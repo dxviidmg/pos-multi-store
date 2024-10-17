@@ -1,10 +1,9 @@
 import React from 'react'
+import SearchableSelect from '../common/searchableSelect/SearchableSelect'
 
 const Sale = () => {
   return (
-    <div>
-      Hola venta
-    </div>
+    <SearchableSelect></SearchableSelect>
   )
 }
 

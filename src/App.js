@@ -35,7 +35,7 @@ function App() {
       <Routes>
         {isLoggedIn ? (
           <>
-            <Route path="/sale" element={<Sale />} />
+            <Route path="/nueva-venta" element={<Sale />} />
           </>
         ) : (
           <Route path="/" element={<Login onLogin={handleLogin} />} />

@@ -89,7 +89,7 @@ function Login({ onLogin }) {
         `/${response.tipo_jurisdiccion.toLowerCase()}/${response.nombre_jurisdiccion.toLowerCase()}`
       );
     } else {
-      navigate("/regiones/");
+      navigate("/nueva-venta/");
     }
   };
 
