@@ -15,11 +15,6 @@ const CustomTable =
     progressPending = false,
     title = '',
     inputPlaceholder = '',
-    buttonText = '',
-    buttonOnClick,
-    buttonHref,
-    buttonIcon = null,
-    buttonDisabled = false
   }) => {
     const [filterText, setFilterText] = useState("");
 
@@ -43,7 +38,7 @@ const CustomTable =
         <div>
           <div className="">
             <div className="">
-              <h1 className="h3 fw-bold text-center">{title}</h1>
+              <h1 className="h3">{title}</h1>
             </div>
             <div className="">
               {search && (
@@ -54,10 +49,6 @@ const CustomTable =
                   placeholder={inputPlaceholder}
                 />
               )}
-              <CustomButton type="button" size="sm" onClick={buttonOnClick} href={buttonHref} disabled={buttonDisabled}>
-                {buttonIcon && buttonIcon}
-                <span>{buttonText && buttonText}</span>
-              </CustomButton>
             </div>
           </div>
         </div>
