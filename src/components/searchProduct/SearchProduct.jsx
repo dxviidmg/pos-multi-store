@@ -34,6 +34,11 @@ const SearchProduct = () => {
         data={options}
         columns={[
           {
+            name: "Codigo",
+            selector: (row) => row.product_code,
+            sortable: true,
+          },
+          {
             name: "Nombre",
             selector: (row) => row.product_name,
             sortable: true,
