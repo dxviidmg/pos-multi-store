@@ -2,23 +2,27 @@ import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable";
 import { getSpecialClients } from "../apis/specialClients";
 import CustomButton from "../commons/customButton/CustomButton";
+import Searcher from "../commons/searcher/Searcher";
 
 const Sale = () => {
+  const [query, setQuery] = useState('');
   const [options, setOptions] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
-      const response2 = await getSpecialClients();
+      console.log(query)
+      const response2 = await getSpecialClients(query);
 
       setOptions(response2.data);
       console.log(response2.data);
     };
 
     fetchData();
-  }, []);
+  }, [query]);
 
   return (
     <>
+    <Searcher setQuery={setQuery}></Searcher>
       <CustomTable
         inputPlaceholder="Buscar cliente"
         title="Clientes"

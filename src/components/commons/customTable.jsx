@@ -16,47 +16,14 @@ const CustomTable =
     title = '',
     inputPlaceholder = '',
   }) => {
-    const [filterText, setFilterText] = useState("");
-
-    const handleFilterChange = useCallback((e) => {
-      setFilterText(e.target.value);
-    }, []);
-
-    const filteredData = useMemo(() => {
-      return data.filter((item) =>
-        Object.values(item).some((value) =>
-          String(value).toLowerCase().includes(filterText.toLowerCase())
-        )
-      );
-    }, [data, filterText]);
-
-    
-
 
     return (
       <>
         <div>
-          <div className="">
-            <div className="">
-              <h1 className="h3">{title}</h1>
-            </div>
-            <div className="">
-              {search && (
-                <Form.Control
-                  type="text"
-                  value={filterText}
-                  onChange={handleFilterChange}
-                  placeholder={inputPlaceholder}
-                />
-              )}
-            </div>
-          </div>
-        </div>
-        <div>
           <DataTable
             noDataComponent="No hay registros para mostrar"
             columns={columns}
-            data={filteredData}
+            data={data}
             pagination={data.length > 10}
             striped
             highlightOnHover
