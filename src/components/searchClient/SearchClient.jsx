@@ -4,17 +4,22 @@ import { getSpecialClients } from "../apis/specialClients";
 import CustomButton from "../commons/customButton/CustomButton";
 import Searcher from "../commons/searcher/Searcher";
 
-const Sale = () => {
+const SearchClient = () => {
   const [query, setQuery] = useState('');
   const [options, setOptions] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       console.log(query)
-      const response2 = await getSpecialClients(query);
 
-      setOptions(response2.data);
-      console.log(response2.data);
+      if (query){
+        const response = await getSpecialClients(query);
+        setOptions(response.data);
+      }
+      else{
+        setOptions([]);
+      }
+
     };
 
     fetchData();
@@ -22,7 +27,7 @@ const Sale = () => {
 
   return (
     <>
-    <Searcher setQuery={setQuery}></Searcher>
+    <Searcher setQuery={setQuery} title="Clientes" inputPlaceholder="Nombre o numero"></Searcher>
       <CustomTable
         inputPlaceholder="Buscar cliente"
         title="Clientes"
@@ -63,4 +68,4 @@ const Sale = () => {
   );
 };
 
-export default Sale;
+export default SearchClient;

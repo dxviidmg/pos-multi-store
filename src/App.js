@@ -8,7 +8,8 @@ import {
 } from "react-router-dom";
 import CustomNavbar from "./components/navbar/Navbar";
 import { useState, useEffect } from "react";
-import Sale from "./components/sale/Sale";
+import NewSale from "./components/newSale/NewSale";
+
 
 
 
@@ -35,7 +36,7 @@ function App() {
       <Routes>
         {isLoggedIn ? (
           <>
-            <Route path="/nueva-venta" element={<Sale />} />
+            <Route path="/nueva-venta" element={<NewSale />} />
           </>
         ) : (
           <Route path="/" element={<Login onLogin={handleLogin} />} />
