@@ -1,10 +1,20 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import CustomTable from '../commons/customTable'; // Si ya tienes una tabla personalizada, la usaremos
+import { removeFromCart } from '../../cartActions';
+import CustomButton from '../commons/customButton/CustomButton';
+
 
 const Cart = () => {
   // Obtenemos el carrito del estado de Redux
   const cart = useSelector((state) => state.cartReducer.cart);
+  const dispatch = useDispatch(); 
+
+
+  const handleRemoveToCart = (product) => {
+    dispatch(removeFromCart(product)); // Despachar la acción con el producto como payload
+  };
+
 
   return (
     <div>
@@ -47,13 +57,11 @@ const Cart = () => {
                 selector: (row) => row.product_price,
                 sortable: true,
               },
+
               {
                 name: "Cantidad a vender",
-                selector: (row) => (
-                  <div>
-                    <input type="number" min="1" max={row.quantity} value="1"/>
-                  </div>
-                ),
+                selector: (row) => row.quantity,
+                sortable: true,
               },
 
 
@@ -62,6 +70,21 @@ const Cart = () => {
               selector: (row) => `$${(row.product_price * row.quantity).toFixed(2)}`, // Multiplicamos el precio por la cantidad
               sortable: true,
             },
+
+
+
+            {
+                name: "Acciones",
+                selector: (row) => (
+                  <div>
+                    <CustomButton onClick={() => handleRemoveToCart(row)}> 
+                      Borrar
+                    </CustomButton>
+                  </div>
+                ),
+              },
+
+
           ]}
         />
       ) : (

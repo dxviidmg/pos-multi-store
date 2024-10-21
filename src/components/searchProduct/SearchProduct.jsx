@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch } from 'react-redux'; // Importar useDispatch
+import { useDispatch } from 'react-redux'; 
 import CustomTable from "../commons/customTable";
 import CustomButton from "../commons/customButton/CustomButton";
 import Searcher from "../commons/searcher/Searcher";
 import { getStoreProducts } from "../apis/products";
 import { addToCart } from "../../cartActions";
 
-
 const SearchProduct = () => {
   const [query, setQuery] = useState('');
-  const [options, setOptions] = useState([]);
-  const dispatch = useDispatch(); // Crear la instancia de dispatch
+  const [options, setOptions] = useState({});
+  const [quantities, setQuantities] = useState([]); // Almacenar las cantidades por ID de producto
+  const dispatch = useDispatch(); 
 
   useEffect(() => {
     const fetchData = async () => {
@@ -19,6 +19,7 @@ const SearchProduct = () => {
       if (query) {
         const response = await getStoreProducts(query);
         setOptions(response.data);
+        console.log(response.data)
       } else {
         setOptions([]);
       }
@@ -29,13 +30,31 @@ const SearchProduct = () => {
 
   // Función para manejar la adición de un producto al carrito
   const handleAddToCart = (product) => {
-    console.log(product)
-    dispatch(addToCart(product)); // Despachar la acción con el producto como payload
+    const quantity = quantities[product.id] || 1; // Usar la cantidad almacenada o 1 si no existe
+    const productWithQuantity = { ...product, quantity }; // Incluir la cantidad en el producto
+    dispatch(addToCart(productWithQuantity)); // Despachar la acción con el producto como payload
+  };
+
+  // Función para manejar el cambio en la cantidad
+  const handleQuantityChange = (id, value, max) => {
+
+    console.log(id, value)
+
+    if ( value > max){
+      return
+    }
+
+    setQuantities((prev) => ({
+      ...prev,
+      [id]: value, // Limitar el valor
+    }));
+
+    console.log(quantities)
   };
 
   return (
     <>
-      <Searcher setQuery={setQuery} title="Productos" inputPlaceholder="Nombre o codigo" />
+      <Searcher setQuery={setQuery} title="Productos" inputPlaceholder="Nombre o código" />
       <CustomTable
         inputPlaceholder="Buscar producto"
         title="Productos"
@@ -66,27 +85,32 @@ const SearchProduct = () => {
             selector: (row) => row.stock,
             sortable: true,
           },
-
           {
             name: "Precio",
             selector: (row) => row.product_price,
             sortable: true,
           },
-
           {
             name: "Cantidad a vender",
             selector: (row) => (
               <div>
-                <input type="number" id="quantity" name="quantity" min="1" max={row.quantity} value="1"/>
+                <input 
+                  type="number" 
+                  id={`quantity-${row.id}`} 
+                  name="quantity" 
+                  min="1" 
+                  max={row.stock} 
+                  value={quantities[row.id] || ''} // Usar el valor almacenado o 1 como predeterminado
+                  onChange={(e) => handleQuantityChange(row.id, Number(e.target.value), row.stock)} // Manejar el cambio
+                />
               </div>
             ),
           },
-  
           {
             name: "Acciones",
             selector: (row) => (
               <div>
-                <CustomButton onClick={() => handleAddToCart(row)}> 
+                <CustomButton onClick={() => handleAddToCart(row)} disabled={row.stock === 0}> 
                   Añadir
                 </CustomButton>
               </div>
