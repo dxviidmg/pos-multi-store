@@ -38,7 +38,6 @@ const SearchProduct = () => {
   // Función para manejar el cambio en la cantidad
   const handleQuantityChange = (id, value, max) => {
 
-    console.log(id, value)
 
     if ( value > max){
       return

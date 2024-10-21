@@ -7,13 +7,14 @@ const initialState = {
 const cartReducer = (state = initialState, action) => {
   switch (action.type) {
     case ADD_TO_CART: {
-      const existingProduct = state.cart.find(item => item.id === action.payload.id);
+      const { id } = action.payload; // Extraer cantidad del payload
+      const existingProductIndex = state.cart.findIndex(item => item.id === id);
 
-      if (existingProduct) {
-        // Si el producto ya existe, actualizar la cantidad
-        const updatedCart = state.cart.map(item =>
-          item.id === existingProduct.id
-            ? { ...item, quantity: (item.quantity || 1) + 1 } // Aumentar la cantidad
+      if (existingProductIndex !== -1) {
+        // Si el producto ya existe, actualizar la cantidad sumando la del item existente
+        const updatedCart = state.cart.map((item, index) => 
+          index === existingProductIndex
+            ? { ...item, quantity: item.quantity + 1 } // Aumentar la cantidad desde el item
             : item
         );
 
@@ -23,10 +24,10 @@ const cartReducer = (state = initialState, action) => {
         };
       }
 
-      // Agregar producto nuevo al carrito con cantidad inicial de 1
+      // Agregar producto nuevo al carrito con la cantidad que viene del payload
       return {
         ...state,
-        cart: [...state.cart, { ...action.payload, quantity: 1 }],
+        cart: [...state.cart, { ...action.payload }], // No establecer cantidad aquí, ya que viene del payload
       };
     }
 
