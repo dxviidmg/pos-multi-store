@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CustomTable from '../commons/customTable'; // Si ya tienes una tabla personalizada, la usaremos
-import { removeFromCart } from '../../cartActions';
+import { removeFromCart } from '../redux/cart/cartActions';
 import CustomButton from '../commons/customButton/CustomButton';
 
 

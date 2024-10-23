@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
-import cartReducer from './cartReducer'; // Importamos el cartReducer
+import cartReducer from './components/redux/cart/cartReducer';
+//import cartReducer from './cartReducer'; // Importamos el cartReducer
 
 const rootReducer = combineReducers({
   cartReducer, // Lo combinamos con otros reducers

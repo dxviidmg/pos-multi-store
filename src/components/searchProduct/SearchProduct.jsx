@@ -4,7 +4,7 @@ import CustomTable from "../commons/customTable";
 import CustomButton from "../commons/customButton/CustomButton";
 import Searcher from "../commons/searcher/Searcher";
 import { getStoreProducts } from "../apis/products";
-import { addToCart } from "../../cartActions";
+import { addToCart } from "../redux/cart/cartActions";
 
 const SearchProduct = () => {
   const [query, setQuery] = useState('');
@@ -103,6 +103,17 @@ const SearchProduct = () => {
                   onChange={(e) => handleQuantityChange(row.id, Number(e.target.value), row.stock)} // Manejar el cambio
                 />
               </div>
+            ),
+          },
+          {
+            name: "Stock en otras tiendas",
+            selector: (row) => (
+              row.stock_in_other_stores.map((stock, index) => (
+                <div key={index}>
+                    <p>{`En ${stock.store__name} hay ${stock.stock}`}</p>
+                </div>
+            ))
+            
             ),
           },
           {
