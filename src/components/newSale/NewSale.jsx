@@ -8,7 +8,7 @@ const NewSale = () => {
   return (
     <Container>
       <Row>
-        <h1>Clientes xxx</h1>
+        <h1>Clientes</h1>
         <Col md={6}>
           {" "}
           <SearchClient></SearchClient>

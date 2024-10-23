@@ -110,7 +110,7 @@ const SearchProduct = () => {
             selector: (row) => (
               row.stock_in_other_stores.map((stock, index) => (
                 <div key={index}>
-                    <p>{`En ${stock.store__name} hay ${stock.stock}`}</p>
+                    <p>{`${stock.store__name}: ${stock.stock}`}</p>
                 </div>
             ))
             

@@ -4,6 +4,7 @@ import Form from "react-bootstrap/Form";
 const Searcher = ({
   setQuery,
   inputPlaceholder = "",
+  label
 }) => {
   const [filterText, setFilterText] = useState("");
 
@@ -15,6 +16,7 @@ const Searcher = ({
 
   return (
     <div>
+      <Form.Label>{label}</Form.Label>
       <Form.Control
         type="text"
         value={filterText}
