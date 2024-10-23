@@ -6,7 +6,6 @@ import CustomButton from '../commons/customButton/CustomButton';
 
 
 const Cart = () => {
-  // Obtenemos el carrito del estado de Redux
   const cart = useSelector((state) => state.cartReducer.cart);
   const dispatch = useDispatch(); 
 

@@ -9,10 +9,9 @@ const CustomTable =
   }) => {
 
     return (
-      <>
         <div>
           <DataTable
-            noDataComponent="No hay registros para mostrar"
+            noDataComponent=""
             columns={columns}
             data={data}
             pagination={data.length > 10}
@@ -21,7 +20,6 @@ const CustomTable =
             progressPending={progressPending}
           />
         </div>
-      </>
     );
   };
 

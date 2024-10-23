@@ -3,10 +3,14 @@ import CustomTable from "../commons/customTable";
 import { getSpecialClients } from "../apis/specialClients";
 import CustomButton from "../commons/customButton/CustomButton";
 import Searcher from "../commons/searcher/Searcher";
+import { useDispatch } from "react-redux";
+import { selectClient } from "../redux/clientSelected/clientSelectedActions";
+
 
 const SearchClient = () => {
   const [query, setQuery] = useState('');
   const [options, setOptions] = useState([]);
+  const dispatch = useDispatch(); 
 
   useEffect(() => {
     const fetchData = async () => {
@@ -24,6 +28,14 @@ const SearchClient = () => {
 
     fetchData();
   }, [query]);
+
+
+  const handleSelectClient = (client) => {
+    dispatch(selectClient(client)); // Despachar la acción con el producto como payload
+    setQuery('')
+  };
+
+
 
   return (
     <>
@@ -53,9 +65,9 @@ const SearchClient = () => {
 
           {
             name: "Acciones",
-            selector: (props) => (
+            selector: (row) => (
               <div>
-                <CustomButton >
+                <CustomButton onClick={() => handleSelectClient(row)}>
                 Seleccionar
                 </CustomButton>
               </div>
