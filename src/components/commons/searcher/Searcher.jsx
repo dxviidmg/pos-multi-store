@@ -3,7 +3,6 @@ import Form from "react-bootstrap/Form";
 
 const Searcher = ({
   setQuery,
-  title = "",
   inputPlaceholder = "",
 }) => {
   const [filterText, setFilterText] = useState("");
@@ -16,7 +15,6 @@ const Searcher = ({
 
   return (
     <div>
-      <h1 className="h3">{title}</h1>
       <Form.Control
         type="text"
         value={filterText}

@@ -1,5 +1,8 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux';
+import SearchClient from '../searchClient/SearchClient';
+import Searcher from '../commons/searcher/Searcher';
+import { Form } from 'react-bootstrap';
 
 const ClientSelected = () => {
 
@@ -7,12 +10,12 @@ const ClientSelected = () => {
 
   
   return (
-    <div>
-      <h1>Cliente seleccionado</h1>
-      { s ? s.full_name : 'No data' }
 
-
-    </div>
+      <Form.Control
+        type="text"
+        value={ s ? s.full_name + s.discount: 'No data' }
+        placeholder=""
+      />
   )
 }
 

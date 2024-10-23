@@ -17,10 +17,8 @@ const Cart = () => {
 
   return (
     <div>
-      <h2>Carrito de Compras</h2>
       {cart.length > 0 ? (
         <CustomTable
-          title="Productos en el Carrito"
           data={cart} // Pasamos los productos en el carrito
           columns={[
 

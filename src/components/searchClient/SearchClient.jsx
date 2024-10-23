@@ -39,10 +39,8 @@ const SearchClient = () => {
 
   return (
     <>
-    <Searcher setQuery={setQuery} title="Clientes" inputPlaceholder="Nombre o numero"></Searcher>
+    <Searcher setQuery={setQuery}  inputPlaceholder="Nombre o numero"></Searcher>
       <CustomTable
-        inputPlaceholder="Buscar cliente"
-        title="Clientes"
         data={options}
         columns={[
           {
