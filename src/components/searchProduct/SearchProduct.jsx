@@ -31,7 +31,7 @@ const SearchProduct = () => {
   // Función para manejar la adición de un producto al carrito
   const handleAddToCart = (product) => {
     const quantity = quantities[product.id] || 1; // Usar la cantidad almacenada o 1 si no existe
-    const productWithQuantity = { ...product, quantity }; // Incluir la cantidad en el producto
+    const productWithQuantity = { ...product, quantity}; // Incluir la cantidad en el producto
     dispatch(addToCart(productWithQuantity)); // Despachar la acción con el producto como payload
   };
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable";
-import { getSpecialClients } from "../apis/specialClients";
+import { getClients } from "../apis/clients";
 import CustomButton from "../commons/customButton/CustomButton";
 import Searcher from "../commons/searcher/Searcher";
 import { useDispatch } from "react-redux";
@@ -17,7 +17,7 @@ const SearchClient = () => {
       console.log(query)
 
       if (query){
-        const response = await getSpecialClients(query);
+        const response = await getClients(query);
         setOptions(response.data);
       }
       else{
@@ -56,8 +56,8 @@ const SearchClient = () => {
           },
 
           {
-            name: "Tipo de cliente",
-            selector: (row) => row.special_client_type.name,
+            name: "Descuento",
+            selector: (row) => row.discount.discount_percentage + '%',
             sortable: true,
           },
 

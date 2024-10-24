@@ -1,7 +1,5 @@
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
-import SearchClient from "../searchClient/SearchClient";
-import Searcher from "../commons/searcher/Searcher";
+import { useSelector } from "react-redux";
 import { Col, Form, Row } from "react-bootstrap";
 
 const ClientSelected = () => {
@@ -9,7 +7,7 @@ const ClientSelected = () => {
 
   return (
     <Row>
-      <Col md={3}>
+      <Col md={4}>
       <Form.Label>Nombre</Form.Label>
         <Form.Control
           type="text"
@@ -19,7 +17,7 @@ const ClientSelected = () => {
         />
       </Col>
 
-      <Col md={3}>
+      <Col md={4}>
       <Form.Label>Telefono</Form.Label>
         <Form.Control
           type="text"
@@ -28,21 +26,12 @@ const ClientSelected = () => {
           disabled
 />
       </Col>
-      <Col md={3}>
-      <Form.Label>Tipo de cliente</Form.Label>
-        <Form.Control
-          type="text"
-          value={s.special_client_type?.name ? s.special_client_type.name : ""}
-          placeholder="Tipo de cliente"
-          disabled
-/>
-      </Col>
 
-      <Col md={3}>
+      <Col md={4}>
       <Form.Label>Descuento</Form.Label>
         <Form.Control
           type="text"
-          value={s.special_client_type?.discount_percentage ? s.special_client_type.discount_percentage + '%': ""}
+          value={s.discount?.discount_percentage ? s.discount.discount_percentage + '%': ""}
           placeholder="Descuento"
           disabled
 />
