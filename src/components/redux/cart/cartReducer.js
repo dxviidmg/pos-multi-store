@@ -25,7 +25,8 @@ const cartReducer = (state = initialState, action) => {
         // Producto existente, incrementar cantidad y recalcular precio
         const updatedCart = state.cart.map((item, index) => {
           if (index === existingProductIndex) {
-            const updatedQuantity = item.quantity + 1;
+
+            const updatedQuantity = item.quantity < item.stock ? item.quantity + 1: item.stock
             const product_price = calculateProductPrice(updatedQuantity, item.prices);
             console.log('product_price 2', product_price)
             return { 

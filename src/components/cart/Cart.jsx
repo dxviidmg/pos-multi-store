@@ -19,7 +19,7 @@ const Cart = () => {
   const total = cart.reduce((acc, item) => acc + item.product_price * item.quantity, 0);
 
 
-  const total_with_discount = total * (1 - clientSelected.discount?.discount_percentage /100)
+  const total_with_discount = total * (clientSelected.discount?.discount_percentage_complement /100)
 
   return (
     <div>
