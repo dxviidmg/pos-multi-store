@@ -62,59 +62,27 @@ const SearchProduct = () => {
           {
             name: "Codigo",
             selector: (row) => row.product_code,
-            sortable: true,
           },
           {
-            name: "Nombre",
-            selector: (row) => row.product_name,
-            sortable: true,
-          },
-          {
-            name: "Marca",
-            selector: (row) => row.brand_name,
-            sortable: true,
-          },
-          {
-            name: "Categoria",
-            selector: (row) => row.category_name,
-            sortable: true,
+            name: 'Descripción',
+            cell: row => <div>{row.description}</div>
           },
           {
             name: "Stock",
             selector: (row) => row.stock,
-            sortable: true,
           },
           {
-            name: "Precio",
-            selector: (row) => row.product_price,
-            sortable: true,
+            name: "Precio unitario",
+            selector: (row) => row.prices.unit_sale_price
           },
+
           {
-            name: "Cantidad a vender",
-            selector: (row) => (
-              <div>
-                <input 
-                  type="number" 
-                  id={`quantity-${row.id}`} 
-                  name="quantity" 
-                  min="1" 
-                  max={row.stock} 
-                  value={quantities[row.id] || ''} // Usar el valor almacenado o 1 como predeterminado
-                  onChange={(e) => handleQuantityChange(row.id, Number(e.target.value), row.stock)} // Manejar el cambio
-                />
-              </div>
-            ),
-          },
-          {
-            name: "Stock en otras tiendas",
-            selector: (row) => (
-              row.stock_in_other_stores.map((stock, index) => (
-                <div key={index}>
-                    <p>{`${stock.store__name}: ${stock.stock}`}</p>
-                </div>
-            ))
-            
-            ),
+            name: "Precio mayoreo",
+            selector: (row) => {
+              return row.prices.apply_wholesale 
+                  ? `${row.prices.min_wholesale_quantity} o más a ${row.prices.wholesale_sale_price}` 
+                  : '';
+          }
           },
           {
             name: "Acciones",

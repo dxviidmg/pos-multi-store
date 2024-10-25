@@ -43,18 +43,8 @@ const Cart = () => {
                 sortable: true,
               },
               {
-                name: "Nombre",
-                selector: (row) => row.product_name,
-                sortable: true,
-              },
-              {
-                name: "Marca",
-                selector: (row) => row.brand_name,
-                sortable: true,
-              },
-              {
-                name: "Categoría",
-                selector: (row) => row.category_name,
+                name: "Descripcion",
+                selector: (row) => row.description,
                 sortable: true,
               },
               {
@@ -64,7 +54,8 @@ const Cart = () => {
               },
               {
                 name: "Precio",
-                selector: (row) => `$${row.product_price.toFixed(2)}`,
+//                selector: (row) => `$${row.product_price.toFixed(2)}`,
+                selector: (row) => row.product_price,
                 sortable: true,
               },
               {
@@ -73,7 +64,7 @@ const Cart = () => {
                 sortable: true,
               },
               {
-                name: "Total",
+                name: "Total por producto",
                 selector: (row) => `$${(row.product_price * row.quantity).toFixed(2)}`, // Calcular el total por producto
                 sortable: true,
               },
