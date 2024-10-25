@@ -70,7 +70,6 @@ const SearchProduct = () => {
   return (
     <>
       <Form.Label>Tipo de búsqueda</Form.Label>
-      <br />
       <Form.Check
         inline
         id="code"
@@ -89,8 +88,10 @@ const SearchProduct = () => {
         value="q"
         checked={queryType === "q"}
       />
-      <br />
+      <br></br>
       <Form.Label>Buscador de productos</Form.Label>
+
+
       <Form.Control
         type="text"
         value={queryType === "code" ? barcode : query} // Usa barcode si es código

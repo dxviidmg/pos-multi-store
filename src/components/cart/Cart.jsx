@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import CustomTable from '../commons/customTable';
 import { removeFromCart } from '../redux/cart/cartActions';
 import CustomButton from '../commons/customButton/CustomButton';
+import { Col, Row } from 'react-bootstrap';
 
 const Cart = () => {
 
@@ -25,13 +26,19 @@ const Cart = () => {
     <div>
       {cart.length > 0 ? (
         <div>
-          <h3>Total: ${total.toFixed(2)}</h3>
+            <Row>
+              <Col md={4}>          <h1>Compra actual</h1></Col>
+              <Col md={3}>          <h2>Total: ${total.toFixed(2)}</h2></Col>
+              <Col md={5}>                    {Object.keys(clientSelected).length > 0
+        ?           <h2>Total con descuento: ${total_with_discount.toFixed(2)}</h2>
+        : ''
+      }</Col>
+            </Row>
+
+          <h3></h3>
           {}
 
-          {Object.keys(clientSelected).length > 0
-        ?           <h3>Total con descuento: ${total_with_discount.toFixed(2)}</h3>
-        : ''
-      }
+
 
 
           <CustomTable

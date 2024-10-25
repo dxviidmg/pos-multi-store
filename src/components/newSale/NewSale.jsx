@@ -27,7 +27,6 @@ const NewSale = () => {
           <SearchProduct></SearchProduct>
         </Col>
 
-        <h1>Compra actual</h1>
         <Col md={12}>
           {" "}
           <Cart></Cart>
