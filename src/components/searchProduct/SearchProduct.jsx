@@ -9,18 +9,15 @@ import { Form } from "react-bootstrap";
 const SearchProduct = () => {
   const [query, setQuery] = useState("");
   const [data, setData] = useState([]);
-  const [quantities, setQuantities] = useState({});
   const [queryType, setQueryType] = useState("code");
   const dispatch = useDispatch();
-  const [barcode, setBarcode] = useState('');
+  const [barcode, setBarcode] = useState("");
 
   const fetchData = useCallback(async () => {
     if (!query) {
       setData([]);
       return;
     }
-
-    if (queryType === "code") await new Promise((resolve) => setTimeout(resolve, 1000));
 
     const response = await getStoreProducts(queryType, query);
     const fetchedData = response.data;
@@ -34,50 +31,46 @@ const SearchProduct = () => {
   }, [query, queryType, dispatch]);
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    // Solo llama a fetchData si hay un query
+    if (query) {
+      fetchData();
+    }
+  }, [fetchData, query]);
 
   const handleAddToCart = (product) => {
-    const quantity = quantities[product.id] || 1;
-    dispatch(addToCart({ ...product, quantity }));
+    dispatch(addToCart({ ...product, quantity: 1 }));
   };
 
-  const handleQuantityChange = (id, value, max) => {
-    if (value <= max) {
-      setQuantities((prev) => ({ ...prev, [id]: value }));
-    }
+  const handleQueryTypeChange = (e) => {
+    setQueryType(e.target.value);
+    setQuery(""); // Reinicia el query cuando cambias el tipo
+    setData([]); // Limpia los resultados
   };
-
-  const handleQueryTypeChange = (e) => setQueryType(e.target.value);
 
   const handleKeyDown = (event) => {
-    if (event.key === "Enter") {
+    if (event.key === "Enter" && queryType === "code") {
+      // Solo busca si el tipo de consulta es código
       console.log("Código escaneado:", barcode);
-      setBarcode("");
-      setQuery(barcode);
+      setQuery(barcode); // Actualiza el query con el código escaneado
+      setBarcode(""); // Limpia el campo de código de barras
     }
   };
 
   const handleChange = async (e) => {
-    if (queryType === "code") {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-    }
-    
     setQuery(e.target.value);
+
+    // Solo llama a fetchData si el tipo de consulta es "q"
+    if (queryType === "q") {
+      const response = await getStoreProducts(queryType, e.target.value);
+      const fetchedData = response.data;
+      setData(fetchedData);
+    }
   };
-  
 
   return (
     <>
-      <input
-        type="text"
-        placeholder="Escanea el código de barras"
-        value={barcode}
-        onChange={(e) => setBarcode(e.target.value)}
-        onKeyDown={queryType === "code" ? handleKeyDown : undefined}
-      />
-
       <Form.Label>Tipo de búsqueda</Form.Label>
+      <br />
       <Form.Check
         inline
         id="code"
@@ -96,13 +89,13 @@ const SearchProduct = () => {
         value="q"
         checked={queryType === "q"}
       />
-
+      <br />
       <Form.Label>Buscador de productos</Form.Label>
       <Form.Control
         type="text"
-        value={query}
+        value={queryType === "code" ? barcode : query} // Usa barcode si es código
         placeholder="Buscar producto"
-        onChange={handleChange} // Solo activa si queryType es "q"
+        onChange={queryType === "q" ? handleChange : (e) => setBarcode(e.target.value)} // Cambia el valor del input según el tipo
         onKeyDown={queryType === "code" ? handleKeyDown : undefined} // Solo activa si queryType es "code"
       />
 
