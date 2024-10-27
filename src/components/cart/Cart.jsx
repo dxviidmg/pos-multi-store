@@ -4,6 +4,7 @@ import CustomTable from "../commons/customTable";
 import { removeFromCart } from "../redux/cart/cartActions";
 import CustomButton from "../commons/customButton/CustomButton";
 import { Col, Row } from "react-bootstrap";
+import { createSale } from "../apis/sales";
 
 const Cart = () => {
   const cart = useSelector((state) => state.cartReducer.cart);
@@ -28,6 +29,16 @@ const Cart = () => {
 
   const handleRemoveFromCart = (product) => dispatch(removeFromCart(product));
 
+  const handleCreateSale = () => {
+    const data = {total: total ? total: totalDiscount, store_products: cart.map(product => ({
+      id: product.id,
+      quantity: product.quantity
+  }))}
+
+    createSale(data)
+
+  };
+
   return (
     <div>
       {cart.length > 0 ? (
@@ -46,7 +57,7 @@ const Cart = () => {
             </Col>
 
             <Col md={2}>
-              <CustomButton fullWidth={true}>Pagar</CustomButton>
+              <CustomButton fullWidth={true} onClick={() => handleCreateSale()}>Pagar</CustomButton>
             </Col>
           </Row>
 

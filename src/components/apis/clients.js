@@ -8,7 +8,7 @@ export const getClients = async (query) => {
   
     try {
       const response = await axios.get(apiUrl, {
-        headers: getHeaders(true),
+        headers: getHeaders(),
       });
       return response;
     } catch (error) {

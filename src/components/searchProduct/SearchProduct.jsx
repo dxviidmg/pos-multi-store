@@ -23,7 +23,17 @@ const SearchProduct = () => {
     const fetchedData = response.data;
 
     if (queryType === "code" && fetchedData.length === 1) {
-      dispatch(addToCart({ ...fetchedData[0], quantity: 1 }));
+      console.log('')
+      if (fetchedData[0].stock === 0){
+        console.log('AGOTADO')
+      }
+      else{
+
+        dispatch(addToCart({ ...fetchedData[0], quantity: 1 }));
+
+
+      }
+
       setQuery("");
     } else {
       setData(fetchedData);
