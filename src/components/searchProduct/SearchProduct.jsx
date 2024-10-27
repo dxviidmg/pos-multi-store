@@ -5,9 +5,8 @@ import CustomButton from "../commons/customButton/CustomButton";
 import { getStoreProducts } from "../apis/products";
 import { addToCart } from "../redux/cart/cartActions";
 import { Form, Table } from "react-bootstrap";
-import { debounce } from 'lodash'; // Ensure you install lodash
+import { debounce } from "lodash"; // Ensure you install lodash
 import CustomModal from "../commons/customModal/customModal";
-
 
 const SearchProduct = () => {
   const [query, setQuery] = useState("");
@@ -17,42 +16,54 @@ const SearchProduct = () => {
   const [barcode, setBarcode] = useState("");
   const cart = useSelector((state) => state.cartReducer.cart);
   const [showModal, setShowModal] = useState(false);
-  const [productStock, setProductStock] = useState({code:'xxx', name: '', stock: '', stock_in_other_stores: []});
+  const [productStock, setProductStock] = useState({
+    code: "",
+    name: "",
+    stock: "",
+    stock_in_other_stores: [],
+  });
 
-  const fetchData = useCallback(debounce(async () => {
-    if (!query) {
-      setData([]);
-      return;
-    }
+  const fetchData = useCallback(
+    debounce(async () => {
+      if (!query) {
+        setData([]);
+        return;
+      }
 
-    const response = await getStoreProducts(queryType, query);
-    const fetchedData = response.data;
+      const response = await getStoreProducts(queryType, query);
+      const fetchedData = response.data;
 
-    if (queryType === "code" && fetchedData.length === 1) {
-      const product = fetchedData[0];
-      
-      if (product.stock === 0) {
-        handleOpenModal(product)
-      } else {
-        const existingProductIndex = cart.findIndex(item => item.id === product.id);
-        
-        // Check if the product already exists in the cart
-        if (existingProductIndex === -1) {
-          dispatch(addToCart({ ...product, quantity: 1 }));
+      if (queryType === "code" && fetchedData.length === 1) {
+        const product = fetchedData[0];
+
+        if (product.stock === 0) {
+          handleOpenModal(product);
         } else {
-          const productExists = cart[existingProductIndex];
-          if (productExists.quantity < productExists.stock) {
+          const existingProductIndex = cart.findIndex(
+            (item) => item.id === product.id
+          );
+
+          // Check if the product already exists in the cart
+          if (existingProductIndex === -1) {
             dispatch(addToCart({ ...product, quantity: 1 }));
           } else {
-            console.log('ya llegaste al limite');
+
+            console.log('stock antes de add tocart', product.stock)
+            const productExists = cart[existingProductIndex];
+            if (productExists.quantity < product.stock) {
+              dispatch(addToCart({ ...product, quantity: 1 }));
+            } else {
+              handleOpenModal(product);
+            }
           }
         }
+        setQuery("");
+      } else {
+        setData(fetchedData);
       }
-      setQuery("");
-    } else {
-      setData(fetchedData);
-    }
-  }, 300), [query, queryType, dispatch, cart]); // Debouncing fetchData
+    }, 300),
+    [query, queryType, dispatch, cart]
+  ); // Debouncing fetchData
 
   useEffect(() => {
     // Call fetchData only if there is a query
@@ -66,6 +77,7 @@ const SearchProduct = () => {
   }, [fetchData, query]);
 
   const handleAddToCart = (product) => {
+    console.log('stock antes de add tocart', product.stock)
     dispatch(addToCart({ ...product, quantity: 1 }));
   };
 
@@ -74,7 +86,6 @@ const SearchProduct = () => {
     setQuery(""); // Reset the query when changing type
     setData([]); // Clear results
   };
-
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter" && queryType === "code") {
@@ -86,45 +97,58 @@ const SearchProduct = () => {
 
   const handleChange = (e) => {
     setQuery(e.target.value);
-    
+
     // Only call fetchData if queryType is "q"
     if (queryType === "q") {
       fetchData();
     }
   };
 
-
   const handleOpenModal = (row) => {
-    setShowModal(false)
+    setShowModal(false);
     setTimeout(() => setShowModal(true), 1);
-    setProductStock({code:row.product_code, name: row.description, stock: row.stock, stock_in_other_stores: row.stock_in_other_stores})
+    setProductStock({
+      code: row.product_code,
+      name: row.description,
+      stock: row.stock,
+      stock_in_other_stores: row.stock_in_other_stores,
+    });
   };
-
 
   return (
     <>
-          <CustomModal showOut={showModal} title='Revision de stock'>
+      <CustomModal showOut={showModal} title="Revision de stock">
+        <p className="text-center">
+          <b>Codigo:</b> {productStock.code} <b>Nombre:</b> {productStock.name}
+        </p>
 
-          <p className="text-center"><b>Codigo:</b> {productStock.code} <b>Nombre:</b> {productStock.name}</p>
-          
-          {productStock.stock === 0 ? <p className="text-center"><b>Nota:</b> No hay stock de este producto en la tienda</p>: ''}
-          <Table striped bordered hover>
-    <thead>
-      <tr>
-        <th>Tienda/Amlacen</th>
-        <th>Stock</th>
-      </tr>
-    </thead>
-    <tbody>
-      {productStock.stock_in_other_stores.map((stock, e) => (
-        <tr key={e}>
-          <td>{stock.store_name}</td>
-          <td>{stock.stock}</td>
-        </tr>
-      ))}
-    </tbody>
-  </Table>
-          </CustomModal>
+        {productStock.stock === 0 ? (
+          <p className="text-center">
+            <b>Nota:</b> No hay stock de este producto en la tienda
+          </p>
+        ) : (
+          <p className="text-center">
+            <b>Nota:</b> Ya llegaste al límite de stock de este producto en esta tienda
+          </p>
+        )}
+
+        <Table striped bordered hover>
+          <thead>
+            <tr>
+              <th>Tienda/Amlacen</th>
+              <th>Stock</th>
+            </tr>
+          </thead>
+          <tbody>
+            {productStock.stock_in_other_stores.map((stock, e) => (
+              <tr key={e}>
+                <td>{stock.store_name}</td>
+                <td>{stock.stock}</td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </CustomModal>
       <Form.Label>Buscador de productos</Form.Label>
       <br />
       <Form.Label style={{ marginRight: "30px" }}>Tipo de búsqueda:</Form.Label>
@@ -190,19 +214,14 @@ const SearchProduct = () => {
                 >
                   Añadir
                 </CustomButton>
-          
-
               </div>
             ),
           },
-          
-
 
           {
             name: "Acciones",
             selector: (row) => (
               <div className="d-flex gap-2">
-          
                 <CustomButton
                   onClick={() => handleOpenModal(row)}
                   disabled={row.stock === 0}
@@ -213,8 +232,6 @@ const SearchProduct = () => {
               </div>
             ),
           },
-
-
         ]}
       />
     </>

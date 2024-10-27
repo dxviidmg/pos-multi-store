@@ -7,7 +7,8 @@ const initialState = {
 const cartReducer = (state = initialState, action) => {
   switch (action.type) {
     case ADD_TO_CART: {
-      const { id, quantity, prices } = action.payload;
+      const { id, quantity, prices, stock } = action.payload;
+      console.log('stock en add to cart', stock)
       const existingProductIndex = state.cart.findIndex(item => item.id === id);
       
       // Calcular el precio del producto basado en la cantidad y precios mayoristas
@@ -32,7 +33,8 @@ const cartReducer = (state = initialState, action) => {
             return { 
               ...item, 
               quantity: updatedQuantity, 
-              product_price 
+              product_price,
+              stock 
             };
           }
           return item; // Mantener el producto sin cambios
