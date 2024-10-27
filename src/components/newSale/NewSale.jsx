@@ -6,9 +6,8 @@ import ClientSelected from "../clientSelected/ClientSelected";
 import { Col, Container, Row } from "react-bootstrap";
 const NewSale = () => {
   return (
-    <Container>
-      <Row>
-        <h1>Clientes</h1>
+    <Container >
+      <Row className="section">
         <Col md={6}>
           {" "}
           <SearchClient></SearchClient>
@@ -19,13 +18,16 @@ const NewSale = () => {
         </Col>
       </Row>
 
-      <Row>
-        <h1>Productos</h1>
-
+      <Row className="section">
         <Col md={12}>
           {" "}
           <SearchProduct></SearchProduct>
         </Col>
+      </Row>
+
+
+      <Row className="section">
+
 
         <Col md={12}>
           {" "}

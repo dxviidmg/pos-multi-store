@@ -69,11 +69,14 @@ const SearchProduct = () => {
 
   return (
     <>
-      <Form.Label>Tipo de búsqueda</Form.Label>
+      <Form.Label>Buscador de productos</Form.Label>
+      <br />
+      <Form.Label style={{ marginRight: "30px" }}>Tipo de búsqueda:</Form.Label>
+
       <Form.Check
         inline
         id="code"
-        label="Código"
+        label="Por código de barras"
         type="radio"
         onChange={handleQueryTypeChange}
         value="code"
@@ -82,21 +85,21 @@ const SearchProduct = () => {
       <Form.Check
         inline
         id="description"
-        label="Descripción (Manual)"
+        label="Manual (Descripcion)"
         type="radio"
         onChange={handleQueryTypeChange}
         value="q"
         checked={queryType === "q"}
       />
-      <br></br>
-      <Form.Label>Buscador de productos</Form.Label>
-
+      <br />
 
       <Form.Control
         type="text"
         value={queryType === "code" ? barcode : query} // Usa barcode si es código
         placeholder="Buscar producto"
-        onChange={queryType === "q" ? handleChange : (e) => setBarcode(e.target.value)} // Cambia el valor del input según el tipo
+        onChange={
+          queryType === "q" ? handleChange : (e) => setBarcode(e.target.value)
+        } // Cambia el valor del input según el tipo
         onKeyDown={queryType === "code" ? handleKeyDown : undefined} // Solo activa si queryType es "code"
       />
 

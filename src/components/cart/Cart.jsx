@@ -1,45 +1,54 @@
-import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import CustomTable from '../commons/customTable';
-import { removeFromCart } from '../redux/cart/cartActions';
-import CustomButton from '../commons/customButton/CustomButton';
-import { Col, Row } from 'react-bootstrap';
+import React, { useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import CustomTable from "../commons/customTable";
+import { removeFromCart } from "../redux/cart/cartActions";
+import CustomButton from "../commons/customButton/CustomButton";
+import { Col, Row } from "react-bootstrap";
 
 const Cart = () => {
-
   const cart = useSelector((state) => state.cartReducer.cart);
-  const clientSelected = useSelector((state) => state.clientSelectedReducer.client);
-  console.log('clientSelected', clientSelected)
-  const dispatch = useDispatch(); 
+  const clientSelected = useSelector(
+    (state) => state.clientSelectedReducer.client
+  );
+  const dispatch = useDispatch();
 
-  const handleRemoveToCart = (product) => {
-    dispatch(removeFromCart(product));
-  };
+  // Memorizar los totales para evitar recálculo innecesario
+  const { total, totalDiscount } = useMemo(() => {
+    const total = cart.reduce(
+      (acc, item) => acc + item.product_price * item.quantity,
+      0
+    );
+    const totalDiscount = clientSelected?.discount
+      ?.discount_percentage_complement
+      ? total * (clientSelected.discount.discount_percentage_complement / 100)
+      : null;
 
-  // Calcular el total del carrito
-  const total = cart.reduce((acc, item) => acc + item.product_price * item.quantity, 0);
+    return { total, totalDiscount };
+  }, [cart, clientSelected]);
 
-
-  const total_with_discount = total * (clientSelected.discount?.discount_percentage_complement /100)
+  const handleRemoveFromCart = (product) => dispatch(removeFromCart(product));
 
   return (
     <div>
       {cart.length > 0 ? (
         <div>
-            <Row>
-              <Col md={4}>          <h1>Compra actual</h1></Col>
-              <Col md={3}>          <h2>Total: ${total.toFixed(2)}</h2></Col>
-              <Col md={5}>                    {Object.keys(clientSelected).length > 0
-        ?           <h2>Total con descuento: ${total_with_discount.toFixed(2)}</h2>
-        : ''
-      }</Col>
-            </Row>
+          <Row>
+            <Col md={3}>
+              <h2>Compra actual</h2>
+            </Col>
+            <Col md={7}>
+              <div className="d-flex gap-3 justify-content-end">
+                <h3>Total: ${total.toFixed(2)}</h3>
+                {totalDiscount && (
+                  <h3>Total con descuento: ${totalDiscount.toFixed(2)}</h3>
+                )}
+              </div>
+            </Col>
 
-          <h3></h3>
-          {}
-
-
-
+            <Col md={2}>
+              <CustomButton fullWidth={true}>Pagar</CustomButton>
+            </Col>
+          </Row>
 
           <CustomTable
             data={cart}
@@ -50,7 +59,7 @@ const Cart = () => {
                 sortable: true,
               },
               {
-                name: "Descripcion",
+                name: "Descripción",
                 selector: (row) => row.description,
                 sortable: true,
               },
@@ -61,8 +70,7 @@ const Cart = () => {
               },
               {
                 name: "Precio",
-//                selector: (row) => `$${row.product_price.toFixed(2)}`,
-                selector: (row) => row.product_price,
+                selector: (row) => `$${row.product_price.toFixed(2)}`,
                 sortable: true,
               },
               {
@@ -72,24 +80,26 @@ const Cart = () => {
               },
               {
                 name: "Total por producto",
-                selector: (row) => `$${(row.product_price * row.quantity).toFixed(2)}`, // Calcular el total por producto
+                selector: (row) =>
+                  `$${(row.product_price * row.quantity).toFixed(2)}`,
                 sortable: true,
               },
               {
                 name: "Acciones",
                 selector: (row) => (
-                  <div>
-                    <CustomButton onClick={() => handleRemoveToCart(row)}> 
-                      Borrar
-                    </CustomButton>
-                  </div>
+                  <CustomButton onClick={() => handleRemoveFromCart(row)}>
+                    Borrar
+                  </CustomButton>
                 ),
               },
             ]}
           />
         </div>
       ) : (
-        <p>Tu carrito está vacío.</p>
+        <>
+          <h2>Compra actual</h2>
+          <p>Sin productos</p>
+        </>
       )}
     </div>
   );
