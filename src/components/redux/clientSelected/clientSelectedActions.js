@@ -8,5 +8,4 @@ export const selectClient = (client) => ({
 
 export const removeClient = () => ({
   type: REMOVE_CLIENT,
-//  payload: ,
 });

@@ -1,10 +1,13 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import CustomTable from "../commons/customTable";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getStoreProducts } from "../apis/products";
 import { addToCart } from "../redux/cart/cartActions";
-import { Form } from "react-bootstrap";
+import { Form, Table } from "react-bootstrap";
+import { debounce } from 'lodash'; // Ensure you install lodash
+import CustomModal from "../commons/customModal/customModal";
+
 
 const SearchProduct = () => {
   const [query, setQuery] = useState("");
@@ -12,8 +15,11 @@ const SearchProduct = () => {
   const [queryType, setQueryType] = useState("code");
   const dispatch = useDispatch();
   const [barcode, setBarcode] = useState("");
+  const cart = useSelector((state) => state.cartReducer.cart);
+  const [showModal, setShowModal] = useState(false);
+  const [productStock, setProductStock] = useState({code:'xxx', name: '', stock: '', stock_in_other_stores: []});
 
-  const fetchData = useCallback(async () => {
+  const fetchData = useCallback(debounce(async () => {
     if (!query) {
       setData([]);
       return;
@@ -23,28 +29,40 @@ const SearchProduct = () => {
     const fetchedData = response.data;
 
     if (queryType === "code" && fetchedData.length === 1) {
-      console.log('')
-      if (fetchedData[0].stock === 0){
-        console.log('AGOTADO')
+      const product = fetchedData[0];
+      
+      if (product.stock === 0) {
+        handleOpenModal(product)
+      } else {
+        const existingProductIndex = cart.findIndex(item => item.id === product.id);
+        
+        // Check if the product already exists in the cart
+        if (existingProductIndex === -1) {
+          dispatch(addToCart({ ...product, quantity: 1 }));
+        } else {
+          const productExists = cart[existingProductIndex];
+          if (productExists.quantity < productExists.stock) {
+            dispatch(addToCart({ ...product, quantity: 1 }));
+          } else {
+            console.log('ya llegaste al limite');
+          }
+        }
       }
-      else{
-
-        dispatch(addToCart({ ...fetchedData[0], quantity: 1 }));
-
-
-      }
-
       setQuery("");
     } else {
       setData(fetchedData);
     }
-  }, [query, queryType, dispatch]);
+  }, 300), [query, queryType, dispatch, cart]); // Debouncing fetchData
 
   useEffect(() => {
-    // Solo llama a fetchData si hay un query
+    // Call fetchData only if there is a query
     if (query) {
       fetchData();
     }
+    // Cleanup the debounce effect
+    return () => {
+      fetchData.cancel();
+    };
   }, [fetchData, query]);
 
   const handleAddToCart = (product) => {
@@ -53,32 +71,60 @@ const SearchProduct = () => {
 
   const handleQueryTypeChange = (e) => {
     setQueryType(e.target.value);
-    setQuery(""); // Reinicia el query cuando cambias el tipo
-    setData([]); // Limpia los resultados
+    setQuery(""); // Reset the query when changing type
+    setData([]); // Clear results
   };
+
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter" && queryType === "code") {
-      // Solo busca si el tipo de consulta es código
       console.log("Código escaneado:", barcode);
-      setQuery(barcode); // Actualiza el query con el código escaneado
-      setBarcode(""); // Limpia el campo de código de barras
+      setQuery(barcode); // Update the query with the scanned code
+      setBarcode(""); // Clear the barcode field
     }
   };
 
-  const handleChange = async (e) => {
+  const handleChange = (e) => {
     setQuery(e.target.value);
-
-    // Solo llama a fetchData si el tipo de consulta es "q"
+    
+    // Only call fetchData if queryType is "q"
     if (queryType === "q") {
-      const response = await getStoreProducts(queryType, e.target.value);
-      const fetchedData = response.data;
-      setData(fetchedData);
+      fetchData();
     }
   };
+
+
+  const handleOpenModal = (row) => {
+    setShowModal(false)
+    setTimeout(() => setShowModal(true), 1);
+    setProductStock({code:row.product_code, name: row.description, stock: row.stock, stock_in_other_stores: row.stock_in_other_stores})
+  };
+
 
   return (
     <>
+          <CustomModal showOut={showModal} title='Revision de stock'>
+
+          <p className="text-center"><b>Codigo:</b> {productStock.code} <b>Nombre:</b> {productStock.name}</p>
+          
+          {productStock.stock === 0 ? <p className="text-center"><b>Nota:</b> No hay stock de este producto en la tienda</p>: ''}
+          <Table striped bordered hover>
+    <thead>
+      <tr>
+        <th>Tienda/Amlacen</th>
+        <th>Stock</th>
+      </tr>
+    </thead>
+    <tbody>
+      {productStock.stock_in_other_stores.map((stock, e) => (
+        <tr key={e}>
+          <td>{stock.store_name}</td>
+          <td>{stock.stock}</td>
+        </tr>
+      ))}
+    </tbody>
+  </Table>
+          </CustomModal>
       <Form.Label>Buscador de productos</Form.Label>
       <br />
       <Form.Label style={{ marginRight: "30px" }}>Tipo de búsqueda:</Form.Label>
@@ -95,7 +141,7 @@ const SearchProduct = () => {
       <Form.Check
         inline
         id="description"
-        label="Manual (Descripcion)"
+        label="Manual (Descripción)"
         type="radio"
         onChange={handleQueryTypeChange}
         value="q"
@@ -105,12 +151,12 @@ const SearchProduct = () => {
 
       <Form.Control
         type="text"
-        value={queryType === "code" ? barcode : query} // Usa barcode si es código
+        value={queryType === "code" ? barcode : query} // Use barcode if code
         placeholder="Buscar producto"
         onChange={
           queryType === "q" ? handleChange : (e) => setBarcode(e.target.value)
-        } // Cambia el valor del input según el tipo
-        onKeyDown={queryType === "code" ? handleKeyDown : undefined} // Solo activa si queryType es "code"
+        } // Change input value based on type
+        onKeyDown={queryType === "code" ? handleKeyDown : undefined} // Activate only if queryType is "code"
       />
 
       <CustomTable
@@ -132,17 +178,43 @@ const SearchProduct = () => {
                 ? `${row.prices.min_wholesale_quantity} o más a ${row.prices.wholesale_sale_price}`
                 : "",
           },
+
           {
             name: "Acciones",
             selector: (row) => (
-              <CustomButton
-                onClick={() => handleAddToCart(row)}
-                disabled={row.stock === 0}
-              >
-                Añadir
-              </CustomButton>
+              <div className="d-flex gap-2">
+                <CustomButton
+                  onClick={() => handleAddToCart(row)}
+                  disabled={row.stock === 0}
+                  variant="primary"
+                >
+                  Añadir
+                </CustomButton>
+          
+
+              </div>
             ),
           },
+          
+
+
+          {
+            name: "Acciones",
+            selector: (row) => (
+              <div className="d-flex gap-2">
+          
+                <CustomButton
+                  onClick={() => handleOpenModal(row)}
+                  disabled={row.stock === 0}
+                  variant="danger"
+                >
+                  Ver stock total
+                </CustomButton>
+              </div>
+            ),
+          },
+
+
         ]}
       />
     </>

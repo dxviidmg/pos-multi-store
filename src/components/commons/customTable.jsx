@@ -18,6 +18,7 @@ const CustomTable =
             striped
             highlightOnHover
             progressPending={progressPending}
+            dense
           />
         </div>
     );

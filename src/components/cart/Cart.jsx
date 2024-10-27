@@ -1,13 +1,17 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import CustomTable from "../commons/customTable";
-import { removeFromCart } from "../redux/cart/cartActions";
+import { cleanCart, removeFromCart } from "../redux/cart/cartActions";
 import CustomButton from "../commons/customButton/CustomButton";
 import { Col, Row } from "react-bootstrap";
 import { createSale } from "../apis/sales";
+import CustomAlert from "../commons/customAlert";
+import { removeClient } from "../redux/clientSelected/clientSelectedActions";
 
 const Cart = () => {
   const cart = useSelector((state) => state.cartReducer.cart);
+  const [messageAlert, setMessageAlert] = useState("");
+  const [showAlert, setShowAlert] = useState(false);
   const clientSelected = useSelector(
     (state) => state.clientSelectedReducer.client
   );
@@ -29,18 +33,42 @@ const Cart = () => {
 
   const handleRemoveFromCart = (product) => dispatch(removeFromCart(product));
 
-  const handleCreateSale = () => {
-    const data = {total: total ? total: totalDiscount, store_products: cart.map(product => ({
-      id: product.id,
-      quantity: product.quantity
-  }))}
+  const handleCreateSale = async () => {
+    const data = {
+      total: total ? total : totalDiscount,
+      store_products: cart.map((product) => ({
+        id: product.id,
+        quantity: product.quantity,
+      })),
+    };
 
-    createSale(data)
+    const response = await createSale(data);
 
+    setShowAlert(true);
+
+    if (response.status === 201) {
+      dispatch(removeClient());
+      dispatch(cleanCart());
+      setMessageAlert("Exitoso");
+    } else {
+      setMessageAlert(
+        "No se pudo concretar la venta. Intente de nuevo o llame a soporte"
+      );
+    }
   };
+
+  setTimeout(function () {
+    setShowAlert(false);
+  }, 5000);
 
   return (
     <div>
+      <CustomAlert
+        messageAlert={messageAlert}
+        isVisible={showAlert}
+        onClose={() => setShowAlert(false)}
+      />
+
       {cart.length > 0 ? (
         <div>
           <Row>
@@ -57,7 +85,9 @@ const Cart = () => {
             </Col>
 
             <Col md={2}>
-              <CustomButton fullWidth={true} onClick={() => handleCreateSale()}>Pagar</CustomButton>
+              <CustomButton fullWidth={true} onClick={() => handleCreateSale()}>
+                Pagar
+              </CustomButton>
             </Col>
           </Row>
 
