@@ -12,7 +12,7 @@ const CustomNavbar = () => {
   return (
     <Navbar expand="lg" style={{backgroundColor: '#3b83bd'}}>
       <Container fluid >
-        <Navbar.Brand href="#">My pos</Navbar.Brand>
+        <Navbar.Brand href="#">My POS</Navbar.Brand>
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll">
           <Nav
