@@ -119,7 +119,7 @@ const SearchProduct = () => {
     <>
       <CustomModal showOut={showModal} title="Revision de stock">
         <p className="text-center">
-          <b>Codigo:</b> {productStock.code} <b>Nombre:</b> {productStock.name}
+          <b>Código:</b> {productStock.code} <b>Nombre:</b> {productStock.name}
         </p>
 
         {productStock.stock === 0 ? (
@@ -135,7 +135,7 @@ const SearchProduct = () => {
         <Table striped bordered hover>
           <thead>
             <tr>
-              <th>Tienda/Amlacen</th>
+              <th>Tienda/Almacen</th>
               <th>Stock</th>
             </tr>
           </thead>

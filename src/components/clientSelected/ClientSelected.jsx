@@ -18,11 +18,11 @@ const ClientSelected = () => {
       </Col>
 
       <Col md={4}>
-      <Form.Label>Telefono</Form.Label>
+      <Form.Label>Teléfono</Form.Label>
         <Form.Control
           type="text"
           value={s.phone_number ? s.phone_number: ""}
-          placeholder="Telefono"
+          placeholder="Teléfono"
           disabled
 />
       </Col>
