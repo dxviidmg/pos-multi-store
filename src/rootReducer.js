@@ -1,12 +1,14 @@
 import { combineReducers } from 'redux';
 import cartReducer from './components/redux/cart/cartReducer';
 import clientSelectedReducer from './components/redux/clientSelected/clientSelectedReducer';
+import showStockModalReducer from './components/redux/showStockModal/showStockModalReducer';
 
 //import cartReducer from './cartReducer'; // Importamos el cartReducer
 
 const rootReducer = combineReducers({
   cartReducer, // Lo combinamos con otros reducers
-  clientSelectedReducer
+  clientSelectedReducer,
+  showStockModalReducer
   // otros reducers si los tienes
 });
 

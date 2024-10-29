@@ -7,6 +7,7 @@ import { Col, Row } from "react-bootstrap";
 import { createSale } from "../apis/sales";
 import CustomAlert from "../commons/customAlert";
 import { removeClient } from "../redux/clientSelected/clientSelectedActions";
+import CustomModal from "../commons/customModal/customModal";
 
 const Cart = () => {
   const cart = useSelector((state) => state.cartReducer.cart);
@@ -15,6 +16,7 @@ const Cart = () => {
   const clientSelected = useSelector(
     (state) => state.clientSelectedReducer.client
   );
+  const [showModal, setShowModal] = useState(false);
   const dispatch = useDispatch();
 
   // Memorizar los totales para evitar recálculo innecesario
@@ -69,8 +71,22 @@ const Cart = () => {
     setShowAlert(false);
   }, 5000);
 
+
+  const handleOpenModal = () => {
+    setShowModal(false);
+    setTimeout(() => setShowModal(true), 1);
+  };
+
+
   return (
     <div>
+
+<CustomModal showOut={showModal} title="Finalizar pago">
+completar
+            </CustomModal>
+
+
+
       <CustomAlert
         messageAlert={messageAlert}
         isVisible={showAlert}
@@ -93,7 +109,7 @@ const Cart = () => {
             </Col>
 
             <Col md={2}>
-              <CustomButton fullWidth={true} onClick={() => handleCreateSale()}>
+              <CustomButton fullWidth={true} onClick={() => handleOpenModal()}>
                 Pagar
               </CustomButton>
             </Col>
