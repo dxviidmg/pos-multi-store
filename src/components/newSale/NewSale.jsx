@@ -8,17 +8,6 @@ const NewSale = () => {
   return (
     <div>
       <Row className="section">
-        <Col md={6}>
-          {" "}
-          <SearchClient></SearchClient>
-        </Col>
-        <Col md={6}>
-          {" "}
-          <ClientSelected></ClientSelected>
-        </Col>
-      </Row>
-
-      <Row className="section">
         <Col md={12}>
           {" "}
           <SearchProduct></SearchProduct>

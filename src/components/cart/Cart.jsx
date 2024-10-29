@@ -7,9 +7,11 @@ import { Col, Row } from "react-bootstrap";
 import { createSale } from "../apis/sales";
 import CustomAlert from "../commons/customAlert";
 import { removeClient } from "../redux/clientSelected/clientSelectedActions";
-import CustomModal from "../commons/customModal/customModal";
 import PaymentModal from "../paymentModal/PaymentModal";
-import { hidePaymentModal, showPaymentModal } from "../redux/paymentModal/PaymentModalActions";
+import {
+  hidePaymentModal,
+  showPaymentModal,
+} from "../redux/paymentModal/PaymentModalActions";
 
 const Cart = () => {
   const cart = useSelector((state) => state.cartReducer.cart);
@@ -18,43 +20,37 @@ const Cart = () => {
   const clientSelected = useSelector(
     (state) => state.clientSelectedReducer.client
   );
-  const [showModal, setShowModal] = useState(false);
   const dispatch = useDispatch();
 
-  // Memorizar los totales para evitar recálculo innecesario
-  const { total, totalDiscount } = useMemo(() => {
+  const { total } = useMemo(() => {
     const total = cart.reduce(
       (acc, item) => acc + item.product_price * item.quantity,
       0
     );
-    const totalDiscount = clientSelected?.discount
-      ?.discount_percentage_complement
-      ? total * (clientSelected.discount.discount_percentage_complement / 100)
-      : null;
 
-    return { total, totalDiscount };
+
+    return { total };
   }, [cart, clientSelected]);
 
   const handleRemoveFromCart = (product) => dispatch(removeFromCart(product));
 
   const handleCreateSale = async () => {
-
-    console.log(cart)
+    console.log('data', cart);
     const data = {
       client: clientSelected.id,
-      total: total ? total : totalDiscount,
+//      total: total ? total : totalDiscount,
+      total: total,
       store_products: cart.map((product) => ({
         id: product.id,
         quantity: product.quantity,
-        price: product.product_price
+        price: product.product_price,
       })),
     };
 
-    console.log('p', data)
-    
+    console.log("data", data);
 
     const response = await createSale(data);
-//    return
+    //    return
 
     setShowAlert(true);
 
@@ -73,20 +69,14 @@ const Cart = () => {
     setShowAlert(false);
   }, 5000);
 
-
   const handleOpenModal = () => {
-    console.log('xxx')
-//    dispatch(hidePaymentModal())
-//    setTimeout(() => dispatch(showPaymentModal()), 1);
+    dispatch(hidePaymentModal());
+    setTimeout(() => dispatch(showPaymentModal()), 1);
   };
-
 
   return (
     <div>
-
-<PaymentModal/>
-
-
+      <PaymentModal />
 
       <CustomAlert
         messageAlert={messageAlert}
@@ -103,9 +93,6 @@ const Cart = () => {
             <Col md={7}>
               <div className="d-flex gap-3 justify-content-end">
                 <h3>Total: ${total.toFixed(2)}</h3>
-                {totalDiscount && (
-                  <h3>Total con descuento: ${totalDiscount.toFixed(2)}</h3>
-                )}
               </div>
             </Col>
 

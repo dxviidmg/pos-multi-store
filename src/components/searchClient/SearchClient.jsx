@@ -15,7 +15,6 @@ const SearchClient = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log(query)
 
       if (query){
         const response = await getClients(query);
@@ -33,7 +32,6 @@ const SearchClient = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log(query)
 
       if (query){
         const response = await getClients(query);

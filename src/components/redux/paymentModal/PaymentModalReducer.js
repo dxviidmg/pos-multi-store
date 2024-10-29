@@ -1,4 +1,4 @@
-import { SHOW_MODAL, HIDE_MODAL } from './PaymentModalActions';
+import { SHOW_MODAL2, HIDE_MODAL2 } from './PaymentModalActions';
 
 const initialState = {
   showPaymentModal: false,
@@ -6,17 +6,15 @@ const initialState = {
 };
 
 const PaymentModalReducer = (state = initialState, action) => {
-  console.log('llegue xxx que onda')
   switch (action.type) {
-    case SHOW_MODAL: {
+    case SHOW_MODAL2: {
         return {
           showPaymentModal: true,
           product: action.payload
         };
       }
 
-      case HIDE_MODAL: {
-        console.log('llegue 2')
+      case HIDE_MODAL2: {
         return {
           showStockModal: false,
           product: {}

@@ -6,7 +6,6 @@ const initialState = {
 };
 
 const StockModalReducer = (state = initialState, action) => {
-  console.log('llegue')
   switch (action.type) {
     case SHOW_MODAL: {
         return {
@@ -16,7 +15,6 @@ const StockModalReducer = (state = initialState, action) => {
       }
 
       case HIDE_MODAL: {
-        console.log('llegue 2')
         return {
           showStockModal: false,
           product: {}

@@ -14,7 +14,6 @@ const clientSelectedReducer = (state = initialState, action) => {
 
 
     case REMOVE_CLIENT: {
-      console.log('remueve')
       return {
         ...state,
         client: {},

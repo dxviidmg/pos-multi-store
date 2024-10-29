@@ -69,7 +69,6 @@ const SearchProduct = () => {
       dispatch(addToCart({ ...product, quantity: 1 }));
     } else {
       const productExists = cart[existingProductIndex];
-      console.log('compara', productExists.quantity, product.stock)
       if (productExists.quantity < product.stock) {
         dispatch(addToCart({ ...product, quantity: 1 }));
       } else {
@@ -79,12 +78,10 @@ const SearchProduct = () => {
   };
 
   useEffect(() => {
-    console.log('query', query)
     if (query) {
       fetchData();
     }
     else{
-      console.log('nana')
       setData([])
     }
     return () => {
