@@ -31,7 +31,7 @@ function App() {
 
   return (
     <Router>
-      {/*{isLoggedIn ? <CustomNavbar /> : ""}*/}
+      {isLoggedIn ? <CustomNavbar /> : ""}
 
       <Routes>
         {isLoggedIn ? (

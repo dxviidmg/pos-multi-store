@@ -7,7 +7,7 @@ import { addToCart } from "../redux/cart/cartActions";
 import { Form } from "react-bootstrap";
 import { debounce } from "lodash"; // Ensure you install lodash
 import StockModal from "../stockModal/StockModal";
-import { hideStockModal, showStockModal } from "../redux/StockModal/StockModalActions";
+import { hideStockModal, showStockModal } from "../redux/stockModal/StockModalActions";
 
 const SearchProduct = () => {
   const inputRef = useRef(null);

@@ -8,6 +8,8 @@ import { createSale } from "../apis/sales";
 import CustomAlert from "../commons/customAlert";
 import { removeClient } from "../redux/clientSelected/clientSelectedActions";
 import CustomModal from "../commons/customModal/customModal";
+import PaymentModal from "../paymentModal/PaymentModal";
+import { hidePaymentModal, showPaymentModal } from "../redux/paymentModal/PaymentModalActions";
 
 const Cart = () => {
   const cart = useSelector((state) => state.cartReducer.cart);
@@ -73,17 +75,16 @@ const Cart = () => {
 
 
   const handleOpenModal = () => {
-    setShowModal(false);
-    setTimeout(() => setShowModal(true), 1);
+    console.log('xxx')
+//    dispatch(hidePaymentModal())
+//    setTimeout(() => dispatch(showPaymentModal()), 1);
   };
 
 
   return (
     <div>
 
-<CustomModal showOut={showModal} title="Finalizar pago">
-completar
-            </CustomModal>
+<PaymentModal/>
 
 
 
