@@ -6,7 +6,7 @@ import ClientSelected from "../clientSelected/ClientSelected";
 import { Col, Container, Row } from "react-bootstrap";
 const NewSale = () => {
   return (
-    <Container >
+    <div>
       <Row className="section">
         <Col md={6}>
           {" "}
@@ -36,7 +36,7 @@ const NewSale = () => {
       </Row>
       
 
-    </Container>
+    </div>
   );
 };
 

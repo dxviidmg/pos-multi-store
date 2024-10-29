@@ -34,22 +34,30 @@ const Cart = () => {
   const handleRemoveFromCart = (product) => dispatch(removeFromCart(product));
 
   const handleCreateSale = async () => {
+
+    console.log(cart)
     const data = {
+      client: clientSelected.id,
       total: total ? total : totalDiscount,
       store_products: cart.map((product) => ({
         id: product.id,
         quantity: product.quantity,
+        price: product.product_price
       })),
     };
 
+    console.log('p', data)
+    
+
     const response = await createSale(data);
+//    return
 
     setShowAlert(true);
 
     if (response.status === 201) {
       dispatch(removeClient());
       dispatch(cleanCart());
-      setMessageAlert("Exitoso");
+      setMessageAlert("Compra exitosa");
     } else {
       setMessageAlert(
         "No se pudo concretar la venta. Intente de nuevo o llame a soporte"

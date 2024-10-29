@@ -30,8 +30,8 @@ function App() {
   };
 
   return (
-    <Router style={{'backgroundColor': '#e1e9f4'}}>
-      {isLoggedIn ? <CustomNavbar /> : ""}
+    <Router>
+      {/*{isLoggedIn ? <CustomNavbar /> : ""}*/}
 
       <Routes>
         {isLoggedIn ? (
