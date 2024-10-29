@@ -7,7 +7,7 @@ import { addToCart } from "../redux/cart/cartActions";
 import { Form } from "react-bootstrap";
 import { debounce } from "lodash"; // Ensure you install lodash
 import StockModal from "../stockModal/StockModal";
-import { hideStockModal, showStockModal } from "../redux/showStockModal/showStockModalActions";
+import { hideStockModal, showStockModal } from "../redux/StockModal/StockModalActions";
 
 const SearchProduct = () => {
   const inputRef = useRef(null);
@@ -68,8 +68,9 @@ const SearchProduct = () => {
     if (existingProductIndex === -1) {
       dispatch(addToCart({ ...product, quantity: 1 }));
     } else {
-//      const productExists = cart[existingProductIndex];
-      if (product.quantity < product.stock) {
+      const productExists = cart[existingProductIndex];
+      console.log('compara', productExists.quantity, product.stock)
+      if (productExists.quantity < product.stock) {
         dispatch(addToCart({ ...product, quantity: 1 }));
       } else {
         handleOpenModal(product);

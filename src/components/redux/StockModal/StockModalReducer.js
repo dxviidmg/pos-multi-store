@@ -1,11 +1,11 @@
-import { SHOW_MODAL, HIDE_MODAL } from './showStockModalActions';
+import { SHOW_MODAL, HIDE_MODAL } from './StockModalActions';
 
 const initialState = {
   showStockModal: false,
   product: {}
 };
 
-const showStockModalReducer = (state = initialState, action) => {
+const StockModalReducer = (state = initialState, action) => {
   console.log('llegue')
   switch (action.type) {
     case SHOW_MODAL: {
@@ -28,4 +28,4 @@ const showStockModalReducer = (state = initialState, action) => {
   }
 };
 
-export default showStockModalReducer;
+export default StockModalReducer;

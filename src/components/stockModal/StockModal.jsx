@@ -5,8 +5,8 @@ import { useSelector } from 'react-redux'
 
 
 const StockModal = () => {
-    const showStockModal = useSelector((state) => state.showStockModalReducer.showStockModal);
-    const product = useSelector((state) => state.showStockModalReducer.product);
+    const showStockModal = useSelector((state) => state.StockModalReducer.showStockModal);
+    const product = useSelector((state) => state.StockModalReducer.product);
 
     console.log(product)
     return (
