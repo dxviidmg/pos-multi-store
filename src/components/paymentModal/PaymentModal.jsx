@@ -6,7 +6,9 @@ import ClientSelected from "../clientSelected/ClientSelected";
 import SearchClient from "../searchClient/SearchClient";
 
 const PaymentModal = () => {
-  const { showPaymentModal } = useSelector((state) => state.PaymentModalReducer);
+  const { showPaymentModal } = useSelector(
+    (state) => state.PaymentModalReducer
+  );
   const cart = useSelector((state) => state.cartReducer.cart);
   const client = useSelector((state) => state.clientSelectedReducer.client);
 
@@ -106,32 +108,38 @@ const PaymentModal = () => {
           <Form.Label className="me-3">Medios de pago:</Form.Label>
 
           {["E", "P", "T"].map((method) => (
-            <Form.Group key={method} className="d-flex align-items-center mb-2">
-              <Form.Check
-                id={method}
-                label={
-                  method === "E" ? "Efectivo" :
-                  method === "P" ? "Pago con tarjeta" :
-                  "Transferencia"
-                }
-                type={paymentType}
-                onChange={handleChangePayments}
-                value={method}
-                name="paymentMethod"
-                checked={
-                  paymentType === "radio"
-                    ? paymentMethod === method
-                    : paymentMethods.includes(method)
-                }
-              />
-              {paymentType === "checkbox" && paymentMethods.includes(method) && (
-                <Form.Control
-                  type="number"
-                  placeholder="Cantidad"
-                  className="ms-2"
+            <div key={method} className="d-flex align-items-center mb-1">
+              <div className="me-3" style={{ flex: "1" }}>
+                <Form.Check
+                  id={method}
+                  label={
+                    method === "E"
+                      ? "Efectivo"
+                      : method === "P"
+                      ? "Pago con tarjeta"
+                      : "Transferencia"
+                  }
+                  type={paymentType}
+                  onChange={handleChangePayments}
+                  value={method}
+                  name="paymentMethod"
+                  checked={
+                    paymentType === "radio"
+                      ? paymentMethod === method
+                      : paymentMethods.includes(method)
+                  }
                 />
-              )}
-            </Form.Group>
+              </div>
+              {paymentType === "checkbox" &&
+                paymentMethods.includes(method) && (
+                  <Form.Control
+                    type="number"
+                    placeholder="$"
+                    style={{ width: "120px", height: "calc(1.5rem + 2px)" }} // Ajusta la altura del input
+                    className="align-self-center"
+                  />
+                )}
+            </div>
           ))}
         </Col>
       </Row>
