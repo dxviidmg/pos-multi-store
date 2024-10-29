@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { Col, Form, Row } from "react-bootstrap";
 
 const ClientSelected = () => {
-  const s = useSelector((state) => state.clientSelectedReducer.client);
+  const client = useSelector((state) => state.clientSelectedReducer.client);
 
   return (
     <Row>
@@ -11,7 +11,7 @@ const ClientSelected = () => {
       <Form.Label>Nombre</Form.Label>
         <Form.Control
           type="text"
-          value={s.full_name ? s.full_name: ""}
+          value={client.full_name ? client.full_name: ""}
           placeholder="Nombre"
           disabled
         />
@@ -21,7 +21,7 @@ const ClientSelected = () => {
       <Form.Label>Teléfono</Form.Label>
         <Form.Control
           type="text"
-          value={s.phone_number ? s.phone_number: ""}
+          value={client.phone_number ? client.phone_number: ""}
           placeholder="Teléfono"
           disabled
 />
@@ -31,7 +31,7 @@ const ClientSelected = () => {
       <Form.Label>Descuento</Form.Label>
         <Form.Control
           type="text"
-          value={s.discount?.discount_percentage ? s.discount.discount_percentage + '%': ""}
+          value={client.discount?.discount_percentage ? client.discount.discount_percentage + '%': ""}
           placeholder="Descuento"
           disabled
 />

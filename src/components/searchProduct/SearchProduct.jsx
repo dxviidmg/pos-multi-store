@@ -162,7 +162,7 @@ const SearchProduct = () => {
       
       <Form.Label>Buscador de productos</Form.Label>
       <br />
-      <Form.Label style={{ marginRight: "30px" }}>Tipo de búsqueda:</Form.Label>
+      <Form.Label className="me-3">Tipo de búsqueda:</Form.Label>
 
       <Form.Check
         inline

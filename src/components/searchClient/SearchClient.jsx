@@ -2,12 +2,13 @@ import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable";
 import { getClients } from "../apis/clients";
 import CustomButton from "../commons/customButton/CustomButton";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { selectClient } from "../redux/clientSelected/clientSelectedActions";
 import { Form } from "react-bootstrap";
 
 
 const SearchClient = () => {
+  const client = useSelector((state) => state.clientSelectedReducer.client);
   const [query, setQuery] = useState('');
   const [options, setOptions] = useState([]);
   const dispatch = useDispatch(); 
@@ -56,7 +57,14 @@ const SearchClient = () => {
 
   return (
     <>
-      <Form.Label>Buscador de clientes</Form.Label>
+      <Form.Label className="me-3">Buscador de clientes</Form.Label>
+
+      <b>
+          {Object.keys(client).length === 0 && (
+            <>Aviso: No hay cliente seleccionado</>
+          )}
+        </b>
+
       <Form.Control
         type="text"
         value={query}
