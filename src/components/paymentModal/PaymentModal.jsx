@@ -1,24 +1,18 @@
 import React, { useMemo, useState } from "react";
 import CustomModal from "../commons/customModal/customModal";
-import { Col, Form, Row, Table } from "react-bootstrap";
+import { Col, Form, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import ClientSelected from "../clientSelected/ClientSelected";
 import SearchClient from "../searchClient/SearchClient";
 
 const PaymentModal = () => {
-  const { showPaymentModal } = useSelector(
-    (state) => state.PaymentModalReducer
-  );
+  const { showPaymentModal } = useSelector((state) => state.PaymentModalReducer);
   const cart = useSelector((state) => state.cartReducer.cart);
-
-  const [messageAlert, setMessageAlert] = useState("");
-  const [showAlert, setShowAlert] = useState(false);
+  const client = useSelector((state) => state.clientSelectedReducer.client);
 
   const [paymentType, setPaymentType] = useState("radio");
   const [paymentMethod, setPaymentMethod] = useState("E");
   const [paymentMethods, setPaymentMethods] = useState([]);
-
-  const client = useSelector((state) => state.clientSelectedReducer.client);
 
   const dispatch = useDispatch();
 
@@ -35,56 +29,41 @@ const PaymentModal = () => {
     return { total, totalDiscount };
   }, [cart, client]);
 
-  console.log("showPaymentModal", showPaymentModal);
-
   const handleChangePayments = (e) => {
+    const { name, value } = e.target;
 
-    const {name, value} = e.target
-    console.log('name and value', name, value)
-    if (name === "paymentType"){
-      console.log('qwerty', value)
-      if (value==="radio"){
-        setPaymentMethod("E")
+    if (name === "paymentType") {
+      // Si cambia a pago único, reinicia y selecciona el primer método
+      if (value === "radio") {
+        setPaymentMethod("E");
+        setPaymentMethods([]);
+      } else {
+        // Si cambia a pago mixto, limpia la selección de métodos únicos
+        setPaymentMethod("");
       }
-      setPaymentType(value)
-      
-    }
-    else{
-      console.log('cambiando', name)
-
-
-      if(paymentType==="radio"){
-        setPaymentMethod(value)
-      }
-      else{
-        console.log('else checkbox')
-        if (paymentMethod.includes(value)){
-
-          setPaymentMethods(paymentMethods.filter((item) => item !== value));
-
-
-        }
-        else{
-          console.log('jalo 2')
-          setPaymentMethods([...paymentMethods, value]);
-
-        }
-        console.log('*****', paymentMethods)
+      setPaymentType(value);
+    } else {
+      if (paymentType === "radio") {
+        setPaymentMethod(value);
+      } else {
+        // Si es mixto, añade o quita métodos de pago seleccionados
+        setPaymentMethods((prev) =>
+          prev.includes(value)
+            ? prev.filter((item) => item !== value)
+            : [...prev, value]
+        );
       }
     }
-
   };
 
   return (
     <CustomModal showOut={showPaymentModal} title="Finalizar pago">
       <Row className="section">
         <Col md={12}>
-          {" "}
-          <SearchClient></SearchClient>
+          <SearchClient />
         </Col>
         <Col md={12}>
-          {" "}
-          <ClientSelected></ClientSelected>
+          <ClientSelected />
         </Col>
       </Row>
 
@@ -103,12 +82,11 @@ const PaymentModal = () => {
       <Row className="section">
         <Col md={3}>
           <Form.Label className="me-3">Tipo de pago:</Form.Label>
-
           <Form.Check
             id="single"
             label="Unico"
             type="radio"
-            onChange={(e) => handleChangePayments(e)}
+            onChange={handleChangePayments}
             value="radio"
             name="paymentType"
             checked={paymentType === "radio"}
@@ -117,7 +95,7 @@ const PaymentModal = () => {
             id="mixed"
             label="Mixto"
             type="radio"
-            onChange={(e) => handleChangePayments(e)}
+            onChange={handleChangePayments}
             value="checkbox"
             name="paymentType"
             checked={paymentType === "checkbox"}
@@ -127,75 +105,34 @@ const PaymentModal = () => {
         <Col md={6}>
           <Form.Label className="me-3">Medios de pago:</Form.Label>
 
-          <Form.Group className="d-flex align-items-center mb-2">
-            <Form.Check
-              id="E"
-              label="Efectivo"
-              type={paymentType}
-              onChange={(e) => handleChangePayments(e)}
-              value="E"
-              name="paymentMethod"
-              checked={
-                paymentType === "radio" ? paymentMethod === "E" : undefined
-              }
-            />
-            {paymentType === "checkbox" && paymentMethod === "E" && (
-              <Form.Control
-                type="number"
-                placeholder="Cantidad"
-                //      onChange={(e) => setCashAmount(e.target.value)}
-                className="ms-2"
+          {["E", "P", "T"].map((method) => (
+            <Form.Group key={method} className="d-flex align-items-center mb-2">
+              <Form.Check
+                id={method}
+                label={
+                  method === "E" ? "Efectivo" :
+                  method === "P" ? "Pago con tarjeta" :
+                  "Transferencia"
+                }
+                type={paymentType}
+                onChange={handleChangePayments}
+                value={method}
+                name="paymentMethod"
+                checked={
+                  paymentType === "radio"
+                    ? paymentMethod === method
+                    : paymentMethods.includes(method)
+                }
               />
-            )}
-          </Form.Group>
-
-
-
-          <Form.Group className="d-flex align-items-center mb-2">
-            <Form.Check
-              id="P"
-              label="Pago con tarjeta"
-              type={paymentType}
-              onChange={(e) => handleChangePayments(e)}
-              value="P"
-              checked={
-                paymentType === "radio" ? paymentMethod === "P" : undefined
-              }
-                            name="paymentMethod"
-            />
-            {paymentType === "checkbox" && paymentMethod === "P" && (
-              <Form.Control
-                type="number"
-                placeholder="Cantidad"
-                //      onChange={(e) => setCashAmount(e.target.value)}
-                className="ms-2"
-              />
-            )}
-          </Form.Group>
-
-
-
-          <Form.Group className="d-flex align-items-center mb-2">
-            <Form.Check
-              id="T"
-              label="Transferencia"
-              type={paymentType}
-              onChange={(e) => handleChangePayments(e)}
-              value="T"
-              checked={
-                paymentType === "radio" ? paymentMethod === "T" : undefined
-              }
-                            name="paymentMethod"
-            />
-            {paymentType === "checkbox" && paymentMethod === "T" && (
-              <Form.Control
-                type="number"
-                placeholder="Cantidad"
-                //      onChange={(e) => setCashAmount(e.target.value)}
-                className="ms-2"
-              />
-            )}
-          </Form.Group>
+              {paymentType === "checkbox" && paymentMethods.includes(method) && (
+                <Form.Control
+                  type="number"
+                  placeholder="Cantidad"
+                  className="ms-2"
+                />
+              )}
+            </Form.Group>
+          ))}
         </Col>
       </Row>
     </CustomModal>
