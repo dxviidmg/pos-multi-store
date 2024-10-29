@@ -16,6 +16,7 @@ const PaymentModal = () => {
 
   const [paymentType, setPaymentType] = useState("radio");
   const [paymentMethod, setPaymentMethod] = useState("E");
+  const [paymentMethods, setPaymentMethods] = useState([]);
 
   const client = useSelector((state) => state.clientSelectedReducer.client);
 
@@ -41,11 +42,15 @@ const PaymentModal = () => {
     const {name, value} = e.target
     console.log('name and value', name, value)
     if (name === "paymentType"){
-      console.log('cambiando paymenttype')
+      console.log('qwerty', value)
+      if (value==="radio"){
+        setPaymentMethod("E")
+      }
       setPaymentType(value)
+      
     }
     else{
-      console.log('no se que hago aqui', paymentType)
+      console.log('cambiando', name)
 
 
       if(paymentType==="radio"){
@@ -53,12 +58,18 @@ const PaymentModal = () => {
       }
       else{
         console.log('else checkbox')
-        if (value in paymentMethod){
-          console.log('jalo')
+        if (paymentMethod.includes(value)){
+
+          setPaymentMethods(paymentMethods.filter((item) => item !== value));
+
+
         }
         else{
           console.log('jalo 2')
+          setPaymentMethods([...paymentMethods, value]);
+
         }
+        console.log('*****', paymentMethods)
       }
     }
 
