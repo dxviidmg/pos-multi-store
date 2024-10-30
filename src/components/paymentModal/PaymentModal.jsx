@@ -42,9 +42,11 @@ const PaymentModal = () => {
     const { name, value } = e.target;
 
     if (name === "paymentType") {
+      const newMethods =
+        value === "radio" ? { E: totalDiscount, P: 0, T: 0 } : { E: 0, P: 0, T: 0 }; // Efectivo por default si es único
       setPaymentMethods({
         type: value,
-        methods: value === "radio" ? { E: totalDiscount, P: 0, T: 0 } : { E: 0, P: 0, T: 0 } // Efectivo por default si es único
+        methods: newMethods
       });
     } else {
       const updatedMethods = paymentMethods.type === "radio"
@@ -78,21 +80,18 @@ const PaymentModal = () => {
     0
   );
 
-
   const convertPaymentMethodsToList = () => {
     return Object.entries(paymentMethods.methods)
       .filter(([method, amount]) => amount > 0) // Filtrar solo los métodos de pago activos
       .map(([method, amount]) => ({
-        method_payment: method,
+        payment_method: method,
         amount: amount
       }));
   };
 
-
   // Crear venta al hacer clic en el botón de pago
   const handleCreateSale = async () => {
-
-    const paymentList = convertPaymentMethodsToList()
+    const paymentList = convertPaymentMethodsToList();
 
     const data = {
       client: client.id,
@@ -104,15 +103,13 @@ const PaymentModal = () => {
       })),
       payments: paymentList
     };
-    console.log(data)
-    console.log(paymentMethods)
-//    return
+
     const response = await createSale(data);
 
     if (response.status === 201) {
       dispatch(removeClient());
       dispatch(cleanCart());
-      dispatch(hidePaymentModal())
+      dispatch(hidePaymentModal());
     }
   };
 
@@ -144,7 +141,7 @@ const PaymentModal = () => {
           <Form.Label className="me-1">Tipo de pago:</Form.Label>
           <Form.Check
             id="single"
-            label="Unico"
+            label="Único"
             type="radio"
             onChange={handleChangePayments}
             value="radio"
@@ -202,7 +199,6 @@ const PaymentModal = () => {
           ))}
         </Col>
         <Col md={3}>
-          {totalPaymentInput} {totalDiscount}
           <CustomButton
             disabled={
               paymentMethods.type === "checkbox" && totalPaymentInput !== totalDiscount
