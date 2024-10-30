@@ -10,7 +10,7 @@ import { Form } from "react-bootstrap";
 const SearchClient = () => {
   const client = useSelector((state) => state.clientSelectedReducer.client);
   const [query, setQuery] = useState('');
-  const [options, setOptions] = useState([]);
+  const [clients, setClients] = useState([]);
   const dispatch = useDispatch(); 
 
   useEffect(() => {
@@ -18,10 +18,10 @@ const SearchClient = () => {
 
       if (query){
         const response = await getClients(query);
-        setOptions(response.data);
+        setClients(response.data);
       }
       else{
-        setOptions([]);
+        setClients([]);
       }
 
     };
@@ -35,10 +35,10 @@ const SearchClient = () => {
 
       if (query){
         const response = await getClients(query);
-        setOptions(response.data);
+        setClients(response.data);
       }
       else{
-        setOptions([]);
+        setClients([]);
       }
 
     };
@@ -70,7 +70,7 @@ const SearchClient = () => {
         placeholder="Nombre y/o número"
       />
       <CustomTable
-        data={options}
+        data={clients}
         columns={[
           {
             name: "Nombre",

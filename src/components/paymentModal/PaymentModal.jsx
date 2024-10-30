@@ -19,19 +19,21 @@ const PaymentModal = () => {
 
   const [paymentMethods, setPaymentMethods] = useState({
     type: "radio", // 'radio' para pago único, 'checkbox' para pago mixto
-    methods: { E: 0, P: 0, T: 0 } // Valores de cada método de pago
+    methods: { E: 0, P: 0, T: 0 }, // Valores de cada método de pago
   });
 
   const dispatch = useDispatch();
 
   // Calcular los totales con descuento y sin descuento
   const { total, totalDiscount } = useMemo(() => {
-    const total = cart.reduce(
+    const total = (cart.reduce(
       (acc, item) => acc + item.product_price * item.quantity,
-      0
-    );
+      0 
+    )) * 100 / 100;
     const totalDiscount = client?.discount?.discount_percentage_complement
-      ? Math.round(total * (client.discount.discount_percentage_complement / 100) * 100) / 100
+      ? Math.round(
+          total * (client.discount.discount_percentage_complement / 100) * 100
+        ) / 100
       : total;
 
     return { total, totalDiscount };
@@ -43,22 +45,25 @@ const PaymentModal = () => {
 
     if (name === "paymentType") {
       const newMethods =
-        value === "radio" ? { E: totalDiscount, P: 0, T: 0 } : { E: 0, P: 0, T: 0 }; // Efectivo por default si es único
+        value === "radio"
+          ? { E: totalDiscount, P: 0, T: 0 }
+          : { E: 0, P: 0, T: 0 }; // Efectivo por default si es único
       setPaymentMethods({
         type: value,
-        methods: newMethods
+        methods: newMethods,
       });
     } else {
-      const updatedMethods = paymentMethods.type === "radio"
-        ? { [value]: totalDiscount } // Selección única
-        : {
-            ...paymentMethods.methods,
-            [value]: paymentMethods.methods[value] ? 0 : totalDiscount // Alternar selección para mixto
-          };
+      const updatedMethods =
+        paymentMethods.type === "radio"
+          ? { [value]: totalDiscount } // Selección única
+          : {
+              ...paymentMethods.methods,
+              [value]: paymentMethods.methods[value] ? 0 : totalDiscount, // Alternar selección para mixto
+            };
 
       setPaymentMethods((prev) => ({
         ...prev,
-        methods: updatedMethods
+        methods: updatedMethods,
       }));
     }
   };
@@ -69,8 +74,8 @@ const PaymentModal = () => {
       ...prev,
       methods: {
         ...prev.methods,
-        [method]: parseFloat(value) || 0
-      }
+        [method]: parseFloat(value) || 0,
+      },
     }));
   };
 
@@ -78,16 +83,17 @@ const PaymentModal = () => {
   const totalPaymentInput = Object.values(paymentMethods.methods).reduce(
     (acc, curr) => acc + curr,
     0
-  );
+  ) * 100 / 100;
 
   const convertPaymentMethodsToList = () => {
     return Object.entries(paymentMethods.methods)
       .filter(([method, amount]) => amount > 0) // Filtrar solo los métodos de pago activos
       .map(([method, amount]) => ({
         payment_method: method,
-        amount: amount
+        amount: amount,
       }));
   };
+
 
   // Crear venta al hacer clic en el botón de pago
   const handleCreateSale = async () => {
@@ -95,21 +101,26 @@ const PaymentModal = () => {
 
     const data = {
       client: client.id,
-      total: total,
+      total: totalDiscount,
       store_products: cart.map((product) => ({
         id: product.id,
         quantity: product.quantity,
         price: product.product_price,
       })),
-      payments: paymentList
+      payments: paymentList,
     };
 
     const response = await createSale(data);
 
     if (response.status === 201) {
+      setPaymentMethods({
+        type: "radio", // 'radio' para pago único, 'checkbox' para pago mixto
+        methods: { E: 0, P: 0, T: 0 }, // Valores de cada método de pago
+      })
       dispatch(removeClient());
       dispatch(cleanCart());
       dispatch(hidePaymentModal());
+
     }
   };
 
@@ -184,28 +195,33 @@ const PaymentModal = () => {
                   }
                 />
               </div>
-              {paymentMethods.type === "checkbox" && paymentMethods.methods[method] > 0 && (
-                <Form.Control
-                  type="number"
-                  placeholder="$"
-                  style={{ width: "120px", height: "calc(1.5rem + 2px)" }}
-                  className="align-self-center"
-                  onChange={(e) =>
-                    handlePaymentValueChange(method, e.target.value)
-                  }
-                />
-              )}
+              {paymentMethods.type === "checkbox" &&
+                paymentMethods.methods[method] > 0 && (
+                  <Form.Control
+                    type="number"
+                    placeholder="$"
+                    style={{ width: "120px", height: "calc(1.5rem + 2px)" }}
+                    className="align-self-center"
+                    onChange={(e) =>
+                      handlePaymentValueChange(method, e.target.value)
+                    }
+                  />
+                )}
             </div>
           ))}
         </Col>
         <Col md={3}>
           <CustomButton
             disabled={
-              paymentMethods.type === "checkbox" && totalPaymentInput !== totalDiscount
+              (paymentMethods.type === "checkbox" &&
+                totalPaymentInput !== totalDiscount) ||
+              Object.values(paymentMethods.methods).every(
+                (amount) => amount === 0
+              ) // Verifica que todos los métodos tengan un monto de 0
             }
             onClick={handleCreateSale}
           >
-            Pagar
+            Pagar {totalPaymentInput} {totalDiscount}
           </CustomButton>
         </Col>
       </Row>

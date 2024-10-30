@@ -9,6 +9,7 @@ import {
 import CustomNavbar from "./components/navbar/Navbar";
 import { useState, useEffect } from "react";
 import NewSale from "./components/newSale/NewSale";
+import SaleList from "./components/saleList/SaleList";
 
 
 
@@ -37,6 +38,7 @@ function App() {
         {isLoggedIn ? (
           <>
             <Route path="/nueva-venta" element={<NewSale />} />
+            <Route path="/ventas/" element={<SaleList />} />
           </>
         ) : (
           <Route path="/" element={<Login onLogin={handleLogin} />} />
