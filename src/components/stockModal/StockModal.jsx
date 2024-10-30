@@ -71,11 +71,11 @@ const StockModal = () => {
           <b>Código:</b> {product.product_code} <b>Nombre:</b> {product.description}
         </p>
 
-        {product.stock === 0 ? (
+        {product.available_stock === 0 ? (
           <p>
             <b>Nota:</b> Producto no disponible
           </p>
-        ) : product.stock !== 0 && !product.onlyRead ? (
+        ) : product.available_stock !== 0 && !product.onlyRead ? (
           <p>
             <b>Nota:</b> Has alcancado el limite de este producto en esta tienda
           </p>
@@ -93,7 +93,7 @@ const StockModal = () => {
       },
       {
         name: "Stock disponible",
-        selector: (row) => row.stock_to_share, // Replace `row.total` with the actual field in your data
+        selector: (row) => row.available_stock, // Replace `row.total` with the actual field in your data
         sortable: true,
       },
 
@@ -105,9 +105,9 @@ const StockModal = () => {
         name="quantity" 
         required 
         min={1} // Ejemplo de mínimo 4 dígitos
-        max={row.stock_to_share} // Ejemplo de máximo 8 dígitos
+        max={row.available_stock} // Ejemplo de máximo 8 dígitos
         placeholder="Cantidad a solicitar" 
-        onChange={(e) => handleQuantityChange(row.store_id, row.stock_to_share, e.target.value)}
+        onChange={(e) => handleQuantityChange(row.store_id, row.available_stock, e.target.value)}
         value={requestedQuantities[row.store_id]}
         />,
         sortable: true,

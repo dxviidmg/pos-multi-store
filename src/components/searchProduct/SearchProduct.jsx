@@ -54,7 +54,7 @@ const SearchProduct = () => {
   );
 
   const handleSingleProductFetch = (product) => {
-    if (product.stock === 0) {
+    if (product.available_stock === 0) {
       handleOpenModal(product);
     } else {
       handleAddToCartIfAvailable(product);
@@ -69,7 +69,7 @@ const SearchProduct = () => {
       dispatch(addToCart({ ...product, quantity: 1 }));
     } else {
       const productExists = cart[existingProductIndex];
-      if (productExists.quantity < product.stock) {
+      if (productExists.quantity < product.available_stock) {
         dispatch(addToCart({ ...product, quantity: 1 }));
       } else {
         handleOpenModal(product);
@@ -177,7 +177,7 @@ const SearchProduct = () => {
           { name: "Descripción", cell: (row) => <div>{row.description}</div> },
           {
             name: "Stock",
-            selector: (row) => row.stock,
+            selector: (row) => row.available_stock,
           },
           {
             name: "Precio unitario",
@@ -195,7 +195,7 @@ const SearchProduct = () => {
             cell: (row) => (
               <CustomButton
                 onClick={() => handleAddToCartIfAvailable(row)}
-                disabled={row.stock === 0}
+                disabled={row.available_stock === 0}
                 variant="primary"
               >
                 Añadir

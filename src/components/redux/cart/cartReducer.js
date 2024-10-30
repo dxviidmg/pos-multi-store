@@ -26,7 +26,7 @@ const cartReducer = (state = initialState, action) => {
         const updatedCart = state.cart.map((item, index) => {
           if (index === existingProductIndex) {
 
-            const updatedQuantity = item.quantity < item.stock ? item.quantity + 1: item.stock
+            const updatedQuantity = item.quantity < item.available_stock ? item.quantity + 1: item.available_stock
             const product_price = calculateProductPrice(updatedQuantity, item.prices);
             return { 
               ...item, 

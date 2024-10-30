@@ -118,7 +118,7 @@ const Cart = () => {
               },
               {
                 name: "Stock",
-                selector: (row) => row.stock,
+                selector: (row) => row.available_stock,
                 sortable: true,
               },
               {
