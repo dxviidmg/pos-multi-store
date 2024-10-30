@@ -16,9 +16,18 @@ const StockModal = () => {
 
   const [requestedQuantities, setRequestedQuantities] = useState({}); // Manejar cantidades solicitadas
 
-  const handleQuantityChange = (rowId, value) => {
+  const handleQuantityChange = (rowId, max, value) => {
+
+    console.log('hola')    
+
+    value = parseInt(value);
+    console.log(value, max, typeof value, typeof max)
 
 
+    if (value > max){
+      console.log('entro')
+      value = max
+    }
     setRequestedQuantities((prev) => ({
       ...prev,
       [rowId]: value, // Usamos el ID de la fila como clave
@@ -47,6 +56,7 @@ const StockModal = () => {
 
 
     if (response.status === 201) {
+      setRequestedQuantities({})
       dispatch(hideStockModal());
 
     }
@@ -58,7 +68,7 @@ const StockModal = () => {
     <CustomModal showOut={showStockModal} title="Revisión de Stock">
       <div className="text-center">
         <p>
-          <b>Code:</b> {product.product_code} <b>Name:</b> {product.description}
+          <b>Código:</b> {product.product_code} <b>Nombre:</b> {product.description}
         </p>
 
         {product.stock === 0 ? (
@@ -97,13 +107,14 @@ const StockModal = () => {
         min={1} // Ejemplo de mínimo 4 dígitos
         max={row.stock_to_share} // Ejemplo de máximo 8 dígitos
         placeholder="Cantidad a solicitar" 
-        onChange={(e) => handleQuantityChange(row.store_id, e.target.value)}
-      />,
+        onChange={(e) => handleQuantityChange(row.store_id, row.stock_to_share, e.target.value)}
+        value={requestedQuantities[row.store_id]}
+        />,
         sortable: true,
       },
       {
         name: "Solicitar",
-        selector: (row) => <CustomButton onClick={() => handleCreateTransfer(row)}>Solicitar</CustomButton>,
+        selector: (row) => <CustomButton disabled={!requestedQuantities[row.store_id] || requestedQuantities[row.store_id] <= 0} onClick={() => handleCreateTransfer(row)}>Solicitar</CustomButton>,
         sortable: true,
       }
     ]}
