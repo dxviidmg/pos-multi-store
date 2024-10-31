@@ -43,6 +43,7 @@ function App() {
             <Route path="/ventas/" element={<SaleList />} />
             <Route path="/traspasos/" element={<TransferList />} />
             <Route path="/clientes/" element={<ClientList />} />
+            <Route path="/*" element={<NewSale />} />
           </>
         ) : (
           <Route path="/" element={<Login onLogin={handleLogin} />} />
