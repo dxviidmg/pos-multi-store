@@ -1,13 +1,16 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import CustomTable from "../commons/customTable";
+import CustomTable from "../commons/customTable/customTable";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getStoreProducts } from "../apis/products";
 import { addToCart } from "../redux/cart/cartActions";
 import { Form } from "react-bootstrap";
 import { debounce } from "lodash"; // Ensure you install lodash
 import StockModal from "../stockModal/StockModal";
-import { hideStockModal, showStockModal } from "../redux/stockModal/StockModalActions";
+import {
+  hideStockModal,
+  showStockModal,
+} from "../redux/stockModal/StockModalActions";
 
 const SearchProduct = () => {
   const inputRef = useRef(null);
@@ -63,7 +66,9 @@ const SearchProduct = () => {
   };
 
   const handleAddToCartIfAvailable = (product) => {
-    const existingProductIndex = cart.findIndex(item => item.id === product.id);
+    const existingProductIndex = cart.findIndex(
+      (item) => item.id === product.id
+    );
 
     if (existingProductIndex === -1) {
       dispatch(addToCart({ ...product, quantity: 1 }));
@@ -80,13 +85,11 @@ const SearchProduct = () => {
   useEffect(() => {
     if (query) {
       fetchData();
-    }
-    else{
-      setData([])
+    } else {
+      setData([]);
     }
     return () => {
       fetchData.cancel();
-
     };
   }, [fetchData, query]);
 
@@ -112,17 +115,15 @@ const SearchProduct = () => {
   };
 
   const handleOpenModal = (row) => {
-    dispatch(hideStockModal())
+    dispatch(hideStockModal());
 
     setTimeout(() => dispatch(showStockModal(row)), 1);
-    
   };
 
   return (
-
     <>
       <StockModal></StockModal>
-      
+
       <Form.Label>Buscador de productos</Form.Label>
       <br />
       <Form.Label className="me-3">Tipo de búsqueda:</Form.Label>
@@ -174,7 +175,7 @@ const SearchProduct = () => {
         data={data}
         columns={[
           { name: "Código", selector: (row) => row.product_code },
-          { name: "Descripción", cell: (row) => <div>{row.description}</div> },
+          { name: "Descripción", selector: (row) => row.description, grow: 3,  wrap: true},
           {
             name: "Stock",
             selector: (row) => row.available_stock,
@@ -187,7 +188,9 @@ const SearchProduct = () => {
             name: "Precio mayoreo",
             selector: (row) =>
               row.prices.apply_wholesale
-                ? `${row.prices.min_wholesale_quantity} o más a $${row.prices.wholesale_sale_price.toFixed(2)}`
+                ? `${
+                    row.prices.min_wholesale_quantity
+                  } o más a $${row.prices.wholesale_sale_price.toFixed(2)}`
                 : "N/A",
           },
           {
@@ -203,11 +206,10 @@ const SearchProduct = () => {
             ),
           },
           {
-            name: "Stock en otras tiendas",
+            name: "Stock total",
             cell: (row) => (
               <CustomButton
                 onClick={() => handleOpenModal({ ...row, onlyRead: true })}
-                
                 variant="danger"
               >
                 Ver
@@ -217,8 +219,6 @@ const SearchProduct = () => {
         ]}
       />
     </>
-
-
   );
 };
 

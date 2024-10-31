@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import CustomModal from '../commons/customModal/customModal';
 import { Form, Table } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import CustomTable from '../commons/customTable';
+import CustomTable from '../commons/customTable/customTable';
 import CustomButton from '../commons/customButton/CustomButton';
-import { createTransfer } from '../apis/products';
 import { hideStockModal } from '../redux/stockModal/StockModalActions';
+import { createTransfer } from '../apis/transfers';
 
 
 const StockModal = () => {

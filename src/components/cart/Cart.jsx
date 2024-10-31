@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import CustomTable from "../commons/customTable";
+import CustomTable from "../commons/customTable/customTable";
 import { cleanCart, removeFromCart } from "../redux/cart/cartActions";
 import CustomButton from "../commons/customButton/CustomButton";
 import { Col, Row } from "react-bootstrap";
@@ -109,33 +109,33 @@ const Cart = () => {
               {
                 name: "Código",
                 selector: (row) => row.product_code,
-                sortable: true,
+  
               },
               {
                 name: "Descripción",
                 selector: (row) => row.description,
-                sortable: true,
+   grow: 3,  wrap: true
               },
               {
                 name: "Stock",
                 selector: (row) => row.available_stock,
-                sortable: true,
+  
               },
               {
                 name: "Precio",
                 selector: (row) => `$${row.product_price.toFixed(2)}`,
-                sortable: true,
+  
               },
               {
-                name: "Cantidad a vender",
+                name: "Vender",
                 selector: (row) => row.quantity,
-                sortable: true,
+  
               },
               {
                 name: "Total por producto",
                 selector: (row) =>
                   `$${(row.product_price * row.quantity).toFixed(2)}`,
-                sortable: true,
+  
               },
               {
                 name: "Acciones",

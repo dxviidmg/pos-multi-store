@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import CustomTable from "../commons/customTable";
+import CustomTable from "../commons/customTable/customTable";
 import { getClients } from "../apis/clients";
 import CustomButton from "../commons/customButton/CustomButton";
 import { useDispatch, useSelector } from "react-redux";
@@ -52,25 +52,25 @@ const SaleList = () => {
             {
               name: "#",
               selector: (row) => row.id,
-              sortable: true,
+
             },
 
             {
               name: "Cliente",
               selector: (row) => row.client?.full_name,
-              sortable: true,
+
             },
 
             {
               name: "Hora",
               selector: (row) => getTimeFromDateString(row.created_at),
-              sortable: true,
+
             },
 
             {
               name: "Total",
               selector: (row) => "$" + row.total,
-              sortable: true,
+
             },
           ]}
         ></CustomTable>

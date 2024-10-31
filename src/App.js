@@ -10,6 +10,7 @@ import CustomNavbar from "./components/navbar/Navbar";
 import { useState, useEffect } from "react";
 import NewSale from "./components/newSale/NewSale";
 import SaleList from "./components/saleList/SaleList";
+import TransferList from "./components/transferList/TransferList";
 
 
 
@@ -39,6 +40,7 @@ function App() {
           <>
             <Route path="/nueva-venta" element={<NewSale />} />
             <Route path="/ventas/" element={<SaleList />} />
+            <Route path="/traspasos/" element={<TransferList />} />
           </>
         ) : (
           <Route path="/" element={<Login onLogin={handleLogin} />} />

@@ -1,0 +1,24 @@
+.table-container {
+    /* Asegúrate de que el contenedor ocupe el 100% del ancho */
+    width: 100%;
+    overflow: auto; /* Permite el desplazamiento si el contenido es más ancho que el contenedor */
+  }
+  
+  .rdt_Table {
+    width: 100%; /* Asegúrate de que la tabla ocupe todo el ancho del contenedor */
+  }
+
+  .rdt_Table {
+    width: 100%; /* Asegúrate de que la tabla ocupe todo el ancho del contenedor */
+    border-collapse: collapse; /* Estilo opcional para un mejor aspecto */
+  }
+  
+  .rdt_Table th, .rdt_Table td {
+    padding: 10px; /* Espaciado interno para celdas */
+    border: 1px solid #ddd; /* Borde para celdas */
+  }
+  
+  .rdt_Table th {
+    background-color: #f4f4f4; /* Color de fondo para los encabezados */
+    text-align: left; /* Alineación del texto */
+  }

@@ -1,5 +1,6 @@
 import React from "react";
 import DataTable from "react-data-table-component";
+import './customTable.css'
 
 const CustomTable =
   ({
@@ -9,7 +10,7 @@ const CustomTable =
   }) => {
 
     return (
-        <div>
+        <div className="table-container">
           <DataTable
             noDataComponent=""
             columns={columns}

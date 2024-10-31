@@ -219,9 +219,10 @@ const PaymentModal = () => {
                 (amount) => amount === 0
               ) // Verifica que todos los métodos tengan un monto de 0
             }
+            fullWidth={true}
             onClick={handleCreateSale}
           >
-            Pagar {totalPaymentInput} {totalDiscount}
+            Pagar
           </CustomButton>
         </Col>
       </Row>
