@@ -21,6 +21,7 @@ const CustomNavbar = () => {
             navbarScroll
           >
             <Nav.Link href="/nueva-venta/">Nueva venta</Nav.Link>
+            <Nav.Link href="/clientes/">Clientes</Nav.Link>            
             <Nav.Link href="/traspasos/">Traspasos</Nav.Link>            
             <Nav.Link href="/ventas/">Ventas</Nav.Link>            
             <Nav.Link href="/" onClick={handleLogout}>Salir</Nav.Link>
