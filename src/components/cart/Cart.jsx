@@ -138,10 +138,18 @@ const Cart = () => {
   
               },
               {
-                name: "Acciones",
+                name: "Borrar",
                 selector: (row) => (
                   <CustomButton onClick={() => handleRemoveFromCart(row)}>
                     Borrar
+                  </CustomButton>
+                ),
+              },
+              {
+                name: "Transderir",
+                selector: (row) => (
+                  <CustomButton onClick="">
+                    Transferir
                   </CustomButton>
                 ),
               },

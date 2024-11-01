@@ -38,7 +38,7 @@ const TransferList = () => {
 
   return (
     <>
-      <div className="section">
+      <div className="">
         <h1>Traspasos</h1>
         <CustomTable
           data={transfers}
