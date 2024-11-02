@@ -11,6 +11,8 @@ import {
 } from "../redux/paymentModal/PaymentModalActions";
 import { getStores } from "../apis/stores";
 import { confirmTransfer } from "../apis/transfers";
+import Swal from 'sweetalert2';
+
 
 const Cart = () => {
   const cart = useSelector((state) => state.cartReducer.cart);
@@ -64,9 +66,36 @@ const Cart = () => {
     if (response.status === 200) {
       dispatch(removeFromCart(product))
 
+      Swal.fire({
+        icon: 'success',
+        title: 'Traspaso confirmado',
+        timer: 2000,
+      });
+
+
     }
+
+    else if (response.status === 404) {
+
+      Swal.fire({
+        icon: 'error',
+        title: 'Transpaso no encontrado',
+        text: 'No se puede completar el traspaso de producto',
+        timer: 2000,
+      });
+
+
+    }    
     else{
       console.log('no eoncontrado')
+
+      Swal.fire({
+        icon: 'error',
+        title: 'Error desconocido',
+        text: 'Por favor llame a soporte tecnico',
+        timer: 2000,
+      });
+
     }
 
 
@@ -138,7 +167,7 @@ const Cart = () => {
                 <Col md={3}></Col>
                 <Col md={3}>
                   <Form.Select aria-label="Default select example" value={selectedStore} onChange={handleSelectChange}>
-                    <option>Selecciona una tienda</option>
+                    <option value="">Selecciona una tienda</option>
                     {stores.map((store) => (
                       <option key={store.id} value={store.id}>
                         {store.full_name}

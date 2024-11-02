@@ -9,6 +9,8 @@ import { removeClient } from "../redux/clientSelected/clientSelectedActions";
 import { cleanCart } from "../redux/cart/cartActions";
 import { createSale } from "../apis/sales";
 import { hidePaymentModal } from "../redux/paymentModal/PaymentModalActions";
+import Swal from 'sweetalert2';
+
 
 const PaymentModal = () => {
   const { showPaymentModal } = useSelector(
@@ -121,6 +123,21 @@ const PaymentModal = () => {
       dispatch(cleanCart());
       dispatch(hidePaymentModal());
 
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Compra exitosa',
+        timer: 2000,
+      });
+
+    }
+    else {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al finalizar la compra',
+        text: 'Por favor llame a soporte tecnico',
+        timer: 2000,
+      });
     }
   };
 

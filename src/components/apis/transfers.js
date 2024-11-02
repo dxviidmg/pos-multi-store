@@ -37,6 +37,6 @@ export const getTransfers = async () => {
     return response; // Devuelve los datos de la respuesta
   } catch (error) {
     console.error("Error al obtener clientes:", error);
-    throw error; // Puedes manejar el error según tus necesidades
+    return error; // Puedes manejar el error según tus necesidades
   }
   };

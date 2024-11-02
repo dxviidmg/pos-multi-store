@@ -11,6 +11,8 @@ import {
   hideStockModal,
   showStockModal,
 } from "../redux/stockModal/StockModalActions";
+import Swal from 'sweetalert2';
+
 
 const SearchProduct = () => {
   const inputRef = useRef(null);
@@ -46,8 +48,18 @@ const SearchProduct = () => {
 
       const response = await getStoreProducts(queryType, query);
       const fetchedData = response.data;
+      if (queryType === "code" && fetchedData.length === 0) {
+        console.log('hola')
 
-      if (queryType === "code" && fetchedData.length === 1) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Producto no encontrado',
+          text: 'No se pudo encontrar este producto mediante su codigo',
+          timer: 1000,
+        });
+
+      }
+      else if (queryType === "code" && fetchedData.length === 1) {
         handleSingleProductFetch(fetchedData[0]);
       } else {
         setData(fetchedData);
@@ -102,6 +114,7 @@ const SearchProduct = () => {
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter" && queryType === "code") {
+      console.log('exp')
       setQuery(barcode); // Update the query with the scanned code
       setBarcode(""); // Clear the barcode field
     }

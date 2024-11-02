@@ -4,7 +4,9 @@ import SearchProduct from "../searchProduct/SearchProduct";
 import Cart from "../cart/Cart";
 import ClientSelected from "../clientSelected/ClientSelected";
 import { Col, Container, Row } from "react-bootstrap";
-import JustifiedExample from "../cart/Cart2";
+import TabCart from "../cart/TabCart";
+
+
 const NewSale = () => {
   return (
     <div>
@@ -27,7 +29,7 @@ const NewSale = () => {
       </Row>
 
       <Row className="section">
-        <JustifiedExample></JustifiedExample>
+        <TabCart></TabCart>
       </Row>
     </div>
   );

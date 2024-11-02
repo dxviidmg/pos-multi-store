@@ -1,13 +1,16 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Col, Form, Row } from "react-bootstrap";
+import CustomButton from "../commons/customButton/CustomButton";
+import { removeClient } from "../redux/clientSelected/clientSelectedActions";
+
 
 const ClientSelected = () => {
   const client = useSelector((state) => state.clientSelectedReducer.client);
-
+  const dispatch = useDispatch()
   return (
     <Row>
-      <Col md={4}>
+      <Col md={3}>
       <Form.Label>Nombre</Form.Label>
         <Form.Control
           type="text"
@@ -17,7 +20,7 @@ const ClientSelected = () => {
         />
       </Col>
 
-      <Col md={4}>
+      <Col md={3}>
       <Form.Label>Teléfono</Form.Label>
         <Form.Control
           type="text"
@@ -27,7 +30,7 @@ const ClientSelected = () => {
 />
       </Col>
 
-      <Col md={4}>
+      <Col md={3}>
       <Form.Label>Descuento</Form.Label>
         <Form.Control
           type="text"
@@ -35,6 +38,11 @@ const ClientSelected = () => {
           placeholder="Descuento"
           disabled
 />
+      </Col>
+
+      <Col md={3}>
+      <Form.Label>Borrar cliente</Form.Label>
+      <CustomButton fullWidth={true} onClick={e => dispatch(removeClient())}>Borrar cliente</CustomButton>
       </Col>
     </Row>
   );
