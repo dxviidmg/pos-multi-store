@@ -124,7 +124,7 @@ const SearchProduct = () => {
     <>
       <StockModal></StockModal>
 
-      <Form.Label>Buscador de productos</Form.Label>
+      <Form.Label className="fw-bold">Buscador de productos</Form.Label>
       <br />
       <Form.Label className="me-3">Tipo de búsqueda:</Form.Label>
 
@@ -146,13 +146,11 @@ const SearchProduct = () => {
         value="q"
         checked={queryType === "q"}
       />
-
-      <Form.Label>
-        <b>
+      <br/>
+      <Form.Label className="fw-bold">
           {!isInputFocused && (
-            <>Aviso: El cursor no está en el campo de búsqueda de productos.</>
+            <>Aviso: Para añadir productos al carrito el cursor debe estar en el campo de búsqueda de productos.</>
           )}
-        </b>
       </Form.Label>
       <br />
 

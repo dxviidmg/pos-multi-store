@@ -1,26 +1,41 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import CustomTable from "../commons/customTable/customTable";
-import { cleanCart, removeFromCart } from "../redux/cart/cartActions";
+import { removeFromCart } from "../redux/cart/cartActions";
 import CustomButton from "../commons/customButton/CustomButton";
-import { Col, Row } from "react-bootstrap";
-import { createSale } from "../apis/sales";
-import CustomAlert from "../commons/customAlert";
-import { removeClient } from "../redux/clientSelected/clientSelectedActions";
+import { Col, Form, Row } from "react-bootstrap";
 import PaymentModal from "../paymentModal/PaymentModal";
 import {
   hidePaymentModal,
   showPaymentModal,
 } from "../redux/paymentModal/PaymentModalActions";
+import { getStores } from "../apis/stores";
+import { confirmTransfer } from "../apis/transfers";
 
 const Cart = () => {
   const cart = useSelector((state) => state.cartReducer.cart);
-  const [messageAlert, setMessageAlert] = useState("");
-  const [showAlert, setShowAlert] = useState(false);
-  const clientSelected = useSelector(
-    (state) => state.clientSelectedReducer.client
-  );
   const dispatch = useDispatch();
+  const [action, setAction] = useState("v");
+  const [stores, setStores] = useState([]);
+
+  const [selectedStore, setSelectedStore] = useState('')
+
+  const handleSelectChange = (event) => {
+    setSelectedStore(event.target.value); // Update state with selected value
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await getStores();
+      setStores(response.data);
+    };
+
+    fetchData();
+  }, []);
+
+  const handleQueryTypeChange = (e) => {
+    setAction(e.target.value);
+  };
 
   const { total } = useMemo(() => {
     const total = cart.reduce(
@@ -28,46 +43,40 @@ const Cart = () => {
       0
     );
 
-
     return { total };
-  }, [cart, clientSelected]);
+  }, [cart]);
 
   const handleRemoveFromCart = (product) => dispatch(removeFromCart(product));
 
-  const handleCreateSale = async () => {
-    console.log('data', cart);
+  const handleTranserFromCart = async(product) => {
+    console.log(product)
     const data = {
-      client: clientSelected.id,
-//      total: total ? total : totalDiscount,
-      total: total,
-      store_products: cart.map((product) => ({
-        id: product.id,
-        quantity: product.quantity,
-        price: product.product_price,
-      })),
-    };
-
-    console.log("data", data);
-
-    const response = await createSale(data);
-    //    return
-
-    setShowAlert(true);
-
-    if (response.status === 201) {
-      dispatch(removeClient());
-      dispatch(cleanCart());
-      setMessageAlert("Compra exitosa");
-    } else {
-      setMessageAlert(
-        "No se pudo concretar la venta. Intente de nuevo o llame a soporte"
-      );
+      product: product.product_id,
+      quantity: product.quantity,
+      destination_store: selectedStore
     }
-  };
 
-  setTimeout(function () {
-    setShowAlert(false);
-  }, 5000);
+    console.log('dd', data)
+    
+    const response = await confirmTransfer(data);
+
+    
+    if (response.status === 200) {
+      dispatch(removeFromCart(product))
+
+    }
+    else{
+      console.log('no eoncontrado')
+    }
+
+
+
+
+    removeFromCart(product)
+  }
+
+  
+
 
   const handleOpenModal = () => {
     dispatch(hidePaymentModal());
@@ -77,30 +86,68 @@ const Cart = () => {
   return (
     <div>
       <PaymentModal />
-
-      <CustomAlert
-        messageAlert={messageAlert}
-        isVisible={showAlert}
-        onClose={() => setShowAlert(false)}
-      />
-
       {cart.length > 0 ? (
         <div>
           <Row>
             <Col md={3}>
-              <h2>Compra actual</h2>
-            </Col>
-            <Col md={7}>
-              <div className="d-flex gap-3 justify-content-end">
-                <h3>Total: ${total.toFixed(2)}</h3>
-              </div>
+              <Form.Label className="fw-bold">Compra actual</Form.Label>
+              <br />
+              <Form.Label className="me-3">Acciones:</Form.Label>
+
+              <Form.Check
+                inline
+                id="v"
+                label="Venta"
+                type="radio"
+                onChange={handleQueryTypeChange}
+                value="v"
+                checked={action === "v"}
+              />
+              <Form.Check
+                inline
+                id="t"
+                label="Traspasar"
+                type="radio"
+                onChange={handleQueryTypeChange}
+                value="t"
+                checked={action === "t"}
+              />
             </Col>
 
-            <Col md={2}>
-              <CustomButton fullWidth={true} onClick={() => handleOpenModal()}>
-                Pagar
-              </CustomButton>
-            </Col>
+            <Col md={3}></Col>
+            {action === "v" ? (
+              <>
+                {" "}
+                <Col md={3}>
+                  <div className="d-flex gap-3 justify-content-end">
+                    <h3>Total: ${total.toFixed(2)}</h3>
+                  </div>
+                </Col>
+                <Col md={3}>
+                  <CustomButton
+                    fullWidth={true}
+                    onClick={() => handleOpenModal()}
+                  >
+                    Pagar
+                  </CustomButton>
+                </Col>
+              </>
+            ) : (
+              <>
+                {" "}
+                <Col md={3}></Col>
+                <Col md={3}>
+                  <Form.Select aria-label="Default select example" value={selectedStore} onChange={handleSelectChange}>
+                    <option>Selecciona una tienda</option>
+                    {stores.map((store) => (
+                      <option key={store.id} value={store.id}>
+                        {store.full_name}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Col>
+              </>
+            )}
           </Row>
 
           <CustomTable
@@ -109,33 +156,29 @@ const Cart = () => {
               {
                 name: "Código",
                 selector: (row) => row.product_code,
-  
               },
               {
                 name: "Descripción",
                 selector: (row) => row.description,
-   grow: 3,  wrap: true
+                grow: 3,
+                wrap: true,
               },
               {
                 name: "Stock",
                 selector: (row) => row.available_stock,
-  
               },
               {
                 name: "Precio",
                 selector: (row) => `$${row.product_price.toFixed(2)}`,
-  
               },
               {
                 name: "Vender",
                 selector: (row) => row.quantity,
-  
               },
               {
                 name: "Total por producto",
                 selector: (row) =>
                   `$${(row.product_price * row.quantity).toFixed(2)}`,
-  
               },
               {
                 name: "Borrar",
@@ -145,14 +188,16 @@ const Cart = () => {
                   </CustomButton>
                 ),
               },
-              {
-                name: "Transderir",
-                selector: (row) => (
-                  <CustomButton onClick="">
-                    Transferir
-                  </CustomButton>
-                ),
-              },
+              ...(action === "t"
+                ? [
+                    {
+                      name: "Transferir",
+                      selector: (row) => (
+                        <CustomButton onClick={() => handleTranserFromCart(row)} disabled={selectedStore===''}>Transferir</CustomButton>
+                      ),
+                    },
+                  ]
+                : []),
             ]}
           />
         </div>
