@@ -4,12 +4,13 @@ import Cart from './Cart';
 import TransferList from '../transferList/TransferList';
 
 
-
 import { useState } from "react";
+import { useSelector } from 'react-redux';
 
 function TabCart() {
   const [activeTab, setActiveTab] = useState("compra-actual");
   const [refreshKey, setRefreshKey] = useState(0);
+  const movementType = useSelector((state) => state.movementTypeReducer.movementType);
 
   const handleSelect = (key) => {
     setActiveTab(key);
@@ -26,10 +27,10 @@ function TabCart() {
       className="mb-3"
       justify
     >
-      <Tab eventKey="compra-actual" title="Compra actual">
+      <Tab eventKey="compra-actual" title={movementType.charAt(0).toUpperCase() + movementType.slice(1) + " actual"} >
         <Cart />
       </Tab>
-      <Tab eventKey="traspasos" title="Traspasos">
+      <Tab eventKey="traspasos" title="Traspasos pendientes">
         <TransferList key={refreshKey} /> {/* key cambia cada vez que se selecciona */}
       </Tab>
     </Tabs>

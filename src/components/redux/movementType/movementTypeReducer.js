@@ -1,7 +1,7 @@
 import { UPDATE_MOVEMENT_TYPE } from './movementTypeActions';
 
 const initialState = {
-  movementType: "venta",
+  movementType: "compra",
 };
 
 const movementTypeReducer = (state = initialState, action) => {

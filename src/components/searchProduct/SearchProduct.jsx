@@ -73,7 +73,7 @@ const SearchProduct = () => {
 
   const handleSingleProductFetch = (product) => {
     console.log('movementType 2', movementType)
-    if (movementType === "venta" && product.available_stock === 0){
+    if (movementType === "compra" && product.available_stock === 0){
       console.log('venta')
       handleOpenModal(product);     
     }
@@ -94,7 +94,7 @@ const SearchProduct = () => {
       dispatch(addToCart({ ...product, quantity: 1, movement_type: movementType }));
     } else {
       const productExists = cart[existingProductIndex];
-      if (movementType === "venta" && productExists.quantity < product.available_stock) {
+      if (movementType === "compra" && productExists.quantity < product.available_stock) {
         dispatch(addToCart({ ...product, quantity: 1,  movement_type: movementType}));
       }
       else if (movementType === "traspaso" && productExists.quantity < product.reserved_stock) {
@@ -185,12 +185,12 @@ const SearchProduct = () => {
 
       <Form.Check
         inline
-        id="venta"
-        label="Venta"
+        id="compra"
+        label="Compra"
         type="radio"
         onChange={handleMovementTypeChange}
-        value="venta"
-        checked={movementType === "venta"}
+        value="compra"
+        checked={movementType === "compra"}
       />
       <Form.Check
         inline

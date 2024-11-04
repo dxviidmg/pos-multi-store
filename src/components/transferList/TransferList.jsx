@@ -39,8 +39,8 @@ const TransferList = () => {
   return (
     <>
       <div className="">
-        <h1>Traspasos</h1>
         <CustomTable
+          noDataComponent="Sin traspasos pendientes"
           data={transfers}
           columns={[
             {

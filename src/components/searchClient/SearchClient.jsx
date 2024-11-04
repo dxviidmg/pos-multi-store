@@ -55,7 +55,8 @@ const SearchClient = () => {
 
   return (
     <>
-      <Form.Label className="me-3">Buscador de clientes</Form.Label>
+      <Form.Label className="fw-bold me-3">Buscador de clientes</Form.Label>
+      
 
       <b>
           {Object.keys(client).length === 0 && (
@@ -86,7 +87,7 @@ const SearchClient = () => {
 
           {
             name: "Descuento",
-            selector: (row) => row.discount.discount_percentage + '%',
+            selector: (row) => row.discount_percentage + '%',
             sortable: true,
           },
 

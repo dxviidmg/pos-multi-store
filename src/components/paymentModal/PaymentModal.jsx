@@ -32,9 +32,10 @@ const PaymentModal = () => {
       (acc, item) => acc + item.product_price * item.quantity,
       0 
     )) * 100 / 100;
-    const totalDiscount = client?.discount?.discount_percentage_complement
+    console.log(client)
+    const totalDiscount = client?.discount_percentage_complement
       ? Math.round(
-          total * (client.discount.discount_percentage_complement / 100) * 100
+          total * (client.discount_percentage_complement / 100) * 100
         ) / 100
       : total;
 

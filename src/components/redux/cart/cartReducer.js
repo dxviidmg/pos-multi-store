@@ -26,7 +26,7 @@ const cartReducer = (state = initialState, action) => {
 
         const updatedCart = state.cart.map((item, index) => {
           if (index === existingProductIndex) {
-            const stock_temp = item.movement_type === "venta" ? item.available_stock : item.reserved_stock 
+            const stock_temp = item.movement_type === "compra" ? item.available_stock : item.reserved_stock 
             const updatedQuantity = item.quantity < stock_temp ? item.quantity + 1: stock_temp
             const product_price = calculateProductPrice(updatedQuantity, item.prices);
             return { 
@@ -48,7 +48,7 @@ const cartReducer = (state = initialState, action) => {
       // Producto nuevo, agregar al carrito
       const product_price = calculateProductPrice(quantity, prices);
 
-      const stock_temp = movement_type === "venta" ? available_stock : reserved_stock
+      const stock_temp = movement_type === "compra" ? available_stock : reserved_stock
       return {
         ...state,
         cart: [...state.cart, { ...action.payload, product_price, stock: stock_temp }],

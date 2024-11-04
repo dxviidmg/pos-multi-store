@@ -117,11 +117,10 @@ const Cart = () => {
         <div>
           <Row>
             <Col md={3}>
-              <Form.Label className="fw-bold">Compra actual</Form.Label>
             </Col>
 
             <Col md={3}></Col>
-            {movementType === "venta" ? (
+            {movementType === "compra" ? (
               <>
                 {" "}
                 <Col md={3}>
@@ -174,7 +173,7 @@ const Cart = () => {
                 selector: (row) => row.stock,
               },
 
-              ...(movementType === "venta"
+              ...(movementType === "compra"
                 ? [
                   {
                     name: "Precio",
@@ -190,7 +189,7 @@ const Cart = () => {
                 selector: (row) => row.quantity,
               },
 
-              ...(movementType === "venta"
+              ...(movementType === "compra"
                 ? [
                   {
                     name: "Total por producto",
@@ -224,7 +223,6 @@ const Cart = () => {
         </div>
       ) : (
         <>
-          <h2>Compra actual</h2>
           <p>Sin productos</p>
         </>
       )}

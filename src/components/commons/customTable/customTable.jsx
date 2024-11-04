@@ -7,12 +7,13 @@ const CustomTable =
     columns,
     data,
     progressPending = false,
+    noDataComponent = null
   }) => {
 
     return (
         <div className="table-container">
           <DataTable
-            noDataComponent=""
+            noDataComponent={noDataComponent}
             columns={columns}
             data={data}
             pagination={data.length > 10}

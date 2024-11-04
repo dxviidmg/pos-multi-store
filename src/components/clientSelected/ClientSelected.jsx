@@ -34,7 +34,7 @@ const ClientSelected = () => {
       <Form.Label>Descuento</Form.Label>
         <Form.Control
           type="text"
-          value={client.discount?.discount_percentage ? client.discount.discount_percentage + '%': ""}
+          value={client.discount_percentage ? client.discount_percentage + '%': ""}
           placeholder="Descuento"
           disabled
 />
