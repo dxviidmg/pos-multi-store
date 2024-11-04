@@ -7,7 +7,8 @@ const initialState = {
 const cartReducer = (state = initialState, action) => {
   switch (action.type) {
     case ADD_TO_CART: {
-      const { id, quantity, prices, stock } = action.payload;
+      console.log(action.payload)
+      const { id, quantity, prices, reserved_stock, available_stock, movement_type } = action.payload;
       const existingProductIndex = state.cart.findIndex(item => item.id === id);
       
       // Calcular el precio del producto basado en la cantidad y precios mayoristas
@@ -22,17 +23,17 @@ const cartReducer = (state = initialState, action) => {
       };
 
       if (existingProductIndex !== -1) {
-        // Producto existente, incrementar cantidad y recalcular precio
+
         const updatedCart = state.cart.map((item, index) => {
           if (index === existingProductIndex) {
-
-            const updatedQuantity = item.quantity < item.available_stock ? item.quantity + 1: item.available_stock
+            const stock_temp = item.movement_type === "venta" ? item.available_stock : item.reserved_stock 
+            const updatedQuantity = item.quantity < stock_temp ? item.quantity + 1: stock_temp
             const product_price = calculateProductPrice(updatedQuantity, item.prices);
             return { 
               ...item, 
               quantity: updatedQuantity, 
               product_price,
-              stock 
+              stock: stock_temp
             };
           }
           return item; // Mantener el producto sin cambios
@@ -46,9 +47,11 @@ const cartReducer = (state = initialState, action) => {
 
       // Producto nuevo, agregar al carrito
       const product_price = calculateProductPrice(quantity, prices);
+
+      const stock_temp = movement_type === "venta" ? available_stock : reserved_stock
       return {
         ...state,
-        cart: [...state.cart, { ...action.payload, product_price }],
+        cart: [...state.cart, { ...action.payload, product_price, stock: stock_temp }],
       };
     }
 

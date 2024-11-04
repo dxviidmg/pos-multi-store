@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import CustomTable from "../commons/customTable/customTable";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getStoreProducts } from "../apis/products";
-import { addToCart } from "../redux/cart/cartActions";
+import { addToCart, cleanCart } from "../redux/cart/cartActions";
 import { Form } from "react-bootstrap";
 import { debounce } from "lodash"; // Ensure you install lodash
 import StockModal from "../stockModal/StockModal";
@@ -12,12 +12,14 @@ import {
   showStockModal,
 } from "../redux/stockModal/StockModalActions";
 import Swal from 'sweetalert2';
+import { updateMovement } from "../redux/movementType/movementTypeActions";
 
 
 const SearchProduct = () => {
   const inputRef = useRef(null);
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.cartReducer.cart);
+  const movementType = useSelector((state) => state.movementTypeReducer.movementType);
 
   // State variables
   const [query, setQuery] = useState("");
@@ -26,6 +28,7 @@ const SearchProduct = () => {
   const [barcode, setBarcode] = useState("");
 
   const [isInputFocused, setIsInputFocused] = useState(false);
+//  const [movementType, setMovementType] = useState("venta");
 
   // Focus input on component load
   useEffect(() => {
@@ -69,7 +72,12 @@ const SearchProduct = () => {
   );
 
   const handleSingleProductFetch = (product) => {
-    if (product.available_stock === 0) {
+    console.log('movementType 2', movementType)
+    if (movementType === "venta" && product.available_stock === 0){
+      console.log('venta')
+      handleOpenModal(product);     
+    }
+    else if (movementType === "traspaso" && product.reserved_stock === 0) {
       handleOpenModal(product);
     } else {
       handleAddToCartIfAvailable(product);
@@ -83,12 +91,17 @@ const SearchProduct = () => {
     );
 
     if (existingProductIndex === -1) {
-      dispatch(addToCart({ ...product, quantity: 1 }));
+      dispatch(addToCart({ ...product, quantity: 1, movement_type: movementType }));
     } else {
       const productExists = cart[existingProductIndex];
-      if (productExists.quantity < product.available_stock) {
-        dispatch(addToCart({ ...product, quantity: 1 }));
-      } else {
+      if (movementType === "venta" && productExists.quantity < product.available_stock) {
+        dispatch(addToCart({ ...product, quantity: 1,  movement_type: movementType}));
+      }
+      else if (movementType === "traspaso" && productExists.quantity < product.reserved_stock) {
+        console.log('movementType', movementType)
+        dispatch(addToCart({ ...product, quantity: 1,  movement_type: movementType}));
+      }
+      else {
         handleOpenModal(product);
       }
     }
@@ -110,6 +123,13 @@ const SearchProduct = () => {
     setQueryType(e.target.value);
     setQuery(""); // Reset the query when changing type
     setData([]); // Clear results
+  };
+
+
+  const handleMovementTypeChange = (e) => {
+    dispatch(updateMovement(e.target.value))
+    setData([]); // Clear results
+    dispatch(cleanCart());
   };
 
   const handleKeyDown = (event) => {
@@ -159,6 +179,30 @@ const SearchProduct = () => {
         value="q"
         checked={queryType === "q"}
       />
+
+      <>
+      <Form.Label className="me-3">Tipo de operación:</Form.Label>
+
+      <Form.Check
+        inline
+        id="venta"
+        label="Venta"
+        type="radio"
+        onChange={handleMovementTypeChange}
+        value="venta"
+        checked={movementType === "venta"}
+      />
+      <Form.Check
+        inline
+        id="traspaso"
+        label="Traspaso"
+        type="radio"
+        onChange={handleMovementTypeChange}
+        value="traspaso"
+        checked={movementType === "traspaso"}
+      />
+      
+      </>
       <br/>
       <Form.Label className="fw-bold">
           {!isInputFocused && (

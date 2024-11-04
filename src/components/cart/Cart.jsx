@@ -16,8 +16,9 @@ import Swal from 'sweetalert2';
 
 const Cart = () => {
   const cart = useSelector((state) => state.cartReducer.cart);
+  const movementType = useSelector((state) => state.movementTypeReducer.movementType);
+
   const dispatch = useDispatch();
-  const [action, setAction] = useState("v");
   const [stores, setStores] = useState([]);
 
   const [selectedStore, setSelectedStore] = useState('')
@@ -35,9 +36,6 @@ const Cart = () => {
     fetchData();
   }, []);
 
-  const handleQueryTypeChange = (e) => {
-    setAction(e.target.value);
-  };
 
   const { total } = useMemo(() => {
     const total = cart.reduce(
@@ -120,31 +118,10 @@ const Cart = () => {
           <Row>
             <Col md={3}>
               <Form.Label className="fw-bold">Compra actual</Form.Label>
-              <br />
-              <Form.Label className="me-3">Acciones:</Form.Label>
-
-              <Form.Check
-                inline
-                id="v"
-                label="Venta"
-                type="radio"
-                onChange={handleQueryTypeChange}
-                value="v"
-                checked={action === "v"}
-              />
-              <Form.Check
-                inline
-                id="t"
-                label="Traspasar"
-                type="radio"
-                onChange={handleQueryTypeChange}
-                value="t"
-                checked={action === "t"}
-              />
             </Col>
 
             <Col md={3}></Col>
-            {action === "v" ? (
+            {movementType === "venta" ? (
               <>
                 {" "}
                 <Col md={3}>
@@ -194,21 +171,36 @@ const Cart = () => {
               },
               {
                 name: "Stock",
-                selector: (row) => row.available_stock,
+                selector: (row) => row.stock,
               },
+
+              ...(movementType === "venta"
+                ? [
+                  {
+                    name: "Precio",
+                    selector: (row) => `$${row.product_price.toFixed(2)}`,
+                  },
+                  ]
+                : []),
+
+
+
               {
-                name: "Precio",
-                selector: (row) => `$${row.product_price.toFixed(2)}`,
-              },
-              {
-                name: "Vender",
+                name: movementType === "traspaso" ? "Traspasar":"Vender",
                 selector: (row) => row.quantity,
               },
-              {
-                name: "Total por producto",
-                selector: (row) =>
-                  `$${(row.product_price * row.quantity).toFixed(2)}`,
-              },
+
+              ...(movementType === "venta"
+                ? [
+                  {
+                    name: "Total por producto",
+                    selector: (row) =>
+                      `$${(row.product_price * row.quantity).toFixed(2)}`,
+                  },
+    
+                  ]
+                : []),
+
               {
                 name: "Borrar",
                 selector: (row) => (
@@ -217,7 +209,7 @@ const Cart = () => {
                   </CustomButton>
                 ),
               },
-              ...(action === "t"
+              ...(movementType === "traspaso"
                 ? [
                     {
                       name: "Transferir",

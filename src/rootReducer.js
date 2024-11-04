@@ -3,6 +3,7 @@ import cartReducer from './components/redux/cart/cartReducer';
 import clientSelectedReducer from './components/redux/clientSelected/clientSelectedReducer';
 import StockModalReducer from './components/redux/stockModal/StockModalReducer';
 import PaymentModalReducer from './components/redux/paymentModal/PaymentModalReducer';
+import movementTypeReducer from './components/redux/movementType/movementTypeReducer';
 
 //import cartReducer from './cartReducer'; // Importamos el cartReducer
 
@@ -10,8 +11,8 @@ const rootReducer = combineReducers({
   cartReducer, // Lo combinamos con otros reducers
   clientSelectedReducer,
   StockModalReducer,
-  PaymentModalReducer
-  
+  PaymentModalReducer,
+  movementTypeReducer
   // otros reducers si los tienes
 });
 
