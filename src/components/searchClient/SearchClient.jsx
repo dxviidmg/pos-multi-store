@@ -3,11 +3,12 @@ import CustomTable from "../commons/customTable/customTable";
 import { getClients } from "../apis/clients";
 import CustomButton from "../commons/customButton/CustomButton";
 import { useDispatch, useSelector } from "react-redux";
-import { selectClient } from "../redux/clientSelected/clientSelectedActions";
+//import { selectClient } from "../redux/clientSelected/clientSelectedActions";
 import { Form } from "react-bootstrap";
+import { addClientToCart } from "../redux/cart/cartActions";
 
 const SearchClient = () => {
-  const client = useSelector((state) => state.clientSelectedReducer.client);
+  const client = useSelector((state) => state.cartReducer.client);
   const [query, setQuery] = useState("");
   const [clients, setClients] = useState([]);
   const dispatch = useDispatch();
@@ -39,7 +40,7 @@ const SearchClient = () => {
   }, [query]);
 
   const handleSelectClient = (client) => {
-    dispatch(selectClient(client)); // Despachar la acción con el producto como payload
+    dispatch(addClientToCart(client)); // Despachar la acción con el producto como payload
 
     setQuery("");
   };

@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 import cartReducer from './components/redux/cart/cartReducer';
-import clientSelectedReducer from './components/redux/clientSelected/clientSelectedReducer';
+//import clientSelectedReducer from './components/redux/clientSelected/clientSelectedReducer';
 import StockModalReducer from './components/redux/stockModal/StockModalReducer';
 import PaymentModalReducer from './components/redux/paymentModal/PaymentModalReducer';
 import movementTypeReducer from './components/redux/movementType/movementTypeReducer';
@@ -9,7 +9,7 @@ import movementTypeReducer from './components/redux/movementType/movementTypeRed
 
 const rootReducer = combineReducers({
   cartReducer, // Lo combinamos con otros reducers
-  clientSelectedReducer,
+//  clientSelectedReducer,
   StockModalReducer,
   PaymentModalReducer,
   movementTypeReducer

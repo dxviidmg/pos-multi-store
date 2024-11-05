@@ -2,10 +2,11 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Col, Form, Row } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
-import { removeClient } from "../redux/clientSelected/clientSelectedActions";
+import { removeClientfromCart } from "../redux/cart/cartActions";
+//import { removeClient } from "../redux/clientSelected/clientSelectedActions";
 
 const ClientSelected = () => {
-  const client = useSelector((state) => state.clientSelectedReducer.client);
+  const client = useSelector((state) => state.cartReducer.client);
   const dispatch = useDispatch();
 
   return (
@@ -48,7 +49,8 @@ const ClientSelected = () => {
 
       <Col md={3}>
         <Form.Group>
-          <CustomButton fullWidth={true} onClick={() => dispatch(removeClient())}>
+          <CustomButton fullWidth={true} onClick={() => dispatch(removeClientfromCart())}>
+
             Borrar cliente
           </CustomButton>
         </Form.Group>

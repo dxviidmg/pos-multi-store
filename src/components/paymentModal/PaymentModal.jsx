@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import ClientSelected from "../clientSelected/ClientSelected";
 import SearchClient from "../searchClient/SearchClient";
 import CustomButton from "../commons/customButton/CustomButton";
-import { removeClient } from "../redux/clientSelected/clientSelectedActions";
+//import { removeClient } from "../redux/clientSelected/clientSelectedActions";
 import { cleanCart } from "../redux/cart/cartActions";
 import { createSale } from "../apis/sales";
 import { hidePaymentModal } from "../redux/paymentModal/PaymentModalActions";
@@ -22,7 +22,7 @@ const PaymentModal = () => {
     (state) => state.PaymentModalReducer
   );
   const cart = useSelector((state) => state.cartReducer.cart);
-  const client = useSelector((state) => state.clientSelectedReducer.client);
+  const client = useSelector((state) => state.cartReducer.client);
 
   const [paymentMethods, setPaymentMethods] = useState({
     type: "radio", // 'radio' para pago único, 'checkbox' para pago mixto
@@ -126,7 +126,7 @@ const PaymentModal = () => {
         type: "radio", // 'radio' para pago único, 'checkbox' para pago mixto
         methods: { E: 0, P: 0, T: 0 }, // Valores de cada método de pago
       })
-      dispatch(removeClient());
+//      dispatch(removeClient());
       dispatch(cleanCart());
       dispatch(hidePaymentModal());
 

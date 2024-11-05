@@ -20,7 +20,7 @@ const SearchProduct = () => {
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.cartReducer.cart);
   const movementType = useSelector((state) => state.movementTypeReducer.movementType);
-  const client = useSelector((state) => state.clientSelectedReducer.client);
+  const client = useSelector((state) => state.cartReducer.client);
 
   // State variables
   const [query, setQuery] = useState("");

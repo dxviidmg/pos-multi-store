@@ -1,11 +1,25 @@
-import { ADD_TO_CART, REMOVE_FROM_CART, CLEAN_CART } from './cartActions';
+import { ADD_CLIENT_TO_CART, REMOVE_CLIENT_FROM_CART, ADD_TO_CART, REMOVE_FROM_CART, CLEAN_CART } from './cartActions';
 
 const initialState = {
   cart: [],
+  client: {}
 };
 
 const cartReducer = (state = initialState, action) => {
   switch (action.type) {
+    case ADD_CLIENT_TO_CART: {
+      return {
+        ...state,
+        client: action.payload,
+      };
+    }
+
+    case REMOVE_CLIENT_FROM_CART: {
+      return {
+        ...state,
+        client: {},
+      };
+    }
 
     case ADD_TO_CART: {
       const { id, quantity, prices, reserved_stock, available_stock, movement_type, aClientIsSelected } = action.payload;
