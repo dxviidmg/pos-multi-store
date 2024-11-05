@@ -64,10 +64,15 @@ const SearchProduct = () => {
   );
 
   const handleSingleProductFetch = (product) => {
+    console.log('para añadir 1,', product, movementType)
     if (movementType === "compra" && product.available_stock === 0) {
       handleOpenModal(product);
     } else if (movementType === "traspaso" && product.reserved_stock === 0) {
-      handleOpenModal(product);
+      Swal.fire({
+        icon: "error",
+        title: "No hay traspasos relacionados a este producto",
+        timer: 2000,
+      });
     } else {
       handleAddToCartIfAvailable(product);
     }
@@ -75,16 +80,43 @@ const SearchProduct = () => {
   };
 
   const handleAddToCartIfAvailable = (product) => {
+
+    console.log('para añadir 2', product, movementType)
     const existingProductIndex = cart.findIndex(
       (item) => item.id === product.id
     );
 
     if (existingProductIndex === -1) {
-      dispatch(
-        addToCart({ ...product, quantity: 1, movement_type: movementType })
-      );
+
+      const quantity = product.quantity || 1
+      console.log('nuevo producto', movementType, quantity, product.available_stock, product.reserved_stock)
+      if (
+        movementType === "traspaso" &&
+        quantity < product.reserved_stock
+      ) {
+        dispatch(
+          addToCart({ ...product, quantity: 1, movement_type: movementType })
+        );
+      }
+      else if (
+        movementType === "compra" &&
+        quantity < product.available_stock
+      ) {
+        dispatch(
+          addToCart({ ...product, quantity: 1, movement_type: movementType })
+        );
+      }
+      else {
+        Swal.fire({
+          icon: "error",
+          title: "No hay traspasos relacionados a este producto",
+          timer: 2000,
+        });
+      }
+
     } else {
       const productExists = cart[existingProductIndex];
+      console.log('existe el producto', movementType, productExists.quantity, product.available_stock, product.reserved_stock)
       if (
         movementType === "compra" &&
         productExists.quantity < product.available_stock
@@ -99,6 +131,17 @@ const SearchProduct = () => {
         dispatch(
           addToCart({ ...product, quantity: 1, movement_type: movementType })
         );
+
+      } else if (
+        movementType === "traspaso" &&
+        productExists.quantity >= product.reserved_stock
+      ) {
+        Swal.fire({
+          icon: "error",
+          title: "Llegaste al limite de producto reservado para traspasar",
+          timer: 2000,
+        });
+
       } else {
         handleOpenModal(product);
       }
