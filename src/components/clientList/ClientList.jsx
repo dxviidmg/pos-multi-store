@@ -90,8 +90,9 @@ const ClientList = () => {
 
   return (
     <>
-      <div className="section">
-        <Row>
+      <div >
+        <Row className="section">
+        <Form.Label className="fw-bold">Crear cliente</Form.Label>
           <Col md={3}>
             <Form.Label>Nombre</Form.Label>
             <Form.Control
@@ -136,21 +137,25 @@ const ClientList = () => {
               <option value="">Selecciona un descuento</option>
               {discounts.map((discount) => (
                 <option key={discount.id} value={discount.id}>
-                  {discount.discount_percentage}
+                  {discount.discount_percentage}%
                 </option>
               ))}
             </Form.Select>
           </Col>
 
           <Col md={3}>
-            <Form.Label>Borrar cliente</Form.Label>
-            <CustomButton fullWidth={true} onClick={handleCreateClient} disabled={isFormIncomplete()}>
+          <Form.Label></Form.Label>
+          <CustomButton fullWidth={true} onClick={handleCreateClient} disabled={isFormIncomplete()} marginTop="10px">
               Crear cliente
             </CustomButton>
+            
+
           </Col>
         </Row>
       </div>
-      <div className="section">
+      <div >
+        <Row className="section">
+        <Form.Label className="fw-bold">Lista de clientes</Form.Label>
         <CustomTable
           data={clients}
           columns={[
@@ -175,6 +180,8 @@ const ClientList = () => {
             },
           ]}
         />
+ 
+        </Row>
       </div>
     </>
   );

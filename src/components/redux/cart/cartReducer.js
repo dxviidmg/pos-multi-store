@@ -7,67 +7,54 @@ const initialState = {
 const cartReducer = (state = initialState, action) => {
   switch (action.type) {
     case ADD_TO_CART: {
-      console.log(action.payload)
       const { id, quantity, prices, reserved_stock, available_stock, movement_type } = action.payload;
       const existingProductIndex = state.cart.findIndex(item => item.id === id);
-      
-      // Calcular el precio del producto basado en la cantidad y precios mayoristas
-      const calculateProductPrice = (quantity, prices) => {
-        if (prices.min_wholesale_quantity == null) {
-          return prices.unit_sale_price;
-        }
 
-        return quantity >= prices.min_wholesale_quantity
+      // Función para calcular el precio del producto basado en la cantidad y precios mayoristas
+      const calculateProductPrice = (quantity, prices) => (
+        prices.min_wholesale_quantity && quantity >= prices.min_wholesale_quantity
           ? prices.wholesale_sale_price
-          : prices.unit_sale_price;
-      };
+          : prices.unit_sale_price
+      );
+
+      // Determinar el stock dependiendo del tipo de movimiento
+      const stockTemp = movement_type === "compra" ? available_stock : reserved_stock;
 
       if (existingProductIndex !== -1) {
-
         const updatedCart = state.cart.map((item, index) => {
           if (index === existingProductIndex) {
-            const stock_temp = item.movement_type === "compra" ? item.available_stock : item.reserved_stock 
-            const updatedQuantity = item.quantity < stock_temp ? item.quantity + 1: stock_temp
-            const product_price = calculateProductPrice(updatedQuantity, item.prices);
-            return { 
-              ...item, 
-              quantity: updatedQuantity, 
-              product_price,
-              stock: stock_temp
+            const updatedQuantity = Math.min(item.quantity + 1, stockTemp);
+            return {
+              ...item,
+              quantity: updatedQuantity,
+              product_price: calculateProductPrice(updatedQuantity, item.prices),
+              stock: stockTemp,
             };
           }
-          return item; // Mantener el producto sin cambios
+          return item;
         });
 
-        return {
-          ...state,
-          cart: updatedCart,
-        };
+        return { ...state, cart: updatedCart };
       }
 
       // Producto nuevo, agregar al carrito
-      const product_price = calculateProductPrice(quantity, prices);
-
-      const stock_temp = movement_type === "compra" ? available_stock : reserved_stock
       return {
         ...state,
-        cart: [...state.cart, { ...action.payload, product_price, stock: stock_temp }],
+        cart: [
+          ...state.cart,
+          { ...action.payload, product_price: calculateProductPrice(quantity, prices), stock: stockTemp }
+        ],
       };
     }
 
-    case REMOVE_FROM_CART: {
+    case REMOVE_FROM_CART:
       return {
         ...state,
         cart: state.cart.filter(item => item.id !== action.payload.id),
       };
-    }
 
-    case CLEAN_CART: {
-      return {
-        ...state,
-        cart: [],
-      };
-    }
+    case CLEAN_CART:
+      return { ...state, cart: [] };
 
     default:
       return state;

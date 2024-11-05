@@ -11,6 +11,11 @@ import { createSale } from "../apis/sales";
 import { hidePaymentModal } from "../redux/paymentModal/PaymentModalActions";
 import Swal from 'sweetalert2';
 
+function roundToClosestHalfOrWhole(number) {
+  // Multiplicamos por 2, redondeamos al entero más cercano y luego dividimos por 2
+  return Math.round(number * 2) / 2;
+}
+
 
 const PaymentModal = () => {
   const { showPaymentModal } = useSelector(
@@ -28,15 +33,16 @@ const PaymentModal = () => {
 
   // Calcular los totales con descuento y sin descuento
   const { total, totalDiscount } = useMemo(() => {
-    const total = (cart.reduce(
+    const total = roundToClosestHalfOrWhole(cart.reduce(
       (acc, item) => acc + item.product_price * item.quantity,
       0 
-    )) * 100 / 100;
+    ))// * 100 / 100;
     console.log(client)
+
+
     const totalDiscount = client?.discount_percentage_complement
-      ? Math.round(
-          total * (client.discount_percentage_complement / 100) * 100
-        ) / 100
+      ? 
+      roundToClosestHalfOrWhole(total * (client.discount_percentage_complement / 100))
       : total;
 
     return { total, totalDiscount };
@@ -190,15 +196,15 @@ const PaymentModal = () => {
 
         <Col md={6}>
           <Form.Label className="me-3">Medios de pago:</Form.Label>
-          {["E", "P", "T"].map((method) => (
+          {["EF", "PT", "TR"].map((method) => (
             <div key={method} className="d-flex align-items-center mb-1">
               <div className="me-3" style={{ flex: "1" }}>
                 <Form.Check
                   id={method}
                   label={
-                    method === "E"
+                    method === "EF"
                       ? "Efectivo"
-                      : method === "P"
+                      : method === "PT"
                       ? "Pago con tarjeta"
                       : "Transferencia"
                   }

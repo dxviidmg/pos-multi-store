@@ -1,80 +1,90 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { getClients } from "../apis/clients";
-import CustomButton from "../commons/customButton/CustomButton";
-import { useDispatch, useSelector } from "react-redux";
-import { selectClient } from "../redux/clientSelected/clientSelectedActions";
-import { Form } from "react-bootstrap";
+import { Col, Form, Row } from "react-bootstrap";
 import { getDailyEarnings, getSales } from "../apis/sales";
 
 const SaleList = () => {
-  const [sales, setSales] = useState([]);
-  const [dailyEarnings, setDailyEarnings] = useState({});
+  const [salesList, setSalesList] = useState([]);
+  const [dailyEarningsSummary, setDailyEarningsSummary] = useState({});
 
   useEffect(() => {
-    const fetchData = async () => {
-      const response = await getSales();
-      setSales(response.data);
-      const response2 = await getDailyEarnings();
-      console.log(response2);
-      setDailyEarnings(response2.data);
+    const fetchSalesData = async () => {
+      const salesResponse = await getSales();
+      setSalesList(salesResponse.data);
+
+      const earningsResponse = await getDailyEarnings();
+      console.log(earningsResponse);
+      setDailyEarningsSummary(earningsResponse.data);
     };
 
-    fetchData();
+    fetchSalesData();
   }, []);
 
-  const getTimeFromDateString = function (dateString) {
+  const formatTimeFromDate = (dateString) => {
     const date = new Date(dateString);
-    const hours = date.getHours().toString().padStart(2, "0"); // Formato de 2 dígitos
-    const minutes = date.getMinutes().toString().padStart(2, "0"); // Formato de 2 dígitos
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
     return `${hours}:${minutes}`;
   };
 
   return (
     <>
-      <div className="section">
-        <h1>Ganacias al dia</h1>
-        Total de ventas: {dailyEarnings.total_sales_sum}
-        {dailyEarnings.payments_by_method &&
-          dailyEarnings.payments_by_method.map((e, index) => (
-            <p key={index}>
-              {e.payment_method}: {e.total_amount}
-            </p>
-          ))}
-        {dailyEarnings.is_balance_matched && "las cuentas cuadran"}
-      </div>
+      <Row className="section">
+        <Col md={2}>
+          <Form.Label className="fw-bold">
+            Corte del día
+          </Form.Label>
+        </Col>
 
-      <div className="section">
-        <h1>Ventas del dia</h1>
+        <Col md={2}>
+          <Form.Label className="fw-bold">Total:</Form.Label> $
+          {dailyEarningsSummary.total_sales_sum}
+        </Col>
+
+        {dailyEarningsSummary.payments_by_method &&
+          dailyEarningsSummary.payments_by_method.map((payment, index) => (
+            <Col md={2}>
+              <Form.Label className="fw-bold">
+                {payment.payment_method}:
+              </Form.Label>{" "}
+              ${payment.total_amount}
+            </Col>
+          ))}
+
+        <Col md={2}>
+          <Form.Label className="fw-bold">
+            {dailyEarningsSummary.is_balance_matched
+              ? "Las cuentas cuadran"
+              : "Las cuentas NO cuadran"}
+          </Form.Label>
+        </Col>
+      </Row>
+
+      <Row className="section">
+        <Form.Label className="fw-bold">Lista de ventas</Form.Label>
+
         <CustomTable
-          data={sales}
+          data={salesList}
           columns={[
             {
               name: "#",
               selector: (row) => row.id,
-
             },
-
             {
               name: "Cliente",
               selector: (row) => row.client?.full_name,
-
             },
-
             {
               name: "Hora",
-              selector: (row) => getTimeFromDateString(row.created_at),
-
+              selector: (row) => formatTimeFromDate(row.created_at),
             },
-
             {
               name: "Total",
-              selector: (row) => "$" + row.total,
-
+              selector: (row) => `$${row.total}`,
             },
           ]}
-        ></CustomTable>
-      </div>
+        />
+      </Row>
     </>
   );
 };

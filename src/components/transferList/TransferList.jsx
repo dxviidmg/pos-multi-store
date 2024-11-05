@@ -55,7 +55,7 @@ const TransferList = () => {
             {
               name: "Producto",
               selector: (row) => row.product_description,
-              grow: 2,
+              grow: 4,
               wrap: true
             },
             {
@@ -68,17 +68,12 @@ const TransferList = () => {
               name: "Descripcion",
               selector: (row) => row.description,
 
-              grow: 3
+              grow: 4
             },
             {
               name: "Creado hace",
               selector: (row) => calculateTimeAgo(row.created_at), // Usar la función aquí
-          grow: 2
-            },
-            {
-              name: "Status",
-              selector: (row) => row.is_delivered ? 'Completado': 'En proceso',
-
+              grow: 2
             },
           ]}
         />

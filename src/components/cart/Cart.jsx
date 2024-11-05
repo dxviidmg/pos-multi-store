@@ -11,17 +11,18 @@ import {
 } from "../redux/paymentModal/PaymentModalActions";
 import { getStores } from "../apis/stores";
 import { confirmTransfer } from "../apis/transfers";
-import Swal from 'sweetalert2';
-
+import Swal from "sweetalert2";
 
 const Cart = () => {
   const cart = useSelector((state) => state.cartReducer.cart);
-  const movementType = useSelector((state) => state.movementTypeReducer.movementType);
+  const movementType = useSelector(
+    (state) => state.movementTypeReducer.movementType
+  );
 
   const dispatch = useDispatch();
   const [stores, setStores] = useState([]);
 
-  const [selectedStore, setSelectedStore] = useState('')
+  const [selectedStore, setSelectedStore] = useState("");
 
   const handleSelectChange = (event) => {
     setSelectedStore(event.target.value); // Update state with selected value
@@ -36,7 +37,6 @@ const Cart = () => {
     fetchData();
   }, []);
 
-
   const { total } = useMemo(() => {
     const total = cart.reduce(
       (acc, item) => acc + item.product_price * item.quantity,
@@ -48,62 +48,46 @@ const Cart = () => {
 
   const handleRemoveFromCart = (product) => dispatch(removeFromCart(product));
 
-  const handleTranserFromCart = async(product) => {
-    console.log(product)
+  const handleTranserFromCart = async (product) => {
+    console.log(product);
     const data = {
       product: product.product_id,
       quantity: product.quantity,
-      destination_store: selectedStore
-    }
+      destination_store: selectedStore,
+    };
 
-    console.log('dd', data)
-    
+    console.log("dd", data);
+
     const response = await confirmTransfer(data);
 
-    
     if (response.status === 200) {
-      dispatch(removeFromCart(product))
+      dispatch(removeFromCart(product));
 
       Swal.fire({
-        icon: 'success',
-        title: 'Traspaso confirmado',
+        icon: "success",
+        title: "Traspaso confirmado",
         timer: 2000,
       });
+    } else if (response.status === 404) {
+      Swal.fire({
+        icon: "error",
+        title: "Transpaso no encontrado",
+        text: "No se puede completar el traspaso de producto",
+        timer: 2000,
+      });
+    } else {
+      console.log("no eoncontrado");
 
-
+      Swal.fire({
+        icon: "error",
+        title: "Error desconocido",
+        text: "Por favor llame a soporte tecnico",
+        timer: 2000,
+      });
     }
 
-    else if (response.status === 404) {
-
-      Swal.fire({
-        icon: 'error',
-        title: 'Transpaso no encontrado',
-        text: 'No se puede completar el traspaso de producto',
-        timer: 2000,
-      });
-
-
-    }    
-    else{
-      console.log('no eoncontrado')
-
-      Swal.fire({
-        icon: 'error',
-        title: 'Error desconocido',
-        text: 'Por favor llame a soporte tecnico',
-        timer: 2000,
-      });
-
-    }
-
-
-
-
-    removeFromCart(product)
-  }
-
-  
-
+    removeFromCart(product);
+  };
 
   const handleOpenModal = () => {
     dispatch(hidePaymentModal());
@@ -113,119 +97,123 @@ const Cart = () => {
   return (
     <div>
       <PaymentModal />
-      {cart.length > 0 ? (
-        <div>
-          <Row>
-            <Col md={3}>
-            </Col>
+      <div>
+        
+        {cart.length !== 0 && (
 
-            <Col md={3}></Col>
-            {movementType === "compra" ? (
-              <>
-                {" "}
-                <Col md={3}>
-                  <div className="d-flex gap-3 justify-content-end">
-                    <h3>Total: ${total.toFixed(2)}</h3>
-                  </div>
-                </Col>
-                <Col md={3}>
-                  <CustomButton
-                    fullWidth={true}
-                    onClick={() => handleOpenModal()}
-                  >
-                    Pagar
-                  </CustomButton>
-                </Col>
-              </>
-            ) : (
-              <>
-                {" "}
-                <Col md={3}></Col>
-                <Col md={3}>
-                  <Form.Select aria-label="Default select example" value={selectedStore} onChange={handleSelectChange}>
-                    <option value="">Selecciona una tienda</option>
-                    {stores.map((store) => (
-                      <option key={store.id} value={store.id}>
-                        {store.full_name}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </Col>
-              </>
-            )}
-          </Row>
+<Row>
 
-          <CustomTable
-            data={cart}
-            columns={[
-              {
-                name: "Código",
-                selector: (row) => row.product_code,
-              },
-              {
-                name: "Descripción",
-                selector: (row) => row.description,
-                grow: 3,
-                wrap: true,
-              },
-              {
-                name: "Stock",
-                selector: (row) => row.stock,
-              },
+{movementType === "compra" ? (
+  <>
+    {" "}
+    <Col md={6}></Col>
+    <Col md={3} style={{backgroundColor: 'red'}}>
+      <div className="d-flex gap-3 justify-content-end">
+        <h3>Total: ${total.toFixed(2)}</h3>
+      </div>
+    </Col>
+    <Col md={3}>
+      <CustomButton
+        fullWidth={true}
+        onClick={() => handleOpenModal()}
+      >
+        Pagar
+      </CustomButton>
+    </Col>
+  </>
+) : (
+  <>
+    {" "}
+    <Col md={9}></Col>
+    <Col md={3}>
+      <Form.Select
+        aria-label="Default select example"
+        value={selectedStore}
+        onChange={handleSelectChange}
+      >
+        <option value="">Selecciona una tienda</option>
+        {stores.map((store) => (
+          <option key={store.id} value={store.id}>
+            {store.full_name}
+          </option>
+        ))}
+      </Form.Select>
+    </Col>
+  </>
+)}
+</Row>
 
-              ...(movementType === "compra"
-                ? [
+
+        )}
+        <CustomTable
+        noDataComponent="Sin productos"
+          data={cart}
+          columns={[
+            {
+              name: "Código",
+              selector: (row) => row.product_code,
+            },
+            {
+              name: "Descripción",
+              selector: (row) => row.description,
+              grow: 3,
+              wrap: true,
+            },
+            {
+              name: "Stock",
+              selector: (row) => row.stock,
+            },
+
+            ...(movementType === "compra"
+              ? [
                   {
                     name: "Precio",
                     selector: (row) => `$${row.product_price.toFixed(2)}`,
                   },
-                  ]
-                : []),
+                ]
+              : []),
 
+            {
+              name: movementType === "traspaso" ? "Traspasar" : "Vender",
+              selector: (row) => row.quantity,
+            },
 
-
-              {
-                name: movementType === "traspaso" ? "Traspasar":"Vender",
-                selector: (row) => row.quantity,
-              },
-
-              ...(movementType === "compra"
-                ? [
+            ...(movementType === "compra"
+              ? [
                   {
                     name: "Total por producto",
                     selector: (row) =>
                       `$${(row.product_price * row.quantity).toFixed(2)}`,
                   },
-    
-                  ]
-                : []),
+                ]
+              : []),
 
-              {
-                name: "Borrar",
-                selector: (row) => (
-                  <CustomButton onClick={() => handleRemoveFromCart(row)}>
-                    Borrar
-                  </CustomButton>
-                ),
-              },
-              ...(movementType === "traspaso"
-                ? [
-                    {
-                      name: "Transferir",
-                      selector: (row) => (
-                        <CustomButton onClick={() => handleTranserFromCart(row)} disabled={selectedStore===''}>Transferir</CustomButton>
-                      ),
-                    },
-                  ]
-                : []),
-            ]}
-          />
-        </div>
-      ) : (
-        <>
-          <p>Sin productos</p>
-        </>
-      )}
+            {
+              name: "Borrar",
+              selector: (row) => (
+                <CustomButton onClick={() => handleRemoveFromCart(row)}>
+                  Borrar
+                </CustomButton>
+              ),
+            },
+            ...(movementType === "traspaso"
+              ? [
+                  {
+                    name: "Transferir",
+                    selector: (row) => (
+                      <CustomButton
+                        onClick={() => handleTranserFromCart(row)}
+                        disabled={selectedStore === ""}
+                      >
+                        Transferir
+                      </CustomButton>
+                    ),
+                  },
+                ]
+              : []),
+          ]}
+        />
+      </div>
     </div>
   );
 };
