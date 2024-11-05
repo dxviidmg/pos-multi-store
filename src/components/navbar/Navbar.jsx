@@ -2,7 +2,7 @@ import React from 'react'
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-
+import { getUserData } from '../apis/utils';
 
 const CustomNavbar = () => {
     const handleLogout = () => {
@@ -20,6 +20,9 @@ const CustomNavbar = () => {
             style={{ maxHeight: '100px' }}
             navbarScroll
           >
+                      <Navbar.Text>
+                      {getUserData().store}
+          </Navbar.Text>
             <Nav.Link href="/nueva-venta/">Nueva venta</Nav.Link>
             <Nav.Link href="/clientes/">Clientes</Nav.Link>            
             <Nav.Link href="/ventas/">Ventas</Nav.Link>            
