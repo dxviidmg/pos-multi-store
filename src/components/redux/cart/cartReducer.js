@@ -11,67 +11,41 @@ const initialState = {
   client: {},
 };
 
-const aClientIsSelected = (client) => !Object.keys(client).length === 0
+const aClientIsSelected = (client) => Object.keys(client).length > 0;
 
-const calculateProductPrice = (quantity, prices, aClientIsSelected) => {
-  if (
-    !prices.apply_wholesale_price_on_costumer_discount &&
-    aClientIsSelected
-  ) {
+const calculateProductPrice = (quantity, prices, clientSelected) => {
+  if (!prices.apply_wholesale_price_on_costumer_discount && clientSelected) {
     return prices.unit_sale_price;
   }
-
-  if (
-    prices.min_wholesale_quantity &&
-    quantity >= prices.min_wholesale_quantity
-  ) {
-    return prices.wholesale_sale_price; // Aplica el precio mayorista
+  if (prices.min_wholesale_quantity && quantity >= prices.min_wholesale_quantity) {
+    return prices.wholesale_sale_price;
   }
-
   return prices.unit_sale_price;
-}
+};
+
+const updateCartWithPrice = (cart, clientSelected) => {
+  return cart.map((item, index) => ({
+    ...item,
+    product_price: calculateProductPrice(item.quantity, item.prices, clientSelected)
+  }));
+};
 
 const cartReducer = (state = initialState, action) => {
   switch (action.type) {
     case ADD_CLIENT_TO_CART: {
-
-      const cart2 = state.cart.map((item, index) => {
-        return {
-          ...item, xxx: index,
-          product_price: calculateProductPrice(
-            item.quantity,
-            item.prices,
-            true
-          )
-        }
-      })
-
-      console.log('cart2', cart2)
+      const updatedCart = updateCartWithPrice(state.cart, true);
       return {
-        cart: cart2,
+        ...state,
+        cart: updatedCart,
         client: action.payload,
       };
     }
 
     case REMOVE_CLIENT_FROM_CART: {
-
-
-      const cart3 = state.cart.map((item, index) => {
-        return {
-          ...item, xxx: index,
-          product_price: calculateProductPrice(
-            item.quantity,
-            item.prices,
-            false
-          )
-        }
-      })
-
-      console.log('cart2', cart3)
-
-
+      const updatedCart = updateCartWithPrice(state.cart, false);
       return {
-        cart: cart3,
+        ...state,
+        cart: updatedCart,
         client: {},
       };
     }
@@ -85,71 +59,34 @@ const cartReducer = (state = initialState, action) => {
         available_stock,
         movement_type,
       } = action.payload;
-      const existingProductIndex = state.cart.findIndex(
-        (item) => item.id === id
-      );
-      console.log(action.payload);
-
-      // Función para calcular el precio del producto basado en la cantidad y precios mayoristas
-      const calculateProductPrice = (quantity, prices, aClientIsSelected) => {
-        if (
-          !prices.apply_wholesale_price_on_costumer_discount &&
-          aClientIsSelected
-        ) {
-          return prices.unit_sale_price;
-        }
-
-        if (
-          prices.min_wholesale_quantity &&
-          quantity >= prices.min_wholesale_quantity
-        ) {
-          return prices.wholesale_sale_price; // Aplica el precio mayorista
-        }
-
-        return prices.unit_sale_price;
-      };
-
-      // Determinar el stock dependiendo del tipo de movimiento
-      const stockTemp =
-        movement_type === "compra" ? available_stock : reserved_stock;
+      const existingProductIndex = state.cart.findIndex((item) => item.id === id);
+      const stockTemp = movement_type === "compra" ? available_stock : reserved_stock;
+      const clientSelected = aClientIsSelected(state.client);
 
       if (existingProductIndex !== -1) {
         const updatedCart = state.cart.map((item, index) => {
           if (index === existingProductIndex) {
             const updatedQuantity = Math.min(item.quantity + 1, stockTemp);
-
-            console.log('aClientIsSelected(state.client)', aClientIsSelected(state.client))
             return {
               ...item,
               quantity: updatedQuantity,
-              product_price: calculateProductPrice(
-                updatedQuantity,
-                item.prices,
-                aClientIsSelected(state.client)
-              ),
+              product_price: calculateProductPrice(updatedQuantity, item.prices, clientSelected),
               stock: stockTemp,
             };
           }
           return item;
         });
-
         return { ...state, cart: updatedCart };
       }
 
-      // Producto nuevo, agregar al carrito
-
-      console.log("soy nuevo", aClientIsSelected);
+      // Si el producto no está en el carrito, se añade como un nuevo producto
       return {
         ...state,
         cart: [
           ...state.cart,
           {
             ...action.payload,
-            product_price: calculateProductPrice(
-              quantity,
-              prices,
-              aClientIsSelected(state.client)
-            ),
+            product_price: calculateProductPrice(quantity, prices, clientSelected),
             stock: stockTemp,
           },
         ],
