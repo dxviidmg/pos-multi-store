@@ -20,6 +20,7 @@ const SearchProduct = () => {
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.cartReducer.cart);
   const movementType = useSelector((state) => state.movementTypeReducer.movementType);
+  const client = useSelector((state) => state.clientSelectedReducer.client);
 
   // State variables
   const [query, setQuery] = useState("");
@@ -41,6 +42,12 @@ const SearchProduct = () => {
   const handleFocus = () => setIsInputFocused(true);
   const handleBlur = () => setIsInputFocused(false);
 
+  const aClientIsSelected = () => {
+    if (Object.keys(client).length === 0) {
+      return false
+  }
+  return true
+  }
   // Debounced fetch data function
   const fetchData = useCallback(
     debounce(async () => {
@@ -91,15 +98,15 @@ const SearchProduct = () => {
     );
 
     if (existingProductIndex === -1) {
-      dispatch(addToCart({ ...product, quantity: 1, movement_type: movementType }));
+      dispatch(addToCart({ ...product, quantity: 1, movement_type: movementType, aClientIsSelected: aClientIsSelected()}));
     } else {
       const productExists = cart[existingProductIndex];
       if (movementType === "compra" && productExists.quantity < product.available_stock) {
-        dispatch(addToCart({ ...product, quantity: 1,  movement_type: movementType}));
+        dispatch(addToCart({ ...product, quantity: 1,  movement_type: movementType, aClientIsSelected: aClientIsSelected()}));
       }
       else if (movementType === "traspaso" && productExists.quantity < product.reserved_stock) {
         console.log('movementType', movementType)
-        dispatch(addToCart({ ...product, quantity: 1,  movement_type: movementType}));
+        dispatch(addToCart({ ...product, quantity: 1,  movement_type: movementType, aClientIsSelected: aClientIsSelected()}));
       }
       else {
         handleOpenModal(product);

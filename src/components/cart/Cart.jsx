@@ -107,7 +107,7 @@ const Cart = () => {
   <>
     {" "}
     <Col md={6}></Col>
-    <Col md={3} style={{backgroundColor: 'red'}}>
+    <Col md={3}>
       <div className="d-flex gap-3 justify-content-end">
         <h3>Total: ${total.toFixed(2)}</h3>
       </div>
