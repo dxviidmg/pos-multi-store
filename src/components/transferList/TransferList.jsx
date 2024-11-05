@@ -72,7 +72,7 @@ const TransferList = () => {
             },
             {
               name: "Creado hace",
-              selector: (row) => calculateTimeAgo(row.created_at), // Usar la función aquí
+              selector: (row) => calculateTimeAgo(row.created_at),
               grow: 2
             },
           ]}

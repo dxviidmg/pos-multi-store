@@ -5,7 +5,7 @@ import CustomButton from "../commons/customButton/CustomButton";
 import { getStoreProducts } from "../apis/products";
 import { addToCart, cleanCart } from "../redux/cart/cartActions";
 import { Form } from "react-bootstrap";
-import { debounce } from "lodash"; // Ensure you install lodash
+import { debounce } from "lodash";
 import StockModal from "../stockModal/StockModal";
 import {
   hideStockModal,
@@ -21,28 +21,22 @@ const SearchProduct = () => {
   const cart = useSelector((state) => state.cartReducer.cart);
   const movementType = useSelector((state) => state.movementTypeReducer.movementType);
 
-  // State variables
   const [query, setQuery] = useState("");
   const [data, setData] = useState([]);
   const [queryType, setQueryType] = useState("code");
   const [barcode, setBarcode] = useState("");
 
   const [isInputFocused, setIsInputFocused] = useState(false);
-//  const [movementType, setMovementType] = useState("venta");
 
-  // Focus input on component load
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.focus();
     }
   }, []);
 
-  // Handlers for input focus
   const handleFocus = () => setIsInputFocused(true);
   const handleBlur = () => setIsInputFocused(false);
 
-
-  // Debounced fetch data function
   const fetchData = useCallback(
     debounce(async () => {
       if (!query) {
@@ -83,7 +77,7 @@ const SearchProduct = () => {
     } else {
       handleAddToCartIfAvailable(product);
     }
-    setQuery(""); // Clear the query after fetching
+    setQuery("");
   };
 
   const handleAddToCartIfAvailable = (product) => {
@@ -119,25 +113,24 @@ const SearchProduct = () => {
     };
   }, [fetchData, query]);
 
-  // Event handlers
   const handleQueryTypeChange = (e) => {
     setQueryType(e.target.value);
-    setQuery(""); // Reset the query when changing type
-    setData([]); // Clear results
+    setQuery("");
+    setData([]);
   };
 
 
   const handleMovementTypeChange = (e) => {
     dispatch(updateMovement(e.target.value))
-    setData([]); // Clear results
+    setData([]);
     dispatch(cleanCart());
   };
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter" && queryType === "code") {
       console.log('exp')
-      setQuery(barcode); // Update the query with the scanned code
-      setBarcode(""); // Clear the barcode field
+      setQuery(barcode);
+      setBarcode("");
     }
   };
 
@@ -215,7 +208,7 @@ const SearchProduct = () => {
       <Form.Control
         ref={inputRef}
         type="text"
-        value={queryType === "code" ? barcode : query} // Use barcode if queryType is "code"
+        value={queryType === "code" ? barcode : query}
         placeholder="Buscar producto"
         onChange={
           queryType === "q" ? handleChange : (e) => setBarcode(e.target.value)

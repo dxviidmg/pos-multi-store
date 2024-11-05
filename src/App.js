@@ -20,10 +20,8 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    // Chequear si hay un token en el almacenamiento local
     const storedToken = localStorage.getItem("user");
     if (storedToken) {
-      // Si hay un token, establecer el estado de inicio de sesión y actualizar el token
       setIsLoggedIn(true);
     }
   }, []);

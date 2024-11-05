@@ -15,7 +15,7 @@ function TabCart() {
   const handleSelect = (key) => {
     setActiveTab(key);
     if (key === "traspasos") {
-      setRefreshKey((prevKey) => prevKey + 1); // Cambia refreshKey para forzar la actualización
+      setRefreshKey((prevKey) => prevKey + 1);
     }
   };
 

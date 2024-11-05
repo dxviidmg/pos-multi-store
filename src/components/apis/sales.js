@@ -8,10 +8,10 @@ export const createSale = async (data) => {
     const response = await axios.post(getApiUrl("sale"), data, {
       headers: getHeaders(),
     });
-    return response; // Devuelve los datos de la respuesta
+    return response;
   } catch (error) {
     console.error("Error al obtener clientes:", error);
-    throw error; // Puedes manejar el error según tus necesidades
+    throw error;
   }
 };
 
@@ -22,10 +22,10 @@ export const getSales = async () => {
   const response = await axios.get(getApiUrl("sale"), {
     headers: getHeaders(),
   });
-  return response; // Devuelve los datos de la respuesta
+  return response;
 } catch (error) {
   console.error("Error al obtener clientes:", error);
-  throw error; // Puedes manejar el error según tus necesidades
+  throw error;
 }
 };
 
@@ -36,9 +36,9 @@ export const getDailyEarnings = async () => {
   const response = await axios.get(getApiUrl("daily-earnings"), {
     headers: getHeaders(),
   });
-  return response; // Devuelve los datos de la respuesta
+  return response;
 } catch (error) {
   console.error("Error al obtener clientes:", error);
-  throw error; // Puedes manejar el error según tus necesidades
+  throw error;
 }
 };

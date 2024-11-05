@@ -5,14 +5,12 @@ import { useDispatch, useSelector } from "react-redux";
 import ClientSelected from "../clientSelected/ClientSelected";
 import SearchClient from "../searchClient/SearchClient";
 import CustomButton from "../commons/customButton/CustomButton";
-//import { removeClient } from "../redux/clientSelected/clientSelectedActions";
-import { cleanCart } from "../redux/cart/cartActions";
+import { cleanCart, removeClientfromCart } from "../redux/cart/cartActions";
 import { createSale } from "../apis/sales";
 import { hidePaymentModal } from "../redux/paymentModal/PaymentModalActions";
 import Swal from 'sweetalert2';
 
 function roundToClosestHalfOrWhole(number) {
-  // Multiplicamos por 2, redondeamos al entero más cercano y luego dividimos por 2
   return Math.round(number * 2) / 2;
 }
 
@@ -25,18 +23,17 @@ const PaymentModal = () => {
   const client = useSelector((state) => state.cartReducer.client);
 
   const [paymentMethods, setPaymentMethods] = useState({
-    type: "radio", // 'radio' para pago único, 'checkbox' para pago mixto
-    methods: { E: 0, P: 0, T: 0 }, // Valores de cada método de pago
+    type: "radio",
+    methods: { E: 0, P: 0, T: 0 },
   });
 
   const dispatch = useDispatch();
 
-  // Calcular los totales con descuento y sin descuento
   const { total, totalDiscount } = useMemo(() => {
     const total = roundToClosestHalfOrWhole(cart.reduce(
       (acc, item) => acc + item.product_price * item.quantity,
       0 
-    ))// * 100 / 100;
+    ))
     console.log(client)
 
 
@@ -48,7 +45,6 @@ const PaymentModal = () => {
     return { total, totalDiscount };
   }, [cart, client]);
 
-  // Manejar cambio en el tipo y método de pago
   const handleChangePayments = (e) => {
     const { name, value } = e.target;
 
@@ -56,7 +52,7 @@ const PaymentModal = () => {
       const newMethods =
         value === "radio"
           ? { E: totalDiscount, P: 0, T: 0 }
-          : { E: 0, P: 0, T: 0 }; // Efectivo por default si es único
+          : { E: 0, P: 0, T: 0 };
       setPaymentMethods({
         type: value,
         methods: newMethods,
@@ -64,10 +60,10 @@ const PaymentModal = () => {
     } else {
       const updatedMethods =
         paymentMethods.type === "radio"
-          ? { [value]: totalDiscount } // Selección única
+          ? { [value]: totalDiscount }
           : {
               ...paymentMethods.methods,
-              [value]: paymentMethods.methods[value] ? 0 : totalDiscount, // Alternar selección para mixto
+              [value]: paymentMethods.methods[value] ? 0 : totalDiscount,
             };
 
       setPaymentMethods((prev) => ({
@@ -77,7 +73,6 @@ const PaymentModal = () => {
     }
   };
 
-  // Cambiar valor de cada método de pago en mixto
   const handlePaymentValueChange = (method, value) => {
     setPaymentMethods((prev) => ({
       ...prev,
@@ -88,7 +83,6 @@ const PaymentModal = () => {
     }));
   };
 
-  // Sumar todos los métodos de pago seleccionados
   const totalPaymentInput = Object.values(paymentMethods.methods).reduce(
     (acc, curr) => acc + curr,
     0
@@ -96,15 +90,13 @@ const PaymentModal = () => {
 
   const convertPaymentMethodsToList = () => {
     return Object.entries(paymentMethods.methods)
-      .filter(([method, amount]) => amount > 0) // Filtrar solo los métodos de pago activos
+      .filter(([method, amount]) => amount > 0)
       .map(([method, amount]) => ({
         payment_method: method,
         amount: amount,
       }));
   };
 
-
-  // Crear venta al hacer clic en el botón de pago
   const handleCreateSale = async () => {
     const paymentList = convertPaymentMethodsToList();
 
@@ -123,10 +115,10 @@ const PaymentModal = () => {
 
     if (response.status === 201) {
       setPaymentMethods({
-        type: "radio", // 'radio' para pago único, 'checkbox' para pago mixto
-        methods: { E: 0, P: 0, T: 0 }, // Valores de cada método de pago
+        type: "radio",
+        methods: { E: 0, P: 0, T: 0 },
       })
-//      dispatch(removeClient());
+      dispatch(removeClientfromCart());
       dispatch(cleanCart());
       dispatch(hidePaymentModal());
 
@@ -241,7 +233,7 @@ const PaymentModal = () => {
                 totalPaymentInput !== totalDiscount) ||
               Object.values(paymentMethods.methods).every(
                 (amount) => amount === 0
-              ) // Verifica que todos los métodos tengan un monto de 0
+              )
             }
             fullWidth={true}
             onClick={handleCreateSale}

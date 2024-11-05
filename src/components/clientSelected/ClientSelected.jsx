@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { Col, Form, Row } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import { removeClientfromCart } from "../redux/cart/cartActions";
-//import { removeClient } from "../redux/clientSelected/clientSelectedActions";
 
 const ClientSelected = () => {
   const client = useSelector((state) => state.cartReducer.client);

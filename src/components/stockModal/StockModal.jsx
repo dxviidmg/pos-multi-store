@@ -14,7 +14,7 @@ const StockModal = () => {
 
   const dispatch = useDispatch();
 
-  const [requestedQuantities, setRequestedQuantities] = useState({}); // Manejar cantidades solicitadas
+  const [requestedQuantities, setRequestedQuantities] = useState({});
 
   const handleQuantityChange = (rowId, max, value) => {
 
@@ -30,14 +30,14 @@ const StockModal = () => {
     }
     setRequestedQuantities((prev) => ({
       ...prev,
-      [rowId]: value, // Usamos el ID de la fila como clave
+      [rowId]: value,
     }));
   };
 
 
   const handleCreateTransfer = async (row) => {
     console.log('base', row)
-    const quantity = requestedQuantities[row.store_id]; // Usa el ID de la tienda como clave
+    const quantity = requestedQuantities[row.store_id];
     console.log('Solicitar cantidad:', quantity);
 
 
@@ -88,12 +88,12 @@ const StockModal = () => {
     columns={[
       {
         name: "Locación",
-        selector: (row) => row.store_name, // Replace `row.total` with the actual field in your data
+        selector: (row) => row.store_name,
         sortable: true,
       },
       {
         name: "Stock disponible",
-        selector: (row) => row.available_stock, // Replace `row.total` with the actual field in your data
+        selector: (row) => row.available_stock,
         sortable: true,
       },
 
@@ -104,8 +104,8 @@ const StockModal = () => {
         type="number" 
         name="quantity" 
         required 
-        min={1} // Ejemplo de mínimo 4 dígitos
-        max={row.available_stock} // Ejemplo de máximo 8 dígitos
+        min={1}
+        max={row.available_stock}
         placeholder="Cantidad a solicitar" 
         onChange={(e) => handleQuantityChange(row.store_id, row.available_stock, e.target.value)}
         value={requestedQuantities[row.store_id]}

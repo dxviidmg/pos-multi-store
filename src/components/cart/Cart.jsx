@@ -25,7 +25,7 @@ const Cart = () => {
   const [selectedStore, setSelectedStore] = useState("");
 
   const handleSelectChange = (event) => {
-    setSelectedStore(event.target.value); // Update state with selected value
+    setSelectedStore(event.target.value);
   };
 
   useEffect(() => {

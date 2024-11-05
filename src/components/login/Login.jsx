@@ -20,7 +20,6 @@ function Login({ onLogin }) {
     canLogin: true,
   });
 
-  // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setState((prevState) => ({
@@ -32,7 +31,6 @@ function Login({ onLogin }) {
     }));
   };
 
-  // Show alert
   const showAlert = (message) => {
     setState((prevState) => ({
       ...prevState,
@@ -43,7 +41,6 @@ function Login({ onLogin }) {
     }));
   };
 
-  // Check subscription expiration
   useEffect(() => {
     const expirationDate = new Date(suscriptionExpirationDate);
     const currentDate = new Date();
@@ -53,7 +50,6 @@ function Login({ onLogin }) {
     }));
   }, []);
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { formData } = state;
@@ -73,7 +69,6 @@ function Login({ onLogin }) {
     }
   };
 
-  // Handle login error
   const handleLoginError = (error) => {
     if (error.response && error.response.status === 400) {
       showAlert("Usuario o contraseña incorrecta");
@@ -82,7 +77,6 @@ function Login({ onLogin }) {
     }
   };
 
-  // Handle redirection based on user jurisdiction
   const handleRedirect = (response) => {
     if (response.tipo_jurisdiccion) {
       navigate(

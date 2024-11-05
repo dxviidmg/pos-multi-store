@@ -79,14 +79,13 @@ const cartReducer = (state = initialState, action) => {
         return { ...state, cart: updatedCart };
       }
 
-      // Si el producto no está en el carrito, se añade como un nuevo producto
       return {
         ...state,
         cart: [
           ...state.cart,
           {
             ...action.payload,
-            product_price: calculateProductPrice(quantity, prices, clientSelected),
+            product_price: prices.unit_sale_price,
             stock: stockTemp,
           },
         ],

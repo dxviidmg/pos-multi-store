@@ -7,10 +7,10 @@ export const createTransfer = async (data) => {
   const response = await axios.post(getApiUrl("product-transfer"), data, {
     headers: getHeaders(),
   });
-  return response; // Devuelve los datos de la respuesta
+  return response;
 } catch (error) {
   console.error("Error al obtener clientes:", error);
-  throw error; // Puedes manejar el error según tus necesidades
+  throw error;
 }
 };
 
@@ -34,9 +34,9 @@ export const getTransfers = async () => {
     const response = await axios.post(getApiUrl("confirm-transfer"), data, {
       headers: getHeaders(),
     });
-    return response; // Devuelve los datos de la respuesta
+    return response;
   } catch (error) {
     console.error("Error al obtener clientes:", error);
-    return error; // Puedes manejar el error según tus necesidades
+    return error;
   }
   };
