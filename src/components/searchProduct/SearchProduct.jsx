@@ -87,7 +87,7 @@ const SearchProduct = () => {
       if (existingProduct.quantity < stock) {
         dispatch(addToCart({ ...product, quantity: 1, movement_type: movementType }));
       }
-      else if (movementType == "compra" && existingProduct.quantity >= stock) {
+      else if (movementType === "compra" && existingProduct.quantity >= stock) {
         handleOpenModal(existingProduct);
       }
       else {
