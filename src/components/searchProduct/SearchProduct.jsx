@@ -26,17 +26,11 @@ const SearchProduct = () => {
   const [data, setData] = useState([]);
   const [queryType, setQueryType] = useState("code");
   const [barcode, setBarcode] = useState("");
-
   const [isInputFocused, setIsInputFocused] = useState(false);
 
   useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
+    inputRef.current?.focus();
   }, []);
-
-  const handleFocus = () => setIsInputFocused(true);
-  const handleBlur = () => setIsInputFocused(false);
 
   const fetchData = useCallback(
     debounce(async () => {
@@ -44,14 +38,14 @@ const SearchProduct = () => {
         setData([]);
         return;
       }
-
       const response = await getStoreProducts(queryType, query);
       const fetchedData = response.data;
+
       if (queryType === "code" && fetchedData.length === 0) {
         Swal.fire({
           icon: "error",
           title: "Producto no encontrado",
-          text: "No se pudo encontrar este producto mediante su codigo",
+          text: "No se pudo encontrar este producto mediante su código",
           timer: 1000,
         });
       } else if (queryType === "code" && fetchedData.length === 1) {
@@ -60,19 +54,15 @@ const SearchProduct = () => {
         setData(fetchedData);
       }
     }, 300),
-    [query, queryType, dispatch, cart]
+    [query, queryType, movementType]
   );
 
   const handleSingleProductFetch = (product) => {
-    console.log('para añadir 1,', product, movementType)
-    if (movementType === "compra" && product.available_stock === 0) {
+    if (
+      (movementType === "compra" && product.available_stock === 0) ||
+      (movementType === "traspaso" && product.reserved_stock === 0)
+    ) {
       handleOpenModal(product);
-    } else if (movementType === "traspaso" && product.reserved_stock === 0) {
-      Swal.fire({
-        icon: "error",
-        title: "No hay traspasos relacionados a este producto",
-        timer: 2000,
-      });
     } else {
       handleAddToCartIfAvailable(product);
     }
@@ -80,72 +70,40 @@ const SearchProduct = () => {
   };
 
   const handleAddToCartIfAvailable = (product) => {
-
-    console.log('para añadir 2', product, movementType)
-    const existingProductIndex = cart.findIndex(
-      (item) => item.id === product.id
-    );
+    const existingProductIndex = cart.findIndex((item) => item.id === product.id);
+    const quantity = product.quantity || 1;
 
     if (existingProductIndex === -1) {
-
-      const quantity = product.quantity || 1
-      console.log('nuevo producto', movementType, quantity, product.available_stock, product.reserved_stock)
-      if (
-        movementType === "traspaso" &&
-        quantity < product.reserved_stock
-      ) {
-        dispatch(
-          addToCart({ ...product, quantity: 1, movement_type: movementType })
-        );
+      const stock = movementType === "traspaso" ? product.reserved_stock : product.available_stock;
+      if (quantity < stock) {
+        dispatch(addToCart({ ...product, quantity: 1, movement_type: movementType }));
+      } else {
+        displayStockLimitAlert();
       }
-      else if (
-        movementType === "compra" &&
-        quantity < product.available_stock
-      ) {
-        dispatch(
-          addToCart({ ...product, quantity: 1, movement_type: movementType })
-        );
+    } else {
+      const existingProduct = cart[existingProductIndex];
+      const stock = movementType === "traspaso" ? product.reserved_stock : product.available_stock;
+
+      if (existingProduct.quantity < stock) {
+        dispatch(addToCart({ ...product, quantity: 1, movement_type: movementType }));
+      }
+      else if (movementType == "compra" && existingProduct.quantity >= stock) {
+        handleOpenModal(existingProduct);
       }
       else {
-        Swal.fire({
-          icon: "error",
-          title: "No hay traspasos relacionados a este producto",
-          timer: 2000,
-        });
-      }
-
-    } else {
-      const productExists = cart[existingProductIndex];
-      console.log('existe el producto', movementType, productExists.quantity, product.available_stock, product.reserved_stock)
-      if (
-        movementType === "compra" &&
-        productExists.quantity < product.available_stock
-      ) {
-        dispatch(
-          addToCart({ ...product, quantity: 1, movement_type: movementType })
-        );
-      } else if (
-        movementType === "traspaso" &&
-        productExists.quantity < product.reserved_stock
-      ) {
-        dispatch(
-          addToCart({ ...product, quantity: 1, movement_type: movementType })
-        );
-
-      } else if (
-        movementType === "traspaso" &&
-        productExists.quantity >= product.reserved_stock
-      ) {
-        Swal.fire({
-          icon: "error",
-          title: "Llegaste al limite de producto reservado para traspasar",
-          timer: 2000,
-        });
-
-      } else {
-        handleOpenModal(product);
+        displayStockLimitAlert();
       }
     }
+  };
+
+  const displayStockLimitAlert = () => {
+    Swal.fire({
+      icon: "error",
+      title: movementType === "traspaso"
+        ? "Llegaste al límite de producto reservado para traspasar"
+        : "No hay suficiente stock para comprar",
+      timer: 2000,
+    });
   };
 
   useEffect(() => {
@@ -171,34 +129,29 @@ const SearchProduct = () => {
     dispatch(cleanCart());
   };
 
-  const handleKeyDown = (event) => {
-    if (event.key === "Enter" && queryType === "code") {
+  const handleBarcodeSearch = (event) => {
+    if (event.key === "Enter") {
       setQuery(barcode);
       setBarcode("");
     }
   };
 
-  const handleChange = (e) => {
+  const handleQueryChange = (e) => {
     setQuery(e.target.value);
-    if (queryType === "q") {
-      fetchData();
-    }
+    if (queryType === "q") fetchData();
   };
 
-  const handleOpenModal = (row) => {
+  const handleOpenModal = (product) => {
     dispatch(hideStockModal());
-
-    setTimeout(() => dispatch(showStockModal(row)), 1);
+    setTimeout(() => dispatch(showStockModal(product)), 1);
   };
 
   return (
     <>
-      <StockModal></StockModal>
-
+      <StockModal />
       <Form.Label className="fw-bold">Buscador de productos</Form.Label>
       <br />
       <Form.Label className="me-3">Tipo de búsqueda:</Form.Label>
-
       <Form.Check
         inline
         id="code"
@@ -217,80 +170,53 @@ const SearchProduct = () => {
         value="q"
         checked={queryType === "q"}
       />
-
-      <>
-        <Form.Label className="me-3">Tipo de operación:</Form.Label>
-
-        <Form.Check
-          inline
-          id="compra"
-          label="Compra"
-          type="radio"
-          onChange={handleMovementTypeChange}
-          value="compra"
-          checked={movementType === "compra"}
-        />
-        <Form.Check
-          inline
-          id="traspaso"
-          label="Traspaso"
-          type="radio"
-          onChange={handleMovementTypeChange}
-          value="traspaso"
-          checked={movementType === "traspaso"}
-        />
-      </>
+      <Form.Label className="me-3">Tipo de operación:</Form.Label>
+      <Form.Check
+        inline
+        id="compra"
+        label="Compra"
+        type="radio"
+        onChange={handleMovementTypeChange}
+        value="compra"
+        checked={movementType === "compra"}
+      />
+      <Form.Check
+        inline
+        id="traspaso"
+        label="Traspaso"
+        type="radio"
+        onChange={handleMovementTypeChange}
+        value="traspaso"
+        checked={movementType === "traspaso"}
+      />
       <br />
       <Form.Label className="fw-bold">
-        {!isInputFocused && (
-          <>
-            Aviso: Para añadir productos al carrito el cursor debe estar en el
-            campo de búsqueda de productos.
-          </>
-        )}
+        {!isInputFocused && "Aviso: Para añadir productos al carrito el cursor debe estar en el campo de búsqueda de productos."}
       </Form.Label>
       <br />
-
       <Form.Control
         ref={inputRef}
         type="text"
         value={queryType === "code" ? barcode : query}
         placeholder="Buscar producto"
-        onChange={
-          queryType === "q" ? handleChange : (e) => setBarcode(e.target.value)
-        }
-        onKeyDown={queryType === "code" ? handleKeyDown : undefined}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
+        onChange={queryType === "q" ? handleQueryChange : (e) => setBarcode(e.target.value)}
+        onKeyDown={queryType === "code" ? handleBarcodeSearch : undefined}
+        onFocus={() => setIsInputFocused(true)}
+        onBlur={() => setIsInputFocused(false)}
       />
-
       <CustomTable
-        inputPlaceholder="Buscar producto"
         title="Productos"
         data={data}
         columns={[
           { name: "Código", selector: (row) => row.product_code },
-          {
-            name: "Descripción",
-            selector: (row) => row.description,
-            grow: 3,
-            wrap: true,
-          },
-          {
-            name: "Stock",
-            selector: (row) => row.available_stock,
-          },
-          {
-            name: "Precio unitario",
-            selector: (row) => `$${row.prices.unit_sale_price.toFixed(2)}`,
-          },
+          { name: "Descripción", selector: (row) => row.description, grow: 3, wrap: true },
+          { name: "Stock", selector: (row) => row.available_stock },
+          { name: "Precio unitario", selector: (row) => `$${row.prices.unit_sale_price.toFixed(2)}` },
           {
             name: "Precio mayoreo",
             selector: (row) =>
               row.prices.apply_wholesale
-                ? `${
-                    row.prices.min_wholesale_quantity
-                  } o más a $${row.prices.wholesale_sale_price.toFixed(2)}`
+                ? `${row.prices.min_wholesale_quantity} o más a $${row.prices.wholesale_sale_price.toFixed(2)}`
                 : "N/A",
           },
           {
@@ -308,10 +234,7 @@ const SearchProduct = () => {
           {
             name: "Stock total",
             cell: (row) => (
-              <CustomButton
-                onClick={() => handleOpenModal({ ...row, onlyRead: true })}
-                variant="danger"
-              >
+              <CustomButton onClick={() => handleOpenModal({ ...row, onlyRead: true })} variant="danger">
                 Ver
               </CustomButton>
             ),
