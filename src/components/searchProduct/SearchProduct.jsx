@@ -11,15 +11,16 @@ import {
   hideStockModal,
   showStockModal,
 } from "../redux/stockModal/StockModalActions";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 import { updateMovement } from "../redux/movementType/movementTypeActions";
-
 
 const SearchProduct = () => {
   const inputRef = useRef(null);
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.cartReducer.cart);
-  const movementType = useSelector((state) => state.movementTypeReducer.movementType);
+  const movementType = useSelector(
+    (state) => state.movementTypeReducer.movementType
+  );
 
   const [query, setQuery] = useState("");
   const [data, setData] = useState([]);
@@ -47,17 +48,13 @@ const SearchProduct = () => {
       const response = await getStoreProducts(queryType, query);
       const fetchedData = response.data;
       if (queryType === "code" && fetchedData.length === 0) {
-        console.log('hola')
-
         Swal.fire({
-          icon: 'error',
-          title: 'Producto no encontrado',
-          text: 'No se pudo encontrar este producto mediante su codigo',
+          icon: "error",
+          title: "Producto no encontrado",
+          text: "No se pudo encontrar este producto mediante su codigo",
           timer: 1000,
         });
-
-      }
-      else if (queryType === "code" && fetchedData.length === 1) {
+      } else if (queryType === "code" && fetchedData.length === 1) {
         handleSingleProductFetch(fetchedData[0]);
       } else {
         setData(fetchedData);
@@ -67,12 +64,9 @@ const SearchProduct = () => {
   );
 
   const handleSingleProductFetch = (product) => {
-    console.log('movementType 2', movementType)
-    if (movementType === "compra" && product.available_stock === 0){
-      console.log('venta')
-      handleOpenModal(product);     
-    }
-    else if (movementType === "traspaso" && product.reserved_stock === 0) {
+    if (movementType === "compra" && product.available_stock === 0) {
+      handleOpenModal(product);
+    } else if (movementType === "traspaso" && product.reserved_stock === 0) {
       handleOpenModal(product);
     } else {
       handleAddToCartIfAvailable(product);
@@ -86,17 +80,26 @@ const SearchProduct = () => {
     );
 
     if (existingProductIndex === -1) {
-      dispatch(addToCart({ ...product, quantity: 1, movement_type: movementType}));
+      dispatch(
+        addToCart({ ...product, quantity: 1, movement_type: movementType })
+      );
     } else {
       const productExists = cart[existingProductIndex];
-      if (movementType === "compra" && productExists.quantity < product.available_stock) {
-        dispatch(addToCart({ ...product, quantity: 1,  movement_type: movementType}));
-      }
-      else if (movementType === "traspaso" && productExists.quantity < product.reserved_stock) {
-        console.log('movementType', movementType)
-        dispatch(addToCart({ ...product, quantity: 1,  movement_type: movementType}));
-      }
-      else {
+      if (
+        movementType === "compra" &&
+        productExists.quantity < product.available_stock
+      ) {
+        dispatch(
+          addToCart({ ...product, quantity: 1, movement_type: movementType })
+        );
+      } else if (
+        movementType === "traspaso" &&
+        productExists.quantity < product.reserved_stock
+      ) {
+        dispatch(
+          addToCart({ ...product, quantity: 1, movement_type: movementType })
+        );
+      } else {
         handleOpenModal(product);
       }
     }
@@ -119,16 +122,14 @@ const SearchProduct = () => {
     setData([]);
   };
 
-
   const handleMovementTypeChange = (e) => {
-    dispatch(updateMovement(e.target.value))
+    dispatch(updateMovement(e.target.value));
     setData([]);
     dispatch(cleanCart());
   };
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter" && queryType === "code") {
-      console.log('exp')
       setQuery(barcode);
       setBarcode("");
     }
@@ -175,33 +176,35 @@ const SearchProduct = () => {
       />
 
       <>
-      <Form.Label className="me-3">Tipo de operación:</Form.Label>
+        <Form.Label className="me-3">Tipo de operación:</Form.Label>
 
-      <Form.Check
-        inline
-        id="compra"
-        label="Compra"
-        type="radio"
-        onChange={handleMovementTypeChange}
-        value="compra"
-        checked={movementType === "compra"}
-      />
-      <Form.Check
-        inline
-        id="traspaso"
-        label="Traspaso"
-        type="radio"
-        onChange={handleMovementTypeChange}
-        value="traspaso"
-        checked={movementType === "traspaso"}
-      />
-      
+        <Form.Check
+          inline
+          id="compra"
+          label="Compra"
+          type="radio"
+          onChange={handleMovementTypeChange}
+          value="compra"
+          checked={movementType === "compra"}
+        />
+        <Form.Check
+          inline
+          id="traspaso"
+          label="Traspaso"
+          type="radio"
+          onChange={handleMovementTypeChange}
+          value="traspaso"
+          checked={movementType === "traspaso"}
+        />
       </>
-      <br/>
+      <br />
       <Form.Label className="fw-bold">
-          {!isInputFocused && (
-            <>Aviso: Para añadir productos al carrito el cursor debe estar en el campo de búsqueda de productos.</>
-          )}
+        {!isInputFocused && (
+          <>
+            Aviso: Para añadir productos al carrito el cursor debe estar en el
+            campo de búsqueda de productos.
+          </>
+        )}
       </Form.Label>
       <br />
 
@@ -224,7 +227,12 @@ const SearchProduct = () => {
         data={data}
         columns={[
           { name: "Código", selector: (row) => row.product_code },
-          { name: "Descripción", selector: (row) => row.description, grow: 3,  wrap: true},
+          {
+            name: "Descripción",
+            selector: (row) => row.description,
+            grow: 3,
+            wrap: true,
+          },
           {
             name: "Stock",
             selector: (row) => row.available_stock,

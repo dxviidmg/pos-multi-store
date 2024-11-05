@@ -49,14 +49,11 @@ const Cart = () => {
   const handleRemoveFromCart = (product) => dispatch(removeFromCart(product));
 
   const handleTranserFromCart = async (product) => {
-    console.log(product);
     const data = {
       product: product.product_id,
       quantity: product.quantity,
       destination_store: selectedStore,
     };
-
-    console.log("dd", data);
 
     const response = await confirmTransfer(data);
 
@@ -76,8 +73,6 @@ const Cart = () => {
         timer: 2000,
       });
     } else {
-      console.log("no eoncontrado");
-
       Swal.fire({
         icon: "error",
         title: "Error desconocido",
@@ -98,55 +93,50 @@ const Cart = () => {
     <div>
       <PaymentModal />
       <div>
-        
         {cart.length !== 0 && (
-
-<Row>
-
-{movementType === "compra" ? (
-  <>
-    {" "}
-    <Col md={6}></Col>
-    <Col md={3}>
-      <div className="d-flex gap-3 justify-content-end">
-        <h3>Total: ${total.toFixed(2)}</h3>
-      </div>
-    </Col>
-    <Col md={3}>
-      <CustomButton
-        fullWidth={true}
-        onClick={() => handleOpenModal()}
-      >
-        Pagar
-      </CustomButton>
-    </Col>
-  </>
-) : (
-  <>
-    {" "}
-    <Col md={9}></Col>
-    <Col md={3}>
-      <Form.Select
-        aria-label="Default select example"
-        value={selectedStore}
-        onChange={handleSelectChange}
-      >
-        <option value="">Selecciona una tienda</option>
-        {stores.map((store) => (
-          <option key={store.id} value={store.id}>
-            {store.full_name}
-          </option>
-        ))}
-      </Form.Select>
-    </Col>
-  </>
-)}
-</Row>
-
-
+          <Row>
+            {movementType === "compra" ? (
+              <>
+                {" "}
+                <Col md={6}></Col>
+                <Col md={3}>
+                  <div className="d-flex gap-3 justify-content-end">
+                    <h3>Total: ${total.toFixed(2)}</h3>
+                  </div>
+                </Col>
+                <Col md={3}>
+                  <CustomButton
+                    fullWidth={true}
+                    onClick={() => handleOpenModal()}
+                  >
+                    Pagar
+                  </CustomButton>
+                </Col>
+              </>
+            ) : (
+              <>
+                {" "}
+                <Col md={9}></Col>
+                <Col md={3}>
+                  <Form.Select
+                    aria-label="Default select example"
+                    value={selectedStore}
+                    onChange={handleSelectChange}
+                  >
+                    <option value="">Selecciona una tienda</option>
+                    {stores.map((store) => (
+                      <option key={store.id} value={store.id}>
+                        {store.full_name}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Col>
+              </>
+            )}
+          </Row>
         )}
         <CustomTable
-        noDataComponent="Sin productos"
+          noDataComponent="Sin productos"
           data={cart}
           columns={[
             {

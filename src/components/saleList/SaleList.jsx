@@ -13,7 +13,6 @@ const SaleList = () => {
       setSalesList(salesResponse.data);
 
       const earningsResponse = await getDailyEarnings();
-      console.log(earningsResponse);
       setDailyEarningsSummary(earningsResponse.data);
     };
 
@@ -31,9 +30,7 @@ const SaleList = () => {
     <>
       <Row className="section">
         <Col md={2}>
-          <Form.Label className="fw-bold">
-            Corte del día
-          </Form.Label>
+          <Form.Label className="fw-bold">Corte del día</Form.Label>
         </Col>
 
         <Col md={2}>

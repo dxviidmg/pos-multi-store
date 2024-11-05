@@ -53,7 +53,6 @@ const cartReducer = (state = initialState, action) => {
     case ADD_TO_CART: {
       const {
         id,
-        quantity,
         prices,
         reserved_stock,
         available_stock,

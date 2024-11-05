@@ -8,12 +8,11 @@ import CustomButton from "../commons/customButton/CustomButton";
 import { cleanCart, removeClientfromCart } from "../redux/cart/cartActions";
 import { createSale } from "../apis/sales";
 import { hidePaymentModal } from "../redux/paymentModal/PaymentModalActions";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 
 function roundToClosestHalfOrWhole(number) {
   return Math.round(number * 2) / 2;
 }
-
 
 const PaymentModal = () => {
   const { showPaymentModal } = useSelector(
@@ -30,16 +29,14 @@ const PaymentModal = () => {
   const dispatch = useDispatch();
 
   const { total, totalDiscount } = useMemo(() => {
-    const total = roundToClosestHalfOrWhole(cart.reduce(
-      (acc, item) => acc + item.product_price * item.quantity,
-      0 
-    ))
-    console.log(client)
-
+    const total = roundToClosestHalfOrWhole(
+      cart.reduce((acc, item) => acc + item.product_price * item.quantity, 0)
+    );
 
     const totalDiscount = client?.discount_percentage_complement
-      ? 
-      roundToClosestHalfOrWhole(total * (client.discount_percentage_complement / 100))
+      ? roundToClosestHalfOrWhole(
+          total * (client.discount_percentage_complement / 100)
+        )
       : total;
 
     return { total, totalDiscount };
@@ -83,10 +80,13 @@ const PaymentModal = () => {
     }));
   };
 
-  const totalPaymentInput = Object.values(paymentMethods.methods).reduce(
-    (acc, curr) => acc + curr,
-    0
-  ) * 100 / 100;
+  const totalPaymentInput =
+    (Object.values(paymentMethods.methods).reduce(
+      (acc, curr) => acc + curr,
+      0
+    ) *
+      100) /
+    100;
 
   const convertPaymentMethodsToList = () => {
     return Object.entries(paymentMethods.methods)
@@ -117,24 +117,21 @@ const PaymentModal = () => {
       setPaymentMethods({
         type: "radio",
         methods: { E: 0, P: 0, T: 0 },
-      })
+      });
       dispatch(removeClientfromCart());
       dispatch(cleanCart());
       dispatch(hidePaymentModal());
 
-
       Swal.fire({
-        icon: 'success',
-        title: 'Compra exitosa',
+        icon: "success",
+        title: "Compra exitosa",
         timer: 2000,
       });
-
-    }
-    else {
+    } else {
       Swal.fire({
-        icon: 'error',
-        title: 'Error al finalizar la compra',
-        text: 'Por favor llame a soporte tecnico',
+        icon: "error",
+        title: "Error al finalizar la compra",
+        text: "Por favor llame a soporte tecnico",
         timer: 2000,
       });
     }

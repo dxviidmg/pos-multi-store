@@ -4,8 +4,7 @@ import { createClient, getClients } from "../apis/clients";
 import { Col, Form, Row } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getDiscounts } from "../apis/discounts";
-import Swal from 'sweetalert2';
-
+import Swal from "sweetalert2";
 
 const ClientList = () => {
   const [clients, setClients] = useState([]);
@@ -21,13 +20,11 @@ const ClientList = () => {
     return Object.values(formData).some((value) => value === "");
   };
 
-
   useEffect(() => {
     const fetchData = async () => {
       const response = await getClients();
       setClients(response.data);
       const response2 = await getDiscounts();
-      console.log(response2);
       setDiscounts(response2.data);
     };
 
@@ -37,62 +34,59 @@ const ClientList = () => {
   const handleDataChange = async (e) => {
     let { name, value } = e.target;
 
-    if (name === "discount"){
-      value = parseInt(value)
+    if (name === "discount") {
+      value = parseInt(value);
     }
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
   const handleCreateClient = async (e) => {
-
-
     const response = await createClient(formData);
-    
-    console.log(response.data)
-
 
     if (response.status === 201) {
       setClients((prevClients) => [...prevClients, response.data]);
       Swal.fire({
-        icon: 'success',
-        title: 'Cliente creado',
+        icon: "success",
+        title: "Cliente creado",
         timer: 2000,
       });
-    }
-    else if (response.status === 400) {
-      let text = 'Error desconocido'
-      if (response.response.data.phone_number){
-        console.log('xxx', response.response.data.phone_number[0])
-        if (response.response.data.phone_number[0] === 'Ensure this field has at least 10 characters.'){
-          text = 'El telefono debe tener 10 digitos'
+    } else if (response.status === 400) {
+      let text = "Error desconocido";
+      if (response.response.data.phone_number) {
+        if (
+          response.response.data.phone_number[0] ===
+          "Ensure this field has at least 10 characters."
+        ) {
+          text = "El telefono debe tener 10 digitos";
         }
-        if (response.response.data.phone_number[0] === 'client with this phone number already exists.'){
-          text = 'El telefono ya existe'
+        if (
+          response.response.data.phone_number[0] ===
+          "client with this phone number already exists."
+        ) {
+          text = "El telefono ya existe";
         }
       }
       Swal.fire({
-        icon: 'error',
-        title: 'Error al crear cliente',
+        icon: "error",
+        title: "Error al crear cliente",
         timer: 2000,
-        text:text
+        text: text,
       });
-    
-    }
-    else {
+    } else {
       Swal.fire({
-        icon: 'error',
-        title: 'Error al crear cliente',
+        icon: "error",
+        title: "Error al crear cliente",
         timer: 2000,
-        text: 'Error desconocido, por favor comuniquese con soporte'
+        text: "Error desconocido, por favor comuniquese con soporte",
       });
     }
   };
 
   return (
     <>
-      <div >
+      <div>
         <Row className="section">
-        <Form.Label className="fw-bold">Crear cliente</Form.Label>
+          <Form.Label className="fw-bold">Crear cliente</Form.Label>
           <Col md={3}>
             <Form.Label>Nombre</Form.Label>
             <Form.Control
@@ -144,43 +138,45 @@ const ClientList = () => {
           </Col>
 
           <Col md={3}>
-          <Form.Label></Form.Label>
-          <CustomButton fullWidth={true} onClick={handleCreateClient} disabled={isFormIncomplete()} marginTop="10px">
+            <Form.Label></Form.Label>
+            <CustomButton
+              fullWidth={true}
+              onClick={handleCreateClient}
+              disabled={isFormIncomplete()}
+              marginTop="10px"
+            >
               Crear cliente
             </CustomButton>
-            
-
           </Col>
         </Row>
       </div>
-      <div >
+      <div>
         <Row className="section">
-        <Form.Label className="fw-bold">Lista de clientes</Form.Label>
-        <CustomTable
-          data={clients}
-          columns={[
-            {
-              name: "#",
-              selector: (row) => row.id,
-            },
-            {
-              name: "Nombre",
-              selector: (row) => row.full_name,
-              grow: 2,
-            },
-            {
-              name: "Telefono",
-              selector: (row) => row.phone_number,
-              grow: 2,
-              wrap: true,
-            },
-            {
-              name: "Descuento",
-              selector: (row) => row.discount_percentage + "%",
-            },
-          ]}
-        />
- 
+          <Form.Label className="fw-bold">Lista de clientes</Form.Label>
+          <CustomTable
+            data={clients}
+            columns={[
+              {
+                name: "#",
+                selector: (row) => row.id,
+              },
+              {
+                name: "Nombre",
+                selector: (row) => row.full_name,
+                grow: 2,
+              },
+              {
+                name: "Telefono",
+                selector: (row) => row.phone_number,
+                grow: 2,
+                wrap: true,
+              },
+              {
+                name: "Descuento",
+                selector: (row) => row.discount_percentage + "%",
+              },
+            ]}
+          />
         </Row>
       </div>
     </>
