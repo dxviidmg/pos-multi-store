@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Container, Row, Col, Alert } from "react-bootstrap";
 import { loginUser } from "../apis/login";
 import { useNavigate } from "react-router-dom";
@@ -15,7 +15,6 @@ function Login({ onLogin }) {
       shown: false,
       message: "",
     },
-    canLogin: true,
   });
 
   const handleChange = (e) => {
@@ -39,14 +38,6 @@ function Login({ onLogin }) {
     }));
   };
 
-  useEffect(() => {
-    const expirationDate = new Date(suscriptionExpirationDate);
-    const currentDate = new Date();
-    setState((prevState) => ({
-      ...prevState,
-      canLogin: currentDate <= expirationDate,
-    }));
-  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -76,16 +67,15 @@ function Login({ onLogin }) {
   };
 
   const handleRedirect = (response) => {
-    if (response.tipo_jurisdiccion) {
-      navigate(
-        `/${response.tipo_jurisdiccion.toLowerCase()}/${response.nombre_jurisdiccion.toLowerCase()}`
-      );
-    } else {
+    console.log('responsito', response)
+    if (response.store) {
       navigate("/nueva-venta/");
+    } else {
+      navigate("/aun-no-existe/");
     }
   };
 
-  const { formData, alertData, canLogin } = state;
+  const { formData, alertData } = state;
 
   return (
     <div id="login">
@@ -125,7 +115,7 @@ function Login({ onLogin }) {
                   />
                 </div>
                 <div className="d-grid gap-2 mt-3">
-                  {canLogin ? (
+                  
                     <button
                       type="submit"
                       className="btn btn-success"
@@ -133,12 +123,7 @@ function Login({ onLogin }) {
                     >
                       Iniciar sesión
                     </button>
-                  ) : (
-                    <span>
-                      No puede iniciar sesión, póngase en contacto con su
-                      proveedor.
-                    </span>
-                  )}
+                  
                 </div>
                 {alertData.shown && (
                   <Alert variant="danger" className="mt-3">
