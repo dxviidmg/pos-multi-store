@@ -3,8 +3,6 @@ import { Container, Row, Col, Alert } from "react-bootstrap";
 import { loginUser } from "../apis/login";
 import { useNavigate } from "react-router-dom";
 
-const suscriptionExpirationDate = process.env.REACT_APP_SUBSCRIPTION_EXPIRATION_DATE;
-
 function Login({ onLogin }) {
   const navigate = useNavigate();
 
