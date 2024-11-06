@@ -71,13 +71,14 @@ const SearchProduct = () => {
 
   const handleAddToCartIfAvailable = (product) => {
     const existingProductIndex = cart.findIndex((item) => item.id === product.id);
-    const quantity = product.quantity || 1;
+    const quantity = product.quantity || 0;
 
     if (existingProductIndex === -1) {
       const stock = movementType === "traspaso" ? product.reserved_stock : product.available_stock;
       if (quantity < stock) {
         dispatch(addToCart({ ...product, quantity: 1, movement_type: movementType }));
       } else {
+        console.log('1')
         displayStockLimitAlert();
       }
     } else {
