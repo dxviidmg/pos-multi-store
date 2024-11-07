@@ -35,6 +35,9 @@ const CustomNavbar = () => {
               <>
                 <Nav.Link href="/productos/">Productos</Nav.Link>
                 <Nav.Link href="/clientes/">Clientes</Nav.Link>
+                <Nav.Link href="/" onClick={handleLogout}>
+                  Salir
+                </Nav.Link>
               </>
             )}
           </Nav>
