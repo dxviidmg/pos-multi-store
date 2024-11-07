@@ -8,6 +8,7 @@ import { getBrands } from "../apis/brands";
 
 const ProductList = () => {
   const [products, setproducts] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [brands, setBrands] = useState([]);
   const [formData, setFormData] = useState({
     brand: "",
@@ -39,9 +40,10 @@ const ProductList = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true)
       const response = await getProducts();
-      console.log(response);
       setproducts(response.data);
+      setLoading(false)
       const response2 = await getBrands();
       setBrands(response2.data);
     };
@@ -197,6 +199,7 @@ const ProductList = () => {
         <Row className="section">
           <Form.Label className="fw-bold">Lista de productos</Form.Label>
           <CustomTable
+            progressPending={loading}
             data={products}
             columns={[
               {
