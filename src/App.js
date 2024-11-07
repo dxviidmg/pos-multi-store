@@ -12,6 +12,7 @@ import NewSale from "./components/newSale/NewSale";
 import SaleList from "./components/saleList/SaleList";
 import TransferList from "./components/transferList/TransferList";
 import ClientList from "./components/clientList/ClientList";
+import ProductList from "./components/prodcutList/ProductList";
 
 
 
@@ -43,6 +44,7 @@ function App() {
             <Route path="/nueva-venta" element={<NewSale />} />
             <Route path="/traspasos/" element={<TransferList />} />
             <Route path="/clientes/" element={<ClientList />} />
+            <Route path="/productos/" element={<ProductList />} />
             <Route path="/*" element={<NewSale />} />
           </>
         ) : (

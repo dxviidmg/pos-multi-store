@@ -6,7 +6,6 @@ import CustomButton from "../commons/customButton/CustomButton";
 import Swal from "sweetalert2";
 import { getBrands } from "../apis/brands";
 
-
 const ProductList = () => {
   const [products, setproducts] = useState([]);
   const [brands, setBrands] = useState([]);
@@ -17,46 +16,31 @@ const ProductList = () => {
     purchase_price: "",
     unit_sale_price: "",
     wholesale_sale_price: "",
-    min_wholesale_quantity: ""
+    min_wholesale_quantity: "",
   });
 
-
-  const areObjectsEqual = (obj1, obj2) => {
-    return Object.keys(obj1).every(
-      key => obj1[key] === obj2[key] && obj2.hasOwnProperty(key)
-    );
-  };
-
-
   const isFormIncomplete = () => {
-    console.log(formData)
-//    const { brand, code, name, purchase_price, unit_sale_price, wholesale_sale_price, min_wholesale_quantity } = formData;
-    
-    // Verificar que todos los campos excepto los dos específicos estén completos
+    // Separar los dos campos que pueden estar vacíos opcionalmente
+    const { wholesale_sale_price, min_wholesale_quantity, ...requiredFields } =
+      formData;
 
-    const { wholesale_sale_price, min_wholesale_quantity, ...formData2 } = formData;
+    // Verificar que los campos obligatorios no estén vacíos
+    const areRequiredFieldsComplete = !Object.values(requiredFields).some(
+      (value) => value === ""
+    );
 
-    console.log('formData2', formData2, wholesale_sale_price, min_wholesale_quantity)
-    const c1 = Object.values(formData2).some((value) => value === "")
+    // Verificar las condiciones de los campos opcionales
+    const areOptionalFieldsConsistent =
+      (wholesale_sale_price === "") === (min_wholesale_quantity === "");
 
-    console.log('OBLIGATORIAS', c1)
-
-    const todos_vacios = (wholesale_sale_price === "" && min_wholesale_quantity === "")
-    console.log('TODOS VACIOS', todos_vacios)
-
-    const todos_llenos = (wholesale_sale_price !== "" && min_wholesale_quantity !== "")
-    console.log('todos_llenos', todos_llenos)
-
-    const c2 = !(todos_llenos || todos_vacios)
-
-    console.log('pasa', c2)
-    return c1 || c2 
+    // La forma está incompleta si hay campos obligatorios vacíos o los opcionales son inconsistentes
+    return !areRequiredFieldsComplete || !areOptionalFieldsConsistent;
   };
 
   useEffect(() => {
     const fetchData = async () => {
       const response = await getProducts();
-      console.log(response)
+      console.log(response);
       setproducts(response.data);
       const response2 = await getBrands();
       setBrands(response2.data);
@@ -70,7 +54,7 @@ const ProductList = () => {
 
     setFormData((prevData) => ({ ...prevData, [name]: value }));
 
-    console.log(formData)
+    console.log(formData);
   };
 
   const handleCreateproduct = async (e) => {
@@ -174,7 +158,6 @@ const ProductList = () => {
             />
           </Col>
 
-
           <Col md={3}>
             <Form.Label>Precio de venta mayoreo</Form.Label>
             <Form.Control
@@ -186,7 +169,6 @@ const ProductList = () => {
             />
           </Col>
 
-
           <Col md={3}>
             <Form.Label>Cantidad minima mayoreo</Form.Label>
             <Form.Control
@@ -197,7 +179,6 @@ const ProductList = () => {
               onChange={handleDataChange}
             />
           </Col>
-
 
           <Col md={3}>
             <Form.Label></Form.Label>
@@ -229,24 +210,32 @@ const ProductList = () => {
               {
                 name: "Nombre",
                 selector: (row) => row.name,
-                grow: 2
+                grow: 2,
+                wrap: true
               },
               {
                 name: "Precio de compra",
-                selector: (row) => '$' + row.purchase_price,
+                selector: (row) => "$" + row.purchase_price,
                 wrap: true,
               },
               {
                 name: "Precio de venta unitario",
-                selector: (row) => '$'  + row.unit_sale_price,
+                selector: (row) => "$" + row.unit_sale_price,
               },
               {
                 name: "Precio de venta mayoreo",
-                selector: (row) => (row.apply_wholesale? '$'  + row.wholesale_sale_price + ' apartir de ' + row.min_wholesale_quantity : 'NA'),
+                selector: (row) =>
+                  row.apply_wholesale
+                    ? "$" +
+                      row.wholesale_sale_price +
+                      " apartir de " +
+                      row.min_wholesale_quantity
+                    : "NA",
               },
               {
                 name: "Aplica PM sobre DC",
-                selector: (row) => row.apply_wholesale_price_on_costumer_discount ? 'Si': 'No',
+                selector: (row) =>
+                  row.apply_wholesale_price_on_costumer_discount ? "Si" : "No",
               },
             ]}
           />
