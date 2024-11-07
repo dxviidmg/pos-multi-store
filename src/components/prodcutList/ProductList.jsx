@@ -16,11 +16,13 @@ const ProductList = () => {
     name: "",
     purchase_price: "",
     unit_sale_price: "",
-    wholesale_sale_price: "",
-    min_wholesale_quantity: "",
+    wholesale_sale_price: null,
+    min_wholesale_quantity: null,
+    apply_wholesale_price_on_costumer_discount: false
   });
 
   const isFormIncomplete = () => {
+    console.log(formData)
     // Separar los dos campos que pueden estar vacíos opcionalmente
     const { wholesale_sale_price, min_wholesale_quantity, ...requiredFields } =
       formData;
@@ -52,14 +54,19 @@ const ProductList = () => {
   }, []);
 
   const handleDataChange = async (e) => {
-    let { name, value } = e.target;
+    let { name, value, checked } = e.target;
 
+    console.log('c', name, 'v', value, checked)
+    if (name === "apply_wholesale_price_on_costumer_discount"){
+      value = checked
+    }
     setFormData((prevData) => ({ ...prevData, [name]: value }));
 
-    console.log(formData);
+//    console.log(formData);
   };
 
   const handleCreateproduct = async (e) => {
+    console.log(formData)
     const response = await createProduct(formData);
 
     if (response.status === 201) {
@@ -67,7 +74,7 @@ const ProductList = () => {
 
       Swal.fire({
         icon: "success",
-        title: "producte creado",
+        title: "producto creado",
         timer: 2000,
       });
     } else if (response.status === 400) {
@@ -180,6 +187,16 @@ const ProductList = () => {
               name="min_wholesale_quantity"
               onChange={handleDataChange}
             />
+          </Col>
+          <Col md={3}>
+          <Form.Check // prettier-ignore
+            type="checkbox"
+            id={`default-checkbox`}
+            label="Aplicar precio de mayoreo en descuento de cliente registrado"
+            checked={formData.apply_wholesale_price_on_costumer_discount === true}
+            onChange={handleDataChange}
+            name = "apply_wholesale_price_on_costumer_discount"
+          />
           </Col>
 
           <Col md={3}>
