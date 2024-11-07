@@ -7,7 +7,7 @@ const CustomTable =
     columns,
     data,
     progressPending = false,
-    noDataComponent = null
+    noDataComponent = 'Sin datos que mostrae'
   }) => {
 
     return (
