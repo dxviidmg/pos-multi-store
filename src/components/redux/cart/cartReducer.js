@@ -57,15 +57,17 @@ const cartReducer = (state = initialState, action) => {
         reserved_stock,
         available_stock,
         movement_type,
+        quantity
       } = action.payload;
       const existingProductIndex = state.cart.findIndex((item) => item.id === id);
-      const stockTemp = movement_type === "compra" ? available_stock : reserved_stock;
+      let stockTemp = movement_type === "venta" ? available_stock : reserved_stock;
+      
       const clientSelected = aClientIsSelected(state.client);
 
       if (existingProductIndex !== -1) {
         const updatedCart = state.cart.map((item, index) => {
           if (index === existingProductIndex) {
-            const updatedQuantity = Math.min(item.quantity + 1, stockTemp);
+            const updatedQuantity = movement_type === "agregar" ? item.quantity + 1: Math.min(item.quantity + 1, stockTemp);
             return {
               ...item,
               quantity: updatedQuantity,

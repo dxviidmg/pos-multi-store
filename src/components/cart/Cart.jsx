@@ -95,7 +95,7 @@ const Cart = () => {
       <div>
         {cart.length !== 0 && (
           <Row>
-            {movementType === "compra" ? (
+            {movementType === "venta" ? (
               <>
                 {" "}
                 <Col md={6}></Col>
@@ -154,7 +154,7 @@ const Cart = () => {
               selector: (row) => row.stock,
             },
 
-            ...(movementType === "compra"
+            ...(movementType === "venta"
               ? [
                   {
                     name: "Precio",
@@ -164,11 +164,11 @@ const Cart = () => {
               : []),
 
             {
-              name: movementType === "traspaso" ? "Traspasar" : "Vender",
+              name: movementType === "traspaso" ? "Traspasar" : movementType === "agregar" ? "Agregar" : "Vender",
               selector: (row) => row.quantity,
             },
 
-            ...(movementType === "compra"
+            ...(movementType === "venta"
               ? [
                   {
                     name: "Total por producto",

@@ -24,6 +24,7 @@ const CustomNavbar = () => {
             <Navbar.Text>{getUserData().store ? getUserData().store: 'Usuario: Administrador'}</Navbar.Text>
             {user && user.store ? (
               <>
+                <Nav.Link href="/nueva-venta/">Vender</Nav.Link>
                 <Nav.Link href="/clientes/">Clientes</Nav.Link>
                 <Nav.Link href="/ventas/">Ventas</Nav.Link>
               </>

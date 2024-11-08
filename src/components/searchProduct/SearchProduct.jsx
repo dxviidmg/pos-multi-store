@@ -59,10 +59,18 @@ const SearchProduct = () => {
 
   const handleSingleProductFetch = (product) => {
     if (
-      (movementType === "compra" && product.available_stock === 0) ||
-      (movementType === "traspaso" && product.reserved_stock === 0)
+      (movementType === "venta" && product.available_stock === 0)
     ) {
       handleOpenModal(product);
+    }
+    else if (
+      (movementType === "traspaso" && product.reserved_stock === 0)
+    ) {
+      Swal.fire({
+        icon: "error",
+        title: "Este producto no esta relacionado a algun traspaso",
+        timer: 2000,
+      });
     } else {
       handleAddToCartIfAvailable(product);
     }
@@ -78,17 +86,20 @@ const SearchProduct = () => {
       if (quantity < stock) {
         dispatch(addToCart({ ...product, quantity: 1, movement_type: movementType }));
       } else {
-        console.log('1')
         displayStockLimitAlert();
       }
     } else {
+      console.log('aqui2', movementType)
       const existingProduct = cart[existingProductIndex];
       const stock = movementType === "traspaso" ? product.reserved_stock : product.available_stock;
-
-      if (existingProduct.quantity < stock) {
+      if (movementType === "agregar") {
+        console.log('agregar')
         dispatch(addToCart({ ...product, quantity: 1, movement_type: movementType }));
       }
-      else if (movementType === "compra" && existingProduct.quantity >= stock) {
+      else if (existingProduct.quantity < stock) {
+        dispatch(addToCart({ ...product, quantity: 1, movement_type: movementType }));
+      }
+      else if (movementType === "venta" && existingProduct.quantity >= stock) {
         handleOpenModal(existingProduct);
       }
       else {
@@ -102,7 +113,7 @@ const SearchProduct = () => {
       icon: "error",
       title: movementType === "traspaso"
         ? "Llegaste al límite de producto reservado para traspasar"
-        : "No hay suficiente stock para comprar",
+        : "No hay suficiente stock para ventar",
       timer: 2000,
     });
   };
@@ -174,12 +185,12 @@ const SearchProduct = () => {
       <Form.Label className="me-3">Tipo de operación:</Form.Label>
       <Form.Check
         inline
-        id="compra"
-        label="Compra"
+        id="venta"
+        label="Venta"
         type="radio"
         onChange={handleMovementTypeChange}
-        value="compra"
-        checked={movementType === "compra"}
+        value="venta"
+        checked={movementType === "venta"}
       />
       <Form.Check
         inline
@@ -189,6 +200,16 @@ const SearchProduct = () => {
         onChange={handleMovementTypeChange}
         value="traspaso"
         checked={movementType === "traspaso"}
+      />
+
+      <Form.Check
+        inline
+        id="agregar"
+        label="Agregar a inventario"
+        type="radio"
+        onChange={handleMovementTypeChange}
+        value="agregar"
+        checked={movementType === "agregar"}
       />
       <br />
       <Form.Label className="fw-bold">
@@ -221,14 +242,14 @@ const SearchProduct = () => {
                 : "N/A",
           },
           {
-            name: "Añadir",
+            name: "Agregar a venta",
             cell: (row) => (
               <CustomButton
                 onClick={() => handleAddToCartIfAvailable(row)}
                 disabled={row.available_stock === 0}
                 variant="primary"
               >
-                Añadir
+                Agregar
               </CustomButton>
             ),
           },

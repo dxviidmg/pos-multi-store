@@ -146,11 +146,11 @@ const ProductList = () => {
           </Col>
 
           <Col md={3}>
-            <Form.Label>Precio de compra</Form.Label>
+            <Form.Label>Precio de venta</Form.Label>
             <Form.Control
               type="number"
               value={formData.purchase_price}
-              placeholder="Precio de compra"
+              placeholder="Precio de venta"
               name="purchase_price"
               onChange={handleDataChange}
             />
@@ -161,7 +161,7 @@ const ProductList = () => {
             <Form.Control
               type="number"
               value={formData.unit_sale_price}
-              placeholder="Precio de compra"
+              placeholder="Precio de venta"
               name="unit_sale_price"
               onChange={handleDataChange}
             />
@@ -234,7 +234,7 @@ const ProductList = () => {
                 wrap: true
               },
               {
-                name: "Precio de compra",
+                name: "Precio de venta",
                 selector: (row) => "$" + row.purchase_price,
                 wrap: true,
               },
