@@ -81,7 +81,7 @@ const SearchProduct = () => {
     if (existingProductIndex === -1) {
       const stock = movementType === "traspaso" ? product.reserved_stock : product.available_stock;
       if (quantity < stock) {
-        dispatch(addToCart({ ...product, quantity: 1, movement_type: movementType }));
+        dispatch(addToCart({ ...product, quantity: 1}));
       } else {
         displayStockLimitAlert();
       }
@@ -91,10 +91,10 @@ const SearchProduct = () => {
       const stock = movementType === "traspaso" ? product.reserved_stock : product.available_stock;
       if (movementType === "agregar") {
         console.log('agregar')
-        dispatch(addToCart({ ...product, quantity: 1, movement_type: movementType }));
+        dispatch(addToCart({ ...product, quantity: 1}));
       }
       else if (existingProduct.quantity < stock) {
-        dispatch(addToCart({ ...product, quantity: 1, movement_type: movementType }));
+        dispatch(addToCart({ ...product, quantity: 1}));
       }
       else if (movementType === "venta" && existingProduct.quantity >= stock) {
         handleOpenModal(existingProduct);
