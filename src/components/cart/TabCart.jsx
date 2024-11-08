@@ -10,7 +10,7 @@ import { useSelector } from 'react-redux';
 function TabCart() {
   const [activeTab, setActiveTab] = useState("venta-actual");
   const [refreshKey, setRefreshKey] = useState(0);
-  const movementType = useSelector((state) => state.movementTypeReducer.movementType);
+  const movementType = useSelector((state) => state.cartReducer.movementType);
 
   const handleSelect = (key) => {
     setActiveTab(key);

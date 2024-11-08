@@ -16,7 +16,7 @@ import Swal from "sweetalert2";
 const Cart = () => {
   const cart = useSelector((state) => state.cartReducer.cart);
   const movementType = useSelector(
-    (state) => state.movementTypeReducer.movementType
+    (state) => state.cartReducer.movementType
   );
 
   const dispatch = useDispatch();

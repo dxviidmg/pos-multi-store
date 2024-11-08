@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import CustomTable from "../commons/customTable/customTable";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getStoreProducts } from "../apis/products";
-import { addToCart, cleanCart } from "../redux/cart/cartActions";
+import { addToCart, cleanCart, updateMovementType } from "../redux/cart/cartActions";
 import { Form } from "react-bootstrap";
 import { debounce } from "lodash";
 import StockModal from "../stockModal/StockModal";
@@ -12,15 +12,12 @@ import {
   showStockModal,
 } from "../redux/stockModal/StockModalActions";
 import Swal from "sweetalert2";
-import { updateMovement } from "../redux/movementType/movementTypeActions";
 
 const SearchProduct = () => {
   const inputRef = useRef(null);
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.cartReducer.cart);
-  const movementType = useSelector(
-    (state) => state.movementTypeReducer.movementType
-  );
+  const movementType = useSelector((state) => state.cartReducer.movementType);
 
   const [query, setQuery] = useState("");
   const [data, setData] = useState([]);
@@ -136,7 +133,8 @@ const SearchProduct = () => {
   };
 
   const handleMovementTypeChange = (e) => {
-    dispatch(updateMovement(e.target.value));
+    dispatch(updateMovementType(e.target.value));
+    
     setData([]);
     dispatch(cleanCart());
   };

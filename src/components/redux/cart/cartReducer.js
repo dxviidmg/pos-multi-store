@@ -4,11 +4,13 @@ import {
   ADD_TO_CART,
   REMOVE_FROM_CART,
   CLEAN_CART,
+  UPDATE_MOVEMENT_TYPE
 } from "./cartActions";
 
 const initialState = {
   cart: [],
   client: {},
+  movementType: "venta"
 };
 
 const aClientIsSelected = (client) => Object.keys(client).length > 0;
@@ -57,7 +59,6 @@ const cartReducer = (state = initialState, action) => {
         reserved_stock,
         available_stock,
         movement_type,
-        quantity
       } = action.payload;
       const existingProductIndex = state.cart.findIndex((item) => item.id === id);
       let stockTemp = movement_type === "venta" ? available_stock : reserved_stock;
@@ -101,6 +102,9 @@ const cartReducer = (state = initialState, action) => {
 
     case CLEAN_CART:
       return { ...state, cart: [] };
+
+    case UPDATE_MOVEMENT_TYPE:
+      return { ...state, movementType: action.payload };
 
     default:
       return state;
