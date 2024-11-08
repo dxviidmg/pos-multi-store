@@ -24,22 +24,19 @@ const CustomNavbar = () => {
             <Navbar.Text>{getUserData().store ? getUserData().store: 'Usuario: Administrador'}</Navbar.Text>
             {user && user.store ? (
               <>
-                <Navbar.Text>{user.store}</Navbar.Text>
                 <Nav.Link href="/clientes/">Clientes</Nav.Link>
                 <Nav.Link href="/ventas/">Ventas</Nav.Link>
-                <Nav.Link href="/" onClick={handleLogout}>
-                  Salir
-                </Nav.Link>
               </>
             ) : (
               <>
                 <Nav.Link href="/productos/">Productos</Nav.Link>
                 <Nav.Link href="/clientes/">Clientes</Nav.Link>
-                <Nav.Link href="/" onClick={handleLogout}>
-                  Salir
-                </Nav.Link>
+                
               </>
             )}
+            <Nav.Link href="/" onClick={handleLogout}>
+                  Salir
+                </Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Container>
