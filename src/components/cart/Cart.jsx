@@ -15,9 +15,7 @@ import Swal from "sweetalert2";
 
 const Cart = () => {
   const cart = useSelector((state) => state.cartReducer.cart);
-  const movementType = useSelector(
-    (state) => state.cartReducer.movementType
-  );
+  const movementType = useSelector((state) => state.cartReducer.movementType);
 
   const dispatch = useDispatch();
   const [stores, setStores] = useState([]);
@@ -48,17 +46,19 @@ const Cart = () => {
 
   const handleRemoveFromCart = (product) => dispatch(removeFromCart(product));
 
-  const handleTranserFromCart = async (product) => {
+  const handleTranserFromCart = async (cart) => {
+    alert('Cambiar de product a products (cart). api, if tipo tienda solo vea tiendas')
+    return
     const data = {
-      product: product.product_id,
-      quantity: product.quantity,
-      destination_store: selectedStore,
+//      product: product.product_id,
+//      quantity: product.quantity,
+//      destination_store: selectedStore,
     };
 
     const response = await confirmTransfer(data);
 
     if (response.status === 200) {
-      dispatch(removeFromCart(product));
+  //    dispatch(removeFromCart(product));
 
       Swal.fire({
         icon: "success",
@@ -81,7 +81,46 @@ const Cart = () => {
       });
     }
 
-    removeFromCart(product);
+//    removeFromCart(product);
+  };
+
+
+  const handleAddToStock = async (cart) => {
+    alert('crear api')
+    return
+    const data = {
+//      product: product.product_id,
+//      quantity: product.quantity,
+//      destination_store: selectedStore,
+    };
+
+    const response = await confirmTransfer(data);
+
+    if (response.status === 200) {
+//      dispatch(removeFromCart(product));
+
+      Swal.fire({
+        icon: "success",
+        title: "Traspaso confirmado",
+        timer: 2000,
+      });
+    } else if (response.status === 404) {
+      Swal.fire({
+        icon: "error",
+        title: "Transpaso no encontrado",
+        text: "No se puede completar el traspaso de producto",
+        timer: 2000,
+      });
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Error desconocido",
+        text: "Por favor llame a soporte tecnico",
+        timer: 2000,
+      });
+    }
+
+//    removeFromCart(product);
   };
 
   const handleOpenModal = () => {
@@ -95,7 +134,7 @@ const Cart = () => {
       <div>
         {cart.length !== 0 && (
           <Row>
-            {movementType === "venta" ? (
+            {movementType === "venta" && (
               <>
                 {" "}
                 <Col md={6}></Col>
@@ -113,10 +152,12 @@ const Cart = () => {
                   </CustomButton>
                 </Col>
               </>
-            ) : (
+            )}
+
+            {movementType === "traspaso" && (
               <>
                 {" "}
-                <Col md={9}></Col>
+                <Col md={6}></Col>
                 <Col md={3}>
                   <Form.Select
                     aria-label="Default select example"
@@ -131,8 +172,36 @@ const Cart = () => {
                     ))}
                   </Form.Select>
                 </Col>
+                <Col md={3}>
+                  <CustomButton
+                    onClick={() => handleTranserFromCart(cart)}
+                    disabled={selectedStore === ""}
+                    fullWidth={true}
+                  >
+                    Transferir
+                  </CustomButton>
+                </Col>
               </>
             )}
+
+
+{movementType === "agregar" && (
+              <>
+                {" "}
+                <Col md={9}></Col>
+
+                <Col md={3}>
+                  <CustomButton
+                  //pendiente
+                    onClick={() => handleAddToStock(cart)}
+                    fullWidth={true}
+                  >
+                    Añadir
+                  </CustomButton>
+                </Col>
+              </>
+            )}
+
           </Row>
         )}
         <CustomTable
@@ -164,7 +233,12 @@ const Cart = () => {
               : []),
 
             {
-              name: movementType === "traspaso" ? "Traspasar" : movementType === "agregar" ? "Agregar" : "Vender",
+              name:
+                movementType === "traspaso"
+                  ? "Traspasar"
+                  : movementType === "agregar"
+                  ? "Agregar"
+                  : "Vender",
               selector: (row) => row.quantity,
             },
 
@@ -186,21 +260,6 @@ const Cart = () => {
                 </CustomButton>
               ),
             },
-            ...(movementType === "traspaso"
-              ? [
-                  {
-                    name: "Transferir",
-                    selector: (row) => (
-                      <CustomButton
-                        onClick={() => handleTranserFromCart(row)}
-                        disabled={selectedStore === ""}
-                      >
-                        Transferir
-                      </CustomButton>
-                    ),
-                  },
-                ]
-              : []),
           ]}
         />
       </div>
