@@ -103,7 +103,7 @@ const cartReducer = (state = initialState, action) => {
       return { ...state, cart: [] };
 
     case UPDATE_MOVEMENT_TYPE:
-      return { ...state, movementType: action.payload };
+      return { ...state, movementType: action.payload, cart: [] };
 
     default:
       return state;

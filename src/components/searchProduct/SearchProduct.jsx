@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import CustomTable from "../commons/customTable/customTable";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getStoreProducts } from "../apis/products";
-import { addToCart, cleanCart, updateMovementType } from "../redux/cart/cartActions";
+import { addToCart, updateMovementType } from "../redux/cart/cartActions";
 import { Form } from "react-bootstrap";
 import { debounce } from "lodash";
 import StockModal from "../stockModal/StockModal";
@@ -136,7 +136,6 @@ const SearchProduct = () => {
     dispatch(updateMovementType(e.target.value));
     
     setData([]);
-    dispatch(cleanCart());
   };
 
   const handleBarcodeSearch = (event) => {

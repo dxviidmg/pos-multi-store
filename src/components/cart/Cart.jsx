@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import CustomTable from "../commons/customTable/customTable";
-import { removeFromCart } from "../redux/cart/cartActions";
+import { cleanCart, removeFromCart } from "../redux/cart/cartActions";
 import CustomButton from "../commons/customButton/CustomButton";
 import { Col, Form, Row } from "react-bootstrap";
 import PaymentModal from "../paymentModal/PaymentModal";
@@ -10,7 +10,7 @@ import {
   showPaymentModal,
 } from "../redux/paymentModal/PaymentModalActions";
 import { getStores } from "../apis/stores";
-import { confirmTransfer } from "../apis/transfers";
+import { confirmTransfers } from "../apis/transfers";
 import Swal from "sweetalert2";
 
 const Cart = () => {
@@ -47,18 +47,15 @@ const Cart = () => {
   const handleRemoveFromCart = (product) => dispatch(removeFromCart(product));
 
   const handleTranserFromCart = async (cart) => {
-    alert('Cambiar de product a products (cart). api, if tipo tienda solo vea tiendas')
-    return
     const data = {
-//      product: product.product_id,
-//      quantity: product.quantity,
-//      destination_store: selectedStore,
+      transfers: cart,
+      destination_store: selectedStore,
     };
 
-    const response = await confirmTransfer(data);
+    const response = await confirmTransfers(data);
 
     if (response.status === 200) {
-  //    dispatch(removeFromCart(product));
+      dispatch(cleanCart());
 
       Swal.fire({
         icon: "success",
@@ -69,7 +66,7 @@ const Cart = () => {
       Swal.fire({
         icon: "error",
         title: "Transpaso no encontrado",
-        text: "No se puede completar el traspaso de producto",
+        text: "Algunos productos no coinciden con el traspaso solicitado, ya sea en cantidad o en código.",
         timer: 2000,
       });
     } else {
@@ -94,7 +91,7 @@ const Cart = () => {
 //      destination_store: selectedStore,
     };
 
-    const response = await confirmTransfer(data);
+    const response = await confirmTransfers(data);
 
     if (response.status === 200) {
 //      dispatch(removeFromCart(product));

@@ -28,10 +28,10 @@ export const getTransfers = async () => {
   };
 
   
-  export const confirmTransfer = async (data) => {
+  export const confirmTransfers = async (data) => {
 
     try {
-    const response = await axios.post(getApiUrl("confirm-transfer"), data, {
+    const response = await axios.post(getApiUrl("confirm-transfers"), data, {
       headers: getHeaders(),
     });
     return response;
