@@ -12,6 +12,7 @@ import {
 import { getStores } from "../apis/stores";
 import { confirmTransfers } from "../apis/transfers";
 import Swal from "sweetalert2";
+import { addProducts } from "../apis/products";
 
 const Cart = () => {
   const cart = useSelector((state) => state.cartReducer.cart);
@@ -83,22 +84,18 @@ const Cart = () => {
 
 
   const handleAddToStock = async (cart) => {
-    alert('crear api')
-    return
     const data = {
-//      product: product.product_id,
-//      quantity: product.quantity,
-//      destination_store: selectedStore,
+      products: cart
     };
 
-    const response = await confirmTransfers(data);
+    const response = await addProducts(data);
 
     if (response.status === 200) {
-//      dispatch(removeFromCart(product));
+      dispatch(cleanCart());
 
       Swal.fire({
         icon: "success",
-        title: "Traspaso confirmado",
+        title: "Se agrego producto al inventario",
         timer: 2000,
       });
     } else if (response.status === 404) {
@@ -116,8 +113,6 @@ const Cart = () => {
         timer: 2000,
       });
     }
-
-//    removeFromCart(product);
   };
 
   const handleOpenModal = () => {

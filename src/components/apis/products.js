@@ -46,5 +46,18 @@ export const getStoreProducts = async (filter, query) => {
     }
   };
 
+  export const addProducts = async (data) => {
+    const apiUrl = new URL(getApiUrl("add-products"));
+
+  
+    try {
+      const response = await axios.post(apiUrl, data, {
+        headers: getHeaders(),
+      });
+      return response;
+    } catch (error) {
+      return error;
+    }
+  };
 
 
