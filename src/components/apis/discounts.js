@@ -14,3 +14,17 @@ export const getDiscounts = async () => {
       return error;
     }
   };
+
+  export const createDiscount = async (data) => {
+    const apiUrl = new URL(getApiUrl("discount"));
+
+  
+    try {
+      const response = await axios.post(apiUrl, data, {
+        headers: getHeaders(),
+      });
+      return response;
+    } catch (error) {
+      return error;
+    }
+  };

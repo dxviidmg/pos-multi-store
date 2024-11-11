@@ -3,6 +3,7 @@ import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import { getUserData } from "../apis/utils";
+import { NavDropdown } from "react-bootstrap";
 
 const CustomNavbar = () => {
   const handleLogout = () => {
@@ -32,7 +33,19 @@ const CustomNavbar = () => {
               <>
                 <Nav.Link href="/productos/">Productos</Nav.Link>
                 <Nav.Link href="/clientes/">Clientes</Nav.Link>
-                
+
+
+                <NavDropdown title="Clientes" id="navbarScrollingDropdown">
+                <NavDropdown.Item href="/clientes/">Clientes</NavDropdown.Item>
+                <NavDropdown.Divider />
+              <NavDropdown.Item href="/clientes/">
+                Descuentos
+              </NavDropdown.Item>
+            </NavDropdown>
+
+
+
+
               </>
             )}
             <Nav.Link href="/" onClick={handleLogout}>

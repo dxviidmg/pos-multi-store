@@ -33,11 +33,26 @@ export const getStoreProducts = async (filter, query) => {
 
 
   export const createProduct = async (data) => {
+    
     const apiUrl = new URL(getApiUrl("product"));
 
   
     try {
       const response = await axios.post(apiUrl, data, {
+        headers: getHeaders(),
+      });
+      return response;
+    } catch (error) {
+      return error;
+    }
+  };
+
+  export const updateProduct = async (data) => {
+    const apiUrl = new URL(getApiUrl("product/"+data.id));
+
+  
+    try {
+      const response = await axios.patch(apiUrl, data, {
         headers: getHeaders(),
       });
       return response;
