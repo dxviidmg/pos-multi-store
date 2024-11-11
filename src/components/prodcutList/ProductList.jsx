@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { createProduct, getProducts } from "../apis/products";
+import { createProduct, getProducts, updateProduct } from "../apis/products";
 import { Col, Form, Row } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import Swal from "sweetalert2";
 import { getBrands } from "../apis/brands";
 
 const ProductList = () => {
-  const [products, setproducts] = useState([]);
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [brands, setBrands] = useState([]);
   const [formData, setFormData] = useState({
@@ -16,8 +16,8 @@ const ProductList = () => {
     name: "",
     purchase_price: "",
     unit_sale_price: "",
-    wholesale_sale_price: null,
-    min_wholesale_quantity: null,
+    wholesale_sale_price: "",
+    min_wholesale_quantity: "",
     apply_wholesale_price_on_costumer_discount: false
   });
 
@@ -44,7 +44,7 @@ const ProductList = () => {
     const fetchData = async () => {
       setLoading(true)
       const response = await getProducts();
-      setproducts(response.data);
+      setProducts(response.data);
       setLoading(false)
       const response2 = await getBrands();
       setBrands(response2.data);
@@ -67,17 +67,49 @@ const ProductList = () => {
 
   const handleCreateproduct = async (e) => {
     console.log(formData)
-    const response = await createProduct(formData);
+
+    let response = undefined
+    if (formData.id){
+      response = await updateProduct(formData);
+    }
+    else{
+      response = await createProduct(formData);
+    }
 
     if (response.status === 201) {
-      setproducts((prevproducts) => [...prevproducts, response.data]);
+      setProducts((prevproducts) => [...prevproducts, response.data]);
 
       Swal.fire({
         icon: "success",
         title: "producto creado",
         timer: 2000,
       });
-    } else if (response.status === 400) {
+    }
+    if (response.status === 200) {
+      setProducts((prevProducts) =>
+        prevProducts.map((product) =>
+          product.id === response.data.id ? response.data : product
+        )
+      );
+      
+      setFormData(
+        {
+          brand: "",
+          code: "",
+          name: "",
+          purchase_price: "",
+          unit_sale_price: "",
+          wholesale_sale_price: "",
+          min_wholesale_quantity: "",
+          apply_wholesale_price_on_costumer_discount: false}
+      )
+      Swal.fire({
+        icon: "success",
+        title: "producto actualizado",
+        timer: 2000,
+      });
+    }
+    else if (response.status === 400) {
       let text = "Error desconocido";
       if (response.response.data.code) {
         if (
@@ -207,7 +239,7 @@ const ProductList = () => {
               disabled={isFormIncomplete()}
               marginTop="10px"
             >
-              Crear producto
+              {formData.id ? 'Actualizar': 'Crear'} producto
             </CustomButton>
           </Col>
         </Row>
@@ -256,6 +288,14 @@ const ProductList = () => {
                 name: "Aplica PM sobre DC",
                 selector: (row) =>
                   row.apply_wholesale_price_on_costumer_discount ? "Si" : "No",
+              },
+              {
+                name: "Accciones",
+                cell: (row) => (
+                  <CustomButton onClick={() => setFormData(row)}>
+                    Editar
+                  </CustomButton>
+                ),
               },
             ]}
           />
