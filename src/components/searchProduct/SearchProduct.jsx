@@ -224,7 +224,7 @@ const SearchProduct = () => {
         onBlur={() => setIsInputFocused(false)}
       />
       <CustomTable
-        title="Productos"
+        showNoDataComponent={false}
         data={data}
         columns={[
           { name: "Código", selector: (row) => row.product_code },

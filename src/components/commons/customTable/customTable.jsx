@@ -7,13 +7,14 @@ const CustomTable =
     columns,
     data,
     progressPending = false,
-    noDataComponent = 'Sin datos que mostrar'
+    noDataComponent = 'Sin datos que mostrar',
+    showNoDataComponent = true
   }) => {
 
     return (
         <div className="table-container">
           <DataTable
-            noDataComponent={noDataComponent}
+            noDataComponent={showNoDataComponent && noDataComponent}
             columns={columns}
             data={data}
             pagination={data.length > 10}
