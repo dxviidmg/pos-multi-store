@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
 import { createClient, getClients } from "../apis/clients";
-import { Col, Form, Row } from "react-bootstrap";
+import { Col, Container, Form, Row } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import { createDiscount, getDiscounts } from "../apis/discounts";
 import Swal from "sweetalert2";
@@ -144,33 +144,12 @@ const ClientList = () => {
   };
 
   return (
-    <>
-      {userType === "admin" && (
-        <Row className="section">
-          <Form.Label className="fw-bold">Crear descuento</Form.Label>
-          <Col>
-            <Form.Label>Descuento</Form.Label>
-            <Form.Control
-              type="number"
-              value={formData2.discount_percentage}
-              placeholder="Descuento"
-              name="discount_percentage"
-              onChange={handleData2Change}
-            />
+    <Container fluid>
 
-            <CustomButton
-              fullWidth={true}
-              onClick={handleCreateDiscount}
-              disabled={formData2.discount_percentage === ""}
-              marginTop="10px"
-            >
-              Crear descuento
-            </CustomButton>
-          </Col>
-        </Row>
-      )}
+      <Row>
+        <Col md={userType === "admin" ? 9 : 12}>
 
-      <Row className={`section${userType === "admin" ? "" : ""}`}>
+        <Row className={`section${userType === "admin" ? "-left" : ""}`}>
         <Form.Label className="fw-bold">Crear cliente</Form.Label>
         <Col>
           <Form.Label>Nombre</Form.Label>
@@ -234,6 +213,51 @@ const ClientList = () => {
         </Col>
       </Row>
 
+
+        </Col>
+        <Col md={3}>
+        
+        
+
+
+        {userType === "admin" && (
+        <Row className="section-right">
+
+          <Form>
+          <Form.Label className="fw-bold">Crear descuento</Form.Label>
+          <br></br>
+            <Form.Label>Descuento</Form.Label>
+            <Form.Control
+              type="number"
+              value={formData2.discount_percentage}
+              placeholder="Descuento"
+              name="discount_percentage"
+              onChange={handleData2Change}
+            />
+
+            <CustomButton
+              fullWidth={true}
+              onClick={handleCreateDiscount}
+              disabled={formData2.discount_percentage === ""}
+              marginTop="10px"
+            >
+              Crear descuento
+            </CustomButton>
+          </Form>
+        </Row>
+      )}
+
+
+
+
+
+        
+        </Col>
+      </Row>
+
+
+
+
       <Row className="section">
         <Form.Label className="fw-bold">Lista de clientes</Form.Label>
         <CustomTable
@@ -261,7 +285,7 @@ const ClientList = () => {
           ]}
         />
       </Row>
-    </>
+    </Container>
   );
 };
 
