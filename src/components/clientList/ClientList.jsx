@@ -24,14 +24,12 @@ const ClientList = () => {
   // Cargar el userType desde localStorage
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
-    console.log(user)
-    if (user.store === null){
+    console.log(user);
+    if (user.store === null) {
       setUserType("admin");
-    }
-    else{
+    } else {
       setUserType("");
     }
-
   }, []);
 
   const isFormIncomplete = () => {
@@ -108,10 +106,12 @@ const ClientList = () => {
     if (response.status === 201) {
       setDiscounts((prevDiscounts) => {
         const updatedDiscounts = [...prevDiscounts, response.data];
-        updatedDiscounts.sort((a, b) => a.discount_percentage - b.discount_percentage);
+        updatedDiscounts.sort(
+          (a, b) => a.discount_percentage - b.discount_percentage
+        );
         return updatedDiscounts;
       });
-      setFormData2({discount_percentage: ""})
+      setFormData2({ discount_percentage: "" });
       Swal.fire({
         icon: "success",
         title: "Descuento creado",
@@ -145,131 +145,122 @@ const ClientList = () => {
 
   return (
     <>
-      <div>
-        <Row>
-          <Col md={userType === "admin" ? 9 : 12}>
-          <Row className={`section${userType === "admin" ? "-left" : ""}`}>
-              <Form.Label className="fw-bold">Crear cliente</Form.Label>
-              <Col md={3}>
-                <Form.Label>Nombre</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={formData.first_name}
-                  placeholder="Nombre"
-                  name="first_name"
-                  onChange={handleDataChange}
-                />
-              </Col>
-
-              <Col md={3}>
-                <Form.Label>Apellidos</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={formData.last_name}
-                  placeholder="Apellidos"
-                  name="last_name"
-                  onChange={handleDataChange}
-                />
-              </Col>
-
-              <Col md={3}>
-                <Form.Label>Teléfono</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={formData.phone_number}
-                  placeholder="Teléfono"
-                  name="phone_number"
-                  onChange={handleDataChange}
-                />
-              </Col>
-
-              <Col md={3}>
-                <Form.Label>Descuento</Form.Label>
-                <Form.Select
-                  aria-label="Default select example"
-                  value={formData.discount}
-                  onChange={handleDataChange}
-                  name="discount"
-                >
-                  <option value="">Descuento</option>
-                  {discounts.map((discount) => (
-                    <option key={discount.id} value={discount.id}>
-                      {discount.discount_percentage}%
-                    </option>
-                  ))}
-                </Form.Select>
-              </Col>
-
-              <Col md={3}>
-                <CustomButton
-                  fullWidth={true}
-                  onClick={handleCreateClient}
-                  disabled={isFormIncomplete()}
-                  marginTop="10px"
-                >
-                  Crear cliente
-                </CustomButton>
-              </Col>
-            </Row>
-          </Col>
-
-          {userType === "admin" && (
-            <Col md={3}>
-              <Row className="section-right">
-                <Form.Label className="fw-bold">Crear descuento</Form.Label>
-                <Col md={12}>
-                  <Form.Label>Descuento</Form.Label>
-                  <Form.Control
-                    type="number"
-                    value={formData2.discount_percentage}
-                    placeholder="Descuento"
-                    name="discount_percentage"
-                    onChange={handleData2Change}
-                  />
-
-                  <CustomButton
-                    fullWidth={true}
-                    onClick={handleCreateDiscount}
-                    disabled={formData2.discount_percentage === ""}
-                    marginTop="10px"
-                  >
-                    Crear descuento
-                  </CustomButton>
-                </Col>
-              </Row>
-            </Col>
-          )}
-        </Row>
-      </div>
-      <div>
+      {userType === "admin" && (
         <Row className="section">
-          <Form.Label className="fw-bold">Lista de clientes</Form.Label>
-          <CustomTable
-            data={clients}
-            columns={[
-              {
-                name: "#",
-                selector: (row) => row.id,
-              },
-              {
-                name: "Nombre",
-                selector: (row) => row.full_name,
-                grow: 2,
-              },
-              {
-                name: "Teléfono",
-                selector: (row) => row.phone_number,
-                grow: 2,
-                wrap: true,
-              },
-              {
-                name: "Descuento",
-                selector: (row) => row.discount_percentage + "%",
-              },
-            ]}
-          />
+          <Form.Label className="fw-bold">Crear descuento</Form.Label>
+          <Col>
+            <Form.Label>Descuento</Form.Label>
+            <Form.Control
+              type="number"
+              value={formData2.discount_percentage}
+              placeholder="Descuento"
+              name="discount_percentage"
+              onChange={handleData2Change}
+            />
+
+            <CustomButton
+              fullWidth={true}
+              onClick={handleCreateDiscount}
+              disabled={formData2.discount_percentage === ""}
+              marginTop="10px"
+            >
+              Crear descuento
+            </CustomButton>
+          </Col>
         </Row>
-      </div>
+      )}
+
+      <Row className={`section${userType === "admin" ? "" : ""}`}>
+        <Form.Label className="fw-bold">Crear cliente</Form.Label>
+        <Col>
+          <Form.Label>Nombre</Form.Label>
+          <Form.Control
+            type="text"
+            value={formData.first_name}
+            placeholder="Nombre"
+            name="first_name"
+            onChange={handleDataChange}
+          />
+        </Col>
+
+        <Col md={3}>
+          <Form.Label>Apellidos</Form.Label>
+          <Form.Control
+            type="text"
+            value={formData.last_name}
+            placeholder="Apellidos"
+            name="last_name"
+            onChange={handleDataChange}
+          />
+        </Col>
+
+        <Col md={3}>
+          <Form.Label>Teléfono</Form.Label>
+          <Form.Control
+            type="text"
+            value={formData.phone_number}
+            placeholder="Teléfono"
+            name="phone_number"
+            onChange={handleDataChange}
+          />
+        </Col>
+
+        <Col md={3}>
+          <Form.Label>Descuento</Form.Label>
+          <Form.Select
+            aria-label="Default select example"
+            value={formData.discount}
+            onChange={handleDataChange}
+            name="discount"
+          >
+            <option value="">Descuento</option>
+            {discounts.map((discount) => (
+              <option key={discount.id} value={discount.id}>
+                {discount.discount_percentage}%
+              </option>
+            ))}
+          </Form.Select>
+        </Col>
+
+        <Col md={3}>
+          <CustomButton
+            fullWidth={true}
+            onClick={handleCreateClient}
+            disabled={isFormIncomplete()}
+            marginTop="10px"
+          >
+            Crear cliente
+          </CustomButton>
+        </Col>
+      </Row>
+
+      <Row className="section">
+        <Form.Label className="fw-bold">Lista de clientes</Form.Label>
+        <CustomTable
+          data={clients}
+          columns={[
+            {
+              name: "#",
+              selector: (row) => row.id,
+            },
+            {
+              name: "Nombre",
+              selector: (row) => row.full_name,
+              grow: 2,
+            },
+            {
+              name: "Teléfono",
+              selector: (row) => row.phone_number,
+              grow: 2,
+              wrap: true,
+            },
+            {
+              name: "Descuento",
+              selector: (row) => row.discount_percentage + "%",
+            },
+          ]}
+        />
+      </Row>
     </>
   );
 };
