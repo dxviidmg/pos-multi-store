@@ -34,3 +34,17 @@ export const getClients = async (query) => {
       return error;
     }
   };
+
+  export const updateClient = async (data) => {
+    const apiUrl = new URL(getApiUrl("client/"+data.id));
+
+  
+    try {
+      const response = await axios.patch(apiUrl, data, {
+        headers: getHeaders(),
+      });
+      return response;
+    } catch (error) {
+      return error;
+    }
+  };

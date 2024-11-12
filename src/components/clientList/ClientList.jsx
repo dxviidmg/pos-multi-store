@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { createClient, getClients } from "../apis/clients";
+import { createClient, getClients, updateClient } from "../apis/clients";
 import { Col, Container, Form, Row } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import { createDiscount, getDiscounts } from "../apis/discounts";
@@ -59,9 +59,37 @@ const ClientList = () => {
   };
 
   const handleCreateClient = async (e) => {
-    const response = await createClient(formData);
 
-    if (response.status === 201) {
+    let response = undefined
+    if (formData.id){
+      response = await updateClient(formData);
+    }
+    else{
+      const response = await createClient(formData);    }
+
+    if (response.status === 200) {
+      setClients((prevClients) =>
+        prevClients.map((client) =>
+          client.id === response.data.id ? response.data : client
+        )
+      );
+      
+      setFormData(
+        {
+          first_name: "",
+          last_name: "",
+          phone_number: "",
+          discount: "",
+        }
+      )
+      Swal.fire({
+        icon: "success",
+        title: "Producto actualizado",
+        timer: 2000,
+      });
+      }
+
+    else if (response.status === 201) {
       setClients((prevClients) => [...prevClients, response.data]);
       Swal.fire({
         icon: "success",
@@ -145,118 +173,100 @@ const ClientList = () => {
 
   return (
     <Container fluid>
-
       <Row>
         <Col md={userType === "admin" ? 9 : 12}>
+          <Row className={`section${userType === "admin" ? "-left" : ""}`}>
+            <Form.Label className="fw-bold">Crear cliente</Form.Label>
+            <Col>
+              <Form.Label>Nombre</Form.Label>
+              <Form.Control
+                type="text"
+                value={formData.first_name}
+                placeholder="Nombre"
+                name="first_name"
+                onChange={handleDataChange}
+              />
+            </Col>
 
-        <Row className={`section${userType === "admin" ? "-left" : ""}`}>
-        <Form.Label className="fw-bold">Crear cliente</Form.Label>
-        <Col>
-          <Form.Label>Nombre</Form.Label>
-          <Form.Control
-            type="text"
-            value={formData.first_name}
-            placeholder="Nombre"
-            name="first_name"
-            onChange={handleDataChange}
-          />
+            <Col md={3}>
+              <Form.Label>Apellidos</Form.Label>
+              <Form.Control
+                type="text"
+                value={formData.last_name}
+                placeholder="Apellidos"
+                name="last_name"
+                onChange={handleDataChange}
+              />
+            </Col>
+
+            <Col md={3}>
+              <Form.Label>Teléfono</Form.Label>
+              <Form.Control
+                type="text"
+                value={formData.phone_number}
+                placeholder="Teléfono"
+                name="phone_number"
+                onChange={handleDataChange}
+              />
+            </Col>
+
+            <Col md={3}>
+              <Form.Label>Descuento</Form.Label>
+              <Form.Select
+                aria-label="Default select example"
+                value={formData.discount}
+                onChange={handleDataChange}
+                name="discount"
+              >
+                <option value="">Descuento</option>
+                {discounts.map((discount) => (
+                  <option key={discount.id} value={discount.id}>
+                    {discount.discount_percentage}%
+                  </option>
+                ))}
+              </Form.Select>
+            </Col>
+
+            <Col md={3}>
+              <CustomButton
+                fullWidth={true}
+                onClick={handleCreateClient}
+                disabled={isFormIncomplete()}
+                marginTop="10px"
+              >
+                Crear cliente
+              </CustomButton>
+            </Col>
+          </Row>
         </Col>
-
         <Col md={3}>
-          <Form.Label>Apellidos</Form.Label>
-          <Form.Control
-            type="text"
-            value={formData.last_name}
-            placeholder="Apellidos"
-            name="last_name"
-            onChange={handleDataChange}
-          />
-        </Col>
+          {userType === "admin" && (
+            <Row className="section-right">
+              <Form>
+                <Form.Label className="fw-bold">Crear descuento</Form.Label>
+                <br></br>
+                <Form.Label>Descuento</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={formData2.discount_percentage}
+                  placeholder="Descuento"
+                  name="discount_percentage"
+                  onChange={handleData2Change}
+                />
 
-        <Col md={3}>
-          <Form.Label>Teléfono</Form.Label>
-          <Form.Control
-            type="text"
-            value={formData.phone_number}
-            placeholder="Teléfono"
-            name="phone_number"
-            onChange={handleDataChange}
-          />
-        </Col>
-
-        <Col md={3}>
-          <Form.Label>Descuento</Form.Label>
-          <Form.Select
-            aria-label="Default select example"
-            value={formData.discount}
-            onChange={handleDataChange}
-            name="discount"
-          >
-            <option value="">Descuento</option>
-            {discounts.map((discount) => (
-              <option key={discount.id} value={discount.id}>
-                {discount.discount_percentage}%
-              </option>
-            ))}
-          </Form.Select>
-        </Col>
-
-        <Col md={3}>
-          <CustomButton
-            fullWidth={true}
-            onClick={handleCreateClient}
-            disabled={isFormIncomplete()}
-            marginTop="10px"
-          >
-            Crear cliente
-          </CustomButton>
+                <CustomButton
+                  fullWidth={true}
+                  onClick={handleCreateDiscount}
+                  disabled={formData2.discount_percentage === ""}
+                  marginTop="10px"
+                >
+                  Crear descuento
+                </CustomButton>
+              </Form>
+            </Row>
+          )}
         </Col>
       </Row>
-
-
-        </Col>
-        <Col md={3}>
-        
-        
-
-
-        {userType === "admin" && (
-        <Row className="section-right">
-
-          <Form>
-          <Form.Label className="fw-bold">Crear descuento</Form.Label>
-          <br></br>
-            <Form.Label>Descuento</Form.Label>
-            <Form.Control
-              type="number"
-              value={formData2.discount_percentage}
-              placeholder="Descuento"
-              name="discount_percentage"
-              onChange={handleData2Change}
-            />
-
-            <CustomButton
-              fullWidth={true}
-              onClick={handleCreateDiscount}
-              disabled={formData2.discount_percentage === ""}
-              marginTop="10px"
-            >
-              Crear descuento
-            </CustomButton>
-          </Form>
-        </Row>
-      )}
-
-
-
-
-
-        
-        </Col>
-      </Row>
-
-
-
 
       <Row className="section">
         <Form.Label className="fw-bold">Lista de clientes</Form.Label>
@@ -281,6 +291,14 @@ const ClientList = () => {
             {
               name: "Descuento",
               selector: (row) => row.discount_percentage + "%",
+            },
+            {
+              name: "Accciones",
+              cell: (row) => (
+                <CustomButton onClick={() => setFormData(row)}>
+                  Editar
+                </CustomButton>
+              ),
             },
           ]}
         />

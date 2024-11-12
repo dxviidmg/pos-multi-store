@@ -9,7 +9,7 @@ import TabCart from "../cart/TabCart";
 
 const NewSale = () => {
   return (
-    <div>
+    <Container fluid>
       <Row className="section">
         <Col md={6}>
           {" "}
@@ -31,7 +31,7 @@ const NewSale = () => {
       <Row className="section">
         <TabCart></TabCart>
       </Row>
-    </div>
+    </Container>
   );
 };
 

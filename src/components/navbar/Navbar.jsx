@@ -22,7 +22,11 @@ const CustomNavbar = () => {
             style={{ maxHeight: "100px" }}
             navbarScroll
           >
-            <Navbar.Text>{getUserData().store ? getUserData().store: 'Usuario: Administrador'}</Navbar.Text>
+            <Navbar.Text>
+              {getUserData().store
+                ? getUserData().store
+                : "Usuario: Administrador"}
+            </Navbar.Text>
             {user && user.store ? (
               <>
                 <Nav.Link href="/nueva-venta/">Vender</Nav.Link>
@@ -33,24 +37,11 @@ const CustomNavbar = () => {
               <>
                 <Nav.Link href="/productos/">Productos</Nav.Link>
                 <Nav.Link href="/clientes/">Clientes</Nav.Link>
-
-
-                <NavDropdown title="Clientes" id="navbarScrollingDropdown">
-                <NavDropdown.Item href="/clientes/">Clientes</NavDropdown.Item>
-                <NavDropdown.Divider />
-              <NavDropdown.Item href="/clientes/">
-                Descuentos
-              </NavDropdown.Item>
-            </NavDropdown>
-
-
-
-
               </>
             )}
             <Nav.Link href="/" onClick={handleLogout}>
-                  Salir
-                </Nav.Link>
+              Salir
+            </Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Container>

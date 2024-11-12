@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
 import { createProduct, getProducts, updateProduct } from "../apis/products";
-import { Col, Form, Row } from "react-bootstrap";
+import { Col, Container, Form, Row } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import Swal from "sweetalert2";
 import { getBrands } from "../apis/brands";
@@ -66,7 +66,6 @@ const ProductList = () => {
   };
 
   const handleCreateproduct = async (e) => {
-    console.log(formData)
 
     let response = undefined
     if (formData.id){
@@ -74,16 +73,6 @@ const ProductList = () => {
     }
     else{
       response = await createProduct(formData);
-    }
-
-    if (response.status === 201) {
-      setProducts((prevproducts) => [...prevproducts, response.data]);
-
-      Swal.fire({
-        icon: "success",
-        title: "producto creado",
-        timer: 2000,
-      });
     }
     if (response.status === 200) {
       setProducts((prevProducts) =>
@@ -105,10 +94,20 @@ const ProductList = () => {
       )
       Swal.fire({
         icon: "success",
-        title: "producto actualizado",
+        title: "Producto actualizado",
         timer: 2000,
       });
     }
+    else if (response.status === 201) {
+      setProducts((prevproducts) => [...prevproducts, response.data]);
+
+      Swal.fire({
+        icon: "success",
+        title: "producto creado",
+        timer: 2000,
+      });
+    }
+
     else if (response.status === 400) {
       let text = "Error desconocido";
       if (response.response.data.code) {
@@ -136,7 +135,7 @@ const ProductList = () => {
   };
 
   return (
-    <>
+    <Container fluid>
       <div>
         <Row className="section">
           <Form.Label className="fw-bold">Crear producto</Form.Label>
@@ -178,11 +177,11 @@ const ProductList = () => {
           </Col>
 
           <Col md={3}>
-            <Form.Label>Precio de venta</Form.Label>
+            <Form.Label>Precio de compra</Form.Label>
             <Form.Control
               type="number"
               value={formData.purchase_price}
-              placeholder="Precio de venta"
+              placeholder="Precio de compra"
               name="purchase_price"
               onChange={handleDataChange}
             />
@@ -193,7 +192,7 @@ const ProductList = () => {
             <Form.Control
               type="number"
               value={formData.unit_sale_price}
-              placeholder="Precio de venta"
+              placeholder="Precio de venta unitario"
               name="unit_sale_price"
               onChange={handleDataChange}
             />
@@ -266,7 +265,7 @@ const ProductList = () => {
                 wrap: true
               },
               {
-                name: "Precio de venta",
+                name: "Precio de compra",
                 selector: (row) => "$" + row.purchase_price,
                 wrap: true,
               },
@@ -301,7 +300,7 @@ const ProductList = () => {
           />
         </Row>
       </div>
-    </>
+    </Container>
   );
 };
 
