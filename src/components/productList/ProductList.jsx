@@ -8,7 +8,7 @@ import { getBrands } from "../apis/brands";
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [brands, setBrands] = useState([]);
   const [formData, setFormData] = useState({
     brand: "",
@@ -42,10 +42,10 @@ const ProductList = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true)
+      setIsLoading(true)
       const response = await getProducts();
       setProducts(response.data);
-      setLoading(false)
+      setIsLoading(false)
       const response2 = await getBrands();
       setBrands(response2.data);
     };
@@ -146,6 +146,7 @@ const ProductList = () => {
               value={formData.brand}
               onChange={handleDataChange}
               name="brand"
+              disabled={isLoading}
             >
               <option value="">Selecciona una marca</option>
               {brands.map((brands) => (
@@ -247,7 +248,7 @@ const ProductList = () => {
         <Row className="section">
           <Form.Label className="fw-bold">Lista de productos</Form.Label>
           <CustomTable
-            progressPending={loading}
+            progressPending={isLoading}
             data={products}
             columns={[
               {
