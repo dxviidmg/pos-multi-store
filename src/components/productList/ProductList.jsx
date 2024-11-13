@@ -65,9 +65,9 @@ const ProductList = () => {
 //    console.log(formData);
   };
 
-  const handleCreateproduct = async (e) => {
+  const handleProductSubmit = async (e) => {
 
-    let response = undefined
+    let response
     if (formData.id){
       response = await updateProduct(formData);
     }
@@ -234,7 +234,7 @@ const ProductList = () => {
             <Form.Label></Form.Label>
             <CustomButton
               fullWidth={true}
-              onClick={handleCreateproduct}
+              onClick={handleProductSubmit}
               disabled={isFormIncomplete()}
               marginTop="10px"
             >
