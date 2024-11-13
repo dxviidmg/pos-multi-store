@@ -42,7 +42,8 @@ function App() {
 
 
             <Route path="/ventas/" element={<SaleList />} />
-            <Route path="/nueva-venta" element={<NewSale />} />
+            <Route path="/nueva-venta/" element={<NewSale />} />
+            <Route path="/distribuir/" element={<NewSale />} />
             <Route path="/traspasos/" element={<TransferList />} />
             <Route path="/clientes/" element={<ClientList />} />
             <Route path="/productos/" element={<ProductList />} />

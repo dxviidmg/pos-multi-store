@@ -40,3 +40,17 @@ export const getTransfers = async () => {
     return error;
   }
   };
+
+
+  export const confirmDistribution = async (data) => {
+
+    try {
+    const response = await axios.post(getApiUrl("confirm-distribution"), data, {
+      headers: getHeaders(),
+    });
+    return response;
+  } catch (error) {
+    console.error("Error al obtener clientes:", error);
+    return error;
+  }
+  };

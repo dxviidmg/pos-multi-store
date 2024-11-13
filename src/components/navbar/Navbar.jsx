@@ -8,32 +8,41 @@ import { NavDropdown } from "react-bootstrap";
 const CustomNavbar = () => {
   const handleLogout = () => {
     localStorage.removeItem("user");
+    // Redireccionar a la página de inicio de sesión, si es necesario
+    window.location.href = "/";
   };
 
   const user = getUserData();
+
   return (
-    <Navbar expand="lg" style={{ backgroundColor: "#3b83bd" }}>
+    <Navbar expand="lg" className="custom-navbar" bg="primary" data-bs-theme="dark">
       <Container fluid>
         <Navbar.Brand href="#">My POS</Navbar.Brand>
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll">
-          <Nav
-            className="me-auto my-2 my-lg-0"
-            style={{ maxHeight: "100px" }}
-            navbarScroll
-          >
+          <Nav className="me-auto my-2 my-lg-0" navbarScroll>
             <Navbar.Text>
-              {getUserData().store
-                ? getUserData().store
-                : "Usuario: Administrador"}
+              {user?.store ? user.store : "Usuario: Administrador"}
             </Navbar.Text>
-            {user && user.store ? (
+
+            {/* Opciones para tipo de tienda "T" */}
+            {user?.store_type === "T" && (
               <>
                 <Nav.Link href="/nueva-venta/">Vender</Nav.Link>
                 <Nav.Link href="/clientes/">Clientes</Nav.Link>
                 <Nav.Link href="/ventas/">Ventas</Nav.Link>
               </>
-            ) : (
+            )}
+
+            {/* Opciones para tipo de tienda "A" */}
+            {user?.store_type === "A" && (
+              <>
+                <Nav.Link href="/distribuir/">Distribuir</Nav.Link>
+              </>
+            )}
+
+            {/* Opciones para usuarios sin tipo de tienda */}
+            {user && !user.store_type && (
               <>
                 <NavDropdown title="Productos" id="basic-nav-dropdown">
                   <NavDropdown.Item href="/marcas/">Marcas</NavDropdown.Item>
@@ -45,6 +54,7 @@ const CustomNavbar = () => {
                 <Nav.Link href="/clientes/">Clientes</Nav.Link>
               </>
             )}
+
             <Nav.Link href="/" onClick={handleLogout}>
               Salir
             </Nav.Link>
@@ -54,4 +64,5 @@ const CustomNavbar = () => {
     </Navbar>
   );
 };
+
 export default CustomNavbar;

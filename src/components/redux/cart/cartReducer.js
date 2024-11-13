@@ -58,9 +58,13 @@ const cartReducer = (state = initialState, action) => {
         prices,
         reserved_stock,
         available_stock,
+        stock
       } = action.payload;
       const existingProductIndex = state.cart.findIndex((item) => item.id === id);
       let stockTemp = state.movementType === "venta" ? available_stock : reserved_stock;
+      if (state.movementType === "distribucion"){
+        stockTemp = stock
+      }
       
       const clientSelected = aClientIsSelected(state.client);
 
