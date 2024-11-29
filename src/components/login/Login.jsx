@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Container, Row, Col, Alert } from "react-bootstrap";
 import { loginUser } from "../apis/login";
 import { useNavigate } from "react-router-dom";
+import CustomButton from "../commons/customButton/CustomButton";
+
 
 function Login({ onLogin }) {
   const navigate = useNavigate();
@@ -116,13 +118,8 @@ function Login({ onLogin }) {
                 </div>
                 <div className="d-grid gap-2 mt-3">
                   
-                    <button
-                      type="submit"
-                      className="btn btn-success"
-                      onClick={handleSubmit}
-                    >
-                      Iniciar sesión
-                    </button>
+
+                    <CustomButton onClick={handleSubmit}>Iniciar sesión</CustomButton>
                   
                 </div>
                 {alertData.shown && (

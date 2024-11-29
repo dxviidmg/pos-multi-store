@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
 
-const CustomButton = ({ text, children, onClick, size = "sm", disabled = false, href, fullWidth = false, marginTop="5px", ...props }) => {
+const CustomButton = ({children, onClick, size = "sm", disabled = false, href, fullWidth = false, marginTop="5px", ...props }) => {
   return (
     <Button
       onClick={onClick}

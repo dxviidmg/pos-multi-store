@@ -21,9 +21,7 @@ const CustomNavbar = () => {
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll">
           <Nav className="me-auto my-2 my-lg-0" navbarScroll>
-            <Navbar.Text>
-              {user?.store ? user.store : "Usuario: Administrador"}
-            </Navbar.Text>
+
 
             {/* Opciones para tipo de tienda "T" */}
             {user?.store_type === "T" && (
@@ -55,10 +53,19 @@ const CustomNavbar = () => {
               </>
             )}
 
-            <Nav.Link href="/" onClick={handleLogout}>
+
+
+            
+          </Nav>
+
+          <Nav className='ms-auto'>
+          <Navbar.Text>
+              {user?.store ? user.store : "Usuario: Administrador"}
+            </Navbar.Text>
+          <Nav.Link  href="/" onClick={handleLogout}>
               Salir
             </Nav.Link>
-          </Nav>
+    </Nav>
         </Navbar.Collapse>
       </Container>
     </Navbar>
