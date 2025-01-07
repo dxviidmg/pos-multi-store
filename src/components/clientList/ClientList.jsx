@@ -251,6 +251,7 @@ const ClientList = () => {
       <Row className="section">
         <Form.Label className="fw-bold">Lista de clientes</Form.Label>
         <CustomTable
+          searcher={true}
           data={clients}
           columns={[
             { name: "#", selector: (row) => row.id },

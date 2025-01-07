@@ -15,7 +15,7 @@ const CustomNavbar = () => {
   const user = getUserData();
 
   return (
-    <Navbar expand="lg" className="custom-navbar" bg="primary" data-bs-theme="dark">
+    <Navbar expand="lg" bg="primary" data-bs-theme="light">
       <Container fluid>
         <Navbar.Brand href="#">My POS</Navbar.Brand>
         <Navbar.Toggle aria-controls="navbarScroll" />
@@ -42,7 +42,7 @@ const CustomNavbar = () => {
             {/* Opciones para usuarios sin tipo de tienda */}
             {user && !user.store_type && (
               <>
-                <NavDropdown title="Productos" id="basic-nav-dropdown">
+                <NavDropdown title="Productos">
                   <NavDropdown.Item href="/marcas/">Marcas</NavDropdown.Item>
                   <NavDropdown.Divider />
                   <NavDropdown.Item href="/productos/">

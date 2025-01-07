@@ -123,8 +123,15 @@ const Cart = () => {
     { name: "Stock", selector: (row) => row.stock },
   ];
 
+  const commonColumns2 = [
+    { name: "Código", selector: (row) => row.product_code },
+    { name: "Descripción", selector: (row) => row.description, grow: 3, wrap: true }
+  ];
+
   const saleColumns = [
-    ...commonColumns,
+    ...commonColumns2,
+    { name: "Cantidad", selector: (row) => row.quantity },
+    { name: "Stock", selector: (row) => row.stock },
     { name: "Precio", selector: (row) => `$${row.product_price.toFixed(2)}` },
     {
       name: "Total por producto",

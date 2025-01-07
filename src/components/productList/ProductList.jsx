@@ -248,6 +248,7 @@ const ProductList = () => {
         <Row className="section">
           <Form.Label className="fw-bold">Lista de productos</Form.Label>
           <CustomTable
+            searcher={true}
             progressPending={isLoading}
             data={products}
             columns={[
