@@ -65,14 +65,43 @@ const ProductList = () => {
 //    console.log(formData);
   };
 
+  const handleProductEdit = async (row) => {
+    await setFormData(
+      {
+        brand: "",
+        code: "",
+        name: "",
+        purchase_price: "",
+        unit_sale_price: "",
+        wholesale_sale_price: "",
+        min_wholesale_quantity: "",
+        apply_wholesale_price_on_costumer_discount: false
+      }
+    )
+
+    await setFormData(row)
+
+  };
+
+
+
   const handleProductSubmit = async (e) => {
 
     let response
+
+    const payload = { ...formData };
+
+    // Si no aplica precio de mayoreo en descuento, eliminar los campos opcionales
+    if (!formData.wholesale_sale_price || !formData.min_wholesale_quantity) {
+      payload.wholesale_sale_price = null;
+      payload.min_wholesale_quantity = null;
+    }
+
     if (formData.id){
-      response = await updateProduct(formData);
+      response = await updateProduct(payload);
     }
     else{
-      response = await createProduct(formData);
+      response = await createProduct(payload);
     }
     if (response.status === 200) {
       setProducts((prevProducts) =>
@@ -109,6 +138,8 @@ const ProductList = () => {
     }
 
     else if (response.status === 400) {
+
+      console.log(response.response)
       let text = "Error desconocido";
       if (response.response.data.code) {
         if (
@@ -293,7 +324,7 @@ const ProductList = () => {
               {
                 name: "Accciones",
                 cell: (row) => (
-                  <CustomButton onClick={() => setFormData(row)}>
+                  <CustomButton onClick={() => handleProductEdit(row)}>
                     Editar
                   </CustomButton>
                 ),

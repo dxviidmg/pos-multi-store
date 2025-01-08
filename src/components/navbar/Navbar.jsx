@@ -17,7 +17,7 @@ const CustomNavbar = () => {
   return (
     <Navbar expand="lg" bg="primary" data-bs-theme="light">
       <Container fluid>
-        <Navbar.Brand href="#">My POS</Navbar.Brand>
+        <Navbar.Brand href="#">SmartVenta</Navbar.Brand>
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll">
           <Nav className="me-auto my-2 my-lg-0" navbarScroll>
@@ -59,6 +59,9 @@ const CustomNavbar = () => {
           </Nav>
 
           <Nav className='ms-auto'>
+          <Navbar.Text>
+              Negocio: {user?.tenant}
+            </Navbar.Text>
           <Navbar.Text>
               {user?.store ? user.store : "Usuario: Administrador"}
             </Navbar.Text>

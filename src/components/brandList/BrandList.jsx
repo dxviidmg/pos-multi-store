@@ -69,24 +69,16 @@ const BrandList = () => {
 
     else if (response.status === 400) {
       let text = "Error desconocido";
-      if (response.response.data.code) {
-        if (
-          response.response.data.code[0] ===
-          "product with this code already exists."
-        ) {
-          text = "El codigo ya existe";
-        }
-      }
       Swal.fire({
         icon: "error",
-        title: "Error al crear producto",
+        title: "Error al crear marca",
         timer: 2000,
         text: text,
       });
     } else {
       Swal.fire({
         icon: "error",
-        title: "Error al crear producto",
+        title: "Error al crear la marca",
         timer: 2000,
         text: "Error desconocido, por favor comuniquese con soporte",
       });
@@ -119,7 +111,7 @@ const BrandList = () => {
               disabled={formData.name === ""}
               marginTop="3px"
             >
-              {formData.id ? 'Actualizar': 'Crear'} producto
+              {formData.id ? 'Actualizar': 'Crear'} marca
             </CustomButton>
           </Col>
         </Row>
