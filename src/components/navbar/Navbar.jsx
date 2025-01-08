@@ -59,12 +59,12 @@ const CustomNavbar = () => {
           </Nav>
 
           <Nav className='ms-auto'>
-          <Navbar.Text>
+          <Nav.Link>
               Negocio: {user?.tenant}
-            </Navbar.Text>
-          <Navbar.Text>
+            </Nav.Link>
+          <Nav.Link>
               {user?.store ? user.store : "Usuario: Administrador"}
-            </Navbar.Text>
+            </Nav.Link>
           <Nav.Link  href="/" onClick={handleLogout}>
               Salir
             </Nav.Link>
