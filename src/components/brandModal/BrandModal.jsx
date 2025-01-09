@@ -2,16 +2,12 @@ import React, { useEffect, useState } from "react";
 import CustomModal from "../commons/customModal/customModal";
 import { Col, Form, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import CustomTable from "../commons/customTable/customTable";
 import CustomButton from "../commons/customButton/CustomButton";
-import { hideStockModal } from "../redux/stockModal/StockModalActions";
-import { createTransfer } from "../apis/transfers";
 import { createBrand, updateBrand } from "../apis/brands";
 import Swal from "sweetalert2";
 import { hideBrandModal } from "../redux/brandModal/BrandModalActions";
 
-
-const BrandModal = ({onUpdateBrandList}) => {
+const BrandModal = ({ onUpdateBrandList }) => {
   const { showBrandModal, brand } = useSelector(
     (state) => state.BrandModalReducer
   );
@@ -19,7 +15,6 @@ const BrandModal = ({onUpdateBrandList}) => {
   const [formData, setFormData] = useState({
     name: "",
   });
-
 
   useEffect(() => {
     if (brand) {
@@ -32,23 +27,9 @@ const BrandModal = ({onUpdateBrandList}) => {
 
   const dispatch = useDispatch();
 
-  const [requestedQuantities, setRequestedQuantities] = useState({});
-
   const handleDataChange = async (e) => {
     let { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
-  };
-
-  const handleQuantityChange = (rowId, max, value) => {
-    value = parseInt(value);
-
-    if (value > max) {
-      value = max;
-    }
-    setRequestedQuantities((prev) => ({
-      ...prev,
-      [rowId]: value,
-    }));
   };
 
   const handleBrandSubmit = async () => {
@@ -59,15 +40,8 @@ const BrandModal = ({onUpdateBrandList}) => {
       response = await createBrand(formData);
     }
 
-    onUpdateBrandList(response.data)
+    onUpdateBrandList(response.data);
     if (response.status === 200) {
-      //      setBrands((prevProducts) =>
-      //        prevProducts.map((product) =>
-      //          product.id === response.data.id ? response.data : product
-      //        )
-      //      );
-
-
       dispatch(hideBrandModal());
       setFormData({
         name: "",
@@ -75,36 +49,30 @@ const BrandModal = ({onUpdateBrandList}) => {
       Swal.fire({
         icon: "success",
         title: "Marca actualizada",
-        timer: 2000,
+        timer: 5000,
       });
     } else if (response.status === 201) {
-      //      setBrands((prevproducts) => [...prevproducts, response.data]);
-
+      dispatch(hideBrandModal());
+      setFormData({
+        name: "",
+      });
       Swal.fire({
         icon: "success",
         title: "Marca creada",
-        timer: 2000,
-      });
-    } else if (response.status === 400) {
-      let text = "Error desconocido";
-      Swal.fire({
-        icon: "error",
-        title: "Error al crear marca",
-        timer: 2000,
-        text: text,
+        timer: 5000,
       });
     } else {
       Swal.fire({
         icon: "error",
         title: "Error al crear la marca",
-        timer: 2000,
+        timer: 5000,
         text: "Error desconocido, por favor comuniquese con soporte",
       });
     }
   };
 
   return (
-    <CustomModal showOut={showBrandModal} title="Crear marca">
+    <CustomModal showOut={showBrandModal} title={formData.id ? "Actualizar marca" : "Crear marca"}>
       <Row className="section">
         <Col md={6}>
           <Form.Label>Nombre</Form.Label>
@@ -125,7 +93,7 @@ const BrandModal = ({onUpdateBrandList}) => {
             disabled={formData.name === ""}
             marginTop="3px"
           >
-            {formData.id ? "Actualizar" : "Crear"} marca
+            {formData.id ? "Actualizar" : "Crear"}
           </CustomButton>
         </Col>
       </Row>

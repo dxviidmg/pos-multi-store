@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
 import { Col, Container, Form, Row } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
-import Swal from "sweetalert2";
-import { createBrand, getBrands, updateBrand } from "../apis/brands";
+import { getBrands } from "../apis/brands";
 import BrandModal from "../brandModal/BrandModal";
 import { useDispatch } from "react-redux";
 import {
@@ -14,10 +13,6 @@ import {
 const BrandList = () => {
   const [loading, setLoading] = useState(false);
   const [brands, setBrands] = useState([]);
-  const [formData, setFormData] = useState({
-    name: "",
-  });
-
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -31,66 +26,10 @@ const BrandList = () => {
     fetchData();
   }, []);
 
-  const handleDataChange = async (e) => {
-    let { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
-  };
-
-  const handleBrandSubmit = async () => {
-    let response;
-    if (formData.id) {
-      response = await updateBrand(formData);
-    } else {
-      response = await createBrand(formData);
-    }
-    if (response.status === 200) {
-      setBrands((prevProducts) =>
-        prevProducts.map((product) =>
-          product.id === response.data.id ? response.data : product
-        )
-      );
-
-      setFormData({
-        name: "",
-      });
-      Swal.fire({
-        icon: "success",
-        title: "Marca actualizada",
-        timer: 2000,
-      });
-    } else if (response.status === 201) {
-      setBrands((prevproducts) => [...prevproducts, response.data]);
-
-      Swal.fire({
-        icon: "success",
-        title: "Marca creada",
-        timer: 2000,
-      });
-    } else if (response.status === 400) {
-      let text = "Error desconocido";
-      Swal.fire({
-        icon: "error",
-        title: "Error al crear marca",
-        timer: 2000,
-        text: text,
-      });
-    } else {
-      Swal.fire({
-        icon: "error",
-        title: "Error al crear la marca",
-        timer: 2000,
-        text: "Error desconocido, por favor comuniquese con soporte",
-      });
-    }
-  };
-
   const handleOpenModal = (brand) => {
-    console.log('handleOpenModal')
     dispatch(hideBrandModal());
     setTimeout(() => dispatch(showBrandModal(brand)));
-    console.log('handleOpenModal 2')    
   };
-
 
   const handleUpdateBrandList = (updatedBrand) => {
     setBrands((prevBrands) => {
@@ -101,71 +40,40 @@ const BrandList = () => {
     });
   };
 
-
   return (
     <Container fluid>
       <BrandModal onUpdateBrandList={handleUpdateBrandList}></BrandModal>
-      <div>
         <Row className="section">
-          <Form.Label className="fw-bold">Crear marca</Form.Label>
-          <Col md={6}>
-            <Form.Label>Nombre</Form.Label>
-            <Form.Control
-              type="text"
-              value={formData.name}
-              placeholder="Nombre"
-              name="name"
-              onChange={handleDataChange}
-            />
+          <Col md={2}>
+            {" "}
+            <Form.Label className="fw-bold">Lista de marcas</Form.Label>
+            <br></br>
+            <CustomButton onClick={() => handleOpenModal()}>Crear</CustomButton>
           </Col>
 
-          <Col md={6}>
-            <Form.Label>.</Form.Label>
-            <CustomButton
-              fullWidth={true}
-              onClick={handleBrandSubmit}
-              disabled={formData.name === ""}
-              marginTop="3px"
-            >
-              {formData.id ? "Actualizar" : "Crear"} marca
-            </CustomButton>
-          </Col>
-        </Row>
-      </div>
-      <div>
-        <Row className="section">
-          <Form.Label className="fw-bold">Lista de marcas</Form.Label>
-          <CustomTable
-            progressPending={loading}
-            data={brands}
-            columns={[
-              {
-                name: "Nombre",
-                selector: (row) => row.name,
-                grow: 2,
-                wrap: true,
-              },
-              {
-                name: "Accciones",
-                cell: (row) => (
-                  <>
-                    <CustomButton onClick={() => setFormData(row)}>
+          <Col md={12}>
+            <CustomTable
+              progressPending={loading}
+              data={brands}
+              columns={[
+                {
+                  name: "Nombre",
+                  selector: (row) => row.name,
+                  grow: 2,
+                  wrap: true,
+                },
+                {
+                  name: "Accciones",
+                  cell: (row) => (
+                    <CustomButton onClick={() => handleOpenModal(row)}>
                       Editar
                     </CustomButton>
-                    <CustomButton
-                      onClick={() =>
-                        handleOpenModal(row)
-                      }
-                    >
-                      Ver
-                    </CustomButton>
-                  </>
-                ),
-              },
-            ]}
-          />
+                  ),
+                },
+              ]}
+            />
+          </Col>
         </Row>
-      </div>
     </Container>
   );
 };
