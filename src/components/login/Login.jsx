@@ -69,7 +69,6 @@ function Login({ onLogin }) {
   };
 
   const handleRedirect = (response) => {
-    console.log('responsito', response)
     if (response.store) {
       navigate("/nueva-venta/");
     } else {

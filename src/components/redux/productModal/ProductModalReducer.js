@@ -1,23 +1,23 @@
-import { SHOW_MODAL, HIDE_MODAL } from './BrandModalActions';
+import { SHOW_MODAL, HIDE_MODAL } from './ProductModalActions';
 
 const initialState = {
   showBrandModal: false,
-  brand: {}
+  product: {}
 };
 
-const BrandModalReducer = (state = initialState, action) => {
+const ProductModalReducer = (state = initialState, action) => {
   switch (action.type) {
     case SHOW_MODAL: {
         return {
           showBrandModal: true,
-          brand: action.payload
+          product: action.payload
         };
       }
 
       case HIDE_MODAL: {
         return {
           showBrandModal: false,
-          brand: {}
+          product: {}
         };
       }
 
@@ -26,4 +26,4 @@ const BrandModalReducer = (state = initialState, action) => {
   }
 };
 
-export default BrandModalReducer;
+export default ProductModalReducer;

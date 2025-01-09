@@ -1,94 +1,63 @@
 import React, { useEffect, useState } from "react";
-import CustomTable from "../commons/customTable/customTable";
-import { createProduct, getProducts, updateProduct } from "../apis/products";
-import { Col, Container, Form, Row } from "react-bootstrap";
+import CustomModal from "../commons/customModal/customModal";
+import { Col, Form, Row } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
+import { createBrand, getBrands, updateBrand } from "../apis/brands";
 import Swal from "sweetalert2";
-import { getBrands } from "../apis/brands";
-import { useDispatch } from "react-redux";
-import {
-  hideProductModal,
-  showProductModal,
-} from "../redux/productModal/ProductModalActions";
-import ProductModal from "../productModal/ProductModal";
+import { hideProductModal } from "../redux/productModal/ProductModalActions";
+import { createProduct, updateProduct } from "../apis/products";
 
-const ProductList = () => {
-  const [products, setProducts] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+
+const ProductModal = ({ onUpdateBrandList }) => {
+  const { showBrandModal, product } = useSelector(
+    (state) => state.ProductModalReducer
+  );
+
   const [brands, setBrands] = useState([]);
+
   const [formData, setFormData] = useState({
-    brand: "",
-    code: "",
     name: "",
-    purchase_price: "",
-    unit_sale_price: "",
-    wholesale_sale_price: "",
-    min_wholesale_quantity: "",
-    apply_wholesale_price_on_costumer_discount: false
   });
+
+  useEffect(() => {
+    if (product) {
+      setFormData({
+
+        id: product.id || "",
+        brand: product.brand || "",
+        code: product.code || "",
+        name: product.name || "",
+        purchase_price: product.purchase_price || "",
+        unit_sale_price: product.unit_sale_price || "",
+        wholesale_sale_price: product.wholesale_sale_price || "",
+        min_wholesale_quantity: product.min_wholesale_quantity || "",
+        apply_wholesale_price_on_costumer_discount: product.apply_wholesale_price_on_costumer_discount || false
+
+      });
+
+      const fetchBrands = async () => {
+        try {
+          const response2 = await getBrands();
+          setBrands(response2.data);
+        } catch (error) {
+          console.error("Error fetching brands:", error);
+        }
+      };
+  
+      fetchBrands();
+
+    }
+  }, [product]);
+
+
 
   const dispatch = useDispatch();
 
-  const isFormIncomplete = () => {
-    // Separar los dos campos que pueden estar vacíos opcionalmente
-    const { wholesale_sale_price, min_wholesale_quantity, ...requiredFields } =
-      formData;
-
-    // Verificar que los campos obligatorios no estén vacíos
-    const areRequiredFieldsComplete = !Object.values(requiredFields).some(
-      (value) => value === ""
-    );
-
-    // Verificar las condiciones de los campos opcionales
-    const areOptionalFieldsConsistent =
-      (wholesale_sale_price === "") === (min_wholesale_quantity === "");
-
-    // La forma está incompleta si hay campos obligatorios vacíos o los opcionales son inconsistentes
-    return !areRequiredFieldsComplete || !areOptionalFieldsConsistent;
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true)
-      const response = await getProducts();
-      setProducts(response.data);
-      setIsLoading(false)
-      const response2 = await getBrands();
-      setBrands(response2.data);
-    };
-
-    fetchData();
-  }, []);
-
   const handleDataChange = async (e) => {
-    let { name, value, checked } = e.target;
-
-    if (name === "apply_wholesale_price_on_costumer_discount"){
-      value = checked
-    }
+    let { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
-
   };
-
-  const handleProductEdit = async (row) => {
-    await setFormData(
-      {
-        brand: "",
-        code: "",
-        name: "",
-        purchase_price: "",
-        unit_sale_price: "",
-        wholesale_sale_price: "",
-        min_wholesale_quantity: "",
-        apply_wholesale_price_on_costumer_discount: false
-      }
-    )
-
-    await setFormData(row)
-
-  };
-
-
 
   const handleProductSubmit = async (e) => {
 
@@ -109,11 +78,11 @@ const ProductList = () => {
       response = await createProduct(payload);
     }
     if (response.status === 200) {
-      setProducts((prevProducts) =>
-        prevProducts.map((product) =>
-          product.id === response.data.id ? response.data : product
-        )
-      );
+//      setProducts((prevProducts) =>
+//        prevProducts.map((product) =>
+//          product.id === response.data.id ? response.data : product
+//        )
+//      );
       
       setFormData(
         {
@@ -133,7 +102,7 @@ const ProductList = () => {
       });
     }
     else if (response.status === 201) {
-      setProducts((prevproducts) => [...prevproducts, response.data]);
+//      setProducts((prevproducts) => [...prevproducts, response.data]);
 
       Swal.fire({
         icon: "success",
@@ -170,25 +139,40 @@ const ProductList = () => {
   };
 
 
-  const handleOpenModal = (brand) => {
-    dispatch(hideProductModal());
-    setTimeout(() => dispatch(showProductModal(brand)));
+  const isFormIncomplete = () => {
+    // Separar los dos campos que pueden estar vacíos opcionalmente
+    const { wholesale_sale_price, min_wholesale_quantity, apply_wholesale_price_on_costumer_discount, ...requiredFields } =
+      formData;
+
+    console.log(wholesale_sale_price, min_wholesale_quantity, requiredFields)
+
+    // Verificar que los campos obligatorios no estén vacíos
+    const areRequiredFieldsComplete = !Object.values(requiredFields).some(
+      (value) => value === ""
+    );
+
+    // Verificar las condiciones de los campos opcionales
+    const areOptionalFieldsConsistent =
+      (wholesale_sale_price === "") === (min_wholesale_quantity === "");
+
+    // La forma está incompleta si hay campos obligatorios vacíos o los opcionales son inconsistentes
+
+    console.log('!areRequiredFieldsComplete || !areOptionalFieldsConsistent', !areRequiredFieldsComplete || !areOptionalFieldsConsistent)
+    return !areRequiredFieldsComplete || !areOptionalFieldsConsistent;
   };
 
+
   return (
-    <Container fluid>
-      <ProductModal/>
-      <div>
+    <CustomModal showOut={showBrandModal} title={formData.id ? "Actualizar producto" : "Crear producto"}>
         <Row className="section">
-          <Form.Label className="fw-bold">Crear producto</Form.Label>
-          <Col md={3}>
+          <Col md={4}>
             <Form.Label>Marca</Form.Label>
             <Form.Select
               aria-label="Default select example"
               value={formData.brand}
               onChange={handleDataChange}
               name="brand"
-              disabled={isLoading}
+//              disabled={isLoading}
             >
               <option value="">Selecciona una marca</option>
               {brands.map((brands) => (
@@ -198,7 +182,7 @@ const ProductList = () => {
               ))}
             </Form.Select>
           </Col>
-          <Col md={3}>
+          <Col md={4}>
             <Form.Label>Codigo</Form.Label>
             <Form.Control
               type="text"
@@ -208,7 +192,7 @@ const ProductList = () => {
               onChange={handleDataChange}
             />
           </Col>
-          <Col md={6}>
+          <Col md={4}>
             <Form.Label>Nombre</Form.Label>
             <Form.Control
               type="text"
@@ -219,7 +203,7 @@ const ProductList = () => {
             />
           </Col>
 
-          <Col md={3}>
+          <Col md={4}>
             <Form.Label>Precio de compra</Form.Label>
             <Form.Control
               type="number"
@@ -230,7 +214,7 @@ const ProductList = () => {
             />
           </Col>
 
-          <Col md={3}>
+          <Col md={4}>
             <Form.Label>Precio de venta unitario</Form.Label>
             <Form.Control
               type="number"
@@ -241,7 +225,7 @@ const ProductList = () => {
             />
           </Col>
 
-          <Col md={3}>
+          <Col md={4}>
             <Form.Label>Precio de venta mayoreo</Form.Label>
             <Form.Control
               type="number"
@@ -252,7 +236,7 @@ const ProductList = () => {
             />
           </Col>
 
-          <Col md={3}>
+          <Col md={4}>
             <Form.Label>Cantidad minima mayoreo</Form.Label>
             <Form.Control
               type="number"
@@ -262,7 +246,7 @@ const ProductList = () => {
               onChange={handleDataChange}
             />
           </Col>
-          <Col md={3}>
+          <Col md={4}>
           <Form.Check // prettier-ignore
             type="checkbox"
             id={`default-checkbox`}
@@ -273,7 +257,7 @@ const ProductList = () => {
           />
           </Col>
 
-          <Col md={3}>
+          <Col md={4}>
             <Form.Label></Form.Label>
             <CustomButton
               fullWidth={true}
@@ -285,67 +269,8 @@ const ProductList = () => {
             </CustomButton>
           </Col>
         </Row>
-      </div>
-      <div>
-        <Row className="section">
-          <Form.Label className="fw-bold">Lista de productos</Form.Label>
-          <CustomTable
-            searcher={true}
-            progressPending={isLoading}
-            data={products}
-            columns={[
-              {
-                name: "Codigo",
-                selector: (row) => row.code,
-              },
-              {
-                name: "Marca",
-                selector: (row) => row.brand_name,
-              },
-              {
-                name: "Nombre",
-                selector: (row) => row.name,
-                grow: 2,
-                wrap: true
-              },
-              {
-                name: "Precio de compra",
-                selector: (row) => "$" + row.purchase_price,
-                wrap: true,
-              },
-              {
-                name: "Precio de venta unitario",
-                selector: (row) => "$" + row.unit_sale_price,
-              },
-              {
-                name: "Precio de venta mayoreo",
-                selector: (row) =>
-                  row.apply_wholesale
-                    ? "$" +
-                      row.wholesale_sale_price +
-                      " apartir de " +
-                      row.min_wholesale_quantity
-                    : "NA",
-              },
-              {
-                name: "Aplica PM sobre DC",
-                selector: (row) =>
-                  row.apply_wholesale_price_on_costumer_discount ? "Si" : "No",
-              },
-              {
-                name: "Accciones",
-                cell: (row) => (
-                  <CustomButton onClick={() => handleOpenModal(row)}>
-                  Editar
-                </CustomButton>
-                ),
-              },
-            ]}
-          />
-        </Row>
-      </div>
-    </Container>
+    </CustomModal>
   );
 };
 
-export default ProductList;
+export default ProductModal;

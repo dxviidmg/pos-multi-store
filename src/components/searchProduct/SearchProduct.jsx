@@ -89,14 +89,12 @@ const SearchProduct = () => {
         displayStockLimitAlert();
       }
     } else {
-      console.log("aqui2", movementType);
       const existingProduct = cart[existingProductIndex];
       const stock =
         movementType === "traspaso"
           ? product.reserved_stock
           : product.available_stock;
       if (movementType === "agregar") {
-        console.log("agregar");
         dispatch(addToCart({ ...product, quantity: 1 }));
       } else if (existingProduct.quantity < stock) {
         dispatch(addToCart({ ...product, quantity: 1 }));
