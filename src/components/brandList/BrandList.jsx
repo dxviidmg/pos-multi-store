@@ -44,7 +44,7 @@ const BrandList = () => {
     <Container fluid>
       <BrandModal onUpdateBrandList={handleUpdateBrandList}></BrandModal>
         <Row className="section">
-          <Col md={2}>
+          <Col md={12}>
             {" "}
             <Form.Label className="fw-bold">Lista de marcas</Form.Label>
             <br></br>

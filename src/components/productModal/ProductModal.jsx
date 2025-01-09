@@ -3,13 +3,13 @@ import CustomModal from "../commons/customModal/customModal";
 import { Col, Form, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
-import { createBrand, getBrands, updateBrand } from "../apis/brands";
+import { getBrands } from "../apis/brands";
 import Swal from "sweetalert2";
 import { hideProductModal } from "../redux/productModal/ProductModalActions";
 import { createProduct, updateProduct } from "../apis/products";
 
 
-const ProductModal = ({ onUpdateBrandList }) => {
+const ProductModal = ({ onUpdateProductList }) => {
   const { showBrandModal, product } = useSelector(
     (state) => state.ProductModalReducer
   );
@@ -77,12 +77,10 @@ const ProductModal = ({ onUpdateBrandList }) => {
     else{
       response = await createProduct(payload);
     }
+
+    onUpdateProductList(response.data);
     if (response.status === 200) {
-//      setProducts((prevProducts) =>
-//        prevProducts.map((product) =>
-//          product.id === response.data.id ? response.data : product
-//        )
-//      );
+      dispatch(hideProductModal());
       
       setFormData(
         {
@@ -102,7 +100,7 @@ const ProductModal = ({ onUpdateBrandList }) => {
       });
     }
     else if (response.status === 201) {
-//      setProducts((prevproducts) => [...prevproducts, response.data]);
+      dispatch(hideProductModal());
 
       Swal.fire({
         icon: "success",
