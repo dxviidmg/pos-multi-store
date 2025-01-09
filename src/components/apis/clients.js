@@ -31,6 +31,7 @@ export const getClients = async (query) => {
       });
       return response;
     } catch (error) {
+      console.log(error)
       return error;
     }
   };
