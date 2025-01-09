@@ -4,6 +4,12 @@ import { Col, Container, Form, Row } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import Swal from "sweetalert2";
 import { createBrand, getBrands, updateBrand } from "../apis/brands";
+import BrandModal from "../brandModal/BrandModal";
+import { useDispatch } from "react-redux";
+import {
+  hideBrandModal,
+  showBrandModal,
+} from "../redux/brandModal/BrandModalActions";
 
 const BrandList = () => {
   const [loading, setLoading] = useState(false);
@@ -12,13 +18,14 @@ const BrandList = () => {
     name: "",
   });
 
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true)
+      setLoading(true);
       const response = await getBrands();
       setBrands(response.data);
-      setLoading(false)
+      setLoading(false);
     };
 
     fetchData();
@@ -27,16 +34,13 @@ const BrandList = () => {
   const handleDataChange = async (e) => {
     let { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
-
   };
 
   const handleBrandSubmit = async () => {
-
-    let response
-    if (formData.id){
+    let response;
+    if (formData.id) {
       response = await updateBrand(formData);
-    }
-    else{
+    } else {
       response = await createBrand(formData);
     }
     if (response.status === 200) {
@@ -45,19 +49,16 @@ const BrandList = () => {
           product.id === response.data.id ? response.data : product
         )
       );
-      
-      setFormData(
-        {
-          name: ""
-        }
-      )
+
+      setFormData({
+        name: "",
+      });
       Swal.fire({
         icon: "success",
         title: "Marca actualizada",
         timer: 2000,
       });
-    }
-    else if (response.status === 201) {
+    } else if (response.status === 201) {
       setBrands((prevproducts) => [...prevproducts, response.data]);
 
       Swal.fire({
@@ -65,9 +66,7 @@ const BrandList = () => {
         title: "Marca creada",
         timer: 2000,
       });
-    }
-
-    else if (response.status === 400) {
+    } else if (response.status === 400) {
       let text = "Error desconocido";
       Swal.fire({
         icon: "error",
@@ -85,8 +84,27 @@ const BrandList = () => {
     }
   };
 
+  const handleOpenModal = (brand) => {
+    console.log('handleOpenModal')
+    dispatch(hideBrandModal());
+    setTimeout(() => dispatch(showBrandModal(brand)));
+    console.log('handleOpenModal 2')    
+  };
+
+
+  const handleUpdateBrandList = (updatedBrand) => {
+    setBrands((prevBrands) => {
+      const brandExists = prevBrands.some((b) => b.id === updatedBrand.id);
+      return brandExists
+        ? prevBrands.map((b) => (b.id === updatedBrand.id ? updatedBrand : b))
+        : [...prevBrands, updatedBrand];
+    });
+  };
+
+
   return (
     <Container fluid>
+      <BrandModal onUpdateBrandList={handleUpdateBrandList}></BrandModal>
       <div>
         <Row className="section">
           <Form.Label className="fw-bold">Crear marca</Form.Label>
@@ -101,8 +119,6 @@ const BrandList = () => {
             />
           </Col>
 
-
-
           <Col md={6}>
             <Form.Label>.</Form.Label>
             <CustomButton
@@ -111,7 +127,7 @@ const BrandList = () => {
               disabled={formData.name === ""}
               marginTop="3px"
             >
-              {formData.id ? 'Actualizar': 'Crear'} marca
+              {formData.id ? "Actualizar" : "Crear"} marca
             </CustomButton>
           </Col>
         </Row>
@@ -127,14 +143,23 @@ const BrandList = () => {
                 name: "Nombre",
                 selector: (row) => row.name,
                 grow: 2,
-                wrap: true
+                wrap: true,
               },
               {
                 name: "Accciones",
                 cell: (row) => (
-                  <CustomButton onClick={() => setFormData(row)}>
-                    Editar
-                  </CustomButton>
+                  <>
+                    <CustomButton onClick={() => setFormData(row)}>
+                      Editar
+                    </CustomButton>
+                    <CustomButton
+                      onClick={() =>
+                        handleOpenModal(row)
+                      }
+                    >
+                      Ver
+                    </CustomButton>
+                  </>
                 ),
               },
             ]}
