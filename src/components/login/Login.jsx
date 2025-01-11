@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { Container, Row, Col, Alert, Image, Form, Button } from "react-bootstrap";
+import { Container, Row, Col, Alert, Image, Form } from "react-bootstrap";
 import { loginUser } from "../apis/login";
 import { useNavigate } from "react-router-dom";
 import CustomButton from "../commons/customButton/CustomButton";
-import Logo from '../../assets/images/Logo.png'
+import Logo from "../../assets/images/Logo.png";
 
 function Login({ onLogin }) {
   const navigate = useNavigate();
@@ -39,7 +39,6 @@ function Login({ onLogin }) {
       },
     }));
   };
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -83,48 +82,56 @@ function Login({ onLogin }) {
       <Container style={{ height: "100vh" }}>
         <Row className="h-100 d-flex align-items-center justify-content-center">
           <Col
-          sx={10}
+            sx={10}
             md={6}
             lg={4}
             id="login-col"
             className="align-items-center rounded"
-            style={{backgroundColor: '#343a40', padding: '20px', border: '1px solid'}}
+            style={{
+              backgroundColor: "#253C47",
+              padding: "30px",
+              border: "1px solid",
+              color: 'white'
+            }}
           >
-                <Image width="100%" src={Logo} rounded></Image>
+            <Image width="100%" src={Logo} rounded></Image>
 
-
-                {alertData.shown && (
-                  <Alert variant="danger" className="mt-3">
-                    {alertData.message}
-                  </Alert>
-                )}            
+            {alertData.shown && (
+              <Alert variant="danger" className="mt-3">
+                {alertData.message}
+              </Alert>
+            )}
 
             <Form>
-      <Form.Group className="mb-3" controlId="formBasicEmail">
-        <Form.Label>Email address</Form.Label>
-        <Form.Control type="text"
-                    className="form-control mt-1"
-                    placeholder="Usuario"
-                    name="username"
-                    value={formData.username}
-                    onChange={handleChange}
-                    required/>
-      </Form.Group>
+              <Form.Group className="mb-3" controlId="formBasicEmail">
+                <Form.Label>Email address</Form.Label>
+                <Form.Control
+                  type="text"
+                  className="form-control mt-1"
+                  placeholder="Usuario"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
 
-      <Form.Group className="mb-3" controlId="formBasicPassword">
-        <Form.Label>Password</Form.Label>
-        <Form.Control                     type="password"
-                    className="form-control mt-1"
-                    placeholder="Contraseña"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    required/>
-      </Form.Group>
-      <CustomButton onClick={handleSubmit} fullWidth>Iniciar sesión</CustomButton>
-    </Form>
-
-
+              <Form.Group className="mb-3" controlId="formBasicPassword">
+                <Form.Label >Password</Form.Label>
+                <Form.Control
+                  type="password"
+                  className="form-control mt-1"
+                  placeholder="Contraseña"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
+              <CustomButton onClick={handleSubmit} fullWidth>
+                Iniciar sesión
+              </CustomButton>
+            </Form>
           </Col>
         </Row>
       </Container>
