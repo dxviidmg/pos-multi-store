@@ -6,7 +6,10 @@ import CustomButton from "../commons/customButton/CustomButton";
 import { createDiscount, getDiscounts } from "../apis/discounts";
 import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";
-import { hideClientModal, showClientModal } from "../redux/clientModal/ClientModalActions";
+import {
+  hideClientModal,
+  showClientModal,
+} from "../redux/clientModal/ClientModalActions";
 import ClientModal from "../clientModal/ClientModal";
 
 const ClientList = () => {
@@ -14,7 +17,7 @@ const ClientList = () => {
   const [userType, setUserType] = useState(null);
   const [discounts, setDiscounts] = useState([]);
   const dispatch = useDispatch();
-  
+
   const [discountFormData, setDiscountFormData] = useState({
     discount_percentage: "",
   });
@@ -24,7 +27,6 @@ const ClientList = () => {
     const user = JSON.parse(localStorage.getItem("user"));
     setUserType(user?.store === null ? "admin" : "");
   }, []);
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -43,34 +45,31 @@ const ClientList = () => {
     fetchData();
   }, []);
 
-
   const handleDiscountInputChange = (e) => {
     const { name, value } = e.target;
     setDiscountFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-
   const handleSaveDiscount = async () => {
-    try {
-      const response = await createDiscount(discountFormData);
+    const response = await createDiscount(discountFormData);
 
-      if (response.status === 201) {
-        setDiscounts((prevDiscounts) => {
-          const updatedDiscounts = [...prevDiscounts, response.data].sort(
-            (a, b) => a.discount_percentage - b.discount_percentage
-          );
-          return updatedDiscounts;
-        });
-        setDiscountFormData({ discount_percentage: "" });
+    if (response.status === 201) {
+      setDiscounts((prevDiscounts) => {
+        const updatedDiscounts = [...prevDiscounts, response.data].sort(
+          (a, b) => a.discount_percentage - b.discount_percentage
+        );
+        return updatedDiscounts;
+      });
+      setDiscountFormData({ discount_percentage: "" });
 
-        Swal.fire({
-          icon: "success",
-          title: "Descuento creado",
-          timer: 2000,
-        });
-      }
-    } catch (error) {
-      handleDiscountError(error);
+      Swal.fire({
+        icon: "success",
+        title: "Descuento creado",
+        timer: 5000,
+      });
+    }
+    else{
+      handleDiscountError(response);
     }
   };
 
@@ -83,7 +82,8 @@ const ClientList = () => {
     ) {
       const discountError = error.response.data.discount_percentage[0];
       if (
-        discountError === "discount with this discount percentage already exists."
+        discountError ===
+        "discount with this discount percentage already exists."
       ) {
         message = "El descuento ya existe";
       }
@@ -93,23 +93,22 @@ const ClientList = () => {
       icon: "error",
       title: "Error al crear descuento",
       text: message,
-      timer: 2000,
+      timer: 5000,
     });
   };
 
-
   const handleOpenModal = (client) => {
-    console.log('x')
     dispatch(hideClientModal());
     setTimeout(() => dispatch(showClientModal(client)));
-    console.log('xx')
   };
 
   const handleUpdateClientList = (updatedClient) => {
     setClients((prevClients) => {
       const clientExists = prevClients.some((b) => b.id === updatedClient.id);
       return clientExists
-        ? prevClients.map((b) => (b.id === updatedClient.id ? updatedClient : b))
+        ? prevClients.map((b) =>
+            b.id === updatedClient.id ? updatedClient : b
+          )
         : [...prevClients, updatedClient];
     });
   };
@@ -118,11 +117,9 @@ const ClientList = () => {
     <Container fluid>
       <ClientModal onUpdateClientList={handleUpdateClientList}></ClientModal>
       <Row>
-        <Col md={userType === "admin" ? 9 : 12}>
-        </Col>
         {userType === "admin" && (
-          <Col md={3}>
-            <Row className="section-right">
+          <Col md={12}>
+            <Row className="section">
               <Form>
                 <Form.Label className="fw-bold">Crear descuento</Form.Label>
                 <br></br>
@@ -148,30 +145,39 @@ const ClientList = () => {
         )}
       </Row>
       <Row className="section">
-      <CustomButton onClick={() => handleOpenModal()}>
-                  Crear
-                </CustomButton>
-        <Form.Label className="fw-bold">Lista de clientes</Form.Label>
-        <CustomTable
-          searcher={true}
-          data={clients}
-          columns={[
-            { name: "#", selector: (row) => row.id },
-            { name: "Nombre", selector: (row) => row.full_name, grow: 2 },
-            { name: "Teléfono", selector: (row) => row.phone_number, grow: 2 },
-            { name: "Descuento", selector: (row) => `${row.discount_percentage}%` },
+        <Col>
+          <Form.Label className="fw-bold">Lista de clientes</Form.Label>
+          <br></br>
+          <CustomButton onClick={() => handleOpenModal()}>Crear</CustomButton>
 
-            {
-              name: "Accciones",
-              cell: (row) => (
-                <CustomButton onClick={() => handleOpenModal(row)}>
-                  Editar
-                </CustomButton>
-              ),
-            },
-          ]}
-          highlightOnHover
-        />
+          <CustomTable
+            searcher={true}
+            data={clients}
+            columns={[
+              { name: "#", selector: (row) => row.id },
+              { name: "Nombre", selector: (row) => row.full_name, grow: 2 },
+              {
+                name: "Teléfono",
+                selector: (row) => row.phone_number,
+                grow: 2,
+              },
+              {
+                name: "Descuento",
+                selector: (row) => `${row.discount_percentage}%`,
+              },
+
+              {
+                name: "Accciones",
+                cell: (row) => (
+                  <CustomButton onClick={() => handleOpenModal(row)}>
+                    Editar
+                  </CustomButton>
+                ),
+              },
+            ]}
+            highlightOnHover
+          />
+        </Col>
       </Row>
     </Container>
   );

@@ -9,6 +9,18 @@ import { hideProductModal } from "../redux/productModal/ProductModalActions";
 import { createProduct, updateProduct } from "../apis/products";
 
 
+const INITIAL_FORM_DATA = {
+  brand: "",
+  code: "",
+  name: "",
+  purchase_price: "",
+  unit_sale_price: "",
+  wholesale_sale_price: "",
+  min_wholesale_quantity: "",
+  apply_wholesale_price_on_costumer_discount: false
+
+}
+
 const ProductModal = ({ onUpdateProductList }) => {
   const { showBrandModal, product } = useSelector(
     (state) => state.ProductModalReducer
@@ -16,38 +28,31 @@ const ProductModal = ({ onUpdateProductList }) => {
 
   const [brands, setBrands] = useState([]);
 
-  const [formData, setFormData] = useState({
-    name: "",
-  });
+  const [formData, setFormData] = useState(INITIAL_FORM_DATA);
 
   useEffect(() => {
+    console.log('x', product)
     if (product) {
-      setFormData({
-
-        id: product.id || "",
-        brand: product.brand || "",
-        code: product.code || "",
-        name: product.name || "",
-        purchase_price: product.purchase_price || "",
-        unit_sale_price: product.unit_sale_price || "",
-        wholesale_sale_price: product.wholesale_sale_price || "",
-        min_wholesale_quantity: product.min_wholesale_quantity || "",
-        apply_wholesale_price_on_costumer_discount: product.apply_wholesale_price_on_costumer_discount || false
-
-      });
-
-      const fetchBrands = async () => {
-        try {
-          const response2 = await getBrands();
-          setBrands(response2.data);
-        } catch (error) {
-          console.error("Error fetching brands:", error);
-        }
-      };
-  
-      fetchBrands();
-
+      setFormData(product);
     }
+    else{
+      setFormData(INITIAL_FORM_DATA)
+    }
+
+
+    const fetchBrands = async () => {
+      try {
+        const response2 = await getBrands();
+        setBrands(response2.data);
+      } catch (error) {
+        console.error("Error fetching brands:", error);
+      }
+    };
+
+    fetchBrands();
+
+
+
   }, [product]);
 
 
@@ -71,6 +76,7 @@ const ProductModal = ({ onUpdateProductList }) => {
       payload.min_wholesale_quantity = null;
     }
 
+    console.log('payload to sent', payload)
     if (formData.id){
       response = await updateProduct(payload);
     }
@@ -96,7 +102,7 @@ const ProductModal = ({ onUpdateProductList }) => {
       Swal.fire({
         icon: "success",
         title: "Producto actualizado",
-        timer: 2000,
+        timer: 5000,
       });
     }
     else if (response.status === 201) {
@@ -105,7 +111,7 @@ const ProductModal = ({ onUpdateProductList }) => {
       Swal.fire({
         icon: "success",
         title: "Producto creado",
-        timer: 2000,
+        timer: 5000,
       });
     }
 
@@ -117,20 +123,20 @@ const ProductModal = ({ onUpdateProductList }) => {
           response.response.data.code[0] ===
           "product with this code already exists."
         ) {
-          text = "El codigo ya existe";
+          text = "El código ya existe";
         }
       }
       Swal.fire({
         icon: "error",
         title: "Error al crear producto",
-        timer: 2000,
+        timer: 5000,
         text: text,
       });
     } else {
       Swal.fire({
         icon: "error",
         title: "Error al crear producto",
-        timer: 2000,
+        timer: 5000,
         text: "Error desconocido, por favor comuniquese con soporte",
       });
     }
@@ -142,20 +148,21 @@ const ProductModal = ({ onUpdateProductList }) => {
     const { wholesale_sale_price, min_wholesale_quantity, apply_wholesale_price_on_costumer_discount, ...requiredFields } =
       formData;
 
-    console.log(wholesale_sale_price, min_wholesale_quantity, requiredFields)
-
+    console.log('fff', formData)
+    console.log('a1', wholesale_sale_price, min_wholesale_quantity, apply_wholesale_price_on_costumer_discount)
     // Verificar que los campos obligatorios no estén vacíos
     const areRequiredFieldsComplete = !Object.values(requiredFields).some(
       (value) => value === ""
     );
 
+
     // Verificar las condiciones de los campos opcionales
     const areOptionalFieldsConsistent =
       (wholesale_sale_price === "") === (min_wholesale_quantity === "");
 
+    console.log('a2', areOptionalFieldsConsistent)
     // La forma está incompleta si hay campos obligatorios vacíos o los opcionales son inconsistentes
 
-    console.log('!areRequiredFieldsComplete || !areOptionalFieldsConsistent', !areRequiredFieldsComplete || !areOptionalFieldsConsistent)
     return !areRequiredFieldsComplete || !areOptionalFieldsConsistent;
   };
 
@@ -181,11 +188,11 @@ const ProductModal = ({ onUpdateProductList }) => {
             </Form.Select>
           </Col>
           <Col md={4}>
-            <Form.Label>Codigo</Form.Label>
+            <Form.Label>Código</Form.Label>
             <Form.Control
               type="text"
               value={formData.code}
-              placeholder="Codigo"
+              placeholder="Código"
               name="code"
               onChange={handleDataChange}
             />

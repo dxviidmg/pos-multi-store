@@ -125,14 +125,14 @@ const PaymentModal = () => {
       Swal.fire({
         icon: "success",
         title: "venta exitosa",
-        timer: 2000,
+        timer: 5000,
       });
     } else {
       Swal.fire({
         icon: "error",
         title: "Error al finalizar la venta",
         text: "Por favor llame a soporte tecnico",
-        timer: 2000,
+        timer: 5000,
       });
     }
   };

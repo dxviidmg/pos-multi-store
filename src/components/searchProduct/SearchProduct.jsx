@@ -46,7 +46,7 @@ const SearchProduct = () => {
           icon: "error",
           title: "Producto no encontrado",
           text: "No se pudo encontrar este producto mediante su código",
-          timer: 1000,
+          timer: 5000,
         });
       } else if (queryType === "code" && fetchedData.length === 1) {
         handleSingleProductFetch(fetchedData[0]);
@@ -64,7 +64,7 @@ const SearchProduct = () => {
       Swal.fire({
         icon: "error",
         title: "Este producto no esta relacionado a algun traspaso",
-        timer: 2000,
+        timer: 5000,
       });
     } else {
       handleAddToCartIfAvailable(product);
@@ -116,7 +116,7 @@ const SearchProduct = () => {
         movementType === "traspaso"
           ? "Llegaste al límite de producto reservado para traspasar"
           : "No hay suficiente stock para ventar",
-      timer: 2000,
+      timer: 5000,
     });
   };
 

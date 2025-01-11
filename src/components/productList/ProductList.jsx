@@ -64,7 +64,7 @@ const ProductList = () => {
             data={products}
             columns={[
               {
-                name: "Codigo",
+                name: "Código",
                 selector: (row) => row.code,
               },
               {

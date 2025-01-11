@@ -8,106 +8,103 @@ import { getDiscounts } from "../apis/discounts";
 import { createClient, updateClient } from "../apis/clients";
 import { hideClientModal } from "../redux/clientModal/ClientModalActions";
 
+const INITIAL_FORM_DATA = {
+  first_name: "",
+  last_name: "",
+  phone_number: "",
+  discount: "",
+};
+
 const ClientModal = ({ onUpdateClientList }) => {
   const { showClientModal, client } = useSelector(
     (state) => state.ClientModalReducer
   );
 
   const [discounts, setDiscounts] = useState([]);
+  const [formData, setFormData] = useState(INITIAL_FORM_DATA);
 
-  const [formData, setFormData] = useState({
-    first_name: "",
-    last_name: "",
-    phone_number: "",
-    discount: "",
-  });
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchDiscounts = async () => {
       try {
-        const [discountsResponse] = await Promise.all([getDiscounts()]);
-        setDiscounts(discountsResponse.data);
+        const response = await getDiscounts();
+        setDiscounts(response.data);
       } catch (error) {
-        console.error("Error fetching data", error);
+        console.error("Error fetching discounts", error);
+        Swal.fire({
+          icon: "error",
+          title: "Error al cargar descuentos",
+          text: "Por favor, intente de nuevo más tarde.",
+          timer: 5000,
+        });
       }
     };
 
     if (client) {
       setFormData(client);
+    } else {
+      setFormData(INITIAL_FORM_DATA);
     }
 
-    fetchData();
+    fetchDiscounts();
   }, [client]);
 
-  const dispatch = useDispatch();
-
-
-  const handleClientInputChange = (e) => {
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const isClientFormIncomplete = () => {
-    return Object.values(formData).some((value) => value === "");
-  };
+  const isFormIncomplete = Object.values(formData).some((value) => value === "");
 
   const handleSaveClient = async () => {
     try {
-      const response = formData.id
-        ? await updateClient(formData)
-        : await createClient(formData);
+      const apiCall = formData.id ? updateClient : createClient;
+      const response = await apiCall(formData);
 
-      if (response.status === 200 || response.status === 201) {
+      if ([200, 201].includes(response.status)) {
         dispatch(hideClientModal());
         onUpdateClientList(response.data);
-        setFormData({
-          first_name: "",
-          last_name: "",
-          phone_number: "",
-          discount: "",
-        });
+        setFormData(INITIAL_FORM_DATA);
 
         Swal.fire({
           icon: "success",
           title: `Cliente ${formData.id ? "actualizado" : "creado"}`,
-          timer: 2000,
+          timer: 5000,
         });
-      }
-      else{
-
+      } else {
         handleClientError(response);
       }
     } catch (error) {
+      handleClientError(error.response);
     }
   };
 
   const handleClientError = (response) => {
-    let message = "Error desconocido, por favor comuníquese con soporte";
+    let message = "Error desconocido. Por favor, contacte soporte.";
 
-    if (response.response?.status === 400 && response.response.data.phone_number) {
-      const phoneError = response.response.data.phone_number[0];
+    if (response?.status === 400 && response.data.phone_number) {
+      const phoneError = response.data.phone_number[0];
       if (phoneError === "Ensure this field has at least 10 characters.") {
-        message = "El teléfono debe tener 10 dígitos";
+        message = "El teléfono debe tener al menos 10 dígitos.";
       } else if (phoneError === "client with this phone number already exists.") {
-        message = "El teléfono ya existe";
+        message = "El teléfono ya existe.";
       }
     }
 
     Swal.fire({
       icon: "error",
-      title: "Error al crear cliente",
+      title: "Error al guardar cliente",
       text: message,
-      timer: 2000,
+      timer: 5000,
     });
   };
-
   return (
     <CustomModal
       showOut={showClientModal}
       title={formData ? "Actualizar marca" : "Crear marca"}
     >
-      <Row className={`section${"aa" === "admin" ? "-left" : ""}`}>
-        <Form.Label className="fw-bold">Crear cliente</Form.Label>
+      <Row className={`section`}>
         <Col>
           <Form.Label>Nombre</Form.Label>
           <Form.Control
@@ -115,7 +112,7 @@ const ClientModal = ({ onUpdateClientList }) => {
             value={formData.first_name}
             placeholder="Nombre"
             name="first_name"
-            onChange={handleClientInputChange}
+            onChange={handleInputChange}
           />
         </Col>
         <Col md={3}>
@@ -125,7 +122,7 @@ const ClientModal = ({ onUpdateClientList }) => {
             value={formData.last_name}
             placeholder="Apellidos"
             name="last_name"
-            onChange={handleClientInputChange}
+            onChange={handleInputChange}
           />
         </Col>
         <Col md={3}>
@@ -135,7 +132,7 @@ const ClientModal = ({ onUpdateClientList }) => {
             value={formData.phone_number}
             placeholder="Teléfono"
             name="phone_number"
-            onChange={handleClientInputChange}
+            onChange={handleInputChange}
           />
         </Col>
         <Col md={3}>
@@ -143,7 +140,7 @@ const ClientModal = ({ onUpdateClientList }) => {
           <Form.Select
             aria-label="Select discount"
             value={formData.discount}
-            onChange={handleClientInputChange}
+            onChange={handleInputChange}
             name="discount"
           >
             <option value="">Descuento</option>
@@ -158,7 +155,7 @@ const ClientModal = ({ onUpdateClientList }) => {
           <CustomButton
             fullWidth
             onClick={handleSaveClient}
-            disabled={isClientFormIncomplete()}
+            disabled={isFormIncomplete}
             marginTop="10px"
           >
             {formData.id ? "Actualizar" : "Crear"} cliente

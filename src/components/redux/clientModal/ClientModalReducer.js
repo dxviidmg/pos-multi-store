@@ -6,7 +6,6 @@ const initialState = {
 };
 
 const ClientModalReducer = (state = initialState, action) => {
-  console.log('showClientModal')
   switch (action.type) {
     case SHOW_MODAL: {
         return {
