@@ -73,20 +73,27 @@ const SearchProduct = () => {
   };
 
   const handleAddToCartIfAvailable = (product) => {
+
     const existingProductIndex = cart.findIndex(
       (item) => item.id === product.id
     );
     const quantity = product.quantity || 0;
 
     if (existingProductIndex === -1) {
-      const stock =
-        movementType === "traspaso"
-          ? product.reserved_stock
-          : product.available_stock;
-      if (quantity < stock) {
+
+
+      if (movementType === "agregar"){
         dispatch(addToCart({ ...product, quantity: 1 }));
-      } else {
-        displayStockLimitAlert();
+
+      }
+      else{
+
+        const stock = movementType === "traspaso" ? product.reserved_stock: product.available_stock;
+        if (quantity < stock) {
+          dispatch(addToCart({ ...product, quantity: 1 }));
+        } else {
+          displayStockLimitAlert();
+        }
       }
     } else {
       const existingProduct = cart[existingProductIndex];
@@ -115,7 +122,7 @@ const SearchProduct = () => {
       title:
         movementType === "traspaso"
           ? "Llegaste al límite de producto reservado para traspasar"
-          : "No hay suficiente stock para ventar",
+          : "No hay suficiente stock para vender",
       timer: 5000,
     });
   };

@@ -65,6 +65,10 @@ const cartReducer = (state = initialState, action) => {
       if (state.movementType === "distribucion"){
         stockTemp = stock
       }
+
+      if (state.movementType === "agregar"){
+        stockTemp = available_stock
+      }
       
       const clientSelected = aClientIsSelected(state.client);
 
