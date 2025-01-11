@@ -3,7 +3,7 @@ import CustomTable from "../commons/customTable/customTable";
 import { getClients } from "../apis/clients";
 import { Col, Container, Form, Row } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
-import { createDiscount, getDiscounts } from "../apis/discounts";
+import { createDiscount } from "../apis/discounts";
 import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";
 import {
@@ -15,7 +15,6 @@ import ClientModal from "../clientModal/ClientModal";
 const ClientList = () => {
   const [clients, setClients] = useState([]);
   const [userType, setUserType] = useState(null);
-  const [discounts, setDiscounts] = useState([]);
   const dispatch = useDispatch();
 
   const [discountFormData, setDiscountFormData] = useState({
@@ -31,12 +30,10 @@ const ClientList = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [clientsResponse, discountsResponse] = await Promise.all([
+        const [clientsResponse] = await Promise.all([
           getClients(),
-          getDiscounts(),
         ]);
         setClients(clientsResponse.data);
-        setDiscounts(discountsResponse.data);
       } catch (error) {
         console.error("Error fetching data", error);
       }
@@ -54,12 +51,6 @@ const ClientList = () => {
     const response = await createDiscount(discountFormData);
 
     if (response.status === 201) {
-      setDiscounts((prevDiscounts) => {
-        const updatedDiscounts = [...prevDiscounts, response.data].sort(
-          (a, b) => a.discount_percentage - b.discount_percentage
-        );
-        return updatedDiscounts;
-      });
       setDiscountFormData({ discount_percentage: "" });
 
       Swal.fire({
