@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Container, Row, Col, Alert, Image } from "react-bootstrap";
+import { Container, Row, Col, Alert, Image, Form, Button } from "react-bootstrap";
 import { loginUser } from "../apis/login";
 import { useNavigate } from "react-router-dom";
 import CustomButton from "../commons/customButton/CustomButton";
@@ -70,7 +70,7 @@ function Login({ onLogin }) {
 
   const handleRedirect = (response) => {
     if (response.store) {
-      navigate("/nueva-venta/");
+      navigate("/vender/");
     } else {
       navigate("/productos/");
     }
@@ -80,58 +80,51 @@ function Login({ onLogin }) {
 
   return (
     <div id="login">
-      <Container>
-        <Row className="justify-content-center">
+      <Container style={{ height: "100vh" }}>
+        <Row className="h-100 d-flex align-items-center justify-content-center">
           <Col
           sx={10}
             md={6}
-            lg={3}
+            lg={4}
             id="login-col"
-            className="align-items-center"
-            style={{backgroundColor: ''}}
+            className="align-items-center rounded"
+            style={{backgroundColor: '#343a40', padding: '20px', border: '1px solid'}}
           >
+                <Image width="100%" src={Logo} rounded></Image>
 
-            <form className="Auth-form">
-              <div className="Auth-form-content">
-              <h3 className="Auth-form-title text-center">Iniciar sesión</h3>
-                <Image width="100%" src={Logo}></Image>
-                <div className="form-group mt-3">
-                  <label>Usuario</label>
-                  <input
-                    type="text"
+
+                {alertData.shown && (
+                  <Alert variant="danger" className="mt-3">
+                    {alertData.message}
+                  </Alert>
+                )}            
+
+            <Form>
+      <Form.Group className="mb-3" controlId="formBasicEmail">
+        <Form.Label>Email address</Form.Label>
+        <Form.Control type="text"
                     className="form-control mt-1"
                     placeholder="Usuario"
                     name="username"
                     value={formData.username}
                     onChange={handleChange}
-                    required
-                  />
-                </div>
-                <div className="form-group mt-3">
-                  <label>Contraseña</label>
-                  <input
-                    type="password"
+                    required/>
+      </Form.Group>
+
+      <Form.Group className="mb-3" controlId="formBasicPassword">
+        <Form.Label>Password</Form.Label>
+        <Form.Control                     type="password"
                     className="form-control mt-1"
                     placeholder="Contraseña"
                     name="password"
                     value={formData.password}
                     onChange={handleChange}
-                    required
-                  />
-                </div>
-                <div className="d-grid gap-2 mt-3">
-                  
+                    required/>
+      </Form.Group>
+      <CustomButton onClick={handleSubmit} fullWidth>Iniciar sesión</CustomButton>
+    </Form>
 
-                    <CustomButton onClick={handleSubmit}>Iniciar sesión</CustomButton>
-                  
-                </div>
-                {alertData.shown && (
-                  <Alert variant="danger" className="mt-3">
-                    {alertData.message}
-                  </Alert>
-                )}
-              </div>
-            </form>
+
           </Col>
         </Row>
       </Container>

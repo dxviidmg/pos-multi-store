@@ -66,8 +66,6 @@ const ProductModal = ({ onUpdateProductList }) => {
 
   const handleProductSubmit = async (e) => {
 
-    let response
-
     const payload = { ...formData };
 
     // Si no aplica precio de mayoreo en descuento, eliminar los campos opcionales
@@ -76,72 +74,42 @@ const ProductModal = ({ onUpdateProductList }) => {
       payload.min_wholesale_quantity = null;
     }
 
-    console.log('payload to sent', payload)
-    if (formData.id){
-      response = await updateProduct(payload);
-    }
-    else{
-      response = await createProduct(payload);
-    }
+    const apiCall = payload.id ? updateProduct : createProduct;
+    const response = await apiCall(payload);
 
-    onUpdateProductList(response.data);
-    if (response.status === 200) {
+    if ([200, 201].includes(response.status)) {
       dispatch(hideProductModal());
-      
-      setFormData(
-        {
-          brand: "",
-          code: "",
-          name: "",
-          purchase_price: "",
-          unit_sale_price: "",
-          wholesale_sale_price: "",
-          min_wholesale_quantity: "",
-          apply_wholesale_price_on_costumer_discount: false}
-      )
-      Swal.fire({
-        icon: "success",
-        title: "Producto actualizado",
-        timer: 5000,
-      });
-    }
-    else if (response.status === 201) {
-      dispatch(hideProductModal());
+      onUpdateProductList(response.data);
+      setFormData(INITIAL_FORM_DATA);
 
       Swal.fire({
         icon: "success",
-        title: "Producto creado",
+        title: `Producto ${formData.id ? "actualizado" : "creado"}`,
         timer: 5000,
-      });
-    }
-
-    else if (response.status === 400) {
-
-      let text = "Error desconocido";
-      if (response.response.data.code) {
-        if (
-          response.response.data.code[0] ===
-          "product with this code already exists."
-        ) {
-          text = "El código ya existe";
-        }
-      }
-      Swal.fire({
-        icon: "error",
-        title: "Error al crear producto",
-        timer: 5000,
-        text: text,
       });
     } else {
-      Swal.fire({
-        icon: "error",
-        title: "Error al crear producto",
-        timer: 5000,
-        text: "Error desconocido, por favor comuniquese con soporte",
-      });
-    }
+      handleClientError(response);
+      }
+
   };
 
+  const handleClientError = (response) => {
+    let message = "Error desconocido. Por favor, contacte soporte.";
+
+    if (response.response?.status === 400 && response.response.data?.code) {
+      const codeError = response.response.data.code[0];
+      if (codeError === "product with this code already exists.") {
+        message = "El código ya existe.";
+      }
+    }
+
+    Swal.fire({
+      icon: "error",
+      title: `Error al ${formData.id ? "actualizar" : "crear"} producto`,
+      text: message,
+      timer: 5000,
+    })
+  }
 
   const isFormIncomplete = () => {
     // Separar los dos campos que pueden estar vacíos opcionalmente

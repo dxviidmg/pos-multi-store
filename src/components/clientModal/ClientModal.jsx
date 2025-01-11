@@ -58,7 +58,6 @@ const ClientModal = ({ onUpdateClientList }) => {
   const isFormIncomplete = Object.values(formData).some((value) => value === "");
 
   const handleSaveClient = async () => {
-    try {
       const apiCall = formData.id ? updateClient : createClient;
       const response = await apiCall(formData);
 
@@ -75,9 +74,6 @@ const ClientModal = ({ onUpdateClientList }) => {
       } else {
         handleClientError(response);
       }
-    } catch (error) {
-      handleClientError(error.response);
-    }
   };
 
   const handleClientError = (response) => {

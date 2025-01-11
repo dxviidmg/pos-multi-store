@@ -39,7 +39,7 @@ const Cart = () => {
     if (store_type === "A" && movementType !== "distribucion") {
       dispatch(updateMovementType('distribucion'));
     }
-  }, []);
+  }, [store_type,dispatch, movementType]);
 
   const { total } = useMemo(() => {
     const total = cart.reduce(

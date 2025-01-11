@@ -124,7 +124,7 @@ const PaymentModal = () => {
 
       Swal.fire({
         icon: "success",
-        title: "venta exitosa",
+        title: "Venta exitosa",
         timer: 5000,
       });
     } else {

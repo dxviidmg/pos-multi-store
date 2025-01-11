@@ -4,6 +4,7 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import { getUserData } from "../apis/utils";
 import { NavDropdown } from "react-bootstrap";
+import Logo from '../../assets/images/Logo.png'
 
 const CustomNavbar = () => {
   const handleLogout = () => {
@@ -15,9 +16,15 @@ const CustomNavbar = () => {
   const user = getUserData();
 
   return (
-    <Navbar expand="lg" bg="primary" data-bs-theme="light">
+    <Navbar expand="lg" bg="dark" data-bs-theme="dark">
       <Container fluid>
-        <Navbar.Brand href="#">SmartVenta</Navbar.Brand>
+      <img
+              src={Logo}
+              width="100"
+              height="50"
+              className="d-inline-block align-top"
+              alt="React Bootstrap logo"
+            />
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll">
           <Nav className="me-auto my-2 my-lg-0" navbarScroll>
@@ -26,7 +33,7 @@ const CustomNavbar = () => {
             {/* Opciones para tipo de tienda "T" */}
             {user?.store_type === "T" && (
               <>
-                <Nav.Link href="/nueva-venta/">Vender</Nav.Link>
+                <Nav.Link href="/vender/">Vender</Nav.Link>
                 <Nav.Link href="/clientes/">Clientes</Nav.Link>
                 <Nav.Link href="/ventas/">Ventas</Nav.Link>
               </>
