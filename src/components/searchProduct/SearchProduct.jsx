@@ -73,22 +73,19 @@ const SearchProduct = () => {
   };
 
   const handleAddToCartIfAvailable = (product) => {
-
     const existingProductIndex = cart.findIndex(
       (item) => item.id === product.id
     );
     const quantity = product.quantity || 0;
 
     if (existingProductIndex === -1) {
-
-
-      if (movementType === "agregar"){
+      if (movementType === "agregar") {
         dispatch(addToCart({ ...product, quantity: 1 }));
-
-      }
-      else{
-
-        const stock = movementType === "traspaso" ? product.reserved_stock: product.available_stock;
+      } else {
+        const stock =
+          movementType === "traspaso"
+            ? product.reserved_stock
+            : product.available_stock;
         if (quantity < stock) {
           dispatch(addToCart({ ...product, quantity: 1 }));
         } else {
@@ -221,7 +218,7 @@ const SearchProduct = () => {
         value="distribucion"
         checked={movementType === "distribucion"}
         disabled={store_type === "T"}
-/>
+      />
       <Form.Check
         inline
         id="agregar"
