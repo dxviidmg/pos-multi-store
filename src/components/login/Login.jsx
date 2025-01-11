@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { Container, Row, Col, Alert } from "react-bootstrap";
+import { Container, Row, Col, Alert, Image } from "react-bootstrap";
 import { loginUser } from "../apis/login";
 import { useNavigate } from "react-router-dom";
 import CustomButton from "../commons/customButton/CustomButton";
-
+import Logo from '../../assets/images/Logo.png'
 
 function Login({ onLogin }) {
   const navigate = useNavigate();
@@ -83,14 +83,18 @@ function Login({ onLogin }) {
       <Container>
         <Row className="justify-content-center">
           <Col
+          sx={10}
             md={6}
             lg={3}
             id="login-col"
-            className="d-flex align-items-center"
+            className="align-items-center"
+            style={{backgroundColor: ''}}
           >
+
             <form className="Auth-form">
               <div className="Auth-form-content">
-                <h3 className="Auth-form-title text-center">Iniciar sesión</h3>
+              <h3 className="Auth-form-title text-center">Iniciar sesión</h3>
+                <Image width="100%" src={Logo}></Image>
                 <div className="form-group mt-3">
                   <label>Usuario</label>
                   <input

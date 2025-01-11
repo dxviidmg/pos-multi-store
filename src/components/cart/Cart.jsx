@@ -217,7 +217,7 @@ const Cart = () => {
                     <option value="">Selecciona una tienda</option>
                     {stores.map((store) => (
                       <option key={store.id} value={store.id}>
-                        {store.full_name}
+                        {store.name}
                       </option>
                     ))}
                   </Form.Select>
