@@ -4,11 +4,13 @@ import {
   ADD_TO_CART,
   REMOVE_FROM_CART,
   CLEAN_CART,
+  UPDATE_MOVEMENT_TYPE
 } from "./cartActions";
 
 const initialState = {
   cart: [],
   client: {},
+  movementType: "venta"
 };
 
 const aClientIsSelected = (client) => Object.keys(client).length > 0;
@@ -56,16 +58,33 @@ const cartReducer = (state = initialState, action) => {
         prices,
         reserved_stock,
         available_stock,
-        movement_type,
+        stock,
       } = action.payload;
-      const existingProductIndex = state.cart.findIndex((item) => item.id === id);
-      const stockTemp = movement_type === "compra" ? available_stock : reserved_stock;
+      
+      const getStockTemp = (movementType) => {
+        switch (movementType) {
+          case "distribucion":
+            return stock;
+          case "agregar":
+            return available_stock;
+          case "venta":
+          default:
+            return available_stock || reserved_stock;
+        }
+      };
+    
+      const stockTemp = getStockTemp(state.movementType);
       const clientSelected = aClientIsSelected(state.client);
-
+      const existingProductIndex = state.cart.findIndex((item) => item.id === id);
+    
       if (existingProductIndex !== -1) {
+        // Actualizar producto existente
         const updatedCart = state.cart.map((item, index) => {
           if (index === existingProductIndex) {
-            const updatedQuantity = Math.min(item.quantity + 1, stockTemp);
+            const updatedQuantity = state.movementType === "agregar" 
+              ? item.quantity + 1 
+              : Math.min(item.quantity + 1, stockTemp);
+            
             return {
               ...item,
               quantity: updatedQuantity,
@@ -77,7 +96,8 @@ const cartReducer = (state = initialState, action) => {
         });
         return { ...state, cart: updatedCart };
       }
-
+    
+      // Agregar nuevo producto
       return {
         ...state,
         cart: [
@@ -90,6 +110,7 @@ const cartReducer = (state = initialState, action) => {
         ],
       };
     }
+    
 
     case REMOVE_FROM_CART:
       return {
@@ -99,6 +120,9 @@ const cartReducer = (state = initialState, action) => {
 
     case CLEAN_CART:
       return { ...state, cart: [] };
+
+    case UPDATE_MOVEMENT_TYPE:
+      return { ...state, movementType: action.payload, cart: [] };
 
     default:
       return state;

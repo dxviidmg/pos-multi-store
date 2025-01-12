@@ -4,7 +4,7 @@ import { getApiUrl, getHeaders } from "./utils";
 export const createTransfer = async (data) => {
 
   try {
-  const response = await axios.post(getApiUrl("product-transfer"), data, {
+  const response = await axios.post(getApiUrl("transfer"), data, {
     headers: getHeaders(),
   });
   return response;
@@ -15,7 +15,7 @@ export const createTransfer = async (data) => {
 };
 
 export const getTransfers = async () => {
-    const apiUrl = new URL(getApiUrl("product-transfer"));
+    const apiUrl = new URL(getApiUrl("transfer"));
   
     try {
       const response = await axios.get(apiUrl, {
@@ -28,10 +28,24 @@ export const getTransfers = async () => {
   };
 
   
-  export const confirmTransfer = async (data) => {
+  export const confirmTransfers = async (data) => {
 
     try {
-    const response = await axios.post(getApiUrl("confirm-transfer"), data, {
+    const response = await axios.post(getApiUrl("confirm-transfers"), data, {
+      headers: getHeaders(),
+    });
+    return response;
+  } catch (error) {
+    console.error("Error al obtener clientes:", error);
+    return error;
+  }
+  };
+
+
+  export const confirmDistribution = async (data) => {
+
+    try {
+    const response = await axios.post(getApiUrl("confirm-distribution"), data, {
       headers: getHeaders(),
     });
     return response;

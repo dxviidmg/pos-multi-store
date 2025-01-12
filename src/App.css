@@ -38,11 +38,21 @@
 }
 
 
-.section {
-  margin: 15px 20px 7px 20px !important; /* Mantener el margen general */
-  padding-bottom: 10px !important;
-  padding-top: 10px !important;
+.section,
+.section-left,
+.section-right {
+  margin: 20px 10px 7px 10px !important; /* Mantener el margen general */
+  padding: 10px 0 !important;
   background-color: white;
   box-shadow: 0px 0px 2px 0px #000;
   border-radius: 5px;
+}
+
+.section-left {
+  margin-right: 0px !important; /* Ajuste específico para la sección izquierda */
+
+}
+
+.section-right {
+  margin-left: 0px !important; /* Ajuste específico para la sección derecha */
 }

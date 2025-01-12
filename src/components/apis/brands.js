@@ -14,3 +14,30 @@ export const getBrands = async () => {
       return error;
     }
   };
+
+
+  export const createBrand = async (data) => {
+    const apiUrl = new URL(getApiUrl("brand"));
+  
+    try {
+      const response = await axios.post(apiUrl, data, {
+        headers: getHeaders(),
+      });
+      return response;
+    } catch (error) {
+      return error;
+    }
+  };
+  
+  export const updateBrand = async (data) => {
+    const apiUrl = new URL(getApiUrl("brand/" + data.id));
+  
+    try {
+      const response = await axios.patch(apiUrl, data, {
+        headers: getHeaders(),
+      });
+      return response;
+    } catch (error) {
+      return error;
+    }
+  };

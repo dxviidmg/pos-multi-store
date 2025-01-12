@@ -5,22 +5,30 @@ import Cart from "../cart/Cart";
 import ClientSelected from "../clientSelected/ClientSelected";
 import { Col, Container, Row } from "react-bootstrap";
 import TabCart from "../cart/TabCart";
+import { getUserData } from "../apis/utils";
 
 
 const NewSale = () => {
-  return (
-    <div>
-      <Row className="section">
-        <Col md={6}>
-          {" "}
-          <SearchClient></SearchClient>
-        </Col>
+  const store_type = getUserData().store_type;
 
-        <Col md={6}>
-          {" "}
-          <ClientSelected></ClientSelected>
-        </Col>
-      </Row>
+  return (
+    <Container fluid>
+  {store_type === "T" && (
+
+<Row className="section">
+        
+<Col md={6}>
+  {" "}
+  <SearchClient></SearchClient>
+</Col>
+
+<Col md={6}>
+  {" "}
+  <ClientSelected></ClientSelected>
+</Col>
+</Row>
+
+  )}
       <Row className="section">
         <Col md={12}>
           {" "}
@@ -31,7 +39,7 @@ const NewSale = () => {
       <Row className="section">
         <TabCart></TabCart>
       </Row>
-    </div>
+    </Container>
   );
 };
 

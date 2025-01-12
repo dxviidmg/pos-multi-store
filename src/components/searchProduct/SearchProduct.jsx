@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import CustomTable from "../commons/customTable/customTable";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getStoreProducts } from "../apis/products";
-import { addToCart, cleanCart } from "../redux/cart/cartActions";
+import { addToCart, updateMovementType } from "../redux/cart/cartActions";
 import { Form } from "react-bootstrap";
 import { debounce } from "lodash";
 import StockModal from "../stockModal/StockModal";
@@ -12,15 +12,15 @@ import {
   showStockModal,
 } from "../redux/stockModal/StockModalActions";
 import Swal from "sweetalert2";
-import { updateMovement } from "../redux/movementType/movementTypeActions";
+import { getUserData } from "../apis/utils";
 
 const SearchProduct = () => {
   const inputRef = useRef(null);
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.cartReducer.cart);
-  const movementType = useSelector(
-    (state) => state.movementTypeReducer.movementType
-  );
+  const movementType = useSelector((state) => state.cartReducer.movementType);
+
+  const store_type = getUserData().store_type;
 
   const [query, setQuery] = useState("");
   const [data, setData] = useState([]);
@@ -46,7 +46,7 @@ const SearchProduct = () => {
           icon: "error",
           title: "Producto no encontrado",
           text: "No se pudo encontrar este producto mediante su código",
-          timer: 1000,
+          timer: 5000,
         });
       } else if (queryType === "code" && fetchedData.length === 1) {
         handleSingleProductFetch(fetchedData[0]);
@@ -58,11 +58,14 @@ const SearchProduct = () => {
   );
 
   const handleSingleProductFetch = (product) => {
-    if (
-      (movementType === "compra" && product.available_stock === 0) ||
-      (movementType === "traspaso" && product.reserved_stock === 0)
-    ) {
+    if (movementType === "venta" && product.available_stock === 0) {
       handleOpenModal(product);
+    } else if (movementType === "traspaso" && product.reserved_stock === 0) {
+      Swal.fire({
+        icon: "error",
+        title: "Este producto no esta relacionado a algun traspaso",
+        timer: 5000,
+      });
     } else {
       handleAddToCartIfAvailable(product);
     }
@@ -70,28 +73,41 @@ const SearchProduct = () => {
   };
 
   const handleAddToCartIfAvailable = (product) => {
-    const existingProductIndex = cart.findIndex((item) => item.id === product.id);
+    const existingProductIndex = cart.findIndex(
+      (item) => item.id === product.id
+    );
     const quantity = product.quantity || 0;
 
     if (existingProductIndex === -1) {
-      const stock = movementType === "traspaso" ? product.reserved_stock : product.available_stock;
-      if (quantity < stock) {
-        dispatch(addToCart({ ...product, quantity: 1, movement_type: movementType }));
+      if (movementType === "agregar") {
+        dispatch(addToCart({ ...product, quantity: 1 }));
       } else {
-        console.log('1')
-        displayStockLimitAlert();
+        const stock =
+          movementType === "traspaso"
+            ? product.reserved_stock
+            : product.available_stock;
+        if (quantity < stock) {
+          dispatch(addToCart({ ...product, quantity: 1 }));
+        } else {
+          displayStockLimitAlert();
+        }
       }
     } else {
       const existingProduct = cart[existingProductIndex];
-      const stock = movementType === "traspaso" ? product.reserved_stock : product.available_stock;
-
-      if (existingProduct.quantity < stock) {
-        dispatch(addToCart({ ...product, quantity: 1, movement_type: movementType }));
-      }
-      else if (movementType === "compra" && existingProduct.quantity >= stock) {
+      const stock =
+        movementType === "traspaso"
+          ? product.reserved_stock
+          : product.available_stock;
+      if (movementType === "agregar") {
+        dispatch(addToCart({ ...product, quantity: 1 }));
+      } else if (existingProduct.quantity < stock) {
+        dispatch(addToCart({ ...product, quantity: 1 }));
+      } else if (
+        movementType === "venta" &&
+        existingProduct.quantity >= stock
+      ) {
         handleOpenModal(existingProduct);
-      }
-      else {
+      } else {
         displayStockLimitAlert();
       }
     }
@@ -100,10 +116,11 @@ const SearchProduct = () => {
   const displayStockLimitAlert = () => {
     Swal.fire({
       icon: "error",
-      title: movementType === "traspaso"
-        ? "Llegaste al límite de producto reservado para traspasar"
-        : "No hay suficiente stock para comprar",
-      timer: 2000,
+      title:
+        movementType === "traspaso"
+          ? "Llegaste al límite de producto reservado para traspasar"
+          : "No hay suficiente stock para vender",
+      timer: 5000,
     });
   };
 
@@ -125,9 +142,9 @@ const SearchProduct = () => {
   };
 
   const handleMovementTypeChange = (e) => {
-    dispatch(updateMovement(e.target.value));
+    dispatch(updateMovementType(e.target.value));
+
     setData([]);
-    dispatch(cleanCart());
   };
 
   const handleBarcodeSearch = (event) => {
@@ -174,12 +191,13 @@ const SearchProduct = () => {
       <Form.Label className="me-3">Tipo de operación:</Form.Label>
       <Form.Check
         inline
-        id="compra"
-        label="Compra"
+        id="venta"
+        label="Venta"
         type="radio"
         onChange={handleMovementTypeChange}
-        value="compra"
-        checked={movementType === "compra"}
+        value="venta"
+        checked={movementType === "venta"}
+        disabled={store_type === "A"}
       />
       <Form.Check
         inline
@@ -189,10 +207,32 @@ const SearchProduct = () => {
         onChange={handleMovementTypeChange}
         value="traspaso"
         checked={movementType === "traspaso"}
+        disabled={store_type === "A"}
       />
+      <Form.Check
+        inline
+        id="distribucion"
+        label="Distribucion"
+        type="radio"
+        onChange={handleMovementTypeChange}
+        value="distribucion"
+        checked={movementType === "distribucion"}
+        disabled={store_type === "T"}
+      />
+      <Form.Check
+        inline
+        id="agregar"
+        label="Agregar a inventario"
+        type="radio"
+        onChange={handleMovementTypeChange}
+        value="agregar"
+        checked={movementType === "agregar"}
+      />
+
       <br />
       <Form.Label className="fw-bold">
-        {!isInputFocused && "Aviso: Para añadir productos al carrito el cursor debe estar en el campo de búsqueda de productos."}
+        {!isInputFocused &&
+          "Aviso: Para añadir productos al carrito el cursor debe estar en el campo de búsqueda de productos."}
       </Form.Label>
       <br />
       <Form.Control
@@ -200,42 +240,59 @@ const SearchProduct = () => {
         type="text"
         value={queryType === "code" ? barcode : query}
         placeholder="Buscar producto"
-        onChange={queryType === "q" ? handleQueryChange : (e) => setBarcode(e.target.value)}
+        onChange={
+          queryType === "q"
+            ? handleQueryChange
+            : (e) => setBarcode(e.target.value)
+        }
         onKeyDown={queryType === "code" ? handleBarcodeSearch : undefined}
         onFocus={() => setIsInputFocused(true)}
         onBlur={() => setIsInputFocused(false)}
       />
       <CustomTable
-        title="Productos"
+        showNoDataComponent={false}
         data={data}
         columns={[
           { name: "Código", selector: (row) => row.product_code },
-          { name: "Descripción", selector: (row) => row.description, grow: 3, wrap: true },
+          {
+            name: "Descripción",
+            selector: (row) => row.description,
+            grow: 3,
+            wrap: true,
+          },
           { name: "Stock", selector: (row) => row.available_stock },
-          { name: "Precio unitario", selector: (row) => `$${row.prices.unit_sale_price.toFixed(2)}` },
+          {
+            name: "Precio unitario",
+            selector: (row) => `$${row.prices.unit_sale_price.toFixed(2)}`,
+          },
           {
             name: "Precio mayoreo",
             selector: (row) =>
               row.prices.apply_wholesale
-                ? `${row.prices.min_wholesale_quantity} o más a $${row.prices.wholesale_sale_price.toFixed(2)}`
+                ? `${
+                    row.prices.min_wholesale_quantity
+                  } o más a $${row.prices.wholesale_sale_price.toFixed(2)}`
                 : "N/A",
           },
           {
-            name: "Añadir",
+            name: "Agregar a venta",
             cell: (row) => (
               <CustomButton
                 onClick={() => handleAddToCartIfAvailable(row)}
                 disabled={row.available_stock === 0}
                 variant="primary"
               >
-                Añadir
+                Agregar
               </CustomButton>
             ),
           },
           {
             name: "Stock total",
             cell: (row) => (
-              <CustomButton onClick={() => handleOpenModal({ ...row, onlyRead: true })} variant="danger">
+              <CustomButton
+                onClick={() => handleOpenModal({ ...row, onlyRead: true })}
+                variant="danger"
+              >
                 Ver
               </CustomButton>
             ),

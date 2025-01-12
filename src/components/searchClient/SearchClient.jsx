@@ -62,6 +62,7 @@ const SearchClient = () => {
       />
       <CustomTable
         data={clients}
+        showNoDataComponent={false}
         columns={[
           {
             name: "Nombre",
