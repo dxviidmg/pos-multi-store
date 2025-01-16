@@ -4,7 +4,7 @@ import CustomTable from "../commons/customTable/customTable";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getStoreProducts } from "../apis/products";
 import { addToCart, updateMovementType } from "../redux/cart/cartActions";
-import { Form } from "react-bootstrap";
+import { Badge, Form } from "react-bootstrap";
 import { debounce } from "lodash";
 import StockModal from "../stockModal/StockModal";
 import {
@@ -13,6 +13,7 @@ import {
 } from "../redux/stockModal/StockModalActions";
 import Swal from "sweetalert2";
 import { getUserData } from "../apis/utils";
+
 
 const SearchProduct = () => {
   const inputRef = useRef(null);
@@ -230,10 +231,14 @@ const SearchProduct = () => {
       />
 
       <br />
-      <Form.Label className="fw-bold">
-        {!isInputFocused &&
-          "Aviso: Para añadir productos al carrito el cursor debe estar en el campo de búsqueda de productos."}
-      </Form.Label>
+
+      {!isInputFocused && (
+        <Badge bg="success">
+          Aviso: Para añadir productos al carrito el cursor debe estar en el
+          campo de búsqueda de productos.
+        </Badge>
+      )}
+
       <br />
       <Form.Control
         ref={inputRef}

@@ -15,6 +15,7 @@ import ClientList from "./components/clientList/ClientList";
 import ProductList from "./components/productList/ProductList";
 import BrandList from "./components/brandList/BrandList";
 import SaleImport from "./components/saleImport/SaleImport";
+import StoreProductList from "./components/storeProductList /StoreProductList";
 
 
 
@@ -49,6 +50,7 @@ function App() {
             <Route path="/traspasos/" element={<TransferList />} />
             <Route path="/clientes/" element={<ClientList />} />
             <Route path="/productos/" element={<ProductList />} />
+            <Route path="/inventario/" element={<StoreProductList />} />
             <Route path="/marcas/" element={<BrandList />} />
             <Route path="/*" element={<SaleCreate />} />
           </>

@@ -48,7 +48,7 @@ const SaleImport = () => {
       Swal.fire({
         icon: "error",
         title: "Error al cargar archivo",
-        text: "Archivo incorrecto",
+        text: response.response.data.error,
         timer: 5000,
       });
     } else {

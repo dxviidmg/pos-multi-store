@@ -3,7 +3,7 @@ import CustomTable from "../commons/customTable/customTable";
 import { getClients } from "../apis/clients";
 import CustomButton from "../commons/customButton/CustomButton";
 import { useDispatch, useSelector } from "react-redux";
-import { Form } from "react-bootstrap";
+import { Badge, Form } from "react-bootstrap";
 import { addClientToCart } from "../redux/cart/cartActions";
 
 const SearchClient = () => {
@@ -47,10 +47,11 @@ const SearchClient = () => {
   return (
     <>
       <Form.Label className="fw-bold me-3">Buscador de clientes</Form.Label>
-
       <b>
         {Object.keys(client).length === 0 && (
-          <>Aviso: No hay cliente seleccionado</>
+          <Badge bg="success">
+          Aviso: No hay cliente seleccionado
+        </Badge>
         )}
       </b>
 
