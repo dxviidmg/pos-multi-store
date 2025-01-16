@@ -196,15 +196,15 @@ const SaleImport = () => {
             columns={[
               {
                 name: "Código",
-                selector: (row) => row.Código,
+                selector: (row) => row.code,
               },
               {
                 name: "Cantidad",
-                selector: (row) => row.Cantidad,
+                selector: (row) => row.quantity,
               },
               {
                 name: "Descripción",
-                selector: (row) => row.Descripción,
+                selector: (row) => row.description,
               },
               {
                 name: "status",
