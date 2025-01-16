@@ -42,3 +42,27 @@ export const getDailyEarnings = async () => {
   throw error;
 }
 };
+
+export const salesImportValidation = async (data) => {
+  const apiUrl = getApiUrl("sales-import-validation");
+  try {
+    const response = await axios.post(apiUrl, data, {
+      headers: getHeaders(true),
+    });
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const salesImport = async (data) => {
+  const apiUrl = getApiUrl("sales-import");
+  try {
+    const response = await axios.post(apiUrl, data, {
+      headers: getHeaders(true),
+    });
+    return response;
+  } catch (error) {
+    return error;
+  }
+};

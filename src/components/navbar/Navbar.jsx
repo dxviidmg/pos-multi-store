@@ -4,7 +4,7 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import { getUserData } from "../apis/utils";
 import { NavDropdown } from "react-bootstrap";
-import Logo from '../../assets/images/Logo.png'
+import Logo from "../../assets/images/Logo.png";
 
 const CustomNavbar = () => {
   const handleLogout = () => {
@@ -18,24 +18,30 @@ const CustomNavbar = () => {
   return (
     <Navbar expand="lg" bg="dark" data-bs-theme="dark">
       <Container fluid>
-      <img
-              src={Logo}
-              width="100"
-              height="50"
-              className="d-inline-block align-top"
-              alt="React Bootstrap logo"
-            />
+        <img
+          src={Logo}
+          width="100"
+          height="50"
+          className="d-inline-block align-top"
+          alt="React Bootstrap logo"
+        />
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll">
           <Nav className="me-auto my-2 my-lg-0" navbarScroll>
-
-
             {/* Opciones para tipo de tienda "T" */}
             {user?.store_type === "T" && (
               <>
                 <Nav.Link href="/vender/">Vender</Nav.Link>
                 <Nav.Link href="/clientes/">Clientes</Nav.Link>
-                <Nav.Link href="/ventas/">Ventas</Nav.Link>
+                <NavDropdown title="Ventas">
+                  <NavDropdown.Item href="/ventas/">
+                    Resumen del dia
+                  </NavDropdown.Item>
+                  <NavDropdown.Divider />
+                  <NavDropdown.Item href="/importar-ventas/">
+                    Importar ventas
+                  </NavDropdown.Item>
+                </NavDropdown>
               </>
             )}
 
@@ -59,23 +65,17 @@ const CustomNavbar = () => {
                 <Nav.Link href="/clientes/">Clientes</Nav.Link>
               </>
             )}
-
-
-
-            
           </Nav>
 
-          <Nav className='ms-auto'>
-          <Nav.Link>
-              Negocio: {user?.tenant}
+          <Nav className="ms-auto">
+            <Nav.Link>Negocio: {user?.tenant_name}</Nav.Link>
+            <Nav.Link>
+              {user.store_name ? user.store_name : "Usuario: Owner"}
             </Nav.Link>
-          <Nav.Link>
-              {user?.store ? user.store : "Usuario: Administrador"}
-            </Nav.Link>
-          <Nav.Link  href="/" onClick={handleLogout}>
+            <Nav.Link href="/" onClick={handleLogout}>
               Salir
             </Nav.Link>
-    </Nav>
+          </Nav>
         </Navbar.Collapse>
       </Container>
     </Navbar>
