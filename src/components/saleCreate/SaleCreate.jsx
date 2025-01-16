@@ -1,14 +1,13 @@
 import React from "react";
 import SearchClient from "../searchClient/SearchClient";
 import SearchProduct from "../searchProduct/SearchProduct";
-import Cart from "../cart/Cart";
 import ClientSelected from "../clientSelected/ClientSelected";
 import { Col, Container, Row } from "react-bootstrap";
 import TabCart from "../cart/TabCart";
 import { getUserData } from "../apis/utils";
 
 
-const NewSale = () => {
+const SaleCreate = () => {
   const store_type = getUserData().store_type;
 
   return (
@@ -43,4 +42,4 @@ const NewSale = () => {
   );
 };
 
-export default NewSale;
+export default SaleCreate;
