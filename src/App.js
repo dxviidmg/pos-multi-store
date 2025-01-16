@@ -8,12 +8,13 @@ import {
 } from "react-router-dom";
 import CustomNavbar from "./components/navbar/Navbar";
 import { useState, useEffect } from "react";
-import NewSale from "./components/newSale/NewSale";
+import SaleCreate from "./components/saleCreate/SaleCreate";
 import SaleList from "./components/saleList/SaleList";
 import TransferList from "./components/transferList/TransferList";
 import ClientList from "./components/clientList/ClientList";
 import ProductList from "./components/productList/ProductList";
 import BrandList from "./components/brandList/BrandList";
+import SaleImport from "./components/saleImport/SaleImport";
 
 
 
@@ -42,13 +43,14 @@ function App() {
 
 
             <Route path="/ventas/" element={<SaleList />} />
-            <Route path="/vender/" element={<NewSale />} />
-            <Route path="/distribuir/" element={<NewSale />} />
+            <Route path="/vender/" element={<SaleCreate />} />
+            <Route path="/importar-ventas/" element={<SaleImport />} />
+            <Route path="/distribuir/" element={<SaleCreate />} />
             <Route path="/traspasos/" element={<TransferList />} />
             <Route path="/clientes/" element={<ClientList />} />
             <Route path="/productos/" element={<ProductList />} />
             <Route path="/marcas/" element={<BrandList />} />
-            <Route path="/*" element={<NewSale />} />
+            <Route path="/*" element={<SaleCreate />} />
           </>
         ) : (
           <Route path="/" element={<Login onLogin={handleLogin} />} />
