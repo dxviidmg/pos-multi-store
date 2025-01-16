@@ -51,7 +51,6 @@ export const salesImportValidation = async (data) => {
     });
     return response;
   } catch (error) {
-//    console.log(error);
     return error;
   }
 };
@@ -64,7 +63,6 @@ export const salesImport = async (data) => {
     });
     return response;
   } catch (error) {
-//    console.log(error);
     return error;
   }
 };

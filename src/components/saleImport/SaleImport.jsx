@@ -13,9 +13,8 @@ const DATA_SAMPLE = [
 
 const URL_TEMPLATE =
   process.env.REACT_APP_API_URL +
-  "/static/excel_templates/SmartVenta_plantilla_importacion_de_ventas.xlsx";
+  "/static/templates/SmartVenta_plantilla_importacion_ventas.xlsx";
 
-console.log(URL_TEMPLATE);
 const SaleImport = () => {
   const [formData, setFormData] = useState({
     file: "",
@@ -37,9 +36,7 @@ const SaleImport = () => {
   const handleValidation = async () => {
     const response = await salesImportValidation(formData);
 
-    console.log(response);
     if (response.status === 200) {
-      console.log(response.data);
       setSales(response.data);
 
       Swal.fire({
@@ -48,14 +45,12 @@ const SaleImport = () => {
         timer: 5000,
       });
     } else if (response.status === 400) {
-
       Swal.fire({
         icon: "error",
         title: "Error al cargar archivo",
         text: "Archivo incorrecto",
         timer: 5000,
       });
-
     } else {
       Swal.fire({
         icon: "error",
@@ -66,14 +61,10 @@ const SaleImport = () => {
     }
   };
 
-
   const handleImport = async () => {
-    
     const response = await salesImport(formData);
 
-    console.log(response);
     if (response.status === 200) {
-      console.log(response.data);
       setSales([]);
 
       Swal.fire({
@@ -82,14 +73,12 @@ const SaleImport = () => {
         timer: 5000,
       });
     } else if (response.status === 400) {
-
       Swal.fire({
         icon: "error",
         title: "Error al cargar archivo",
         text: "Archivo incorrecto",
         timer: 5000,
       });
-
     } else {
       Swal.fire({
         icon: "error",
@@ -99,10 +88,6 @@ const SaleImport = () => {
       });
     }
   };
-
-  const disableImportButton =
-    sales.length === 0 || sales.some((item) => item.status !== "Exitoso");
-  console.log(disableImportButton, sales.length, sales);
 
   return (
     <Container fluid>
@@ -122,7 +107,7 @@ const SaleImport = () => {
         <Col md={1}>
           <CustomButton
             onClick={handleValidation}
-            disabled={formData.file == ""}
+            disabled={formData.file === ""}
             fullWidth
           >
             Validar
@@ -133,7 +118,7 @@ const SaleImport = () => {
           <CustomButton
             onClick={handleImport}
             disabled={
-              sales.length == [] ||
+              sales.length === 0 ||
               sales.some((item) => item.status !== "Exitoso")
             }
             fullWidth
@@ -143,50 +128,50 @@ const SaleImport = () => {
         </Col>
 
         <Col md={2}>
-          <CustomButton
-            onClick={handleValidation}
-            fullWidth
-          >
+          <CustomButton href={URL_TEMPLATE} fullWidth>
             Descargar plantilla
           </CustomButton>
         </Col>
 
         <Col md={2}>
-          <CustomButton
-            onClick={()=>setShowExample(!showExample)}
-            fullWidth
-          >
+          <CustomButton onClick={() => setShowExample(!showExample)} fullWidth>
             Ver Ejemplo
           </CustomButton>
         </Col>
       </Row>
-    
-            {showExample && (
-                    <Row className="section">
-                    <Col>
-                      <br></br>
-                      <Form.Label className="fw-bold">Ejemplo de plantilla</Form.Label>
-                      <CustomTable
-                        data={DATA_SAMPLE}
-                        columns={[
-                          {
-                            name: "Código",
-                            selector: (row) => row.code,
-                          },
-                          {
-                            name: "Cantidad",
-                            selector: (row) => row.cantidad,
-                          },
-                          {
-                            name: "Descripción",
-                            selector: (row) => row.description,
-                          },
-                        ]}
-                      ></CustomTable>
-                    </Col>
-                  </Row>
-            )}
 
+      {showExample && (
+        <Row className="section">
+          <Col>
+            <Form.Label className="fw-bold">Ejemplo de plantilla</Form.Label>
+
+            <CustomTable
+              data={DATA_SAMPLE}
+              columns={[
+                {
+                  name: "Código",
+                  selector: (row) => row.code,
+                },
+                {
+                  name: "Cantidad",
+                  selector: (row) => row.cantidad,
+                },
+                {
+                  name: "Descripción",
+                  selector: (row) => row.description,
+                },
+              ]}
+            ></CustomTable>
+            <p>
+              Notas: <br /> 1-.Las descripciones pueden ser NO Exactas la
+              información de la base de datos, pero si una referencia en caso de
+              que haya escrito mal el codigó. <br /> 2-. Podemos añadir el mismo
+              producto en diferentes renglones haciendo referencia a que el
+              mismo producto fue comprado varias veces.
+            </p>
+          </Col>
+        </Row>
+      )}
 
       <Row className="section">
         <Col>

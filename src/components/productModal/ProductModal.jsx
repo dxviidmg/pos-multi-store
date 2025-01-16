@@ -31,7 +31,6 @@ const ProductModal = ({ onUpdateProductList }) => {
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
 
   useEffect(() => {
-    console.log('x', product)
     if (product) {
       setFormData(product);
     }
@@ -116,8 +115,6 @@ const ProductModal = ({ onUpdateProductList }) => {
     const { wholesale_sale_price, min_wholesale_quantity, apply_wholesale_price_on_costumer_discount, ...requiredFields } =
       formData;
 
-    console.log('fff', formData)
-    console.log('a1', wholesale_sale_price, min_wholesale_quantity, apply_wholesale_price_on_costumer_discount)
     // Verificar que los campos obligatorios no estén vacíos
     const areRequiredFieldsComplete = !Object.values(requiredFields).some(
       (value) => value === ""
@@ -128,7 +125,6 @@ const ProductModal = ({ onUpdateProductList }) => {
     const areOptionalFieldsConsistent =
       (wholesale_sale_price === "") === (min_wholesale_quantity === "");
 
-    console.log('a2', areOptionalFieldsConsistent)
     // La forma está incompleta si hay campos obligatorios vacíos o los opcionales son inconsistentes
 
     return !areRequiredFieldsComplete || !areOptionalFieldsConsistent;
