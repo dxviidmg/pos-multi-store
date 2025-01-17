@@ -1,12 +1,31 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Col, Form, Row } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import { removeClientfromCart } from "../redux/cart/cartActions";
+import { ErrorIcon } from "../commons/icons/Icons";
+
 
 const ClientSelected = () => {
   const client = useSelector((state) => state.cartReducer.client);
   const dispatch = useDispatch();
+
+  const handleShortcut = (event) => {
+    if (event.ctrlKey && event.key === "e") {
+      event.preventDefault(); // Evita la acción predeterminada del navegador
+      dispatch(removeClientfromCart())
+    }
+  };
+
+  useEffect(() => {
+    // Añadir el listener al montar el componente
+    window.addEventListener("keydown", handleShortcut);
+
+    // Limpiar el listener al desmontar el componente
+    return () => {
+      window.removeEventListener("keydown", handleShortcut);
+    };
+  }, []);
 
   return (
     <Row className="align-items-end">
@@ -49,8 +68,8 @@ const ClientSelected = () => {
       <Col md={3}>
         <Form.Group>
           <CustomButton fullWidth={true} onClick={() => dispatch(removeClientfromCart())}>
-
-            Borrar cliente
+          Borrar cliente 
+          (Ctrl + E)
           </CustomButton>
         </Form.Group>
       </Col>
