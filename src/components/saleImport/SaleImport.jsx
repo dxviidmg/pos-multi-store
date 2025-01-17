@@ -4,7 +4,8 @@ import CustomTable from "../commons/customTable/customTable";
 import CustomButton from "../commons/customButton/CustomButton";
 import { salesImport, salesImportValidation } from "../apis/sales";
 import Swal from "sweetalert2";
-import { ErrorIcon, SuccessIcon } from "../utils/Icons";
+import { SuccessIcon, ErrorIcon,  } from "../commons/icons/Icons";
+
 
 const DATA_SAMPLE = [
   { code: 1, cantidad: 1, description: "Descripción del producto 1" },
