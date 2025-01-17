@@ -17,7 +17,7 @@ const INITIAL_FORM_DATA = {
   unit_sale_price: "",
   wholesale_sale_price: "",
   min_wholesale_quantity: "",
-  apply_wholesale_price_on_customer_discount: false
+  apply_wholesale_price_on_client_discount: false
 
 }
 
@@ -112,7 +112,7 @@ const ProductModal = ({ onUpdateProductList }) => {
 
   const isFormIncomplete = () => {
     // Separar los dos campos que pueden estar vacíos opcionalmente
-    const { wholesale_sale_price, min_wholesale_quantity, apply_wholesale_price_on_customer_discount, ...requiredFields } =
+    const { wholesale_sale_price, min_wholesale_quantity, apply_wholesale_price_on_client_discount, ...requiredFields } =
       formData;
 
     // Verificar que los campos obligatorios no estén vacíos
@@ -220,9 +220,9 @@ const ProductModal = ({ onUpdateProductList }) => {
             type="checkbox"
             id={`default-checkbox`}
             label="Aplicar precio de mayoreo en descuento de cliente registrado"
-            checked={formData.apply_wholesale_price_on_customer_discount === true}
+            checked={formData.apply_wholesale_price_on_client_discount === true}
             onChange={handleDataChange}
-            name = "apply_wholesale_price_on_customer_discount"
+            name = "apply_wholesale_price_on_client_discount"
           />
           </Col>
 
