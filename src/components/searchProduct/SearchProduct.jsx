@@ -175,6 +175,22 @@ const SearchProduct = () => {
       event.preventDefault(); // Evita la acción predeterminada del navegador
       setQueryType("q")
     }
+    if (event.ctrlKey && event.key === "u") {
+      event.preventDefault(); // Evita la acción predeterminada del navegador
+      dispatch(updateMovementType("venta"))
+    }
+    if (event.ctrlKey && event.key === "i") {
+      event.preventDefault(); // Evita la acción predeterminada del navegador
+      dispatch(updateMovementType("traspaso"))
+    }
+    if (event.ctrlKey && event.key === "o") {
+      event.preventDefault(); // Evita la acción predeterminada del navegador
+      dispatch(updateMovementType("distribucion"))
+    }
+    if (event.ctrlKey && event.key === "a") {
+      event.preventDefault(); // Evita la acción predeterminada del navegador
+      dispatch(updateMovementType("agregar"))
+    }
   };
 
   useEffect(() => {
@@ -216,7 +232,7 @@ const SearchProduct = () => {
       <Form.Check
         inline
         id="venta"
-        label="Venta"
+        label="Venta (Ctrl + U)"
         type="radio"
         onChange={handleMovementTypeChange}
         value="venta"
@@ -226,7 +242,7 @@ const SearchProduct = () => {
       <Form.Check
         inline
         id="traspaso"
-        label="Traspaso"
+        label="Traspaso  (Ctrl + I)"
         type="radio"
         onChange={handleMovementTypeChange}
         value="traspaso"
@@ -236,7 +252,7 @@ const SearchProduct = () => {
       <Form.Check
         inline
         id="distribucion"
-        label="Distribucion"
+        label="Distribucion  (Ctrl + O)"
         type="radio"
         onChange={handleMovementTypeChange}
         value="distribucion"
@@ -246,7 +262,7 @@ const SearchProduct = () => {
       <Form.Check
         inline
         id="agregar"
-        label="Agregar a inventario"
+        label="Agregar a inventario (Ctrl + A)"
         type="radio"
         onChange={handleMovementTypeChange}
         value="agregar"
