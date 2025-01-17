@@ -40,7 +40,7 @@ const SaleList = () => {
 
         {dailyEarningsSummary.payments_by_method &&
           dailyEarningsSummary.payments_by_method.map((payment, index) => (
-            <Col md={2}>
+            <Col md={2} key={index}>
               <Form.Label className="fw-bold">
                 {payment.payment_method}:
               </Form.Label>{" "}
@@ -67,18 +67,32 @@ const SaleList = () => {
               name: "#",
               selector: (row) => row.id,
             },
+
+            
             {
               name: "Cliente",
               selector: (row) => row.client?.full_name,
             },
+            
             {
               name: "Hora",
               selector: (row) => formatTimeFromDate(row.created_at),
             },
             {
+              name: "Productos",
+              selector: (row) => (      <ul>
+                {/* Map over the array and render each item */}
+                {row.products.map((item, index) => (
+                  <li key={index}>{item.quantity} x {item.description} a ${item.price} </li>
+                ))}
+              </ul>),
+            },
+            {
               name: "Total",
               selector: (row) => `$${row.total}`,
             },
+
+
           ]}
         />
       </Row>
