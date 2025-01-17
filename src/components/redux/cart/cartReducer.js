@@ -16,7 +16,7 @@ const initialState = {
 const aClientIsSelected = (client) => Object.keys(client).length > 0;
 
 const calculateProductPrice = (quantity, prices, clientSelected) => {
-  if (!prices.apply_wholesale_price_on_costumer_discount && clientSelected) {
+  if (!prices.apply_wholesale_price_on_customer_discount && clientSelected) {
     return prices.unit_sale_price;
   }
   if (prices.min_wholesale_quantity && quantity >= prices.min_wholesale_quantity) {
