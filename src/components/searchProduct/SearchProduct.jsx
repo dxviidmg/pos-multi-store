@@ -165,6 +165,29 @@ const SearchProduct = () => {
     setTimeout(() => dispatch(showStockModal(product)), 1);
   };
 
+
+  const handleShortcut = (event) => {
+    if (event.ctrlKey && event.key === "r") {
+      event.preventDefault(); // Evita la acción predeterminada del navegador
+      setQueryType("code")
+    }
+    if (event.ctrlKey && event.key === "y") {
+      event.preventDefault(); // Evita la acción predeterminada del navegador
+      setQueryType("q")
+    }
+  };
+
+  useEffect(() => {
+    // Añadir el listener al montar el componente
+    window.addEventListener("keydown", handleShortcut);
+
+    // Limpiar el listener al desmontar el componente
+    return () => {
+      window.removeEventListener("keydown", handleShortcut);
+    };
+  }, []);
+
+
   return (
     <>
       <StockModal />
@@ -174,7 +197,7 @@ const SearchProduct = () => {
       <Form.Check
         inline
         id="code"
-        label="Por código de barras"
+        label="Por código de barras (Ctrl + R)"
         type="radio"
         onChange={handleQueryTypeChange}
         value="code"
@@ -183,7 +206,7 @@ const SearchProduct = () => {
       <Form.Check
         inline
         id="description"
-        label="Manual (Descripción)"
+        label="Manual (Descripción) (Ctrl + Y)"
         type="radio"
         onChange={handleQueryTypeChange}
         value="q"
