@@ -4,6 +4,8 @@ import CustomTable from "../commons/customTable/customTable";
 import CustomButton from "../commons/customButton/CustomButton";
 import { salesImport, salesImportValidation } from "../apis/sales";
 import Swal from "sweetalert2";
+import { SuccessIcon, ErrorIcon,  } from "../commons/icons/Icons";
+
 
 const DATA_SAMPLE = [
   { code: 1, cantidad: 1, description: "Descripción del producto 1" },
@@ -142,7 +144,7 @@ const SaleImport = () => {
 
       {showExample && (
         <Row className="section">
-          <Col>
+          <Col md={9}>
             <Form.Label className="fw-bold">Ejemplo de plantilla</Form.Label>
 
             <CustomTable
@@ -162,14 +164,21 @@ const SaleImport = () => {
                 },
               ]}
             ></CustomTable>
+
+
+          </Col>
+
+          <Col md={3}>
+          <Form.Label className="fw-bold">Notas</Form.Label>
             <p>
-              Notas: <br /> 1-.Las descripciones pueden ser NO Exactas la
+              1-.Las descripciones pueden ser NO Exactas la
               información de la base de datos, pero si una referencia en caso de
               que haya escrito mal el codigó. <br /> 2-. Podemos añadir el mismo
               producto en diferentes renglones haciendo referencia a que el
               mismo producto fue comprado varias veces.
             </p>
-          </Col>
+
+            </Col>
         </Row>
       )}
 
@@ -192,8 +201,14 @@ const SaleImport = () => {
                 selector: (row) => row.description,
               },
               {
-                name: "status",
-                selector: (row) => row.status,
+                name: "Status",
+                selector: (row) => (
+                  row.status === "Exitoso" 
+                    ? <SuccessIcon /> 
+                    : <>
+                        <ErrorIcon /> {row.status}
+                      </>
+                ),
               },
             ]}
           ></CustomTable>
