@@ -3,9 +3,8 @@ import CustomTable from "../commons/customTable/customTable";
 import { getStoreProducts } from "../apis/products";
 import { Container, Form, Row, Col } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
-import * as XLSX from "xlsx";
 import { getUserData } from "../apis/utils";
-import { getFormattedDate, exportToExcel } from "../utils/utils";
+import { exportToExcel } from "../utils/utils";
 
 const StoreProductList = () => {
   const [products, setProducts] = useState([]);
@@ -36,7 +35,7 @@ const StoreProductList = () => {
     }));
     
     const prefix_name = "Reporte Inventario " + getUserData().store_name 
-    exportToExcel(products_to_report, prefix_name)
+     exportToExcel(products_to_report, prefix_name)
   };
 
 
