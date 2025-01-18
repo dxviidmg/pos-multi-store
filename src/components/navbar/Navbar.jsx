@@ -36,7 +36,7 @@ const CustomNavbar = () => {
                 <Nav.Link href="/inventario/">Inventario</Nav.Link>
                 <NavDropdown title="Ventas">
                   <NavDropdown.Item href="/ventas/">
-                    Resumen del dia
+                    Ventas
                   </NavDropdown.Item>
                   <NavDropdown.Divider />
                   <NavDropdown.Item href="/importar-ventas/">

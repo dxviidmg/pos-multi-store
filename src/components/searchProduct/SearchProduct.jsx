@@ -187,7 +187,7 @@ const SearchProduct = () => {
       event.preventDefault(); // Evita la acción predeterminada del navegador
       dispatch(updateMovementType("distribucion"))
     }
-    if (event.ctrlKey && event.key === "a") {
+    if (event.ctrlKey && event.key === "p") {
       event.preventDefault(); // Evita la acción predeterminada del navegador
       dispatch(updateMovementType("agregar"))
     }
@@ -262,7 +262,7 @@ const SearchProduct = () => {
       <Form.Check
         inline
         id="agregar"
-        label="Agregar a inventario (Ctrl + A)"
+        label="Agregar a inventario (Ctrl + P)"
         type="radio"
         onChange={handleMovementTypeChange}
         value="agregar"
