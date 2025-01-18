@@ -16,10 +16,16 @@ export const createSale = async (data) => {
 };
 
 
-export const getSales = async () => {
+export const getSales = async (date) => {
+
+  const apiUrl = new URL(getApiUrl("sale"));
+  if (date){
+    apiUrl.searchParams.append('date', date);
+
+  }
 
   try {
-  const response = await axios.get(getApiUrl("sale"), {
+  const response = await axios.get(apiUrl, {
     headers: getHeaders(),
   });
   return response;
@@ -30,10 +36,15 @@ export const getSales = async () => {
 };
 
 
-export const getDailyEarnings = async () => {
+export const getDailyEarnings = async (date) => {
+  const apiUrl = new URL(getApiUrl("daily-earnings"));
+  if (date){
+    apiUrl.searchParams.append('date', date);
+
+  }
 
   try {
-  const response = await axios.get(getApiUrl("daily-earnings"), {
+  const response = await axios.get(apiUrl, {
     headers: getHeaders(),
   });
   return response;
