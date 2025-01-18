@@ -60,14 +60,15 @@ const StoreProductList = () => {
                 selector: (row) => row.product_code,
               },
               {
-                name: "Marca",
+                name: "Desripcion",
                 selector: (row) => row.description,
+                grow: 3,
+                wrap: true,
               },
 
               {
                 name: "Stock total",
                 selector: (row) => row.stock,
-                wrap: true,
               },
 
               {
