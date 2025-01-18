@@ -24,7 +24,7 @@ const ClientList = () => {
   // Load userType from localStorage
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
-    setUserType(user?.store === null ? "admin" : "");
+    setUserType(user?.store_type === null ? "admin" : "");
   }, []);
 
   useEffect(() => {

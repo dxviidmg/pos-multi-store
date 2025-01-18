@@ -1,9 +1,9 @@
-export const SuccessIcon = () => {
+export const SuccessIcon = ({color='green'}) => {
     return (<svg
         xmlns="http://www.w3.org/2000/svg"
         width="16"
         height="16"
-        fill="green"
+        fill={color}
         class="bi bi-check-circle-fill"
         viewBox="0 0 16 16"
         >
@@ -12,12 +12,12 @@ export const SuccessIcon = () => {
 }
 
 
-export const ErrorIcon = () => {
+export const ErrorIcon = ({color='red'}) => {
     return (<svg
         xmlns="http://www.w3.org/2000/svg"
         width="16"
         height="16"
-        fill="red"
+        fill={color}
         class="bi bi-x-circle-fill"
         viewBox="0 0 16 16"
         >
