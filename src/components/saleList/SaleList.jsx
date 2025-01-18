@@ -4,18 +4,23 @@ import { Col, Container, Form, Row } from "react-bootstrap";
 import { getDailyEarnings, getSales } from "../apis/sales";
 import DataTable from "react-data-table-component";
 import CustomButton from "../commons/customButton/CustomButton";
+import { getUserData } from "../apis/utils";
+import { exportToExcel } from "../utils/utils";
 
+const getToday = () =>
+{
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0"); // Add 1 because months are 0-indexed
+  const day = String(today.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`; // Format as 'YYYY-MM-DD
+}
 const SaleList = () => {
   const [salesList, setSalesList] = useState([]);
   const [dailyEarningsSummary, setDailyEarningsSummary] = useState([]);
+  const today = getToday()
+  const [date, setDate] = useState(today);
 
-  const [date, setDate] = useState(() => {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, "0"); // Add 1 because months are 0-indexed
-    const day = String(today.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`; // Format as 'YYYY-MM-DD'
-  });
 
   useEffect(() => {
     const fetchSalesData = async () => {
@@ -31,11 +36,31 @@ const SaleList = () => {
   }, [date]);
 
   const formatTimeFromDate = (dateString) => {
-    const date = new Date(dateString);
+    let date = ''
+    if (dateString){
+      date = new Date(dateString);
+    }else{
+      date = new Date();
+    }
     const hours = date.getHours().toString().padStart(2, "0");
     const minutes = date.getMinutes().toString().padStart(2, "0");
     return `${hours}:${minutes}`;
   };
+
+
+  const handleExport = () => {
+    // Definir valores iniciales
+    const isPartial = date === today;
+    const dateFile = `${date}${isPartial ? ' ' + formatTimeFromDate() : ''}`;
+    const type = isPartial ? 'parcial ' : 'total ';
+    
+    // Generar el prefijo del nombre del archivo
+    const prefixName = `Corte de caja ${type}${getUserData().store_name} ${dateFile}`;
+    
+    // Exportar a Excel
+    exportToExcel(dailyEarningsSummary, prefixName, false);
+  };
+  
 
   return (
     <>
@@ -48,7 +73,8 @@ const SaleList = () => {
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-            />
+              max={today}
+/>
           </Form>
         </Col>
 
@@ -72,7 +98,7 @@ const SaleList = () => {
 
 
         <Col md={4}>
-            <CustomButton>Descargar corte del dia</CustomButton>
+            <CustomButton onClick={handleExport}>Descargar corte del dia</CustomButton>
         </Col>
       </Row>
 

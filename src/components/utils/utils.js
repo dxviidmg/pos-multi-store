@@ -10,7 +10,7 @@ export const getFormattedDate = (date = new Date()) => {
 };
 
 
-export const exportToExcel = (data, prefix_name) => {  
+export const exportToExcel = (data, prefix_name, use_today=true) => {  
     console.log(data, prefix_name)
     const worksheet = XLSX.utils.json_to_sheet(data, prefix_name);
 
@@ -19,5 +19,10 @@ export const exportToExcel = (data, prefix_name) => {
     XLSX.utils.book_append_sheet(workbook, worksheet, "Reporte");
     const formattedDate = getFormattedDate()
 
-    XLSX.writeFile(workbook, `${prefix_name} ${formattedDate}.xlsx`);
+    if (use_today){
+        XLSX.writeFile(workbook, `${prefix_name} ${formattedDate}.xlsx`);
+    }
+    else{
+        XLSX.writeFile(workbook, `${prefix_name}.xlsx`);
+    }
   };
