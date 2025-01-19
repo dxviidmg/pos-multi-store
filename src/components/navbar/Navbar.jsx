@@ -56,6 +56,7 @@ const CustomNavbar = () => {
             {/* Opciones para usuarios sin tipo de tienda */}
             {user && !user.store_type && (
               <>
+                <Nav.Link href="/tiendas/">Tiendas</Nav.Link>
                 <NavDropdown title="Productos">
                   <NavDropdown.Item href="/marcas/">Marcas</NavDropdown.Item>
                   <NavDropdown.Divider />

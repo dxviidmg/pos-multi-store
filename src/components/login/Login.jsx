@@ -71,7 +71,7 @@ function Login({ onLogin }) {
     if (response.store_name) {
       navigate("/vender/");
     } else {
-      navigate("/productos/");
+      navigate("/tiendas/");
     }
   };
 

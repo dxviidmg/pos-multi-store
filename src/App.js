@@ -16,6 +16,7 @@ import ProductList from "./components/productList/ProductList";
 import BrandList from "./components/brandList/BrandList";
 import SaleImport from "./components/saleImport/SaleImport";
 import StoreProductList from "./components/storeProductList /StoreProductList";
+import StoreList from "./components/storeList/StoreList";
 
 
 
@@ -42,7 +43,7 @@ function App() {
         {isLoggedIn ? (
           <>
 
-
+            <Route path="/tiendas/" element={<StoreList />} />
             <Route path="/ventas/" element={<SaleList />} />
             <Route path="/vender/" element={<SaleCreate />} />
             <Route path="/importar-ventas/" element={<SaleImport />} />
