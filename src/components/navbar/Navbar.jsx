@@ -73,7 +73,7 @@ const CustomNavbar = () => {
               <>
                 <Nav.Link href="/distribuir/">Distribuir</Nav.Link>
                 {user.is_owner && (
-                  <Nav.Link href="/tiendas/">Regresar</Nav.Link>
+                  <Nav.Link onClick={handleBack}>Regresar</Nav.Link>
                 )}
               </>
             )}
