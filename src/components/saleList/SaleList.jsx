@@ -1,31 +1,27 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { Col, Container, Form, Row } from "react-bootstrap";
+import { Col, Form, Row } from "react-bootstrap";
 import { getDailyEarnings, getSales } from "../apis/sales";
-import DataTable from "react-data-table-component";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getUserData } from "../apis/utils";
-import { exportToExcel } from "../utils/utils";
+import { exportToExcel, getToday } from "../utils/utils";
+import { useDispatch } from "react-redux";
+import { hideSaleModal, showSaleModal } from "../redux/saleModal/SaleModalActions";
+import SaleModal from "../saleModal/saleModal";
 
-const getToday = () =>
-{
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, "0"); // Add 1 because months are 0-indexed
-  const day = String(today.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`; // Format as 'YYYY-MM-DD
-}
 const SaleList = () => {
-  const [salesList, setSalesList] = useState([]);
+  const [sales, setSales] = useState([]);
   const [dailyEarningsSummary, setDailyEarningsSummary] = useState([]);
   const today = getToday()
   const [date, setDate] = useState(today);
+
+  const dispatch = useDispatch()
 
 
   useEffect(() => {
     const fetchSalesData = async () => {
       const salesResponse = await getSales(date);
-      setSalesList(salesResponse.data);
+      setSales(salesResponse.data);
 
       const earningsResponse = await getDailyEarnings(date);
       console.log(earningsResponse.data);
@@ -61,9 +57,23 @@ const SaleList = () => {
     exportToExcel(dailyEarningsSummary, prefixName, false);
   };
   
+  const handleOpenModal = (sale) => {
+    dispatch(hideSaleModal());
+    setTimeout(() => dispatch(showSaleModal(sale)));
+  };
+
+  const handleUpdateSaleList = (updatedBrand) => {
+    setSales((prevBrands) => {
+      const brandExists = prevBrands.some((b) => b.id === updatedBrand.id);
+      return brandExists
+        ? prevBrands.map((b) => (b.id === updatedBrand.id ? updatedBrand : b))
+        : [...prevBrands, updatedBrand];
+    });
+  };
 
   return (
     <>
+    <SaleModal onUpdateSaleList={handleUpdateSaleList}></SaleModal>
       <Row className="section">
         <Col md={3}>
         <Form.Label className="fw-bold">Resumen de ventas</Form.Label>
@@ -106,7 +116,7 @@ const SaleList = () => {
         <Form.Label className="fw-bold">Lista de ventas</Form.Label>
 
         <CustomTable
-          data={salesList}
+          data={sales}
           columns={[
             {
               name: "#",
@@ -116,6 +126,7 @@ const SaleList = () => {
             {
               name: "Cliente",
               selector: (row) => row.client?.full_name,
+              grow: 2
             },
 
             {
@@ -134,11 +145,25 @@ const SaleList = () => {
                   ))}
                 </ul>
               ),
+              wrap: true,
+              grow: 3
             },
             {
               name: "Total",
               selector: (row) => `$${row.total}`,
             },
+            {
+              name: "Vendido por",
+              selector: (row) => row.saler_username,
+            },
+                            {
+                  name: "Accciones",
+                  cell: (row) => (
+                    <CustomButton onClick={() => handleOpenModal(row)}>
+                      Cancelar
+                    </CustomButton>
+                  ),
+                },
           ]}
         />
       </Row>

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Col, Container, Form, Row } from "react-bootstrap";
 import CustomTable from "../commons/customTable/customTable";
 import CustomButton from "../commons/customButton/CustomButton";
-import { salesImport, salesImportValidation } from "../apis/sales";
+import { importSales, importSalesValidation } from "../apis/sales";
 import Swal from "sweetalert2";
 import { SuccessIcon, ErrorIcon,  } from "../commons/icons/Icons";
 
@@ -36,7 +36,7 @@ const SaleImport = () => {
   };
 
   const handleValidation = async () => {
-    const response = await salesImportValidation(formData);
+    const response = await importSalesValidation(formData);
 
     if (response.status === 200) {
       setSales(response.data);
@@ -64,7 +64,7 @@ const SaleImport = () => {
   };
 
   const handleImport = async () => {
-    const response = await salesImport(formData);
+    const response = await importSales(formData);
 
     if (response.status === 200) {
       setSales([]);
