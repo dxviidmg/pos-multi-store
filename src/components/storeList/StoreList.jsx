@@ -3,8 +3,10 @@ import CustomTable from "../commons/customTable/customTable";
 import { Col, Container, Form, Row } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getStores } from "../apis/stores";
+import { useNavigate } from "react-router-dom";
 
 const StoreList = () => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [stores, setStores] = useState([]);
 
@@ -19,6 +21,23 @@ const StoreList = () => {
 
     fetchData();
   }, []);
+
+  const handleSelectStore = async (row) => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    user.store_type = row.store_type;
+    user.store_name = row.full_name;
+    user.store_id = row.id;
+    console.log(user)
+
+    const updatedData = JSON.stringify(user);
+    
+    // Save the updated string back to localStorage
+    localStorage.setItem('user', updatedData);
+
+    navigate("/vender/")
+    window.location.reload();
+
+  };
 
   return (
     <Container fluid>
@@ -45,7 +64,7 @@ const StoreList = () => {
                 {
                   name: "Accciones",
                   cell: (row) => (
-                    <CustomButton>
+                    <CustomButton onClick={()=> handleSelectStore(row)}>
                       Entrar
                     </CustomButton>
                   ),

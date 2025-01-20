@@ -1,11 +1,7 @@
 import "./App.css";
 import Login from "./components/login/Login";
 import "bootstrap/dist/css/bootstrap.min.css";
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-} from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import CustomNavbar from "./components/navbar/Navbar";
 import { useState, useEffect } from "react";
 import SaleCreate from "./components/saleCreate/SaleCreate";
@@ -17,9 +13,6 @@ import BrandList from "./components/brandList/BrandList";
 import SaleImport from "./components/saleImport/SaleImport";
 import StoreProductList from "./components/storeProductList /StoreProductList";
 import StoreList from "./components/storeList/StoreList";
-
-
-
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -42,7 +35,6 @@ function App() {
       <Routes>
         {isLoggedIn ? (
           <>
-
             <Route path="/tiendas/" element={<StoreList />} />
             <Route path="/ventas/" element={<SaleList />} />
             <Route path="/vender/" element={<SaleCreate />} />
