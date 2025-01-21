@@ -68,10 +68,10 @@ function Login({ onLogin }) {
   };
 
   const handleRedirect = (response) => {
-    if (response.store_name) {
-      navigate("/vender/");
+    if (response.is_owner) {
+      navigate("/tiendas/");
     } else {
-      navigate("/productos/");
+      navigate("/vender/");
     }
   };
 

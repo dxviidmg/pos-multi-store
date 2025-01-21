@@ -54,8 +54,8 @@ export const getDailyEarnings = async (date) => {
 }
 };
 
-export const salesImportValidation = async (data) => {
-  const apiUrl = getApiUrl("sales-import-validation");
+export const importSalesValidation = async (data) => {
+  const apiUrl = getApiUrl("import-sales-validation");
   try {
     const response = await axios.post(apiUrl, data, {
       headers: getHeaders(true),
@@ -66,11 +66,23 @@ export const salesImportValidation = async (data) => {
   }
 };
 
-export const salesImport = async (data) => {
-  const apiUrl = getApiUrl("sales-import");
+export const importSales = async (data) => {
+  const apiUrl = getApiUrl("import-sales");
   try {
     const response = await axios.post(apiUrl, data, {
       headers: getHeaders(true),
+    });
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const cancelSale = async (data) => {
+  const apiUrl = getApiUrl("cancel-sale");
+  try {
+    const response = await axios.post(apiUrl, data, {
+      headers: getHeaders(),
     });
     return response;
   } catch (error) {
