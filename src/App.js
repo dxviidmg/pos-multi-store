@@ -11,20 +11,22 @@ import ClientList from "./components/clientList/ClientList";
 import ProductList from "./components/productList/ProductList";
 import BrandList from "./components/brandList/BrandList";
 import SaleImport from "./components/saleImport/SaleImport";
-import StoreProductList from "./components/storeProductList /StoreProductList";
+import StoreProductList from "./components/storeProductList/StoreProductList";
 import StoreList from "./components/storeList/StoreList";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  const user = localStorage.getItem("user");
+
   useEffect(() => {
-    const storedToken = localStorage.getItem("user");
-    if (storedToken) {
+    const user = localStorage.getItem("user");
+    if (user) {
       setIsLoggedIn(true);
     }
   }, []);
 
-  const handleLogin = (data) => {
+  const handleLogin = () => {
     setIsLoggedIn(true);
   };
 
@@ -45,7 +47,9 @@ function App() {
             <Route path="/productos/" element={<ProductList />} />
             <Route path="/inventario/" element={<StoreProductList />} />
             <Route path="/marcas/" element={<BrandList />} />
-            <Route path="/*" element={<SaleCreate />} />
+            {user.store_id  ? (<Route path="/" element={<SaleCreate />} />): (<Route path="/" element={<SaleCreate />} />)}
+            {user.store_id  ? (<Route path="/*" element={<SaleCreate />} />): (<Route path="/*" element={<SaleCreate />} />)}
+            
           </>
         ) : (
           <Route path="/" element={<Login onLogin={handleLogin} />} />

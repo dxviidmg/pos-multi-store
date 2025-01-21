@@ -45,7 +45,7 @@ const CustomTable = ({
         striped
         highlightOnHover
         progressPending={progressPending}
-        progressComponent={<CustomSpinner />}
+//        progressComponent={<CustomSpinner />}
         dense
       />
     </div>
