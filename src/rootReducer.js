@@ -5,6 +5,7 @@ import PaymentModalReducer from './components/redux/paymentModal/PaymentModalRed
 import BrandModalReducer from './components/redux/brandModal/BrandModalReducer';
 import ProductModalReducer from './components/redux/productModal/ProductModalReducer';
 import ClientModalReducer from './components/redux/clientModal/ClientModalReducer';
+import SaleModalReducer from './components/redux/saleModal/SaleModalReducer';
 
 
 
@@ -15,7 +16,8 @@ const rootReducer = combineReducers({
   PaymentModalReducer,
   BrandModalReducer,
   ProductModalReducer,
-  ClientModalReducer
+  ClientModalReducer,
+  SaleModalReducer
 });
 
 export default rootReducer;
