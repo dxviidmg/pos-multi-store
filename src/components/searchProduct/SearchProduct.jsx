@@ -194,7 +194,7 @@ const SearchProduct = () => {
     }
     if (event.ctrlKey && event.key === "a") {
       event.preventDefault(); // Evita la acción predeterminada del navegador
-
+      inputRef.current?.focus();
       
 
     }
@@ -290,7 +290,7 @@ const SearchProduct = () => {
         ref={inputRef}
         type="text"
         value={queryType === "code" ? barcode : query}
-        placeholder="Buscar producto"
+        placeholder="Buscar producto (Ctrl + A)"
         onChange={
           queryType === "q"
             ? handleQueryChange

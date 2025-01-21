@@ -255,7 +255,7 @@ const PaymentModal = () => {
             fullWidth={true}
             onClick={handleCreateSale}
           >
-            Pagar Ctrl + S
+            Pagar Ctrl + D
           </CustomButton>
         </Col>
       </Row>
