@@ -17,6 +17,7 @@ import { getUserData } from "../apis/utils";
 
 const SearchProduct = () => {
   const inputRef = useRef(null);
+
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.cartReducer.cart);
   const movementType = useSelector((state) => state.cartReducer.movementType);
@@ -190,6 +191,12 @@ const SearchProduct = () => {
     if (event.ctrlKey && event.key === "p") {
       event.preventDefault(); // Evita la acción predeterminada del navegador
       dispatch(updateMovementType("agregar"))
+    }
+    if (event.ctrlKey && event.key === "a") {
+      event.preventDefault(); // Evita la acción predeterminada del navegador
+
+      
+
     }
   };
 

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import CustomModal from "../commons/customModal/customModal";
 import { Col, Form, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
@@ -22,8 +22,8 @@ const PaymentModal = () => {
   const client = useSelector((state) => state.cartReducer.client);
 
   const [paymentMethods, setPaymentMethods] = useState({
-    type: "radio",
-    methods: { E: 0, P: 0, T: 0 },
+    type: "radio", // Tipo de pago inicial.
+    methods: { E: 0, P: 0, T: 0 }, // Valores iniciales de los métodos de pago.
   });
 
   const dispatch = useDispatch();
@@ -41,6 +41,25 @@ const PaymentModal = () => {
 
     return { total, totalDiscount };
   }, [cart, client]);
+
+  useEffect(() => {
+    const handleShortcut = (event) => {
+      if (event.ctrlKey && event.key === "d") {
+        event.preventDefault();
+        handleCreateSale();
+      }
+    };
+
+    window.addEventListener("keydown", handleShortcut);
+    return () => window.removeEventListener("keydown", handleShortcut);
+  }, [totalDiscount, paymentMethods, cart, client]);
+
+  useEffect(() => {
+    setPaymentMethods({
+      type: "radio", // Por defecto, "Único".
+      methods: { E: totalDiscount, P: 0, T: 0 }, // Efectivo seleccionado.
+    });
+  }, [totalDiscount]);
 
   const handleChangePayments = (e) => {
     const { name, value } = e.target;
@@ -111,6 +130,7 @@ const PaymentModal = () => {
       payments: paymentList,
     };
 
+    console.log("data", data);
     const response = await createSale(data);
 
     if (response.status === 201) {
@@ -131,7 +151,7 @@ const PaymentModal = () => {
       Swal.fire({
         icon: "error",
         title: "Error al finalizar la venta",
-        text: "Por favor llame a soporte tecnico",
+        text: "Por favor llame a soporte técnico",
         timer: 5000,
       });
     }
@@ -185,7 +205,7 @@ const PaymentModal = () => {
 
         <Col md={6}>
           <Form.Label className="me-3">Medios de pago:</Form.Label>
-          {["EF", "PT", "TR"].map((method) => (
+          {["EF", "TA", "TR"].map((method) => (
             <div key={method} className="d-flex align-items-center mb-1">
               <div className="me-3" style={{ flex: "1" }}>
                 <Form.Check
@@ -193,7 +213,7 @@ const PaymentModal = () => {
                   label={
                     method === "EF"
                       ? "Efectivo"
-                      : method === "PT"
+                      : method === "TA"
                       ? "Pago con tarjeta"
                       : "Transferencia"
                   }
@@ -235,7 +255,7 @@ const PaymentModal = () => {
             fullWidth={true}
             onClick={handleCreateSale}
           >
-            Pagar
+            Pagar Ctrl + S
           </CustomButton>
         </Col>
       </Row>
