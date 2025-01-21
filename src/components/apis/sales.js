@@ -82,7 +82,7 @@ export const cancelSale = async (data) => {
   const apiUrl = getApiUrl("cancel-sale");
   try {
     const response = await axios.post(apiUrl, data, {
-      headers: getHeaders(true),
+      headers: getHeaders(),
     });
     return response;
   } catch (error) {

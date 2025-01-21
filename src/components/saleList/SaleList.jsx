@@ -6,17 +6,19 @@ import CustomButton from "../commons/customButton/CustomButton";
 import { getUserData } from "../apis/utils";
 import { exportToExcel, getToday } from "../utils/utils";
 import { useDispatch } from "react-redux";
-import { hideSaleModal, showSaleModal } from "../redux/saleModal/SaleModalActions";
+import {
+  hideSaleModal,
+  showSaleModal,
+} from "../redux/saleModal/SaleModalActions";
 import SaleModal from "../saleModal/saleModal";
 
 const SaleList = () => {
   const [sales, setSales] = useState([]);
   const [dailyEarningsSummary, setDailyEarningsSummary] = useState([]);
-  const today = getToday()
+  const today = getToday();
   const [date, setDate] = useState(today);
 
-  const dispatch = useDispatch()
-
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchSalesData = async () => {
@@ -31,11 +33,21 @@ const SaleList = () => {
     fetchSalesData();
   }, [date]);
 
+  useEffect(() => {
+    const fetchSalesData = async () => {
+      const earningsResponse = await getDailyEarnings(date);
+      console.log(earningsResponse.data);
+      setDailyEarningsSummary(earningsResponse.data);
+    };
+
+    fetchSalesData();
+  }, [date, sales]);
+
   const formatTimeFromDate = (dateString) => {
-    let date = ''
-    if (dateString){
+    let date = "";
+    if (dateString) {
       date = new Date(dateString);
-    }else{
+    } else {
       date = new Date();
     }
     const hours = date.getHours().toString().padStart(2, "0");
@@ -43,40 +55,50 @@ const SaleList = () => {
     return `${hours}:${minutes}`;
   };
 
-
   const handleExport = () => {
     // Definir valores iniciales
     const isPartial = date === today;
-    const dateFile = `${date}${isPartial ? ' ' + formatTimeFromDate() : ''}`;
-    const type = isPartial ? 'parcial ' : 'total ';
-    
+    const dateFile = `${date}${isPartial ? " " + formatTimeFromDate() : ""}`;
+    const type = isPartial ? "parcial " : "total ";
+
     // Generar el prefijo del nombre del archivo
-    const prefixName = `Corte de caja ${type}${getUserData().store_name} ${dateFile}`;
-    
+    const prefixName = `Corte de caja ${type}${
+      getUserData().store_name
+    } ${dateFile}`;
+
     // Exportar a Excel
     exportToExcel(dailyEarningsSummary, prefixName, false);
   };
-  
+
   const handleOpenModal = (sale) => {
     dispatch(hideSaleModal());
     setTimeout(() => dispatch(showSaleModal(sale)));
   };
 
-  const handleUpdateSaleList = (updatedBrand) => {
-    setSales((prevBrands) => {
-      const brandExists = prevBrands.some((b) => b.id === updatedBrand.id);
-      return brandExists
-        ? prevBrands.map((b) => (b.id === updatedBrand.id ? updatedBrand : b))
-        : [...prevBrands, updatedBrand];
-    });
+  const handleUpdateSaleList = (updatedSale) => {
+    if ("delete" in updatedSale) {
+      setSales((prevSales) => {
+        const updatedList = prevSales.filter(
+          (item) => item.id !== updatedSale.id
+        );
+        return updatedList;
+      });
+    } else {
+      setSales((prevSales) => {
+        const saleExists = prevSales.some((b) => b.id === updatedSale.id);
+        return saleExists
+          ? prevSales.map((b) => (b.id === updatedSale.id ? updatedSale : b))
+          : [...prevSales, updatedSale];
+      });
+    }
   };
 
   return (
     <>
-    <SaleModal onUpdateSaleList={handleUpdateSaleList}></SaleModal>
+      <SaleModal onUpdateSaleList={handleUpdateSaleList}></SaleModal>
       <Row className="section">
         <Col md={3}>
-        <Form.Label className="fw-bold">Resumen de ventas</Form.Label>
+          <Form.Label className="fw-bold">Resumen de ventas</Form.Label>
           <Form>
             <Form.Label>Fecha</Form.Label>
             <Form.Control
@@ -84,7 +106,7 @@ const SaleList = () => {
               value={date}
               onChange={(e) => setDate(e.target.value)}
               max={today}
-/>
+            />
           </Form>
         </Col>
 
@@ -105,10 +127,10 @@ const SaleList = () => {
           />
         </Col>
 
-
-
         <Col md={4}>
-            <CustomButton onClick={handleExport}>Descargar corte del dia</CustomButton>
+          <CustomButton onClick={handleExport}>
+            Descargar corte del dia
+          </CustomButton>
         </Col>
       </Row>
 
@@ -126,7 +148,7 @@ const SaleList = () => {
             {
               name: "Cliente",
               selector: (row) => row.client?.full_name,
-              grow: 2
+              grow: 2,
             },
 
             {
@@ -138,7 +160,7 @@ const SaleList = () => {
               selector: (row) => (
                 <ul>
                   {/* Map over the array and render each item */}
-                  {row.products.map((item, index) => (
+                  {row.products_sale.map((item, index) => (
                     <li key={index}>
                       {item.quantity} x {item.description} a ${item.price}{" "}
                     </li>
@@ -146,24 +168,30 @@ const SaleList = () => {
                 </ul>
               ),
               wrap: true,
-              grow: 3
+              grow: 3,
             },
             {
               name: "Total",
               selector: (row) => `$${row.total}`,
             },
             {
-              name: "Vendido por",
+              name: "Metodos de pago",
+              selector: (row) => row.payments_methods.join(", "),
+            },
+
+            {
+              name: "Vendedor",
               selector: (row) => row.saler_username,
             },
-                            {
-                  name: "Accciones",
-                  cell: (row) => (
-                    <CustomButton onClick={() => handleOpenModal(row)}>
-                      Cancelar
-                    </CustomButton>
-                  ),
-                },
+            {
+              name: "Accciones",
+              cell: (row) =>
+                row.is_cancelable && (
+                  <CustomButton onClick={() => handleOpenModal(row)}>
+                    Cancelar
+                  </CustomButton>
+                ),
+            },
           ]}
         />
       </Row>

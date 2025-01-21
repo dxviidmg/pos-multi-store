@@ -4,28 +4,26 @@ import { Col, Form, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
 import Swal from "sweetalert2";
-import { createClient, updateClient } from "../apis/clients";
-import { hideSaleModal } from "../redux/saleModal/SaleModalActions";
-import CustomTable from "../commons/customTable/customTable";
 import { cancelSale } from "../apis/sales";
+import CustomTable from "../commons/customTable/customTable";
+import { hideSaleModal } from "../redux/saleModal/SaleModalActions";
 
 const INITIAL_FORM_DATA = {
-  products: [],
+  products_sale: [],
 };
 
-const SaleModal = ({ onUpdateClientList }) => {
+const SaleModal = ({ onUpdateSaleList }) => {
   const { showSaleModal, sale } = useSelector(
     (state) => state.SaleModalReducer
   );
 
-  const [productsToCancel, setProductsToCancel] = useEffect([]);
+  const [productsSaleToCancel, setProductsSaleToCancel] = useState([]);
 
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log("xxx", sale);
     if (sale.id) {
       setFormData(sale);
     } else {
@@ -34,16 +32,42 @@ const SaleModal = ({ onUpdateClientList }) => {
   }, [sale]);
 
   const handleSaveClient = async () => {
-    const response = await cancelSale(formData);
+    console.log(productsSaleToCancel)
+    const payload = {id: sale.id, products_sale_to_cancel: productsSaleToCancel}
+    const response = await cancelSale(payload);
 
-    if ([200].includes(response.status)) {
-      dispatch(hideSaleModal());
-      //        onUpdateClientList(response.data);
-      //        setFormData(INITIAL_FORM_DATA);
+    if (response.status === 200) {
+
+      let cash_back = response.data.cash_back
+      const sale_response = response.data.sale
+
+      if ('id' in sale_response){
+
+        onUpdateSaleList(sale_response)
+        setFormData(INITIAL_FORM_DATA)
+        setProductsSaleToCancel([])
+        dispatch(hideSaleModal());        
+      }
+      else{
+        onUpdateSaleList({...sale, delete: true})
+        setFormData(INITIAL_FORM_DATA)
+        setProductsSaleToCancel([])
+        dispatch(hideSaleModal());        
+      }
+
+//      const type = response.data[0]['type'] || ''
+
+//      if (type === 'total'){
+//        onUpdateSaleList({...sale, delete: true})
+//        setFormData(INITIAL_FORM_DATA)
+//        setProductsSaleToCancel([])
+//        dispatch(hideSaleModal());
+  
+//      }
 
       Swal.fire({
         icon: "success",
-        title: "Venta cancelada",
+        title: "Venta cancelada. Devolver $" + cash_back,
         timer: 5000,
       });
     } else {
@@ -53,7 +77,6 @@ const SaleModal = ({ onUpdateClientList }) => {
 
   const handleClientError = (response) => {
     let message = "Error desconocido. Por favor, contacte soporte.";
-
     Swal.fire({
       icon: "error",
       title: "Error al cancelar venta",
@@ -62,12 +85,22 @@ const SaleModal = ({ onUpdateClientList }) => {
     });
   };
 
-
   const handleSelectProduct = (row) => {
-    setProductsToCancel(productsToCancel, row.id)
+    setProductsSaleToCancel((prev) => {
+      const updatedProducts = [...prev];
 
-    
+      console.log('updatedProducts', updatedProducts)
+      if (updatedProducts.includes(row.id)) {
+        console.log('quita')
+        return updatedProducts.filter((id) => id !== row.id); // Remove product if already selected
+      } else {
+        console.log('inserta')
+        updatedProducts.push(row.id); // Add product to cancel list
+        return updatedProducts;
+      }
+    });
   };
+
   return (
     <CustomModal showOut={showSaleModal} title="Cancelación de compra">
       <Row className="section">
@@ -124,14 +157,13 @@ const SaleModal = ({ onUpdateClientList }) => {
           <Form.Label className="fw-bold">Productos</Form.Label>
 
           <CustomTable
-            data={formData.products}
+            data={formData.products_sale}
             columns={[
               {
                 name: "Descripción",
                 selector: (row) => row.description,
                 grow: 3,
               },
-
               {
                 name: "Cantidad",
                 selector: (row) => row.quantity,
@@ -148,18 +180,19 @@ const SaleModal = ({ onUpdateClientList }) => {
               {
                 name: "Cancelar",
                 selector: (row) => (
-                  <Form.Check // prettier-ignore
-                    type={"checkbox"}
-                    id={`default-${"checkbox"}`}
-                    onClick={() => handleSelectProduct(row)}
+                  <Form.Check
+                    type="checkbox"
+                    id={`default-${row.id}`}
+                    checked={productsSaleToCancel.includes(row.id)}
+                    onChange={() => handleSelectProduct(row)}
                   />
                 ),
               },
             ]}
-          ></CustomTable>
+          />
         </Col>
         <Col md={12}>
-          <CustomButton fullWidth onClick={handleSaveClient} marginTop="10px">
+          <CustomButton fullWidth onClick={handleSaveClient} marginTop="10px" disabled={productsSaleToCancel.length === 0}>
             Cancelar venta
           </CustomButton>
         </Col>
