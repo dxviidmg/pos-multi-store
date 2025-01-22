@@ -6,28 +6,12 @@ import { Col, Container, Row } from "react-bootstrap";
 import TabCart from "../cart/TabCart";
 import { getUserData } from "../apis/utils";
 
-
 const SaleCreate = () => {
   const store_type = getUserData().store_type;
 
   return (
     <Container fluid>
-  {store_type === "T" && (
 
-<Row className="section">
-        
-<Col md={6}>
-  {" "}
-  <SearchClient></SearchClient>
-</Col>
-
-<Col md={6}>
-  {" "}
-  <ClientSelected></ClientSelected>
-</Col>
-</Row>
-
-  )}
       <Row className="section">
         <Col md={12}>
           {" "}
@@ -36,7 +20,7 @@ const SaleCreate = () => {
       </Row>
 
       <Row className="section">
-        <TabCart></TabCart>
+        <TabCart/>
       </Row>
     </Container>
   );

@@ -23,7 +23,7 @@ const PaymentModal = () => {
 
   const [paymentMethods, setPaymentMethods] = useState({
     type: "radio", // Tipo de pago inicial.
-    methods: { E: 0, P: 0, T: 0 }, // Valores iniciales de los métodos de pago.
+    methods: { EF: 0, TA: 0, TR: 0 }, // Valores iniciales de los métodos de pago.
   });
 
   const dispatch = useDispatch();
@@ -57,7 +57,7 @@ const PaymentModal = () => {
   useEffect(() => {
     setPaymentMethods({
       type: "radio", // Por defecto, "Único".
-      methods: { E: totalDiscount, P: 0, T: 0 }, // Efectivo seleccionado.
+      methods: { EF: totalDiscount, TA: 0, TR: 0 }, // Efectivo seleccionado.
     });
   }, [totalDiscount]);
 
@@ -67,8 +67,8 @@ const PaymentModal = () => {
     if (name === "paymentType") {
       const newMethods =
         value === "radio"
-          ? { E: totalDiscount, P: 0, T: 0 }
-          : { E: 0, P: 0, T: 0 };
+          ? { EF: totalDiscount, TA: 0, TR: 0 }
+          : { EF: 0, TA: 0, TR: 0 };
       setPaymentMethods({
         type: value,
         methods: newMethods,
@@ -136,7 +136,7 @@ const PaymentModal = () => {
     if (response.status === 201) {
       setPaymentMethods({
         type: "radio",
-        methods: { E: 0, P: 0, T: 0 },
+        methods: { EF: 0, TA: 0, TR: 0 },
       });
       dispatch(removeClientfromCart());
       dispatch(cleanCart());
