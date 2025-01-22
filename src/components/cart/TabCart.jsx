@@ -20,12 +20,14 @@ function TabCart() {
   };
 
   return (
+    <div style={{minHeight: '45vh'}}>
     <Tabs
       activeKey={activeTab}
       onSelect={handleSelect}
       id="justify-tab-example"
       className="mb-3"
       justify
+
     >
       <Tab eventKey="venta-actual" title={movementType.charAt(0).toUpperCase() + movementType.slice(1) + " actual"} >
         <Cart />
@@ -34,6 +36,7 @@ function TabCart() {
         <TransferList key={refreshKey} /> {/* key cambia cada vez que se selecciona */}
       </Tab>
     </Tabs>
+    </div>
   );
 }
 
