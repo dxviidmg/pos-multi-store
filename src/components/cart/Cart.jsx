@@ -1,11 +1,18 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import CustomTable from "../commons/customTable/customTable";
-import { cleanCart, removeFromCart, updateMovementType } from "../redux/cart/cartActions";
+import {
+  cleanCart,
+  removeFromCart,
+  updateMovementType,
+} from "../redux/cart/cartActions";
 import CustomButton from "../commons/customButton/CustomButton";
 import { Col, Form, Row } from "react-bootstrap";
 import PaymentModal from "../paymentModal/PaymentModal";
-import { hidePaymentModal, showPaymentModal } from "../redux/paymentModal/PaymentModalActions";
+import {
+  hidePaymentModal,
+  showPaymentModal,
+} from "../redux/paymentModal/PaymentModalActions";
 import { getStores } from "../apis/stores";
 import { confirmDistribution, confirmTransfers } from "../apis/transfers";
 import Swal from "sweetalert2";
@@ -19,6 +26,18 @@ const Cart = () => {
   const dispatch = useDispatch();
   const [stores, setStores] = useState([]);
   const [selectedStore, setSelectedStore] = useState("");
+
+  useEffect(() => {
+    const handleShortcut = (event) => {
+      if (event.ctrlKey && event.key === "s") {
+        event.preventDefault();
+        dispatch(hidePaymentModal());
+        setTimeout(() => dispatch(showPaymentModal()), 1);
+      }
+    };
+    window.addEventListener("keydown", handleShortcut);
+    return () => window.removeEventListener("keydown", handleShortcut);
+  }, [dispatch]);
 
   const handleSelectChange = (event) => {
     setSelectedStore(event.target.value);
@@ -37,9 +56,9 @@ const Cart = () => {
 
     // Si el tipo de tienda es "A", se establece el movimiento como "distribucion"
     if (store_type === "A" && movementType !== "distribucion") {
-      dispatch(updateMovementType('distribucion'));
+      dispatch(updateMovementType("distribucion"));
     }
-  }, [store_type,dispatch, movementType]);
+  }, [store_type, dispatch, movementType]);
 
   const { total } = useMemo(() => {
     const total = cart.reduce(
@@ -51,7 +70,7 @@ const Cart = () => {
 
   const handleRemoveFromCart = (product) => dispatch(removeFromCart(product));
 
-  const showAlert = (icon, title, text = "", timer = 2000) => {
+  const showAlert = (icon, title, text = "", timer = 5000) => {
     Swal.fire({ icon, title, text, timer });
   };
 
@@ -69,7 +88,11 @@ const Cart = () => {
           "Algunos productos no coinciden con el traspaso solicitado, ya sea en cantidad o en código."
         );
       } else {
-        showAlert("error", "Error desconocido", "Por favor llame a soporte técnico");
+        showAlert(
+          "error",
+          "Error desconocido",
+          "Por favor llame a soporte técnico"
+        );
       }
     } catch (error) {
       showAlert("error", "Error en la solicitud", error.message);
@@ -90,7 +113,11 @@ const Cart = () => {
           "Algunos productos no coinciden con la distribución solicitada, ya sea en cantidad o en código."
         );
       } else {
-        showAlert("error", "Error desconocido", "Por favor llame a soporte técnico");
+        showAlert(
+          "error",
+          "Error desconocido",
+          "Por favor llame a soporte técnico"
+        );
       }
     } catch (error) {
       showAlert("error", "Error en la solicitud", error.message);
@@ -105,7 +132,11 @@ const Cart = () => {
         dispatch(cleanCart());
         showAlert("success", "Producto añadido al inventario");
       } else {
-        showAlert("error", "Error en el inventario", "No se pudo añadir el producto");
+        showAlert(
+          "error",
+          "Error en el inventario",
+          "No se pudo añadir el producto"
+        );
       }
     } catch (error) {
       showAlert("error", "Error en la solicitud", error.message);
@@ -119,13 +150,23 @@ const Cart = () => {
 
   const commonColumns = [
     { name: "Código", selector: (row) => row.product_code },
-    { name: "Descripción", selector: (row) => row.description, grow: 3, wrap: true },
+    {
+      name: "Descripción",
+      selector: (row) => row.description,
+      grow: 3,
+      wrap: true,
+    },
     { name: "Stock", selector: (row) => row.stock },
   ];
 
   const commonColumns2 = [
     { name: "Código", selector: (row) => row.product_code },
-    { name: "Descripción", selector: (row) => row.description, grow: 3, wrap: true }
+    {
+      name: "Descripción",
+      selector: (row) => row.description,
+      grow: 3,
+      wrap: true,
+    },
   ];
 
   const saleColumns = [
@@ -140,7 +181,9 @@ const Cart = () => {
     {
       name: "Borrar",
       selector: (row) => (
-        <CustomButton onClick={() => handleRemoveFromCart(row)}>Borrar</CustomButton>
+        <CustomButton onClick={() => handleRemoveFromCart(row)}>
+          Borrar
+        </CustomButton>
       ),
     },
   ];
@@ -151,7 +194,9 @@ const Cart = () => {
     {
       name: "Borrar",
       selector: (row) => (
-        <CustomButton onClick={() => handleRemoveFromCart(row)}>Borrar</CustomButton>
+        <CustomButton onClick={() => handleRemoveFromCart(row)}>
+          Borrar
+        </CustomButton>
       ),
     },
   ];
@@ -162,7 +207,9 @@ const Cart = () => {
     {
       name: "Borrar",
       selector: (row) => (
-        <CustomButton onClick={() => handleRemoveFromCart(row)}>Borrar</CustomButton>
+        <CustomButton onClick={() => handleRemoveFromCart(row)}>
+          Borrar
+        </CustomButton>
       ),
     },
   ];
@@ -176,7 +223,9 @@ const Cart = () => {
     {
       name: "Borrar",
       selector: (row) => (
-        <CustomButton onClick={() => handleRemoveFromCart(row)}>Borrar</CustomButton>
+        <CustomButton onClick={() => handleRemoveFromCart(row)}>
+          Borrar
+        </CustomButton>
       ),
     },
   ];
@@ -203,17 +252,21 @@ const Cart = () => {
                 </Col>
                 <Col md={3}>
                   <CustomButton fullWidth onClick={handleOpenModal}>
-                    Pagar
+                    Pagar (Ctrl + S)
                   </CustomButton>
                 </Col>
               </>
             )}
 
-            {(movementType === "traspaso" || movementType === "distribucion") && (
+            {(movementType === "traspaso" ||
+              movementType === "distribucion") && (
               <>
                 <Col md={6}></Col>
                 <Col md={3}>
-                  <Form.Select value={selectedStore} onChange={handleSelectChange}>
+                  <Form.Select
+                    value={selectedStore}
+                    onChange={handleSelectChange}
+                  >
                     <option value="">Selecciona una tienda</option>
                     {stores.map((store) => (
                       <option key={store.id} value={store.id}>
@@ -242,7 +295,10 @@ const Cart = () => {
               <>
                 <Col md={9}></Col>
                 <Col md={3}>
-                  <CustomButton fullWidth onClick={() => handleAddToStock(cart)}>
+                  <CustomButton
+                    fullWidth
+                    onClick={() => handleAddToStock(cart)}
+                  >
                     Añadir
                   </CustomButton>
                 </Col>
@@ -250,7 +306,11 @@ const Cart = () => {
             )}
           </Row>
         )}
-        <CustomTable noDataComponent="Sin productos" data={cart} columns={getColumns()} />
+        <CustomTable
+          noDataComponent="Sin productos"
+          data={cart}
+          columns={getColumns()}
+        />
       </div>
     </div>
   );

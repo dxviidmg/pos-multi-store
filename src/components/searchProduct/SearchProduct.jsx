@@ -17,6 +17,7 @@ import { getUserData } from "../apis/utils";
 
 const SearchProduct = () => {
   const inputRef = useRef(null);
+
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.cartReducer.cart);
   const movementType = useSelector((state) => state.cartReducer.movementType);
@@ -191,6 +192,12 @@ const SearchProduct = () => {
       event.preventDefault(); // Evita la acción predeterminada del navegador
       dispatch(updateMovementType("agregar"))
     }
+    if (event.ctrlKey && event.key === "a") {
+      event.preventDefault(); // Evita la acción predeterminada del navegador
+      inputRef.current?.focus();
+      
+
+    }
   };
 
   useEffect(() => {
@@ -283,7 +290,7 @@ const SearchProduct = () => {
         ref={inputRef}
         type="text"
         value={queryType === "code" ? barcode : query}
-        placeholder="Buscar producto"
+        placeholder="Buscar producto (Ctrl + A)"
         onChange={
           queryType === "q"
             ? handleQueryChange
