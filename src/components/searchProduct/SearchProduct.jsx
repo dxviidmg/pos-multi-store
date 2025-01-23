@@ -207,14 +207,14 @@ const SearchProduct = () => {
     };
   }, []);
 
-  const downloadExcel = async () => {
+  const handleDownloadStockReport = async () => {
     try {
       const response = await getStoreProductsReport();
       // Crear un enlace para descargar el archivo
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", "data.xlsx"); // Nombre del archivo
+      link.setAttribute("download", "Reporte stock.xlsx"); // Nombre del archivo
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -288,7 +288,7 @@ const SearchProduct = () => {
         checked={movementType === "agregar"}
       />
 
-      <CustomButton onClick={downloadExcel}>Descargar inventario</CustomButton>
+      <CustomButton onClick={handleDownloadStockReport}>Descargar inventario</CustomButton>
       <br />
 
       {!isInputFocused && (
