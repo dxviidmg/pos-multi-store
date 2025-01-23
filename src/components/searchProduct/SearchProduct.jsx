@@ -207,21 +207,7 @@ const SearchProduct = () => {
     };
   }, []);
 
-  const handleDownloadStockReport = async () => {
-    try {
-      const response = await getStoreProductsReport();
-      // Crear un enlace para descargar el archivo
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", "Reporte stock.xlsx"); // Nombre del archivo
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-    } catch (error) {
-      console.error("Error downloading the file", error);
-    }
-  };
+
 
   return (
     <>
@@ -288,7 +274,6 @@ const SearchProduct = () => {
         checked={movementType === "agregar"}
       />
 
-      <CustomButton onClick={handleDownloadStockReport}>Descargar inventario</CustomButton>
       <br />
 
       {!isInputFocused && (
@@ -320,7 +305,7 @@ const SearchProduct = () => {
           { name: "Código", selector: (row) => row.product_code },
           {
             name: "Descripción",
-            selector: (row) => row.description,
+            selector: (row) => row.product_description,
             grow: 3,
             wrap: true,
           },
