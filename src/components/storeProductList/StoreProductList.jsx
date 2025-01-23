@@ -70,8 +70,12 @@ const StoreProductList = () => {
                 selector: (row) => row.product_code,
               },
               {
-                name: "Desripcion",
-                selector: (row) => row.description,
+                name: "Marca",
+                selector: (row) => row.product_brand,
+              },
+              {
+                name: "Nombre",
+                selector: (row) => row.product_name,
                 grow: 3,
                 wrap: true,
               },

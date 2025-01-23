@@ -152,7 +152,7 @@ const Cart = () => {
     { name: "Código", selector: (row) => row.product_code },
     {
       name: "Descripción",
-      selector: (row) => row.description,
+      selector: (row) => row.product_description,
       grow: 3,
       wrap: true,
     },
@@ -163,7 +163,7 @@ const Cart = () => {
     { name: "Código", selector: (row) => row.product_code },
     {
       name: "Descripción",
-      selector: (row) => row.description,
+      selector: (row) => row.product_description,
       grow: 3,
       wrap: true,
     },

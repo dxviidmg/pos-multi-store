@@ -66,7 +66,7 @@ const TransferList = () => {
 
             {
               name: "Descripcion",
-              selector: (row) => row.description,
+              selector: (row) => row.product_description,
 
               grow: 4
             },
