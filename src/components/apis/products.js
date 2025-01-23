@@ -67,3 +67,18 @@ export const addProducts = async (data) => {
     return error;
   }
 };
+
+
+export const getStoreProductsReport = async (filter, query) => {
+  const apiUrl = new URL(getApiUrl("store-product-report"));
+
+  try {
+    const response = await axios.get(apiUrl, {
+      responseType: 'blob',
+      headers: getHeaders(),
+    });
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
