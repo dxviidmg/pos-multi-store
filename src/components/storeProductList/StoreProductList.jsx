@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { getStoreProducts } from "../apis/products";
+import { getStoreProducts, getStoreProductsReport } from "../apis/products";
 import { Container, Form, Row, Col } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getUserData } from "../apis/utils";
 import { exportToExcel } from "../utils/utils";
+
 
 const StoreProductList = () => {
   const [products, setProducts] = useState([]);
@@ -27,19 +28,20 @@ const StoreProductList = () => {
   }, []);
 
 
-  const handleExport = () => {
-    // Crear una hoja de cálculo a partir de los datos
-
-    const products_to_report = products.map(({ id, product_id, stock_in_other_stores, store, product, ...resto }) => ({
-      Código: resto.product_code,
-      Descripción: resto.description,
-      'Stock total': resto.stock,
-      'Stock disponible': resto.available_stock,
-      'Stock Reservado': resto.reserved_stock,
-    }));
-    
-    const prefix_name = "Reporte Inventario " + getUserData().store_name 
-     exportToExcel(products_to_report, prefix_name)
+  const handleDownloadStockReport = async () => {
+    try {
+      const response = await getStoreProductsReport();
+      // Crear un enlace para descargar el archivo
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "Reporte stock.xlsx"); // Nombre del archivo
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error("Error downloading the file", error);
+    }
   };
 
 
@@ -49,13 +51,17 @@ const StoreProductList = () => {
         <Col md={12}>
           <Form.Label className="fw-bold">Inventario</Form.Label>
 
-          <br></br>
-          <CustomButton onClick={() => handleExport()}>
-            Descargar reporte
-          </CustomButton>
+          <br/>
+          <CustomButton onClick={handleDownloadStockReport}>Descargar inventario</CustomButton>
+          <br/>
 
+          <Form.Label className="fw-bold">Logs de un producto</Form.Label>
+
+          <Form.Control
+        type="text"
+        placeholder="Buscar producto"
+      />
           <CustomTable
-            searcher={true}
             progressPending={isLoading}
             data={products}
             columns={[
@@ -75,14 +81,6 @@ const StoreProductList = () => {
                 selector: (row) => row.stock,
               },
 
-              {
-                name: "Stock Disponible",
-                selector: (row) => row.available_stock,
-              },
-              {
-                name: "Stock Reservado",
-                selector: (row) => row.reserved_stock,
-              },
             ]}
           />
         </Col>

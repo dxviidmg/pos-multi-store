@@ -12,7 +12,6 @@ export const getStoreProducts = async (filter, query) => {
   try {
     const response = await axios.get(apiUrl, {
       headers: getHeaders(),
-      timeout: 600000
     });
     return response;
   } catch (error) {
@@ -80,6 +79,25 @@ export const getStoreProductsReport = async (filter, query) => {
   try {
     const response = await axios.get(apiUrl, {
       responseType: 'blob',
+      headers: getHeaders(),
+    });
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const getStoreProductsList = async (page = 1, pageSize = 10, searchTerm) => {
+  const apiUrl = new URL(getApiUrl("store-product-list"));
+
+  apiUrl.searchParams.append("page", page);
+  apiUrl.searchParams.append("page_size", pageSize);
+  if (searchTerm){
+    apiUrl.searchParams.append("q", searchTerm);
+  }
+
+  try {
+    const response = await axios.get(apiUrl, {
       headers: getHeaders(),
     });
     return response;

@@ -63,6 +63,10 @@ const BrandList = () => {
                   wrap: true,
                 },
                 {
+                  name: "Numero de productos",
+                  selector: (row) => row.product_count,
+                },
+                {
                   name: "Accciones",
                   cell: (row) => (
                     <CustomButton onClick={() => handleOpenModal(row)}>
