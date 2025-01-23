@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import CustomTable from "../commons/customTable/customTable";
 import CustomButton from "../commons/customButton/CustomButton";
-import { getStoreProducts } from "../apis/products";
+import { getStoreProducts, getStoreProductsReport } from "../apis/products";
 import { addToCart, updateMovementType } from "../redux/cart/cartActions";
 import { Badge, Form } from "react-bootstrap";
 import { debounce } from "lodash";
@@ -13,7 +13,7 @@ import {
 } from "../redux/stockModal/StockModalActions";
 import Swal from "sweetalert2";
 import { getUserData } from "../apis/utils";
-
+import axios from "axios";
 
 const SearchProduct = () => {
   const inputRef = useRef(null);
@@ -166,37 +166,34 @@ const SearchProduct = () => {
     setTimeout(() => dispatch(showStockModal(product)), 1);
   };
 
-
   const handleShortcut = (event) => {
     if (event.ctrlKey && event.key === "r") {
       event.preventDefault(); // Evita la acción predeterminada del navegador
-      setQueryType("code")
+      setQueryType("code");
     }
     if (event.ctrlKey && event.key === "y") {
       event.preventDefault(); // Evita la acción predeterminada del navegador
-      setQueryType("q")
+      setQueryType("q");
     }
     if (event.ctrlKey && event.key === "u") {
       event.preventDefault(); // Evita la acción predeterminada del navegador
-      dispatch(updateMovementType("venta"))
+      dispatch(updateMovementType("venta"));
     }
     if (event.ctrlKey && event.key === "i") {
       event.preventDefault(); // Evita la acción predeterminada del navegador
-      dispatch(updateMovementType("traspaso"))
+      dispatch(updateMovementType("traspaso"));
     }
     if (event.ctrlKey && event.key === "o") {
       event.preventDefault(); // Evita la acción predeterminada del navegador
-      dispatch(updateMovementType("distribucion"))
+      dispatch(updateMovementType("distribucion"));
     }
     if (event.ctrlKey && event.key === "p") {
       event.preventDefault(); // Evita la acción predeterminada del navegador
-      dispatch(updateMovementType("agregar"))
+      dispatch(updateMovementType("agregar"));
     }
     if (event.ctrlKey && event.key === "a") {
       event.preventDefault(); // Evita la acción predeterminada del navegador
       inputRef.current?.focus();
-      
-
     }
   };
 
@@ -210,6 +207,21 @@ const SearchProduct = () => {
     };
   }, []);
 
+  const downloadExcel = async () => {
+    try {
+      const response = await getStoreProductsReport();
+      // Crear un enlace para descargar el archivo
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "data.xlsx"); // Nombre del archivo
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error("Error downloading the file", error);
+    }
+  };
 
   return (
     <>
@@ -276,6 +288,7 @@ const SearchProduct = () => {
         checked={movementType === "agregar"}
       />
 
+      <CustomButton onClick={downloadExcel}>Descargar inventario</CustomButton>
       <br />
 
       {!isInputFocused && (
