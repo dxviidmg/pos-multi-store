@@ -71,3 +71,16 @@ export const addProducts = async (data) => {
     return error;
   }
 };
+
+export const getStoreProductLogs = async (data) => {
+  const apiUrl = new URL(getApiUrl("store-product-logs/" + data.id));
+
+  try {
+    const response = await axios.get(apiUrl, {
+      headers: getHeaders(),
+    });
+    return response;
+  } catch (error) {
+    return error;
+  }
+};

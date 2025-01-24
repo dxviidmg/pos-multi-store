@@ -55,16 +55,6 @@ const SaleModal = ({ onUpdateSaleList }) => {
         dispatch(hideSaleModal());        
       }
 
-//      const type = response.data[0]['type'] || ''
-
-//      if (type === 'total'){
-//        onUpdateSaleList({...sale, delete: true})
-//        setFormData(INITIAL_FORM_DATA)
-//        setProductsSaleToCancel([])
-//        dispatch(hideSaleModal());
-  
-//      }
-
       Swal.fire({
         icon: "success",
         title: "Venta cancelada. Devolver $" + cash_back,
@@ -171,11 +161,11 @@ const SaleModal = ({ onUpdateSaleList }) => {
               },
               {
                 name: "Precio unitario",
-                selector: (row) => "$" + row.price / row.quantity,
+                selector: (row) => "$" + row.price,
               },
               {
                 name: "Precio",
-                selector: (row) => "$" + row.price,
+                selector: (row) => "$" + row.price * row.quantity ,
               },
               {
                 name: "Cancelar",
