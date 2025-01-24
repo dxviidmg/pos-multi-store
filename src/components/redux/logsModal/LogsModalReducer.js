@@ -2,7 +2,8 @@ import { SHOW_MODAL, HIDE_MODAL } from './LogsModalActions';
 
 const initialState = {
   showSaleModal: false,
-  storeProduct: {}
+  storeProduct: {},
+  adjustStock: false
 };
 
 const LogsModalReducer = (state = initialState, action) => {
@@ -10,7 +11,8 @@ const LogsModalReducer = (state = initialState, action) => {
     case SHOW_MODAL: {
         return {
           showLogsModal: true,
-          storeProduct: action.payload
+          storeProduct: action.payload.storeProduct,
+          adjustStock: action.payload.adjustStock
         };
       }
 

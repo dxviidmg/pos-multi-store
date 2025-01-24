@@ -5,7 +5,10 @@ import { Container, Form, Row, Col } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getUserData } from "../apis/utils";
 import { exportToExcel } from "../utils/utils";
-import { hideLogsModal, showLogsModal } from "../redux/logsModal/LogsModalActions";
+import {
+  hideLogsModal,
+  showLogsModal,
+} from "../redux/logsModal/LogsModalActions";
 import { useDispatch } from "react-redux";
 import LogsModal from "../logsModal/LogsModal";
 
@@ -13,6 +16,7 @@ const StoreProductList = () => {
   const dispatch = useDispatch();
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const user = getUserData();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -49,9 +53,9 @@ const StoreProductList = () => {
     exportToExcel(storeProductsForReport, prefixName);
   };
 
-  const handleOpenModal = (storeProduct) => {
+  const handleOpenModal = (storeProduct, adjustStock) => {
     dispatch(hideLogsModal());
-    setTimeout(() => dispatch(showLogsModal(storeProduct)));
+    setTimeout(() => dispatch(showLogsModal(storeProduct, adjustStock)));
   };
 
   return (
@@ -67,7 +71,7 @@ const StoreProductList = () => {
           </CustomButton>
           <br />
           <CustomTable
-          searcher={true}
+            searcher={true}
             progressPending={isLoading}
             data={products}
             columns={[
@@ -92,11 +96,18 @@ const StoreProductList = () => {
               },
               {
                 name: "Accciones",
-                cell: (row) =>
-                    <CustomButton onClick={() => handleOpenModal(row)}>
-                      Ver logs
+                cell: (row) => (
+                  <>
+                    {user.is_owner && (
+                      <CustomButton onClick={() => handleOpenModal(row, true)}>
+                        Ajustar cantidad
+                      </CustomButton>
+                    )}
+                    <CustomButton onClick={() => handleOpenModal(row, false)}>
+                      Ver logs {user.is_owner}
                     </CustomButton>
-                
+                  </>
+                ),
               },
             ]}
           />
