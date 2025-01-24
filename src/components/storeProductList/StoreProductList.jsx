@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { getStoreProducts, getStoreProductsReport } from "../apis/products";
+import { getStoreProducts } from "../apis/products";
 import { Container, Form, Row, Col } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getUserData } from "../apis/utils";
@@ -28,20 +28,16 @@ const StoreProductList = () => {
   }, []);
 
 
-  const handleDownloadStockReport = async () => {
-    try {
-      const response = await getStoreProductsReport();
-      // Crear un enlace para descargar el archivo
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", "Reporte stock.xlsx"); // Nombre del archivo
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-    } catch (error) {
-      console.error("Error downloading the file", error);
-    }
+  const handleDownload = async () => {
+    const storeProductsForReport = products.map(({ product_code: Código, product_brand: Marca, product_name: Nombre, stock: Stock }) => ({
+      Código,
+      Marca,
+      Nombre,
+      Stock,
+    }));
+    
+    const prefix_name = "Reporte Inventario " + getUserData().store_name 
+     exportToExcel(storeProductsForReport, prefix_name)
   };
 
 
@@ -52,7 +48,7 @@ const StoreProductList = () => {
           <Form.Label className="fw-bold">Inventario</Form.Label>
 
           <br/>
-          <CustomButton onClick={handleDownloadStockReport}>Descargar inventario</CustomButton>
+          <CustomButton onClick={handleDownload}>Descargar inventario</CustomButton>
           <br/>
 
           <Form.Label className="fw-bold">Logs de un producto</Form.Label>
@@ -81,7 +77,7 @@ const StoreProductList = () => {
               },
 
               {
-                name: "Stock total",
+                name: "Stock",
                 selector: (row) => row.stock,
               },
 

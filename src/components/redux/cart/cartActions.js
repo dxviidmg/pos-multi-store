@@ -6,6 +6,8 @@ export const REMOVE_FROM_CART = 'REMOVE_FROM_CART';
 export const CLEAN_CART = 'CLEAN_CART';
 
 export const UPDATE_MOVEMENT_TYPE = 'UPDATE_MOVEMENT_TYPE';
+export const UPDATE_QUANTITY_IN_CART = 'UPDATE_QUANTITY_IN_CART';
+
 
 
 export const addClientToCart = (client) => ({
@@ -35,4 +37,9 @@ export const cleanCart = () => ({
 export const updateMovementType = (movementType) => ({
   type: UPDATE_MOVEMENT_TYPE,
   payload: movementType,
+});
+
+export const updateQuantityInCart = (product, newQuantity) => ({
+  type: 'UPDATE_QUANTITY_IN_CART',
+  payload: { product, newQuantity },
 });

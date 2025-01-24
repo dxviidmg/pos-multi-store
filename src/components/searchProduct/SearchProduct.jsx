@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import CustomTable from "../commons/customTable/customTable";
 import CustomButton from "../commons/customButton/CustomButton";
-import { getStoreProducts, getStoreProductsReport } from "../apis/products";
+import { getStoreProducts } from "../apis/products";
 import { addToCart, updateMovementType } from "../redux/cart/cartActions";
 import { Badge, Form } from "react-bootstrap";
 import { debounce } from "lodash";
@@ -13,7 +13,7 @@ import {
 } from "../redux/stockModal/StockModalActions";
 import Swal from "sweetalert2";
 import { getUserData } from "../apis/utils";
-import axios from "axios";
+
 
 const SearchProduct = () => {
   const inputRef = useRef(null);
