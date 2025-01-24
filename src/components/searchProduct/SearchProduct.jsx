@@ -166,37 +166,34 @@ const SearchProduct = () => {
     setTimeout(() => dispatch(showStockModal(product)), 1);
   };
 
-
   const handleShortcut = (event) => {
     if (event.ctrlKey && event.key === "r") {
       event.preventDefault(); // Evita la acción predeterminada del navegador
-      setQueryType("code")
+      setQueryType("code");
     }
     if (event.ctrlKey && event.key === "y") {
       event.preventDefault(); // Evita la acción predeterminada del navegador
-      setQueryType("q")
+      setQueryType("q");
     }
     if (event.ctrlKey && event.key === "u") {
       event.preventDefault(); // Evita la acción predeterminada del navegador
-      dispatch(updateMovementType("venta"))
+      dispatch(updateMovementType("venta"));
     }
     if (event.ctrlKey && event.key === "i") {
       event.preventDefault(); // Evita la acción predeterminada del navegador
-      dispatch(updateMovementType("traspaso"))
+      dispatch(updateMovementType("traspaso"));
     }
     if (event.ctrlKey && event.key === "o") {
       event.preventDefault(); // Evita la acción predeterminada del navegador
-      dispatch(updateMovementType("distribucion"))
+      dispatch(updateMovementType("distribucion"));
     }
     if (event.ctrlKey && event.key === "p") {
       event.preventDefault(); // Evita la acción predeterminada del navegador
-      dispatch(updateMovementType("agregar"))
+      dispatch(updateMovementType("agregar"));
     }
     if (event.ctrlKey && event.key === "a") {
       event.preventDefault(); // Evita la acción predeterminada del navegador
       inputRef.current?.focus();
-      
-
     }
   };
 
@@ -209,6 +206,7 @@ const SearchProduct = () => {
       window.removeEventListener("keydown", handleShortcut);
     };
   }, []);
+
 
 
   return (
@@ -307,7 +305,7 @@ const SearchProduct = () => {
           { name: "Código", selector: (row) => row.product_code },
           {
             name: "Descripción",
-            selector: (row) => row.description,
+            selector: (row) => row.product_description,
             grow: 3,
             wrap: true,
           },

@@ -4,7 +4,8 @@ import {
   ADD_TO_CART,
   REMOVE_FROM_CART,
   CLEAN_CART,
-  UPDATE_MOVEMENT_TYPE
+  UPDATE_MOVEMENT_TYPE,
+  UPDATE_QUANTITY_IN_CART
 } from "./cartActions";
 
 const initialState = {
@@ -123,6 +124,17 @@ const cartReducer = (state = initialState, action) => {
 
     case UPDATE_MOVEMENT_TYPE:
       return { ...state, movementType: action.payload, cart: [] };
+
+    case UPDATE_QUANTITY_IN_CART:
+      console.log(action)
+      return {
+        ...state,
+        cart: state.cart.map((item) =>
+          item.id === action.payload.product.id
+            ? { ...item, quantity: action.payload.newQuantity }
+            : item
+        ),
+      };
 
     default:
       return state;

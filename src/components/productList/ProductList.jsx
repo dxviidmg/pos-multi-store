@@ -9,6 +9,8 @@ import {
   showProductModal,
 } from "../redux/productModal/ProductModalActions";
 import ProductModal from "../productModal/ProductModal";
+import { exportToExcel } from "../utils/utils";
+
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
@@ -45,6 +47,24 @@ const ProductList = () => {
     });
   };
 
+
+  const handleDownload = async () => {
+    const storeProductsForReport = products.map(({ code: Código, brand_name: Marca, name: Nombre, purchase_price: Costo, unit_sale_price: PrecioUnitario, wholesale_sale_price: PrecioMayoreo, min_wholesale_quantity: CantidadMinimaMayoreo, apply_wholesale_price_on_client_discount: DescuentoSobreClientes}) => ({
+      Código,
+      Marca,
+      Nombre,
+      Costo,
+      PrecioUnitario,
+      PrecioMayoreo,
+      CantidadMinimaMayoreo,
+      DescuentoSobreClientes
+    }));
+    
+    const prefix_name = "Productos"
+     exportToExcel(storeProductsForReport, prefix_name)
+  };
+
+
   return (
     <Container fluid>
       <ProductModal onUpdateProductList={handleUpdateProductList} />
@@ -57,6 +77,7 @@ const ProductList = () => {
           <CustomButton onClick={() => handleOpenModal()}>
             Crear producto
           </CustomButton>
+          <CustomButton onClick={handleDownload}>Descargar inventario</CustomButton>
 
           <CustomTable
             searcher={true}

@@ -1,9 +1,13 @@
 import axios from "axios";
 import { getApiUrl, getHeaders } from "./utils";
 
+
 export const getStoreProducts = async (filter, query) => {
   const apiUrl = new URL(getApiUrl("store-product"));
-  apiUrl.searchParams.append(filter, query);
+
+  if (filter){
+    apiUrl.searchParams.append(filter, query);
+  }
 
   try {
     const response = await axios.get(apiUrl, {

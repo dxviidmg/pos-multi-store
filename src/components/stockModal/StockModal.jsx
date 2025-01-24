@@ -50,7 +50,7 @@ const StockModal = () => {
       <div className="text-center">
         <p>
           <b>Código:</b> {product.product_code} <b>Nombre:</b>{" "}
-          {product.description}
+          {product.product_description}
         </p>
 
         {product.available_stock === 0 ? (

@@ -17,23 +17,19 @@ const CustomNavbar = () => {
     window.location.href = "/";
   };
 
-
-
   const handleBack = async () => {
     const user = JSON.parse(localStorage.getItem("user"));
     user.store_type = "";
     user.store_name = "";
     user.store_id = "";
-    console.log(user)
 
     const updatedData = JSON.stringify(user);
-    
+
     // Save the updated string back to localStorage
-    localStorage.setItem('user', updatedData);
+    localStorage.setItem("user", updatedData);
 
-    navigate("/tiendas/")
+    navigate("/tiendas/");
     window.location.reload();
-
   };
 
   return (
@@ -72,6 +68,7 @@ const CustomNavbar = () => {
             {user?.store_type === "A" && (
               <>
                 <Nav.Link href="/distribuir/">Distribuir</Nav.Link>
+                <Nav.Link href="/inventario/">Inventario</Nav.Link>
                 {user.is_owner && (
                   <Nav.Link onClick={handleBack}>Regresar</Nav.Link>
                 )}
@@ -96,9 +93,12 @@ const CustomNavbar = () => {
 
           <Nav className="ms-auto">
             <Nav.Link>Negocio: {user?.tenant_name}</Nav.Link>
-            <Nav.Link>
-              {user.store_name ? user.store_name : "Usuario: Owner"}
-            </Nav.Link>
+
+            {user.store_name && (
+              <Nav.Link> {user.store_type_display} {user.store_name} </Nav.Link>
+            )}
+
+            <Nav.Link>Usuario: {user.full_name}</Nav.Link>
             <Nav.Link href="/" onClick={handleLogout}>
               Salir
             </Nav.Link>

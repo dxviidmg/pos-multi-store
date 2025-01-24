@@ -6,36 +6,38 @@ import CustomButton from "../commons/customButton/CustomButton";
 import { getUserData } from "../apis/utils";
 import { exportToExcel } from "../utils/utils";
 
+
 const StoreProductList = () => {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
+      const now = new Date();
       setIsLoading(true);
       const response = await getStoreProducts();
       console.log(response);
       setProducts(response.data);
       setIsLoading(false);
+      const now2 = new Date();
+      const diffInSeconds = Math.abs(now2.getTime() - now.getTime()) / 1000;
+      console.log('dif', diffInSeconds)
     };
 
     fetchData();
   }, []);
 
 
-  const handleExport = () => {
-    // Crear una hoja de cálculo a partir de los datos
-
-    const products_to_report = products.map(({ id, product_id, stock_in_other_stores, store, product, ...resto }) => ({
-      Código: resto.product_code,
-      Descripción: resto.description,
-      'Stock total': resto.stock,
-      'Stock disponible': resto.available_stock,
-      'Stock Reservado': resto.reserved_stock,
+  const handleDownload = async () => {
+    const storeProductsForReport = products.map(({ product_code: Código, product_brand: Marca, product_name: Nombre, stock: Stock }) => ({
+      Código,
+      Marca,
+      Nombre,
+      Stock,
     }));
     
     const prefix_name = "Reporte Inventario " + getUserData().store_name 
-     exportToExcel(products_to_report, prefix_name)
+     exportToExcel(storeProductsForReport, prefix_name)
   };
 
 
@@ -45,13 +47,17 @@ const StoreProductList = () => {
         <Col md={12}>
           <Form.Label className="fw-bold">Inventario</Form.Label>
 
-          <br></br>
-          <CustomButton onClick={() => handleExport()}>
-            Descargar reporte
-          </CustomButton>
+          <br/>
+          <CustomButton onClick={handleDownload}>Descargar inventario</CustomButton>
+          <br/>
 
+          <Form.Label className="fw-bold">Logs de un producto</Form.Label>
+
+          <Form.Control
+        type="text"
+        placeholder="Buscar producto"
+      />
           <CustomTable
-            searcher={true}
             progressPending={isLoading}
             data={products}
             columns={[
@@ -60,25 +66,21 @@ const StoreProductList = () => {
                 selector: (row) => row.product_code,
               },
               {
-                name: "Desripcion",
-                selector: (row) => row.description,
+                name: "Marca",
+                selector: (row) => row.product_brand,
+              },
+              {
+                name: "Nombre",
+                selector: (row) => row.product_name,
                 grow: 3,
                 wrap: true,
               },
 
               {
-                name: "Stock total",
+                name: "Stock",
                 selector: (row) => row.stock,
               },
 
-              {
-                name: "Stock Disponible",
-                selector: (row) => row.available_stock,
-              },
-              {
-                name: "Stock Reservado",
-                selector: (row) => row.reserved_stock,
-              },
             ]}
           />
         </Col>

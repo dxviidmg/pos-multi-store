@@ -160,7 +160,7 @@ const SaleImport = () => {
                 },
                 {
                   name: "Descripción",
-                  selector: (row) => row.description,
+                  selector: (row) => row.product_description,
                 },
               ]}
             ></CustomTable>
@@ -198,7 +198,7 @@ const SaleImport = () => {
               },
               {
                 name: "Descripción",
-                selector: (row) => row.description,
+                selector: (row) => row.product_description,
               },
               {
                 name: "Status",
