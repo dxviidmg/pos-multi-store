@@ -5,6 +5,7 @@ import {
   cleanCart,
   removeFromCart,
   updateMovementType,
+  updateQuantityInCart
 } from "../redux/cart/cartActions";
 import CustomButton from "../commons/customButton/CustomButton";
 import { Col, Form, Row } from "react-bootstrap";
@@ -69,6 +70,17 @@ const Cart = () => {
   }, [cart]);
 
   const handleRemoveFromCart = (product) => dispatch(removeFromCart(product));
+
+  const handleQuantityChangeToCart = (e, product) => {
+    console.log('xx')
+    const newQuantity = parseInt(e.target.value, 10);
+    console.log(newQuantity)
+    if (newQuantity > 0) {
+      console.log('entra')
+      dispatch(updateQuantityInCart(product, newQuantity));
+    }
+  };
+  
 
   const showAlert = (icon, title, text = "", timer = 5000) => {
     Swal.fire({ icon, title, text, timer });
@@ -218,7 +230,14 @@ const Cart = () => {
     ...commonColumns,
     {
       name: "Cantidad",
-      selector: (row) => row.quantity,
+      selector: (row) => (
+        <Form.Control
+          type="number"
+          value={row.quantity}
+          onChange={(e) => handleQuantityChangeToCart(e, row)} // Implementa esta función para manejar el cambio
+          min="1" // Opcional, para establecer un valor mínimo
+        />
+      ),
     },
     {
       name: "Borrar",
