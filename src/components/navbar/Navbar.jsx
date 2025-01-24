@@ -68,6 +68,7 @@ const CustomNavbar = () => {
             {user?.store_type === "A" && (
               <>
                 <Nav.Link href="/distribuir/">Distribuir</Nav.Link>
+                <Nav.Link href="/inventario/">Inventario</Nav.Link>
                 {user.is_owner && (
                   <Nav.Link onClick={handleBack}>Regresar</Nav.Link>
                 )}

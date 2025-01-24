@@ -28,16 +28,16 @@ const StoreProductList = () => {
   }, []);
 
 
-  const handleDownloadStockReport = async () => {
-    const products_to_report = products.map(({ id, product_id, stock_in_other_stores, store, product, ...resto }) => ({
-      Código: resto.product_code,
-      Marca: resto.product_brand,
-      Nombre: resto.product_name,
-      Stock: resto.stock,
+  const handleDownload = async () => {
+    const storeProductsForReport = products.map(({ product_code: Código, product_brand: Marca, product_name: Nombre, stock: Stock }) => ({
+      Código,
+      Marca,
+      Nombre,
+      Stock,
     }));
     
     const prefix_name = "Reporte Inventario " + getUserData().store_name 
-     exportToExcel(products_to_report, prefix_name)
+     exportToExcel(storeProductsForReport, prefix_name)
   };
 
 
@@ -48,7 +48,7 @@ const StoreProductList = () => {
           <Form.Label className="fw-bold">Inventario</Form.Label>
 
           <br/>
-          <CustomButton onClick={handleDownloadStockReport}>Descargar inventario</CustomButton>
+          <CustomButton onClick={handleDownload}>Descargar inventario</CustomButton>
           <br/>
 
           <Form.Label className="fw-bold">Logs de un producto</Form.Label>
