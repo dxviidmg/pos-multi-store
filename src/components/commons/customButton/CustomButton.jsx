@@ -11,7 +11,9 @@ const CustomButton = ({children, onClick, size = "sm", disabled = false, href, f
       style={{
         width: fullWidth ? '100%' : 'auto',
         marginBottom: '3px',
-        marginTop: marginTop
+        marginTop: marginTop,
+        marginLeft: '5px',
+        marginRight: '5px'
       }}
       {...props}
     >

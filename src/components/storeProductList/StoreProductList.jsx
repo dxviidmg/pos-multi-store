@@ -5,11 +5,18 @@ import { Container, Form, Row, Col } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getUserData } from "../apis/utils";
 import { exportToExcel } from "../utils/utils";
-
+import {
+  hideLogsModal,
+  showLogsModal,
+} from "../redux/logsModal/LogsModalActions";
+import { useDispatch } from "react-redux";
+import LogsModal from "../logsModal/LogsModal";
 
 const StoreProductList = () => {
+  const dispatch = useDispatch();
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const user = getUserData();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -21,43 +28,50 @@ const StoreProductList = () => {
       setIsLoading(false);
       const now2 = new Date();
       const diffInSeconds = Math.abs(now2.getTime() - now.getTime()) / 1000;
-      console.log('dif', diffInSeconds)
+      console.log("dif", diffInSeconds);
     };
 
     fetchData();
   }, []);
 
-
   const handleDownload = async () => {
-    const storeProductsForReport = products.map(({ product_code: Código, product_brand: Marca, product_name: Nombre, stock: Stock }) => ({
-      Código,
-      Marca,
-      Nombre,
-      Stock,
-    }));
-    
-    const prefix_name = "Reporte Inventario " + getUserData().store_name 
-     exportToExcel(storeProductsForReport, prefix_name)
+    const storeProductsForReport = products.map(
+      ({
+        product_code: Código,
+        product_brand: Marca,
+        product_name: Nombre,
+        stock: Stock,
+      }) => ({
+        Código,
+        Marca,
+        Nombre,
+        Stock,
+      })
+    );
+
+    const prefixName = "Reporte Inventario " + getUserData().store_name;
+    exportToExcel(storeProductsForReport, prefixName);
   };
 
+  const handleOpenModal = (storeProduct, adjustStock) => {
+    dispatch(hideLogsModal());
+    setTimeout(() => dispatch(showLogsModal(storeProduct, adjustStock)));
+  };
 
   return (
     <Container fluid>
+      <LogsModal></LogsModal>
       <Row className="section">
         <Col md={12}>
           <Form.Label className="fw-bold">Inventario</Form.Label>
 
-          <br/>
-          <CustomButton onClick={handleDownload}>Descargar inventario</CustomButton>
-          <br/>
-
-          <Form.Label className="fw-bold">Logs de un producto</Form.Label>
-
-          <Form.Control
-        type="text"
-        placeholder="Buscar producto"
-      />
+          <br />
+          <CustomButton onClick={handleDownload}>
+            Descargar inventario
+          </CustomButton>
+          <br />
           <CustomTable
+            searcher={true}
             progressPending={isLoading}
             data={products}
             columns={[
@@ -80,7 +94,22 @@ const StoreProductList = () => {
                 name: "Stock",
                 selector: (row) => row.stock,
               },
-
+              {
+                name: "Accciones",
+                grow: 4,
+                cell: (row) => (
+                  <>
+                    {user.is_owner && (
+                      <CustomButton onClick={() => handleOpenModal(row, true)}>
+                        Ajustar cantidad
+                      </CustomButton>
+                    )}
+                    <CustomButton onClick={() => handleOpenModal(row, false)}>
+                      Movimientos de stock {user.is_owner}
+                    </CustomButton>
+                  </>
+                ),
+              },
             ]}
           />
         </Col>

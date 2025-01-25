@@ -60,8 +60,8 @@ const ProductList = () => {
       DescuentoSobreClientes
     }));
     
-    const prefix_name = "Productos"
-     exportToExcel(storeProductsForReport, prefix_name)
+    const prefixName = "Productos"
+     exportToExcel(storeProductsForReport, prefixName)
   };
 
 

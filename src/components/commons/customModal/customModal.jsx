@@ -14,6 +14,7 @@ function CustomModal({ showOut, title, children}) {
   return (
     
       <Modal show={show} onHide={handleClose} size="lg"
+      
       >
         <Modal.Header closeButton>
           <Modal.Title className=" w-100 text-center">
