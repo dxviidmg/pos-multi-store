@@ -4,7 +4,7 @@ import { Col, Form, Row } from "react-bootstrap";
 import { getDailyEarnings, getSales } from "../apis/sales";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getUserData } from "../apis/utils";
-import { exportToExcel, getToday } from "../utils/utils";
+import { exportToExcel, getFormattedDate } from "../utils/utils";
 import { useDispatch } from "react-redux";
 import {
   hideSaleModal,
@@ -15,7 +15,7 @@ import SaleModal from "../saleModal/saleModal";
 const SaleList = () => {
   const [sales, setSales] = useState([]);
   const [dailyEarningsSummary, setDailyEarningsSummary] = useState([]);
-  const today = getToday();
+  const today = getFormattedDate();
   const [date, setDate] = useState(today);
 
   const dispatch = useDispatch();
@@ -188,7 +188,7 @@ const SaleList = () => {
               cell: (row) =>
                 row.is_cancelable && (
                   <CustomButton onClick={() => handleOpenModal(row)}>
-                    Cancelar
+                    Devolución
                   </CustomButton>
                 ),
             },

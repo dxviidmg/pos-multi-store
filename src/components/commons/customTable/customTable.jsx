@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import DataTable from "react-data-table-component";
 import "./customTable.css";
 import { Form } from "react-bootstrap";
-import CustomSpinner from "../customSpinner/CustomSpinner";
 
 
 const CustomTable = ({
