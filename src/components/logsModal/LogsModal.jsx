@@ -75,7 +75,7 @@ const LogsModal = () => {
 
 
   return (
-    <CustomModal showOut={showLogsModal} title={adjustStock? 'Ajuste de stock': 'Ver logs'}>
+    <CustomModal showOut={showLogsModal} title={adjustStock? 'Ajuste de stock': 'Movimientos de stock'}>
       <Row className="section">
         <Col md={6}>
           <Form.Label>Codigo</Form.Label>
@@ -133,11 +133,13 @@ const LogsModal = () => {
                 name: "Fecha",
                 selector: (row) => getFormattedDateTime(row.created_at),
                 grow: 2,
+                wrap: true
               },
               {
                 name: "Descripcion",
                 selector: (row) => row.description,
                 grow: 2,
+                wrap: true
               },
               {
                 name: "Stock anterior",
@@ -154,7 +156,8 @@ const LogsModal = () => {
               {
                 name: "Hecho por",
                 selector: (row) => row.user_username,
-                grow: 2,
+                grow: 3,
+                wrap: true
               },
             ]}
           />

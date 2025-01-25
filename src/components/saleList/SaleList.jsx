@@ -188,7 +188,7 @@ const SaleList = () => {
               cell: (row) =>
                 row.is_cancelable && (
                   <CustomButton onClick={() => handleOpenModal(row)}>
-                    Cancelar
+                    Devolución
                   </CustomButton>
                 ),
             },

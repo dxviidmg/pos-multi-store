@@ -57,7 +57,7 @@ const SaleModal = ({ onUpdateSaleList }) => {
 
       Swal.fire({
         icon: "success",
-        title: "Venta cancelada. Devolver $" + cash_back,
+        title: "Devolución exitosa. Devolver $" + cash_back,
         timer: 5000,
       });
     } else {
@@ -92,7 +92,7 @@ const SaleModal = ({ onUpdateSaleList }) => {
   };
 
   return (
-    <CustomModal showOut={showSaleModal} title="Cancelación de compra">
+    <CustomModal showOut={showSaleModal} title="Devolución de productos">
       <Row className="section">
         <Col md={3}>
           <Form.Label>Folio</Form.Label>
@@ -183,7 +183,7 @@ const SaleModal = ({ onUpdateSaleList }) => {
         </Col>
         <Col md={12}>
           <CustomButton fullWidth onClick={handleSaveClient} marginTop="10px" disabled={productsSaleToCancel.length === 0}>
-            Cancelar venta
+            Devolución de productos
           </CustomButton>
         </Col>
       </Row>

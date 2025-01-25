@@ -96,6 +96,7 @@ const StoreProductList = () => {
               },
               {
                 name: "Accciones",
+                grow: 4,
                 cell: (row) => (
                   <>
                     {user.is_owner && (
@@ -104,7 +105,7 @@ const StoreProductList = () => {
                       </CustomButton>
                     )}
                     <CustomButton onClick={() => handleOpenModal(row, false)}>
-                      Ver logs {user.is_owner}
+                      Movimientos de stock {user.is_owner}
                     </CustomButton>
                   </>
                 ),
