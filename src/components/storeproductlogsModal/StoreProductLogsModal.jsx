@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from "react";
 import CustomModal from "../commons/customModal/customModal";
 import { Col, Form, Row } from "react-bootstrap";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import CustomTable from "../commons/customTable/customTable";
 import { getStoreProductLogs, updateStoreProduct } from "../apis/products";
 import { getFormattedDateTime } from "../utils/utils";
 import Swal from "sweetalert2";
 import CustomButton from "../commons/customButton/CustomButton";
+import { hideLogsModal } from "../redux/logsModal/LogsModalActions";
 
 const INITIAL_FORM_DATA = {};
 
-const LogsModal = () => {
+
+const StoreProductLogsModal = ({onUpdateStoreProductList}) => {
+  const dispatch = useDispatch();
   const { showLogsModal, storeProduct, adjustStock } = useSelector(
     (state) => state.LogsModalReducer
   );
@@ -58,6 +61,9 @@ const LogsModal = () => {
     const response = await updateStoreProduct(formData);
 
     if (response.status === 200) {
+      setFormData(INITIAL_FORM_DATA);
+      dispatch(hideLogsModal());
+      onUpdateStoreProductList(response.data);
       Swal.fire({
         icon: "success",
         title: "Ajuste exitoso",
@@ -150,7 +156,7 @@ const LogsModal = () => {
                 selector: (row) => row.updated_stock,
               },
               {
-                name: "Diferencia",
+                name: "Conteo(E/S)",
                 selector: (row) => row.difference,
               },
               {
@@ -167,4 +173,4 @@ const LogsModal = () => {
   );
 };
 
-export default LogsModal;
+export default StoreProductLogsModal;

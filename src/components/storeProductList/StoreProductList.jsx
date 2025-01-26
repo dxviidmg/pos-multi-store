@@ -10,11 +10,11 @@ import {
   showLogsModal,
 } from "../redux/logsModal/LogsModalActions";
 import { useDispatch } from "react-redux";
-import LogsModal from "../logsModal/LogsModal";
+import StoreProductLogsModal from "../storeproductlogsModal/StoreProductLogsModal";
 
 const StoreProductList = () => {
   const dispatch = useDispatch();
-  const [products, setProducts] = useState([]);
+  const [storeProducts, setStoreProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const user = getUserData();
 
@@ -24,7 +24,7 @@ const StoreProductList = () => {
       setIsLoading(true);
       const response = await getStoreProducts();
       console.log(response);
-      setProducts(response.data);
+      setStoreProducts(response.data);
       setIsLoading(false);
       const now2 = new Date();
       const diffInSeconds = Math.abs(now2.getTime() - now.getTime()) / 1000;
@@ -35,7 +35,7 @@ const StoreProductList = () => {
   }, []);
 
   const handleDownload = async () => {
-    const storeProductsForReport = products.map(
+    const storeProductsForReport = storeProducts.map(
       ({
         product_code: Código,
         product_brand: Marca,
@@ -58,9 +58,18 @@ const StoreProductList = () => {
     setTimeout(() => dispatch(showLogsModal(storeProduct, adjustStock)));
   };
 
+  const handleUpdateStoreProductList = (updatedStoreProduct) => {
+    setStoreProducts((prevStoreProducts) => {
+      const StoreProductsExists = prevStoreProducts.some((b) => b.id === updatedStoreProduct.id);
+      return StoreProductsExists
+        ? prevStoreProducts.map((b) => (b.id === updatedStoreProduct.id ? updatedStoreProduct : b))
+        : [...prevStoreProducts, updatedStoreProduct];
+    });
+  };
+
   return (
     <Container fluid>
-      <LogsModal></LogsModal>
+      <StoreProductLogsModal onUpdateStoreProductList={handleUpdateStoreProductList}/>
       <Row className="section">
         <Col md={12}>
           <Form.Label className="fw-bold">Inventario</Form.Label>
@@ -73,7 +82,7 @@ const StoreProductList = () => {
           <CustomTable
             searcher={true}
             progressPending={isLoading}
-            data={products}
+            data={storeProducts}
             columns={[
               {
                 name: "Código",
