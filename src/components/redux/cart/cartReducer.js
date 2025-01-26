@@ -126,7 +126,6 @@ const cartReducer = (state = initialState, action) => {
       return { ...state, movementType: action.payload, cart: [] };
 
     case UPDATE_QUANTITY_IN_CART:
-      console.log(action)
       return {
         ...state,
         cart: state.cart.map((item) =>

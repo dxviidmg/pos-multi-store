@@ -20,15 +20,10 @@ const StoreProductList = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const now = new Date();
       setIsLoading(true);
       const response = await getStoreProducts();
-      console.log(response);
       setStoreProducts(response.data);
       setIsLoading(false);
-      const now2 = new Date();
-      const diffInSeconds = Math.abs(now2.getTime() - now.getTime()) / 1000;
-      console.log("dif", diffInSeconds);
     };
 
     fetchData();

@@ -14,7 +14,6 @@ const StoreList = () => {
     const fetchData = async () => {
       setLoading(true);
       const response = await getStores();
-      console.log(response)
       setStores(response.data);
       setLoading(false);
     };
@@ -27,7 +26,6 @@ const StoreList = () => {
     user.store_type = row.store_type;
     user.store_name = row.full_name;
     user.store_id = row.id;
-    console.log(user)
 
     const updatedData = JSON.stringify(user);
     

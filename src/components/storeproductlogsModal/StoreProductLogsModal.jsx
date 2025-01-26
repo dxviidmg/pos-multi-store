@@ -11,8 +11,7 @@ import { hideLogsModal } from "../redux/logsModal/LogsModalActions";
 
 const INITIAL_FORM_DATA = {};
 
-
-const StoreProductLogsModal = ({onUpdateStoreProductList}) => {
+const StoreProductLogsModal = ({ onUpdateStoreProductList }) => {
   const dispatch = useDispatch();
   const { showLogsModal, storeProduct, adjustStock } = useSelector(
     (state) => state.LogsModalReducer
@@ -21,17 +20,14 @@ const StoreProductLogsModal = ({onUpdateStoreProductList}) => {
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
   const [logs, setLogs] = useState([]);
 
-
   useEffect(() => {
     const fetchStoreProductLogs = async () => {
-      console.log("storeProduct", storeProduct);
       if (storeProduct.id) {
         setFormData(storeProduct);
 
         try {
           // Esperamos la respuesta de getStoreProductLogs
           const response = await getStoreProductLogs(storeProduct);
-          console.log(response.data);
           setLogs(response.data);
         } catch (error) {
           console.error("Error fetching store product logs:", error);
@@ -47,17 +43,12 @@ const StoreProductLogsModal = ({onUpdateStoreProductList}) => {
     fetchStoreProductLogs();
   }, [storeProduct]);
 
-  
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
   const handleCreateAdjustStock = async () => {
-
-
-
-    console.log("formData", formData);
     const response = await updateStoreProduct(formData);
 
     if (response.status === 200) {
@@ -79,9 +70,11 @@ const StoreProductLogsModal = ({onUpdateStoreProductList}) => {
     }
   };
 
-
   return (
-    <CustomModal showOut={showLogsModal} title={adjustStock? 'Ajuste de stock': 'Movimientos de stock'}>
+    <CustomModal
+      showOut={showLogsModal}
+      title={adjustStock ? "Ajuste de stock" : "Movimientos de stock"}
+    >
       <Row className="section">
         <Col md={6}>
           <Form.Label>Codigo</Form.Label>
@@ -118,20 +111,28 @@ const StoreProductLogsModal = ({onUpdateStoreProductList}) => {
             type="text"
             value={formData.stock}
             placeholder="Cantidad"
-            disabled ={!adjustStock}
-            name={'stock'}
+            disabled={!adjustStock}
+            name={"stock"}
             onChange={handleInputChange}
           />
         </Col>
 
-        <Col md={3} className={`d-flex flex-column justify-content-end ${!adjustStock? 'd-none': ''}`}>
-
-          <CustomButton onClick={() => handleCreateAdjustStock()} fullWidth disabled ={!adjustStock}>
+        <Col
+          md={3}
+          className={`d-flex flex-column justify-content-end ${
+            !adjustStock ? "d-none" : ""
+          }`}
+        >
+          <CustomButton
+            onClick={() => handleCreateAdjustStock()}
+            fullWidth
+            disabled={!adjustStock}
+          >
             Ajustar
           </CustomButton>
         </Col>
 
-        <Col md={12} className={adjustStock? 'd-none': ''}>
+        <Col md={12} className={adjustStock ? "d-none" : ""}>
           <CustomTable
             data={logs}
             columns={[
@@ -139,13 +140,13 @@ const StoreProductLogsModal = ({onUpdateStoreProductList}) => {
                 name: "Fecha",
                 selector: (row) => getFormattedDateTime(row.created_at),
                 grow: 2,
-                wrap: true
+                wrap: true,
               },
               {
                 name: "Descripcion",
                 selector: (row) => row.description,
                 grow: 2,
-                wrap: true
+                wrap: true,
               },
               {
                 name: "Stock anterior",
@@ -163,7 +164,7 @@ const StoreProductLogsModal = ({onUpdateStoreProductList}) => {
                 name: "Hecho por",
                 selector: (row) => row.user_username,
                 grow: 3,
-                wrap: true
+                wrap: true,
               },
             ]}
           />
