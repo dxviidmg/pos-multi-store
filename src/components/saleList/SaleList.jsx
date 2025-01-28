@@ -26,7 +26,6 @@ const SaleList = () => {
       setSales(salesResponse.data);
 
       const earningsResponse = await getDailyEarnings(date);
-      console.log(earningsResponse.data);
       setDailyEarningsSummary(earningsResponse.data);
     };
 
@@ -36,7 +35,6 @@ const SaleList = () => {
   useEffect(() => {
     const fetchSalesData = async () => {
       const earningsResponse = await getDailyEarnings(date);
-      console.log(earningsResponse.data);
       setDailyEarningsSummary(earningsResponse.data);
     };
 

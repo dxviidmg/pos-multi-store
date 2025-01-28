@@ -72,14 +72,19 @@ const Cart = () => {
   const handleRemoveFromCart = (product) => dispatch(removeFromCart(product));
 
   const handleQuantityChangeToCart = (e, product) => {
-    console.log('xx')
-    const newQuantity = parseInt(e.target.value, 10);
-    console.log(newQuantity)
-    if (newQuantity > 0) {
-      console.log('entra')
-      dispatch(updateQuantityInCart(product, newQuantity));
+    const newQuantity = parseInt(e.target.value, 10); // Usar base 10 para parsear
+    
+    // Validaciones
+    if (newQuantity <= 0) {
+      return;
     }
+  
+    const validQuantity = movementType === "venta" ? Math.min(newQuantity, product.available_stock) : newQuantity;
+    
+    // Despachar acción para actualizar la cantidad en el carrito
+    dispatch(updateQuantityInCart(product, validQuantity));
   };
+  
   
 
   const showAlert = (icon, title, text = "", timer = 5000) => {
@@ -183,7 +188,18 @@ const Cart = () => {
 
   const saleColumns = [
     ...commonColumns2,
-    { name: "Cantidad", selector: (row) => row.quantity },
+    {
+      name: "Cantidad",
+      selector: (row) => (
+        <Form.Control
+          type="number"
+          value={row.quantity}
+          onChange={(e) => handleQuantityChangeToCart(e, row)} // Implementa esta función para manejar el cambio
+          min="1" // Opcional, para establecer un valor mínimo
+          max={row.stock}
+        />
+      ),
+    },
     { name: "Stock", selector: (row) => row.stock },
     { name: "Precio", selector: (row) => `$${row.product_price.toFixed(2)}` },
     {

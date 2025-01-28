@@ -312,7 +312,7 @@ const SearchProduct = () => {
           { name: "Stock", selector: (row) => row.available_stock },
           {
             name: "Precio unitario",
-            selector: (row) => `$${row.prices.unit_sale_price.toFixed(2)}`,
+            selector: (row) => `$${row.prices.unit_price.toFixed(2)}`,
           },
           {
             name: "Precio mayoreo",
@@ -320,7 +320,7 @@ const SearchProduct = () => {
               row.prices.apply_wholesale
                 ? `${
                     row.prices.min_wholesale_quantity
-                  } o más a $${row.prices.wholesale_sale_price.toFixed(2)}`
+                  } o más a $${row.prices.wholesale_price.toFixed(2)}`
                 : "N/A",
           },
           {

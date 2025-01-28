@@ -32,7 +32,6 @@ const SaleModal = ({ onUpdateSaleList }) => {
   }, [sale]);
 
   const handleSaveClient = async () => {
-    console.log(productsSaleToCancel)
     const payload = {id: sale.id, products_sale_to_cancel: productsSaleToCancel}
     const response = await cancelSale(payload);
 
@@ -79,12 +78,9 @@ const SaleModal = ({ onUpdateSaleList }) => {
     setProductsSaleToCancel((prev) => {
       const updatedProducts = [...prev];
 
-      console.log('updatedProducts', updatedProducts)
       if (updatedProducts.includes(row.id)) {
-        console.log('quita')
         return updatedProducts.filter((id) => id !== row.id); // Remove product if already selected
       } else {
-        console.log('inserta')
         updatedProducts.push(row.id); // Add product to cancel list
         return updatedProducts;
       }
