@@ -9,7 +9,6 @@ export const getFormattedDate = (date = new Date()) => {
 };
 
 export const exportToExcel = (data, prefixName, use_today = true) => {
-  console.log(data, prefixName);
   const worksheet = XLSX.utils.json_to_sheet(data, prefixName);
 
   // Crear un libro de trabajo

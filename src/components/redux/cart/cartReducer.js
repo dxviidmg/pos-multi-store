@@ -17,13 +17,13 @@ const initialState = {
 const aClientIsSelected = (client) => Object.keys(client).length > 0;
 
 const calculateProductPrice = (quantity, prices, clientSelected) => {
-  if (!prices.apply_wholesale_price_on_client_discount && clientSelected) {
-    return prices.unit_sale_price;
+  if (!prices.wholesale_price_on_client_discount && clientSelected) {
+    return prices.unit_price;
   }
   if (prices.min_wholesale_quantity && quantity >= prices.min_wholesale_quantity) {
-    return prices.wholesale_sale_price;
+    return prices.wholesale_price;
   }
-  return prices.unit_sale_price;
+  return prices.unit_price;
 };
 
 const updateCartWithPrice = (cart, clientSelected) => {
@@ -105,7 +105,7 @@ const cartReducer = (state = initialState, action) => {
           ...state.cart,
           {
             ...action.payload,
-            product_price: prices.unit_sale_price,
+            product_price: prices.unit_price,
             stock: stockTemp,
           },
         ],
@@ -126,7 +126,6 @@ const cartReducer = (state = initialState, action) => {
       return { ...state, movementType: action.payload, cart: [] };
 
     case UPDATE_QUANTITY_IN_CART:
-      console.log(action)
       return {
         ...state,
         cart: state.cart.map((item) =>

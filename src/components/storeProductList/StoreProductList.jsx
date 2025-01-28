@@ -10,32 +10,28 @@ import {
   showLogsModal,
 } from "../redux/logsModal/LogsModalActions";
 import { useDispatch } from "react-redux";
-import LogsModal from "../logsModal/LogsModal";
+import StoreProductLogsModal from "../storeproductlogsModal/StoreProductLogsModal";
+import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
 
 const StoreProductList = () => {
   const dispatch = useDispatch();
-  const [products, setProducts] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [storeProducts, setStoreProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
   const user = getUserData();
 
   useEffect(() => {
     const fetchData = async () => {
-      const now = new Date();
-      setIsLoading(true);
+      setLoading(true);
       const response = await getStoreProducts();
-      console.log(response);
-      setProducts(response.data);
-      setIsLoading(false);
-      const now2 = new Date();
-      const diffInSeconds = Math.abs(now2.getTime() - now.getTime()) / 1000;
-      console.log("dif", diffInSeconds);
+      setStoreProducts(response.data);
+      setLoading(false);
     };
 
     fetchData();
   }, []);
 
   const handleDownload = async () => {
-    const storeProductsForReport = products.map(
+    const storeProductsForReport = storeProducts.map(
       ({
         product_code: Código,
         product_brand: Marca,
@@ -55,12 +51,22 @@ const StoreProductList = () => {
 
   const handleOpenModal = (storeProduct, adjustStock) => {
     dispatch(hideLogsModal());
-    setTimeout(() => dispatch(showLogsModal(storeProduct, adjustStock)));
+    setTimeout(() => dispatch(showLogsModal(storeProduct, adjustStock)), 1);
+  };
+
+  const handleUpdateStoreProductList = (updatedStoreProduct) => {
+    setStoreProducts((prevStoreProducts) => {
+      const StoreProductsExists = prevStoreProducts.some((b) => b.id === updatedStoreProduct.id);
+      return StoreProductsExists
+        ? prevStoreProducts.map((b) => (b.id === updatedStoreProduct.id ? updatedStoreProduct : b))
+        : [...prevStoreProducts, updatedStoreProduct];
+    });
   };
 
   return (
     <Container fluid>
-      <LogsModal></LogsModal>
+      <CustomSpinner2 isLoading={loading}></CustomSpinner2>
+      <StoreProductLogsModal onUpdateStoreProductList={handleUpdateStoreProductList}/>
       <Row className="section">
         <Col md={12}>
           <Form.Label className="fw-bold">Inventario</Form.Label>
@@ -72,8 +78,8 @@ const StoreProductList = () => {
           <br />
           <CustomTable
             searcher={true}
-            progressPending={isLoading}
-            data={products}
+            progressPending={loading}
+            data={storeProducts}
             columns={[
               {
                 name: "Código",

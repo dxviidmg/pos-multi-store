@@ -130,7 +130,6 @@ const PaymentModal = () => {
       payments: paymentList,
     };
 
-    console.log("data", data);
     const response = await createSale(data);
 
     if (response.status === 201) {

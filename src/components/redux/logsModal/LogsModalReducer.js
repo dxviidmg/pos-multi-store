@@ -1,4 +1,4 @@
-import { SHOW_MODAL, HIDE_MODAL } from './LogsModalActions';
+import { SHOW_LOGS_MODAL, HIDE_LOGS_MODAL } from './LogsModalActions';
 
 const initialState = {
   showSaleModal: false,
@@ -8,7 +8,7 @@ const initialState = {
 
 const LogsModalReducer = (state = initialState, action) => {
   switch (action.type) {
-    case SHOW_MODAL: {
+    case SHOW_LOGS_MODAL: {
         return {
           showLogsModal: true,
           storeProduct: action.payload.storeProduct,
@@ -16,7 +16,7 @@ const LogsModalReducer = (state = initialState, action) => {
         };
       }
 
-      case HIDE_MODAL: {
+      case HIDE_LOGS_MODAL: {
         return {
           showLogsModal: false,
           storeProduct: {}
