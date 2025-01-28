@@ -49,7 +49,7 @@ const ProductList = () => {
 
 
   const handleDownload = async () => {
-    const storeProductsForReport = products.map(({ code: Código, brand_name: Marca, name: Nombre, purchase_price: Costo, unit_sale_price: PrecioUnitario, wholesale_sale_price: PrecioMayoreo, min_wholesale_quantity: CantidadMinimaMayoreo, apply_wholesale_price_on_client_discount: DescuentoSobreClientes}) => ({
+    const storeProductsForReport = products.map(({ code: Código, brand_name: Marca, name: Nombre, cost: Costo, unit_price: PrecioUnitario, wholesale_price: PrecioMayoreo, min_wholesale_quantity: CantidadMinimaMayoreo, wholesale_price_on_client_discount: DescuentoSobreClientes}) => ({
       Código,
       Marca,
       Nombre,
@@ -99,20 +99,20 @@ const ProductList = () => {
                 wrap: true,
               },
               {
-                name: "Precio de compra",
-                selector: (row) => "$" + row.purchase_price,
+                name: "Costo",
+                selector: (row) => "$" + row.cost,
                 wrap: true,
               },
               {
-                name: "Precio de venta Uni.",
-                selector: (row) => "$" + row.unit_sale_price,
+                name: "Precio Unitario",
+                selector: (row) => "$" + row.unit_price,
               },
               {
-                name: "Precio de venta May.",
+                name: "Precio Mayoreo.",
                 selector: (row) =>
                   row.apply_wholesale
                     ? "$" +
-                      row.wholesale_sale_price +
+                      row.wholesale_price +
                       " apartir de " +
                       row.min_wholesale_quantity
                     : "NA",

@@ -51,7 +51,7 @@ const StoreProductList = () => {
 
   const handleOpenModal = (storeProduct, adjustStock) => {
     dispatch(hideLogsModal());
-    setTimeout(() => dispatch(showLogsModal(storeProduct, adjustStock)));
+    setTimeout(() => dispatch(showLogsModal(storeProduct, adjustStock)), 1);
   };
 
   const handleUpdateStoreProductList = (updatedStoreProduct) => {

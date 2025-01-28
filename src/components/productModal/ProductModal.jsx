@@ -13,11 +13,11 @@ const INITIAL_FORM_DATA = {
   brand: "",
   code: "",
   name: "",
-  purchase_price: "",
-  unit_sale_price: "",
-  wholesale_sale_price: "",
+  cost: "",
+  unit_price: "",
+  wholesale_price: "",
   min_wholesale_quantity: "",
-  apply_wholesale_price_on_client_discount: false
+  wholesale_price_on_client_discount: false
 
 }
 
@@ -68,8 +68,8 @@ const ProductModal = ({ onUpdateProductList }) => {
     const payload = { ...formData };
 
     // Si no aplica precio de mayoreo en descuento, eliminar los campos opcionales
-    if (!formData.wholesale_sale_price || !formData.min_wholesale_quantity) {
-      payload.wholesale_sale_price = null;
+    if (!formData.wholesale_price || !formData.min_wholesale_quantity) {
+      payload.wholesale_price = null;
       payload.min_wholesale_quantity = null;
     }
 
@@ -112,7 +112,7 @@ const ProductModal = ({ onUpdateProductList }) => {
 
   const isFormIncomplete = () => {
     // Separar los dos campos que pueden estar vacíos opcionalmente
-    const { wholesale_sale_price, min_wholesale_quantity, apply_wholesale_price_on_client_discount, ...requiredFields } =
+    const { wholesale_price, min_wholesale_quantity, wholesale_price_on_client_discount, ...requiredFields } =
       formData;
 
     // Verificar que los campos obligatorios no estén vacíos
@@ -123,7 +123,7 @@ const ProductModal = ({ onUpdateProductList }) => {
 
     // Verificar las condiciones de los campos opcionales
     const areOptionalFieldsConsistent =
-      (wholesale_sale_price === "") === (min_wholesale_quantity === "");
+      (wholesale_price === "") === (min_wholesale_quantity === "");
 
     // La forma está incompleta si hay campos obligatorios vacíos o los opcionales son inconsistentes
 
@@ -173,34 +173,34 @@ const ProductModal = ({ onUpdateProductList }) => {
           </Col>
 
           <Col md={4}>
-            <Form.Label>Precio de compra</Form.Label>
+            <Form.Label>Costo</Form.Label>
             <Form.Control
               type="number"
-              value={formData.purchase_price}
-              placeholder="Precio de compra"
-              name="purchase_price"
+              value={formData.cost}
+              placeholder="Costo"
+              name="cost"
               onChange={handleDataChange}
             />
           </Col>
 
           <Col md={4}>
-            <Form.Label>Precio de venta unitario</Form.Label>
+            <Form.Label>Precio unitario</Form.Label>
             <Form.Control
               type="number"
-              value={formData.unit_sale_price}
-              placeholder="Precio de venta unitario"
-              name="unit_sale_price"
+              value={formData.unit_price}
+              placeholder="Precio unitario"
+              name="unit_price"
               onChange={handleDataChange}
             />
           </Col>
 
           <Col md={4}>
-            <Form.Label>Precio de venta mayoreo</Form.Label>
+            <Form.Label>Precio de mayoreo</Form.Label>
             <Form.Control
               type="number"
-              value={formData.wholesale_sale_price}
-              placeholder="Precio de venta mayoreo"
-              name="wholesale_sale_price"
+              value={formData.wholesale_price}
+              placeholder="Precio de mayoreo"
+              name="wholesale_price"
               onChange={handleDataChange}
             />
           </Col>
@@ -219,10 +219,10 @@ const ProductModal = ({ onUpdateProductList }) => {
           <Form.Check // prettier-ignore
             type="checkbox"
             id={`default-checkbox`}
-            label="Aplicar precio de mayoreo en descuento de cliente registrado"
-            checked={formData.apply_wholesale_price_on_client_discount === true}
+            label="Precio de mayoreo en descuento de cliente registrado"
+            checked={formData.wholesale_price_on_client_discount === true}
             onChange={handleDataChange}
-            name = "apply_wholesale_price_on_client_discount"
+            name = "wholesale_price_on_client_discount"
           />
           </Col>
 
