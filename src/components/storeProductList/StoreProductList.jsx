@@ -11,19 +11,20 @@ import {
 } from "../redux/logsModal/LogsModalActions";
 import { useDispatch } from "react-redux";
 import StoreProductLogsModal from "../storeproductlogsModal/StoreProductLogsModal";
+import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
 
 const StoreProductList = () => {
   const dispatch = useDispatch();
   const [storeProducts, setStoreProducts] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const user = getUserData();
 
   useEffect(() => {
     const fetchData = async () => {
-      setIsLoading(true);
+      setLoading(true);
       const response = await getStoreProducts();
       setStoreProducts(response.data);
-      setIsLoading(false);
+      setLoading(false);
     };
 
     fetchData();
@@ -64,6 +65,7 @@ const StoreProductList = () => {
 
   return (
     <Container fluid>
+      <CustomSpinner2 isLoading={loading}></CustomSpinner2>
       <StoreProductLogsModal onUpdateStoreProductList={handleUpdateStoreProductList}/>
       <Row className="section">
         <Col md={12}>
@@ -76,7 +78,7 @@ const StoreProductList = () => {
           <br />
           <CustomTable
             searcher={true}
-            progressPending={isLoading}
+            progressPending={loading}
             data={storeProducts}
             columns={[
               {
