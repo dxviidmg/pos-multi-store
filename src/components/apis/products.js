@@ -97,3 +97,28 @@ export const updateStoreProduct = async (data) => {
     return error;
   }
 };
+
+
+export const importProductsValidation = async (data) => {
+  const apiUrl = getApiUrl("products/import-validation");
+  try {
+    const response = await axios.post(apiUrl, data, {
+      headers: getHeaders(true),
+    });
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const importProducts = async (data) => {
+  const apiUrl = getApiUrl("products/import");
+  try {
+    const response = await axios.post(apiUrl, data, {
+      headers: getHeaders(true),
+    });
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
