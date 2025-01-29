@@ -94,8 +94,10 @@ const SaleList = () => {
   return (
     <>
       <SaleModal onUpdateSaleList={handleUpdateSaleList}></SaleModal>
-      <Row className="section">
-        <Col md={3}>
+      <div className="section2">
+
+      <Row>
+        <Col md={4}>
           <Form.Label className="fw-bold">Resumen de ventas</Form.Label>
           <Form>
             <Form.Label>Fecha</Form.Label>
@@ -107,8 +109,9 @@ const SaleList = () => {
             />
           </Form>
         </Col>
+        
 
-        <Col md={3}>
+        <Col md={4}>
           <CustomTable
             data={dailyEarningsSummary}
             columns={[
@@ -126,13 +129,17 @@ const SaleList = () => {
         </Col>
 
         <Col md={4}>
-          <CustomButton onClick={handleExport}>
+          <CustomButton onClick={handleExport} fullWidth>
             Descargar corte del dia
           </CustomButton>
         </Col>
       </Row>
 
-      <Row className="section">
+
+      </div>
+
+
+      <div className="section2">
         <Form.Label className="fw-bold">Lista de ventas</Form.Label>
 
         <CustomTable
@@ -192,7 +199,7 @@ const SaleList = () => {
             },
           ]}
         />
-      </Row>
+      </div>
     </>
   );
 };

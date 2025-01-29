@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Col, Container, Form, Row } from "react-bootstrap";
+import { Col, Form, Row } from "react-bootstrap";
 import CustomTable from "../commons/customTable/customTable";
 import CustomButton from "../commons/customButton/CustomButton";
 import { importSales, importSalesValidation } from "../apis/sales";
@@ -97,9 +97,10 @@ const SaleImport = () => {
   };
 
   return (
-    <Container fluid>
-      <Row className="section">
+    <div>
+      <div className="section2">
         <Form.Label className="fw-bold">Importar ventas</Form.Label>
+        <Row>
         <Col md={4}>
           <Form.Group controlId="formFile" className="">
             <Form.Control
@@ -112,7 +113,7 @@ const SaleImport = () => {
           </Form.Group>
         </Col>
 
-        <Col md={1}>
+        <Col md={2}>
           <CustomButton
             onClick={handleValidation}
             disabled={formData.file === ""}
@@ -122,7 +123,7 @@ const SaleImport = () => {
           </CustomButton>
         </Col>
 
-        <Col md={1}>
+        <Col md={2}>
           <CustomButton
             onClick={handleImport}
             disabled={
@@ -146,10 +147,13 @@ const SaleImport = () => {
             Ver Ejemplo
           </CustomButton>
         </Col>
-      </Row>
+        </Row>
+
+      </div>
 
       {showExample && (
-        <Row className="section">
+        <div className="section2">
+          <Row>
           <Col md={9}>
             <Form.Label className="fw-bold">Ejemplo de plantilla</Form.Label>
 
@@ -185,11 +189,11 @@ const SaleImport = () => {
             </p>
 
             </Col>
-        </Row>
+          </Row>
+        </div>
       )}
 
-      <Row className="section">
-        <Col>
+      <div className="section2">
           <Form.Label className="fw-bold">Archivo actual</Form.Label>
           <CustomTable
             data={sales}
@@ -218,9 +222,8 @@ const SaleImport = () => {
               },
             ]}
           ></CustomTable>
-        </Col>
-      </Row>
-    </Container>
+      </div>
+    </div>
   );
 };
 

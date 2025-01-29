@@ -4,7 +4,7 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import { getUserData } from "../apis/utils";
 import { NavDropdown } from "react-bootstrap";
-import Logo from "../../assets/images/Logo.png";
+import Logo from "../../assets/images/LogoH.jpg";
 import { useNavigate } from "react-router-dom";
 
 const CustomNavbar = () => {
@@ -37,7 +37,7 @@ const CustomNavbar = () => {
       <Container fluid>
         <img
           src={Logo}
-          width="100"
+          width="120"
           height="50"
           className="d-inline-block align-top"
           alt="React Bootstrap logo"

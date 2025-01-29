@@ -73,7 +73,7 @@ const BrandModal = ({ onUpdateBrandList }) => {
 
   return (
     <CustomModal showOut={showBrandModal} title={formData.id ? "Actualizar marca" : "Crear marca"}>
-      <Row className="section">
+      <Row>
         <Col md={6}>
           <Form.Label>Nombre</Form.Label>
           <Form.Control

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
 import { getStoreProducts } from "../apis/products";
-import { Container, Form, Row, Col } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getUserData } from "../apis/utils";
 import { exportToExcel } from "../utils/utils";
@@ -56,71 +56,71 @@ const StoreProductList = () => {
 
   const handleUpdateStoreProductList = (updatedStoreProduct) => {
     setStoreProducts((prevStoreProducts) => {
-      const StoreProductsExists = prevStoreProducts.some((b) => b.id === updatedStoreProduct.id);
+      const StoreProductsExists = prevStoreProducts.some(
+        (b) => b.id === updatedStoreProduct.id
+      );
       return StoreProductsExists
-        ? prevStoreProducts.map((b) => (b.id === updatedStoreProduct.id ? updatedStoreProduct : b))
+        ? prevStoreProducts.map((b) =>
+            b.id === updatedStoreProduct.id ? updatedStoreProduct : b
+          )
         : [...prevStoreProducts, updatedStoreProduct];
     });
   };
 
   return (
-    <Container fluid>
+    <div className="section2">
       <CustomSpinner2 isLoading={loading}></CustomSpinner2>
-      <StoreProductLogsModal onUpdateStoreProductList={handleUpdateStoreProductList}/>
-      <Row className="section">
-        <Col md={12}>
-          <Form.Label className="fw-bold">Inventario</Form.Label>
+      <StoreProductLogsModal
+        onUpdateStoreProductList={handleUpdateStoreProductList}
+      />
+      <Form.Label className="fw-bold">Inventario</Form.Label>
 
-          <br />
-          <CustomButton onClick={handleDownload}>
-            Descargar inventario
-          </CustomButton>
-          <br />
-          <CustomTable
-            searcher={true}
-            progressPending={loading}
-            data={storeProducts}
-            columns={[
-              {
-                name: "Código",
-                selector: (row) => row.product_code,
-              },
-              {
-                name: "Marca",
-                selector: (row) => row.product_brand,
-              },
-              {
-                name: "Nombre",
-                selector: (row) => row.product_name,
-                grow: 3,
-                wrap: true,
-              },
+      <br />
+      <CustomButton onClick={handleDownload}>Descargar inventario</CustomButton>
 
-              {
-                name: "Stock",
-                selector: (row) => row.stock,
-              },
-              {
-                name: "Accciones",
-                grow: 4,
-                cell: (row) => (
-                  <>
-                    {user.is_owner && (
-                      <CustomButton onClick={() => handleOpenModal(row, true)}>
-                        Ajustar cantidad
-                      </CustomButton>
-                    )}
-                    <CustomButton onClick={() => handleOpenModal(row, false)}>
-                      Movimientos de stock {user.is_owner}
-                    </CustomButton>
-                  </>
-                ),
-              },
-            ]}
-          />
-        </Col>
-      </Row>
-    </Container>
+      <CustomTable
+        searcher={true}
+        progressPending={loading}
+        data={storeProducts}
+        columns={[
+          {
+            name: "Código",
+            selector: (row) => row.product_code,
+          },
+          {
+            name: "Marca",
+            selector: (row) => row.product_brand,
+          },
+          {
+            name: "Nombre",
+            selector: (row) => row.product_name,
+            grow: 3,
+            wrap: true,
+          },
+
+          {
+            name: "Stock",
+            selector: (row) => row.stock,
+          },
+          {
+            name: "Accciones",
+            grow: 4,
+            cell: (row) => (
+              <>
+                {user.is_owner && (
+                  <CustomButton onClick={() => handleOpenModal(row, true)}>
+                    Ajustar cantidad
+                  </CustomButton>
+                )}
+                <CustomButton onClick={() => handleOpenModal(row, false)}>
+                  Movimientos de stock {user.is_owner}
+                </CustomButton>
+              </>
+            ),
+          },
+        ]}
+      />
+    </div>
   );
 };
 

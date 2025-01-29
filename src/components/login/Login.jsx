@@ -3,7 +3,7 @@ import { Container, Row, Col, Alert, Image, Form } from "react-bootstrap";
 import { loginUser } from "../apis/login";
 import { useNavigate } from "react-router-dom";
 import CustomButton from "../commons/customButton/CustomButton";
-import Logo from "../../assets/images/Logo.png";
+import Logo from "../../assets/images/LogoH.jpg";
 
 function Login({ onLogin }) {
   const navigate = useNavigate();
@@ -88,7 +88,7 @@ function Login({ onLogin }) {
             id="login-col"
             className="align-items-center rounded"
             style={{
-              backgroundColor: "#253C47",
+              backgroundColor: "#04356b",
               padding: "30px",
               border: "1px solid",
               color: 'white'
@@ -104,7 +104,7 @@ function Login({ onLogin }) {
 
             <Form>
               <Form.Group className="mb-3" controlId="formBasicEmail">
-                <Form.Label>Email address</Form.Label>
+                <Form.Label>Usuario</Form.Label>
                 <Form.Control
                   type="text"
                   className="form-control mt-1"
@@ -117,7 +117,7 @@ function Login({ onLogin }) {
               </Form.Group>
 
               <Form.Group className="mb-3" controlId="formBasicPassword">
-                <Form.Label >Password</Form.Label>
+                <Form.Label >Contraseña</Form.Label>
                 <Form.Control
                   type="password"
                   className="form-control mt-1"

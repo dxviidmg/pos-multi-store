@@ -21,7 +21,7 @@ function CustomModal({ showOut, title, children}) {
             {title}
           </Modal.Title>
         </Modal.Header>
-        <Modal.Body style={{backgroundColor: '#e1e9f4'}}>{children}
+        <Modal.Body>{children}
         </Modal.Body>
       </Modal>
     
