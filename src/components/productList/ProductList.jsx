@@ -49,15 +49,15 @@ const ProductList = () => {
 
 
   const handleDownload = async () => {
-    const storeProductsForReport = products.map(({ code: Código, brand_name: Marca, name: Nombre, cost: Costo, unit_price: PrecioUnitario, wholesale_price: PrecioMayoreo, min_wholesale_quantity: CantidadMinimaMayoreo, wholesale_price_on_client_discount: DescuentoSobreClientes}) => ({
+    const storeProductsForReport = products.map(({ code: Código, brand_name: Marca, name: Nombre, cost: Costo, unit_price: PrecioUnitario, wholesale_price: PrecioMayoreo, min_wholesale_quantity: CantidadMinimaMayoreo, wholesale_price_on_client_discount: PMDC}) => ({
       Código,
       Marca,
       Nombre,
       Costo,
-      PrecioUnitario,
-      PrecioMayoreo,
-      CantidadMinimaMayoreo,
-      DescuentoSobreClientes
+      'Precio unitario': PrecioUnitario,
+      'Precio mayoreo': PrecioMayoreo,
+      'Cantidad minima mayoreo': CantidadMinimaMayoreo,
+      'Precio Mayoreo en descuento de clientes': PMDC
     }));
     
     const prefixName = "Productos"
@@ -77,7 +77,7 @@ const ProductList = () => {
           <CustomButton onClick={() => handleOpenModal()}>
             Crear producto
           </CustomButton>
-          <CustomButton onClick={handleDownload}>Descargar inventario</CustomButton>
+          <CustomButton onClick={handleDownload}>Descargar productos</CustomButton>
 
           <CustomTable
             searcher={true}

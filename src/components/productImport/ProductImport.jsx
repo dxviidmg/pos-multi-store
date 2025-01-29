@@ -1,32 +1,30 @@
 import React, { useState } from "react";
-import { Col, Container, Form, Row } from "react-bootstrap";
 import CustomTable from "../commons/customTable/customTable";
+import { importProducts, importProductsValidation } from "../apis/products";
+import { Container, Form, Row, Col } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
-import { importSales, importSalesValidation } from "../apis/sales";
 import Swal from "sweetalert2";
-import { SuccessIcon, ErrorIcon,  } from "../commons/icons/Icons";
+import { ErrorIcon, SuccessIcon } from "../commons/icons/Icons";
 import { useRef } from "react";
 
 
-const DATA_SAMPLE = [
-  { code: 1, cantidad: 1, description: "Descripción del producto 1" },
-  { code: 2, cantidad: 2, description: "Descripción del producto 2" },
-  { code: 1, cantidad: 3, description: "Descripción del producto 1" },
-];
-
 const URL_TEMPLATE =
   process.env.REACT_APP_API_URL +
-  "/static/templates/SmartVenta_plantilla_importacion_ventas.xlsx";
+  "/static/templates/SmartVenta_plantilla_importacion_productos.xlsx";
 
-const SaleImport = () => {
+const DATA_SAMPLE = [
+  { code: 1, brand: 'Refrescos Inc', name: "Nombre del producto 1", cost: 10, unit_price: 20, wholesale_price: 15, min_wholesale_quantity: 3, wholesale_price_on_client_discount: 'Si'},
+  { code: 2, brand: 'Refrescos Inc', name: "Nombre del producto 2", cost: 12, unit_price: 22},
+  { code: 3, brand: 'Refrescos Inc', name: "Nombre del producto 3", cost: 14, unit_price: 22, wholesale_price: 15, min_wholesale_quantity: 3},
+];
+
+const ProductImport = () => {
   const fileInputRef = useRef(null);
+  const [products, setProducts] = useState([]);
   const [formData, setFormData] = useState({
     file: "",
-  });
-
-  const [showExample, setShowExample] = useState(false);
-
-  const [sales, setSales] = useState([]);
+  })
+  const [showExample, setShowExample] = useState([]);
 
   const handleDataChange = (e) => {
     var { name, files } = e.target;
@@ -38,10 +36,10 @@ const SaleImport = () => {
   };
 
   const handleValidation = async () => {
-    const response = await importSalesValidation(formData);
+    const response = await importProductsValidation(formData);
 
     if (response.status === 200) {
-      setSales(response.data);
+      setProducts(response.data);
 
       Swal.fire({
         icon: "success",
@@ -66,17 +64,19 @@ const SaleImport = () => {
   };
 
   const handleImport = async () => {
-    const response = await importSales(formData);
+    const response = await importProducts(formData);
 
     if (response.status === 200) {
-      setSales([]);
+      setProducts([]);
+
       setFormData({ ...formData, file: null });
     if (fileInputRef.current) {
       fileInputRef.current.value = ""; // Limpia el input de archivo
     }
+
       Swal.fire({
         icon: "success",
-        title: "Ventas importadas",
+        title: "Productos importados",
         timer: 5000,
       });
     } else if (response.status === 400) {
@@ -96,10 +96,11 @@ const SaleImport = () => {
     }
   };
 
+
   return (
     <Container fluid>
       <Row className="section">
-        <Form.Label className="fw-bold">Importar ventas</Form.Label>
+        <Form.Label className="fw-bold">Importar productos</Form.Label>
         <Col md={4}>
           <Form.Group controlId="formFile" className="">
             <Form.Control
@@ -126,8 +127,8 @@ const SaleImport = () => {
           <CustomButton
             onClick={handleImport}
             disabled={
-              sales.length === 0 ||
-              sales.some((item) => item.status !== "Exitoso")
+              products.length === 0 ||
+              products.some((item) => item.status !== "Exitoso")
             }
             fullWidth
           >
@@ -148,9 +149,10 @@ const SaleImport = () => {
         </Col>
       </Row>
 
+
       {showExample && (
         <Row className="section">
-          <Col md={9}>
+          <Col md={12}>
             <Form.Label className="fw-bold">Ejemplo de plantilla</Form.Label>
 
             <CustomTable
@@ -161,30 +163,41 @@ const SaleImport = () => {
                   selector: (row) => row.code,
                 },
                 {
-                  name: "Cantidad",
-                  selector: (row) => row.cantidad,
+                  name: "Marca",
+                  selector: (row) => row.brand,
                 },
                 {
-                  name: "Descripción",
-                  selector: (row) => row.description,
+                  name: "Nombre",
+                  selector: (row) => row.name,
+                  wrap: true
                 },
+  
+                {
+                  name: "Costo",
+                  selector: (row) => row.cost,
+                },
+                {
+                  name: "Precio unitario",
+                  selector: (row) => row.unit_price,
+                },
+                {
+                  name: "Precio mayoreo",
+                  selector: (row) => row.wholesale_price,
+                },
+  
+                {
+                  name: "Cantidad minima mayoreo",
+                  selector: (row) => row.min_wholesale_quantity,
+                },
+                {
+                  name: "Precio mayoreo en descuentos de clientes",
+                  selector: (row) => row.wholesale_price_on_client_discount,
+                }
               ]}
             ></CustomTable>
 
 
           </Col>
-
-          <Col md={3}>
-          <Form.Label className="fw-bold">Notas</Form.Label>
-            <p>
-              1-.Las descripciones pueden ser NO Exactas la
-              información de la base de datos, pero si una referencia en caso de
-              que haya escrito mal el codigó. <br /> 2-. Podemos añadir el mismo
-              producto en diferentes renglones haciendo referencia a que el
-              mismo producto fue comprado varias veces.
-            </p>
-
-            </Col>
         </Row>
       )}
 
@@ -192,22 +205,46 @@ const SaleImport = () => {
         <Col>
           <Form.Label className="fw-bold">Archivo actual</Form.Label>
           <CustomTable
-            data={sales}
+            data={products}
             columns={[
               {
                 name: "Código",
                 selector: (row) => row.code,
               },
               {
-                name: "Cantidad",
-                selector: (row) => row.quantity,
+                name: "Marca",
+                selector: (row) => row.brand,
               },
               {
-                name: "Descripción",
-                selector: (row) => row.product_description,
+                name: "Nombre",
+                selector: (row) => row.name,
+                wrap: true
+              },
+
+              {
+                name: "Costo",
+                selector: (row) => row.cost,
+              },
+              {
+                name: "Precio unitario",
+                selector: (row) => row.unit_price,
+              },
+              {
+                name: "Precio mayoreo",
+                selector: (row) => row.wholesale_price,
+              },
+
+              {
+                name: "Cantidad minima mayoreo",
+                selector: (row) => row.min_wholesale_quantity,
+              },
+              {
+                name: "Precio mayoreo en descuentos de clientes",
+                selector: (row) => row.wholesale_price_on_client_discount,
               },
               {
                 name: "Status",
+                wrap: true,
                 selector: (row) => (
                   row.status === "Exitoso" 
                     ? <SuccessIcon /> 
@@ -220,8 +257,10 @@ const SaleImport = () => {
           ></CustomTable>
         </Col>
       </Row>
+
+
     </Container>
   );
 };
 
-export default SaleImport;
+export default ProductImport;

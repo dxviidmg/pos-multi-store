@@ -13,6 +13,7 @@ import BrandList from "./components/brandList/BrandList";
 import SaleImport from "./components/saleImport/SaleImport";
 import StoreProductList from "./components/storeProductList/StoreProductList";
 import StoreList from "./components/storeList/StoreList";
+import ProductImport from "./components/productImport/ProductImport";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -45,6 +46,7 @@ function App() {
             <Route path="/traspasos/" element={<TransferList />} />
             <Route path="/clientes/" element={<ClientList />} />
             <Route path="/productos/" element={<ProductList />} />
+            <Route path="/importar-productos/" element={<ProductImport />} />
             <Route path="/inventario/" element={<StoreProductList />} />
             <Route path="/marcas/" element={<BrandList />} />
             {user.store_id  ? (<Route path="/" element={<SaleCreate />} />): (<Route path="/" element={<SaleCreate />} />)}
