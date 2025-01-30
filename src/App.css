@@ -26,10 +26,9 @@
   border-radius: 5px;
 }
 
+
+
 #root {
-  background-image: url('https://img.freepik.com/vector-gratis/vector-fondo-ondas-futuristas-azules-tecnologia-codigo-computadora_53876-110867.jpg?semt=ais_hybrid');
-  background-size: cover; /* Ajusta la imagen para cubrir toda la pantalla */
-  background-repeat: no-repeat; /* Evita que la imagen se repita */
-  background-position: center; /* Centra la imagen */
+  background-color: rgba(4, 53, 107, 0.2); /* 0.5 = 50% de opacidad */
   min-height: 100vh;
 }

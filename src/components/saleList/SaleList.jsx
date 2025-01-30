@@ -190,6 +190,7 @@ const SaleList = () => {
             },
             {
               name: "Accciones",
+              grow: 2,
               cell: (row) =>
                 row.is_cancelable && (
                   <CustomButton onClick={() => handleOpenModal(row)}>

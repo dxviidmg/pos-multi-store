@@ -4,6 +4,7 @@ import { loginUser } from "../apis/login";
 import { useNavigate } from "react-router-dom";
 import CustomButton from "../commons/customButton/CustomButton";
 import Logo from "../../assets/images/LogoH.jpg";
+import './login.css'
 
 function Login({ onLogin }) {
   const navigate = useNavigate();
@@ -102,8 +103,8 @@ function Login({ onLogin }) {
               </Alert>
             )}
 
-            <Form>
-              <Form.Group className="mb-3" controlId="formBasicEmail">
+            <Form className='mt-4'>
+              <Form.Group className="mb-2" controlId="formBasicEmail">
                 <Form.Label>Usuario</Form.Label>
                 <Form.Control
                   type="text"
@@ -116,7 +117,7 @@ function Login({ onLogin }) {
                 />
               </Form.Group>
 
-              <Form.Group className="mb-3" controlId="formBasicPassword">
+              <Form.Group className="mb-2" controlId="formBasicPassword">
                 <Form.Label >Contraseña</Form.Label>
                 <Form.Control
                   type="password"

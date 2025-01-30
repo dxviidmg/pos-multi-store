@@ -6,6 +6,7 @@ import { getUserData } from "../apis/utils";
 import { NavDropdown } from "react-bootstrap";
 import Logo from "../../assets/images/LogoH.jpg";
 import { useNavigate } from "react-router-dom";
+import './navbar.css'
 
 const CustomNavbar = () => {
   const navigate = useNavigate();
@@ -33,7 +34,7 @@ const CustomNavbar = () => {
   };
 
   return (
-    <Navbar expand="lg" bg="dark" data-bs-theme="dark">
+    <Navbar expand="lg" className="custom-navbar">
       <Container fluid>
         <img
           src={Logo}
@@ -51,7 +52,7 @@ const CustomNavbar = () => {
                 <Nav.Link href="/vender/">Vender</Nav.Link>
                 <Nav.Link href="/clientes/">Clientes</Nav.Link>
                 <Nav.Link href="/inventario/">Inventario</Nav.Link>
-                <NavDropdown title="Ventas">
+                <NavDropdown title="Ventas" className="custom-dropdown">
                   <NavDropdown.Item href="/ventas/">Ventas</NavDropdown.Item>
                   <NavDropdown.Divider />
                   <NavDropdown.Item href="/importar-ventas/">
@@ -79,7 +80,7 @@ const CustomNavbar = () => {
             {user && !user.store_type && (
               <>
                 <Nav.Link href="/tiendas/">Tiendas</Nav.Link>
-                <NavDropdown title="Productos">
+                <NavDropdown title="Productos" className="custom-dropdown">
                   <NavDropdown.Item href="/marcas/">Marcas</NavDropdown.Item>
                   <NavDropdown.Divider />
                   <NavDropdown.Item href="/productos/">

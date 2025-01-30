@@ -133,6 +133,7 @@ const StoreProductLogsModal = ({ onUpdateStoreProductList }) => {
         </Col>
 
         <Col md={12} className={adjustStock ? "d-none" : ""}>
+        <Form.Label className="fw-bold">Utimos movimientos</Form.Label>
           <CustomTable
             data={logs}
             columns={[

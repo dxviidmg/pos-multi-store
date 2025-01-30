@@ -85,8 +85,7 @@ const BrandModal = ({ onUpdateBrandList }) => {
           />
         </Col>
 
-        <Col md={6}>
-          <Form.Label>.</Form.Label>
+        <Col md={6} className="d-flex flex-column justify-content-end">
           <CustomButton
             fullWidth={true}
             onClick={handleBrandSubmit}
