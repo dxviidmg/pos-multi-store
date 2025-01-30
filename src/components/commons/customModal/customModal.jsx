@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import Modal from "react-bootstrap/Modal";
+import './customModal.css'
 
 
 function CustomModal({ showOut, title, children}) {
@@ -15,13 +16,14 @@ function CustomModal({ showOut, title, children}) {
     
       <Modal show={show} onHide={handleClose} size="lg"
       
+      
       >
-        <Modal.Header closeButton>
+        <Modal.Header closeButton className="custom-modal-header">
           <Modal.Title className=" w-100 text-center">
             {title}
           </Modal.Title>
         </Modal.Header>
-        <Modal.Body style={{backgroundColor: '#e1e9f4'}}>{children}
+        <Modal.Body className="custom-modal-body">{children}
         </Modal.Body>
       </Modal>
     

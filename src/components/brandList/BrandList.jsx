@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { Col, Container, Form, Row } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getBrands } from "../apis/brands";
 import BrandModal from "../brandModal/BrandModal";
@@ -41,44 +41,36 @@ const BrandList = () => {
   };
 
   return (
-    <Container fluid>
-      <BrandModal onUpdateBrandList={handleUpdateBrandList}></BrandModal>
-        <Row className="section">
-          <Col md={12}>
-            {" "}
-            <Form.Label className="fw-bold">Lista de marcas</Form.Label>
-            <br></br>
-            <CustomButton onClick={() => handleOpenModal()}>Crear</CustomButton>
-          </Col>
-
-          <Col md={12}>
-            <CustomTable
-              progressPending={loading}
-              data={brands}
-              columns={[
-                {
-                  name: "Nombre",
-                  selector: (row) => row.name,
-                  grow: 2,
-                  wrap: true,
-                },
-                {
-                  name: "Numero de productos",
-                  selector: (row) => row.product_count,
-                },
-                {
-                  name: "Accciones",
-                  cell: (row) => (
-                    <CustomButton onClick={() => handleOpenModal(row)}>
-                      Editar
-                    </CustomButton>
-                  ),
-                },
-              ]}
-            />
-          </Col>
-        </Row>
-    </Container>
+    <div className="custom-section">
+      <BrandModal onUpdateBrandList={handleUpdateBrandList}></BrandModal>{" "}
+      <Form.Label className="fw-bold">Lista de marcas</Form.Label>
+      <br></br>
+      <CustomButton onClick={() => handleOpenModal()}>Crear</CustomButton>
+      <CustomTable
+        progressPending={loading}
+        data={brands}
+        columns={[
+          {
+            name: "Nombre",
+            selector: (row) => row.name,
+            grow: 2,
+            wrap: true,
+          },
+          {
+            name: "Numero de productos",
+            selector: (row) => row.product_count,
+          },
+          {
+            name: "Accciones",
+            cell: (row) => (
+              <CustomButton onClick={() => handleOpenModal(row)}>
+                Editar
+              </CustomButton>
+            ),
+          },
+        ]}
+      />
+    </div>
   );
 };
 

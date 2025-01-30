@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
 import { getClients } from "../apis/clients";
-import { Col, Container, Form, Row } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import { createDiscount } from "../apis/discounts";
 import Swal from "sweetalert2";
@@ -105,12 +105,11 @@ const ClientList = () => {
   };
 
   return (
-    <Container fluid>
+    <div className="">
       <ClientModal onUpdateClientList={handleUpdateClientList}></ClientModal>
-      <Row>
+      <div>
         {userType === "admin" && (
-          <Col md={12}>
-            <Row className="section">
+            <div className="custom-section">
               <Form>
                 <Form.Label className="fw-bold">Crear descuento</Form.Label>
                 <br></br>
@@ -131,12 +130,10 @@ const ClientList = () => {
                   Crear descuento
                 </CustomButton>
               </Form>
-            </Row>
-          </Col>
+            </div>
         )}
-      </Row>
-      <Row className="section">
-        <Col>
+      </div>
+      <div className="custom-section">
           <Form.Label className="fw-bold">Lista de clientes</Form.Label>
           <br></br>
           <CustomButton onClick={() => handleOpenModal()}>Crear</CustomButton>
@@ -168,9 +165,8 @@ const ClientList = () => {
             ]}
             highlightOnHover
           />
-        </Col>
-      </Row>
-    </Container>
+      </div>
+    </div>
   );
 };
 

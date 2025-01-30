@@ -98,7 +98,7 @@ const ClientModal = ({ onUpdateClientList }) => {
   return (
     <CustomModal
       showOut={showClientModal}
-      title={formData ? "Actualizar marca" : "Crear marca"}
+      title={formData ? "Actualizar cliente" : "Crear cliente"}
     >
       <Row className={`section`}>
         <Col>

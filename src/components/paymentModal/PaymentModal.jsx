@@ -158,16 +158,13 @@ const PaymentModal = () => {
 
   return (
     <CustomModal showOut={showPaymentModal} title="Finalizar pago">
-      <Row className="section">
-        <Col md={12}>
+      <div className="custom-section">
           <SearchClient />
-        </Col>
-        <Col md={12}>
           <ClientSelected />
-        </Col>
-      </Row>
+      </div>
 
-      <Row className="section">
+      <div className="custom-section">
+      <Row>
         <Col md={6}>
           <Form.Label>Total</Form.Label>
           <Form.Control type="text" value={total.toFixed(2)} disabled />
@@ -178,8 +175,11 @@ const PaymentModal = () => {
           <Form.Control type="text" value={totalDiscount.toFixed(2)} disabled />
         </Col>
       </Row>
+      </div>
 
-      <Row className="section">
+
+      <div className="custom-section">
+      <Row>
         <Col md={3}>
           <Form.Label className="me-1">Tipo de pago:</Form.Label>
           <Form.Check
@@ -258,6 +258,10 @@ const PaymentModal = () => {
           </CustomButton>
         </Col>
       </Row>
+      </div>
+
+
+
     </CustomModal>
   );
 };

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
 import { getProducts } from "../apis/products";
-import { Container, Form, Row, Col } from "react-bootstrap";
+import { Form} from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import { useDispatch } from "react-redux";
 import {
@@ -66,10 +66,8 @@ const ProductList = () => {
 
 
   return (
-    <Container fluid>
+    <div className="custom-section">
       <ProductModal onUpdateProductList={handleUpdateProductList} />
-      <Row className="section">
-        <Col md={12}>
           <Form.Label className="fw-bold">Lista de productos</Form.Label>
 
           <br />
@@ -127,9 +125,7 @@ const ProductList = () => {
               },
             ]}
           />
-        </Col>
-      </Row>
-    </Container>
+    </div>
   );
 };
 

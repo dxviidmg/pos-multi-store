@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { Col, Container, Form, Row } from "react-bootstrap";
+import { Form} from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getStoreInvestment, getStores } from "../apis/stores";
 import { useNavigate } from "react-router-dom";
@@ -51,10 +51,9 @@ const StoreList = () => {
 
   };
   return (
-    <Container fluid>
+    <div className="custom-section">
       <CustomSpinner2 isLoading={loadingInvesment}></CustomSpinner2>
-      <Row className="section">
-        <Col md={12}>
+
           <Form.Label className="fw-bold">Lista de tiendas</Form.Label>
           <CustomTable
             progressPending={loading}
@@ -85,9 +84,8 @@ const StoreList = () => {
               },
             ]}
           />
-        </Col>
-      </Row>
-    </Container>
+
+    </div>
   );
 };
 
