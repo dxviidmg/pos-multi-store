@@ -47,9 +47,9 @@ function Login({ onLogin }) {
 
     try {
       const response = await loginUser(formData);
-      localStorage.setItem("user", JSON.stringify(response));
 
-      if ("user_id" in response) {
+      if (response.status === 200) {
+        localStorage.setItem("user", JSON.stringify(response));
         onLogin(response);
         handleRedirect(response);
       } else {
