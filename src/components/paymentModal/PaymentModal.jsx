@@ -125,7 +125,7 @@ const PaymentModal = () => {
       store_products: cart.map((product) => ({
         id: product.id,
         quantity: product.quantity,
-        price: product.product_price,
+        price: product.product_price * ((client?.discount_percentage_complement ?? 100) * 0.01)
       })),
       payments: paymentList,
     };
