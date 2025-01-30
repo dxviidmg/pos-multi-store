@@ -10,7 +10,7 @@ export const loginUser = async (credentials) => {
         "Content-Type": "application/json",
       },
     });
-    return response.data;
+    return response;
   } catch (error) {
     return error;
   }
