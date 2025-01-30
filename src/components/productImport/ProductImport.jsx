@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
 import { importProducts, importProductsValidation } from "../apis/products";
-import { Container, Form, Row, Col } from "react-bootstrap";
+import { Form, Row, Col } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import Swal from "sweetalert2";
 import { ErrorIcon, SuccessIcon } from "../commons/icons/Icons";
@@ -98,9 +98,11 @@ const ProductImport = () => {
 
 
   return (
-    <Container fluid>
-      <Row className="section">
+    <div>
+      <div className="section2">
         <Form.Label className="fw-bold">Importar productos</Form.Label>
+        <Row>
+
         <Col md={4}>
           <Form.Group controlId="formFile" className="">
             <Form.Control
@@ -113,7 +115,7 @@ const ProductImport = () => {
           </Form.Group>
         </Col>
 
-        <Col md={1}>
+        <Col md={2}>
           <CustomButton
             onClick={handleValidation}
             disabled={formData.file === ""}
@@ -123,7 +125,7 @@ const ProductImport = () => {
           </CustomButton>
         </Col>
 
-        <Col md={1}>
+        <Col md={2}>
           <CustomButton
             onClick={handleImport}
             disabled={
@@ -147,12 +149,14 @@ const ProductImport = () => {
             Ver Ejemplo
           </CustomButton>
         </Col>
-      </Row>
+
+        </Row>
+
+      </div>
 
 
       {showExample && (
-        <Row className="section">
-          <Col md={12}>
+        <div className="section2">
             <Form.Label className="fw-bold">Ejemplo de plantilla</Form.Label>
 
             <CustomTable
@@ -197,12 +201,10 @@ const ProductImport = () => {
             ></CustomTable>
 
 
-          </Col>
-        </Row>
+        </div>
       )}
 
-      <Row className="section">
-        <Col>
+      <div className="section2">
           <Form.Label className="fw-bold">Archivo actual</Form.Label>
           <CustomTable
             data={products}
@@ -255,11 +257,10 @@ const ProductImport = () => {
               },
             ]}
           ></CustomTable>
-        </Col>
-      </Row>
+      </div>
 
 
-    </Container>
+    </div>
   );
 };
 

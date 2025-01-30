@@ -73,7 +73,7 @@ const BrandModal = ({ onUpdateBrandList }) => {
 
   return (
     <CustomModal showOut={showBrandModal} title={formData.id ? "Actualizar marca" : "Crear marca"}>
-      <Row className="section">
+      <Row>
         <Col md={6}>
           <Form.Label>Nombre</Form.Label>
           <Form.Control
@@ -85,8 +85,7 @@ const BrandModal = ({ onUpdateBrandList }) => {
           />
         </Col>
 
-        <Col md={6}>
-          <Form.Label>.</Form.Label>
+        <Col md={6} className="d-flex flex-column justify-content-end">
           <CustomButton
             fullWidth={true}
             onClick={handleBrandSubmit}

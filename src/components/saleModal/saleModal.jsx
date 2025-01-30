@@ -89,7 +89,7 @@ const SaleModal = ({ onUpdateSaleList }) => {
 
   return (
     <CustomModal showOut={showSaleModal} title="Devolución de productos">
-      <Row className="section">
+      <Row>
         <Col md={3}>
           <Form.Label>Folio</Form.Label>
           <Form.Control

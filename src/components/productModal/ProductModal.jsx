@@ -133,7 +133,8 @@ const ProductModal = ({ onUpdateProductList }) => {
 
   return (
     <CustomModal showOut={showBrandModal} title={formData.id ? "Actualizar producto" : "Crear producto"}>
-        <Row className="section">
+
+      <Row>
           <Col md={4}>
             <Form.Label>Marca</Form.Label>
             <Form.Select
@@ -238,6 +239,8 @@ const ProductModal = ({ onUpdateProductList }) => {
             </CustomButton>
           </Col>
         </Row>
+
+
     </CustomModal>
   );
 };

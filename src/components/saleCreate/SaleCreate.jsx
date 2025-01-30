@@ -1,24 +1,18 @@
 import React from "react";
 import SearchProduct from "../searchProduct/SearchProduct";
-import { Col, Container, Row } from "react-bootstrap";
 import TabCart from "../cart/TabCart";
-
 
 const SaleCreate = () => {
   return (
-    <Container fluid>
+    <div>
+      <div className="section2">
+        <SearchProduct></SearchProduct>
+      </div>
 
-      <Row className="section">
-        <Col md={12}>
-          {" "}
-          <SearchProduct></SearchProduct>
-        </Col>
-      </Row>
-
-      <Row className="section">
-        <TabCart/>
-      </Row>
-    </Container>
+      <div className="section2">
+        <TabCart />
+      </div>
+    </div>
   );
 };
 
