@@ -49,9 +49,10 @@ function Login({ onLogin }) {
       const response = await loginUser(formData);
 
       if (response.status === 200) {
-        localStorage.setItem("user", JSON.stringify(response));
-        onLogin(response);
-        handleRedirect(response);
+        localStorage.setItem("user", JSON.stringify(response.data));
+
+        handleRedirect(response.data);
+        onLogin();
       } else {
         showAlert("Usuario o contraseña incorrecta");
       }
@@ -68,8 +69,8 @@ function Login({ onLogin }) {
     }
   };
 
-  const handleRedirect = (response) => {
-    if (response.is_owner) {
+  const handleRedirect = (user) => {
+    if (user.is_owner) {
       navigate("/tiendas/");
     } else {
       navigate("/vender/");
