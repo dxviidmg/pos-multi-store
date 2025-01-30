@@ -5,11 +5,11 @@ import TabCart from "../cart/TabCart";
 const SaleCreate = () => {
   return (
     <div>
-      <div className="section2">
+      <div className="custom-section">
         <SearchProduct></SearchProduct>
       </div>
 
-      <div className="section2">
+      <div className="custom-section">
         <TabCart />
       </div>
     </div>

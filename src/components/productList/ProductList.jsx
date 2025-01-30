@@ -66,7 +66,7 @@ const ProductList = () => {
 
 
   return (
-    <div className="section2">
+    <div className="custom-section">
       <ProductModal onUpdateProductList={handleUpdateProductList} />
           <Form.Label className="fw-bold">Lista de productos</Form.Label>
 

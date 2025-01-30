@@ -94,7 +94,7 @@ const SaleList = () => {
   return (
     <>
       <SaleModal onUpdateSaleList={handleUpdateSaleList}></SaleModal>
-      <div className="section2">
+      <div className="custom-section">
 
       <Row>
         <Col md={4}>
@@ -139,7 +139,7 @@ const SaleList = () => {
       </div>
 
 
-      <div className="section2">
+      <div className="custom-section">
         <Form.Label className="fw-bold">Lista de ventas</Form.Label>
 
         <CustomTable

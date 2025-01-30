@@ -51,7 +51,7 @@ const StoreList = () => {
 
   };
   return (
-    <div className="section2">
+    <div className="custom-section">
       <CustomSpinner2 isLoading={loadingInvesment}></CustomSpinner2>
 
           <Form.Label className="fw-bold">Lista de tiendas</Form.Label>

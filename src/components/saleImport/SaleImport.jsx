@@ -98,7 +98,7 @@ const SaleImport = () => {
 
   return (
     <div>
-      <div className="section2">
+      <div className="custom-section">
         <Form.Label className="fw-bold">Importar ventas</Form.Label>
         <Row>
         <Col md={4}>
@@ -152,7 +152,7 @@ const SaleImport = () => {
       </div>
 
       {showExample && (
-        <div className="section2">
+        <div className="custom-section">
           <Row>
           <Col md={9}>
             <Form.Label className="fw-bold">Ejemplo de plantilla</Form.Label>
@@ -193,7 +193,7 @@ const SaleImport = () => {
         </div>
       )}
 
-      <div className="section2">
+      <div className="custom-section">
           <Form.Label className="fw-bold">Archivo actual</Form.Label>
           <CustomTable
             data={sales}

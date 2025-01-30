@@ -41,7 +41,7 @@ const BrandList = () => {
   };
 
   return (
-    <div className="section2">
+    <div className="custom-section">
       <BrandModal onUpdateBrandList={handleUpdateBrandList}></BrandModal>{" "}
       <Form.Label className="fw-bold">Lista de marcas</Form.Label>
       <br></br>
