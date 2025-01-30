@@ -4,7 +4,7 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import { getUserData } from "../apis/utils";
 import { NavDropdown } from "react-bootstrap";
-import Logo from "../../assets/images/LogoH.jpg";
+import Logo from "../../assets/images/logo.jpg";
 import { useNavigate } from "react-router-dom";
 import './navbar.css'
 

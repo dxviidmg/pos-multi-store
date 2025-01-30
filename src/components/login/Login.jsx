@@ -3,7 +3,7 @@ import { Container, Row, Col, Alert, Image, Form } from "react-bootstrap";
 import { loginUser } from "../apis/login";
 import { useNavigate } from "react-router-dom";
 import CustomButton from "../commons/customButton/CustomButton";
-import Logo from "../../assets/images/LogoH.jpg";
+import Logo from "../../assets/images/logo.jpg";
 import './login.css'
 
 function Login({ onLogin }) {
