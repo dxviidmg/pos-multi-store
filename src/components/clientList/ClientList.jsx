@@ -109,7 +109,7 @@ const ClientList = () => {
       <ClientModal onUpdateClientList={handleUpdateClientList}></ClientModal>
       <div>
         {userType === "admin" && (
-            <div className="section2">
+            <div className="custom-section">
               <Form>
                 <Form.Label className="fw-bold">Crear descuento</Form.Label>
                 <br></br>
@@ -133,7 +133,7 @@ const ClientList = () => {
             </div>
         )}
       </div>
-      <div className="section2">
+      <div className="custom-section">
           <Form.Label className="fw-bold">Lista de clientes</Form.Label>
           <br></br>
           <CustomButton onClick={() => handleOpenModal()}>Crear</CustomButton>

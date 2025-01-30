@@ -158,12 +158,12 @@ const PaymentModal = () => {
 
   return (
     <CustomModal showOut={showPaymentModal} title="Finalizar pago">
-      <div className="section2">
+      <div className="custom-section">
           <SearchClient />
           <ClientSelected />
       </div>
 
-      <div className="section2">
+      <div className="custom-section">
       <Row>
         <Col md={6}>
           <Form.Label>Total</Form.Label>
@@ -178,7 +178,7 @@ const PaymentModal = () => {
       </div>
 
 
-      <div className="section2">
+      <div className="custom-section">
       <Row>
         <Col md={3}>
           <Form.Label className="me-1">Tipo de pago:</Form.Label>

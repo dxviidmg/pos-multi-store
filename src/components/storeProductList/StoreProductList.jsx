@@ -68,7 +68,7 @@ const StoreProductList = () => {
   };
 
   return (
-    <div className="section2">
+    <div className="custom-section">
       <CustomSpinner2 isLoading={loading}></CustomSpinner2>
       <StoreProductLogsModal
         onUpdateStoreProductList={handleUpdateStoreProductList}
