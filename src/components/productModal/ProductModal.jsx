@@ -22,7 +22,7 @@ const INITIAL_FORM_DATA = {
 }
 
 const ProductModal = ({ onUpdateProductList }) => {
-  const { showBrandModal, product } = useSelector(
+  const { showProductModal, product } = useSelector(
     (state) => state.ProductModalReducer
   );
 
@@ -32,6 +32,7 @@ const ProductModal = ({ onUpdateProductList }) => {
 
   useEffect(() => {
     if (product) {
+      console.log(product)
       setFormData(product);
     }
     else{
@@ -59,10 +60,12 @@ const ProductModal = ({ onUpdateProductList }) => {
   const dispatch = useDispatch();
 
   const handleDataChange = async (e) => {
-    let { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    let { name, value, checked, type } = e.target;  
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: type === "checkbox" ? checked : value, // Usa checked para checkboxes
+    }));
   };
-
   const handleProductSubmit = async (e) => {
 
     const payload = { ...formData };
@@ -132,7 +135,7 @@ const ProductModal = ({ onUpdateProductList }) => {
 
 
   return (
-    <CustomModal showOut={showBrandModal} title={formData.id ? "Actualizar producto" : "Crear producto"}>
+    <CustomModal showOut={showProductModal} title={formData.id ? "Actualizar producto" : "Crear producto"}>
 
       <Row>
           <Col md={4}>

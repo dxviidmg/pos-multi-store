@@ -126,11 +126,14 @@ const cartReducer = (state = initialState, action) => {
       return { ...state, movementType: action.payload, cart: [] };
 
     case UPDATE_QUANTITY_IN_CART:
+
+    const clientSelected = aClientIsSelected(state.client);
+    
       return {
         ...state,
         cart: state.cart.map((item) =>
           item.id === action.payload.product.id
-            ? { ...item, quantity: action.payload.newQuantity }
+            ? { ...item, quantity: action.payload.newQuantity, product_price: calculateProductPrice(action.payload.newQuantity, item.prices, clientSelected) }
             : item
         ),
       };
