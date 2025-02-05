@@ -5,7 +5,8 @@ import {
   REMOVE_FROM_CART,
   CLEAN_CART,
   UPDATE_MOVEMENT_TYPE,
-  UPDATE_QUANTITY_IN_CART
+  UPDATE_QUANTITY_IN_CART,
+  CHANGE_PRICE
 } from "./cartActions";
 
 const initialState = {
@@ -25,6 +26,14 @@ const calculateProductPrice = (quantity, prices, clientSelected) => {
   }
   return prices.unit_price;
 };
+
+const changeProductPrice = (product_price, prices) => {
+  if (product_price === prices.wholesale_price) {
+    return prices.unit_price;
+  }
+  return prices.wholesale_price;
+};
+
 
 const updateCartWithPrice = (cart, clientSelected) => {
   return cart.map((item, index) => ({
@@ -127,13 +136,23 @@ const cartReducer = (state = initialState, action) => {
 
     case UPDATE_QUANTITY_IN_CART:
 
-    const clientSelected = aClientIsSelected(state.client);
+      const clientSelected = aClientIsSelected(state.client);
     
       return {
         ...state,
         cart: state.cart.map((item) =>
           item.id === action.payload.product.id
             ? { ...item, quantity: action.payload.newQuantity, product_price: calculateProductPrice(action.payload.newQuantity, item.prices, clientSelected) }
+            : item
+        ),
+      };
+
+    case CHANGE_PRICE:
+      return {
+        ...state,
+        cart: state.cart.map((item) =>
+          item.id === action.payload.id
+            ? { ...item, product_price: changeProductPrice(item.product_price, item.prices) }
             : item
         ),
       };

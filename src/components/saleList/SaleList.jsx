@@ -116,12 +116,12 @@ const SaleList = () => {
             data={dailyEarningsSummary}
             columns={[
               {
-                name: "Metodo de pago",
+                name: "Definición",
                 selector: (row) => row.payment_method,
               },
 
               {
-                name: "Cantidad",
+                name: "($) Total",
                 selector: (row) => row.total_amount,
               },
             ]}
