@@ -1,7 +1,7 @@
 import { SHOW_MODAL, HIDE_MODAL } from './ProductModalActions';
 
 const initialState = {
-  showBrandModal: false,
+  showProductModal: false,
   product: {}
 };
 
@@ -9,14 +9,14 @@ const ProductModalReducer = (state = initialState, action) => {
   switch (action.type) {
     case SHOW_MODAL: {
         return {
-          showBrandModal: true,
+          showProductModal: true,
           product: action.payload
         };
       }
 
       case HIDE_MODAL: {
         return {
-          showBrandModal: false,
+          showProductModal: false,
           product: {}
         };
       }
