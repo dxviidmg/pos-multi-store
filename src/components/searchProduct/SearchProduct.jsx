@@ -13,6 +13,7 @@ import {
 } from "../redux/stockModal/StockModalActions";
 import Swal from "sweetalert2";
 import { getUserData } from "../apis/utils";
+import { printTicket } from "../apis/sales";
 
 
 const SearchProduct = () => {
@@ -209,10 +210,32 @@ const SearchProduct = () => {
 
 
 
+  const handlePrintTicket = async () => {
+    const response = await printTicket();
+
+    if (response.status === 200) {
+      Swal.fire({
+        icon: "success",
+        title: "Imprimiento",
+        timer: 5000,
+      });
+    } else {
+      console.log(response.response.data.error)
+      Swal.fire({
+        icon: "error",
+        title: response.response.data.error,
+        timer: 5000,
+      });
+    }
+  };
+
+
+
   return (
     <>
       <StockModal />
       <Form.Label className="fw-bold">Buscador de productos</Form.Label>
+      <CustomButton onClick={handlePrintTicket}>Verificar impresora</CustomButton>
       <br />
       <Form.Label className="me-3">Tipo de búsqueda:</Form.Label>
       <Form.Check
