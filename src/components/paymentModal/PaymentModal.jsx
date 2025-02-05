@@ -10,8 +10,14 @@ import { createSale } from "../apis/sales";
 import { hidePaymentModal } from "../redux/paymentModal/PaymentModalActions";
 import Swal from "sweetalert2";
 
-function roundToClosestHalfOrWhole(number) {
-  return Math.round(number * 2) / 2;
+
+  function roundUpCustom(value) {
+    const intPart = Math.floor(value); // Parte entera
+    const decimalPart = value - intPart; // Parte decimal
+    
+    if (decimalPart === 0) return value; // Si es entero, se queda igual
+    if (decimalPart <= 0.5) return intPart + 0.5; // Si es hasta 0.5, sube a 0.5
+    return Math.ceil(value); // Si es mayor a 0.5, sube al siguiente entero
 }
 
 const PaymentModal = () => {
@@ -29,12 +35,12 @@ const PaymentModal = () => {
   const dispatch = useDispatch();
 
   const { total, totalDiscount } = useMemo(() => {
-    const total = roundToClosestHalfOrWhole(
+    const total = roundUpCustom(
       cart.reduce((acc, item) => acc + item.product_price * item.quantity, 0)
     );
 
     const totalDiscount = client?.discount_percentage_complement
-      ? roundToClosestHalfOrWhole(
+      ? roundUpCustom(
           total * (client.discount_percentage_complement / 100)
         )
       : total;
