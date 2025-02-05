@@ -5,7 +5,8 @@ import {
   cleanCart,
   removeFromCart,
   updateMovementType,
-  updateQuantityInCart
+  updateQuantityInCart,
+  changePrice
 } from "../redux/cart/cartActions";
 import CustomButton from "../commons/customButton/CustomButton";
 import { Col, Form, Row } from "react-bootstrap";
@@ -70,6 +71,10 @@ const Cart = () => {
   }, [cart]);
 
   const handleRemoveFromCart = (product) => dispatch(removeFromCart(product));
+
+  const handleChangePrice = (product) => {
+    dispatch(changePrice(product))
+  }
 
   const handleQuantityChangeToCart = (e, product) => {
     const newQuantity = parseInt(e.target.value, 10); // Usar base 10 para parsear
@@ -205,6 +210,18 @@ const Cart = () => {
     {
       name: "Total por producto",
       selector: (row) => `$${(row.product_price * row.quantity).toFixed(2)}`,
+    },
+    {
+      name: "Precio mayorista",
+      selector: (row) => (
+        <Form.Check
+        type="switch"
+        id="custom-switch"
+        checked={row.product_price === row.prices.wholesale_price}
+        onClick={() => handleChangePrice(row)}
+        disabled={!row.prices.wholesale_price}
+      />
+      ),
     },
     {
       name: "Borrar",
