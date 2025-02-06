@@ -4,19 +4,25 @@ import { Col, Form, Row } from "react-bootstrap";
 import { getDailyEarnings, getSales } from "../apis/sales";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getUserData } from "../apis/utils";
-import { exportToExcel, getFormattedDate } from "../utils/utils";
+import {
+  exportToExcel,
+  getFormattedDate,
+  formatTimeFromDate,
+} from "../utils/utils";
 import { useDispatch } from "react-redux";
 import {
   hideSaleModal,
   showSaleModal,
 } from "../redux/saleModal/SaleModalActions";
 import SaleModal from "../saleModal/saleModal";
+import { getCashFlow } from "../apis/cashflow";
 
 const SaleList = () => {
   const [sales, setSales] = useState([]);
   const [dailyEarningsSummary, setDailyEarningsSummary] = useState([]);
   const today = getFormattedDate();
   const [date, setDate] = useState(today);
+  const [cashFlow, setCashFlow] = useState([]);
 
   const dispatch = useDispatch();
 
@@ -27,6 +33,8 @@ const SaleList = () => {
 
       const earningsResponse = await getDailyEarnings(date);
       setDailyEarningsSummary(earningsResponse.data);
+      const cashFlowResponse = await getCashFlow(date);
+      setCashFlow(cashFlowResponse.data);
     };
 
     fetchSalesData();
@@ -36,22 +44,12 @@ const SaleList = () => {
     const fetchSalesData = async () => {
       const earningsResponse = await getDailyEarnings(date);
       setDailyEarningsSummary(earningsResponse.data);
+      const cashFlowResponse = await getCashFlow(date);
+      setCashFlow(cashFlowResponse.data);
     };
 
     fetchSalesData();
   }, [date, sales]);
-
-  const formatTimeFromDate = (dateString) => {
-    let date = "";
-    if (dateString) {
-      date = new Date(dateString);
-    } else {
-      date = new Date();
-    }
-    const hours = date.getHours().toString().padStart(2, "0");
-    const minutes = date.getMinutes().toString().padStart(2, "0");
-    return `${hours}:${minutes}`;
-  };
 
   const handleExport = () => {
     // Definir valores iniciales
@@ -95,49 +93,76 @@ const SaleList = () => {
     <>
       <SaleModal onUpdateSaleList={handleUpdateSaleList}></SaleModal>
       <div className="custom-section">
+        <Row>
+          <Col md={4}>
+            <Form.Label className="fw-bold">Filtros</Form.Label>
+            <Form>
+              <Form.Label>Fecha</Form.Label>
+              <Form.Control
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                max={today}
+              />
+            </Form>
 
-      <Row>
-        <Col md={4}>
-          <Form.Label className="fw-bold">Resumen de ventas</Form.Label>
-          <Form>
-            <Form.Label>Fecha</Form.Label>
-            <Form.Control
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              max={today}
+            <CustomButton onClick={handleExport} fullWidth>
+              Descargar corte del dia
+            </CustomButton>
+          </Col>
+
+          <Col md={4}>
+          <Form.Label className="fw-bold">Resumen</Form.Label>
+            <CustomTable
+              data={dailyEarningsSummary}
+              columns={[
+                {
+                  name: "Definición",
+                  selector: (row) => row.payment_method,
+                },
+
+                {
+                  name: "($) Total",
+                  selector: (row) => row.total_amount,
+                },
+              ]}
             />
-          </Form>
-        </Col>
-        
+          </Col>
 
-        <Col md={4}>
-          <CustomTable
-            data={dailyEarningsSummary}
-            columns={[
-              {
-                name: "Definición",
-                selector: (row) => row.payment_method,
-              },
+          <Col md={4}>
+          <Form.Label className="fw-bold">Movimientos en caja</Form.Label>
+            <CustomTable
+              data={cashFlow}
+              columns={[
+                {
+                  name: "Creación",
+                  selector: (row) => formatTimeFromDate(row.created_at),
+                },
+                {
+                  name: "Concepto",
+                  selector: (row) => row.concept,
+                },
 
-              {
-                name: "($) Total",
-                selector: (row) => row.total_amount,
-              },
-            ]}
-          />
-        </Col>
+                {
+                  name: "Tipo",
+                  selector: (row) => row.transaction_type_display,
+                },
 
-        <Col md={4}>
-          <CustomButton onClick={handleExport} fullWidth>
-            Descargar corte del dia
-          </CustomButton>
-        </Col>
-      </Row>
+                {
+                  name: "Cantidad",
+                  selector: (row) => "$" + row.amount,
+                },
+                {
+                  name: "usuario",
+                  selector: (row) => row.user_username,
+                },
+              ]}
+            />
+          </Col>
 
 
+        </Row>
       </div>
-
 
       <div className="custom-section">
         <Form.Label className="fw-bold">Lista de ventas</Form.Label>
