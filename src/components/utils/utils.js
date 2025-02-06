@@ -35,3 +35,18 @@ export const getFormattedDateTime = (isoDate) => {
     hour12: false,
   }).format(date);
 };
+
+
+
+
+export const formatTimeFromDate = (dateString) => {
+  let date = "";
+  if (dateString) {
+    date = new Date(dateString);
+  } else {
+    date = new Date();
+  }
+  const hours = date.getHours().toString().padStart(2, "0");
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+  return `${hours}:${minutes}`;
+};
