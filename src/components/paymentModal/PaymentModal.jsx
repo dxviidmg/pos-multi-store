@@ -165,8 +165,7 @@ const PaymentModal = () => {
   return (
     <CustomModal showOut={showPaymentModal} title="Finalizar pago">
       <div className="custom-section">
-          <SearchClient />
-          <ClientSelected />
+
       </div>
 
       <div className="custom-section">

@@ -67,7 +67,7 @@ const ClientSelected = () => {
       <Col md={3}>
         <Form.Group>
           <CustomButton fullWidth={true} onClick={() => dispatch(removeClientfromCart())}>
-          Borrar cliente 
+          Borrar 
           (Ctrl + E)
           </CustomButton>
         </Form.Group>
