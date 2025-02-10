@@ -31,7 +31,7 @@ export const getTransfers = async () => {
   export const confirmTransfers = async (data) => {
 
     try {
-    const response = await axios.post(getApiUrl("confirm-transfers"), data, {
+    const response = await axios.post(getApiUrl("transfers/confirm"), data, {
       headers: getHeaders(),
     });
     return response;
@@ -45,7 +45,7 @@ export const getTransfers = async () => {
   export const confirmDistribution = async (data) => {
 
     try {
-    const response = await axios.post(getApiUrl("confirm-distribution"), data, {
+    const response = await axios.post(getApiUrl("store-product/distribution/confirm"), data, {
       headers: getHeaders(),
     });
     return response;

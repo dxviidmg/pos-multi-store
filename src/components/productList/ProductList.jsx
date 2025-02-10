@@ -10,6 +10,7 @@ import {
 } from "../redux/productModal/ProductModalActions";
 import ProductModal from "../productModal/ProductModal";
 import { exportToExcel } from "../utils/utils";
+import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
 
 
 const ProductList = () => {
@@ -67,6 +68,7 @@ const ProductList = () => {
 
   return (
     <div className="custom-section">
+      <CustomSpinner2 isLoading={isLoading}></CustomSpinner2>
       <ProductModal onUpdateProductList={handleUpdateProductList} />
           <Form.Label className="fw-bold">Lista de productos</Form.Label>
 

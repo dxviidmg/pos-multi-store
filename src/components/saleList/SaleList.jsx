@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { Col, Form, Row } from "react-bootstrap";
-import { getDailyEarnings, getSales } from "../apis/sales";
+import { Form } from "react-bootstrap";
+import { getSales } from "../apis/sales";
 import CustomButton from "../commons/customButton/CustomButton";
-import { getUserData } from "../apis/utils";
 import {
-  exportToExcel,
   getFormattedDate,
   formatTimeFromDate,
 } from "../utils/utils";
@@ -15,14 +13,12 @@ import {
   showSaleModal,
 } from "../redux/saleModal/SaleModalActions";
 import SaleModal from "../saleModal/saleModal";
-import { getCashFlow } from "../apis/cashflow";
 
 const SaleList = () => {
   const [sales, setSales] = useState([]);
-  const [dailyEarningsSummary, setDailyEarningsSummary] = useState([]);
   const today = getFormattedDate();
   const [date, setDate] = useState(today);
-  const [cashFlow, setCashFlow] = useState([]);
+
 
   const dispatch = useDispatch();
 
@@ -31,40 +27,13 @@ const SaleList = () => {
       const salesResponse = await getSales(date);
       setSales(salesResponse.data);
 
-      const earningsResponse = await getDailyEarnings(date);
-      setDailyEarningsSummary(earningsResponse.data);
-      const cashFlowResponse = await getCashFlow(date);
-      setCashFlow(cashFlowResponse.data);
     };
 
     fetchSalesData();
   }, [date]);
 
-  useEffect(() => {
-    const fetchSalesData = async () => {
-      const earningsResponse = await getDailyEarnings(date);
-      setDailyEarningsSummary(earningsResponse.data);
-      const cashFlowResponse = await getCashFlow(date);
-      setCashFlow(cashFlowResponse.data);
-    };
 
-    fetchSalesData();
-  }, [date, sales]);
 
-  const handleExport = () => {
-    // Definir valores iniciales
-    const isPartial = date === today;
-    const dateFile = `${date}${isPartial ? " " + formatTimeFromDate() : ""}`;
-    const type = isPartial ? "parcial " : "total ";
-
-    // Generar el prefijo del nombre del archivo
-    const prefixName = `Corte de caja ${type}${
-      getUserData().store_name
-    } ${dateFile}`;
-
-    // Exportar a Excel
-    exportToExcel(dailyEarningsSummary, prefixName, false);
-  };
 
   const handleOpenModal = (sale) => {
     dispatch(hideSaleModal());
@@ -93,9 +62,7 @@ const SaleList = () => {
     <>
       <SaleModal onUpdateSaleList={handleUpdateSaleList}></SaleModal>
       <div className="custom-section">
-        <Row>
-          <Col md={4}>
-            <Form.Label className="fw-bold">Filtros</Form.Label>
+        <Form.Label className="fw-bold">Lista de ventas</Form.Label>
             <Form>
               <Form.Label>Fecha</Form.Label>
               <Form.Control
@@ -105,68 +72,6 @@ const SaleList = () => {
                 max={today}
               />
             </Form>
-
-            <CustomButton onClick={handleExport} fullWidth>
-              Descargar corte del dia
-            </CustomButton>
-          </Col>
-
-          <Col md={4}>
-          <Form.Label className="fw-bold">Resumen</Form.Label>
-            <CustomTable
-              data={dailyEarningsSummary}
-              columns={[
-                {
-                  name: "Definición",
-                  selector: (row) => row.payment_method,
-                },
-
-                {
-                  name: "($) Total",
-                  selector: (row) => row.total_amount,
-                },
-              ]}
-            />
-          </Col>
-
-          <Col md={4}>
-          <Form.Label className="fw-bold">Movimientos en caja</Form.Label>
-            <CustomTable
-              data={cashFlow}
-              columns={[
-                {
-                  name: "Creación",
-                  selector: (row) => formatTimeFromDate(row.created_at),
-                },
-                {
-                  name: "Concepto",
-                  selector: (row) => row.concept,
-                },
-
-                {
-                  name: "Tipo",
-                  selector: (row) => row.transaction_type_display,
-                },
-
-                {
-                  name: "Cantidad",
-                  selector: (row) => "$" + row.amount,
-                },
-                {
-                  name: "usuario",
-                  selector: (row) => row.user_username,
-                },
-              ]}
-            />
-          </Col>
-
-
-        </Row>
-      </div>
-
-      <div className="custom-section">
-        <Form.Label className="fw-bold">Lista de ventas</Form.Label>
-
         <CustomTable
           data={sales}
           columns={[
