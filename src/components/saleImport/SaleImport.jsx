@@ -4,9 +4,8 @@ import CustomTable from "../commons/customTable/customTable";
 import CustomButton from "../commons/customButton/CustomButton";
 import { importSales, importSalesValidation } from "../apis/sales";
 import Swal from "sweetalert2";
-import { SuccessIcon, ErrorIcon,  } from "../commons/icons/Icons";
+import { SuccessIcon, ErrorIcon } from "../commons/icons/Icons";
 import { useRef } from "react";
-
 
 const DATA_SAMPLE = [
   { code: 1, cantidad: 1, description: "Descripción del producto 1" },
@@ -71,9 +70,9 @@ const SaleImport = () => {
     if (response.status === 200) {
       setSales([]);
       setFormData({ ...formData, file: null });
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ""; // Limpia el input de archivo
-    }
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ""; // Limpia el input de archivo
+      }
       Swal.fire({
         icon: "success",
         title: "Ventas importadas",
@@ -101,59 +100,60 @@ const SaleImport = () => {
       <div className="custom-section">
         <Form.Label className="fw-bold">Importar ventas</Form.Label>
         <Row>
-        <Col md={4}>
-          <Form.Group controlId="formFile" className="">
-            <Form.Control
-              type="file"
-              ref={fileInputRef}
-              defaultValue={formData.file}
-              onChange={handleDataChange}
-              name="file"
-            />
-          </Form.Group>
-        </Col>
+          <Col md={4}>
+            <Form.Group controlId="formFile" className="">
+              <Form.Control
+                type="file"
+                ref={fileInputRef}
+                defaultValue={formData.file}
+                onChange={handleDataChange}
+                name="file"
+              />
+            </Form.Group>
+          </Col>
 
-        <Col md={2}>
-          <CustomButton
-            onClick={handleValidation}
-            disabled={formData.file === ""}
-            fullWidth
-          >
-            Validar
-          </CustomButton>
-        </Col>
+          <Col md={2}>
+            <CustomButton
+              onClick={handleValidation}
+              disabled={formData.file === ""}
+              fullWidth
+            >
+              Validar
+            </CustomButton>
+          </Col>
 
-        <Col md={2}>
-          <CustomButton
-            onClick={handleImport}
-            disabled={
-              sales.length === 0 ||
-              sales.some((item) => item.status !== "Exitoso")
-            }
-            fullWidth
-          >
-            Importar
-          </CustomButton>
-        </Col>
+          <Col md={2}>
+            <CustomButton
+              onClick={handleImport}
+              disabled={
+                sales.length === 0 ||
+                sales.some((item) => item.status !== "Exitoso")
+              }
+              fullWidth
+            >
+              Importar
+            </CustomButton>
+          </Col>
 
-        <Col md={2}>
-          <CustomButton href={URL_TEMPLATE} fullWidth>
-            Descargar plantilla
-          </CustomButton>
-        </Col>
+          <Col md={2}>
+            <CustomButton href={URL_TEMPLATE} fullWidth>
+              Descargar plantilla
+            </CustomButton>
+          </Col>
 
-        <Col md={2}>
-          <CustomButton onClick={() => setShowExample(!showExample)} fullWidth>
-            Ver Ejemplo
-          </CustomButton>
-        </Col>
+          <Col md={2}>
+            <CustomButton
+              onClick={() => setShowExample(!showExample)}
+              fullWidth
+            >
+              Ver Ejemplo
+            </CustomButton>
+          </Col>
         </Row>
-
       </div>
 
-
-        <div className="custom-section" hidden={showExample}>
-          <Row>
+      <div className="custom-section" hidden={showExample}>
+        <Row>
           <Col md={9}>
             <Form.Label className="fw-bold">Ejemplo de plantilla</Form.Label>
 
@@ -174,53 +174,51 @@ const SaleImport = () => {
                 },
               ]}
             ></CustomTable>
-
-
           </Col>
 
           <Col md={3}>
-          <Form.Label className="fw-bold">Notas</Form.Label>
+            <Form.Label className="fw-bold">Notas</Form.Label>
             <p>
-              1-.Las descripciones pueden ser NO Exactas la
-              información de la base de datos, pero si una referencia en caso de
-              que haya escrito mal el codigó. <br /> 2-. Podemos añadir el mismo
-              producto en diferentes renglones haciendo referencia a que el
-              mismo producto fue comprado varias veces.
+              1-.Las descripciones pueden ser NO Exactas la información de la
+              base de datos, pero si una referencia en caso de que haya escrito
+              mal el codigó. <br /> 2-. Podemos añadir el mismo producto en
+              diferentes renglones haciendo referencia a que el mismo producto
+              fue comprado varias veces.
             </p>
-
-            </Col>
-          </Row>
-        </div>
+          </Col>
+        </Row>
+      </div>
 
       <div className="custom-section">
-          <Form.Label className="fw-bold">Archivo actual</Form.Label>
-          <CustomTable
-            data={sales}
-            columns={[
-              {
-                name: "Código",
-                selector: (row) => row.code,
-              },
-              {
-                name: "Cantidad",
-                selector: (row) => row.quantity,
-              },
-              {
-                name: "Descripción",
-                selector: (row) => row.product_description,
-              },
-              {
-                name: "Status",
-                selector: (row) => (
-                  row.status === "Exitoso" 
-                    ? <SuccessIcon /> 
-                    : <>
-                        <ErrorIcon /> {row.status}
-                      </>
+        <Form.Label className="fw-bold">Archivo actual</Form.Label>
+        <CustomTable
+          data={sales}
+          columns={[
+            {
+              name: "Código",
+              selector: (row) => row.code,
+            },
+            {
+              name: "Cantidad",
+              selector: (row) => row.quantity,
+            },
+            {
+              name: "Descripción",
+              selector: (row) => row.product_description,
+            },
+            {
+              name: "Status",
+              selector: (row) =>
+                row.status === "Exitoso" ? (
+                  <SuccessIcon />
+                ) : (
+                  <>
+                    <ErrorIcon /> {row.status}
+                  </>
                 ),
-              },
-            ]}
-          ></CustomTable>
+            },
+          ]}
+        ></CustomTable>
       </div>
     </div>
   );
