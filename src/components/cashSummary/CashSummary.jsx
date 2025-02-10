@@ -10,12 +10,11 @@ import {
   formatTimeFromDate,
 } from "../utils/utils";
 import { useDispatch } from "react-redux";
-import {
-  hideSaleModal,
-  showSaleModal,
-} from "../redux/saleModal/SaleModalActions";
-import SaleModal from "../saleModal/saleModal";
+
+
 import { getCashFlow } from "../apis/cashflow";
+import CashFlowModal from "../cashFlowModal/CashFlowModal";
+import { hideCashFlowModal, showCashFlowModal } from "../redux/cashFlowModal/CashFlowModalActions";
 
 const CashSummary = () => {
   const [cashSummary, setCashSummary] = useState([]);
@@ -70,32 +69,26 @@ const CashSummary = () => {
     exportToExcel(cashSummary, prefixName, false);
   };
 
-  const handleOpenModal = (sale) => {
-    dispatch(hideSaleModal());
-    setTimeout(() => dispatch(showSaleModal(sale)));
+  const handleOpenModal = (cashFlow) => {
+    console.log('hola')
+    dispatch(hideCashFlowModal());
+    setTimeout(() => dispatch(showCashFlowModal(cashFlow)));
   };
 
-  const handleUpdateSaleList = (updatedSale) => {
-    if ("delete" in updatedSale) {
-      cashFlow((prevSales) => {
-        const updatedList = prevSales.filter(
-          (item) => item.id !== updatedSale.id
-        );
-        return updatedList;
+  const handleUpdateCashFlowList = (updateCashFlow) => {
+      setCashFlow((prevBrands) => {
+        const brandExists = prevBrands.some((b) => b.id === updateCashFlow.id);
+        return brandExists
+          ? prevBrands.map((b) => (b.id === updateCashFlow.id ? updateCashFlow : b))
+          : [...prevBrands, updateCashFlow];
       });
-    } else {
-      setCashFlow((prevSales) => {
-        const saleExists = prevSales.some((b) => b.id === updatedSale.id);
-        return saleExists
-          ? prevSales.map((b) => (b.id === updatedSale.id ? updatedSale : b))
-          : [...prevSales, updatedSale];
-      });
-    }
-  };
+    };
+
+
 
   return (
     <>
-      <SaleModal onUpdateSaleList={handleUpdateSaleList}></SaleModal>
+      <CashFlowModal onUpdateCashFlowList={handleUpdateCashFlowList}/>
       <div className="custom-section">
         <Row>
           <Col md={6}>
@@ -175,7 +168,7 @@ const CashSummary = () => {
             />
           </Col>
 
-          
+
           <Col md={3}>
             <Form.Label className="fw-bold"> Total en caja</Form.Label>
             <CustomTable
@@ -197,6 +190,8 @@ const CashSummary = () => {
 
       <div className="custom-section">
         <Form.Label className="fw-bold">Lista de movimientos</Form.Label>
+        <br/>
+        <CustomButton onClick={()=> handleOpenModal()}>Crear movimiento</CustomButton>
         <CustomTable
           data={cashFlow}
           columns={[
