@@ -60,7 +60,7 @@ export const updateProduct = async (data) => {
 };
 
 export const addProducts = async (data) => {
-  const apiUrl = new URL(getApiUrl("add-products"));
+  const apiUrl = new URL(getApiUrl("products/add"));
 
   try {
     const response = await axios.post(apiUrl, data, {

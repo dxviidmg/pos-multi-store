@@ -155,8 +155,7 @@ const ProductImport = () => {
       </div>
 
 
-      {showExample && (
-        <div className="custom-section">
+        <div className="custom-section" hidden={showExample}>
             <Form.Label className="fw-bold">Ejemplo de plantilla</Form.Label>
 
             <CustomTable
@@ -202,7 +201,6 @@ const ProductImport = () => {
 
 
         </div>
-      )}
 
       <div className="custom-section">
           <Form.Label className="fw-bold">Archivo actual</Form.Label>
