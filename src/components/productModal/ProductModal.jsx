@@ -141,16 +141,15 @@ const ProductModal = ({ onUpdateProductList }) => {
           <Col md={4}>
             <Form.Label>Marca</Form.Label>
             <Form.Select
-              aria-label="Default select example"
               value={formData.brand}
               onChange={handleDataChange}
               name="brand"
 //              disabled={isLoading}
             >
               <option value="">Selecciona una marca</option>
-              {brands.map((brands) => (
-                <option key={brands.id} value={brands.id}>
-                  {brands.name}
+              {brands.map((brand) => (
+                <option key={brand.id} value={brand.id}>
+                  {brand.name}
                 </option>
               ))}
             </Form.Select>
