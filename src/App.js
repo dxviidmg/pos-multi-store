@@ -43,7 +43,7 @@ function App() {
             <Route path="/ventas/" element={<SaleList />} />
             <Route path="/vender/" element={<SaleCreate />} />
             <Route path="/importar-ventas/" element={<SaleImport />} />
-            <Route path="/resumen-ventas/" element={<CashSummary />} />
+            <Route path="/resumen-caja/" element={<CashSummary />} />
             <Route path="/distribuir/" element={<SaleCreate />} />
             <Route path="/traspasos/" element={<TransferList />} />
             <Route path="/clientes/" element={<ClientList />} />

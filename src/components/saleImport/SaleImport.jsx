@@ -151,8 +151,8 @@ const SaleImport = () => {
 
       </div>
 
-      {showExample && (
-        <div className="custom-section">
+
+        <div className="custom-section" hidden={showExample}>
           <Row>
           <Col md={9}>
             <Form.Label className="fw-bold">Ejemplo de plantilla</Form.Label>
@@ -191,7 +191,6 @@ const SaleImport = () => {
             </Col>
           </Row>
         </div>
-      )}
 
       <div className="custom-section">
           <Form.Label className="fw-bold">Archivo actual</Form.Label>
