@@ -36,8 +36,8 @@ export const getSales = async (date) => {
 };
 
 
-export const getDailyEarnings = async (date) => {
-  const apiUrl = new URL(getApiUrl("daily-earnings"));
+export const getCashSummary = async (date) => {
+  const apiUrl = new URL(getApiUrl("cash/summary"));
   if (date){
     apiUrl.searchParams.append('date', date);
 
@@ -55,7 +55,7 @@ export const getDailyEarnings = async (date) => {
 };
 
 export const importSalesValidation = async (data) => {
-  const apiUrl = getApiUrl("import-sales-validation");
+  const apiUrl = getApiUrl("sales/import-validation");
   try {
     const response = await axios.post(apiUrl, data, {
       headers: getHeaders(true),
@@ -67,7 +67,7 @@ export const importSalesValidation = async (data) => {
 };
 
 export const importSales = async (data) => {
-  const apiUrl = getApiUrl("import-sales");
+  const apiUrl = getApiUrl("sales/import");
   try {
     const response = await axios.post(apiUrl, data, {
       headers: getHeaders(true),
@@ -79,7 +79,7 @@ export const importSales = async (data) => {
 };
 
 export const cancelSale = async (data) => {
-  const apiUrl = getApiUrl("cancel-sale");
+  const apiUrl = getApiUrl("sales/cancel");
   try {
     const response = await axios.post(apiUrl, data, {
       headers: getHeaders(),

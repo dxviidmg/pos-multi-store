@@ -53,6 +53,7 @@ const CustomNavbar = () => {
                 <Nav.Link href="/clientes/">Clientes</Nav.Link>
                 <Nav.Link href="/inventario/">Inventario</Nav.Link>
                 <NavDropdown title="Ventas" className="custom-dropdown">
+                <NavDropdown.Item href="/resumen-ventas/">Resumen</NavDropdown.Item>
                   <NavDropdown.Item href="/ventas/">Ventas</NavDropdown.Item>
                   <NavDropdown.Divider />
                   <NavDropdown.Item href="/importar-ventas/">
