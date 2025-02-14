@@ -84,14 +84,16 @@ const CashFlowModal = ({ onUpdateCashFlowList }) => {
   return (
     <CustomModal showOut={showCashFlowModal} title={formData.id ? "Actualizar movimiento" : "Crear movimiento"}>
       <Row>
-        <Col md={6}>
+        <Col md={3}>
+        <Form.Label>Tipo de movimiento</Form.Label>
         <Form.Select
               value={formData.transaction_type}
               onChange={handleDataChange}
               name="transaction_type"
 //              disabled={isLoading}
             >
-              <option value="">Tipo de movimiento</option>
+
+              <option value="">Selecciona</option>
               {options.map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}
@@ -99,7 +101,7 @@ const CashFlowModal = ({ onUpdateCashFlowList }) => {
               ))}
             </Form.Select>
         </Col>
-        <Col md={6}>
+        <Col md={3}>
           <Form.Label>Concepto</Form.Label>
           <Form.Control
             type="text"
@@ -109,7 +111,7 @@ const CashFlowModal = ({ onUpdateCashFlowList }) => {
             onChange={handleDataChange}
           />
         </Col>
-        <Col md={6}>
+        <Col md={3}>
           <Form.Label>Cantidad</Form.Label>
           <Form.Control
             type="number"
@@ -119,7 +121,7 @@ const CashFlowModal = ({ onUpdateCashFlowList }) => {
             onChange={handleDataChange}
           />
         </Col>
-        <Col md={6} className="d-flex flex-column justify-content-end">
+        <Col md={3} className="d-flex flex-column justify-content-end">
           <CustomButton
             fullWidth={true}
             onClick={handleBrandSubmit}
