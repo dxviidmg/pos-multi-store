@@ -122,7 +122,7 @@ const SaleList = () => {
               name: "Accciones",
               grow: 2,
               cell: (row) =>
-                (row.is_cancelable ||JSON.parse(localStorage.getItem("user"))).is_owner === true && (
+                (row.is_cancelable ||JSON.parse(localStorage.getItem("user")).is_owner === true) && (
                   <CustomButton onClick={() => handleOpenModal(row)}>
                     Devolución
                   </CustomButton>
