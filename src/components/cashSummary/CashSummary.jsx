@@ -54,6 +54,34 @@ const CashSummary = () => {
     fetchCashData();
   }, [date]);
 
+
+  useEffect(() => {
+    const fetchCashData = async () => {
+      const cashSummary = await getCashSummary(date);
+      const paymentMethods = cashSummary.data.filter(
+        (cash) => cash.payment_method_data === true
+      );
+      const salesSummary = cashSummary.data.filter(
+        (cash) => cash.sales_data === true
+      );
+      const cashFlowSummary = cashSummary.data.filter(
+        (cash) => cash.cashflow_data === true
+      );
+      const totalSummary = cashSummary.data.filter(
+        (cash) => cash.total_data === true
+      );
+      setSalesSummary(salesSummary);
+      setPaymentMethodsSummary(paymentMethods);
+      setCashSummary(cashSummary.data);
+      setCashFlowSummary(cashFlowSummary);
+      setTotalSummary(totalSummary);
+
+    };
+
+    fetchCashData();
+  }, [date, cashFlow]);
+
+
   const handleExport = () => {
     // Definir valores iniciales
     const isPartial = date === today;
