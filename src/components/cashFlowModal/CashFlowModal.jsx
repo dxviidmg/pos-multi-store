@@ -3,7 +3,6 @@ import CustomModal from "../commons/customModal/customModal";
 import { Col, Form, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
-import { createBrand, updateBrand } from "../apis/brands";
 import Swal from "sweetalert2";
 import { hideCashFlowModal } from "../redux/cashFlowModal/CashFlowModalActions";
 import { createCashFlow, getCashFlowChoices } from "../apis/cashflow";
@@ -49,7 +48,7 @@ const CashFlowModal = ({ onUpdateCashFlowList }) => {
   const handleBrandSubmit = async () => {
     let response;
     if (formData.id) {
-      response = await updateBrand(formData);
+//      response = await updateBrand(formData);
     } else {
       response = await createCashFlow(formData);
     }
