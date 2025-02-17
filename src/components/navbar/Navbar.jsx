@@ -51,6 +51,16 @@ const CustomNavbar = () => {
               <>
                 <Nav.Link href="/vender/">Vender</Nav.Link>
                 <Nav.Link href="/clientes/">Clientes</Nav.Link>
+                <NavDropdown title="Productos" className="custom-dropdown">
+                  <NavDropdown.Item href="/marcas/">Marcas</NavDropdown.Item>
+                  <NavDropdown.Divider />
+                  <NavDropdown.Item href="/productos/">
+                    Productos
+                  </NavDropdown.Item>
+                  <NavDropdown.Item href="/importar-productos/">
+                    Importar Productos
+                  </NavDropdown.Item>
+                </NavDropdown>
                 <Nav.Link href="/inventario/">Inventario</Nav.Link>
                 <NavDropdown title="Ventas" className="custom-dropdown">
                 <NavDropdown.Item href="/resumen-caja/">Resumen</NavDropdown.Item>
