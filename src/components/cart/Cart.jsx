@@ -57,7 +57,7 @@ const Cart = () => {
     fetchData();
 
     // Si el tipo de tienda es "A", se establece el movimiento como "distribucion"
-    if (store_type === "A" && movementType !== "distribucion") {
+    if (store_type === "A" && movementType === "venta") {
       dispatch(updateMovementType("distribucion"));
     }
   }, [store_type, dispatch, movementType]);
