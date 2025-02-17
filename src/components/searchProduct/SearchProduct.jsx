@@ -265,7 +265,7 @@ const SearchProduct = () => {
         onChange={handleMovementTypeChange}
         value="venta"
         checked={movementType === "venta"}
-        disabled={store_type === "A"}
+        className={store_type === "A" ? "d-none" : ""}
       />
       <Form.Check
         inline
@@ -275,7 +275,7 @@ const SearchProduct = () => {
         onChange={handleMovementTypeChange}
         value="traspaso"
         checked={movementType === "traspaso"}
-        disabled={store_type === "A"}
+        className={store_type === "A" ? "d-none" : ""}
       />
       <Form.Check
         inline
@@ -285,7 +285,7 @@ const SearchProduct = () => {
         onChange={handleMovementTypeChange}
         value="distribucion"
         checked={movementType === "distribucion"}
-        disabled={store_type === "T"}
+        className={store_type === "T" ? "d-none" : ""}
       />
       <Form.Check
         inline
