@@ -6,7 +6,7 @@ import { getUserData } from "../apis/utils";
 import { NavDropdown } from "react-bootstrap";
 import Logo from "../../assets/images/logo.jpg";
 import { useNavigate } from "react-router-dom";
-import './navbar.css'
+import "./navbar.css";
 
 const CustomNavbar = () => {
   const navigate = useNavigate();
@@ -63,7 +63,9 @@ const CustomNavbar = () => {
                 </NavDropdown>
                 <Nav.Link href="/inventario/">Inventario</Nav.Link>
                 <NavDropdown title="Ventas" className="custom-dropdown">
-                <NavDropdown.Item href="/resumen-caja/">Resumen</NavDropdown.Item>
+                  <NavDropdown.Item href="/resumen-caja/">
+                    Resumen
+                  </NavDropdown.Item>
                   <NavDropdown.Item href="/ventas/">Ventas</NavDropdown.Item>
                   <NavDropdown.Divider />
                   <NavDropdown.Item href="/importar-ventas/">
@@ -107,13 +109,18 @@ const CustomNavbar = () => {
           </Nav>
 
           <Nav className="ms-auto">
-            <Nav.Link>Negocio: {user?.tenant_name}</Nav.Link>
+            <NavDropdown title="Información de sesión" className="custom-dropdown">
+              <NavDropdown.Item>Negocio: {user?.tenant_name}</NavDropdown.Item>
 
-            {user.store_name && (
-              <Nav.Link> {user.store_type_display} {user.store_name} </Nav.Link>
-            )}
+              {user.store_name && (
+                <NavDropdown.Item>
+                  {user.store_type_display} {user.store_name}
+                </NavDropdown.Item>
+              )}
 
-            <Nav.Link>Usuario: {user.full_name}</Nav.Link>
+              <NavDropdown.Item>Usuario: {user.full_name}</NavDropdown.Item>
+            </NavDropdown>
+
             <Nav.Link href="/" onClick={handleLogout}>
               Salir
             </Nav.Link>
