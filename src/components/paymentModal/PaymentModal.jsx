@@ -1,31 +1,32 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect, useRef } from "react";
 import CustomModal from "../commons/customModal/customModal";
 import { Col, Form, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import ClientSelected from "../clientSelected/ClientSelected";
-import SearchClient from "../searchClient/SearchClient";
 import CustomButton from "../commons/customButton/CustomButton";
 import { cleanCart, removeClientfromCart } from "../redux/cart/cartActions";
 import { createSale } from "../apis/sales";
 import { hidePaymentModal } from "../redux/paymentModal/PaymentModalActions";
 import Swal from "sweetalert2";
 
+function roundUpCustom(value) {
+  const intPart = Math.floor(value); // Parte entera
+  const decimalPart = value - intPart; // Parte decimal
 
-  function roundUpCustom(value) {
-    const intPart = Math.floor(value); // Parte entera
-    const decimalPart = value - intPart; // Parte decimal
-    
-    if (decimalPart === 0) return value; // Si es entero, se queda igual
-    if (decimalPart <= 0.5) return intPart + 0.5; // Si es hasta 0.5, sube a 0.5
-    return Math.ceil(value); // Si es mayor a 0.5, sube al siguiente entero
+  if (decimalPart === 0) return value; // Si es entero, se queda igual
+  if (decimalPart <= 0.5) return intPart + 0.5; // Si es hasta 0.5, sube a 0.5
+  return Math.ceil(value); // Si es mayor a 0.5, sube al siguiente entero
 }
 
+
+const INITIAL_PAYMENT_STATE = { paidWith: 0, change: 0 }
 const PaymentModal = () => {
+  const inputPaymentRef = useRef(null)
   const { showPaymentModal } = useSelector(
     (state) => state.PaymentModalReducer
   );
   const cart = useSelector((state) => state.cartReducer.cart);
   const client = useSelector((state) => state.cartReducer.client);
+  const [payment, setPayment] = useState(INITIAL_PAYMENT_STATE);
 
   const [paymentMethods, setPaymentMethods] = useState({
     type: "radio", // Tipo de pago inicial.
@@ -34,15 +35,21 @@ const PaymentModal = () => {
 
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    if (showPaymentModal) {
+      setTimeout(() => {
+        inputPaymentRef.current?.focus();
+      }, 100); // Pequeño retraso para permitir el renderizado
+    }
+  }, [showPaymentModal]);
+
   const { total, totalDiscount } = useMemo(() => {
     const total = roundUpCustom(
       cart.reduce((acc, item) => acc + item.product_price * item.quantity, 0)
     );
 
     const totalDiscount = client?.discount_percentage_complement
-      ? roundUpCustom(
-          total * (client.discount_percentage_complement / 100)
-        )
+      ? roundUpCustom(total * (client.discount_percentage_complement / 100))
       : total;
 
     return { total, totalDiscount };
@@ -123,6 +130,18 @@ const PaymentModal = () => {
   };
 
   const handleCreateSale = async () => {
+
+    console.log(payment)
+
+    if (payment.paidWith === 0 || payment.change < 0){
+      Swal.fire({
+        icon: "error",
+        title: "Error al finalizar la venta",
+        text: "Pago con debe igual o mayor a la cantidad a pagar",
+        timer: 5000,
+      });
+      return
+    }
     const paymentList = convertPaymentMethodsToList();
 
     const data = {
@@ -131,7 +150,9 @@ const PaymentModal = () => {
       store_products: cart.map((product) => ({
         id: product.id,
         quantity: product.quantity,
-        price: product.product_price * ((client?.discount_percentage_complement ?? 100) * 0.01)
+        price:
+          product.product_price *
+          ((client?.discount_percentage_complement ?? 100) * 0.01),
       })),
       payments: paymentList,
     };
@@ -146,6 +167,7 @@ const PaymentModal = () => {
       dispatch(removeClientfromCart());
       dispatch(cleanCart());
       dispatch(hidePaymentModal());
+      setPayment(INITIAL_PAYMENT_STATE)
 
       Swal.fire({
         icon: "success",
@@ -162,111 +184,125 @@ const PaymentModal = () => {
     }
   };
 
+  const handlePaidWithChange = async (e) => {
+    let value  = Number(e.target.value);
+    setPayment({ paidWith: value, change: value - totalDiscount });
+  };
+
   return (
     <CustomModal showOut={showPaymentModal} title="Finalizar pago">
       <div className="custom-section">
+        <Row>
+          <Col md={3}>
+            <Form.Label>Total</Form.Label>
+            <Form.Control type="number" value={total.toFixed(2)} disabled />
+          </Col>
 
+          <Col md={3}>
+            <Form.Label>Total con descuento</Form.Label>
+            <Form.Control
+              type="number"
+              value={totalDiscount.toFixed(2)}
+              disabled
+            />
+          </Col>
+          <Col md={3}>
+            <Form.Label>Pago con</Form.Label>
+            <Form.Control
+              type="number"
+              value={payment.paidWith}
+              onChange={handlePaidWithChange}
+              ref={inputPaymentRef}
+            />
+          </Col>
+          <Col md={3}>
+            <Form.Label>Cambio</Form.Label>
+            <Form.Control type="number" value={payment.change} disabled />
+          </Col>
+        </Row>
       </div>
 
       <div className="custom-section">
-      <Row>
-        <Col md={6}>
-          <Form.Label>Total</Form.Label>
-          <Form.Control type="text" value={total.toFixed(2)} disabled />
-        </Col>
+        <Row>
+          <Col md={3}>
+            <Form.Label className="me-1">Tipo de pago:</Form.Label>
+            <Form.Check
+              id="single"
+              label="Único"
+              type="radio"
+              onChange={handleChangePayments}
+              value="radio"
+              name="paymentType"
+              checked={paymentMethods.type === "radio"}
+            />
+            <Form.Check
+              id="mixed"
+              label="Mixto"
+              type="radio"
+              onChange={handleChangePayments}
+              value="checkbox"
+              name="paymentType"
+              checked={paymentMethods.type === "checkbox"}
+            />
+          </Col>
 
-        <Col md={6}>
-          <Form.Label>Total con descuento</Form.Label>
-          <Form.Control type="text" value={totalDiscount.toFixed(2)} disabled />
-        </Col>
-      </Row>
-      </div>
-
-
-      <div className="custom-section">
-      <Row>
-        <Col md={3}>
-          <Form.Label className="me-1">Tipo de pago:</Form.Label>
-          <Form.Check
-            id="single"
-            label="Único"
-            type="radio"
-            onChange={handleChangePayments}
-            value="radio"
-            name="paymentType"
-            checked={paymentMethods.type === "radio"}
-          />
-          <Form.Check
-            id="mixed"
-            label="Mixto"
-            type="radio"
-            onChange={handleChangePayments}
-            value="checkbox"
-            name="paymentType"
-            checked={paymentMethods.type === "checkbox"}
-          />
-        </Col>
-
-        <Col md={6}>
-          <Form.Label className="me-3">Medios de pago:</Form.Label>
-          {["EF", "TA", "TR"].map((method) => (
-            <div key={method} className="d-flex align-items-center mb-1">
-              <div className="me-3" style={{ flex: "1" }}>
-                <Form.Check
-                  id={method}
-                  label={
-                    method === "EF"
-                      ? "Efectivo"
-                      : method === "TA"
-                      ? "Pago con tarjeta"
-                      : "Transferencia"
-                  }
-                  type={paymentMethods.type}
-                  onChange={handleChangePayments}
-                  value={method}
-                  name="paymentMethod"
-                  checked={
-                    paymentMethods.type === "radio"
-                      ? paymentMethods.methods[method] === totalDiscount
-                      : paymentMethods.methods[method] > 0
-                  }
-                />
-              </div>
-              {paymentMethods.type === "checkbox" &&
-                paymentMethods.methods[method] > 0 && (
-                  <Form.Control
-                    type="number"
-                    placeholder="$"
-                    style={{ width: "120px", height: "calc(1.5rem + 2px)" }}
-                    className="align-self-center"
-                    onChange={(e) =>
-                      handlePaymentValueChange(method, e.target.value)
+          <Col md={6}>
+            <Form.Label className="me-3">Medios de pago:</Form.Label>
+            {["EF", "TA", "TR"].map((method) => (
+              <div key={method} className="d-flex align-items-center mb-1">
+                <div className="me-3" style={{ flex: "1" }}>
+                  <Form.Check
+                    id={method}
+                    label={
+                      method === "EF"
+                        ? "Efectivo"
+                        : method === "TA"
+                        ? "Pago con tarjeta"
+                        : "Transferencia"
+                    }
+                    type={paymentMethods.type}
+                    onChange={handleChangePayments}
+                    value={method}
+                    name="paymentMethod"
+                    checked={
+                      paymentMethods.type === "radio"
+                        ? paymentMethods.methods[method] === totalDiscount
+                        : paymentMethods.methods[method] > 0
                     }
                   />
-                )}
-            </div>
-          ))}
-        </Col>
-        <Col md={3}>
-          <CustomButton
-            disabled={
-              (paymentMethods.type === "checkbox" &&
-                totalPaymentInput !== totalDiscount) ||
-              Object.values(paymentMethods.methods).every(
-                (amount) => amount === 0
-              )
-            }
-            fullWidth={true}
-            onClick={handleCreateSale}
-          >
-            Pagar Ctrl + D
-          </CustomButton>
-        </Col>
-      </Row>
+                </div>
+                {paymentMethods.type === "checkbox" &&
+                  paymentMethods.methods[method] > 0 && (
+                    <Form.Control
+                      type="number"
+                      placeholder="$"
+                      style={{ width: "120px", height: "calc(1.5rem + 2px)" }}
+                      className="align-self-center"
+                      onChange={(e) =>
+                        handlePaymentValueChange(method, e.target.value)
+                      }
+                    />
+                  )}
+              </div>
+            ))}
+          </Col>
+          <Col md={3}>
+            <CustomButton
+              disabled={
+                (paymentMethods.type === "checkbox" &&
+                  totalPaymentInput !== totalDiscount) ||
+                Object.values(paymentMethods.methods).every(
+                  (amount) => amount === 0
+                )
+              }
+              fullWidth={true}
+              onClick={handleCreateSale}
+            >
+              Pagar (Ctrl + D)
+            </CustomButton>
+          </Col>
+        </Row>
       </div>
-
-
-
     </CustomModal>
   );
 };
