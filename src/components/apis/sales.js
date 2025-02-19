@@ -93,7 +93,6 @@ export const cancelSale = async (data) => {
 
 export const printTicket = async (data={}) => {
   const apiUrl = getApiUrl("print/ticket");
-
   console.log(getHeaders())
   try {
     const response = await axios.post(apiUrl, data, {

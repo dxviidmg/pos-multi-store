@@ -98,7 +98,6 @@ const CashSummary = () => {
   };
 
   const handleOpenModal = (cashFlow) => {
-    console.log('hola')
     dispatch(hideCashFlowModal());
     setTimeout(() => dispatch(showCashFlowModal(cashFlow)));
   };

@@ -71,7 +71,6 @@ const SearchProduct = () => {
       });
     } 
     else if (movementType === "checar") {
-      console.log(product)
       Swal.fire({
         icon: "success",
         title: product.product_description,
@@ -111,6 +110,7 @@ const SearchProduct = () => {
         movementType === "traspaso"
           ? product.reserved_stock
           : product.available_stock;
+
       if (movementType === "agregar") {
         dispatch(addToCart({ ...product, quantity: 1 }));
       } else if (existingProduct.quantity < stock) {
@@ -230,7 +230,6 @@ const SearchProduct = () => {
         timer: 5000,
       });
     } else {
-      console.log(response.response.data.error)
       Swal.fire({
         icon: "error",
         title: response.response.data.error,
@@ -260,7 +259,7 @@ const SearchProduct = () => {
       <Form.Check
         inline
         id="description"
-        label="Manual (Descripción) (Ctrl + Y)"
+        label="Por marca o nombre (Ctrl + Y)"
         type="radio"
         onChange={handleQueryTypeChange}
         value="q"
@@ -280,7 +279,7 @@ const SearchProduct = () => {
       <Form.Check
         inline
         id="traspaso"
-        label="Traspaso  (Ctrl + I)"
+        label="Confirmar traspaso  (Ctrl + I)"
         type="radio"
         onChange={handleMovementTypeChange}
         value="traspaso"
@@ -374,7 +373,7 @@ const SearchProduct = () => {
             cell: (row) => (
               <CustomButton
                 onClick={() => handleAddToCartIfAvailable(row)}
-                disabled={row.available_stock === 0}
+                disabled={movementType === "venta" && row.available_stock === 0}
                 variant="primary"
               >
                 Agregar
