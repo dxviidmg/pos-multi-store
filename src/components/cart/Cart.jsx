@@ -173,8 +173,12 @@ const Cart = () => {
   const commonColumns = [
     { name: "Código", selector: (row) => row.product_code },
     {
-      name: "Descripción",
-      selector: (row) => row.product_description,
+      name: "Marca",
+      selector: (row) => row.product_brand,
+    },
+    {
+      name: "Nombre",
+      selector: (row) => row.product_name,
       grow: 3,
       wrap: true,
     },
@@ -184,8 +188,12 @@ const Cart = () => {
   const commonColumns2 = [
     { name: "Código", selector: (row) => row.product_code },
     {
-      name: "Descripción",
-      selector: (row) => row.product_description,
+      name: "Marca",
+      selector: (row) => row.product_brand,
+    },
+    {
+      name: "Nombre",
+      selector: (row) => row.product_name,
       grow: 3,
       wrap: true,
     },
