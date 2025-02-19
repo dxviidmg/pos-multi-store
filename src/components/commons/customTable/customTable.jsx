@@ -11,6 +11,7 @@ const CustomTable = ({
   noDataComponent = "Sin datos que mostrar",
   showNoDataComponent = true,
   searcher = false,
+  pagination=true
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -40,7 +41,7 @@ const CustomTable = ({
         noDataComponent={showNoDataComponent && noDataComponent}
         columns={columns}
         data={filteredData}
-        pagination={filteredData.length > 10}
+        pagination={pagination && filteredData.length > 10}
         striped
         highlightOnHover
         progressPending={progressPending}

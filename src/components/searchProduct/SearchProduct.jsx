@@ -69,7 +69,17 @@ const SearchProduct = () => {
         title: "Este producto no esta relacionado a algun traspaso",
         timer: 5000,
       });
-    } else {
+    } 
+    else if (movementType === "checar") {
+      console.log(product)
+      Swal.fire({
+        icon: "success",
+        title: product.product_description,
+        text: 'Precio unitario $' + product.prices.unit_price,
+        timer: 5000,
+      });
+    }
+    else {
       handleAddToCartIfAvailable(product);
     }
     setQuery("");
@@ -296,7 +306,15 @@ const SearchProduct = () => {
         value="agregar"
         checked={movementType === "agregar"}
       />
-
+      <Form.Check
+        inline
+        id="checar"
+        label="Checar precio (Ctrl + ***)"
+        type="radio"
+        onChange={handleMovementTypeChange}
+        value="checar"
+        checked={movementType === "checar"}
+      />
       <br />
 
       {!isInputFocused && (
@@ -324,11 +342,16 @@ const SearchProduct = () => {
       <CustomTable
         showNoDataComponent={false}
         data={data}
+        pagination={false}
         columns={[
-          { name: "Código", selector: (row) => row.product_code },
+          { name: "Código", selector: (row) => row.product_code, grow: 2, },
           {
-            name: "Descripción",
-            selector: (row) => row.product_description,
+            name: "Marca",
+            selector: (row) => row.product_brand,
+          },
+          {
+            name: "Nombre",
+            selector: (row) => row.product_name,
             grow: 3,
             wrap: true,
           },
