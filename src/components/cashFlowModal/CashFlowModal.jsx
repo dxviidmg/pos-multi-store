@@ -20,16 +20,14 @@ const CashFlowModal = ({ onUpdateCashFlowList }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await getCashFlowChoices();
-      console.log(data)
-      setOptions(data.data);
+      const response = await getCashFlowChoices();
+      setOptions(response.data);
     };
   
     fetchData();
   }, []);
 
   useEffect(() => {
-    console.log('e2')
     if (cashFlow) {
       setFormData({
         id: cashFlow.id || "",
