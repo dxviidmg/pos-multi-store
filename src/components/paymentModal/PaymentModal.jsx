@@ -17,10 +17,9 @@ function roundUpCustom(value) {
   return Math.ceil(value); // Si es mayor a 0.5, sube al siguiente entero
 }
 
-
-const INITIAL_PAYMENT_STATE = { paidWith: 0, change: 0 }
+const INITIAL_PAYMENT_STATE = { paidWith: 0, change: 0 };
 const PaymentModal = () => {
-  const inputPaymentRef = useRef(null)
+  const inputPaymentRef = useRef(null);
   const { showPaymentModal } = useSelector(
     (state) => state.PaymentModalReducer
   );
@@ -94,7 +93,11 @@ const PaymentModal = () => {
               ...paymentMethods.methods,
               [value]: paymentMethods.methods[value] ? 0 : totalDiscount,
             };
-
+      
+        if (!("EF" in updatedMethods)) {
+          const value = updatedMethods.TA || updatedMethods.TR
+          setPayment({ paidWith: value, change: value - totalDiscount });
+        }
       setPaymentMethods((prev) => ({
         ...prev,
         methods: updatedMethods,
@@ -130,17 +133,14 @@ const PaymentModal = () => {
   };
 
   const handleCreateSale = async () => {
-
-    console.log(payment)
-
-    if (payment.paidWith === 0 || payment.change < 0){
+    if (payment.paidWith === 0 || payment.change < 0) {
       Swal.fire({
         icon: "error",
         title: "Error al finalizar la venta",
         text: "Pago con debe igual o mayor a la cantidad a pagar",
         timer: 5000,
       });
-      return
+      return;
     }
     const paymentList = convertPaymentMethodsToList();
 
@@ -167,7 +167,7 @@ const PaymentModal = () => {
       dispatch(removeClientfromCart());
       dispatch(cleanCart());
       dispatch(hidePaymentModal());
-      setPayment(INITIAL_PAYMENT_STATE)
+      setPayment(INITIAL_PAYMENT_STATE);
 
       Swal.fire({
         icon: "success",
@@ -185,8 +185,20 @@ const PaymentModal = () => {
   };
 
   const handlePaidWithChange = async (e) => {
-    let value  = Number(e.target.value);
+    let value = Number(e.target.value);
     setPayment({ paidWith: value, change: value - totalDiscount });
+  };
+
+  const handleDisableButton = () => {
+    return (
+      (paymentMethods.type === "checkbox" &&
+        totalPaymentInput !== totalDiscount) ||
+      Object.values(paymentMethods.methods).every((amount) => amount === 0)
+    ) || (
+      (paymentMethods.type === "radio" &&
+        paymentMethods.methods.EF >  payment.paidWith) 
+
+    )
   };
 
   return (
@@ -209,7 +221,7 @@ const PaymentModal = () => {
           <Col md={3}>
             <Form.Label>Pago con</Form.Label>
             <Form.Control
-              type="number"
+              type="text"
               value={payment.paidWith}
               onChange={handlePaidWithChange}
               ref={inputPaymentRef}
@@ -288,13 +300,7 @@ const PaymentModal = () => {
           </Col>
           <Col md={3}>
             <CustomButton
-              disabled={
-                (paymentMethods.type === "checkbox" &&
-                  totalPaymentInput !== totalDiscount) ||
-                Object.values(paymentMethods.methods).every(
-                  (amount) => amount === 0
-                )
-              }
+              disabled={handleDisableButton()}
               fullWidth={true}
               onClick={handleCreateSale}
             >
