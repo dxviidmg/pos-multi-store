@@ -243,7 +243,18 @@ const Cart = () => {
 
   const transferColumns = [
     ...commonColumns,
-    { name: "Cantidad", selector: (row) => row.quantity },
+    {
+      name: "Cantidad",
+      selector: (row) => (
+        <Form.Control
+          type="number"
+          value={row.quantity}
+          onChange={(e) => handleQuantityChangeToCart(e, row)} // Implementa esta función para manejar el cambio
+          min="1" // Opcional, para establecer un valor mínimo
+          max={row.stock}
+        />
+      ),
+    },
     {
       name: "Borrar",
       selector: (row) => (
@@ -256,7 +267,18 @@ const Cart = () => {
 
   const distributionColumns = [
     ...commonColumns,
-    { name: "Cantidad", selector: (row) => row.quantity },
+    {
+      name: "Cantidad",
+      selector: (row) => (
+        <Form.Control
+          type="number"
+          value={row.quantity}
+          onChange={(e) => handleQuantityChangeToCart(e, row)} // Implementa esta función para manejar el cambio
+          min="1" // Opcional, para establecer un valor mínimo
+          max={row.stock}
+        />
+      ),
+    },
     {
       name: "Borrar",
       selector: (row) => (
