@@ -64,7 +64,7 @@ const PaymentModal = () => {
 
     window.addEventListener("keydown", handleShortcut);
     return () => window.removeEventListener("keydown", handleShortcut);
-  }, [totalDiscount, paymentMethods, cart, client]);
+  }, [totalDiscount, paymentMethods, cart, client, payment]);
 
   useEffect(() => {
     setPaymentMethods({
