@@ -69,6 +69,10 @@ const StoreList = () => {
                 selector: (row) => row.store_type_display,
               },
               {
+                name: "Inversión",
+                selector: (row) => row.investment.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','),
+              },
+              {
                 name: "Accciones",
                 cell: (row) => (
                   <>
