@@ -56,31 +56,31 @@ const StoreList = () => {
               },
               {
                 name: "Inversión",
-                selector: (row) => row.investment,
+                selector: (row) => row.investment.toLocaleString(),
               },
               {
                 name: "Ganancia del dia",
-                selector: (row) => row.cash_summary[10]["amount"],
+                selector: (row) => row.cash_summary[10]["amount"].toLocaleString(),
               },
               {
                 name: "Efectivo",
-                selector: (row) => row.cash_summary[0]["amount"],
+                selector: (row) => row.cash_summary[0]["amount"].toLocaleString(),
               },
               {
                 name: "Tarjeta",
-                selector: (row) => row.cash_summary[1]["amount"],
+                selector: (row) => row.cash_summary[1]["amount"].toLocaleString(),
               },
               {
                 name: "Transferencia",
-                selector: (row) => row.cash_summary[2]["amount"],
+                selector: (row) => row.cash_summary[2]["amount"].toLocaleString(),
               },
               {
                 name: "Total de ventas",
-                selector: (row) => row.cash_summary[4]["amount"],
+                selector: (row) => row.cash_summary[4]["amount"].toLocaleString(),
               },
               {
                 name: "Ef. en caja",
-                selector: (row) => row.cash_summary[9]["amount"],
+                selector: (row) => row.cash_summary[9]["amount"].toLocaleString(),
               },
               {
                 name: "Accciones",
