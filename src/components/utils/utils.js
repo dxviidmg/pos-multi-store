@@ -36,9 +36,6 @@ export const getFormattedDateTime = (isoDate) => {
   }).format(date);
 };
 
-
-
-
 export const formatTimeFromDate = (dateString) => {
   let date = "";
   if (dateString) {
@@ -49,4 +46,25 @@ export const formatTimeFromDate = (dateString) => {
   const hours = date.getHours().toString().padStart(2, "0");
   const minutes = date.getMinutes().toString().padStart(2, "0");
   return `${hours}:${minutes}`;
+};
+
+export const calculateTimeAgo = (creationDate) => {
+  const now = new Date();
+  const createdAt = new Date(creationDate);
+  const differenceInMs = now - createdAt;
+
+  const seconds = Math.floor(differenceInMs / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+
+  if (days > 0) {
+    return `hace ${days} dia(s)`;
+  } else if (hours > 0) {
+    return `hace ${hours} horas(s)`;
+  } else if (minutes > 0) {
+    return `hace ${minutes} minuto(s)`;
+  } else {
+    return `hace ${seconds} segundo(s)`;
+  }
 };

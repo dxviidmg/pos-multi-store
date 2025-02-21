@@ -2,16 +2,14 @@ import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
 import { Form} from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
-import { getStoreInvestment, getStores } from "../apis/stores";
+import { getStores } from "../apis/stores";
 import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
 import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
 
 
 const StoreList = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [loadingInvesment, setLoadingInvestment] = useState(false);
   const [stores, setStores] = useState([]);
 
   useEffect(() => {
@@ -40,7 +38,7 @@ const StoreList = () => {
 
   return (
     <div className="custom-section">
-      <CustomSpinner2 isLoading={loadingInvesment}></CustomSpinner2>
+      <CustomSpinner2 isLoading={loading}></CustomSpinner2>
 
           <Form.Label className="fw-bold">Lista de tiendas</Form.Label>
           <CustomTable

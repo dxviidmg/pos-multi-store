@@ -1,15 +1,11 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
 import { Form } from "react-bootstrap";
-import { getFormattedDate, formatTimeFromDate } from "../utils/utils";
-import { useDispatch } from "react-redux";
+import { formatTimeFromDate } from "../utils/utils";
 import { getStoreProductLogs } from "../apis/products";
 
 const LogList = () => {
   const [sales, setSales] = useState([]);
-  const today = getFormattedDate();
-
-  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchSalesData = async () => {
@@ -19,10 +15,6 @@ const LogList = () => {
 
     fetchSalesData();
   }, []);
-
-
-
-
 
   return (
     <>

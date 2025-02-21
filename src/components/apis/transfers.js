@@ -54,3 +54,17 @@ export const getTransfers = async () => {
     return error;
   }
   };
+
+
+  export const deleteTransfer = async (id) => {
+
+    try {
+    const response = await axios.delete(getApiUrl("transfer/" + id), {
+      headers: getHeaders(),
+    });
+    return response;
+  } catch (error) {
+    console.error("Error al obtener clientes:", error);
+    return error;
+  }
+  };
