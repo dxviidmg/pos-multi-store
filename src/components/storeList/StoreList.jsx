@@ -38,18 +38,6 @@ const StoreList = () => {
     window.location.reload();
   };
 
-  const handleBrandSubmit = async (row) => {
-    setLoadingInvestment(true)
-    const response = await getStoreInvestment(row);
-    setLoadingInvestment(false)
-    Swal.fire({
-      icon: "success",
-      title: "Inversión en " + row.name,
-      text: "$" + response.data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','),
-      timer: 10000,
-    });
-
-  };
   return (
     <div className="custom-section">
       <CustomSpinner2 isLoading={loadingInvesment}></CustomSpinner2>
@@ -70,11 +58,31 @@ const StoreList = () => {
               },
               {
                 name: "Inversión",
-                selector: (row) => row.investment.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','),
+                selector: (row) => row.investment,
               },
               {
                 name: "Ganancia del dia",
-                selector: (row) => row.profit_today.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','),
+                selector: (row) => row.cash_summary[10]["amount"],
+              },
+              {
+                name: "Efectivo",
+                selector: (row) => row.cash_summary[0]["amount"],
+              },
+              {
+                name: "Tarjeta",
+                selector: (row) => row.cash_summary[1]["amount"],
+              },
+              {
+                name: "Transferencia",
+                selector: (row) => row.cash_summary[2]["amount"],
+              },
+              {
+                name: "Total de ventas",
+                selector: (row) => row.cash_summary[4]["amount"],
+              },
+              {
+                name: "Ef. en caja",
+                selector: (row) => row.cash_summary[9]["amount"],
               },
               {
                 name: "Accciones",
