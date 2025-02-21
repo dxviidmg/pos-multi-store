@@ -53,6 +53,8 @@ const CustomNavbar = () => {
                 <Nav.Link href="/clientes/">Clientes</Nav.Link>
                 <NavDropdown title="Productos" className="custom-dropdown">
                   <NavDropdown.Item href="/marcas/">Marcas</NavDropdown.Item>
+
+
                   <NavDropdown.Divider />
                   <NavDropdown.Item href="/productos/">
                     Productos
@@ -60,8 +62,16 @@ const CustomNavbar = () => {
                   <NavDropdown.Item href="/importar-productos/">
                     Importar Productos
                   </NavDropdown.Item>
+                  <NavDropdown.Divider />
+                  <NavDropdown.Item href="/inventario/">
+                  Inventario
+                  </NavDropdown.Item>
+                  <NavDropdown.Divider />
+                  <NavDropdown.Item href="/logs/">
+                    Logs
+                  </NavDropdown.Item>
+
                 </NavDropdown>
-                <Nav.Link href="/inventario/">Inventario</Nav.Link>
                 <NavDropdown title="Ventas" className="custom-dropdown">
                   <NavDropdown.Item href="/resumen-caja/">
                     Resumen
@@ -71,6 +81,7 @@ const CustomNavbar = () => {
                   <NavDropdown.Item href="/importar-ventas/">
                     Importar ventas
                   </NavDropdown.Item>
+
                 </NavDropdown>
                 {user.is_owner && (
                   <Nav.Link onClick={handleBack}>Regresar</Nav.Link>
@@ -109,15 +120,8 @@ const CustomNavbar = () => {
           </Nav>
 
           <Nav className="ms-auto">
-            <NavDropdown title="Información de sesión" className="custom-dropdown">
+          <NavDropdown title={user.store_name ? `${user.store_name}` : `${user.tenant_name}`} className="custom-dropdown">
               <NavDropdown.Item>Negocio: {user?.tenant_name}</NavDropdown.Item>
-
-              {user.store_name && (
-                <NavDropdown.Item>
-                  {user.store_type_display} {user.store_name}
-                </NavDropdown.Item>
-              )}
-
               <NavDropdown.Item>Usuario: {user.full_name}</NavDropdown.Item>
             </NavDropdown>
 

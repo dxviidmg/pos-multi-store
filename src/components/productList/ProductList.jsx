@@ -11,19 +11,23 @@ import {
 import ProductModal from "../productModal/ProductModal";
 import { exportToExcel } from "../utils/utils";
 import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
+import { getBrands } from "../apis/brands";
 
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-
+  const [brands, setBrands] = useState([])
+  const [brandId, setBrandId] = useState({})
   const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
-      const response = await getProducts();
-      setProducts(response.data);
+      const response_products = await getProducts();
+      setProducts(response_products.data);
+      const response_brands = await getBrands()
+      setBrands(response_brands.data)
       setIsLoading(false);
     };
 
@@ -65,6 +69,14 @@ const ProductList = () => {
      exportToExcel(storeProductsForReport, prefixName)
   };
 
+  const handleDataChange = async (e) => {
+    let { name, value } = e.target;
+    setIsLoading(true)
+    const response = await getProducts(name, value)
+    setBrandId(value)
+    setProducts(response.data)
+    setIsLoading(false)
+  };
 
   return (
     <div className="custom-section">
@@ -79,6 +91,21 @@ const ProductList = () => {
           </CustomButton>
           <CustomButton onClick={handleDownload}>Descargar productos</CustomButton>
 
+          <br/>
+          <Form.Label>Marca</Form.Label>
+            <Form.Select
+              value={brandId}
+              onChange={handleDataChange}
+              name="brand_id"
+//              disabled={isLoading}
+            >
+              <option value="">Selecciona una marca</option>
+              {brands.map((brand) => (
+                <option key={brand.id} value={brand.id}>
+                  {brand.name}
+                </option>
+              ))}
+            </Form.Select>
           <CustomTable
             searcher={true}
             progressPending={isLoading}

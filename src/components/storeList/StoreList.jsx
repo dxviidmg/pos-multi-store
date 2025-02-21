@@ -69,15 +69,19 @@ const StoreList = () => {
                 selector: (row) => row.store_type_display,
               },
               {
+                name: "Inversión",
+                selector: (row) => row.investment.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','),
+              },
+              {
+                name: "Ganancia del dia",
+                selector: (row) => row.profit_today.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','),
+              },
+              {
                 name: "Accciones",
                 cell: (row) => (
                   <>
                     <CustomButton onClick={() => handleSelectStore(row)}>
                       Entrar
-                    </CustomButton>
-
-                    <CustomButton onClick={() => handleBrandSubmit(row)}>
-                      Ver inversión
                     </CustomButton>
                   </>
                 ),

@@ -12,18 +12,24 @@ import {
 import { useDispatch } from "react-redux";
 import StoreProductLogsModal from "../storeproductlogsModal/StoreProductLogsModal";
 import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
+import { getBrands } from "../apis/brands";
+
 
 const StoreProductList = () => {
   const dispatch = useDispatch();
   const [storeProducts, setStoreProducts] = useState([]);
+  const [brands, setBrands] = useState([])
   const [loading, setLoading] = useState(false);
+  const [brandId, setBrandId] = useState({})
   const user = getUserData();
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      const response = await getStoreProducts();
-      setStoreProducts(response.data);
+      const response_store_products = await getStoreProducts();
+      setStoreProducts(response_store_products.data);
+      const response_brands = await getBrands()
+      setBrands(response_brands.data)
       setLoading(false);
     };
 
@@ -67,6 +73,17 @@ const StoreProductList = () => {
     });
   };
 
+
+  const handleDataChange = async (e) => {
+    let { name, value } = e.target;
+    setLoading(true)
+    const response = await getStoreProducts(name, value)
+    setBrandId(value)
+    setStoreProducts(response.data)
+    setLoading(false)
+  };
+
+
   return (
     <div className="custom-section">
       <CustomSpinner2 isLoading={loading}></CustomSpinner2>
@@ -78,6 +95,21 @@ const StoreProductList = () => {
       <br />
       <CustomButton onClick={handleDownload}>Descargar inventario</CustomButton>
 
+      <br/>
+          <Form.Label>Marca</Form.Label>
+            <Form.Select
+              value={brandId}
+              onChange={handleDataChange}
+              name="brand_id"
+//              disabled={isLoading}
+            >
+              <option value="">Selecciona una marca</option>
+              {brands.map((brand) => (
+                <option key={brand.id} value={brand.id}>
+                  {brand.name}
+                </option>
+              ))}
+            </Form.Select>
       <CustomTable
         searcher={true}
         progressPending={loading}
