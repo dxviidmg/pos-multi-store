@@ -126,6 +126,10 @@ const ProductList = () => {
                 wrap: true,
               },
               {
+                name: "Stock",
+                selector: (row) => row.stock,
+              },
+              {
                 name: "Costo",
                 selector: (row) => "$" + row.cost,
                 wrap: true,
