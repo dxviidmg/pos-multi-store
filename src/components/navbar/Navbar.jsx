@@ -66,7 +66,10 @@ const CustomNavbar = () => {
                   <NavDropdown.Item href="/inventario/">
                   Inventario
                   </NavDropdown.Item>
-
+                  <NavDropdown.Divider />
+                  <NavDropdown.Item href="/logs/">
+                    Logs
+                  </NavDropdown.Item>
 
                 </NavDropdown>
                 <NavDropdown title="Ventas" className="custom-dropdown">
@@ -78,6 +81,7 @@ const CustomNavbar = () => {
                   <NavDropdown.Item href="/importar-ventas/">
                     Importar ventas
                   </NavDropdown.Item>
+
                 </NavDropdown>
                 {user.is_owner && (
                   <Nav.Link onClick={handleBack}>Regresar</Nav.Link>

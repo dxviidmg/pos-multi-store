@@ -83,10 +83,6 @@ const StoreList = () => {
                     <CustomButton onClick={() => handleSelectStore(row)}>
                       Entrar
                     </CustomButton>
-
-                    <CustomButton onClick={() => handleBrandSubmit(row)}>
-                      Ver inversión
-                    </CustomButton>
                   </>
                 ),
               },

@@ -15,6 +15,7 @@ import StoreProductList from "./components/storeProductList/StoreProductList";
 import StoreList from "./components/storeList/StoreList";
 import ProductImport from "./components/productImport/ProductImport";
 import CashSummary from "./components/cashSummary/CashSummary";
+import LogList from "./components/logList/LogList";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -51,6 +52,7 @@ function App() {
             <Route path="/importar-productos/" element={<ProductImport />} />
             <Route path="/inventario/" element={<StoreProductList />} />
             <Route path="/marcas/" element={<BrandList />} />
+            <Route path="/logs/" element={<LogList />} />
             {user.store_id  ? (<Route path="/" element={<SaleCreate />} />): (<Route path="/" element={<SaleCreate />} />)}
             {user.store_id  ? (<Route path="/*" element={<SaleCreate />} />): (<Route path="/*" element={<SaleCreate />} />)}
             
