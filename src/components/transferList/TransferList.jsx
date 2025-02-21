@@ -1,27 +1,9 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { getTransfers } from "../apis/transfers";
-
-const calculateTimeAgo = (creationDate) => {
-  const now = new Date();
-  const createdAt = new Date(creationDate);
-  const differenceInMs = now - createdAt;
-
-  const seconds = Math.floor(differenceInMs / 1000);
-  const minutes = Math.floor(seconds / 60);
-  const hours = Math.floor(minutes / 60);
-  const days = Math.floor(hours / 24);
-
-  if (days > 0) {
-    return `hace ${days} dia(s)`;
-  } else if (hours > 0) {
-    return `hace ${hours} horas(s)`;
-  } else if (minutes > 0) {
-    return `hace ${minutes} minuto(s)`;
-  } else {
-    return `hace ${seconds} segundo(s)`;
-  }
-};
+import { deleteTransfer, getTransfers } from "../apis/transfers";
+import { calculateTimeAgo } from "../utils/utils";
+import CustomButton from "../commons/customButton/CustomButton";
+import Swal from "sweetalert2";
 
 const TransferList = () => {
   const [transfers, setTransfers] = useState([]);
@@ -34,6 +16,35 @@ const TransferList = () => {
 
     fetchData();
   }, []);
+
+  const handleOpenModal = async (transfer) => {
+    const response = await deleteTransfer(transfer.id)
+
+
+    console.log(response)
+    if (response.status === 204){
+
+      setTransfers((prevTransfers) => {
+        const updatedList = prevTransfers.filter(
+          (item) => item.id !== transfer.id
+        );
+        return updatedList;
+      });
+
+      Swal.fire({
+        icon: "success",
+        title: "Tranferencia eliminada",
+        timer: 5000,
+      });
+    }
+    else{
+      Swal.fire({
+        icon: "error",
+        title: "Error al eliminar transferencia",
+        timer: 5000,
+      });
+    }
+  };
 
 
   return (
@@ -50,30 +61,38 @@ const TransferList = () => {
             {
               name: "Código",
               selector: (row) => row.product_code,
-              grow: 2
+              grow: 2,
             },
             {
               name: "Producto",
               selector: (row) => row.product_description,
               grow: 4,
-              wrap: true
+              wrap: true,
             },
             {
               name: "Cantidad",
               selector: (row) => row.quantity,
-
             },
 
             {
               name: "Descripcion",
               selector: (row) => row.description,
 
-              grow: 4
+              grow: 4,
             },
             {
               name: "Creado hace",
               selector: (row) => calculateTimeAgo(row.created_at),
-              grow: 2
+              grow: 2,
+            },
+            {
+              name: "Acciones",
+              selector: (row) => (
+                <CustomButton onClick={() => handleOpenModal(row)}>
+                  Eliminar
+                </CustomButton>
+              ),
+              grow: 2,
             },
           ]}
         />
