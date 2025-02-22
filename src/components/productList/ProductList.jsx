@@ -54,10 +54,11 @@ const ProductList = () => {
 
 
   const handleDownload = async () => {
-    const storeProductsForReport = products.map(({ code: Código, brand_name: Marca, name: Nombre, cost: Costo, unit_price: PrecioUnitario, wholesale_price: PrecioMayoreo, min_wholesale_quantity: CantidadMinimaMayoreo, wholesale_price_on_client_discount: PMDC}) => ({
+    const storeProductsForReport = products.map(({ code: Código, brand_name: Marca, name: Nombre, stock: Stock, cost: Costo, unit_price: PrecioUnitario, wholesale_price: PrecioMayoreo, min_wholesale_quantity: CantidadMinimaMayoreo, wholesale_price_on_client_discount: PMDC}) => ({
       Código,
       Marca,
       Nombre,
+      Stock,
       Costo,
       'Precio unitario': PrecioUnitario,
       'Precio mayoreo': PrecioMayoreo,
@@ -124,6 +125,10 @@ const ProductList = () => {
                 selector: (row) => row.name,
                 grow: 2,
                 wrap: true,
+              },
+              {
+                name: "Stock",
+                selector: (row) => row.stock,
               },
               {
                 name: "Costo",
