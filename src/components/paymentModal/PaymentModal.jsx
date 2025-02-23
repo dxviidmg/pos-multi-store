@@ -85,6 +85,7 @@ const PaymentModal = () => {
         type: value,
         methods: newMethods,
       });
+    setPayment({ paidWith: totalDiscount, change: 0 })
     } else {
       const updatedMethods =
         paymentMethods.type === "radio"
@@ -96,7 +97,7 @@ const PaymentModal = () => {
       
         if (!("EF" in updatedMethods)) {
           const value = updatedMethods.TA || updatedMethods.TR
-          setPayment({ paidWith: value, change: value - totalDiscount });
+          setPayment({ paidWith: value, change: 0 });
         }
       setPaymentMethods((prev) => ({
         ...prev,
