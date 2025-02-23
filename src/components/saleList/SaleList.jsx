@@ -13,20 +13,22 @@ import {
   showSaleModal,
 } from "../redux/saleModal/SaleModalActions";
 import SaleModal from "../saleModal/saleModal";
+import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
 
 const SaleList = () => {
   const [sales, setSales] = useState([]);
   const today = getFormattedDate();
   const [date, setDate] = useState(today);
-
+  const [loading, setLoading] = useState(false)
 
   const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchSalesData = async () => {
+      setLoading(true)
       const salesResponse = await getSales(date);
       setSales(salesResponse.data);
-
+      setLoading(false)
     };
 
     fetchSalesData();
@@ -60,6 +62,7 @@ const SaleList = () => {
 
   return (
     <>
+    <CustomSpinner2 isLoading={loading}></CustomSpinner2>
       <SaleModal onUpdateSaleList={handleUpdateSaleList}></SaleModal>
       <div className="custom-section">
         <Form.Label className="fw-bold">Lista de ventas</Form.Label>
