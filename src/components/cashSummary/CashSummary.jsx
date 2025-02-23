@@ -15,6 +15,7 @@ import { useDispatch } from "react-redux";
 import { getCashFlow } from "../apis/cashflow";
 import CashFlowModal from "../cashFlowModal/CashFlowModal";
 import { hideCashFlowModal, showCashFlowModal } from "../redux/cashFlowModal/CashFlowModalActions";
+import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
 
 const CashSummary = () => {
   const [cashSummary, setCashSummary] = useState([]);
@@ -25,10 +26,13 @@ const CashSummary = () => {
   const [cashFlow, setCashFlow] = useState([]);
   const [cashFlowSummary, setCashFlowSummary] = useState([]);
   const [totalSummary, setTotalSummary] = useState([]);
+  const [loading, setLoading] = useState(false)
+
   const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchCashData = async () => {
+      setLoading(true)
       const cashSummary = await getCashSummary(date);
       const paymentMethods = cashSummary.data.filter(
         (cash) => cash.payment_method_data === true
@@ -49,6 +53,7 @@ const CashSummary = () => {
       setTotalSummary(totalSummary);
       const cashFlow = await getCashFlow(date);
       setCashFlow(cashFlow.data);
+      setLoading(false)
     };
 
     fetchCashData();
@@ -115,6 +120,7 @@ const CashSummary = () => {
 
   return (
     <>
+    <CustomSpinner2 isLoading={loading}></CustomSpinner2>
       <CashFlowModal onUpdateCashFlowList={handleUpdateCashFlowList}/>
       <div className="custom-section">
         <Row>
