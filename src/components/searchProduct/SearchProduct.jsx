@@ -13,8 +13,7 @@ import {
 } from "../redux/stockModal/StockModalActions";
 import Swal from "sweetalert2";
 import { getUserData } from "../apis/utils";
-import { getPrinter, printTicket } from "../apis/sales";
-
+import { printTicket } from "../apis/sales";
 
 const SearchProduct = () => {
   const inputRef = useRef(null);
@@ -23,7 +22,8 @@ const SearchProduct = () => {
   const cart = useSelector((state) => state.cartReducer.cart);
   const movementType = useSelector((state) => state.cartReducer.movementType);
 
-  const store_type = getUserData().store_type;
+  const storeType = getUserData().store_type;
+  const urlPrinter = getUserData().store_url_printer;
 
   const [query, setQuery] = useState("");
   const [data, setData] = useState([]);
@@ -69,16 +69,14 @@ const SearchProduct = () => {
         title: "Este producto no esta relacionado a algun traspaso",
         timer: 5000,
       });
-    } 
-    else if (movementType === "checar") {
+    } else if (movementType === "checar") {
       Swal.fire({
         icon: "success",
         title: product.product_description,
-        text: 'Precio unitario $' + product.prices.unit_price,
+        text: "Precio unitario $" + product.prices.unit_price,
         timer: 5000,
       });
-    }
-    else {
+    } else {
       handleAddToCartIfAvailable(product);
     }
     setQuery("");
@@ -218,57 +216,33 @@ const SearchProduct = () => {
     };
   }, []);
 
-
-
   const handlePrintTicket = async () => {
-    const response = await getPrinter();    
-
-
-    if (response.status === 200) {
-
-      Swal.fire({
-        icon: "success",
-        title: "Impresora encontrada",
-        timer: 5000,
+    try {
+      const response2 = await printTicket(urlPrinter, "test/", {
+        data: "Prueba de impresión",
       });
-      console.log(response.data.url)
-      const response2 = await printTicket(response.data.url, "test/", {
-        "data": "Prueba de impresión"
-    });
-      console.log('response2', response2)
 
-      if (response2.status === 200) {
-        Swal.fire({
-          icon: "success",
-          title: "Imprimiento",
-          timer: 5000,
-        });
-      } else {
-        Swal.fire({
-          icon: "error",
-          title: "1",
-          timer: 5000,
-        });
-      }
-
-
-
-    } else {
-      Swal.fire({
-        icon: "error",
-        title: "2",
-        timer: 5000,
-      });
+      showAlert(
+        response2.status === 200 ? "success" : "error",
+        response2.status === 200 ? "Imprimiendo" : "Error de impresión"
+      );
+    } catch (error) {
+      showAlert("error", "Error inesperado");
     }
   };
 
-
+  // Función auxiliar para mostrar alertas
+  const showAlert = (icon, title) => {
+    Swal.fire({ icon, title, timer: icon === "success" ? 2500 : 5000 });
+  };
 
   return (
     <>
       <StockModal />
       <Form.Label className="fw-bold">Buscador de productos</Form.Label>
-      <CustomButton onClick={handlePrintTicket}>Verificar impresora</CustomButton>
+      <CustomButton disabled={urlPrinter === false} onClick={handlePrintTicket}>
+        Verificar impresora
+      </CustomButton>
       <br />
       <Form.Label className="me-3">Tipo de búsqueda:</Form.Label>
       <Form.Check
@@ -298,7 +272,7 @@ const SearchProduct = () => {
         onChange={handleMovementTypeChange}
         value="venta"
         checked={movementType === "venta"}
-        className={store_type === "A" ? "d-none" : ""}
+        className={storeType === "A" ? "d-none" : ""}
       />
       <Form.Check
         inline
@@ -308,7 +282,7 @@ const SearchProduct = () => {
         onChange={handleMovementTypeChange}
         value="traspaso"
         checked={movementType === "traspaso"}
-        className={store_type === "A" ? "d-none" : ""}
+        className={storeType === "A" ? "d-none" : ""}
       />
       <Form.Check
         inline
@@ -318,7 +292,7 @@ const SearchProduct = () => {
         onChange={handleMovementTypeChange}
         value="distribucion"
         checked={movementType === "distribucion"}
-        className={store_type === "T" ? "d-none" : ""}
+        className={storeType === "T" ? "d-none" : ""}
       />
       <Form.Check
         inline
@@ -367,7 +341,7 @@ const SearchProduct = () => {
         data={data}
         pagination={false}
         columns={[
-          { name: "Código", selector: (row) => row.product_code, grow: 2, },
+          { name: "Código", selector: (row) => row.product_code, grow: 2 },
           {
             name: "Marca",
             selector: (row) => row.product_brand,

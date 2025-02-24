@@ -4,13 +4,15 @@ import { Col, Form, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
 import { cleanCart, removeClientfromCart } from "../redux/cart/cartActions";
-import { createSale } from "../apis/sales";
+import { createSale, printTicket } from "../apis/sales";
 import { hidePaymentModal } from "../redux/paymentModal/PaymentModalActions";
 import Swal from "sweetalert2";
+import { getUserData } from "../apis/utils";
 
 function roundUpCustom(value) {
   const intPart = Math.floor(value); // Parte entera
   const decimalPart = value - intPart; // Parte decimal
+  
 
   if (decimalPart === 0) return value; // Si es entero, se queda igual
   if (decimalPart <= 0.5) return intPart + 0.5; // Si es hasta 0.5, sube a 0.5
@@ -19,6 +21,7 @@ function roundUpCustom(value) {
 
 const INITIAL_PAYMENT_STATE = { paidWith: 0, change: 0 };
 const PaymentModal = () => {
+  const urlPrinter = getUserData().store_url_printer;
   const inputPaymentRef = useRef(null);
   const { showPaymentModal } = useSelector(
     (state) => state.PaymentModalReducer
@@ -161,6 +164,7 @@ const PaymentModal = () => {
     const response = await createSale(data);
 
     if (response.status === 201) {
+      handlePrintTicket()
       setPaymentMethods({
         type: "radio",
         methods: { EF: 0, TA: 0, TR: 0 },
@@ -200,6 +204,26 @@ const PaymentModal = () => {
         paymentMethods.methods.EF >  payment.paidWith) 
 
     )
+  };
+
+  const showAlert = (icon, title) => {
+    Swal.fire({ icon, title, timer: icon === "success" ? 2500 : 5000 });
+  };
+
+
+  const handlePrintTicket = async () => {
+    try {
+      const response2 = await printTicket(urlPrinter, "test/", {
+        data: "Prueba de impresión",
+      });
+
+      showAlert(
+        response2.status === 200 ? "success" : "error",
+        response2.status === 200 ? "Imprimiendo" : "Error de impresión"
+      );
+    } catch (error) {
+      showAlert("error", "Error inesperado");
+    }
   };
 
   return (
