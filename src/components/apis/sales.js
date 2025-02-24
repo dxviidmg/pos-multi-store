@@ -91,12 +91,23 @@ export const cancelSale = async (data) => {
 };
 
 
-export const printTicket = async (data={}) => {
-  const apiUrl = getApiUrl("ticket/print");
+export const getPrinter = async (data={}) => {
+  const apiUrl = getApiUrl("printer");
   console.log(getHeaders())
   try {
     const response = await axios.post(apiUrl, data, {
       headers: getHeaders(),
+    });
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const printTicket = async (url, data) => {
+  console.log('url', url)
+  try {
+    const response = await axios.post(url, data, {
     });
     return response;
   } catch (error) {
