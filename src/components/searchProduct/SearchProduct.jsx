@@ -225,12 +225,13 @@ const SearchProduct = () => {
 
 
     if (response.status === 200) {
-      console.log(response)
+
       Swal.fire({
         icon: "success",
         title: "Impresora encontrada",
         timer: 5000,
       });
+      console.log(response.data.url)
       const response2 = await printTicket(response.data.url, "Prueba");
       if (response2.status === 200) {
         Swal.fire({
@@ -241,7 +242,7 @@ const SearchProduct = () => {
       } else {
         Swal.fire({
           icon: "error",
-          title: response,
+          title: "1",
           timer: 5000,
         });
       }
@@ -252,7 +253,7 @@ const SearchProduct = () => {
     } else {
       Swal.fire({
         icon: "error",
-        title: response,
+        title: "2",
         timer: 5000,
       });
     }
