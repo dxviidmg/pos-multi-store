@@ -13,7 +13,7 @@ import {
 } from "../redux/stockModal/StockModalActions";
 import Swal from "sweetalert2";
 import { getUserData } from "../apis/utils";
-import { printTicket } from "../apis/sales";
+import { getPrinter, printTicket } from "../apis/sales";
 
 
 const SearchProduct = () => {
@@ -221,18 +221,38 @@ const SearchProduct = () => {
 
 
   const handlePrintTicket = async () => {
-    const response = await printTicket();
+    const response = await getPrinter();    
+
 
     if (response.status === 200) {
+      console.log(response)
       Swal.fire({
         icon: "success",
-        title: "Imprimiento",
+        title: "Impresora encontrada",
         timer: 5000,
       });
+      const response2 = await printTicket(response.data.url, "Prueba");
+      if (response2.status === 200) {
+        Swal.fire({
+          icon: "success",
+          title: "Imprimiento",
+          timer: 5000,
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: response,
+          timer: 5000,
+        });
+      }
+
+
+
+
     } else {
       Swal.fire({
         icon: "error",
-        title: response.response.data.error,
+        title: response,
         timer: 5000,
       });
     }
