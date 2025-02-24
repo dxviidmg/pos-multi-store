@@ -232,7 +232,11 @@ const SearchProduct = () => {
         timer: 5000,
       });
       console.log(response.data.url)
-      const response2 = await printTicket(response.data.url, "Prueba");
+      const response2 = await printTicket(response.data.url, "test/", {
+        "data": "Prueba de impresión"
+    });
+      console.log('response2', response2)
+
       if (response2.status === 200) {
         Swal.fire({
           icon: "success",
@@ -246,7 +250,6 @@ const SearchProduct = () => {
           timer: 5000,
         });
       }
-
 
 
 
