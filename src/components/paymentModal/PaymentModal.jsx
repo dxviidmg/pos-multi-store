@@ -21,7 +21,6 @@ function roundUpCustom(value) {
 
 const INITIAL_PAYMENT_STATE = { paidWith: 0, change: 0 };
 const PaymentModal = () => {
-  const urlPrinter = getUserData().store_url_printer;
   const inputPaymentRef = useRef(null);
   const { showPaymentModal } = useSelector(
     (state) => state.PaymentModalReducer
@@ -221,7 +220,7 @@ const PaymentModal = () => {
         data,
       });
 
-      if (response.status != 200){
+      if (response.status !== 200){
         showAlert("error", "Error de impresión"
         );
       }
