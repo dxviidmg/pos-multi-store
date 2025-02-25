@@ -213,8 +213,8 @@ const PaymentModal = () => {
 
   const handlePrintTicket = async (data) => {
     const urlPrinter = getUserData().store_url_printer;
-    const store_name = getUserData().store_name;
-    data = {...data, store_name, client}
+    const tenant_name = getUserData().tenant_name;
+    data = {...data, tenant_name, client}
     try {
       const response = await printTicket(urlPrinter, "ticket/", {
         data,
