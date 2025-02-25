@@ -21,7 +21,6 @@ function roundUpCustom(value) {
 
 const INITIAL_PAYMENT_STATE = { paidWith: 0, change: 0 };
 const PaymentModal = () => {
-  const urlPrinter = getUserData().store_url_printer;
   const inputPaymentRef = useRef(null);
   const { showPaymentModal } = useSelector(
     (state) => state.PaymentModalReducer
@@ -154,6 +153,7 @@ const PaymentModal = () => {
       store_products: cart.map((product) => ({
         id: product.id,
         quantity: product.quantity,
+        description: product.product_description,
         price:
           product.product_price *
           ((client?.discount_percentage_complement ?? 100) * 0.01),
@@ -164,7 +164,7 @@ const PaymentModal = () => {
     const response = await createSale(data);
 
     if (response.status === 201) {
-      handlePrintTicket()
+      handlePrintTicket(data)
       setPaymentMethods({
         type: "radio",
         methods: { EF: 0, TA: 0, TR: 0 },
@@ -211,16 +211,20 @@ const PaymentModal = () => {
   };
 
 
-  const handlePrintTicket = async () => {
+  const handlePrintTicket = async (data) => {
+    const urlPrinter = getUserData().store_url_printer;
+    const store_name = getUserData().store_name;
+    data = {...data, store_name, client}
     try {
-      const response2 = await printTicket(urlPrinter, "test/", {
-        data: "Prueba de impresión",
+      const response = await printTicket(urlPrinter, "ticket/", {
+        data,
       });
 
-      showAlert(
-        response2.status === 200 ? "success" : "error",
-        response2.status === 200 ? "Imprimiendo" : "Error de impresión"
-      );
+      if (response.status !== 200){
+        showAlert("error", "Error de impresión"
+        );
+      }
+
     } catch (error) {
       showAlert("error", "Error inesperado");
     }
