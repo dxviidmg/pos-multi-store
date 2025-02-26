@@ -4,13 +4,15 @@ import { Col, Form, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
 import { cleanCart, removeClientfromCart } from "../redux/cart/cartActions";
-import { createSale } from "../apis/sales";
+import { createSale, printTicket } from "../apis/sales";
 import { hidePaymentModal } from "../redux/paymentModal/PaymentModalActions";
 import Swal from "sweetalert2";
+import { getUserData } from "../apis/utils";
 
 function roundUpCustom(value) {
   const intPart = Math.floor(value); // Parte entera
   const decimalPart = value - intPart; // Parte decimal
+  
 
   if (decimalPart === 0) return value; // Si es entero, se queda igual
   if (decimalPart <= 0.5) return intPart + 0.5; // Si es hasta 0.5, sube a 0.5
@@ -31,6 +33,7 @@ const PaymentModal = () => {
     type: "radio", // Tipo de pago inicial.
     methods: { EF: 0, TA: 0, TR: 0 }, // Valores iniciales de los métodos de pago.
   });
+  const urlPrinter = getUserData().store_url_printer;
 
   const dispatch = useDispatch();
 
@@ -151,6 +154,7 @@ const PaymentModal = () => {
       store_products: cart.map((product) => ({
         id: product.id,
         quantity: product.quantity,
+        description: product.product_description,
         price:
           product.product_price *
           ((client?.discount_percentage_complement ?? 100) * 0.01),
@@ -161,6 +165,10 @@ const PaymentModal = () => {
     const response = await createSale(data);
 
     if (response.status === 201) {
+
+      if (urlPrinter){
+        handlePrintTicket(data)
+      }
       setPaymentMethods({
         type: "radio",
         methods: { EF: 0, TA: 0, TR: 0 },
@@ -200,6 +208,29 @@ const PaymentModal = () => {
         paymentMethods.methods.EF >  payment.paidWith) 
 
     )
+  };
+
+  const showAlert = (icon, title) => {
+    Swal.fire({ icon, title, timer: icon === "success" ? 2500 : 5000 });
+  };
+
+
+  const handlePrintTicket = async (data) => {
+    const tenant_name = getUserData().tenant_name;
+    data = {...data, tenant_name, client}
+    try {
+      const response = await printTicket(urlPrinter, "ticket/", {
+        data,
+      });
+
+      if (response.status !== 200){
+        showAlert("error", "Error de impresión"
+        );
+      }
+
+    } catch (error) {
+      showAlert("error", "Error inesperado");
+    }
   };
 
   return (
