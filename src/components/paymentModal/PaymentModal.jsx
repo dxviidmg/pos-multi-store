@@ -33,6 +33,7 @@ const PaymentModal = () => {
     type: "radio", // Tipo de pago inicial.
     methods: { EF: 0, TA: 0, TR: 0 }, // Valores iniciales de los métodos de pago.
   });
+  const urlPrinter = getUserData().store_url_printer;
 
   const dispatch = useDispatch();
 
@@ -164,7 +165,10 @@ const PaymentModal = () => {
     const response = await createSale(data);
 
     if (response.status === 201) {
-      handlePrintTicket(data)
+
+      if (urlPrinter){
+        handlePrintTicket(data)
+      }
       setPaymentMethods({
         type: "radio",
         methods: { EF: 0, TA: 0, TR: 0 },
@@ -212,7 +216,6 @@ const PaymentModal = () => {
 
 
   const handlePrintTicket = async (data) => {
-    const urlPrinter = getUserData().store_url_printer;
     const tenant_name = getUserData().tenant_name;
     data = {...data, tenant_name, client}
     try {
