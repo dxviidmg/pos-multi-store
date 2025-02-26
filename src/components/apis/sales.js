@@ -105,7 +105,6 @@ export const getPrinter = async (data={}) => {
 };
 
 export const printTicket = async (url, endpoint, data) => {
-  console.log('url', url, data)
   try {
     const response = await axios.post(url + endpoint, data, {
     });
