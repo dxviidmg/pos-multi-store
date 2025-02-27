@@ -158,7 +158,7 @@ const PaymentModal = () => {
       store_products: cart.map((product) => ({
         id: product.id,
         quantity: product.quantity,
-        description: product.product_description,
+        description_ticket: product.product_name,
         price:
           product.product_price *
           ((client?.discount_percentage_complement ?? 100) * 0.01),
@@ -220,8 +220,7 @@ const PaymentModal = () => {
 
 
   const handlePrintTicket = async (data) => {
-    const tenant_name = getUserData().tenant_name;
-    data = {...data, tenant_name, client}
+    data = {...data, client}
     try {
       const response = await printTicket(urlPrinter, "ticket/", {
         data,
