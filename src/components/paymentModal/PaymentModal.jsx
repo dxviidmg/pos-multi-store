@@ -63,6 +63,10 @@ const PaymentModal = () => {
         event.preventDefault();
         handleCreateSale();
       }
+      else if (event.ctrlKey && event.key === "f") {
+        event.preventDefault();
+        handleCreateSale(true);
+      }
     };
 
     window.addEventListener("keydown", handleShortcut);
@@ -136,7 +140,7 @@ const PaymentModal = () => {
       }));
   };
 
-  const handleCreateSale = async () => {
+  const handleCreateSale = async (printTicket=false) => {
     if (payment.paidWith === 0 || payment.change < 0) {
       Swal.fire({
         icon: "error",
@@ -166,7 +170,7 @@ const PaymentModal = () => {
 
     if (response.status === 201) {
 
-      if (urlPrinter){
+      if (urlPrinter && printTicket){
         handlePrintTicket(data)
       }
       setPaymentMethods({
@@ -336,7 +340,15 @@ const PaymentModal = () => {
               fullWidth={true}
               onClick={handleCreateSale}
             >
-              Pagar (Ctrl + D)
+              Pagar sin ticket<br/>(Ctrl + D)
+            </CustomButton>
+
+            <CustomButton
+              disabled={handleDisableButton()}
+              fullWidth={true}
+              onClick={(e) => handleCreateSale(true)}
+            >
+              Pagar con ticket<br/> (Ctrl + F)
             </CustomButton>
           </Col>
         </Row>
