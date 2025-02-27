@@ -77,6 +77,7 @@ const SaleList = () => {
             </Form>
         <CustomTable
           data={sales}
+          pagination={false}
           columns={[
             {
               name: "#",
