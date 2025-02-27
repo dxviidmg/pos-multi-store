@@ -20,21 +20,34 @@ const StoreProductList = () => {
   const [storeProducts, setStoreProducts] = useState([]);
   const [brands, setBrands] = useState([])
   const [loading, setLoading] = useState(false);
-  const [brandId, setBrandId] = useState({})
+  const [brandId, setBrandId] = useState(0)
   const user = getUserData();
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true);
-      const response_store_products = await getStoreProducts();
-      setStoreProducts(response_store_products.data);
-      const response_brands = await getBrands()
-      setBrands(response_brands.data)
-      setLoading(false);
+      try {
+        setLoading(true);
+        
+        const [responseBrands, responseProducts] = await Promise.all([
+          getBrands(),
+          brandId ? getStoreProducts("brand_id", brandId) : Promise.resolve({ data: [] }) // Evita llamada innecesaria
+        ]);
+  
+        setBrands(responseBrands.data);
+        
+        if (brandId) {
+          setStoreProducts(responseProducts.data);
+        }
+  
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
     };
-
+  
     fetchData();
-  }, []);
+  }, [brandId]);
 
   const handleDownload = async () => {
     const storeProductsForReport = storeProducts.map(
@@ -75,12 +88,8 @@ const StoreProductList = () => {
 
 
   const handleDataChange = async (e) => {
-    let { name, value } = e.target;
-    setLoading(true)
-    const response = await getStoreProducts(name, value)
+    let { value } = e.target;
     setBrandId(value)
-    setStoreProducts(response.data)
-    setLoading(false)
   };
 
 
@@ -103,7 +112,7 @@ const StoreProductList = () => {
               name="brand_id"
 //              disabled={isLoading}
             >
-              <option value="">Selecciona una marca</option>
+              <option value="0">Selecciona una marca</option>
               {brands.map((brand) => (
                 <option key={brand.id} value={brand.id}>
                   {brand.name}
@@ -118,6 +127,7 @@ const StoreProductList = () => {
           {
             name: "Código",
             selector: (row) => row.product_code,
+            grow: 2
           },
           {
             name: "Marca",

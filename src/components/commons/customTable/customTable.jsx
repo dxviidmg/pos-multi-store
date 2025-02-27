@@ -15,7 +15,8 @@ const CustomTable = ({
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Filtrar datos según el término de búsqueda
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
   const filteredData = data.filter((item) => {
     return Object.values(item).some((value) =>
       value?.toString().toLowerCase().includes(searchTerm.toLowerCase())
@@ -45,9 +46,11 @@ const CustomTable = ({
         striped
         highlightOnHover
         progressPending={progressPending}
-//        progressComponent={<CustomSpinner />}
         dense
-      />
+        paginationRowsPerPageOptions={[10, 25, 50, 100, 500]} // Opciones para cambiar filas por página
+      onChangeRowsPerPage={(currentRowsPerPage) => setRowsPerPage(currentRowsPerPage)}
+      paginationPerPage={rowsPerPage}
+/>
     </div>
   );
 };

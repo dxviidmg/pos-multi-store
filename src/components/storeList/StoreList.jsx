@@ -28,6 +28,7 @@ const StoreList = () => {
     user.store_type = row.store_type;
     user.store_name = row.full_name;
     user.store_id = row.id;
+    user.store_url_printer = row.url_printer;
 
     const updatedData = JSON.stringify(user);
     localStorage.setItem("user", updatedData);
