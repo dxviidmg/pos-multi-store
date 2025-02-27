@@ -63,6 +63,10 @@ const PaymentModal = () => {
         event.preventDefault();
         handleCreateSale();
       }
+      else if (event.ctrlKey && event.key === "f") {
+        event.preventDefault();
+        handleCreateSale(true);
+      }
     };
 
     window.addEventListener("keydown", handleShortcut);
@@ -136,7 +140,7 @@ const PaymentModal = () => {
       }));
   };
 
-  const handleCreateSale = async () => {
+  const handleCreateSale = async (printTicket=false) => {
     if (payment.paidWith === 0 || payment.change < 0) {
       Swal.fire({
         icon: "error",
@@ -154,7 +158,7 @@ const PaymentModal = () => {
       store_products: cart.map((product) => ({
         id: product.id,
         quantity: product.quantity,
-        description: product.product_description,
+        name: product.product_name,
         price:
           product.product_price *
           ((client?.discount_percentage_complement ?? 100) * 0.01),
@@ -166,7 +170,7 @@ const PaymentModal = () => {
 
     if (response.status === 201) {
 
-      if (urlPrinter){
+      if (urlPrinter && printTicket){
         handlePrintTicket(data)
       }
       setPaymentMethods({
@@ -216,8 +220,7 @@ const PaymentModal = () => {
 
 
   const handlePrintTicket = async (data) => {
-    const tenant_name = getUserData().tenant_name;
-    data = {...data, tenant_name, client}
+    data = {...data, client}
     try {
       const response = await printTicket(urlPrinter, "ticket/", {
         data,
@@ -336,7 +339,15 @@ const PaymentModal = () => {
               fullWidth={true}
               onClick={handleCreateSale}
             >
-              Pagar (Ctrl + D)
+              Pagar sin ticket<br/>(Ctrl + D)
+            </CustomButton>
+
+            <CustomButton
+              disabled={handleDisableButton()}
+              fullWidth={true}
+              onClick={(e) => handleCreateSale(true)}
+            >
+              Pagar con ticket<br/> (Ctrl + F)
             </CustomButton>
           </Col>
         </Row>

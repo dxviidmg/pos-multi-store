@@ -18,21 +18,35 @@ const ProductList = () => {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [brands, setBrands] = useState([])
-  const [brandId, setBrandId] = useState({})
+  const [brandId, setBrandId] = useState(0)
   const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchData = async () => {
-      setIsLoading(true);
-      const response_products = await getProducts();
-      setProducts(response_products.data);
-      const response_brands = await getBrands()
-      setBrands(response_brands.data)
-      setIsLoading(false);
+      try {
+        setIsLoading(true);
+        
+        const [responseBrands, responseProducts] = await Promise.all([
+          getBrands(),
+          brandId ? getProducts("brand_id", brandId) : Promise.resolve({ data: [] }) // Evita llamada innecesaria
+        ]);
+  
+        setBrands(responseBrands.data);
+        
+        if (brandId) {
+          setProducts(responseProducts.data);
+        }
+  
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setIsLoading(false);
+      }
     };
-
+  
     fetchData();
-  }, []);
+  }, [brandId]);
+  
 
   const handleOpenModal = (brand) => {
     dispatch(hideProductModal());
@@ -71,12 +85,8 @@ const ProductList = () => {
   };
 
   const handleDataChange = async (e) => {
-    let { name, value } = e.target;
-    setIsLoading(true)
-    const response = await getProducts(name, value)
+    let { value } = e.target;
     setBrandId(value)
-    setProducts(response.data)
-    setIsLoading(false)
   };
 
   return (
@@ -100,7 +110,7 @@ const ProductList = () => {
               name="brand_id"
 //              disabled={isLoading}
             >
-              <option value="">Selecciona una marca</option>
+              <option value="0">Selecciona una marca</option>
               {brands.map((brand) => (
                 <option key={brand.id} value={brand.id}>
                   {brand.name}
@@ -115,6 +125,7 @@ const ProductList = () => {
               {
                 name: "Código",
                 selector: (row) => row.code,
+                grow: 2
               },
               {
                 name: "Marca",
@@ -141,6 +152,7 @@ const ProductList = () => {
               },
               {
                 name: "Precio Mayoreo.",
+                wrap: true,
                 selector: (row) =>
                   row.apply_wholesale
                     ? "$" +
