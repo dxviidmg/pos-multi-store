@@ -59,11 +59,11 @@ const PaymentModal = () => {
 
   useEffect(() => {
     const handleShortcut = (event) => {
-      if (event.ctrlKey && event.key === "d") {
+      if (event.ctrlKey && event.key === "f") {
         event.preventDefault();
         handleCreateSale();
       }
-      else if (event.ctrlKey && event.key === "f") {
+      else if (event.ctrlKey && event.key === "g") {
         event.preventDefault();
         handleCreateSale(true);
       }
@@ -339,7 +339,7 @@ const PaymentModal = () => {
               fullWidth={true}
               onClick={handleCreateSale}
             >
-              Pagar sin ticket<br/>(Ctrl + D)
+              Pagar sin ticket<br/>(Ctrl + F)
             </CustomButton>
 
             <CustomButton
@@ -347,7 +347,7 @@ const PaymentModal = () => {
               fullWidth={true}
               onClick={(e) => handleCreateSale(true)}
             >
-              Pagar con ticket<br/> (Ctrl + F)
+              Pagar con ticket<br/> (Ctrl + G)
             </CustomButton>
           </Col>
         </Row>

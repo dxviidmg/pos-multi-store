@@ -202,6 +202,10 @@ const SearchProduct = () => {
     }
     if (event.ctrlKey && event.key === "a") {
       event.preventDefault(); // Evita la acción predeterminada del navegador
+      dispatch(updateMovementType("checar"));
+    }
+    if (event.ctrlKey && event.key === "a") {
+      event.preventDefault(); // Evita la acción predeterminada del navegador
       inputRef.current?.focus();
     }
   };
@@ -306,7 +310,7 @@ const SearchProduct = () => {
       <Form.Check
         inline
         id="checar"
-        label="Checar precio (Ctrl + ***)"
+        label="Checar precio (Ctrl + A)"
         type="radio"
         onChange={handleMovementTypeChange}
         value="checar"
@@ -326,7 +330,7 @@ const SearchProduct = () => {
         ref={inputRef}
         type="text"
         value={queryType === "code" ? barcode : query}
-        placeholder="Buscar producto (Ctrl + A)"
+        placeholder="Buscar producto (Ctrl + S)"
         onChange={
           queryType === "q"
             ? handleQueryChange
