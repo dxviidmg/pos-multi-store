@@ -81,8 +81,6 @@ const StoreList = () => {
             <Form.Check
               type="switch"
               name="showCashSUmmary"
-              //        checked={row.product_price === row.prices.wholesale_price}
-              //        checked={row.product_price === row.prices.wholesale_price}
               onClick={(e) => handleFilters(e)}
             />
           </Form>
@@ -101,10 +99,6 @@ const StoreList = () => {
           {
             name: "Tipo",
             selector: (row) => row.store_type_display,
-          },
-          {
-            name: "Inversión",
-            selector: (row) => "$" + row.investment.toLocaleString(),
           },
           {
             name: "Ganancia del dia",

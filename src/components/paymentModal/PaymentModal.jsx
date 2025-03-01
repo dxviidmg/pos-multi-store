@@ -337,7 +337,7 @@ const PaymentModal = () => {
             <CustomButton
               disabled={handleDisableButton()}
               fullWidth={true}
-              onClick={handleCreateSale}
+              onClick={(e)=> handleCreateSale()}
             >
               Pagar sin ticket<br/>(Ctrl + F)
             </CustomButton>
