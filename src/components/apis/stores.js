@@ -1,9 +1,17 @@
 import axios from "axios";
 import { getApiUrl, getHeaders } from "./utils";
 
-export const getStores = async () => {
+export const getStores = async (params) => {
+  console.log(params)
     const apiUrl = new URL(getApiUrl("store"));
   
+    if (params && Object.keys(params).length > 0) {
+      Object.keys(params).forEach((key) =>
+        apiUrl.searchParams.append(key, params[key])
+      );
+    }
+
+    console.log('apiUrl', apiUrl)
     try {
       const response = await axios.get(apiUrl, {
         headers: getHeaders(),

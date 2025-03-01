@@ -31,7 +31,7 @@ const Cart = () => {
 
   useEffect(() => {
     const handleShortcut = (event) => {
-      if (event.ctrlKey && event.key === "s") {
+      if (event.ctrlKey && event.key === "d") {
         event.preventDefault();
         dispatch(hidePaymentModal());
         setTimeout(() => dispatch(showPaymentModal()), 1);
@@ -334,7 +334,7 @@ const Cart = () => {
                 </Col>
                 <Col md={3}>
                   <CustomButton fullWidth onClick={handleOpenModal}>
-                    Pagar (Ctrl + S)
+                    Pagar (Ctrl + D)
                   </CustomButton>
                 </Col>
               </>
