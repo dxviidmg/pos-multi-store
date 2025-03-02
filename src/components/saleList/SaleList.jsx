@@ -14,6 +14,7 @@ import {
 } from "../redux/saleModal/SaleModalActions";
 import SaleModal from "../saleModal/saleModal";
 import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
+import { SuccessIcon } from "../commons/icons/Icons";
 
 const SaleList = () => {
   const [sales, setSales] = useState([]);
@@ -126,10 +127,19 @@ const SaleList = () => {
               name: "Accciones",
               grow: 2,
               cell: (row) =>
-                (row.is_cancelable ||JSON.parse(localStorage.getItem("user")).is_owner === true) && (
+                (row.is_cancelable || JSON.parse(localStorage.getItem("user")).is_owner === true || row.is_duplicate) && (
                   <CustomButton onClick={() => handleOpenModal(row)}>
                     Devolución
                   </CustomButton>
+                ),
+            },
+
+            {
+              name: "Es duplicado",
+              grow: 2,
+              cell: (row) =>
+                (row.is_duplicate) && (
+                  <SuccessIcon></SuccessIcon>
                 ),
             },
           ]}
