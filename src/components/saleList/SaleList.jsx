@@ -11,7 +11,7 @@ import {
 } from "../redux/saleModal/SaleModalActions";
 import SaleModal from "../saleModal/saleModal";
 import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
-import { SuccessIcon, WarningIcon } from "../commons/icons/Icons";
+import { WarningIcon } from "../commons/icons/Icons";
 import Alert from 'react-bootstrap/Alert'
 
 
