@@ -3,10 +3,7 @@ import CustomTable from "../commons/customTable/customTable";
 import { Form } from "react-bootstrap";
 import { getSales } from "../apis/sales";
 import CustomButton from "../commons/customButton/CustomButton";
-import {
-  getFormattedDate,
-  formatTimeFromDate,
-} from "../utils/utils";
+import { getFormattedDate, formatTimeFromDate } from "../utils/utils";
 import { useDispatch } from "react-redux";
 import {
   hideSaleModal,
@@ -14,29 +11,34 @@ import {
 } from "../redux/saleModal/SaleModalActions";
 import SaleModal from "../saleModal/saleModal";
 import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
-import { SuccessIcon } from "../commons/icons/Icons";
+import { SuccessIcon, WarningIcon } from "../commons/icons/Icons";
+import Alert from 'react-bootstrap/Alert'
+
 
 const SaleList = () => {
   const [sales, setSales] = useState([]);
   const today = getFormattedDate();
   const [date, setDate] = useState(today);
-  const [loading, setLoading] = useState(false)
-
+  const [loading, setLoading] = useState(false);
+  const [salesDuplicated, setSalesDuplicated] = useState([]);
   const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchSalesData = async () => {
-      setLoading(true)
+      setLoading(true);
       const salesResponse = await getSales(date);
       setSales(salesResponse.data);
-      setLoading(false)
+
+      salesResponse.data.forEach((sale) => {
+        if (sale.is_duplicate) {
+          setSalesDuplicated((prev) => [...prev, sale.id]);
+        }
+      });
+      setLoading(false);
     };
 
     fetchSalesData();
   }, [date]);
-
-
-
 
   const handleOpenModal = (sale) => {
     dispatch(hideSaleModal());
@@ -63,19 +65,31 @@ const SaleList = () => {
 
   return (
     <>
-    <CustomSpinner2 isLoading={loading}></CustomSpinner2>
+      <CustomSpinner2 isLoading={loading}></CustomSpinner2>
       <SaleModal onUpdateSaleList={handleUpdateSaleList}></SaleModal>
       <div className="custom-section">
+
+
+        {salesDuplicated.length > 0 && (
+          <Alert key={"primary"} variant={"primary"}>
+            Ids de ventas duplicadas:  {" "} 
+          {salesDuplicated.map((id) => (
+              <span key={id}>{id}, </span>
+            ))}
+        </Alert>
+
+        )}
+
         <Form.Label className="fw-bold">Lista de ventas</Form.Label>
-            <Form>
-              <Form.Label>Fecha</Form.Label>
-              <Form.Control
-                type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-                max={today}
-              />
-            </Form>
+        <Form>
+          <Form.Label>Fecha</Form.Label>
+          <Form.Control
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            max={today}
+          />
+        </Form>
         <CustomTable
           data={sales}
           pagination={false}
@@ -126,21 +140,19 @@ const SaleList = () => {
             {
               name: "Accciones",
               grow: 2,
-              cell: (row) =>
-                (row.is_cancelable || JSON.parse(localStorage.getItem("user")).is_owner === true || row.is_duplicate) && (
-                  <CustomButton onClick={() => handleOpenModal(row)}>
-                    Devolución
-                  </CustomButton>
-                ),
-            },
-
-            {
-              name: "Es duplicado",
-              grow: 2,
-              cell: (row) =>
-                (row.is_duplicate) && (
-                  <SuccessIcon></SuccessIcon>
-                ),
+              cell: (row) => (
+                <>
+                  {(row.is_cancelable ||
+                    JSON.parse(localStorage.getItem("user")).is_owner ===
+                      true ||
+                    row.is_duplicate) && (
+                    <CustomButton onClick={() => handleOpenModal(row)}>
+                      Devolución
+                    </CustomButton>
+                  )}
+                  {row.is_duplicate && <WarningIcon></WarningIcon>}
+                </>
+              ),
             },
           ]}
         />
