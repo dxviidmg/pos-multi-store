@@ -27,7 +27,9 @@ const StoreProductLogsModal = ({ onUpdateStoreProductList }) => {
 
         try {
           // Esperamos la respuesta de getStoreProductLogs
-          const response = await getStoreProductLogs(storeProduct);
+          const response = await getStoreProductLogs({
+            "store-product-id": storeProduct
+        } );
           setLogs(response.data);
         } catch (error) {
           console.error("Error fetching store product logs:", error);
