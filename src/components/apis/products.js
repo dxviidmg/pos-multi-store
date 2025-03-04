@@ -72,12 +72,14 @@ export const addProducts = async (data) => {
   }
 };
 
-export const getStoreProductLogs = async (storeProductId) => {
+export const getStoreProductLogs = async (params) => {
   const apiUrl = new URL(getApiUrl("store-product-logs"));
 
-  if (storeProductId){
-    apiUrl.searchParams.append("?store-product-id=", storeProductId);
-  }
+  if (params) {
+    Object.entries(params).forEach(([key, value]) => {
+        apiUrl.searchParams.append(key, value);
+    });
+}
 
   try {
     const response = await axios.get(apiUrl, {
