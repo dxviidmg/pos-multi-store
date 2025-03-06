@@ -14,8 +14,10 @@ export const getPayments = async () => {
   };
 
 
-  export const getStoreInvestment = async (store) => {
-    const apiUrl = new URL(getApiUrl("store/investments/" + store.id));
+
+
+  export const getTenantNotices = async () => {
+    const apiUrl = getApiUrl("tenant-notices")
   
     try {
       const response = await axios.get(apiUrl, {

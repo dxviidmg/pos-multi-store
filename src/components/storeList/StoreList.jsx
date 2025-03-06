@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { Form, Row, Col } from "react-bootstrap";
+import { Form, Row, Col, Alert } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getStores } from "../apis/stores";
 import { useNavigate } from "react-router-dom";
 import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
 import { getFormattedDate } from "../utils/utils";
+import { getTenantNotices } from "../apis/tenants";
 
 
 const defaultValue = "Sin calcular"
@@ -15,6 +16,7 @@ const StoreList = () => {
 
   const [loading, setLoading] = useState(false);
   const [stores, setStores] = useState([]);
+  const [notices, setNotices] = useState([]);
 
   const [params, setParams] = useState({
     date: today,
@@ -32,6 +34,9 @@ const StoreList = () => {
       setLoading(true);
       const response = await getStores(params);
       setStores(response.data);
+      const response2 = await getTenantNotices()
+      console.log(response2)
+      setNotices(response2.data)
       setLoading(false);
     };
 
@@ -56,6 +61,11 @@ const StoreList = () => {
     <div className="custom-section">
       <CustomSpinner2 isLoading={loading}></CustomSpinner2>
       <Form.Label className="fw-bold">Lista de tiendas</Form.Label>
+      {notices.map((variant) => (
+        <Alert key={"warning"} variant={'warning'}>
+          {variant}
+        </Alert>
+      ))}
       <Row>
         <Col>
           {" "}
