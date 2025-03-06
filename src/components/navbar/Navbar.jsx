@@ -115,6 +115,7 @@ const CustomNavbar = () => {
                   </NavDropdown.Item>
                 </NavDropdown>
                 <Nav.Link href="/clientes/">Clientes</Nav.Link>
+                <Nav.Link href="/pagos/">Pagos</Nav.Link>
               </>
             )}
           </Nav>
