@@ -18,16 +18,11 @@ const StoreList = () => {
 
   const [params, setParams] = useState({
     date: today,
-    showCashSUmmary: false,
   });
 
 
   const handleFilters = async (e) => {
-    let { name, value, checked } = e.target;
-    console.log(name, value, checked)
-    if (name === "showCashSUmmary"){
-      value = checked
-    }
+    let { name, value } = e.target;
     setParams((prevData) => ({ ...prevData, [name]: value }));
   }
 
@@ -72,16 +67,6 @@ const StoreList = () => {
               value={params.date}
               onChange={(e) => handleFilters(e)}
               max={today}
-            />
-          </Form>
-        </Col>
-        <Col>
-          <Form>
-            <Form.Label>Ver resumen</Form.Label>
-            <Form.Check
-              type="switch"
-              name="showCashSUmmary"
-              onClick={(e) => handleFilters(e)}
             />
           </Form>
         </Col>
