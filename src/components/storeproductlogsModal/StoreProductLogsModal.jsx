@@ -28,7 +28,7 @@ const StoreProductLogsModal = ({ onUpdateStoreProductList }) => {
         try {
           // Esperamos la respuesta de getStoreProductLogs
           const response = await getStoreProductLogs({
-            "store-product-id": storeProduct
+            "store-product-id": storeProduct.id
         } );
           setLogs(response.data);
         } catch (error) {
