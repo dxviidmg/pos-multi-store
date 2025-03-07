@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
 import { getStoreProducts } from "../apis/products";
-import { Form } from "react-bootstrap";
+import { Col, Form, Row } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getUserData } from "../apis/utils";
 import { exportToExcel } from "../utils/utils";
@@ -14,40 +14,41 @@ import StoreProductLogsModal from "../storeproductlogsModal/StoreProductLogsModa
 import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
 import { getBrands } from "../apis/brands";
 
-
 const StoreProductList = () => {
   const dispatch = useDispatch();
   const [storeProducts, setStoreProducts] = useState([]);
-  const [brands, setBrands] = useState([])
+  const [brands, setBrands] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [brandId, setBrandId] = useState(0)
+  const [params, setParams] = useState({});
   const user = getUserData();
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
+    const fetchBrands = async () => {
         setLoading(true);
-        
-        const [responseBrands, responseProducts] = await Promise.all([
-          getBrands(),
-          brandId ? getStoreProducts("brand_id", brandId) : Promise.resolve({ data: [] }) // Evita llamada innecesaria
-        ]);
+        const response = await getBrands();
+        setBrands(response.data);
   
-        setBrands(responseBrands.data);
-        
-        if (brandId) {
-          setStoreProducts(responseProducts.data);
+        if (Object.keys(params).length === 0 && response.data.length > 0) {
+          setParams({ brand_id: response.data[0].id });
         }
-  
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
         setLoading(false);
-      }
     };
   
-    fetchData();
-  }, [brandId]);
+    fetchBrands();
+  }, []); // Solo se ejecuta una vez al montar
+  
+  useEffect(() => {
+    const fetchStoreProducts = async () => {
+      if (Object.keys(params).length === 0) return;
+  
+        setLoading(true);
+        const response = await getStoreProducts(params);
+        setStoreProducts(response.data);
+        setLoading(false);
+    };
+  
+    fetchStoreProducts();
+  }, [params]);
 
   const handleDownload = async () => {
     const storeProductsForReport = storeProducts.map(
@@ -86,12 +87,11 @@ const StoreProductList = () => {
     });
   };
 
-
   const handleDataChange = async (e) => {
-    let { value } = e.target;
-    setBrandId(value)
+    let { name, value } = e.target;
+    console.log(name, value);
+    setParams((prevData) => ({ ...prevData, [name]: value }));
   };
-
 
   return (
     <div className="custom-section">
@@ -104,21 +104,36 @@ const StoreProductList = () => {
       <br />
       <CustomButton onClick={handleDownload}>Descargar inventario</CustomButton>
 
-      <br/>
+      <br />
+      <Row>
+        <Col>
+          {" "}
           <Form.Label>Marca</Form.Label>
-            <Form.Select
-              value={brandId}
-              onChange={handleDataChange}
-              name="brand_id"
-//              disabled={isLoading}
-            >
-              <option value="0">Selecciona una marca</option>
-              {brands.map((brand) => (
-                <option key={brand.id} value={brand.id}>
-                  {brand.name}
-                </option>
-              ))}
-            </Form.Select>
+          <Form.Select
+            value={params.brand_id}
+            onChange={handleDataChange}
+            name="brand_id"
+            //              disabled={isLoading}
+          >
+            <option value="0">Selecciona una marca</option>
+            {brands.map((brand) => (
+              <option key={brand.id} value={brand.id}>
+                {brand.name}
+              </option>
+            ))}
+          </Form.Select>
+        </Col>
+        <Col>
+          <Form.Label>Stock maximo</Form.Label>
+          <Form.Control
+            type="number"
+            value={params.max_stock}
+            onChange={handleDataChange}
+            name="max_stock"
+          />
+        </Col>
+      </Row>
+
       <CustomTable
         searcher={true}
         progressPending={loading}
@@ -127,7 +142,7 @@ const StoreProductList = () => {
           {
             name: "Código",
             selector: (row) => row.product_code,
-            grow: 2
+            grow: 2,
           },
           {
             name: "Marca",

@@ -37,11 +37,13 @@ const SearchProduct = () => {
 
   const fetchData = useCallback(
     debounce(async () => {
-      if (!query) {
+      if ((!query) || (query.length < 3 && queryType === "q")){
         setData([]);
         return;
       }
-      const response = await getStoreProducts(queryType, query);
+
+
+      const response = await getStoreProducts({[queryType]: query});
       const fetchedData = response.data;
 
       if (queryType === "code" && fetchedData.length === 0) {
