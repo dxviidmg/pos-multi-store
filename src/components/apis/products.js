@@ -2,11 +2,13 @@ import axios from "axios";
 import { getApiUrl, getHeaders } from "./utils";
 
 
-export const getStoreProducts = async (filter, query) => {
+export const getStoreProducts = async (params) => {
   const apiUrl = new URL(getApiUrl("store-product"));
 
-  if (filter){
-    apiUrl.searchParams.append(filter, query);
+  if (params) {
+    Object.entries(params).forEach(([key, value]) => {
+        apiUrl.searchParams.append(key, value);
+    });
   }
 
   try {
@@ -19,9 +21,13 @@ export const getStoreProducts = async (filter, query) => {
   }
 };
 
-export const getProducts = async (filter, query) => {
+export const getProducts = async (params) => {
   const apiUrl = new URL(getApiUrl("product"));
-  apiUrl.searchParams.append(filter, query);
+  if (params) {
+    Object.entries(params).forEach(([key, value]) => {
+        apiUrl.searchParams.append(key, value);
+    });
+  }
 
   try {
     const response = await axios.get(apiUrl, {
@@ -79,7 +85,7 @@ export const getStoreProductLogs = async (params) => {
     Object.entries(params).forEach(([key, value]) => {
         apiUrl.searchParams.append(key, value);
     });
-}
+  }
 
   try {
     const response = await axios.get(apiUrl, {
