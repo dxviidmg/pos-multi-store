@@ -1,27 +1,51 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { Form } from "react-bootstrap";
+import { Col, Form, Row } from "react-bootstrap";
 import { formatTimeFromDate, getFormattedDate } from "../utils/utils";
-import { getStoreProductLogs } from "../apis/products";
+import {
+  getStoreProductLogs,
+  getStoreProductLogsChoices,
+} from "../apis/products";
 import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
+import { getBrands } from "../apis/brands";
 
 const LogList = () => {
   const today = getFormattedDate();
   const [sales, setSales] = useState([]);
-  const [loading, setLoading] = useState(false)
-  const [date, setDate] = useState(today)
+  const [loading, setLoading] = useState(false);
+  const [brands, setBrands] = useState([]);
+  const [actions, setActions] = useState([]);
+  const [params, setParams] = useState({ date: today });
+
+  useEffect(() => {
+    const fetchBrands = async () => {
+      setLoading(true);
+      const response = await getBrands();
+      setBrands(response.data);
+      const response2 = await getStoreProductLogsChoices();
+      setActions(response2.data);
+      setLoading(false);
+    };
+
+    fetchBrands();
+  }, []); // Solo se ejecuta una vez al montar
+
   useEffect(() => {
     const fetchSalesData = async () => {
-      setLoading(true)
-      const salesResponse = await getStoreProductLogs({
-        "date": date
-    });
+      setLoading(true);
+      const salesResponse = await getStoreProductLogs(params);
       setSales(salesResponse.data);
-      setLoading(false)
+      setLoading(false);
     };
 
     fetchSalesData();
-  }, [date]);
+  }, [params]);
+
+  const handleDataChange = async (e) => {
+    let { name, value } = e.target;
+    console.log(name, value);
+    setParams((prevData) => ({ ...prevData, [name]: value }));
+  };
 
   return (
     <>
@@ -29,15 +53,54 @@ const LogList = () => {
       <div className="custom-section">
         <Form.Label className="fw-bold">Lista de logs</Form.Label>
 
-        <Form>
-          <Form.Label>Fecha</Form.Label>
-          <Form.Control
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            max={today}
-          />
-        </Form>
+        <Row>
+          <Col>
+            <Form.Label>Fecha</Form.Label>
+            <Form.Control
+              type="date"
+              value={params.date}
+              onChange={handleDataChange}
+              max={today}
+              name="date"
+            />
+          </Col>
+
+          <Col>
+            <Form.Label>Marca</Form.Label>
+            <Form.Select
+              value={params.brand_id}
+              onChange={handleDataChange}
+              name="brand_id"
+              //              disabled={isLoading}
+            >
+              <option value="0">Selecciona una marca</option>
+              {brands.map((brand) => (
+                <option key={brand.id} value={brand.id}>
+                  {brand.name}
+                </option>
+              ))}
+            </Form.Select>
+          </Col>
+
+
+          <Col>
+            <Form.Label>Movimientos</Form.Label>
+            <Form.Select
+              value={params.action}
+              onChange={handleDataChange}
+              name="action"
+              //              disabled={isLoading}
+            >
+              <option value="">Selecciona un movimiento</option>
+              {actions.map((action) => (
+                <option key={action.value} value={action.value}>
+                  {action.label}
+                </option>
+              ))}
+            </Form.Select>
+          </Col>
+
+        </Row>
 
         <CustomTable
           data={sales}
@@ -51,6 +114,8 @@ const LogList = () => {
             {
               name: "Nombre",
               selector: (row) => row.product_name,
+              wrap: true,
+              grow: 2,
             },
 
             {
