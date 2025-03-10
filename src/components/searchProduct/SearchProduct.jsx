@@ -4,7 +4,7 @@ import CustomTable from "../commons/customTable/customTable";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getStoreProducts } from "../apis/products";
 import { addToCart, updateMovementType } from "../redux/cart/cartActions";
-import { Badge, Form } from "react-bootstrap";
+import { Badge, Container, Form } from "react-bootstrap";
 import { debounce } from "lodash";
 import StockModal from "../stockModal/StockModal";
 import {
@@ -37,13 +37,12 @@ const SearchProduct = () => {
 
   const fetchData = useCallback(
     debounce(async () => {
-      if ((!query) || (query.length < 3 && queryType === "q")){
+      if (!query || (query.length < 3 && queryType === "q")) {
         setData([]);
         return;
       }
 
-
-      const response = await getStoreProducts({[queryType]: query});
+      const response = await getStoreProducts({ [queryType]: query });
       const fetchedData = response.data;
 
       if (queryType === "code" && fetchedData.length === 0) {
@@ -62,10 +61,13 @@ const SearchProduct = () => {
     [query, queryType, movementType]
   );
 
-  const handleSingleProductFetch = (product) => {
-    if (movementType === "venta" && product.available_stock === 0) {
-      handleOpenModal(product);
-    } else if (movementType === "traspaso" && product.reserved_stock === 0) {
+  const handleSingleProductFetch = (storeProduct) => {
+    if (movementType === "venta" && storeProduct.available_stock === 0) {
+      handleOpenModal(storeProduct);
+    } else if (
+      movementType === "traspaso" &&
+      storeProduct.reserved_stock === 0
+    ) {
       Swal.fire({
         icon: "error",
         title: "Este producto no esta relacionado a algun traspaso",
@@ -74,32 +76,32 @@ const SearchProduct = () => {
     } else if (movementType === "checar") {
       Swal.fire({
         icon: "success",
-        title: product.product_description,
-        text: "Precio unitario $" + product.prices.unit_price,
+        title: storeProduct.product_description,
+        text: "Precio unitario $" + storeProduct.product.prices.unit_price,
         timer: 5000,
       });
     } else {
-      handleAddToCartIfAvailable(product);
+      handleAddToCartIfAvailable(storeProduct);
     }
     setQuery("");
   };
 
-  const handleAddToCartIfAvailable = (product) => {
+  const handleAddToCartIfAvailable = (storeProduct) => {
     const existingProductIndex = cart.findIndex(
-      (item) => item.id === product.id
+      (item) => item.id === storeProduct.id
     );
-    const quantity = product.quantity || 0;
+    const quantity = storeProduct.quantity || 0;
 
     if (existingProductIndex === -1) {
       if (movementType === "agregar") {
-        dispatch(addToCart({ ...product, quantity: 1 }));
+        dispatch(addToCart({ ...storeProduct, quantity: 1 }));
       } else {
         const stock =
           movementType === "traspaso"
-            ? product.reserved_stock
-            : product.available_stock;
+            ? storeProduct.reserved_stock
+            : storeProduct.available_stock;
         if (quantity < stock) {
-          dispatch(addToCart({ ...product, quantity: 1 }));
+          dispatch(addToCart({ ...storeProduct, quantity: 1 }));
         } else {
           displayStockLimitAlert();
         }
@@ -108,13 +110,13 @@ const SearchProduct = () => {
       const existingProduct = cart[existingProductIndex];
       const stock =
         movementType === "traspaso"
-          ? product.reserved_stock
-          : product.available_stock;
+          ? storeProduct.reserved_stock
+          : storeProduct.available_stock;
 
       if (movementType === "agregar") {
-        dispatch(addToCart({ ...product, quantity: 1 }));
+        dispatch(addToCart({ ...storeProduct, quantity: 1 }));
       } else if (existingProduct.quantity < stock) {
-        dispatch(addToCart({ ...product, quantity: 1 }));
+        dispatch(addToCart({ ...storeProduct, quantity: 1 }));
       } else if (
         movementType === "venta" &&
         existingProduct.quantity >= stock
@@ -172,9 +174,9 @@ const SearchProduct = () => {
     if (queryType === "q") fetchData();
   };
 
-  const handleOpenModal = (product) => {
+  const handleOpenModal = (storeProduct) => {
     dispatch(hideStockModal());
-    setTimeout(() => dispatch(showStockModal(product)), 1);
+    setTimeout(() => dispatch(showStockModal(storeProduct)), 1);
   };
 
   const handleShortcut = (event) => {
@@ -321,8 +323,8 @@ const SearchProduct = () => {
       <br />
 
       {!isInputFocused && (
-        <Badge bg="success">
-          Aviso: Para añadir productos al carrito el cursor debe estar en el
+        <Badge bg="success" className="text-wrap">
+          Aviso: Para añadir productos al carrito, el cursor debe estar en el
           campo de búsqueda de productos.
         </Badge>
       )}
@@ -347,52 +349,62 @@ const SearchProduct = () => {
         data={data}
         pagination={false}
         columns={[
-          { name: "Código", selector: (row) => row.product_code, grow: 2 },
+          { name: "Código", selector: (row) => row.product.code, grow: 2 },
           {
             name: "Marca",
-            selector: (row) => row.product_brand,
+            selector: (row) => row.product.brand_name,
           },
           {
             name: "Nombre",
-            selector: (row) => row.product_name,
+            selector: (row) => row.product.name,
             grow: 3,
             wrap: true,
           },
           { name: "Stock", selector: (row) => row.available_stock },
           {
             name: "Precio unitario",
-            selector: (row) => `$${row.prices.unit_price.toFixed(2)}`,
+            selector: (row) => `$${row.product.prices.unit_price.toFixed(2)}`,
           },
           {
             name: "Precio mayoreo",
             selector: (row) =>
-              row.prices.apply_wholesale
+              row.product.prices.apply_wholesale
                 ? `${
-                    row.prices.min_wholesale_quantity
-                  } o más a $${row.prices.wholesale_price.toFixed(2)}`
+                    row.product.prices.min_wholesale_quantity
+                  } o más a $${row.product.prices.wholesale_price.toFixed(2)}`
                 : "N/A",
           },
           {
-            name: "Agregar a venta",
+            name: "Acciones",
+            grow: 5,
             cell: (row) => (
-              <CustomButton
-                onClick={() => handleAddToCartIfAvailable(row)}
-                disabled={movementType === "venta" && row.available_stock === 0}
-                variant="primary"
-              >
-                Agregar
-              </CustomButton>
-            ),
-          },
-          {
-            name: "Stock total",
-            cell: (row) => (
-              <CustomButton
-                onClick={() => handleOpenModal({ ...row, onlyRead: true })}
-                variant="danger"
-              >
-                Ver
-              </CustomButton>
+              <>
+                <CustomButton
+                  onClick={() => handleAddToCartIfAvailable(row)}
+                  disabled={
+                    movementType === "venta" && row.available_stock === 0
+                  }
+                  variant="primary"
+                >
+                  Agregar
+                </CustomButton>
+
+                <CustomButton
+                  onClick={() => handleOpenModal({ ...row, onlyRead: true })}
+                  variant="danger"
+                >
+                  Ver stock
+                </CustomButton>
+
+                <CustomButton
+                  onClick={() => handleOpenModal({ ...row, onlyRead: true })}
+                  variant="danger"
+                  disabled={!row.product.image}
+                >
+
+                  Ver imagen
+                </CustomButton>
+              </>
             ),
           },
         ]}

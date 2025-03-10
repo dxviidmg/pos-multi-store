@@ -2,7 +2,7 @@ import { SHOW_MODAL, HIDE_MODAL } from './StockModalActions';
 
 const initialState = {
   showStockModal: false,
-  product: {}
+  storeProduct: {}
 };
 
 const StockModalReducer = (state = initialState, action) => {
@@ -10,14 +10,14 @@ const StockModalReducer = (state = initialState, action) => {
     case SHOW_MODAL: {
         return {
           showStockModal: true,
-          product: action.payload
+          storeProduct: action.payload
         };
       }
 
       case HIDE_MODAL: {
         return {
           showStockModal: false,
-          product: {}
+          storeProduct: {}
         };
       }
 

@@ -225,9 +225,9 @@ const Cart = () => {
         <Form.Check
         type="switch"
         id="custom-switch"
-        checked={row.product_price === row.prices.wholesale_price}
+        checked={row.product_price === row.product.prices.wholesale_price}
         onClick={() => handleChangePrice(row)}
-        disabled={!row.prices.wholesale_price}
+        disabled={!row.product.prices.wholesale_price}
       />
       ),
     },
