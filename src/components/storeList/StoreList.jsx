@@ -60,12 +60,14 @@ const StoreList = () => {
   return (
     <div className="custom-section">
       <CustomSpinner2 isLoading={loading}></CustomSpinner2>
-      <Form.Label className="fw-bold">Lista de tiendas</Form.Label>
+
       {notices.map((variant) => (
-        <Alert key={"warning"} variant={'warning'}>
+        <Alert key={"success"} variant={'success'}>
           {variant}
         </Alert>
       ))}
+
+      <Form.Label className="fw-bold">Lista de tiendas</Form.Label>
       <Row>
         <Col>
           {" "}
