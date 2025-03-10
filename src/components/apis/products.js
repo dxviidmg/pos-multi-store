@@ -97,6 +97,21 @@ export const getStoreProductLogs = async (params) => {
   }
 };
 
+
+export const getStoreProductLogsChoices = async () => {
+  const apiUrl = new URL(getApiUrl("store-product-logs/choices"));
+
+
+  try {
+    const response = await axios.get(apiUrl, {
+      headers: getHeaders(),
+    });
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
+
 export const updateStoreProduct = async (data) => {
   const apiUrl = new URL(getApiUrl("store-product/" + data.id));
 
