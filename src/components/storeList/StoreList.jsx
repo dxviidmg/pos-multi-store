@@ -186,7 +186,7 @@ const StoreList = () => {
                   selector: (row) =>
                     row.investment
                       ? "$" + row.investment.toLocaleString()
-                      : "Pendiente calcular",
+                      : "$0",
                 },
               ]
             : []),
