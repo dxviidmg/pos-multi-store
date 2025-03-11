@@ -3,9 +3,9 @@ export const HIDE_MODAL = 'HIDE_MODAL';
 
 
 
-export const showStockModal = (product) => ({
+export const showStockModal = (storeProduct) => ({
   type: SHOW_MODAL,
-  payload: product,  
+  payload: storeProduct,  
 });
 
 export const hideStockModal = () => ({

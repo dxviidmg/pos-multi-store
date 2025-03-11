@@ -38,7 +38,7 @@ const changeProductPrice = (product_price, prices) => {
 const updateCartWithPrice = (cart, clientSelected) => {
   return cart.map((item, index) => ({
     ...item,
-    product_price: calculateProductPrice(item.quantity, item.prices, clientSelected)
+    product_price: calculateProductPrice(item.quantity, item.product.prices, clientSelected)
   }));
 };
 
@@ -65,7 +65,7 @@ const cartReducer = (state = initialState, action) => {
     case ADD_TO_CART: {
       const {
         id,
-        prices,
+        product,
         reserved_stock,
         available_stock,
         stock,
@@ -98,7 +98,7 @@ const cartReducer = (state = initialState, action) => {
             return {
               ...item,
               quantity: updatedQuantity,
-              product_price: calculateProductPrice(updatedQuantity, item.prices, clientSelected),
+              product_price: calculateProductPrice(updatedQuantity, item.product.prices, clientSelected),
               stock: stockTemp,
             };
           }
@@ -114,7 +114,7 @@ const cartReducer = (state = initialState, action) => {
           ...state.cart,
           {
             ...action.payload,
-            product_price: prices.unit_price,
+            product_price: product.prices.unit_price,
             stock: stockTemp,
           },
         ],
@@ -142,7 +142,7 @@ const cartReducer = (state = initialState, action) => {
         ...state,
         cart: state.cart.map((item) =>
           item.id === action.payload.product.id
-            ? { ...item, quantity: action.payload.newQuantity, product_price: calculateProductPrice(action.payload.newQuantity, item.prices, clientSelected) }
+            ? { ...item, quantity: action.payload.newQuantity, product_price: calculateProductPrice(action.payload.newQuantity, item.product.prices, clientSelected) }
             : item
         ),
       };
@@ -152,7 +152,7 @@ const cartReducer = (state = initialState, action) => {
         ...state,
         cart: state.cart.map((item) =>
           item.id === action.payload.id
-            ? { ...item, product_price: changeProductPrice(item.product_price, item.prices) }
+            ? { ...item, product_price: changeProductPrice(item.product_price, item.product.prices) }
             : item
         ),
       };

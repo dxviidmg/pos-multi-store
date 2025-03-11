@@ -44,7 +44,7 @@ export const createProduct = async (data) => {
 
   try {
     const response = await axios.post(apiUrl, data, {
-      headers: getHeaders(),
+      headers: getHeaders(true),
     });
     return response;
   } catch (error) {
@@ -53,11 +53,12 @@ export const createProduct = async (data) => {
 };
 
 export const updateProduct = async (data) => {
+  
   const apiUrl = new URL(getApiUrl("product/" + data.id));
 
   try {
     const response = await axios.patch(apiUrl, data, {
-      headers: getHeaders(),
+      headers: getHeaders(true),
     });
     return response;
   } catch (error) {
