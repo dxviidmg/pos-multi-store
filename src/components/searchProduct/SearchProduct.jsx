@@ -4,7 +4,7 @@ import CustomTable from "../commons/customTable/customTable";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getStoreProducts } from "../apis/products";
 import { addToCart, updateMovementType } from "../redux/cart/cartActions";
-import { Badge, Container, Form } from "react-bootstrap";
+import { Badge, Form } from "react-bootstrap";
 import { debounce } from "lodash";
 import StockModal from "../stockModal/StockModal";
 import {
