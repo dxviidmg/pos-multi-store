@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import CustomModal from "../commons/customModal/customModal";
-import { Form } from "react-bootstrap";
+import { Col, Form, Image, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import CustomTable from "../commons/customTable/customTable";
 import CustomButton from "../commons/customButton/CustomButton";
@@ -8,10 +8,11 @@ import { hideStockModal } from "../redux/stockModal/StockModalActions";
 import { createTransfer } from "../apis/transfers";
 
 const StockModal = () => {
-  const { showStockModal, product } = useSelector(
+  const { showStockModal, storeProduct } = useSelector(
     (state) => state.StockModalReducer
   );
 
+  console.log(storeProduct);
   const dispatch = useDispatch();
 
   const [requestedQuantities, setRequestedQuantities] = useState({});
@@ -34,8 +35,8 @@ const StockModal = () => {
     const data = {
       quantity: quantity,
       origin_store: row.store_id,
-      destination_store: product.store,
-      product: product.product_id,
+      destination_store: storeProduct.store,
+      product: storeProduct.product_id,
     };
 
     const response = await createTransfer(data);
@@ -49,25 +50,25 @@ const StockModal = () => {
     <CustomModal showOut={showStockModal} title="Revisión de Stock">
       <div className="text-center">
         <p>
-          <b>Código:</b> {product.product_code} <b>Nombre:</b>{" "}
-          {product.product_description}
+          <b>Código:</b> {storeProduct.product?.code} <b>Nombre:</b>{" "}
+          {storeProduct.product?.brand_name} {storeProduct.product?.name}
         </p>
 
-        {product.available_stock === 0 ? (
+        {storeProduct.available_stock === 0 ? (
           <p>
             <b>Nota:</b> Producto no disponible
           </p>
-        ) : product.available_stock !== 0 && !product.onlyRead ? (
+        ) : storeProduct.available_stock !== 0 && !storeProduct.onlyRead ? (
           <p>
-            <b>Nota:</b> Has alcancado el limite de este producto en esta tienda
+            <b>Nota:</b> Has alcanzado el limite de este producto en esta tienda
           </p>
         ) : null}
       </div>
 
-      {product.stock_in_other_stores &&
-        product.stock_in_other_stores.length > 0 && (
+      {storeProduct.stock_in_other_stores &&
+        storeProduct.stock_in_other_stores.length > 0 && (
           <CustomTable
-            data={product.stock_in_other_stores}
+            data={storeProduct.stock_in_other_stores}
             columns={[
               {
                 name: "Locación",
@@ -120,6 +121,13 @@ const StockModal = () => {
             ]}
           />
         )}
+
+      <Row className="justify-content-center">
+        <Col md={3}>
+          {" "}
+          <Image src={storeProduct.product?.image} fluid ></Image>{" "}
+        </Col>
+      </Row>
     </CustomModal>
   );
 };
