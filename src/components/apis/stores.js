@@ -35,3 +35,16 @@ export const getStores = async (params) => {
       return error;
     }
   };
+
+  export const getInvestment = async () => {
+    const apiUrl = new URL(getApiUrl("investments"));
+  
+    try {
+      const response = await axios.get(apiUrl, {
+        headers: getHeaders(),
+      });
+      return response;
+    } catch (error) {
+      return error;
+    }
+  };

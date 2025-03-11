@@ -152,19 +152,20 @@ const PaymentModal = () => {
     }
     const paymentList = convertPaymentMethodsToList();
 
+    console.log(cart)
     const data = {
       client: client.id,
       total: totalDiscount,
-      store_products: cart.map((product) => ({
-        id: product.id,
-        quantity: product.quantity,
-        name: product.product_name,
-        price:
-          product.product_price *
-          ((client?.discount_percentage_complement ?? 100) * 0.01),
+      store_products: cart.map((store_product) => ({
+        id: store_product.product.id,
+        quantity: store_product.quantity,
+        name: store_product.product.name,
+        price: store_product.product_price * ((client?.discount_percentage_complement ?? 100) * 0.01),
       })),
       payments: paymentList,
     };
+
+    console.log(data)
 
     const response = await createSale(data);
 
