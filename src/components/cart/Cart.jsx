@@ -171,7 +171,7 @@ const Cart = () => {
   };
 
   const commonColumns = [
-    { name: "Código", selector: (row) => row.product_code },
+    { name: "Código", selector: (row) => row.product.code },
     {
       name: "Marca",
       selector: (row) => row.product.brand_name,

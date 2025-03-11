@@ -9,7 +9,7 @@ import { getFormattedDate } from "../utils/utils";
 import { getTenantNotices } from "../apis/tenants";
 
 
-const defaultValue = "Sin calcular"
+const defaultValue = "N/A"
 const StoreList = () => {
   const navigate = useNavigate();
   const today = getFormattedDate();
@@ -67,7 +67,7 @@ const StoreList = () => {
         </Alert>
       ))}
 
-      <Form.Label className="fw-bold">Lista de tiendas</Form.Label>
+      <Form.Label className="fw-bold">Lista de tiendas y almacenes</Form.Label>
       <Row>
         <Col>
           {" "}
@@ -100,42 +100,42 @@ const StoreList = () => {
           {
             name: "Ganancia del dia",
             selector: (row) =>
-              row.cash_summary && row.cash_summary[10]
+              row.store_type === "T"
                 ? "$" + row.cash_summary[10]["amount"].toLocaleString()
                 : defaultValue,
           },
           {
             name: "Efectivo",
             selector: (row) =>
-              row.cash_summary && row.cash_summary[0]
+              row.store_type === "T"
                 ? "$" + row.cash_summary[0]["amount"].toLocaleString()
                 : defaultValue,
           },
           {
             name: "Tarjeta",
             selector: (row) =>
-              row.cash_summary && row.cash_summary[1]
+              row.store_type === "T"
                 ? "$" + row.cash_summary[1]["amount"].toLocaleString()
                 : defaultValue,
           },
           {
             name: "Transferencia",
             selector: (row) =>
-              row.cash_summary && row.cash_summary[2]
+              row.store_type === "T"
                 ? "$" + row.cash_summary[2]["amount"].toLocaleString()
                 : defaultValue,
           },
           {
             name: "Total de ventas",
             selector: (row) =>
-              row.cash_summary && row.cash_summary[4]
+              row.store_type === "T"
                 ? "$" + row.cash_summary[4]["amount"].toLocaleString()
                 : defaultValue,
           },
           {
             name: "$ en caja",
             selector: (row) =>
-              row.cash_summary && row.cash_summary[9]
+              row.store_type === "T"
                 ? "$" + row.cash_summary[9]["amount"].toLocaleString()
                 : defaultValue,
           },

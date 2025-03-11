@@ -52,12 +52,7 @@ const StoreProductList = () => {
 
   const handleDownload = async () => {
     const storeProductsForReport = storeProducts.map(
-      ({
-        product_code: Código,
-        product_brand: Marca,
-        product_name: Nombre,
-        stock: Stock,
-      }) => ({
+      ({ product: { code: Código, brand_name: Marca, name: Nombre }, stock: Stock }) => ({
         Código,
         Marca,
         Nombre,
