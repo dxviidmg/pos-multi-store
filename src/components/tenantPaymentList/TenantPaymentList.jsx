@@ -8,34 +8,32 @@ const TenantPaymentList = () => {
 
   useEffect(() => {
     const fetchPayments = async () => {
-        const response = await getPayments();
-        setPayments(response.data);
+      const response = await getPayments();
+      setPayments(response.data);
     };
-  
+
     fetchPayments();
   }, []);
 
-
-
-
-
-
   return (
-      <div className="custom-section">
-          <Form.Label className="fw-bold">Lista de pagos</Form.Label>
-          <CustomTable
-            data={payments}
-            columns={[
-              { name: "Validez", selector: (row) => row.start_of_validity + '-' + row.end_of_validity},
-              { name: "Meses pagados", selector: (row) => row.months },
-              {
-                name: "Total",
-                selector: (row) => row.total,
-              },
-
-            ]}
-          />
-      </div>
+    <div className="custom-section">
+      <Form.Label className="fw-bold">Lista de pagos</Form.Label>
+      <CustomTable
+        data={payments}
+        columns={[
+          {
+            name: "Validez",
+            selector: (row) =>
+              row.start_of_validity + "-" + row.end_of_validity,
+          },
+          { name: "Meses pagados", selector: (row) => row.months },
+          {
+            name: "Total",
+            selector: (row) => row.total,
+          },
+        ]}
+      />
+    </div>
   );
 };
 

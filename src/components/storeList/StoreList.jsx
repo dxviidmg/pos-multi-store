@@ -8,8 +8,12 @@ import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
 import { getFormattedDate } from "../utils/utils";
 import { getTenantNotices } from "../apis/tenants";
 
+const defaultValue = "N/A";
 
-const defaultValue = "N/A"
+const storesTypes = [
+  { value: "A", label: "Almacen" },
+  { value: "T", label: "Tienda" },
+];
 const StoreList = () => {
   const navigate = useNavigate();
   const today = getFormattedDate();
@@ -17,26 +21,24 @@ const StoreList = () => {
   const [loading, setLoading] = useState(false);
   const [stores, setStores] = useState([]);
   const [notices, setNotices] = useState([]);
-
+  const [showInvestment, setShowInvestment] = useState(false);
   const [params, setParams] = useState({
     date: today,
   });
 
-
   const handleFilters = async (e) => {
     let { name, value } = e.target;
     setParams((prevData) => ({ ...prevData, [name]: value }));
-  }
-
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       const response = await getStores(params);
       setStores(response.data);
-      const response2 = await getTenantNotices()
-      console.log(response2)
-      setNotices(response2.data)
+      const response2 = await getTenantNotices();
+      console.log(response2);
+      setNotices(response2.data);
       setLoading(false);
     };
 
@@ -57,12 +59,14 @@ const StoreList = () => {
     window.location.reload();
   };
 
+  const handleShowInvestment = () => setShowInvestment(true); 
+
   return (
     <div className="custom-section">
       <CustomSpinner2 isLoading={loading}></CustomSpinner2>
 
       {notices.map((variant) => (
-        <Alert key={"success"} variant={'success'}>
+        <Alert key={"success"} variant={"success"}>
           {variant}
         </Alert>
       ))}
@@ -81,6 +85,26 @@ const StoreList = () => {
               max={today}
             />
           </Form>
+        </Col>
+
+        <Col>
+          <Form.Label>Tipo de tienda</Form.Label>
+          <Form.Select
+            value={params.action}
+            onChange={handleFilters}
+            name="store_type"
+            //              disabled={isLoading}
+          >
+            <option value="">Selecciona un tipo de tienda</option>
+            {storesTypes.map((action) => (
+              <option key={action.value} value={action.value}>
+                {action.label}
+              </option>
+            ))}
+          </Form.Select>
+        </Col>
+        <Col className="d-flex align-items-end">
+          <CustomButton fullWidth onClick={handleShowInvestment}>Ver inversión</CustomButton>
         </Col>
       </Row>
 
@@ -139,6 +163,17 @@ const StoreList = () => {
                 ? "$" + row.cash_summary[9]["amount"].toLocaleString()
                 : defaultValue,
           },
+          ...(showInvestment
+            ? [
+                {
+                  name: "Inversión",
+                  selector: (row) =>
+                    row.investment
+                      ? "$" + row.investment.toLocaleString()
+                      : "Pendiente calcular",
+                },
+              ]
+            : []),
           {
             name: "Accciones",
             cell: (row) => (
