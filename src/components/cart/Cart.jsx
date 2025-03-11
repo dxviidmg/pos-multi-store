@@ -147,7 +147,7 @@ const Cart = () => {
   };
 
   const handleAddToStock = async (cart) => {
-    const data = { products: cart };
+    const data = { store_products: cart };
     try {
       const response = await addProducts(data);
       if (response.status === 200) {
