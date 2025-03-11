@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
 import { Form, Row, Col, Alert } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
-import { getStores } from "../apis/stores";
+import { getInvestment, getStores } from "../apis/stores";
 import { useNavigate } from "react-router-dom";
 import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
 import { getFormattedDate } from "../utils/utils";
@@ -59,7 +59,23 @@ const StoreList = () => {
     window.location.reload();
   };
 
-  const handleShowInvestment = () => setShowInvestment(true); 
+  const handleShowInvestment = async () => {
+    setLoading(true)
+    const response = await getInvestment();
+    setStores((prevData) =>
+      prevData.map((store) => {
+        const matchingInvestment = response.data.find(
+          (investment) => investment.id === store.id
+        );
+        return matchingInvestment
+          ? { ...store, investment: matchingInvestment.investment }
+          : store;
+      })
+    );
+    setLoading(false)
+    setShowInvestment(true);
+  };
+  
 
   return (
     <div className="custom-section">
