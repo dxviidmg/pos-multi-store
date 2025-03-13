@@ -36,7 +36,7 @@ const StockModal = () => {
       quantity: quantity,
       origin_store: row.store_id,
       destination_store: storeProduct.store,
-      product: storeProduct.product_id,
+      product: storeProduct.product.id,
     };
 
     const response = await createTransfer(data);
