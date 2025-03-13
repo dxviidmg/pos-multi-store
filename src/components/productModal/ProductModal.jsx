@@ -103,9 +103,10 @@ const ProductModal = ({ onUpdateProductList }) => {
   };
 
   const handleClientError = (response) => {
+    console.log(response)
     let message = "Error desconocido. Por favor, contacte soporte.";
-    if (response?.status === 400 && response.data?.code) {
-      const codeError = response.data.code[0];
+    if (response.response?.status === 400 && response.response.data?.code) {
+      const codeError = response.response.data.code[0];
       if (codeError === "product with this code already exists.") {
         message = "El código ya existe.";
       }
