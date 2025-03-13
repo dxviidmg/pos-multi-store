@@ -76,7 +76,7 @@ const SearchProduct = () => {
     } else if (movementType === "checar") {
       Swal.fire({
         icon: "success",
-        title: storeProduct.product_description,
+        title: storeProduct.product.name,
         text: "Precio unitario $" + storeProduct.product.prices.unit_price,
         timer: 5000,
       });
