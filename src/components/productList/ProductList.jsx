@@ -125,7 +125,7 @@ const ProductList = () => {
             name="brand_id"
             //              disabled={isLoading}
           >
-            <option value="0">Selecciona una marca</option>
+            <option value="">Selecciona una marca</option>
             {brands.map((brand) => (
               <option key={brand.id} value={brand.id}>
                 {brand.name}
@@ -187,12 +187,38 @@ const ProductList = () => {
                   row.min_wholesale_quantity
                 : "NA",
           },
+
+
+          {
+            name: "Eliminar",
+            selector: (row) => (
+                <Form.Check
+                  type="checkbox"
+                  id={`default-${row.id}`}
+                  //                checked={productsSaleToCancel.includes(row.id)}
+                  //                onChange={() => handleSelectProduct(row)}
+                />
+            ),
+          },
+
+          {
+            name: "Eliminar",
+            selector: (row) => (
+                <CustomButton onClick={() => handleOpenModal(row)}>
+                  Borrar
+                </CustomButton>
+            ),
+          },
+
           {
             name: "Accciones",
             cell: (row) => (
-              <CustomButton onClick={() => handleOpenModal(row)}>
-                Editar
-              </CustomButton>
+              <>
+                {" "}
+                <CustomButton onClick={() => handleOpenModal(row)}>
+                  Editar
+                </CustomButton>
+              </>
             ),
           },
         ]}
