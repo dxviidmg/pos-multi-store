@@ -200,21 +200,15 @@ const ProductList = () => {
                 />
             ),
           },
-
-          {
-            name: "Eliminar",
-            selector: (row) => (
-                <CustomButton onClick={() => handleOpenModal(row)}>
-                  Borrar
-                </CustomButton>
-            ),
-          },
-
           {
             name: "Accciones",
+            grow: 2,
             cell: (row) => (
               <>
                 {" "}
+                <CustomButton onClick={() => handleOpenModal({row})}>
+                  Editar
+                </CustomButton>
                 <CustomButton onClick={() => handleOpenModal(row)}>
                   Editar
                 </CustomButton>
