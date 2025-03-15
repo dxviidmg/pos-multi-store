@@ -3,7 +3,7 @@ import CustomTable from "../commons/customTable/customTable";
 import { Form } from "react-bootstrap";
 import { getSales } from "../apis/sales";
 import CustomButton from "../commons/customButton/CustomButton";
-import { getFormattedDate, formatTimeFromDate } from "../utils/utils";
+import { getFormattedDate, formatTimeFromDate, handlePrintTicket } from "../utils/utils";
 import { useDispatch } from "react-redux";
 import {
   hideSaleModal,
@@ -12,10 +12,13 @@ import {
 import SaleModal from "../saleModal/saleModal";
 import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
 import { WarningIcon } from "../commons/icons/Icons";
-import Alert from 'react-bootstrap/Alert'
+import Alert from "react-bootstrap/Alert";
+import { getUserData } from "../apis/utils";
 
 
 const SaleList = () => {
+  const user = getUserData();
+  const urlPrinter = user.store_url_printer;
   const [sales, setSales] = useState([]);
   const today = getFormattedDate();
   const [date, setDate] = useState(today);
@@ -68,16 +71,13 @@ const SaleList = () => {
       <CustomSpinner2 isLoading={loading}></CustomSpinner2>
       <SaleModal onUpdateSaleList={handleUpdateSaleList}></SaleModal>
       <div className="custom-section">
-
-
         {salesDuplicated.length > 0 && (
           <Alert key={"primary"} variant={"primary"}>
-            Ids de ventas duplicadas:  {" "} 
-          {salesDuplicated.map((id) => (
+            Ids de ventas duplicadas:{" "}
+            {salesDuplicated.map((id) => (
               <span key={id}>{id}, </span>
             ))}
-        </Alert>
-
+          </Alert>
         )}
 
         <Form.Label className="fw-bold">Lista de ventas</Form.Label>
@@ -116,7 +116,7 @@ const SaleList = () => {
                   {/* Map over the array and render each item */}
                   {row.products_sale.map((item, index) => (
                     <li key={index}>
-                      {item.quantity} x {item.description} a ${item.price}{" "}
+                      {item.quantity} x {item.name} a ${item.price}{" "}
                     </li>
                   ))}
                 </ul>
@@ -139,11 +139,17 @@ const SaleList = () => {
             },
             {
               name: "Accciones",
-              grow: 2,
+              grow: 4,
               cell: (row) => (
                 <>
+                  {(
+                    urlPrinter) && (
+                    <CustomButton onClick={() => handlePrintTicket(row)}>
+                      Imprimir ticket
+                    </CustomButton>
+                  )}
                   {(row.is_cancelable ||
-                    JSON.parse(localStorage.getItem("user")).is_owner ===
+                    user.is_owner ===
                       true ||
                     row.is_duplicate) && (
                     <CustomButton onClick={() => handleOpenModal(row)}>
