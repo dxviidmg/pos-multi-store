@@ -177,7 +177,7 @@ const ProductList = () => {
             selector: (row) => "$" + row.unit_price,
           },
           {
-            name: "Precio Mayoreo.",
+            name: "Precio Mayoreo",
             wrap: true,
             selector: (row) =>
               row.apply_wholesale
