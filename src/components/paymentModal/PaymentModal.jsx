@@ -8,6 +8,8 @@ import { createSale, printTicket } from "../apis/sales";
 import { hidePaymentModal } from "../redux/paymentModal/PaymentModalActions";
 import Swal from "sweetalert2";
 import { getUserData } from "../apis/utils";
+import { handlePrintTicket } from "../utils/utils";
+
 
 function roundUpCustom(value) {
   const intPart = Math.floor(value); // Parte entera
@@ -220,22 +222,7 @@ const PaymentModal = () => {
   };
 
 
-  const handlePrintTicket = async (data) => {
-    data = {...data, client}
-    try {
-      const response = await printTicket(urlPrinter, "ticket/", {
-        data,
-      });
 
-      if (response.status !== 200){
-        showAlert("error", "Error de impresión"
-        );
-      }
-
-    } catch (error) {
-      showAlert("error", "Error inesperado");
-    }
-  };
 
   return (
     <CustomModal showOut={showPaymentModal} title="Finalizar pago">

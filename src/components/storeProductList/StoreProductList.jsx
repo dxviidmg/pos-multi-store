@@ -110,7 +110,7 @@ const StoreProductList = () => {
             name="brand_id"
             //              disabled={isLoading}
           >
-            <option value="0">Selecciona una marca</option>
+            <option value="">Selecciona una marca</option>
             {brands.map((brand) => (
               <option key={brand.id} value={brand.id}>
                 {brand.name}

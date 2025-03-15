@@ -1,4 +1,10 @@
 import * as XLSX from "xlsx";
+import {printTicket } from "../apis/sales";
+import Swal from "sweetalert2";
+import { getUserData } from "../apis/utils";
+
+
+const urlPrinter = getUserData().store_url_printer
 
 export const getFormattedDate = (date = new Date()) => {
   const year = date.getFullYear();
@@ -66,5 +72,27 @@ export const calculateTimeAgo = (creationDate) => {
     return `hace ${minutes} minuto(s)`;
   } else {
     return `hace ${seconds} segundo(s)`;
+  }
+};
+
+
+const showAlert = (icon, title, text = "", timer = 5000) => {
+  Swal.fire({ icon, title, text, timer });
+};
+
+export const handlePrintTicket = async (data) => {
+  data = {...data}
+  try {
+    const response = await printTicket(urlPrinter, "ticket/", {
+      data,
+    });
+
+    if (response.status !== 200){
+      showAlert("error", "Error de impresión"
+      );
+    }
+
+  } catch (error) {
+    showAlert("error", "Error inesperado");
   }
 };
