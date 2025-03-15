@@ -367,6 +367,7 @@ const SearchProduct = () => {
           },
           {
             name: "Precio mayoreo",
+            wrap: true,
             selector: (row) =>
               row.product.prices.apply_wholesale
                 ? `${
@@ -397,7 +398,7 @@ const SearchProduct = () => {
                 </CustomButton>
 
                 <CustomButton
-                  onClick={() => handleOpenModal({ ...row, onlyRead: true })}
+                  onClick={() => handleOpenModal({ ...row, showImage: true})}
                   variant="danger"
                   disabled={!row.product.image}
                 >

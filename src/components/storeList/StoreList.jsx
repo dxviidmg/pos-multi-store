@@ -26,6 +26,15 @@ const StoreList = () => {
     date: today,
   });
 
+  const [totals, setTotals] = useState({
+    Ganancia: 0,
+    Efectivo: 0,
+    Tarjeta: 0,
+    Transferencia: 0,
+    'Total de ventas': 0,
+    Caja: 0
+  });
+
   const handleFilters = async (e) => {
     let { name, value } = e.target;
     setParams((prevData) => ({ ...prevData, [name]: value }));
@@ -34,11 +43,28 @@ const StoreList = () => {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      const response = await getStores(params);
-      setStores(response.data);
-      const response2 = await getTenantNotices();
-      console.log(response2);
-      setNotices(response2.data);
+      const response = await getTenantNotices();
+      console.log(response);
+      setNotices(response.data);
+
+      const response2 = await getStores(params);
+      setStores(response2.data);
+
+      const { ganancia, efectivo, tarjeta, transferencia, totalVentas, caja } = response2.data.reduce(
+        (acc, store) => ({
+          ganancia: acc.ganancia + store.cash_summary[10].amount,
+          efectivo: acc.efectivo + store.cash_summary[0].amount,
+          tarjeta: acc.tarjeta + store.cash_summary[1].amount,
+          transferencia: acc.transferencia + store.cash_summary[2].amount,
+          totalVentas: acc.totalVentas + store.cash_summary[4].amount,
+          caja: acc.efectivo + store.cash_summary[9].amount,
+
+        }),
+        { ganancia: 0, efectivo: 0, tarjeta: 0, transferencia: 0, totalVentas: 0, caja: 0 }
+      );
+
+      setTotals({ 'Ganancia': ganancia, 'Efectivo': efectivo,  'Tarjeta': tarjeta, 'Transferencia': transferencia, 'Total de ventas': totalVentas, 'Caja': caja});
+
       setLoading(false);
     };
 
@@ -60,7 +86,7 @@ const StoreList = () => {
   };
 
   const handleShowInvestment = async () => {
-    setLoading(true)
+    setLoading(true);
     const response = await getInvestment();
     setStores((prevData) =>
       prevData.map((store) => {
@@ -72,137 +98,155 @@ const StoreList = () => {
           : store;
       })
     );
-    setLoading(false)
+    setLoading(false);
     setShowInvestment(true);
   };
-  
 
   return (
-    <div className="custom-section">
-      <CustomSpinner2 isLoading={loading}></CustomSpinner2>
+    <>
+      <div className="custom-section">
+        {notices.map((variant) => (
+          <Alert key={"success"} variant={"success"}>
+            {variant}
+          </Alert>
+        ))}
+      </div>
+      <div className="custom-section">
+        <CustomSpinner2 isLoading={loading}></CustomSpinner2>
 
-      {notices.map((variant) => (
-        <Alert key={"success"} variant={"success"}>
-          {variant}
-        </Alert>
-      ))}
+        <Form.Label className="fw-bold">
+          Lista de tiendas y almacenes
+        </Form.Label>
+        <Row>
+          <Col>
+            {" "}
+            <Form>
+              <Form.Label>Fecha</Form.Label>
+              <Form.Control
+                name="date"
+                type="date"
+                value={params.date}
+                onChange={(e) => handleFilters(e)}
+                max={today}
+              />
+            </Form>
+          </Col>
 
-      <Form.Label className="fw-bold">Lista de tiendas y almacenes</Form.Label>
-      <Row>
-        <Col>
-          {" "}
-          <Form>
-            <Form.Label>Fecha</Form.Label>
-            <Form.Control
-              name="date"
-              type="date"
-              value={params.date}
-              onChange={(e) => handleFilters(e)}
-              max={today}
-            />
-          </Form>
-        </Col>
+          <Col>
+            <Form.Label>Tipo de tienda</Form.Label>
+            <Form.Select
+              value={params.action}
+              onChange={handleFilters}
+              name="store_type"
+              //              disabled={isLoading}
+            >
+              <option value="">Selecciona un tipo de tienda</option>
+              {storesTypes.map((action) => (
+                <option key={action.value} value={action.value}>
+                  {action.label}
+                </option>
+              ))}
+            </Form.Select>
+          </Col>
+          <Col className="d-flex align-items-end">
+            <CustomButton fullWidth onClick={handleShowInvestment}>
+              Ver inversión
+            </CustomButton>
+          </Col>
+        </Row>
 
-        <Col>
-          <Form.Label>Tipo de tienda</Form.Label>
-          <Form.Select
-            value={params.action}
-            onChange={handleFilters}
-            name="store_type"
-            //              disabled={isLoading}
-          >
-            <option value="">Selecciona un tipo de tienda</option>
-            {storesTypes.map((action) => (
-              <option key={action.value} value={action.value}>
-                {action.label}
-              </option>
-            ))}
-          </Form.Select>
-        </Col>
-        <Col className="d-flex align-items-end">
-          <CustomButton fullWidth onClick={handleShowInvestment}>Ver inversión</CustomButton>
-        </Col>
-      </Row>
+        <CustomTable
+          progressPending={loading}
+          data={stores}
+          columns={[
+            {
+              name: "Nombre",
+              selector: (row) => row.name,
+            },
 
-      <CustomTable
-        progressPending={loading}
-        data={stores}
-        columns={[
-          {
-            name: "Nombre",
-            selector: (row) => row.name,
-          },
-
-          {
-            name: "Tipo",
-            selector: (row) => row.store_type_display,
-          },
-          {
-            name: "Ganancia del dia",
-            selector: (row) =>
-              row.store_type === "T"
-                ? "$" + row.cash_summary[10]["amount"].toLocaleString()
-                : defaultValue,
-          },
-          {
-            name: "Efectivo",
-            selector: (row) =>
-              row.store_type === "T"
-                ? "$" + row.cash_summary[0]["amount"].toLocaleString()
-                : defaultValue,
-          },
-          {
-            name: "Tarjeta",
-            selector: (row) =>
-              row.store_type === "T"
-                ? "$" + row.cash_summary[1]["amount"].toLocaleString()
-                : defaultValue,
-          },
-          {
-            name: "Transferencia",
-            selector: (row) =>
-              row.store_type === "T"
-                ? "$" + row.cash_summary[2]["amount"].toLocaleString()
-                : defaultValue,
-          },
-          {
-            name: "Total de ventas",
-            selector: (row) =>
-              row.store_type === "T"
-                ? "$" + row.cash_summary[4]["amount"].toLocaleString()
-                : defaultValue,
-          },
-          {
-            name: "$ en caja",
-            selector: (row) =>
-              row.store_type === "T"
-                ? "$" + row.cash_summary[9]["amount"].toLocaleString()
-                : defaultValue,
-          },
-          ...(showInvestment
-            ? [
-                {
-                  name: "Inversión",
-                  selector: (row) =>
-                    row.investment
-                      ? "$" + row.investment.toLocaleString()
-                      : "$0",
-                },
-              ]
-            : []),
-          {
-            name: "Accciones",
-            cell: (row) => (
-              <>
-                <CustomButton onClick={() => handleSelectStore(row)}>
-                  Entrar
-                </CustomButton>
-              </>
-            ),
-          },
-        ]}
-      />
-    </div>
+            {
+              name: "Tipo",
+              selector: (row) => row.store_type_display,
+            },
+            {
+              name: "Ganancia del dia",
+              selector: (row) =>
+                row.store_type === "T"
+                  ? "$" + row.cash_summary[10]["amount"].toLocaleString()
+                  : defaultValue,
+            },
+            {
+              name: "Efectivo",
+              selector: (row) =>
+                row.store_type === "T"
+                  ? "$" + row.cash_summary[0]["amount"].toLocaleString()
+                  : defaultValue,
+            },
+            {
+              name: "Tarjeta",
+              selector: (row) =>
+                row.store_type === "T"
+                  ? "$" + row.cash_summary[1]["amount"].toLocaleString()
+                  : defaultValue,
+            },
+            {
+              name: "Transferencia",
+              selector: (row) =>
+                row.store_type === "T"
+                  ? "$" + row.cash_summary[2]["amount"].toLocaleString()
+                  : defaultValue,
+            },
+            {
+              name: "Total de ventas",
+              selector: (row) =>
+                row.store_type === "T"
+                  ? "$" + row.cash_summary[4]["amount"].toLocaleString()
+                  : defaultValue,
+            },
+            {
+              name: "$ en caja",
+              selector: (row) =>
+                row.store_type === "T"
+                  ? "$" + row.cash_summary[9]["amount"].toLocaleString()
+                  : defaultValue,
+            },
+            ...(showInvestment
+              ? [
+                  {
+                    name: "Inversión",
+                    selector: (row) =>
+                      row.investment
+                        ? "$" + row.investment.toLocaleString()
+                        : "$0",
+                  },
+                ]
+              : []),
+            {
+              name: "Accciones",
+              cell: (row) => (
+                <>
+                  <CustomButton onClick={() => handleSelectStore(row)}>
+                    Entrar
+                  </CustomButton>
+                </>
+              ),
+            },
+          ]}
+        />
+      </div>
+      <div className="custom-section">
+      <Form.Label className="fw-bold">Totales</Form.Label>
+        <Row>
+          {Object.entries(totals).map(([key, value]) => (
+            <Col>
+              <p key={key}>
+                <strong>{key}:</strong> {value}
+              </p>
+            </Col>
+          ))}
+        </Row>
+      </div>
+    </>
   );
 };
 
