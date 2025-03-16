@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { getProducts } from "../apis/products";
+import { deleteProducts, getProducts } from "../apis/products";
 import { Col, Form, Row } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import { useDispatch } from "react-redux";
@@ -12,12 +12,16 @@ import ProductModal from "../productModal/ProductModal";
 import { exportToExcel } from "../utils/utils";
 import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
 import { getBrands } from "../apis/brands";
+import { getUserData } from "../apis/utils";
+import Swal from "sweetalert2";
+
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [brands, setBrands] = useState([]);
   const [params, setParams] = useState({});
+  const [selectedRows, setSelectedRows] = useState([]);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -101,6 +105,49 @@ const ProductList = () => {
     setParams((prevData) => ({ ...prevData, [name]: value }));
   };
 
+
+
+  const handleDeleteProducts = async () => {
+    console.log('ver lista');
+    console.log(selectedRows);
+  
+    const selectedIds = selectedRows.map(element => element.id);
+
+    const response = await deleteProducts(selectedIds)
+
+    console.log(response)
+    if (response.status == 200){
+
+
+      const updatedProducts = products.filter(
+        product => !selectedIds.includes(product.id)
+      );
+    
+      setProducts(updatedProducts);
+
+      
+      Swal.fire({
+        icon: "success",
+        title: "Productos eliminados",
+        timer: 5000,
+      });
+
+    }
+    else{
+
+      Swal.fire({
+        icon: "error",
+        title: "Error al borrar Productos",
+        timer: 5000,
+      });
+    }
+
+
+
+  
+
+  };
+
   return (
     <div className="custom-section">
       <CustomSpinner2 isLoading={loading}></CustomSpinner2>
@@ -114,6 +161,7 @@ const ProductList = () => {
       </CustomButton>
       <CustomButton onClick={handleDownload}>Descargar productos</CustomButton>
 
+      <CustomButton onClick={handleDeleteProducts}>Borrar</CustomButton>
       <br />
       <Row>
         <Col>
@@ -142,8 +190,10 @@ const ProductList = () => {
             name="max_stock"
           />
         </Col>
+
       </Row>
       <CustomTable
+        setSelectedRows={setSelectedRows}
         searcher={true}
         progressPending={loading}
         data={products}
@@ -166,7 +216,9 @@ const ProductList = () => {
           {
             name: "Stock",
             selector: (row) => row.stock,
+            omit: !getUserData().is_owner
           },
+
           {
             name: "Costo",
             selector: (row) => "$" + row.cost,
@@ -190,29 +242,11 @@ const ProductList = () => {
 
 
           {
-            name: "Eliminar",
-            selector: (row) => (
-                <Form.Check
-                  type="checkbox"
-                  id={`default-${row.id}`}
-                  //                checked={productsSaleToCancel.includes(row.id)}
-                  //                onChange={() => handleSelectProduct(row)}
-                />
-            ),
-          },
-          {
             name: "Accciones",
-            grow: 2,
             cell: (row) => (
-              <>
-                {" "}
-                <CustomButton onClick={() => handleOpenModal({row})}>
-                  Editar
-                </CustomButton>
                 <CustomButton onClick={() => handleOpenModal(row)}>
                   Editar
                 </CustomButton>
-              </>
             ),
           },
         ]}
