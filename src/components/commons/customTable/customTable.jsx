@@ -11,17 +11,33 @@ const CustomTable = ({
   noDataComponent = "Sin datos que mostrar",
   showNoDataComponent = true,
   searcher = false,
-  pagination=true
+  pagination=true,
+  setSelectedRows
 }) => {
+
+  const handleSelectedRowsChange = ({ selectedRows }) => {
+    setSelectedRows(selectedRows);
+  };
+
   const [searchTerm, setSearchTerm] = useState("");
 
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  const filteredData = data.filter((item) => {
-    return Object.values(item).some((value) =>
-      value?.toString().toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  });
+  const searchInObject = (obj, searchTerm) => {
+    if (typeof obj === 'string') {
+      return obj.toLowerCase().includes(searchTerm.toLowerCase());
+    }
+  
+    if (typeof obj === 'object' && obj !== null) {
+      return Object.values(obj).some((value) => searchInObject(value, searchTerm));
+    }
+  
+    return false;
+  };
+  
+  const filteredData = data.filter((item) =>
+    searchInObject(item, searchTerm)
+  );
 
   return (
     <div>
@@ -50,6 +66,8 @@ const CustomTable = ({
         paginationRowsPerPageOptions={[10, 25, 50, 100, 500]} // Opciones para cambiar filas por página
       onChangeRowsPerPage={(currentRowsPerPage) => setRowsPerPage(currentRowsPerPage)}
       paginationPerPage={rowsPerPage}
+      selectableRows
+      onSelectedRowsChange={handleSelectedRowsChange}
 />
     </div>
   );
