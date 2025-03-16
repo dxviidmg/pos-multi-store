@@ -4,7 +4,7 @@ import Swal from "sweetalert2";
 import { getUserData } from "../apis/utils";
 
 
-const urlPrinter = getUserData().store_url_printer
+
 
 export const getFormattedDate = (date = new Date()) => {
   const year = date.getFullYear();
@@ -81,6 +81,9 @@ const showAlert = (icon, title, text = "", timer = 5000) => {
 };
 
 export const handlePrintTicket = async (data) => {
+
+  const urlPrinter = getUserData().store_url_printer
+  
   data = {...data}
   try {
     const response = await printTicket(urlPrinter, "ticket/", {

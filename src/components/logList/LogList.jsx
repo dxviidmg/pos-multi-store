@@ -107,13 +107,17 @@ const LogList = () => {
           loading={loading}
           columns={[
             {
+              name: "Codigo",
+              selector: (row) => row.product.code,
+            },
+            {
               name: "Marca",
-              selector: (row) => row.product_brand,
+              selector: (row) => row.product.brand_name,
             },
 
             {
               name: "Nombre",
-              selector: (row) => row.product_name,
+              selector: (row) => row.product.name,
               wrap: true,
               grow: 2,
             },
