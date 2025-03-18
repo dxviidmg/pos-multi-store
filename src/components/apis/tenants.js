@@ -16,8 +16,8 @@ export const getPayments = async () => {
 
 
 
-  export const getTenantNotices = async () => {
-    const apiUrl = getApiUrl("tenant-notices")
+  export const getTenantInfo = async () => {
+    const apiUrl = getApiUrl("tenant-info")
   
     try {
       const response = await axios.get(apiUrl, {

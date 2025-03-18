@@ -6,7 +6,7 @@ import { getInvestment, getStores } from "../apis/stores";
 import { useNavigate } from "react-router-dom";
 import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
 import { getFormattedDate } from "../utils/utils";
-import { getTenantNotices } from "../apis/tenants";
+import { getTenantInfo } from "../apis/tenants";
 
 const defaultValue = "N/A";
 
@@ -20,7 +20,7 @@ const StoreList = () => {
 
   const [loading, setLoading] = useState(false);
   const [stores, setStores] = useState([]);
-  const [notices, setNotices] = useState([]);
+  const [tenantInfo, setTenantInfo] = useState([]);
   const [showInvestment, setShowInvestment] = useState(false);
   const [params, setParams] = useState({
     date: today,
@@ -43,9 +43,9 @@ const StoreList = () => {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      const response = await getTenantNotices();
+      const response = await getTenantInfo();
       console.log(response);
-      setNotices(response.data);
+      setTenantInfo(response.data);
 
       const response2 = await getStores(params);
       setStores(response2.data);
@@ -118,9 +118,9 @@ const StoreList = () => {
 
   return (
     <>
-      {notices.length > 0 && (
+      {tenantInfo.notices && tenantInfo.notices.length > 0 && (
         <div className="custom-section">
-          {notices.map((variant) => (
+          {tenantInfo.notices.map((variant) => (
             <Alert key={"success"} variant={"success"}>
               {variant}
             </Alert>
@@ -132,7 +132,7 @@ const StoreList = () => {
         <CustomSpinner2 isLoading={loading}></CustomSpinner2>
 
         <Form.Label className="fw-bold">
-          Lista de tiendas y almacenes
+          Lista de tiendas y almacenes ({tenantInfo.product_count} productos registrados)
         </Form.Label>
         <Row>
           <Col>
