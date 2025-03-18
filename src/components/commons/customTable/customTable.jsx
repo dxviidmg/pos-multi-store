@@ -66,7 +66,7 @@ const CustomTable = ({
         paginationRowsPerPageOptions={[10, 25, 50, 100, 500]} // Opciones para cambiar filas por página
       onChangeRowsPerPage={(currentRowsPerPage) => setRowsPerPage(currentRowsPerPage)}
       paginationPerPage={rowsPerPage}
-      selectableRows
+      selectableRows={setSelectedRows ? true: false}
       onSelectedRowsChange={handleSelectedRowsChange}
 />
     </div>
