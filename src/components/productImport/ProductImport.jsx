@@ -18,21 +18,36 @@ const DATA_SAMPLE = [
   { code: 3, brand: 'Refrescos Inc', name: "Nombre del producto 3", cost: 14, unit_price: 22, wholesale_price: 15, min_wholesale_quantity: 3},
 ];
 
+const CREATE_BRANDS = [{
+  value: 'Y', label: 'Si'
+}, {
+  value: 'N', label: 'No'
+}]
+
 const ProductImport = () => {
   const fileInputRef = useRef(null);
   const [products, setProducts] = useState([]);
   const [formData, setFormData] = useState({
     file: "",
+    create_brands: ""
   })
   const [showExample, setShowExample] = useState([]);
 
   const handleDataChange = (e) => {
-    var { name, files } = e.target;
+    var { name, value, files  } = e.target;
 
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: files[0],
-    }));
+    if (name === "file"){
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: files[0],
+      }));
+    }
+    else{
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
   };
 
   const handleValidation = async () => {
@@ -103,7 +118,7 @@ const ProductImport = () => {
         <Form.Label className="fw-bold">Importar productos</Form.Label>
         <Row>
 
-        <Col md={4}>
+        <Col md={2}>
           <Form.Group controlId="formFile" className="">
             <Form.Control
               type="file"
@@ -116,9 +131,26 @@ const ProductImport = () => {
         </Col>
 
         <Col md={2}>
+            <Form.Select
+              value={formData.create_brands}
+              onChange={handleDataChange}
+              name="create_brands"
+              //              disabled={isLoading}
+            >
+              <option value="">Crear marcas</option>
+              {CREATE_BRANDS.map((brand) => (
+                <option key={brand.value} value={brand.value}>
+                  {brand.label}
+                </option>
+              ))}
+            </Form.Select>
+          </Col>
+
+
+        <Col md={2}>
           <CustomButton
             onClick={handleValidation}
-            disabled={formData.file === ""}
+            disabled={formData.file === ""  || formData.create_brands === ""}
             fullWidth
           >
             Validar
