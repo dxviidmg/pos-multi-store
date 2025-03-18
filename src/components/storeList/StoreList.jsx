@@ -31,8 +31,8 @@ const StoreList = () => {
     Efectivo: 0,
     Tarjeta: 0,
     Transferencia: 0,
-    'Total de ventas': 0,
-    Caja: 0
+    "Total de ventas": 0,
+    Caja: 0,
   });
 
   const handleFilters = async (e) => {
@@ -50,20 +50,34 @@ const StoreList = () => {
       const response2 = await getStores(params);
       setStores(response2.data);
 
-      const { ganancia, efectivo, tarjeta, transferencia, totalVentas, caja } = response2.data.reduce(
-        (acc, store) => ({
-          ganancia: acc.ganancia + store.cash_summary[10].amount,
-          efectivo: acc.efectivo + store.cash_summary[0].amount,
-          tarjeta: acc.tarjeta + store.cash_summary[1].amount,
-          transferencia: acc.transferencia + store.cash_summary[2].amount,
-          totalVentas: acc.totalVentas + store.cash_summary[4].amount,
-          caja: acc.efectivo + store.cash_summary[9].amount,
+      const { ganancia, efectivo, tarjeta, transferencia, totalVentas, caja } =
+        response2.data.reduce(
+          (acc, store) => ({
+            ganancia: acc.ganancia + store.cash_summary[10].amount,
+            efectivo: acc.efectivo + store.cash_summary[0].amount,
+            tarjeta: acc.tarjeta + store.cash_summary[1].amount,
+            transferencia: acc.transferencia + store.cash_summary[2].amount,
+            totalVentas: acc.totalVentas + store.cash_summary[4].amount,
+            caja: acc.efectivo + store.cash_summary[9].amount,
+          }),
+          {
+            ganancia: 0,
+            efectivo: 0,
+            tarjeta: 0,
+            transferencia: 0,
+            totalVentas: 0,
+            caja: 0,
+          }
+        );
 
-        }),
-        { ganancia: 0, efectivo: 0, tarjeta: 0, transferencia: 0, totalVentas: 0, caja: 0 }
-      );
-
-      setTotals({ 'Ganancia': ganancia, 'Efectivo': efectivo,  'Tarjeta': tarjeta, 'Transferencia': transferencia, 'Total de ventas': totalVentas, 'Caja': caja});
+      setTotals({
+        Ganancia: ganancia,
+        Efectivo: efectivo,
+        Tarjeta: tarjeta,
+        Transferencia: transferencia,
+        "Total de ventas": totalVentas,
+        Caja: caja,
+      });
 
       setLoading(false);
     };
@@ -104,13 +118,16 @@ const StoreList = () => {
 
   return (
     <>
-      <div className="custom-section">
-        {notices.map((variant) => (
-          <Alert key={"success"} variant={"success"}>
-            {variant}
-          </Alert>
-        ))}
-      </div>
+      {notices.length > 0 && (
+        <div className="custom-section">
+          {notices.map((variant) => (
+            <Alert key={"success"} variant={"success"}>
+              {variant}
+            </Alert>
+          ))}
+        </div>
+      )}
+
       <div className="custom-section">
         <CustomSpinner2 isLoading={loading}></CustomSpinner2>
 
@@ -167,6 +184,10 @@ const StoreList = () => {
             {
               name: "Tipo",
               selector: (row) => row.store_type_display,
+            },
+            {
+              name: "Productos registrados",
+              selector: (row) => row.products_count,
             },
             {
               name: "Ganancia del dia",
@@ -233,9 +254,8 @@ const StoreList = () => {
             },
           ]}
         />
-      </div>
-      <div className="custom-section">
-      <Form.Label className="fw-bold">Totales</Form.Label>
+
+        <Form.Label className="fw-bold">Totales</Form.Label>
         <Row>
           {Object.entries(totals).map(([key, value]) => (
             <Col>
