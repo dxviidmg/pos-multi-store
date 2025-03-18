@@ -120,7 +120,7 @@ const StoreList = () => {
   return (
     <>
       {tenantInfo.notices && tenantInfo.notices.length > 0 && (
-        <div className="custom-section">
+        <div>
           {tenantInfo.notices.map((variant) => (
             <Alert key={"success"} variant={"success"}>
               {variant}

@@ -47,19 +47,20 @@ const CustomTable = ({
     },
     headCells: {
       style: {
-        backgroundColor: '#004080', // Dark blue for header
-        color: '#ffffff',           // White text for header
+        backgroundColor: '#04356b', // Dark blue for header
+        color: '#ffffff',
       },
     },
     cells: {
       style: {
-        backgroundColor: '#e6f7ff', // Slightly different blue for cells
+        backgroundColor: '#CFD7E1', // Slightly different blue for cells
+        borderBottom: '1px solid #gray', // Border between rows
       },
     },
   };
 
   return (
-    <div>
+    <div style={{padding: '10px 0px'}}>
       {searcher && (
         <div>
           <Form.Label>Buscar</Form.Label>

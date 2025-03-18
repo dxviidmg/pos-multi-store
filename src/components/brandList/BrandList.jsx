@@ -2,17 +2,20 @@ import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
 import { Form } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
-import { getBrands } from "../apis/brands";
+import { deleteBrands, getBrands } from "../apis/brands";
 import BrandModal from "../brandModal/BrandModal";
 import { useDispatch } from "react-redux";
 import {
   hideBrandModal,
   showBrandModal,
 } from "../redux/brandModal/BrandModalActions";
+import Swal from "sweetalert2";
 
 const BrandList = () => {
   const [loading, setLoading] = useState(false);
   const [brands, setBrands] = useState([]);
+  const [selectedRows, setSelectedRows] = useState([])
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -40,15 +43,56 @@ const BrandList = () => {
     });
   };
 
+  
+
+  const handleDeleteBrands = async () => {
+    console.log(selectedRows);
+
+    const selectedIds = selectedRows.map((element) => element.id);
+
+    const response = await deleteBrands(selectedIds);
+
+    console.log(response);
+    if (response.status == 200) {
+      const updatedBrands = brands.filter(
+        (brand) => !selectedIds.includes(brand.id)
+      );
+
+      setBrands(updatedBrands);
+
+      Swal.fire({
+        icon: "success",
+        title: "Productos eliminados",
+        timer: 5000,
+      });
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Error al borrar Productos",
+        timer: 5000,
+      });
+    }
+  };
+
+  
   return (
     <div className="custom-section">
       <BrandModal onUpdateBrandList={handleUpdateBrandList}></BrandModal>{" "}
       <Form.Label className="fw-bold">Lista de marcas</Form.Label>
       <br></br>
       <CustomButton onClick={() => handleOpenModal()}>Crear</CustomButton>
+
+      <CustomButton
+        onClick={handleDeleteBrands}
+        disabled={selectedRows.length === 0}
+      >
+        Borrar productos
+      </CustomButton>
+
       <CustomTable
         progressPending={loading}
         data={brands}
+        setSelectedRows={setSelectedRows}
         columns={[
           {
             name: "Nombre",
