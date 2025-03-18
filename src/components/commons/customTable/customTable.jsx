@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import DataTable from "react-data-table-component";
-import "./customTable.css";
+//import "./customTable.css";
 import { Form } from "react-bootstrap";
 
 
@@ -39,6 +39,25 @@ const CustomTable = ({
     searchInObject(item, searchTerm)
   );
 
+  const customStyles = {
+    rows: {
+      style: {
+        backgroundColor: '#f0f8ff', // Light blue background
+      },
+    },
+    headCells: {
+      style: {
+        backgroundColor: '#004080', // Dark blue for header
+        color: '#ffffff',           // White text for header
+      },
+    },
+    cells: {
+      style: {
+        backgroundColor: '#e6f7ff', // Slightly different blue for cells
+      },
+    },
+  };
+
   return (
     <div>
       {searcher && (
@@ -68,6 +87,7 @@ const CustomTable = ({
       paginationPerPage={rowsPerPage}
       selectableRows={setSelectedRows ? true: false}
       onSelectedRowsChange={handleSelectedRowsChange}
+      customStyles={customStyles}
 />
     </div>
   );
