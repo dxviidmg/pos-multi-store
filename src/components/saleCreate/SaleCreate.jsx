@@ -9,17 +9,6 @@ const SaleCreate = () => {
   return (
     <div>
       <div className="custom-section">
-        <Row>
-          <Col>
-            <SearchClient />
-          </Col>
-          <Col>
-            <ClientSelected />
-          </Col>
-        </Row>
-      </div>
-
-      <div className="custom-section">
         <SearchProduct />
       </div>
 

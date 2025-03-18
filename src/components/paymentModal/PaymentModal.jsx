@@ -9,6 +9,8 @@ import { hidePaymentModal } from "../redux/paymentModal/PaymentModalActions";
 import Swal from "sweetalert2";
 import { getUserData } from "../apis/utils";
 import { handlePrintTicket } from "../utils/utils";
+import SearchClient from "../searchClient/SearchClient";
+import ClientSelected from "../clientSelected/ClientSelected";
 
 
 function roundUpCustom(value) {
@@ -226,6 +228,10 @@ const PaymentModal = () => {
 
   return (
     <CustomModal showOut={showPaymentModal} title="Finalizar pago">
+      <div className="custom-section">
+            <SearchClient />
+            <ClientSelected />
+      </div>
       <div className="custom-section">
         <Row>
           <Col md={3}>

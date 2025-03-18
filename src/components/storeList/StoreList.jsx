@@ -24,6 +24,7 @@ const StoreList = () => {
   const [showInvestment, setShowInvestment] = useState(false);
   const [params, setParams] = useState({
     date: today,
+    store_type: "T",
   });
 
   const [totals, setTotals] = useState({
@@ -132,7 +133,8 @@ const StoreList = () => {
         <CustomSpinner2 isLoading={loading}></CustomSpinner2>
 
         <Form.Label className="fw-bold">
-          Lista de tiendas y almacenes ({tenantInfo.product_count} productos registrados)
+          Lista de tiendas y almacenes ({tenantInfo.product_count} productos
+          registrados)
         </Form.Label>
         <Row>
           <Col>
@@ -152,15 +154,15 @@ const StoreList = () => {
           <Col>
             <Form.Label>Tipo de tienda</Form.Label>
             <Form.Select
-              value={params.action}
+              value={params.store_type}
               onChange={handleFilters}
               name="store_type"
               //              disabled={isLoading}
             >
               <option value="">Selecciona un tipo de tienda</option>
-              {storesTypes.map((action) => (
-                <option key={action.value} value={action.value}>
-                  {action.label}
+              {storesTypes.map((store_type) => (
+                <option key={store_type.value} value={store_type.value}>
+                  {store_type.label}
                 </option>
               ))}
             </Form.Select>
@@ -180,57 +182,45 @@ const StoreList = () => {
               name: "Nombre",
               selector: (row) => row.name,
             },
-
-            {
-              name: "Tipo",
-              selector: (row) => row.store_type_display,
-            },
             {
               name: "Productos registrados",
               selector: (row) => row.products_count,
             },
-            {
-              name: "Ganancia del dia",
-              selector: (row) =>
-                row.store_type === "T"
-                  ? "$" + row.cash_summary[10]["amount"].toLocaleString()
-                  : defaultValue,
-            },
-            {
-              name: "Efectivo",
-              selector: (row) =>
-                row.store_type === "T"
-                  ? "$" + row.cash_summary[0]["amount"].toLocaleString()
-                  : defaultValue,
-            },
-            {
-              name: "Tarjeta",
-              selector: (row) =>
-                row.store_type === "T"
-                  ? "$" + row.cash_summary[1]["amount"].toLocaleString()
-                  : defaultValue,
-            },
-            {
-              name: "Transferencia",
-              selector: (row) =>
-                row.store_type === "T"
-                  ? "$" + row.cash_summary[2]["amount"].toLocaleString()
-                  : defaultValue,
-            },
-            {
-              name: "Total de ventas",
-              selector: (row) =>
-                row.store_type === "T"
-                  ? "$" + row.cash_summary[4]["amount"].toLocaleString()
-                  : defaultValue,
-            },
-            {
-              name: "$ en caja",
-              selector: (row) =>
-                row.store_type === "T"
-                  ? "$" + row.cash_summary[9]["amount"].toLocaleString()
-                  : defaultValue,
-            },
+            ...(params.store_type === "T"
+              ? [
+                  {
+                    name: "Ganancia del dia",
+                    selector: (row) =>
+                      "$" + row.cash_summary[10]["amount"].toLocaleString(),
+                  },
+                  {
+                    name: "Efectivo",
+                    selector: (row) =>
+                      row.cash_summary[0]["amount"].toLocaleString(),
+                  },
+                  {
+                    name: "Tarjeta",
+                    selector: (row) =>
+                      "$" + row.cash_summary[1]["amount"].toLocaleString(),
+                  },
+                  {
+                    name: "Transferencia",
+                    selector: (row) =>
+                      "$" + row.cash_summary[2]["amount"].toLocaleString(),
+                  },
+                  {
+                    name: "Total de ventas",
+                    selector: (row) =>
+                      "$" + row.cash_summary[4]["amount"].toLocaleString(),
+                  },
+                  {
+                    name: "$ en caja",
+                    selector: (row) =>
+                      "$" + row.cash_summary[9]["amount"].toLocaleString(),
+                  },
+                ]
+              : []),
+
             ...(showInvestment
               ? [
                   {
@@ -254,13 +244,12 @@ const StoreList = () => {
             },
           ]}
         />
-
-        <Form.Label className="fw-bold">Totales</Form.Label>
+        <Form.Label className="fw-bold mt-3">Totales</Form.Label>
         <Row>
           {Object.entries(totals).map(([key, value]) => (
             <Col>
-              <p key={key}>
-                <strong>{key}:</strong> {value}
+              <p className="text-center" key={key}>
+                <strong>{key}:</strong> ${value}
               </p>
             </Col>
           ))}
