@@ -83,15 +83,15 @@ const showAlert = (icon, title, text = "", timer = 5000) => {
 export const handlePrintTicket = async (data) => {
 
   const urlPrinter = getUserData().store_url_printer
-  
-  data = {...data}
   try {
     const response = await printTicket(urlPrinter, "ticket/", {
       data,
     });
-
+    
+    console.log()
     if (response.status !== 200){
-      showAlert("error", "Error de impresión"
+      const text = response.code === "ERR_NETWORK" ? "Servidor no encontrado" : ""
+      showAlert("error", "Error de impresión", text
       );
     }
 
