@@ -230,9 +230,11 @@ const SearchProduct = () => {
         data: "Prueba de impresión",
       });
 
+      console.log(response2.code)
       showAlert(
         response2.status === 200 ? "success" : "error",
-        response2.status === 200 ? "Imprimiendo" : "Error de impresión"
+        response2.status === 200 ? "Imprimiendo" : "Error de impresión",
+        response2.code === "ERR_NETWORK" ? "Servidor no encontrado" : ""
       );
     } catch (error) {
       showAlert("error", "Error inesperado");
@@ -240,8 +242,8 @@ const SearchProduct = () => {
   };
 
   // Función auxiliar para mostrar alertas
-  const showAlert = (icon, title) => {
-    Swal.fire({ icon, title, timer: icon === "success" ? 2500 : 5000 });
+  const showAlert = (icon, title, text="") => {
+    Swal.fire({ icon, title, text, timer: icon === "success" ? 2500 : 5000 });
   };
 
   return (
