@@ -1,8 +1,7 @@
 .custom-section {
   background-color: white;
   margin: 20px;
-  padding: 20px;
-  padding-bottom: 5px;
+  padding: 10px 20px;
   box-shadow: 0px 0px 2px 0px #000;
   border-radius: 5px;
 }
@@ -13,4 +12,8 @@
   background-color: rgba(4, 53, 107, 0.2); /* 0.5 = 50% de opacidad */
   min-height: 100vh;
   padding-bottom: 2px;
+}
+
+.form-label, .form-control {
+  font-size: 0.9rem; /* Or any size you prefer */
 }

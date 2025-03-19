@@ -9,12 +9,12 @@ import { hidePaymentModal } from "../redux/paymentModal/PaymentModalActions";
 import Swal from "sweetalert2";
 import { getUserData } from "../apis/utils";
 import { handlePrintTicket } from "../utils/utils";
-
+import SearchClient from "../searchClient/SearchClient";
+import ClientSelected from "../clientSelected/ClientSelected";
 
 function roundUpCustom(value) {
   const intPart = Math.floor(value); // Parte entera
   const decimalPart = value - intPart; // Parte decimal
-  
 
   if (decimalPart === 0) return value; // Si es entero, se queda igual
   if (decimalPart <= 0.5) return intPart + 0.5; // Si es hasta 0.5, sube a 0.5
@@ -30,6 +30,7 @@ const PaymentModal = () => {
   const cart = useSelector((state) => state.cartReducer.cart);
   const client = useSelector((state) => state.cartReducer.client);
   const [payment, setPayment] = useState(INITIAL_PAYMENT_STATE);
+  const [referencePayment, setReferencePayment] = useState("");
 
   const [paymentMethods, setPaymentMethods] = useState({
     type: "radio", // Tipo de pago inicial.
@@ -64,8 +65,7 @@ const PaymentModal = () => {
       if (event.ctrlKey && event.key === "f") {
         event.preventDefault();
         handleCreateSale();
-      }
-      else if (event.ctrlKey && event.key === "g") {
+      } else if (event.ctrlKey && event.key === "g") {
         event.preventDefault();
         handleCreateSale(true);
       }
@@ -94,8 +94,9 @@ const PaymentModal = () => {
         type: value,
         methods: newMethods,
       });
-    setPayment({ paidWith: totalDiscount, change: 0 })
+      setPayment({ paidWith: totalDiscount, change: 0 });
     } else {
+      console.log(paymentMethods);
       const updatedMethods =
         paymentMethods.type === "radio"
           ? { [value]: totalDiscount }
@@ -103,11 +104,11 @@ const PaymentModal = () => {
               ...paymentMethods.methods,
               [value]: paymentMethods.methods[value] ? 0 : totalDiscount,
             };
-      
-        if (!("EF" in updatedMethods)) {
-          const value = updatedMethods.TA || updatedMethods.TR
-          setPayment({ paidWith: value, change: 0 });
-        }
+
+      if (!("EF" in updatedMethods)) {
+        const value = updatedMethods.TA || updatedMethods.TR;
+        setPayment({ paidWith: value, change: 0 });
+      }
       setPaymentMethods((prev) => ({
         ...prev,
         methods: updatedMethods,
@@ -142,7 +143,7 @@ const PaymentModal = () => {
       }));
   };
 
-  const handleCreateSale = async (printTicket=false) => {
+  const handleCreateSale = async (printTicket = false) => {
     if (payment.paidWith === 0 || payment.change < 0) {
       Swal.fire({
         icon: "error",
@@ -154,7 +155,7 @@ const PaymentModal = () => {
     }
     const paymentList = convertPaymentMethodsToList();
 
-    console.log(cart)
+    console.log(cart);
     const data = {
       client: client.id,
       total: totalDiscount,
@@ -162,24 +163,27 @@ const PaymentModal = () => {
         id: store_product.id,
         quantity: store_product.quantity,
         name: store_product.product.name,
-        price: store_product.product_price * ((client?.discount_percentage_complement ?? 100) * 0.01),
+        price:
+          store_product.product_price *
+          ((client?.discount_percentage_complement ?? 100) * 0.01),
       })),
       payments: paymentList,
+      reference_payment: referencePayment
     };
 
-    console.log(data)
+    console.log(data);
 
     const response = await createSale(data);
 
     if (response.status === 201) {
-
-      if (urlPrinter && printTicket){
-        handlePrintTicket(data)
+      if (urlPrinter && printTicket) {
+        handlePrintTicket(data);
       }
       setPaymentMethods({
         type: "radio",
         methods: { EF: 0, TA: 0, TR: 0 },
       });
+      setReferencePayment("")
       dispatch(removeClientfromCart());
       dispatch(cleanCart());
       dispatch(hidePaymentModal());
@@ -209,23 +213,22 @@ const PaymentModal = () => {
     return (
       (paymentMethods.type === "checkbox" &&
         totalPaymentInput !== totalDiscount) ||
-      Object.values(paymentMethods.methods).every((amount) => amount === 0)
-    ) || (
+      Object.values(paymentMethods.methods).every((amount) => amount === 0) ||
       (paymentMethods.type === "radio" &&
-        paymentMethods.methods.EF >  payment.paidWith) 
-
-    )
+        paymentMethods.methods.EF > payment.paidWith)
+    );
   };
 
   const showAlert = (icon, title) => {
     Swal.fire({ icon, title, timer: icon === "success" ? 2500 : 5000 });
   };
 
-
-
-
   return (
     <CustomModal showOut={showPaymentModal} title="Finalizar pago">
+      <div className="custom-section">
+        <SearchClient />
+        <ClientSelected />
+      </div>
       <div className="custom-section">
         <Row>
           <Col md={3}>
@@ -251,8 +254,17 @@ const PaymentModal = () => {
             />
           </Col>
           <Col md={3}>
-            <Form.Label>Cambio</Form.Label>
-            <Form.Control type="number" value={payment.change} disabled />
+            {paymentMethods.methods.TA > 0 || paymentMethods.methods.TR > 0 ? (
+              <>
+                <Form.Label>Referencia</Form.Label>
+                <Form.Control type="text" value={referencePayment} onChange={(e)=> setReferencePayment(e.target.value)}/>
+              </>
+            ) : (
+              <>
+                <Form.Label>Cambio</Form.Label>
+                <Form.Control type="number" value={payment.change} disabled />
+              </>
+            )}
           </Col>
         </Row>
       </div>
@@ -292,7 +304,7 @@ const PaymentModal = () => {
                       method === "EF"
                         ? "Efectivo"
                         : method === "TA"
-                        ? "Pago con tarjeta"
+                        ? "Tarjeta"
                         : "Transferencia"
                     }
                     type={paymentMethods.type}
@@ -325,9 +337,11 @@ const PaymentModal = () => {
             <CustomButton
               disabled={handleDisableButton()}
               fullWidth={true}
-              onClick={(e)=> handleCreateSale()}
+              onClick={(e) => handleCreateSale()}
             >
-              Pagar sin ticket<br/>(Ctrl + F)
+              Pagar sin ticket
+              <br />
+              (Ctrl + F)
             </CustomButton>
 
             <CustomButton
@@ -335,7 +349,8 @@ const PaymentModal = () => {
               fullWidth={true}
               onClick={(e) => handleCreateSale(true)}
             >
-              Pagar con ticket<br/> (Ctrl + G)
+              Pagar con ticket
+              <br /> (Ctrl + G)
             </CustomButton>
           </Col>
         </Row>

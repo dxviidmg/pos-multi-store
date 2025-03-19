@@ -131,15 +131,24 @@ const SaleList = () => {
             {
               name: "Metodos de pago",
               selector: (row) => row.payments_methods.join(", "),
+              wrap: true,
+              grow: 2
             },
 
             {
+              name: "Referencia",
+              selector: (row) => row.reference,
+              wrap: true,
+              grow: 2
+            },
+            {
               name: "Vendedor",
+              wrap: true,
               selector: (row) => row.saler_username,
             },
             {
               name: "Accciones",
-              grow: 4,
+              grow: 5,
               cell: (row) => (
                 <>
                   {(
