@@ -49,20 +49,21 @@ const CustomTable = ({
       style: {
         backgroundColor: '#04356b', // Dark blue for header
         color: '#ffffff',
+        border: '1px solid gray', // Border between rows
       },
     },
     cells: {
       style: {
         backgroundColor: '#CFD7E1', // Slightly different blue for cells
-        borderBottom: '1px solid #gray', // Border between rows
+        border: '1px solid gray', // Border between rows
       },
     },
   };
 
   return (
-    <div style={{padding: '10px 0px'}}>
+    <div className="mt-1">
       {searcher && (
-        <div>
+        <div className="mb-2">
           <Form.Label>Buscar</Form.Label>
           <Form.Control
             placeholder="Buscar"
