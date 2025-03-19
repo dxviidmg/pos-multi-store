@@ -4,7 +4,7 @@ import CustomTable from "../commons/customTable/customTable";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getStoreProducts } from "../apis/products";
 import { addToCart, updateMovementType } from "../redux/cart/cartActions";
-import { Badge, Form } from "react-bootstrap";
+import { Badge, Form, Spinner } from "react-bootstrap";
 import { debounce } from "lodash";
 import StockModal from "../stockModal/StockModal";
 import {
@@ -24,12 +24,12 @@ const SearchProduct = () => {
 
   const storeType = getUserData().store_type;
   const urlPrinter = getUserData().store_url_printer;
-
   const [query, setQuery] = useState("");
   const [data, setData] = useState([]);
   const [queryType, setQueryType] = useState("code");
   const [barcode, setBarcode] = useState("");
   const [isInputFocused, setIsInputFocused] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -41,10 +41,10 @@ const SearchProduct = () => {
         setData([]);
         return;
       }
-
+      setLoading(true);
       const response = await getStoreProducts({ [queryType]: query });
       const fetchedData = response.data;
-
+      setLoading(false);
       if (queryType === "code" && fetchedData.length === 0) {
         Swal.fire({
           icon: "error",
@@ -230,7 +230,7 @@ const SearchProduct = () => {
         data: "Prueba de impresión",
       });
 
-      console.log(response2.code)
+      console.log(response2.code);
       showAlert(
         response2.status === 200 ? "success" : "error",
         response2.status === 200 ? "Imprimiendo" : "Error de impresión",
@@ -242,7 +242,7 @@ const SearchProduct = () => {
   };
 
   // Función auxiliar para mostrar alertas
-  const showAlert = (icon, title, text="") => {
+  const showAlert = (icon, title, text = "") => {
     Swal.fire({ icon, title, text, timer: icon === "success" ? 2500 : 5000 });
   };
 
@@ -324,15 +324,18 @@ const SearchProduct = () => {
       />
       <br />
 
-      {!isInputFocused && (
-        <Badge bg="success" className="text-wrap">
-          Aviso: Para añadir productos al carrito, el cursor debe estar en el
-          campo de búsqueda de productos.
-        </Badge>
-      )}
+          <Badge bg="success" className="text-wrap" hidden={isInputFocused}>
+            Aviso: Para añadir productos al carrito, el cursor debe estar en el
+            campo de búsqueda de productos.
+          </Badge>
 
-      <br />
+        <Badge bg="success" className="text-wrap" hidden={!loading}>
+          Buscando...
+        </Badge>
+
+      {((!loading) && (isInputFocused)) && (<br/>)}
       <Form.Control
+        className=""
         ref={inputRef}
         type="text"
         value={queryType === "code" ? barcode : query}
@@ -400,11 +403,10 @@ const SearchProduct = () => {
                 </CustomButton>
 
                 <CustomButton
-                  onClick={() => handleOpenModal({ ...row, showImage: true})}
+                  onClick={() => handleOpenModal({ ...row, showImage: true })}
                   variant="danger"
                   disabled={!row.product.image}
                 >
-
                   Ver imagen
                 </CustomButton>
               </>
