@@ -41,3 +41,16 @@ export const getBrands = async () => {
       return error;
     }
   };
+
+  export const deleteBrands = async (data) => {
+    const apiUrl = new URL(getApiUrl("brands/delete"));
+  
+    try {
+      const response = await axios.post(apiUrl, data, {
+        headers: getHeaders(),
+      });
+      return response;
+    } catch (error) {
+      return error;
+    }
+  };

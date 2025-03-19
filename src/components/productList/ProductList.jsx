@@ -15,7 +15,6 @@ import { getBrands } from "../apis/brands";
 import { getUserData } from "../apis/utils";
 import Swal from "sweetalert2";
 
-
 const ProductList = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -105,47 +104,30 @@ const ProductList = () => {
     setParams((prevData) => ({ ...prevData, [name]: value }));
   };
 
-
-
   const handleDeleteProducts = async () => {
-    console.log('ver lista');
-    console.log(selectedRows);
-  
-    const selectedIds = selectedRows.map(element => element.id);
+    const selectedIds = selectedRows.map((element) => element.id);
+    const response = await deleteProducts(selectedIds);
 
-    const response = await deleteProducts(selectedIds)
-
-    console.log(response)
-    if (response.status == 200){
-
-
+    console.log(response);
+    if (response.status == 200) {
       const updatedProducts = products.filter(
-        product => !selectedIds.includes(product.id)
+        (product) => !selectedIds.includes(product.id)
       );
-    
+
       setProducts(updatedProducts);
 
-      
       Swal.fire({
         icon: "success",
         title: "Productos eliminados",
         timer: 5000,
       });
-
-    }
-    else{
-
+    } else {
       Swal.fire({
         icon: "error",
         title: "Error al borrar Productos",
         timer: 5000,
       });
     }
-
-
-
-  
-
   };
 
   return (
@@ -161,9 +143,13 @@ const ProductList = () => {
       </CustomButton>
       <CustomButton onClick={handleDownload}>Descargar productos</CustomButton>
 
-      <CustomButton onClick={handleDeleteProducts}>Borrar</CustomButton>
-      <br />
-      <Row>
+      <CustomButton
+        onClick={handleDeleteProducts}
+        disabled={selectedRows.length === 0}
+      >
+        Borrar productos
+      </CustomButton>
+      <Row className="mt-3">
         <Col>
           {" "}
           <Form.Label>Marca</Form.Label>
@@ -176,7 +162,7 @@ const ProductList = () => {
             <option value="">Selecciona una marca</option>
             {brands.map((brand) => (
               <option key={brand.id} value={brand.id}>
-                {brand.name}
+                {brand.name} ({brand.product_count})
               </option>
             ))}
           </Form.Select>
@@ -190,7 +176,6 @@ const ProductList = () => {
             name="max_stock"
           />
         </Col>
-
       </Row>
       <CustomTable
         setSelectedRows={setSelectedRows}
@@ -216,7 +201,7 @@ const ProductList = () => {
           {
             name: "Stock",
             selector: (row) => row.stock,
-            omit: !getUserData().is_owner
+            omit: !getUserData().is_owner,
           },
 
           {
@@ -240,13 +225,12 @@ const ProductList = () => {
                 : "NA",
           },
 
-
           {
             name: "Accciones",
             cell: (row) => (
-                <CustomButton onClick={() => handleOpenModal(row)}>
-                  Editar
-                </CustomButton>
+              <CustomButton onClick={() => handleOpenModal(row)}>
+                Editar
+              </CustomButton>
             ),
           },
         ]}

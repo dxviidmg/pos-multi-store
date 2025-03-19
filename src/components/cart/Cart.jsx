@@ -6,7 +6,7 @@ import {
   removeFromCart,
   updateMovementType,
   updateQuantityInCart,
-  changePrice
+  changePrice,
 } from "../redux/cart/cartActions";
 import CustomButton from "../commons/customButton/CustomButton";
 import { Col, Form, Row } from "react-bootstrap";
@@ -70,27 +70,33 @@ const Cart = () => {
     return { total };
   }, [cart]);
 
+  const { totalProducts } = useMemo(() => {
+    const totalProducts = cart.reduce((acc, item) => acc + item.quantity, 0);
+    return { totalProducts };
+  }, [cart]);
+
   const handleRemoveFromCart = (product) => dispatch(removeFromCart(product));
 
   const handleChangePrice = (product) => {
-    dispatch(changePrice(product))
-  }
+    dispatch(changePrice(product));
+  };
 
   const handleQuantityChangeToCart = (e, product) => {
     const newQuantity = parseInt(e.target.value, 10); // Usar base 10 para parsear
-    
+
     // Validaciones
     if (newQuantity <= 0) {
       return;
     }
-  
-    const validQuantity = movementType === "venta" ? Math.min(newQuantity, product.available_stock) : newQuantity;
-    
+
+    const validQuantity =
+      movementType === "venta"
+        ? Math.min(newQuantity, product.available_stock)
+        : newQuantity;
+
     // Despachar acción para actualizar la cantidad en el carrito
     dispatch(updateQuantityInCart(product, validQuantity));
   };
-  
-  
 
   const showAlert = (icon, title, text = "", timer = 5000) => {
     Swal.fire({ icon, title, text, timer });
@@ -223,12 +229,12 @@ const Cart = () => {
       name: "Precio mayorista",
       selector: (row) => (
         <Form.Check
-        type="switch"
-        id="custom-switch"
-        checked={row.product_price === row.product.prices.wholesale_price}
-        onClick={() => handleChangePrice(row)}
-        disabled={!row.product.prices.wholesale_price}
-      />
+          type="switch"
+          id="custom-switch"
+          checked={row.product_price === row.product.prices.wholesale_price}
+          onClick={() => handleChangePrice(row)}
+          disabled={!row.product.prices.wholesale_price}
+        />
       ),
     },
     {
@@ -328,8 +334,9 @@ const Cart = () => {
           <Row>
             {movementType === "venta" && (
               <>
-                <Col md={6}></Col>
-                <Col md={3} className="d-flex gap-3 justify-content-end">
+                <Col md={4}></Col>
+                <Col md={5} className="d-flex gap-3 justify-content-end">
+                  <h3>Productos: {totalProducts}</h3>
                   <h3>Total: ${total.toFixed(2)}</h3>
                 </Col>
                 <Col md={3}>
