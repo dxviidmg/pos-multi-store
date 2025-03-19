@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { Form } from "react-bootstrap";
+import { Form, FormCheck } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import { deleteBrands, getBrands } from "../apis/brands";
 import BrandModal from "../brandModal/BrandModal";
@@ -15,7 +15,7 @@ const BrandList = () => {
   const [loading, setLoading] = useState(false);
   const [brands, setBrands] = useState([]);
   const [selectedRows, setSelectedRows] = useState([])
-
+  const [confirmDeletion, setConfirmDeletion] = useState(false)
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -74,6 +74,9 @@ const BrandList = () => {
     }
   };
 
+  const handleCheck = (e) => {
+    setConfirmDeletion(e.target.checked);
+  };
   
   return (
     <div className="custom-section">
@@ -84,11 +87,15 @@ const BrandList = () => {
 
       <CustomButton
         onClick={handleDeleteBrands}
-        disabled={selectedRows.length === 0}
+        disabled={selectedRows.length === 0 || !confirmDeletion}
       >
         Borrar productos
       </CustomButton>
-
+      <FormCheck label={'Confirmar borrado'}
+      checked={confirmDeletion}
+      onChange={handleCheck}
+      
+      ></FormCheck>
       <CustomTable
         progressPending={loading}
         data={brands}
