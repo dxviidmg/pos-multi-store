@@ -7,11 +7,10 @@ import { useNavigate } from "react-router-dom";
 import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
 import { getFormattedDate } from "../utils/utils";
 import { getTenantInfo } from "../apis/tenants";
+import { chooseIcon } from "../commons/icons/Icons";
+import { getBrands } from "../apis/brands";
 
-const storesTypes = [
-  { value: "A", label: "Almacen" },
-  { value: "T", label: "Tienda" },
-];
+
 const StoreList = () => {
   const navigate = useNavigate();
   const today = getFormattedDate();
@@ -21,6 +20,7 @@ const StoreList = () => {
   const [storages, setStorages] = useState([]);
   const [tenantInfo, setTenantInfo] = useState([]);
   const [showInvestment, setShowInvestment] = useState(false);
+  const [brands, setBrands] = useState([])
   const [params, setParams] = useState({
     end_date: today,
     start_date: today,
@@ -32,8 +32,21 @@ const StoreList = () => {
     paymentCard: 0,
     paymentTransfer: 0,
     totalPayment: 0,
-    Cash: 0,
+    cash: 0,
+    investment: 0
   });
+
+
+  useEffect(() => {
+    const fetchBrands = async () => {
+      setLoading(true);
+      const response = await getBrands();
+      setBrands(response.data);
+      setLoading(false);
+    };
+
+    fetchBrands();
+  }, []); // Solo se ejecuta una vez al montar
 
   const handleFilters = async (e) => {
     let { name, value } = e.target;
@@ -47,41 +60,44 @@ const StoreList = () => {
       console.log(response);
       setTenantInfo(response.data);
 
-      setTotals(
-        {
-          profit: 'Calculando...',
-          paymentCash: 'Calculando...',
-          paymentCard: 'Calculando...',
-          paymentTransfer: 'Calculando...',
-          totalPayment: 'Calculando...',
-          Cash: 'Calculando...',
-        }
-      )
+      setTotals({
+        profit: "Calculando...",
+        paymentCash: "Calculando...",
+        paymentCard: "Calculando...",
+        paymentTransfer: "Calculando...",
+        totalPayment: "Calculando...",
+        cash: "Calculando...",
+      });
       const response2 = await getStores({ ...params, store_type: "T" });
       const response3 = await getStores({ ...params, store_type: "A" });
       setStores(response2.data);
       setStorages(response3.data);
 
-      const { profit, paymentCash, paymentCard, paymentTransfer, totalPayment, cash } =
-        response2.data.reduce(
-          (acc, store) => ({
-            profit: acc.profit + store.cash_summary[10].amount,
-            paymentCash: acc.paymentCash + store.cash_summary[0].amount,
-            paymentCard: acc.paymentCard + store.cash_summary[1].amount,
-            paymentTransfer: acc.paymentTransfer + store.cash_summary[2].amount,
-            totalPayment: acc.totalPayment + store.cash_summary[4].amount,
-            cash: acc.paymentCash + store.cash_summary[9].amount,
-          }),
-          {
-            profit: 0,
-            paymentCash: 0,
-            paymentCard: 0,
-            paymentTransfer: 0,
-            totalPayment: 0,
-            cash: 0,
-          }
-        );
-
+      const {
+        profit,
+        paymentCash,
+        paymentCard,
+        paymentTransfer,
+        totalPayment,
+        cash,
+      } = response2.data.reduce(
+        (acc, store) => ({
+          profit: acc.profit + store.cash_summary[10].amount,
+          paymentCash: acc.paymentCash + store.cash_summary[0].amount,
+          paymentCard: acc.paymentCard + store.cash_summary[1].amount,
+          paymentTransfer: acc.paymentTransfer + store.cash_summary[2].amount,
+          totalPayment: acc.totalPayment + store.cash_summary[4].amount,
+          cash: acc.paymentCash + store.cash_summary[9].amount,
+        }),
+        {
+          profit: 0,
+          paymentCash: 0,
+          paymentCard: 0,
+          paymentTransfer: 0,
+          totalPayment: 0,
+          cash: 0,
+        }
+      );
       setTotals({
         profit,
         paymentCash,
@@ -135,6 +151,17 @@ const StoreList = () => {
           : store;
       })
     );
+
+    const {
+      investment,
+    } = response.data.reduce(
+      (acc, store) => ({
+        investment: acc.investment + store.investment,
+      }),
+      {investment: 0}
+    );
+
+    setTotals((prevData) => ({...prevData, investment}))
     setLoading(false);
     setShowInvestment(true);
   };
@@ -185,6 +212,24 @@ const StoreList = () => {
               />
             </Form>
           </Col>
+
+          <Col hidden={!tenantInfo.show_profit_by_brands}>
+            <Form.Label>Marca</Form.Label>
+            <Form.Select
+              value={params.brand_id}
+              onChange={(e) => handleFilters(e)}
+              name="brand_id"
+              //              disabled={isLoading}
+            >
+              <option value="">Todas las marcas</option>
+              {brands.map((brand) => (
+                <option key={brand.id} value={brand.id}>
+                  {brand.name}
+                </option>
+              ))}
+            </Form.Select>
+          </Col>
+
           <Col className="d-flex align-items-end">
             <CustomButton fullWidth onClick={handleShowInvestment}>
               Ver inversión
@@ -201,37 +246,48 @@ const StoreList = () => {
             {
               name: "Nombre",
               wrap: true,
-              selector: (row) => `${row.name} (${row.products_count} P.R.)`,
+              selector: (row) => (
+                <>
+                  {row.name}
+                </>
+              ),
             },
             {
-              name: "Ganancia del dia",
+              name: "Ganancia",
               selector: (row) =>
                 "$" + row.cash_summary[10]["amount"].toLocaleString(),
             },
-            {
-              name: "Efectivo",
-              selector: (row) => row.cash_summary[0]["amount"].toLocaleString(),
-            },
-            {
-              name: "Tarjeta",
-              selector: (row) =>
-                "$" + row.cash_summary[1]["amount"].toLocaleString(),
-            },
-            {
-              name: "Transferencia",
-              selector: (row) =>
-                "$" + row.cash_summary[2]["amount"].toLocaleString(),
-            },
+
+            ...(!params.brand_id ? [
+              {
+                name: "Efectivo",
+                selector: (row) => `$${row.cash_summary?.[0]?.amount?.toLocaleString() || "0"}`,
+              },
+              {
+                name: "Tarjeta",
+                selector: (row) => `$${row.cash_summary?.[1]?.amount?.toLocaleString() || "0"}`,
+              },
+              {
+                name: "Transferencia",
+                selector: (row) => `$${row.cash_summary?.[2]?.amount?.toLocaleString() || "0"}`,
+              },
+            ]:[]),
+
             {
               name: "Total de ventas",
               selector: (row) =>
                 "$" + row.cash_summary[4]["amount"].toLocaleString(),
             },
-            {
-              name: "Caja",
-              selector: (row) =>
-                "$" + row.cash_summary[9]["amount"].toLocaleString(),
-            },
+
+
+
+            ...(!params.brand_id ? [
+              {
+                name: "Caja",
+                selector: (row) =>
+                  "$" + row.cash_summary[9]["amount"].toLocaleString(),
+              }
+            ]:[]),
 
             ...(showInvestment
               ? [
@@ -251,6 +307,7 @@ const StoreList = () => {
                   <CustomButton onClick={() => handleSelectStore(row)}>
                     Entrar
                   </CustomButton>
+                  {chooseIcon(row.products_count === tenantInfo.product_count)}
                 </>
               ),
             },
@@ -265,11 +322,7 @@ const StoreList = () => {
           columns={[
             {
               name: "Nombre",
-              selector: (row) => `${row.name} (${row.products_count} P.R.)`,
-            },
-            {
-              name: "Productos registrados",
-              selector: (row) => row.products_count,
+              selector: (row) => `${row.name}`,
             },
             ...(showInvestment
               ? [
@@ -289,6 +342,7 @@ const StoreList = () => {
                   <CustomButton onClick={() => handleSelectStore(row)}>
                     Entrar
                   </CustomButton>
+                  {chooseIcon(row.products_count === tenantInfo.product_count)}
                 </>
               ),
             },
@@ -306,6 +360,7 @@ const StoreList = () => {
               paymentTransfer: "$" + totals.paymentTransfer,
               totalPayment: "$" + totals.totalPayment,
               cash: "$" + totals.cash,
+              investment: "$" + totals.investment,
             },
           ]}
           columns={[
@@ -314,30 +369,41 @@ const StoreList = () => {
               selector: (row) => `${row.profit.toLocaleString()}`,
             },
 
-            {
-              name: "Efectivo",
-              selector: (row) => `${row.paymentCash.toLocaleString()}`,
-            },
-
-            {
-              name: "Tarjeta",
-              selector: (row) => `${row.paymentCard.toLocaleString()}`,
-            },
-
-            {
-              name: "Transferencia",
-              selector: (row) => `${row.paymentTransfer.toLocaleString()}`,
-            },
+            ...(!params.brand_id ? [
+              {
+                name: "Efectivo",
+                selector: (row) => `${row.paymentCash.toLocaleString()}`,
+              },
+  
+              {
+                name: "Tarjeta",
+                selector: (row) => `${row.paymentCard.toLocaleString()}`,
+              },
+  
+              {
+                name: "Transferencia",
+                selector: (row) => `${row.paymentTransfer.toLocaleString()}`,
+              },
+  
+            ]: []),
 
             {
               name: "Total de ventas",
               selector: (row) => `${row.totalPayment.toLocaleString()}`,
             },
-
+            ...(!params.brand_id ? [
             {
               name: "Caja",
               selector: (row) => `${row.cash.toLocaleString()}`,
-            },
+            }]: []
+          ),
+
+          ...(showInvestment ? [
+            {
+              name: "Inversión",
+              selector: (row) => `${row.investment.toLocaleString()}`,
+            }]: []
+          )
           ]}
         ></CustomTable>
       </div>
