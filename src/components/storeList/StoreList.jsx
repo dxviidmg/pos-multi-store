@@ -23,16 +23,16 @@ const StoreList = () => {
   const [showInvestment, setShowInvestment] = useState(false);
   const [params, setParams] = useState({
     end_date: today,
-    start_date: today
+    start_date: today,
   });
 
   const [totals, setTotals] = useState({
-    Ganancia: 0,
-    Efectivo: 0,
-    Tarjeta: 0,
-    Transferencia: 0,
-    "Total de ventas": 0,
-    Caja: 0,
+    profit: 0,
+    paymentCash: 0,
+    paymentCard: 0,
+    paymentTransfer: 0,
+    totalPayment: 0,
+    Cash: 0,
   });
 
   const handleFilters = async (e) => {
@@ -52,33 +52,33 @@ const StoreList = () => {
       setStores(response2.data);
       setStorages(response3.data);
 
-      const { ganancia, efectivo, tarjeta, transferencia, totalVentas, caja } =
+      const { profit, paymentCash, paymentCard, paymentTransfer, totalPayment, cash } =
         response2.data.reduce(
           (acc, store) => ({
-            ganancia: acc.ganancia + store.cash_summary[10].amount,
-            efectivo: acc.efectivo + store.cash_summary[0].amount,
-            tarjeta: acc.tarjeta + store.cash_summary[1].amount,
-            transferencia: acc.transferencia + store.cash_summary[2].amount,
-            totalVentas: acc.totalVentas + store.cash_summary[4].amount,
-            caja: acc.efectivo + store.cash_summary[9].amount,
+            profit: acc.profit + store.cash_summary[10].amount,
+            paymentCash: acc.paymentCash + store.cash_summary[0].amount,
+            paymentCard: acc.paymentCard + store.cash_summary[1].amount,
+            paymentTransfer: acc.paymentTransfer + store.cash_summary[2].amount,
+            totalPayment: acc.totalPayment + store.cash_summary[4].amount,
+            cash: acc.paymentCash + store.cash_summary[9].amount,
           }),
           {
-            ganancia: 0,
-            efectivo: 0,
-            tarjeta: 0,
-            transferencia: 0,
-            totalVentas: 0,
-            caja: 0,
+            profit: 0,
+            paymentCash: 0,
+            paymentCard: 0,
+            paymentTransfer: 0,
+            totalPayment: 0,
+            cash: 0,
           }
         );
 
       setTotals({
-        Ganancia: ganancia,
-        Efectivo: efectivo,
-        Tarjeta: tarjeta,
-        Transferencia: transferencia,
-        "Total de ventas": totalVentas,
-        Caja: caja,
+        profit,
+        paymentCash,
+        paymentCard,
+        paymentTransfer,
+        totalPayment,
+        cash,
       });
 
       setLoading(false);
@@ -149,7 +149,7 @@ const StoreList = () => {
           registrados)
         </Form.Label>
         <Row>
-        <Col>
+          <Col>
             {" "}
             <Form>
               <Form.Label>Fecha de inicio</Form.Label>
@@ -218,7 +218,7 @@ const StoreList = () => {
                 "$" + row.cash_summary[4]["amount"].toLocaleString(),
             },
             {
-              name: "$ en caja",
+              name: "Caja",
               selector: (row) =>
                 "$" + row.cash_summary[9]["amount"].toLocaleString(),
             },
@@ -285,6 +285,51 @@ const StoreList = () => {
           ]}
         />
 
+        <Form.Label className="fw-bold mt-3">Totales</Form.Label>
+
+        <CustomTable
+          data={[
+            {
+              profit: "$" + totals.profit,
+              paymentCash: "$" + totals.paymentCash,
+              paymentCard: "$" + totals.paymentCard,
+              paymentTransfer: "$" + totals.paymentTransfer,
+              totalPayment: "$" + totals.totalPayment,
+              cash: "$" + totals.cash,
+            },
+          ]}
+          columns={[
+            {
+              name: "Ganancia",
+              selector: (row) => `${row.profit}`,
+            },
+
+            {
+              name: "Efectivo",
+              selector: (row) => `${row.paymentCash}`,
+            },
+
+            {
+              name: "Tarjeta",
+              selector: (row) => `${row.paymentCard}`,
+            },
+
+            {
+              name: "Transferencia",
+              selector: (row) => `${row.paymentTransfer}`,
+            },
+
+            {
+              name: "Total de ventas",
+              selector: (row) => `${row.totalPayment}`,
+            },
+
+            {
+              name: "Caja",
+              selector: (row) => `${row.cash}`,
+            },
+          ]}
+        ></CustomTable>
         <Form.Label className="fw-bold mt-3">Totales</Form.Label>
         <Row>
           {Object.entries(totals).map(([key, value]) => (
