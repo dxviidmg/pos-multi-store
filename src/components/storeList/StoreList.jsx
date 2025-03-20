@@ -47,6 +47,16 @@ const StoreList = () => {
       console.log(response);
       setTenantInfo(response.data);
 
+      setTotals(
+        {
+          profit: 'Calculando...',
+          paymentCash: 'Calculando...',
+          paymentCard: 'Calculando...',
+          paymentTransfer: 'Calculando...',
+          totalPayment: 'Calculando...',
+          Cash: 'Calculando...',
+        }
+      )
       const response2 = await getStores({ ...params, store_type: "T" });
       const response3 = await getStores({ ...params, store_type: "A" });
       setStores(response2.data);
@@ -301,45 +311,35 @@ const StoreList = () => {
           columns={[
             {
               name: "Ganancia",
-              selector: (row) => `${row.profit}`,
+              selector: (row) => `${row.profit.toLocaleString()}`,
             },
 
             {
               name: "Efectivo",
-              selector: (row) => `${row.paymentCash}`,
+              selector: (row) => `${row.paymentCash.toLocaleString()}`,
             },
 
             {
               name: "Tarjeta",
-              selector: (row) => `${row.paymentCard}`,
+              selector: (row) => `${row.paymentCard.toLocaleString()}`,
             },
 
             {
               name: "Transferencia",
-              selector: (row) => `${row.paymentTransfer}`,
+              selector: (row) => `${row.paymentTransfer.toLocaleString()}`,
             },
 
             {
               name: "Total de ventas",
-              selector: (row) => `${row.totalPayment}`,
+              selector: (row) => `${row.totalPayment.toLocaleString()}`,
             },
 
             {
               name: "Caja",
-              selector: (row) => `${row.cash}`,
+              selector: (row) => `${row.cash.toLocaleString()}`,
             },
           ]}
         ></CustomTable>
-        <Form.Label className="fw-bold mt-3">Totales</Form.Label>
-        <Row>
-          {Object.entries(totals).map(([key, value]) => (
-            <Col>
-              <p className="text-center" key={key}>
-                <strong>{key}:</strong> ${value}
-              </p>
-            </Col>
-          ))}
-        </Row>
       </div>
     </>
   );
