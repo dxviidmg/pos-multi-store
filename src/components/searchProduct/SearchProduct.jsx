@@ -324,16 +324,25 @@ const SearchProduct = () => {
       />
       <br />
 
-          <Badge bg="success" className="text-wrap" hidden={isInputFocused}>
-            Aviso: Para añadir productos al carrito, el cursor debe estar en el
-            campo de búsqueda de productos.
-          </Badge>
+      <Badge bg="success" className="text-wrap" hidden={isInputFocused}>
+        Aviso: Para añadir productos al carrito, el cursor debe estar en el
+        campo de búsqueda de productos.
+      </Badge>
 
-        <Badge bg="success" className="text-wrap" hidden={!loading}>
-          Buscando...
-        </Badge>
+      <Badge bg="success" className="text-wrap" hidden={!loading}>
+        Buscando...
+      </Badge>
 
-      {((!loading) && (isInputFocused)) && (<br/>)}
+      <Badge
+        bg="success"
+        className="text-wrap"
+        hidden={loading || data.length === 0}
+      >
+        {data.length} resultados{" "}
+        {data.length === 200 && "(puede haber mas coincidencias)"}
+      </Badge>
+
+      {!loading && isInputFocused && <br />}
       <Form.Control
         className=""
         ref={inputRef}
