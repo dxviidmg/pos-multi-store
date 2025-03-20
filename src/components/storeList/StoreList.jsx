@@ -54,7 +54,7 @@ const StoreList = () => {
           paymentCard: 'Calculando...',
           paymentTransfer: 'Calculando...',
           totalPayment: 'Calculando...',
-          Cash: 'Calculando...',
+          cash: 'Calculando...',
         }
       )
       const response2 = await getStores({ ...params, store_type: "T" });
@@ -266,10 +266,6 @@ const StoreList = () => {
             {
               name: "Nombre",
               selector: (row) => `${row.name} (${row.products_count} P.R.)`,
-            },
-            {
-              name: "Productos registrados",
-              selector: (row) => row.products_count,
             },
             ...(showInvestment
               ? [
