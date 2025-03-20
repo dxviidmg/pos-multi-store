@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
 import { getFormattedDate } from "../utils/utils";
 import { getTenantInfo } from "../apis/tenants";
+import { chooseIcon, SuccessIcon } from "../commons/icons/Icons";
 
 const storesTypes = [
   { value: "A", label: "Almacen" },
@@ -47,41 +48,44 @@ const StoreList = () => {
       console.log(response);
       setTenantInfo(response.data);
 
-      setTotals(
-        {
-          profit: 'Calculando...',
-          paymentCash: 'Calculando...',
-          paymentCard: 'Calculando...',
-          paymentTransfer: 'Calculando...',
-          totalPayment: 'Calculando...',
-          cash: 'Calculando...',
-        }
-      )
+      setTotals({
+        profit: "Calculando...",
+        paymentCash: "Calculando...",
+        paymentCard: "Calculando...",
+        paymentTransfer: "Calculando...",
+        totalPayment: "Calculando...",
+        cash: "Calculando...",
+      });
       const response2 = await getStores({ ...params, store_type: "T" });
       const response3 = await getStores({ ...params, store_type: "A" });
       setStores(response2.data);
       setStorages(response3.data);
 
-      const { profit, paymentCash, paymentCard, paymentTransfer, totalPayment, cash } =
-        response2.data.reduce(
-          (acc, store) => ({
-            profit: acc.profit + store.cash_summary[10].amount,
-            paymentCash: acc.paymentCash + store.cash_summary[0].amount,
-            paymentCard: acc.paymentCard + store.cash_summary[1].amount,
-            paymentTransfer: acc.paymentTransfer + store.cash_summary[2].amount,
-            totalPayment: acc.totalPayment + store.cash_summary[4].amount,
-            cash: acc.paymentCash + store.cash_summary[9].amount,
-          }),
-          {
-            profit: 0,
-            paymentCash: 0,
-            paymentCard: 0,
-            paymentTransfer: 0,
-            totalPayment: 0,
-            cash: 0,
-          }
-        );
-
+      const {
+        profit,
+        paymentCash,
+        paymentCard,
+        paymentTransfer,
+        totalPayment,
+        cash,
+      } = response2.data.reduce(
+        (acc, store) => ({
+          profit: acc.profit + store.cash_summary[10].amount,
+          paymentCash: acc.paymentCash + store.cash_summary[0].amount,
+          paymentCard: acc.paymentCard + store.cash_summary[1].amount,
+          paymentTransfer: acc.paymentTransfer + store.cash_summary[2].amount,
+          totalPayment: acc.totalPayment + store.cash_summary[4].amount,
+          cash: acc.paymentCash + store.cash_summary[9].amount,
+        }),
+        {
+          profit: 0,
+          paymentCash: 0,
+          paymentCard: 0,
+          paymentTransfer: 0,
+          totalPayment: 0,
+          cash: 0,
+        }
+      );
       setTotals({
         profit,
         paymentCash,
@@ -201,10 +205,14 @@ const StoreList = () => {
             {
               name: "Nombre",
               wrap: true,
-              selector: (row) => `${row.name} (${row.products_count} P.R.)`,
+              selector: (row) => (
+                <>
+                  {row.name}
+                </>
+              ),
             },
             {
-              name: "Ganancia del dia",
+              name: "Ganancia",
               selector: (row) =>
                 "$" + row.cash_summary[10]["amount"].toLocaleString(),
             },
@@ -251,6 +259,7 @@ const StoreList = () => {
                   <CustomButton onClick={() => handleSelectStore(row)}>
                     Entrar
                   </CustomButton>
+                  {chooseIcon(row.products_count === tenantInfo.product_count)}
                 </>
               ),
             },
@@ -265,7 +274,7 @@ const StoreList = () => {
           columns={[
             {
               name: "Nombre",
-              selector: (row) => `${row.name} (${row.products_count} P.R.)`,
+              selector: (row) => `${row.name}`,
             },
             ...(showInvestment
               ? [
@@ -285,6 +294,7 @@ const StoreList = () => {
                   <CustomButton onClick={() => handleSelectStore(row)}>
                     Entrar
                   </CustomButton>
+                  {chooseIcon(row.products_count === tenantInfo.product_count)}
                 </>
               ),
             },

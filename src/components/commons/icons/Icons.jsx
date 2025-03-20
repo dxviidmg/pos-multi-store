@@ -42,3 +42,11 @@ export const WarningIcon = () => {
     </svg>
   );
 };
+
+
+export const chooseIcon = (condition) => {
+  if (condition){
+    return <SuccessIcon/>
+  }
+  return <ErrorIcon/>
+}
