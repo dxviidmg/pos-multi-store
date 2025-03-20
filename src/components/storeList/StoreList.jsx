@@ -18,11 +18,12 @@ const StoreList = () => {
 
   const [loading, setLoading] = useState(false);
   const [stores, setStores] = useState([]);
+  const [storages, setStorages] = useState([]);
   const [tenantInfo, setTenantInfo] = useState([]);
   const [showInvestment, setShowInvestment] = useState(false);
   const [params, setParams] = useState({
-    date: today,
-    store_type: "T",
+    end_date: today,
+    start_date: today
   });
 
   const [totals, setTotals] = useState({
@@ -46,8 +47,10 @@ const StoreList = () => {
       console.log(response);
       setTenantInfo(response.data);
 
-      const response2 = await getStores(params);
+      const response2 = await getStores({ ...params, store_type: "T" });
+      const response3 = await getStores({ ...params, store_type: "A" });
       setStores(response2.data);
+      setStorages(response3.data);
 
       const { ganancia, efectivo, tarjeta, transferencia, totalVentas, caja } =
         response2.data.reduce(
@@ -111,6 +114,17 @@ const StoreList = () => {
           : store;
       })
     );
+
+    setStorages((prevData) =>
+      prevData.map((store) => {
+        const matchingInvestment = response.data.find(
+          (investment) => investment.id === store.id
+        );
+        return matchingInvestment
+          ? { ...store, investment: matchingInvestment.investment }
+          : store;
+      })
+    );
     setLoading(false);
     setShowInvestment(true);
   };
@@ -135,35 +149,31 @@ const StoreList = () => {
           registrados)
         </Form.Label>
         <Row>
-          <Col>
+        <Col>
             {" "}
             <Form>
-              <Form.Label>Fecha</Form.Label>
+              <Form.Label>Fecha de inicio</Form.Label>
               <Form.Control
-                name="date"
+                name="start_date"
                 type="date"
-                value={params.date}
+                value={params.start_date}
                 onChange={(e) => handleFilters(e)}
                 max={today}
               />
             </Form>
           </Col>
-
           <Col>
-            <Form.Label>Tipo de tienda</Form.Label>
-            <Form.Select
-              value={params.store_type}
-              onChange={handleFilters}
-              name="store_type"
-              //              disabled={isLoading}
-            >
-              <option value="">Selecciona todos los tipos</option>
-              {storesTypes.map((store_type) => (
-                <option key={store_type.value} value={store_type.value}>
-                  {store_type.label}
-                </option>
-              ))}
-            </Form.Select>
+            {" "}
+            <Form>
+              <Form.Label>Fecha de fin</Form.Label>
+              <Form.Control
+                name="end_date"
+                type="date"
+                value={params.end_date}
+                onChange={(e) => handleFilters(e)}
+                max={today}
+              />
+            </Form>
           </Col>
           <Col className="d-flex align-items-end">
             <CustomButton fullWidth onClick={handleShowInvestment}>
@@ -172,52 +182,46 @@ const StoreList = () => {
           </Col>
         </Row>
 
+        <Form.Label className="fw-bold">Tiendas</Form.Label>
+
         <CustomTable
           progressPending={loading}
           data={stores}
           columns={[
             {
               name: "Nombre",
-              selector: (row) => row.name,
+              wrap: true,
+              selector: (row) => `${row.name} (${row.products_count} P.R.)`,
             },
             {
-              name: "Productos registrados",
-              selector: (row) => row.products_count,
+              name: "Ganancia del dia",
+              selector: (row) =>
+                "$" + row.cash_summary[10]["amount"].toLocaleString(),
             },
-            ...(params.store_type === "T"
-              ? [
-                  {
-                    name: "Ganancia del dia",
-                    selector: (row) =>
-                      "$" + row.cash_summary[10]["amount"].toLocaleString(),
-                  },
-                  {
-                    name: "Efectivo",
-                    selector: (row) =>
-                      row.cash_summary[0]["amount"].toLocaleString(),
-                  },
-                  {
-                    name: "Tarjeta",
-                    selector: (row) =>
-                      "$" + row.cash_summary[1]["amount"].toLocaleString(),
-                  },
-                  {
-                    name: "Transferencia",
-                    selector: (row) =>
-                      "$" + row.cash_summary[2]["amount"].toLocaleString(),
-                  },
-                  {
-                    name: "Total de ventas",
-                    selector: (row) =>
-                      "$" + row.cash_summary[4]["amount"].toLocaleString(),
-                  },
-                  {
-                    name: "$ en caja",
-                    selector: (row) =>
-                      "$" + row.cash_summary[9]["amount"].toLocaleString(),
-                  },
-                ]
-              : []),
+            {
+              name: "Efectivo",
+              selector: (row) => row.cash_summary[0]["amount"].toLocaleString(),
+            },
+            {
+              name: "Tarjeta",
+              selector: (row) =>
+                "$" + row.cash_summary[1]["amount"].toLocaleString(),
+            },
+            {
+              name: "Transferencia",
+              selector: (row) =>
+                "$" + row.cash_summary[2]["amount"].toLocaleString(),
+            },
+            {
+              name: "Total de ventas",
+              selector: (row) =>
+                "$" + row.cash_summary[4]["amount"].toLocaleString(),
+            },
+            {
+              name: "$ en caja",
+              selector: (row) =>
+                "$" + row.cash_summary[9]["amount"].toLocaleString(),
+            },
 
             ...(showInvestment
               ? [
@@ -242,6 +246,45 @@ const StoreList = () => {
             },
           ]}
         />
+
+        <Form.Label className="fw-bold">Almacenes</Form.Label>
+
+        <CustomTable
+          progressPending={loading}
+          data={storages}
+          columns={[
+            {
+              name: "Nombre",
+              selector: (row) => `${row.name} (${row.products_count} P.R.)`,
+            },
+            {
+              name: "Productos registrados",
+              selector: (row) => row.products_count,
+            },
+            ...(showInvestment
+              ? [
+                  {
+                    name: "Inversión",
+                    selector: (row) =>
+                      row.investment
+                        ? "$" + row.investment.toLocaleString()
+                        : "$0",
+                  },
+                ]
+              : []),
+            {
+              name: "Accciones",
+              cell: (row) => (
+                <>
+                  <CustomButton onClick={() => handleSelectStore(row)}>
+                    Entrar
+                  </CustomButton>
+                </>
+              ),
+            },
+          ]}
+        />
+
         <Form.Label className="fw-bold mt-3">Totales</Form.Label>
         <Row>
           {Object.entries(totals).map(([key, value]) => (
