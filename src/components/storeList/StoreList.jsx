@@ -8,8 +8,6 @@ import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
 import { getFormattedDate } from "../utils/utils";
 import { getTenantInfo } from "../apis/tenants";
 
-const defaultValue = "N/A";
-
 const storesTypes = [
   { value: "A", label: "Almacen" },
   { value: "T", label: "Tienda" },
@@ -159,7 +157,7 @@ const StoreList = () => {
               name="store_type"
               //              disabled={isLoading}
             >
-              <option value="">Selecciona un tipo de tienda</option>
+              <option value="">Selecciona todos los tipos</option>
               {storesTypes.map((store_type) => (
                 <option key={store_type.value} value={store_type.value}>
                   {store_type.label}

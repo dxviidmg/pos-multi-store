@@ -9,12 +9,8 @@ import {
   getFormattedDate,
   formatTimeFromDate,
 } from "../utils/utils";
-import { useDispatch } from "react-redux";
-
-
 import { getCashFlow } from "../apis/cashflow";
 import CashFlowModal from "../cashFlowModal/CashFlowModal";
-import { hideCashFlowModal, showCashFlowModal } from "../redux/cashFlowModal/CashFlowModalActions";
 import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
 
 const CashSummary = () => {
@@ -27,8 +23,6 @@ const CashSummary = () => {
   const [cashFlowSummary, setCashFlowSummary] = useState([]);
   const [totalSummary, setTotalSummary] = useState([]);
   const [loading, setLoading] = useState(false)
-
-  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchCashData = async () => {
@@ -100,11 +94,6 @@ const CashSummary = () => {
 
     // Exportar a Excel
     exportToExcel(cashSummary, prefixName, false);
-  };
-
-  const handleOpenModal = (cashFlow) => {
-    dispatch(hideCashFlowModal());
-    setTimeout(() => dispatch(showCashFlowModal(cashFlow)));
   };
 
   const handleUpdateCashFlowList = (updateCashFlow) => {
@@ -185,7 +174,7 @@ const CashSummary = () => {
 
 
           <Col md={3}>
-            <Form.Label className="fw-bold"> Entradas y salidas</Form.Label>
+            <Form.Label className="fw-bold">Flujo de caja</Form.Label>
             <CustomTable
               data={cashFlowSummary}
               columns={[
@@ -219,39 +208,6 @@ const CashSummary = () => {
             />
           </Col>
         </Row>
-      </div>
-
-      <div className="custom-section">
-        <Form.Label className="fw-bold">Lista de movimientos</Form.Label>
-        <br/>
-        <CustomButton onClick={()=> handleOpenModal()}>Crear movimiento</CustomButton>
-        <CustomTable
-          data={cashFlow}
-          columns={[
-            {
-              name: "Creación",
-              selector: (row) => formatTimeFromDate(row.created_at),
-            },
-            {
-              name: "Concepto",
-              selector: (row) => row.concept,
-            },
-
-            {
-              name: "Tipo",
-              selector: (row) => row.transaction_type_display,
-            },
-
-            {
-              name: "Cantidad",
-              selector: (row) => "$" + row.amount,
-            },
-            {
-              name: "usuario",
-              selector: (row) => row.user_username,
-            },
-          ]}
-        />
       </div>
     </>
   );

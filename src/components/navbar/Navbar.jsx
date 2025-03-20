@@ -73,8 +73,12 @@ const CustomNavbar = () => {
 
                 </NavDropdown>
                 <NavDropdown title="Ventas" className="custom-dropdown">
-                  <NavDropdown.Item href="/resumen-caja/">
+                <NavDropdown.Item href="/resumen-caja/">
                     Resumen
+                  </NavDropdown.Item>
+
+                <NavDropdown.Item href="/movimientos/">
+                    Movimientos
                   </NavDropdown.Item>
                   <NavDropdown.Item href="/ventas/">Ventas</NavDropdown.Item>
                   <NavDropdown.Divider />

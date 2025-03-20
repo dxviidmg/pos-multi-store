@@ -174,7 +174,7 @@ const ProductModal = ({ onUpdateProductList }) => {
                 onChange={handleDataChange}
                 name="brand"
               >
-                <option value="">Selecciona una marca</option>
+                <option value="0">Selecciona una marca</option>
                 {brands.map((brand) => (
                   <option key={brand.id} value={brand.id}>
                     {brand.name}

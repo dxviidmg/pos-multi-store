@@ -73,7 +73,7 @@ const LogList = () => {
               name="brand_id"
               //              disabled={isLoading}
             >
-              <option value="0">Selecciona una marca</option>
+              <option value="">Todas las marcas</option>
               {brands.map((brand) => (
                 <option key={brand.id} value={brand.id}>
                   {brand.name}
