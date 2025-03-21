@@ -134,7 +134,7 @@ const SaleModal = ({ onUpdateSaleList }) => {
           <Form.Label>Vendedor</Form.Label>
           <Form.Control
             type="text"
-            value={formData.saler_username}
+            value={formData.seller_username}
             placeholder="Vendedor"
             disabled
           />

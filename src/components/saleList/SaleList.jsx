@@ -144,7 +144,7 @@ const SaleList = () => {
             {
               name: "Vendedor",
               wrap: true,
-              selector: (row) => row.saler_username,
+              selector: (row) => row.seller_username,
             },
             {
               name: "Accciones",

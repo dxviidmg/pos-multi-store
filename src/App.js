@@ -18,6 +18,7 @@ import CashSummary from "./components/cashSummary/CashSummary";
 import LogList from "./components/logList/LogList";
 import TenantPaymentList from "./components/tenantPaymentList/TenantPaymentList";
 import CashFlowList from "./components/cashFlowList/CashFlowList";
+import SellerList from "./components/sellerList/SellerList";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -57,8 +58,9 @@ function App() {
             <Route path="/marcas/" element={<BrandList />} />
             <Route path="/logs/" element={<LogList />} />
             <Route path="/pagos/" element={<TenantPaymentList />} />
-            {user.store_id  ? (<Route path="/" element={<SaleCreate />} />): (<Route path="/" element={<SaleCreate />} />)}
-            {user.store_id  ? (<Route path="/*" element={<SaleCreate />} />): (<Route path="/*" element={<SaleCreate />} />)}
+            <Route path="/vendedores/" element={<SellerList />} />
+            {user.store_id === ""  ? (<Route path="/" element={<SaleCreate />} />): (<Route path="/" element={<StoreList />} />)}
+            {user.store_id  === "" ? (<Route path="/*" element={<SaleCreate />} />): (<Route path="/*" element={<StoreList />} />)}
           </>
         ) : (
           <Route path="/" element={<Login onLogin={handleLogin} />} />
