@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CustomModal from "../commons/customModal/customModal";
-import { Container, Col, Form, Image, Row } from "react-bootstrap";
+import { Col, Form, Image, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getBrands } from "../apis/brands";
@@ -145,8 +145,9 @@ const ProductModal = ({ onUpdateProductList }) => {
       showOut={showProductModal}
       title={formData.id ? "Actualizar producto" : "Crear producto"}
     >
-      <Row>
-        <Col md={4} className="mt-auto">
+     <div className="custom-section">
+     <Row>
+        <Col md={4} className="">
 
 
           <Image
@@ -215,7 +216,7 @@ const ProductModal = ({ onUpdateProductList }) => {
             </Col>
 
             <Col md={3}>
-              <Form.Label>Precio unitario</Form.Label>
+              <Form.Label>P. unitario</Form.Label>
               <Form.Control
                 type="number"
                 value={formData.unit_price}
@@ -271,6 +272,7 @@ const ProductModal = ({ onUpdateProductList }) => {
           </Row>
         </Col>
       </Row>
+      </div> 
     </CustomModal>
   );
 };

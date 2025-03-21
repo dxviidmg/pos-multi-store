@@ -54,7 +54,6 @@ const CustomNavbar = () => {
                 <NavDropdown title="Productos" className="custom-dropdown">
                   <NavDropdown.Item href="/marcas/">Marcas</NavDropdown.Item>
 
-
                   <NavDropdown.Divider />
                   <NavDropdown.Item href="/productos/">
                     Productos
@@ -64,20 +63,17 @@ const CustomNavbar = () => {
                   </NavDropdown.Item>
                   <NavDropdown.Divider />
                   <NavDropdown.Item href="/inventario/">
-                  Inventario
+                    Inventario
                   </NavDropdown.Item>
                   <NavDropdown.Divider />
-                  <NavDropdown.Item href="/logs/">
-                    Logs
-                  </NavDropdown.Item>
-
+                  <NavDropdown.Item href="/logs/">Logs</NavDropdown.Item>
                 </NavDropdown>
                 <NavDropdown title="Ventas" className="custom-dropdown">
-                <NavDropdown.Item href="/resumen-caja/">
+                  <NavDropdown.Item href="/resumen-caja/">
                     Resumen
                   </NavDropdown.Item>
 
-                <NavDropdown.Item href="/movimientos/">
+                  <NavDropdown.Item href="/movimientos/">
                     Movimientos
                   </NavDropdown.Item>
                   <NavDropdown.Item href="/ventas/">Ventas</NavDropdown.Item>
@@ -85,7 +81,6 @@ const CustomNavbar = () => {
                   <NavDropdown.Item href="/importar-ventas/">
                     Importar ventas
                   </NavDropdown.Item>
-
                 </NavDropdown>
                 {user.is_owner && (
                   <Nav.Link onClick={handleBack}>Regresar</Nav.Link>
@@ -119,13 +114,21 @@ const CustomNavbar = () => {
                   </NavDropdown.Item>
                 </NavDropdown>
                 <Nav.Link href="/clientes/">Clientes</Nav.Link>
+                {user.has_sellers && (
+                  <Nav.Link href="/vendedores/">Vendedores</Nav.Link>
+                )}
                 <Nav.Link href="/pagos/">Pagos</Nav.Link>
               </>
             )}
           </Nav>
 
           <Nav className="ms-auto">
-          <NavDropdown title={user.store_name ? `${user.store_name}` : `${user.tenant_name}`} className="custom-dropdown">
+            <NavDropdown
+              title={
+                user.store_name ? `${user.store_name}` : `${user.tenant_name}`
+              }
+              className="custom-dropdown"
+            >
               <NavDropdown.Item>Negocio: {user?.tenant_name}</NavDropdown.Item>
               <NavDropdown.Item>Usuario: {user.full_name}</NavDropdown.Item>
             </NavDropdown>

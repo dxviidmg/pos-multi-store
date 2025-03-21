@@ -13,7 +13,3 @@
   min-height: 100vh;
   padding-bottom: 2px;
 }
-
-.form-label, .form-control {
-  font-size: 0.9rem; /* Or any size you prefer */
-}
