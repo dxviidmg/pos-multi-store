@@ -100,7 +100,9 @@ const ClientModal = ({ onUpdateClientList }) => {
       showOut={showClientModal}
       title={formData ? "Actualizar cliente" : "Crear cliente"}
     >
-      <Row className={`section`}>
+      <div className={`custom-section`}>
+
+      <Row >
         <Col>
           <Form.Label>Nombre</Form.Label>
           <Form.Control
@@ -158,6 +160,8 @@ const ClientModal = ({ onUpdateClientList }) => {
           </CustomButton>
         </Col>
       </Row>
+      </div>
+
     </CustomModal>
   );
 };
