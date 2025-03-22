@@ -14,3 +14,17 @@ export const getSellers = async () => {
       return error;
     }
   };
+
+
+  export const createSeller = async (data) => {
+    const apiUrl = new URL(getApiUrl("store-worker"));
+ 
+    try {
+      const response = await axios.post(apiUrl, data, {
+        headers: getHeaders(),
+      });
+      return response;
+    } catch (error) {
+      return error;
+    }
+  };
