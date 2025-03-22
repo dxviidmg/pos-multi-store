@@ -19,14 +19,15 @@ import LogList from "./components/logList/LogList";
 import TenantPaymentList from "./components/tenantPaymentList/TenantPaymentList";
 import CashFlowList from "./components/cashFlowList/CashFlowList";
 import SellerList from "./components/sellerList/SellerList";
+import { getUserData } from "./components/apis/utils";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const user = localStorage.getItem("user");
+  const user = getUserData();
 
   useEffect(() => {
-    const user = localStorage.getItem("user");
+    const user = getUserData();
     if (user) {
       setIsLoggedIn(true);
     }
@@ -59,8 +60,7 @@ function App() {
             <Route path="/logs/" element={<LogList />} />
             <Route path="/pagos/" element={<TenantPaymentList />} />
             <Route path="/vendedores/" element={<SellerList />} />
-            {user.store_id === ""  ? (<Route path="/" element={<SaleCreate />} />): (<Route path="/" element={<StoreList />} />)}
-            {user.store_id  === "" ? (<Route path="/*" element={<SaleCreate />} />): (<Route path="/*" element={<StoreList />} />)}
+            {user.store_id ? (<Route path="/*" element={<SaleCreate />} />): (<Route path="/*" element={<StoreList />} />)}
           </>
         ) : (
           <Route path="/" element={<Login onLogin={handleLogin} />} />
