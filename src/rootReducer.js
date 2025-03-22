@@ -8,6 +8,7 @@ import ClientModalReducer from "./components/redux/clientModal/ClientModalReduce
 import SaleModalReducer from "./components/redux/saleModal/SaleModalReducer";
 import LogsModalReducer from "./components/redux/logsModal/LogsModalReducer";
 import CashFlowModalReducer from "./components/redux/cashFlowModal/CashFlowModalReducer";
+import SellerModalReducer from "./components/redux/sellerModal/SellerModalReducer";
 
 const rootReducer = combineReducers({
   cartReducer,
@@ -18,7 +19,8 @@ const rootReducer = combineReducers({
   ClientModalReducer,
   SaleModalReducer,
   LogsModalReducer,
-  CashFlowModalReducer
+  CashFlowModalReducer,
+  SellerModalReducer
 });
 
 export default rootReducer;
