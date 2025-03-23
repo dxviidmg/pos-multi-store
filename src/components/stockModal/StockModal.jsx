@@ -52,12 +52,11 @@ const StockModal = () => {
 
   return (
     <CustomModal showOut={showStockModal} title="Revisión de Stock">
-      <div className="text-center">
+      <div className="text-center custom-section">
         <p>
           <b>Código:</b> {storeProduct.product?.code} <b>Nombre:</b> {storeProduct.product?.brand_name} {storeProduct.product?.name}
         </p>
         {renderStockInfo()}
-      </div>
 
       {storeProduct.showImage ? (
         <Row className="justify-content-center">
@@ -103,6 +102,10 @@ const StockModal = () => {
           />
         )
       )}
+
+      
+
+      </div>
     </CustomModal>
   );
 };
