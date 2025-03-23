@@ -292,7 +292,6 @@ const SearchProduct = () => {
         onChange={handleMovementTypeChange}
         value="traspaso"
         checked={movementType === "traspaso"}
-        className={storeType === "A" ? "d-none" : ""}
       />
       <Form.Check
         inline
