@@ -70,7 +70,7 @@ function Login({ onLogin }) {
   };
 
   const handleRedirect = (user) => {
-    if (user.is_owner) {
+    if (user.role === "owner") {
       navigate("/tiendas/");
     } else {
       navigate("/vender/");
