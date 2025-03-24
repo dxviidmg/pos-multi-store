@@ -159,13 +159,13 @@ const StoreProductList = () => {
             grow: 4,
             cell: (row) => (
               <>
-                {user.is_owner && (
+                {user.role === "owner" && (
                   <CustomButton onClick={() => handleOpenModal(row, true)}>
                     Ajustar cantidad
                   </CustomButton>
                 )}
                 <CustomButton onClick={() => handleOpenModal(row, false)}>
-                  Movimientos de stock {user.is_owner}
+                  Movimientos de stock
                 </CustomButton>
               </>
             ),

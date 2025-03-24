@@ -158,8 +158,7 @@ const SaleList = () => {
                     </CustomButton>
                   )}
                   {(row.is_cancelable ||
-                    user.is_owner ===
-                      true ||
+                    user.role === "owner" ||
                     row.is_duplicate) && (
                     <CustomButton onClick={() => handleOpenModal(row)}>
                       Devolución
