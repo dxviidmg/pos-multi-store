@@ -50,8 +50,8 @@ const CustomNavbar = () => {
             {user.store_type === "T" && (
               <>
                 <Nav.Link href="/vender/">Vender</Nav.Link>
-                <Nav.Link href="/clientes/">Clientes</Nav.Link>
-                <NavDropdown title="Productos" className="custom-dropdown">
+                <Nav.Link href="/clientes/" hidden={user.role === "seller"}>Clientes</Nav.Link>
+                <NavDropdown title="Productos" className="custom-dropdown" hidden={user.role === "seller"}>
                   <NavDropdown.Item href="/marcas/">Marcas</NavDropdown.Item>
 
                   <NavDropdown.Divider />
@@ -69,12 +69,12 @@ const CustomNavbar = () => {
                   <NavDropdown.Item href="/logs/">Logs</NavDropdown.Item>
                 </NavDropdown>
                 <NavDropdown title="Ventas" className="custom-dropdown">
-                  <NavDropdown.Item href="/resumen-caja/">
+                  <NavDropdown.Item href="/resumen-caja/" hidden={user.role === "seller"}>
                     Resumen
                   </NavDropdown.Item>
 
-                  <NavDropdown.Item href="/movimientos/">
-                    Movimientos
+                  <NavDropdown.Item href="/movimientos/" hidden={user.role === "seller"}>
+                    Movimientos de caja
                   </NavDropdown.Item>
                   <NavDropdown.Item href="/ventas/">Ventas</NavDropdown.Item>
                   <NavDropdown.Divider />
@@ -82,7 +82,7 @@ const CustomNavbar = () => {
                     Importar ventas
                   </NavDropdown.Item>
                 </NavDropdown>
-                {user.is_owner && (
+                {user.role === "owner" && (
                   <Nav.Link onClick={handleBack}>Regresar</Nav.Link>
                 )}
               </>
@@ -93,7 +93,7 @@ const CustomNavbar = () => {
               <>
                 <Nav.Link href="/distribuir/">Distribuir</Nav.Link>
                 <Nav.Link href="/inventario/">Inventario</Nav.Link>
-                {user.is_owner && (
+                {user.role === "owner" && (
                   <Nav.Link onClick={handleBack}>Regresar</Nav.Link>
                 )}
               </>

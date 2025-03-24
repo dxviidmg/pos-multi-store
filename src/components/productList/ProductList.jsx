@@ -201,7 +201,7 @@ const ProductList = () => {
           {
             name: "Stock",
             selector: (row) => row.stock,
-            omit: !getUserData().is_owner,
+            omit: getUserData().role !== "owner",
           },
 
           {
