@@ -8,6 +8,7 @@ import Swal from "sweetalert2";
 import { hideProductModal } from "../redux/productModal/ProductModalActions";
 import { createProduct, updateProduct } from "../apis/products";
 import noPhoto from "../../assets/images/noPhoto.jpg";
+import { getDepartments } from "../apis/departments";
 
 
 const INITIAL_FORM_DATA = {
@@ -29,6 +30,7 @@ const ProductModal = ({ onUpdateProductList }) => {
   );
 
   const [brands, setBrands] = useState([]);
+  const [departments, setDepartments] = useState([])
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
@@ -46,6 +48,8 @@ const ProductModal = ({ onUpdateProductList }) => {
       try {
         const response = await getBrands();
         setBrands(response.data);
+        const response2 = await getDepartments();
+        setDepartments(response2.data)
       } catch (error) {
         console.error("Error fetching brands:", error);
       }
@@ -183,6 +187,23 @@ const ProductModal = ({ onUpdateProductList }) => {
                 ))}
               </Form.Select>
             </Col>
+
+            <Col md={6}>
+              <Form.Label>Departamento</Form.Label>
+              <Form.Select
+                value={formData.department}
+                onChange={handleDataChange}
+                name="department"
+              >
+                <option value="0">Selecciona una departamento</option>
+                {departments.map((department) => (
+                  <option key={department.id} value={department.id}>
+                    {department.name}
+                  </option>
+                ))}
+              </Form.Select>
+            </Col>
+
             <Col md={6}>
               <Form.Label>Código</Form.Label>
               <Form.Control
@@ -193,7 +214,7 @@ const ProductModal = ({ onUpdateProductList }) => {
                 onChange={handleDataChange}
               />
             </Col>
-            <Col md={12}>
+            <Col md={6}>
               <Form.Label>Nombre</Form.Label>
               <Form.Control
                 type="text"

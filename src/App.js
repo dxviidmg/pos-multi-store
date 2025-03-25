@@ -20,6 +20,7 @@ import TenantPaymentList from "./components/tenantPaymentList/TenantPaymentList"
 import CashFlowList from "./components/cashFlowList/CashFlowList";
 import SellerList from "./components/sellerList/SellerList";
 import { getUserData } from "./components/apis/utils";
+import DepartmentList from "./components/DepartmentList/DepartmentList";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -57,6 +58,7 @@ function App() {
             <Route path="/importar-productos/" element={<ProductImport />} />
             <Route path="/inventario/" element={<StoreProductList />} />
             <Route path="/marcas/" element={<BrandList />} />
+            <Route path="/departamentos/" element={<DepartmentList />} />
             <Route path="/logs/" element={<LogList />} />
             <Route path="/pagos/" element={<TenantPaymentList />} />
             <Route path="/vendedores/" element={<SellerList />} />

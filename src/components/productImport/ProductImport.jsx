@@ -7,42 +7,71 @@ import Swal from "sweetalert2";
 import { ErrorIcon, SuccessIcon } from "../commons/icons/Icons";
 import { useRef } from "react";
 
-
 const URL_TEMPLATE =
   process.env.REACT_APP_API_URL +
   "/static/templates/SmartVenta_plantilla_importacion_productos.xlsx";
 
 const DATA_SAMPLE = [
-  { code: 1, brand: 'Refrescos Inc', name: "Nombre del producto 1", cost: 10, unit_price: 20, wholesale_price: 15, min_wholesale_quantity: 3, wholesale_price_on_client_discount: 'Si'},
-  { code: 2, brand: 'Refrescos Inc', name: "Nombre del producto 2", cost: 12, unit_price: 22},
-  { code: 3, brand: 'Refrescos Inc', name: "Nombre del producto 3", cost: 14, unit_price: 22, wholesale_price: 15, min_wholesale_quantity: 3},
+  {
+    code: 1,
+    brand: "Marca 1",
+    name: "Nombre del producto 1",
+    departament: "Departamento 1",
+    cost: 10,
+    unit_price: 20,
+    wholesale_price: 15,
+    min_wholesale_quantity: 3,
+    wholesale_price_on_client_discount: "Si",
+  },
+  {
+    code: 2,
+    brand: "Marca 2",
+    departament: "Departamento 1",
+    name: "Nombre del producto 2",
+    cost: 12,
+    unit_price: 22,
+  },
+  {
+    code: 3,
+    brand: "Marca 3",
+    departament: "",
+    name: "Nombre del producto 3",
+    cost: 14,
+    unit_price: 22,
+    wholesale_price: 15,
+    min_wholesale_quantity: 3,
+  },
 ];
 
-const CREATE_BRANDS = [{
-  value: 'Y', label: 'Si'
-}, {
-  value: 'N', label: 'No'
-}]
+const CREATE_OPTIONS = [
+  {
+    value: "Y",
+    label: "Si",
+  },
+  {
+    value: "N",
+    label: "No",
+  },
+];
 
 const ProductImport = () => {
   const fileInputRef = useRef(null);
   const [products, setProducts] = useState([]);
   const [formData, setFormData] = useState({
     file: "",
-    create_brands: ""
-  })
+    create_brands: "",
+  });
   const [showExample, setShowExample] = useState([]);
 
   const handleDataChange = (e) => {
-    var { name, value, files  } = e.target;
+    var { name, value, files } = e.target;
 
-    if (name === "file"){
+    if (name === "file") {
       setFormData((prevData) => ({
         ...prevData,
         [name]: files[0],
       }));
-    }
-    else{
+    } else {
       setFormData((prevData) => ({
         ...prevData,
         [name]: value,
@@ -85,9 +114,9 @@ const ProductImport = () => {
       setProducts([]);
 
       setFormData({ ...formData, file: null });
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ""; // Limpia el input de archivo
-    }
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ""; // Limpia el input de archivo
+      }
 
       Swal.fire({
         icon: "success",
@@ -111,26 +140,24 @@ const ProductImport = () => {
     }
   };
 
-
   return (
     <div>
       <div className="custom-section">
         <Form.Label className="fw-bold">Importar productos</Form.Label>
         <Row>
+          <Col md={3}>
+            <Form.Group controlId="formFile" className="">
+              <Form.Control
+                type="file"
+                ref={fileInputRef}
+                defaultValue={formData.file}
+                onChange={handleDataChange}
+                name="file"
+              />
+            </Form.Group>
+          </Col>
 
-        <Col md={2}>
-          <Form.Group controlId="formFile" className="">
-            <Form.Control
-              type="file"
-              ref={fileInputRef}
-              defaultValue={formData.file}
-              onChange={handleDataChange}
-              name="file"
-            />
-          </Form.Group>
-        </Col>
-
-        <Col md={2}>
+          <Col md={3}>
             <Form.Select
               value={formData.create_brands}
               onChange={handleDataChange}
@@ -138,158 +165,196 @@ const ProductImport = () => {
               //              disabled={isLoading}
             >
               <option value="">Crear marcas</option>
-              {CREATE_BRANDS.map((brand) => (
-                <option key={brand.value} value={brand.value}>
-                  {brand.label}
+              {CREATE_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
                 </option>
               ))}
             </Form.Select>
           </Col>
 
+          <Col md={3}>
+            <Form.Select
+              value={formData.create_departments}
+              onChange={handleDataChange}
+              name="create_departments"
+              //              disabled={isLoading}
+            >
+              <option value="">Crear departamentos</option>
+              {CREATE_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </Form.Select>
+          </Col>
 
-        <Col md={2}>
-          <CustomButton
-            onClick={handleValidation}
-            disabled={formData.file === ""  || formData.create_brands === ""}
-            fullWidth
-          >
-            Validar
-          </CustomButton>
-        </Col>
+          <Col md={3}>
+            <Form.Select
+              value={formData.departments_mandatory}
+              onChange={handleDataChange}
+              name="departments_mandatory"
+              //              disabled={isLoading}
+            >
+              <option value="">Departamentos obligatorios en el archivo</option>
+              {CREATE_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </Form.Select>
+          </Col>
 
-        <Col md={2}>
-          <CustomButton
-            onClick={handleImport}
-            disabled={
-              products.length === 0 ||
-              products.some((item) => item.status !== "Exitoso")
-            }
-            fullWidth
-          >
-            Importar
-          </CustomButton>
-        </Col>
+          <Col md={3}>
+            <CustomButton
+              onClick={handleValidation}
+              disabled={formData.file === "" || formData.create_brands === ""  || formData.create_departments === ""}
+              fullWidth
+            >
+              Validar
+            </CustomButton>
+          </Col>
 
-        <Col md={2}>
-          <CustomButton href={URL_TEMPLATE} fullWidth>
-            Descargar plantilla
-          </CustomButton>
-        </Col>
+          <Col md={3}>
+            <CustomButton
+              onClick={handleImport}
+              disabled={
+                products.length === 0 ||
+                products.some((item) => item.status !== "Exitoso")
+              }
+              fullWidth
+            >
+              Importar
+            </CustomButton>
+          </Col>
 
-        <Col md={2}>
-          <CustomButton onClick={() => setShowExample(!showExample)} fullWidth>
-            Ver Ejemplo
-          </CustomButton>
-        </Col>
+          <Col md={3}>
+            <CustomButton href={URL_TEMPLATE} fullWidth>
+              Descargar plantilla
+            </CustomButton>
+          </Col>
 
+          <Col md={3}>
+            <CustomButton
+              onClick={() => setShowExample(!showExample)}
+              fullWidth
+            >
+              Ver Ejemplo
+            </CustomButton>
+          </Col>
         </Row>
-
       </div>
 
+      <div className="custom-section" hidden={showExample}>
+        <Form.Label className="fw-bold">Ejemplo de plantilla</Form.Label>
 
-        <div className="custom-section" hidden={showExample}>
-            <Form.Label className="fw-bold">Ejemplo de plantilla</Form.Label>
+        <CustomTable
+          data={DATA_SAMPLE}
+          columns={[
+            {
+              name: "Código",
+              selector: (row) => row.code,
+            },
+            {
+              name: "Marca",
+              selector: (row) => row.brand,
+            },
+            {
+              name: "Departamento",
+              selector: (row) => row.departament,
+            },
+            {
+              name: "Nombre",
+              selector: (row) => row.name,
+              wrap: true,
+            },
 
-            <CustomTable
-              data={DATA_SAMPLE}
-              columns={[
-                {
-                  name: "Código",
-                  selector: (row) => row.code,
-                },
-                {
-                  name: "Marca",
-                  selector: (row) => row.brand,
-                },
-                {
-                  name: "Nombre",
-                  selector: (row) => row.name,
-                  wrap: true
-                },
-  
-                {
-                  name: "Costo",
-                  selector: (row) => row.cost,
-                },
-                {
-                  name: "Precio unitario",
-                  selector: (row) => row.unit_price,
-                },
-                {
-                  name: "Precio mayoreo",
-                  selector: (row) => row.wholesale_price,
-                },
-  
-                {
-                  name: "Cantidad minima mayoreo",
-                  selector: (row) => row.min_wholesale_quantity,
-                },
-                {
-                  name: "Precio mayoreo en descuentos de clientes",
-                  selector: (row) => row.wholesale_price_on_client_discount,
-                }
-              ]}
-            ></CustomTable>
+            {
+              name: "Costo",
+              selector: (row) => row.cost,
+            },
+            {
+              name: "Precio unitario",
+              selector: (row) => row.unit_price,
+            },
+            {
+              name: "Precio mayoreo",
+              selector: (row) => row.wholesale_price,
+            },
 
-
-        </div>
+            {
+              name: "Cantidad minima mayoreo",
+              selector: (row) => row.min_wholesale_quantity,
+            },
+            {
+              name: "Precio mayoreo en descuentos de clientes",
+              selector: (row) => row.wholesale_price_on_client_discount,
+            },
+          ]}
+        ></CustomTable>
+      </div>
 
       <div className="custom-section">
-          <Form.Label className="fw-bold">Archivo actual</Form.Label>
-          <CustomTable
-            data={products}
-            columns={[
-              {
-                name: "Código",
-                selector: (row) => row.code,
-              },
-              {
-                name: "Marca",
-                selector: (row) => row.brand,
-              },
-              {
-                name: "Nombre",
-                selector: (row) => row.name,
-                wrap: true
-              },
+        <Form.Label className="fw-bold">Archivo actual</Form.Label>
+        <CustomTable
+          data={products}
+          columns={[
+            {
+              name: "Código",
+              selector: (row) => row.code,
+            },
+            {
+              name: "Marca",
+              selector: (row) => row.brand,
+            },
 
-              {
-                name: "Costo",
-                selector: (row) => row.cost,
-              },
-              {
-                name: "Precio unitario",
-                selector: (row) => row.unit_price,
-              },
-              {
-                name: "Precio mayoreo",
-                selector: (row) => row.wholesale_price,
-              },
+            {
+              name: "Departamento",
+              selector: (row) => row.departament,
+            },
 
-              {
-                name: "Cantidad minima mayoreo",
-                selector: (row) => row.min_wholesale_quantity,
-              },
-              {
-                name: "Precio mayoreo en descuentos de clientes",
-                selector: (row) => row.wholesale_price_on_client_discount,
-              },
-              {
-                name: "Status",
-                wrap: true,
-                selector: (row) => (
-                  row.status === "Exitoso" 
-                    ? <SuccessIcon /> 
-                    : <>
-                        <ErrorIcon /> {row.status}
-                      </>
+            {
+              name: "Nombre",
+              selector: (row) => row.name,
+              wrap: true,
+            },
+
+            {
+              name: "Costo",
+              selector: (row) => row.cost,
+            },
+            {
+              name: "Precio unitario",
+              selector: (row) => row.unit_price,
+            },
+            {
+              name: "Precio mayoreo",
+              selector: (row) => row.wholesale_price,
+            },
+
+            {
+              name: "Cantidad minima mayoreo",
+              selector: (row) => row.min_wholesale_quantity,
+            },
+            {
+              name: "Precio mayoreo en descuentos de clientes",
+              selector: (row) => row.wholesale_price_on_client_discount,
+            },
+            {
+              name: "Status",
+              wrap: true,
+              selector: (row) =>
+                row.status === "Exitoso" ? (
+                  <SuccessIcon />
+                ) : (
+                  <>
+                    <ErrorIcon /> {row.status}
+                  </>
                 ),
-              },
-            ]}
-          ></CustomTable>
+            },
+          ]}
+        ></CustomTable>
       </div>
-
-
     </div>
   );
 };
