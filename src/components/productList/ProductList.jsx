@@ -192,6 +192,11 @@ const ProductList = () => {
             name: "Marca",
             selector: (row) => row.brand_name,
           },
+
+          {
+            name: "Departamento",
+            selector: (row) => row.department_name,
+          },
           {
             name: "Nombre",
             selector: (row) => row.name,

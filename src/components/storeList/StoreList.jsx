@@ -8,7 +8,7 @@ import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
 import { getFormattedDate } from "../utils/utils";
 import { getTenantInfo } from "../apis/tenants";
 import { chooseIcon } from "../commons/icons/Icons";
-import { getBrands } from "../apis/brands";
+import { getDepartments } from "../apis/departments";
 
 const StoreList = () => {
   const navigate = useNavigate();
@@ -19,7 +19,7 @@ const StoreList = () => {
   const [storages, setStorages] = useState([]);
   const [tenantInfo, setTenantInfo] = useState([]);
   const [showInvestment, setShowInvestment] = useState(false);
-  const [brands, setBrands] = useState([]);
+  const [departaments, setDepartments] = useState([]);
   const [params, setParams] = useState({
     end_date: today,
     start_date: today,
@@ -38,8 +38,8 @@ const StoreList = () => {
   useEffect(() => {
     const fetchBrands = async () => {
       setLoading(true);
-      const response = await getBrands();
-      setBrands(response.data);
+      const response = await getDepartments();
+      setDepartments(response.data);
       setLoading(false);
     };
 
@@ -209,18 +209,19 @@ const StoreList = () => {
             </Form>
           </Col>
 
-          <Col hidden={!tenantInfo.show_profit_by_brands}>
-            <Form.Label>Marca</Form.Label>
+          <Col hidden={!tenantInfo.supports_departments}>
+            <Form.Label>Departamento</Form.Label>
             <Form.Select
-              value={params.brand_id}
+              value={params.departament_id}
               onChange={(e) => handleFilters(e)}
-              name="brand_id"
+              name="departament_id"
               //              disabled={isLoading}
             >
-              <option value="">Todas las marcas</option>
-              {brands.map((brand) => (
-                <option key={brand.id} value={brand.id}>
-                  {brand.name}
+              <option value="">Todas los departamentos</option>
+              <option value="0">Sin departamento</option>
+              {departaments.map((departament) => (
+                <option key={departament.id} value={departament.id}>
+                  {departament.name}
                 </option>
               ))}
             </Form.Select>

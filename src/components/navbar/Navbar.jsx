@@ -105,6 +105,7 @@ const CustomNavbar = () => {
                 <Nav.Link href="/tiendas/">Tiendas</Nav.Link>
                 <NavDropdown title="Productos" className="custom-dropdown">
                   <NavDropdown.Item href="/marcas/">Marcas</NavDropdown.Item>
+                  <NavDropdown.Item href="/departamentos/">Departamentos</NavDropdown.Item>
                   <NavDropdown.Divider />
                   <NavDropdown.Item href="/productos/">
                     Productos
@@ -114,7 +115,7 @@ const CustomNavbar = () => {
                   </NavDropdown.Item>
                 </NavDropdown>
                 <Nav.Link href="/clientes/">Clientes</Nav.Link>
-                {user.has_sellers && (
+                {user.sellers > 0 && (
                   <Nav.Link href="/vendedores/">Vendedores</Nav.Link>
                 )}
                 <Nav.Link href="/pagos/">Pagos</Nav.Link>

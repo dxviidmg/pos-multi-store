@@ -2,18 +2,16 @@ import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
 import { Form, FormCheck } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
-import { deleteBrands, getBrands } from "../apis/brands";
-import BrandModal from "../brandModal/BrandModal";
+import { deleteDepartments, getDepartments } from "../apis/departments";
 import { useDispatch } from "react-redux";
-import {
-  hideBrandModal,
-  showBrandModal,
-} from "../redux/brandModal/BrandModalActions";
-import Swal from "sweetalert2";
 
-const BrandList = () => {
+import Swal from "sweetalert2";
+import { hideDepartmentModal, showDepartmentModal } from "../redux/departmentModal/DepartmentModalActions";
+import DepartmentModal from "../departmentModal /DepartmentModal";
+
+const DepartmentList = () => {
   const [loading, setLoading] = useState(false);
-  const [brands, setBrands] = useState([]);
+  const [departments, setDepartments] = useState([]);
   const [selectedRows, setSelectedRows] = useState([])
   const [confirmDeletion, setConfirmDeletion] = useState(false)
   const dispatch = useDispatch();
@@ -21,54 +19,54 @@ const BrandList = () => {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      const response = await getBrands();
-      setBrands(response.data);
+      const response = await getDepartments();
+      setDepartments(response.data);
       setLoading(false);
     };
 
     fetchData();
   }, []);
 
-  const handleOpenModal = (brand) => {
-    dispatch(hideBrandModal());
-    setTimeout(() => dispatch(showBrandModal(brand)));
+  const handleOpenModal = (department) => {
+    dispatch(hideDepartmentModal());
+    setTimeout(() => dispatch(showDepartmentModal(department)));
   };
 
-  const handleUpdateBrandList = (updatedBrand) => {
-    setBrands((prevBrands) => {
-      const brandExists = prevBrands.some((b) => b.id === updatedBrand.id);
-      return brandExists
-        ? prevBrands.map((b) => (b.id === updatedBrand.id ? updatedBrand : b))
-        : [...prevBrands, updatedBrand];
+  const handleUpdateDepartmentList = (updatedDepartment) => {
+    setDepartments((prevDepartments) => {
+      const departmentExists = prevDepartments.some((b) => b.id === updatedDepartment.id);
+      return departmentExists
+        ? prevDepartments.map((b) => (b.id === updatedDepartment.id ? updatedDepartment : b))
+        : [...prevDepartments, updatedDepartment];
     });
   };
 
   
 
-  const handleDeleteBrands = async () => {
+  const handleDeleteDepartments = async () => {
     console.log(selectedRows);
 
     const selectedIds = selectedRows.map((element) => element.id);
 
-    const response = await deleteBrands(selectedIds);
+    const response = await deleteDepartments(selectedIds);
 
     console.log(response);
     if (response.status == 200) {
-      const updatedBrands = brands.filter(
-        (brand) => !selectedIds.includes(brand.id)
+      const updatedDepartments = departments.filter(
+        (department) => !selectedIds.includes(department.id)
       );
 
-      setBrands(updatedBrands);
+      setDepartments(updatedDepartments);
 
       Swal.fire({
         icon: "success",
-        title: "Productos eliminados",
+        title: "Departamentos eliminados",
         timer: 5000,
       });
     } else {
       Swal.fire({
         icon: "error",
-        title: "Error al borrar Productos",
+        title: "Error al borrar Departamentos",
         timer: 5000,
       });
     }
@@ -80,16 +78,16 @@ const BrandList = () => {
   
   return (
     <div className="custom-section">
-      <BrandModal onUpdateBrandList={handleUpdateBrandList}></BrandModal>{" "}
-      <Form.Label className="fw-bold">Lista de marcas</Form.Label>
+      <DepartmentModal onUpdateDepartmentList={handleUpdateDepartmentList}></DepartmentModal>{" "}
+      <Form.Label className="fw-bold">Lista de departamentos</Form.Label>
       <br></br>
       <CustomButton onClick={() => handleOpenModal()}>Crear</CustomButton>
 
       <CustomButton
-        onClick={handleDeleteBrands}
+        onClick={handleDeleteDepartments}
         disabled={selectedRows.length === 0 || !confirmDeletion}
       >
-        Borrar marcas
+        Borrar departamentos
       </CustomButton>
       <FormCheck label={'Confirmar borrado'}
       checked={confirmDeletion}
@@ -98,7 +96,7 @@ const BrandList = () => {
       ></FormCheck>
       <CustomTable
         progressPending={loading}
-        data={brands}
+        data={departments}
         setSelectedRows={setSelectedRows}
         columns={[
           {
@@ -125,4 +123,4 @@ const BrandList = () => {
   );
 };
 
-export default BrandList;
+export default DepartmentList;
