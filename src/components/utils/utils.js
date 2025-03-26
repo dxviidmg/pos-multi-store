@@ -99,3 +99,34 @@ export const handlePrintTicket = async (data) => {
     showAlert("error", "Error inesperado");
   }
 };
+
+
+export function getDateDifference(startDate, endDate) {
+    let start = new Date(startDate);
+    let end = new Date(endDate);
+    end.setDate(end.getDate() + 1);
+
+    let years = end.getFullYear() - start.getFullYear();
+    let months = end.getMonth() - start.getMonth();
+    let days = end.getDate() - start.getDate();
+
+    // Ajuste si los días son negativos
+    if (days < 0) {
+        months--;
+        let prevMonth = new Date(end.getFullYear(), end.getMonth(), 0);
+        days += prevMonth.getDate();
+    }
+
+    // Ajuste si los meses son negativos
+    if (months < 0) {
+        years--;
+        months += 12;
+    }
+
+    let result = [];
+    if (years > 0) result.push(`${years} año${years > 1 ? 's' : ''}`);
+    if (months > 0) result.push(`${months} mes${months > 1 ? 'es' : ''}`);
+    if (days > 0) result.push(`${days} día${days > 1 ? 's' : ''}`);
+
+    return result.join(" ");
+}

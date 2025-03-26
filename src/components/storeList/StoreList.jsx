@@ -5,9 +5,9 @@ import CustomButton from "../commons/customButton/CustomButton";
 import { getInvestment, getStores } from "../apis/stores";
 import { useNavigate } from "react-router-dom";
 import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
-import { getFormattedDate } from "../utils/utils";
+import { getDateDifference, getFormattedDate } from "../utils/utils";
 import { getTenantInfo } from "../apis/tenants";
-import { chooseIcon } from "../commons/icons/Icons";
+import { chooseIcon, PrinterIcon } from "../commons/icons/Icons";
 import { getDepartments } from "../apis/departments";
 
 const StoreList = () => {
@@ -24,6 +24,7 @@ const StoreList = () => {
     end_date: today,
     start_date: today,
   });
+  const [range, setRange] = useState('')
 
   const [totals, setTotals] = useState({
     profit: 0,
@@ -105,6 +106,8 @@ const StoreList = () => {
         cash,
       });
 
+      const dateRange = getDateDifference(params.start_date, params.end_date)
+      setRange(dateRange)
       setLoading(false);
     };
 
@@ -208,6 +211,17 @@ const StoreList = () => {
               />
             </Form>
           </Col>
+          <Col>
+          <Form>
+              <Form.Label>Rango</Form.Label>
+              <Form.Control
+                name="range"
+                type="input"
+                value={range}
+                disabled
+              />
+            </Form>
+          </Col>
 
           <Col hidden={!tenantInfo.supports_departments}>
             <Form.Label>Departamento</Form.Label>
@@ -277,11 +291,6 @@ const StoreList = () => {
                 ]
               : []),
 
-            {
-              name: "Total de ventas",
-              selector: (row) =>
-                "$" + row.cash_summary[4]["amount"].toLocaleString(),
-            },
 
             ...(!params.brand_id
               ? [
@@ -292,6 +301,18 @@ const StoreList = () => {
                   },
                 ]
               : []),
+
+
+              {
+                name: "Total de ventas",
+                selector: (row) =>
+                  "$" + row.cash_summary[4]["amount"].toLocaleString(),
+              },
+              {
+                name: "Número de ventas",
+                selector: (row) =>
+                  row.cash_summary[12]["amount"].toLocaleString(),
+              },
 
             ...(showInvestment
               ? [
@@ -306,12 +327,14 @@ const StoreList = () => {
               : []),
             {
               name: "Accciones",
+              grow: 2,
               cell: (row) => (
                 <>
                   <CustomButton onClick={() => handleSelectStore(row)}>
                     Entrar
                   </CustomButton>
                   {chooseIcon(row.products_count === tenantInfo.product_count)}
+                  {row.url_printer && (<PrinterIcon/>)}
                 </>
               ),
             },
