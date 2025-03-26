@@ -137,12 +137,12 @@ const LogList = () => {
               selector: (row) => row.previous_stock,
             },
             {
-              name: "Stock actualizado",
-              selector: (row) => row.updated_stock,
-            },
-            {
               name: "Diferencia de stock",
               selector: (row) => row.difference,
+            },
+            {
+              name: "Stock actualizado",
+              selector: (row) => row.updated_stock,
             },
           ]}
         />
