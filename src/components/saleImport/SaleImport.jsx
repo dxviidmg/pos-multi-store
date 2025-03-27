@@ -8,9 +8,9 @@ import { SuccessIcon, ErrorIcon } from "../commons/icons/Icons";
 import { useRef } from "react";
 
 const DATA_SAMPLE = [
-  { code: 1, cantidad: 1, description: "Descripción del producto 1" },
-  { code: 2, cantidad: 2, description: "Descripción del producto 2" },
-  { code: 1, cantidad: 3, description: "Descripción del producto 1" },
+  { code: 1, quantity: 1, description: "Descripción del producto 1" },
+  { code: 2, quantity: 2, description: "Descripción del producto 2" },
+  { code: 1, quantity: 3, description: "Descripción del producto 1" },
 ];
 
 const URL_TEMPLATE =
@@ -153,8 +153,7 @@ const SaleImport = () => {
       </div>
 
       <div className="custom-section" hidden={showExample}>
-        <Row>
-          <Col md={9}>
+
             <Form.Label className="fw-bold">Ejemplo de plantilla</Form.Label>
 
             <CustomTable
@@ -166,7 +165,7 @@ const SaleImport = () => {
                 },
                 {
                   name: "Cantidad",
-                  selector: (row) => row.cantidad,
+                  selector: (row) => row.quantity,
                 },
                 {
                   name: "Descripción",
@@ -174,9 +173,7 @@ const SaleImport = () => {
                 },
               ]}
             ></CustomTable>
-          </Col>
 
-          <Col md={3}>
             <Form.Label className="fw-bold">Notas</Form.Label>
             <p>
               1-.Las descripciones pueden ser NO Exactas la información de la
@@ -185,8 +182,6 @@ const SaleImport = () => {
               diferentes renglones haciendo referencia a que el mismo producto
               fue comprado varias veces.
             </p>
-          </Col>
-        </Row>
       </div>
 
       <div className="custom-section">

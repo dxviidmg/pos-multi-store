@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { importProducts, importProductsValidation } from "../apis/products";
+import { importProducts, importProductsValidation, importStoreProducts, importStoreProductsValidation } from "../apis/products";
 import { Form, Row, Col } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import Swal from "sweetalert2";
@@ -9,48 +9,21 @@ import { useRef } from "react";
 
 const URL_TEMPLATE =
   process.env.REACT_APP_API_URL +
-  "/static/templates/SmartVenta_plantilla_importacion_productos.xlsx";
+  "/static/templates/SmartVenta_plantilla_importacion_inventario.xlsx";
 
-const DATA_SAMPLE = [
-  {
-    code: 1,
-    brand: "Marca 1",
-    name: "Nombre del producto 1",
-    departament: "Departamento 1",
-    cost: 10,
-    unit_price: 20,
-    wholesale_price: 15,
-    min_wholesale_quantity: 3,
-    wholesale_price_on_client_discount: "Si",
-  },
-  {
-    code: 2,
-    brand: "Marca 2",
-    departament: "Departamento 1",
-    name: "Nombre del producto 2",
-    cost: 12,
-    unit_price: 22,
-  },
-  {
-    code: 3,
-    brand: "Marca 3",
-    departament: "",
-    name: "Nombre del producto 3",
-    cost: 14,
-    unit_price: 22,
-    wholesale_price: 15,
-    min_wholesale_quantity: 3,
-  },
-];
+  const DATA_SAMPLE = [
+    { code: 1, quantity: 1, description: "Descripción del producto 1" },
+    { code: 2, quantity: 2, description: "Descripción del producto 2" },
+  ];
 
-const CREATE_OPTIONS = [
+const ACTION_OPTIONS = [
   {
-    value: "Y",
-    label: "Si",
+    value: "E",
+    label: "Añadir",
   },
   {
-    value: "N",
-    label: "No",
+    value: "A",
+    label: "Sustituir",
   },
 ];
 
@@ -59,7 +32,7 @@ const StoreProductImport = () => {
   const [products, setProducts] = useState([]);
   const [formData, setFormData] = useState({
     file: "",
-    create_brands: "",
+    action: "",
   });
   const [showExample, setShowExample] = useState([]);
 
@@ -80,7 +53,7 @@ const StoreProductImport = () => {
   };
 
   const handleValidation = async () => {
-    const response = await importProductsValidation(formData);
+    const response = await importStoreProductsValidation(formData);
 
     if (response.status === 200) {
       setProducts(response.data);
@@ -108,7 +81,7 @@ const StoreProductImport = () => {
   };
 
   const handleImport = async () => {
-    const response = await importProducts(formData);
+    const response = await importStoreProducts(formData);
 
     if (response.status === 200) {
       setProducts([]);
@@ -143,9 +116,9 @@ const StoreProductImport = () => {
   return (
     <div>
       <div className="custom-section">
-        <Form.Label className="fw-bold">Importación de productos</Form.Label>
+        <Form.Label className="fw-bold">Importación de inventario</Form.Label>
         <Row>
-          <Col md={3} className="d-flex flex-column justify-content-end">
+          <Col md={6} className="d-flex flex-column justify-content-end">
             <Form.Label>Archivo</Form.Label>
 
             <Form.Group controlId="formFile" className="">
@@ -159,50 +132,16 @@ const StoreProductImport = () => {
             </Form.Group>
           </Col>
 
-          <Col md={3}>
-            <Form.Label>¿Desea crear marcas en caso que no existan?</Form.Label>
+          <Col md={6}>
+            <Form.Label>¿Desea adicionar o sustituir la cantidad?</Form.Label>
             <Form.Select
-              value={formData.create_brands}
+              value={formData.action}
               onChange={handleDataChange}
-              name="create_brands"
+              name="action"
               //              disabled={isLoading}
             >
-              <option value="">Crear marcas</option>
-              {CREATE_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </Form.Select>
-          </Col>
-
-          <Col md={3}>
-            <Form.Label>¿Desea crear departamentos en caso que no existan?</Form.Label>
-            <Form.Select
-              value={formData.create_departments}
-              onChange={handleDataChange}
-              name="create_departments"
-              //              disabled={isLoading}
-            >
-              <option value="">Crear departamentos</option>
-              {CREATE_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </Form.Select>
-          </Col>
-
-          <Col md={3}>
-            <Form.Label>¿El campo "Departamentos" es obligatorio?</Form.Label>
-            <Form.Select
-              value={formData.departments_mandatory}
-              onChange={handleDataChange}
-              name="departments_mandatory"
-              //              disabled={isLoading}
-            >
-              <option value="">Departamentos obligatorios en el archivo</option>
-              {CREATE_OPTIONS.map((option) => (
+              <option value="">Tipo de operación</option>
+              {ACTION_OPTIONS.map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}
                 </option>
@@ -215,8 +154,7 @@ const StoreProductImport = () => {
               onClick={handleValidation}
               disabled={
                 formData.file === "" ||
-                formData.create_brands === "" ||
-                formData.create_departments === ""
+                formData.action === ""
               }
               fullWidth
             >
@@ -265,40 +203,13 @@ const StoreProductImport = () => {
               selector: (row) => row.code,
             },
             {
-              name: "Marca",
-              selector: (row) => row.brand,
+              name: "Cantidad",
+              selector: (row) => row.quantity,
             },
             {
-              name: "Departamento",
-              selector: (row) => row.departament,
-            },
-            {
-              name: "Nombre",
-              selector: (row) => row.name,
-              wrap: true,
-            },
-
-            {
-              name: "Costo",
-              selector: (row) => row.cost,
-            },
-            {
-              name: "Precio unitario",
-              selector: (row) => row.unit_price,
-            },
-            {
-              name: "Precio mayoreo",
-              selector: (row) => row.wholesale_price,
-            },
-
-            {
-              name: "Cantidad minima mayoreo",
-              selector: (row) => row.min_wholesale_quantity,
-            },
-            {
-              name: "Precio mayoreo en descuentos de clientes",
-              selector: (row) => row.wholesale_price_on_client_discount,
-            },
+              name: "Descripción (Opcional)",
+              selector: (row) => row.description,
+            }
           ]}
         ></CustomTable>
       </div>
@@ -313,42 +224,14 @@ const StoreProductImport = () => {
               selector: (row) => row.code,
             },
             {
-              name: "Marca",
-              selector: (row) => row.brand,
+              name: "Cantidad",
+              selector: (row) => row.quantity,
+            },
+            {
+              name: "Descripcíon",
+              selector: (row) => row.description,
             },
 
-            {
-              name: "Departamento",
-              selector: (row) => row.departament,
-            },
-
-            {
-              name: "Nombre",
-              selector: (row) => row.name,
-              wrap: true,
-            },
-
-            {
-              name: "Costo",
-              selector: (row) => row.cost,
-            },
-            {
-              name: "Precio unitario",
-              selector: (row) => row.unit_price,
-            },
-            {
-              name: "Precio mayoreo",
-              selector: (row) => row.wholesale_price,
-            },
-
-            {
-              name: "Cantidad minima mayoreo",
-              selector: (row) => row.min_wholesale_quantity,
-            },
-            {
-              name: "Precio mayoreo en descuentos de clientes",
-              selector: (row) => row.wholesale_price_on_client_discount,
-            },
             {
               name: "Status",
               wrap: true,

@@ -168,3 +168,28 @@ export const deleteProducts = async (data) => {
     return error;
   }
 };
+
+export const importStoreProductsValidation = async (data) => {
+  const apiUrl = getApiUrl("store-products/import-validation");
+  try {
+    const response = await axios.post(apiUrl, data, {
+      headers: getHeaders(true),
+    });
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
+
+
+export const importStoreProducts = async (data) => {
+  const apiUrl = getApiUrl("store-products/import");
+  try {
+    const response = await axios.post(apiUrl, data, {
+      headers: getHeaders(true),
+    });
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
