@@ -47,7 +47,7 @@ const StoreList = () => {
     fetchBrands();
   }, []); // Solo se ejecuta una vez al montar
 
-  const handleFilters = async (e) => {
+  const handleParams = async (e) => {
     let { name, value } = e.target;
     setParams((prevData) => ({ ...prevData, [name]: value }));
   };
@@ -193,7 +193,7 @@ const StoreList = () => {
                 name="start_date"
                 type="date"
                 value={params.start_date}
-                onChange={(e) => handleFilters(e)}
+                onChange={(e) => handleParams(e)}
                 max={today}
               />
             </Form>
@@ -206,7 +206,7 @@ const StoreList = () => {
                 name="end_date"
                 type="date"
                 value={params.end_date}
-                onChange={(e) => handleFilters(e)}
+                onChange={(e) => handleParams(e)}
                 max={today}
               />
             </Form>
@@ -227,7 +227,7 @@ const StoreList = () => {
             <Form.Label>Departamento</Form.Label>
             <Form.Select
               value={params.departament_id}
-              onChange={(e) => handleFilters(e)}
+              onChange={(e) => handleParams(e)}
               name="departament_id"
               //              disabled={isLoading}
             >

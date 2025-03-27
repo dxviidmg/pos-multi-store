@@ -210,13 +210,14 @@ const PaymentModal = () => {
   };
 
   const handleDisableButton = () => {
+    console.log('fsdasdf', paymentMethods)
     return (
-      (paymentMethods.type === "checkbox" &&
-        totalPaymentInput !== totalDiscount) ||
+      (paymentMethods.type === "checkbox" && totalPaymentInput !== totalDiscount) ||
       Object.values(paymentMethods.methods).every((amount) => amount === 0) ||
       (paymentMethods.type === "radio" &&
         paymentMethods.methods.EF > payment.paidWith)
-    );
+        || ((paymentMethods.methods.TA > 0 && referencePayment === "") || (paymentMethods.methods.TR > 0 && referencePayment === ""))
+    ) ;
   };
 
   const showAlert = (icon, title) => {

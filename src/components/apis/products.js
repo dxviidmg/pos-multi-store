@@ -53,6 +53,11 @@ export const createProduct = async (data) => {
 };
 
 export const updateProduct = async (data) => {
+  console.log(typeof(data.image))
+
+  if (typeof(data.image) === "string"){
+    delete data.image;
+  }
   const apiUrl = new URL(getApiUrl("product/" + data.id));
 
   try {
@@ -157,6 +162,31 @@ export const deleteProducts = async (data) => {
   try {
     const response = await axios.post(apiUrl, data, {
       headers: getHeaders(),
+    });
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const importStoreProductsValidation = async (data) => {
+  const apiUrl = getApiUrl("store-products/import-validation");
+  try {
+    const response = await axios.post(apiUrl, data, {
+      headers: getHeaders(true),
+    });
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
+
+
+export const importStoreProducts = async (data) => {
+  const apiUrl = getApiUrl("store-products/import");
+  try {
+    const response = await axios.post(apiUrl, data, {
+      headers: getHeaders(true),
     });
     return response;
   } catch (error) {
