@@ -13,6 +13,7 @@ import { getDepartments } from "../apis/departments";
 
 const INITIAL_FORM_DATA = {
   brand: "",
+  department: "",
   code: "",
   name: "",
   cost: "",
@@ -20,7 +21,7 @@ const INITIAL_FORM_DATA = {
   wholesale_price: "",
   min_wholesale_quantity: "",
   wholesale_price_on_client_discount: false,
-  image: "",
+  image: null,
 };
 
 
@@ -37,6 +38,7 @@ const ProductModal = ({ onUpdateProductList }) => {
 
   useEffect(() => {
     if (product) {
+      console.log(product)
       setFormData(product);
       setPreviewImage(product.image || noPhoto);
     } else {
@@ -129,6 +131,8 @@ const ProductModal = ({ onUpdateProductList }) => {
       min_wholesale_quantity,
       wholesale_price_on_client_discount,
       image,
+      department,
+      department_name,
       ...requiredFields
     } = formData;
 
