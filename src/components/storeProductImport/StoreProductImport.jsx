@@ -54,7 +54,7 @@ const CREATE_OPTIONS = [
   },
 ];
 
-const ProductImport = () => {
+const StoreProductImport = () => {
   const fileInputRef = useRef(null);
   const [products, setProducts] = useState([]);
   const [formData, setFormData] = useState({
@@ -368,4 +368,4 @@ const ProductImport = () => {
   );
 };
 
-export default ProductImport;
+export default StoreProductImport;

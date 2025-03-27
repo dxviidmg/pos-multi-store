@@ -53,6 +53,11 @@ export const createProduct = async (data) => {
 };
 
 export const updateProduct = async (data) => {
+  console.log(typeof(data.image))
+
+  if (typeof(data.image) === "string"){
+    delete data.image;
+  }
   const apiUrl = new URL(getApiUrl("product/" + data.id));
 
   try {

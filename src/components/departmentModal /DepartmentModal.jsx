@@ -72,7 +72,10 @@ const DepartmentModal = ({ onUpdateDepartmentList }) => {
   };
 
   return (
-    <CustomModal showOut={showDepartmentModal} title={formData.id ? "Actualizar marca" : "Crear marca"}>
+    <CustomModal showOut={showDepartmentModal} title={formData.id ? "Actualizar departamento" : "Crear departamento"}>
+
+      <div className="custom-section">
+
       <Row>
         <Col md={6}>
           <Form.Label>Nombre</Form.Label>
@@ -96,6 +99,7 @@ const DepartmentModal = ({ onUpdateDepartmentList }) => {
           </CustomButton>
         </Col>
       </Row>
+      </div>
     </CustomModal>
   );
 };
