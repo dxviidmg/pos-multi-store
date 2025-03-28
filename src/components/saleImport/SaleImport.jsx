@@ -15,7 +15,7 @@ const DATA_SAMPLE = [
 
 const URL_TEMPLATE =
   process.env.REACT_APP_API_URL +
-  "/static/templates/SmartVenta_plantilla_importacion_ventas.xlsx";
+  "/static/templates/SmartVenta_plantilla_importacion_inventario_o_ventas.xlsx";
 
 const SaleImport = () => {
   const fileInputRef = useRef(null);
