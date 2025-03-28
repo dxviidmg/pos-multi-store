@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { importProducts, importProductsValidation } from "../apis/products";
-import { Form, Row, Col } from "react-bootstrap";
+import { getImportCanIncludeQuantity, importProducts, importProductsValidation } from "../apis/products";
+import { Form, Row, Col, Alert } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import Swal from "sweetalert2";
-import { ErrorIcon, SuccessIcon } from "../commons/icons/Icons";
+import { chooseIcon} from "../commons/icons/Icons";
 import { useRef } from "react";
 
 const URL_TEMPLATE =
@@ -60,8 +60,29 @@ const ProductImport = () => {
   const [formData, setFormData] = useState({
     file: "",
     create_brands: "",
+    create_departments: "",
+    departments_mandatory: "",
+    import_stock: "N",
   });
   const [showExample, setShowExample] = useState([]);
+  const [canIncludeQuantity, setCanIncludeQuantity] = useState(false);
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await getImportCanIncludeQuantity();
+      console.log('da', response)
+      setCanIncludeQuantity(!response.data);
+
+      if (response.data){
+        console.log('hola')
+        setFormData(prevData => ({...prevData, import_stock: ''}))
+      } 
+    };
+  
+    fetchData();
+  }, []);
+
 
   const handleDataChange = (e) => {
     var { name, value, files } = e.target;
@@ -160,7 +181,7 @@ const ProductImport = () => {
           </Col>
 
           <Col md={3}>
-            <Form.Label>¿Desea crear marcas en caso que no existan?</Form.Label>
+            <Form.Label>¿Crear marcas en caso que no existan?</Form.Label>
             <Form.Select
               value={formData.create_brands}
               onChange={handleDataChange}
@@ -177,7 +198,7 @@ const ProductImport = () => {
           </Col>
 
           <Col md={3}>
-            <Form.Label>¿Desea crear departamentos en caso que no existan?</Form.Label>
+            <Form.Label>¿Crear departamentos en caso que no existan?</Form.Label>
             <Form.Select
               value={formData.create_departments}
               onChange={handleDataChange}
@@ -210,13 +231,41 @@ const ProductImport = () => {
             </Form.Select>
           </Col>
 
+
+
+          <Col md={12} hidden={canIncludeQuantity}>
+          <Alert key={"primary"} variant={"primary"} >
+           Posiblemente sea tu primera vez aqui y tienes solo una tienda, por lo que aparte de importar tus productos puedes ponerle tu stick en tu tienda/almacen.
+              
+          </Alert>
+
+          <Form.Label>¿Agregar inventario a la primera tienda? Ideal para la primera importación si solo tienes una tienda.</Form.Label>
+            <Form.Select
+              value={formData.import_stock}
+              onChange={handleDataChange}
+              name="import_stock"
+              //              disabled={isLoading}
+            >
+              <option value="">Agregar inventario</option>
+              {CREATE_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </Form.Select>
+
+          
+          </Col>
+
           <Col md={3}>
             <CustomButton
               onClick={handleValidation}
               disabled={
                 formData.file === "" ||
                 formData.create_brands === "" ||
-                formData.create_departments === ""
+                formData.create_departments === "" ||
+                formData.departments_mandatory === '' ||
+                formData.import_stock === ""
               }
               fullWidth
             >
@@ -252,7 +301,16 @@ const ProductImport = () => {
             </CustomButton>
           </Col>
         </Row>
+
+        <Row hidden={canIncludeQuantity}>
+
+
+        </Row>
+
       </div>
+
+
+
 
       <div className="custom-section" hidden={showExample}>
         <Form.Label className="fw-bold">Ejemplo de plantilla</Form.Label>
@@ -349,17 +407,19 @@ const ProductImport = () => {
               name: "Precio mayoreo en descuentos de clientes",
               selector: (row) => row.wholesale_price_on_client_discount,
             },
+            ...(formData.import_stock === "Y" ? [            {
+              name: "Cantidad",
+              selector: (row) => row.quantity,
+            },]: []),
             {
               name: "Status",
               wrap: true,
-              selector: (row) =>
-                row.status === "Exitoso" ? (
-                  <SuccessIcon />
-                ) : (
-                  <>
-                    <ErrorIcon /> {row.status}
-                  </>
-                ),
+              selector: (row) => (
+                <>
+                  {chooseIcon(row.status === "Exitoso")}
+                  {row.status !== "Exitoso" && row.status}
+                </>
+              ),
             },
           ]}
         ></CustomTable>

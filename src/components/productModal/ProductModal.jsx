@@ -199,7 +199,7 @@ const ProductModal = ({ onUpdateProductList }) => {
                 onChange={handleDataChange}
                 name="department"
               >
-                <option value="0">Selecciona una departamento</option>
+                <option value="0">Selecciona un departamento</option>
                 {departments.map((department) => (
                   <option key={department.id} value={department.id}>
                     {department.name}
