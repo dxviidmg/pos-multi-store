@@ -193,3 +193,15 @@ export const importStoreProducts = async (data) => {
     return error;
   }
 };
+
+export const getImportCanIncludeQuantity = async () => {
+  const apiUrl = getApiUrl("store-products/import/can-include-quantity");
+  try {
+    const response = await axios.get(apiUrl, {
+      headers: getHeaders(true),
+    });
+    return response;
+  } catch (error) {
+    return error;
+  }
+};

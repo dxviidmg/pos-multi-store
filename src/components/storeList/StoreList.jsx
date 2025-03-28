@@ -325,14 +325,21 @@ const StoreList = () => {
                   },
                 ]
               : []),
+
+              {
+                name: "Entrar",
+                cell: (row) => (
+                  <>
+                    <CustomButton onClick={() => handleSelectStore(row)}>
+                      Entrar
+                    </CustomButton>
+                  </>
+                ),
+              },
             {
-              name: "Accciones",
-              grow: 2,
+              name: "Configuraciones",
               cell: (row) => (
                 <>
-                  <CustomButton onClick={() => handleSelectStore(row)}>
-                    Entrar
-                  </CustomButton>
                   {chooseIcon(row.products_count === tenantInfo.product_count)}
                   {row.url_printer && (<PrinterIcon/>)}
                 </>
