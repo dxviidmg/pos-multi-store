@@ -11,6 +11,15 @@ export const getDepartments = async () => {
       });
       return response;
     } catch (error) {
+
+      if (error.response?.status === 401) {
+        console.error("Unauthorized: Token expired or invalid.");
+        localStorage.removeItem("user");
+        window.location.href = "/";
+        // Opcional: Puedes redirigir al login si es necesario
+        // window.location.href = "/login";
+      }
+      
       return error;
     }
   };

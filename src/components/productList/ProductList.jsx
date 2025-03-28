@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
 import { deleteProducts, getProducts } from "../apis/products";
-import { Col, Form, Row } from "react-bootstrap";
+import { Col, Form, FormCheck, Row } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import { useDispatch } from "react-redux";
 import {
@@ -21,6 +21,7 @@ const ProductList = () => {
   const [brands, setBrands] = useState([]);
   const [params, setParams] = useState({});
   const [selectedRows, setSelectedRows] = useState([]);
+  const [confirmDeletion, setConfirmDeletion] = useState(false)
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -129,6 +130,9 @@ const ProductList = () => {
       });
     }
   };
+  const handleCheck = (e) => {
+    setConfirmDeletion(e.target.checked);
+  };
 
   return (
     <div className="custom-section">
@@ -145,10 +149,17 @@ const ProductList = () => {
 
       <CustomButton
         onClick={handleDeleteProducts}
-        disabled={selectedRows.length === 0}
+        disabled={selectedRows.length === 0  || !confirmDeletion}
       >
         Borrar productos
       </CustomButton>
+
+      <FormCheck label={'Confirmar borrado'}
+      checked={confirmDeletion}
+      onChange={handleCheck}
+      
+      ></FormCheck>
+
       <Row className="mt-3">
         <Col>
           {" "}

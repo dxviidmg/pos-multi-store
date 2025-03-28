@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { getImportCanIncludeQuantity, importProducts, importProductsValidation } from "../apis/products";
+import {
+  getImportCanIncludeQuantity,
+  importProducts,
+  importProductsValidation,
+} from "../apis/products";
 import { Form, Row, Col, Alert } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import Swal from "sweetalert2";
-import { chooseIcon} from "../commons/icons/Icons";
+import { chooseIcon } from "../commons/icons/Icons";
 import { useRef } from "react";
+import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
 
 const URL_TEMPLATE =
   process.env.REACT_APP_API_URL +
@@ -57,6 +62,7 @@ const CREATE_OPTIONS = [
 const ProductImport = () => {
   const fileInputRef = useRef(null);
   const [products, setProducts] = useState([]);
+  const [productsError, setProductsError] = useState([]);
   const [formData, setFormData] = useState({
     file: "",
     create_brands: "",
@@ -66,23 +72,22 @@ const ProductImport = () => {
   });
   const [showExample, setShowExample] = useState([]);
   const [canIncludeQuantity, setCanIncludeQuantity] = useState(false);
-
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
       const response = await getImportCanIncludeQuantity();
-      console.log('da', response)
+      console.log("da", response);
       setCanIncludeQuantity(!response.data);
 
-      if (response.data){
-        console.log('hola')
-        setFormData(prevData => ({...prevData, import_stock: ''}))
-      } 
+      if (response.data) {
+        console.log("hola");
+        setFormData((prevData) => ({ ...prevData, import_stock: "" }));
+      }
     };
-  
+
     fetchData();
   }, []);
-
 
   const handleDataChange = (e) => {
     var { name, value, files } = e.target;
@@ -101,15 +106,29 @@ const ProductImport = () => {
   };
 
   const handleValidation = async () => {
+    setLoading(true)
     const response = await importProductsValidation(formData);
+    setLoading(false)
 
     if (response.status === 200) {
       setProducts(response.data);
+
+      const productsError = response.data.filter(
+        (item) => item.status !== "Exitoso"
+      );
+      console.log(productsError);
+      setProductsError(productsError);
+
+      const text =
+        productsError.length > 0
+          ? productsError.length + " filas tienen errores"
+          : "Todas las filas estan bien ";
 
       Swal.fire({
         icon: "success",
         title: "Archivo cargado",
         timer: 5000,
+        text: text,
       });
     } else if (response.status === 400) {
       Swal.fire({
@@ -129,7 +148,9 @@ const ProductImport = () => {
   };
 
   const handleImport = async () => {
+    setLoading(true)
     const response = await importProducts(formData);
+    setLoading(false)
 
     if (response.status === 200) {
       setProducts([]);
@@ -161,8 +182,18 @@ const ProductImport = () => {
     }
   };
 
+  const handleShowData = async () => {
+    setProducts(productsError);
+    Swal.fire({
+      icon: "success",
+      title: "Mostrando productos con error",
+      timer: 5000,
+    });
+  };
+
   return (
     <div>
+      <CustomSpinner2 isLoading={loading}></CustomSpinner2>
       <div className="custom-section">
         <Form.Label className="fw-bold">Importación de productos</Form.Label>
         <Row>
@@ -198,7 +229,9 @@ const ProductImport = () => {
           </Col>
 
           <Col md={3}>
-            <Form.Label>¿Crear departamentos en caso que no existan?</Form.Label>
+            <Form.Label>
+              ¿Crear departamentos en caso que no existan?
+            </Form.Label>
             <Form.Select
               value={formData.create_departments}
               onChange={handleDataChange}
@@ -231,15 +264,17 @@ const ProductImport = () => {
             </Form.Select>
           </Col>
 
+          <Col md={12} hidden={canIncludeQuantity} className="mt-3">
+            <Alert key={"primary"} variant={"primary"}>
+              Posiblemente sea tu primera vez aqui y tienes solo una tienda, por
+              lo que aparte de importar tus productos puedes ponerle tu stick en
+              tu tienda/almacen.
+            </Alert>
 
-
-          <Col md={12} hidden={canIncludeQuantity}>
-          <Alert key={"primary"} variant={"primary"} >
-           Posiblemente sea tu primera vez aqui y tienes solo una tienda, por lo que aparte de importar tus productos puedes ponerle tu stick en tu tienda/almacen.
-              
-          </Alert>
-
-          <Form.Label>¿Agregar inventario a la primera tienda? Ideal para la primera importación si solo tienes una tienda.</Form.Label>
+            <Form.Label>
+              ¿Agregar inventario a la primera tienda? Ideal para la primera
+              importación si solo tienes una tienda.
+            </Form.Label>
             <Form.Select
               value={formData.import_stock}
               onChange={handleDataChange}
@@ -253,8 +288,6 @@ const ProductImport = () => {
                 </option>
               ))}
             </Form.Select>
-
-          
           </Col>
 
           <Col md={3}>
@@ -264,7 +297,7 @@ const ProductImport = () => {
                 formData.file === "" ||
                 formData.create_brands === "" ||
                 formData.create_departments === "" ||
-                formData.departments_mandatory === '' ||
+                formData.departments_mandatory === "" ||
                 formData.import_stock === ""
               }
               fullWidth
@@ -274,16 +307,19 @@ const ProductImport = () => {
           </Col>
 
           <Col md={3}>
-            <CustomButton
-              onClick={handleImport}
+            {productsError.length > 0 ? (
+              <CustomButton onClick={handleShowData} fullWidth>
+                Ver registros con error
+              </CustomButton>
+            ) : (
+              <CustomButton onClick={handleImport} fullWidth
               disabled={
                 products.length === 0 ||
                 products.some((item) => item.status !== "Exitoso")
-              }
-              fullWidth
-            >
-              Importar
-            </CustomButton>
+              }>
+                Importar
+              </CustomButton>
+            )}
           </Col>
 
           <Col md={3}>
@@ -302,15 +338,8 @@ const ProductImport = () => {
           </Col>
         </Row>
 
-        <Row hidden={canIncludeQuantity}>
-
-
-        </Row>
-
+        <Row hidden={canIncludeQuantity}></Row>
       </div>
-
-
-
 
       <div className="custom-section" hidden={showExample}>
         <Form.Label className="fw-bold">Ejemplo de plantilla</Form.Label>
@@ -318,6 +347,10 @@ const ProductImport = () => {
         <CustomTable
           data={DATA_SAMPLE}
           columns={[
+            {
+              name: "# Col",
+              selector: (row) => row.excel_row,
+            },
             {
               name: "Código",
               selector: (row) => row.code,
@@ -367,6 +400,10 @@ const ProductImport = () => {
           data={products}
           columns={[
             {
+              name: "Col en excel",
+              selector: (row) => row.excel_row,
+            },
+            {
               name: "Código",
               selector: (row) => row.code,
             },
@@ -407,10 +444,14 @@ const ProductImport = () => {
               name: "Precio mayoreo en descuentos de clientes",
               selector: (row) => row.wholesale_price_on_client_discount,
             },
-            ...(formData.import_stock === "Y" ? [            {
-              name: "Cantidad",
-              selector: (row) => row.quantity,
-            },]: []),
+            ...(formData.import_stock === "Y"
+              ? [
+                  {
+                    name: "Cantidad",
+                    selector: (row) => row.quantity,
+                  },
+                ]
+              : []),
             {
               name: "Status",
               wrap: true,
