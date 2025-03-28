@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { Form } from "react-bootstrap";
+import { Col, Form, Row } from "react-bootstrap";
 import { getSales } from "../apis/sales";
 import CustomButton from "../commons/customButton/CustomButton";
-import { getFormattedDate, formatTimeFromDate, handlePrintTicket } from "../utils/utils";
+import {
+  getFormattedDate,
+  formatTimeFromDate,
+  handlePrintTicket,
+} from "../utils/utils";
 import { useDispatch } from "react-redux";
 import {
   hideSaleModal,
@@ -15,7 +19,6 @@ import { WarningIcon } from "../commons/icons/Icons";
 import Alert from "react-bootstrap/Alert";
 import { getUserData } from "../apis/utils";
 
-
 const SaleList = () => {
   const user = getUserData();
   const urlPrinter = user.store_url_printer;
@@ -24,6 +27,7 @@ const SaleList = () => {
   const [date, setDate] = useState(today);
   const [loading, setLoading] = useState(false);
   const [salesDuplicated, setSalesDuplicated] = useState([]);
+  const [showAllFields, setShowAllFields] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -81,15 +85,24 @@ const SaleList = () => {
         )}
 
         <Form.Label className="fw-bold">Lista de ventas</Form.Label>
-        <Form>
-          <Form.Label>Fecha</Form.Label>
-          <Form.Control
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            max={today}
-          />
-        </Form>
+        <Row>
+          <Col>
+            <Form>
+              <Form.Label>Fecha</Form.Label>
+              <Form.Control
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                max={today}
+              />
+            </Form>
+          </Col>
+          <Col>
+            <CustomButton onClick={() => setShowAllFields((prev) => !prev)}>
+              Ver todos los campos
+            </CustomButton>
+          </Col>
+        </Row>
         <CustomTable
           data={sales}
           pagination={false}
@@ -99,11 +112,15 @@ const SaleList = () => {
               selector: (row) => row.id,
             },
 
-            {
-              name: "Cliente",
-              selector: (row) => row.client?.full_name,
-              grow: 2,
-            },
+            ...(showAllFields
+              ? [
+                  {
+                    name: "Cliente",
+                    selector: (row) => row.client?.full_name,
+                    grow: 2,
+                  },
+                ]
+              : []),
 
             {
               name: "Hora",
@@ -132,15 +149,21 @@ const SaleList = () => {
               name: "Metodos de pago",
               selector: (row) => row.payments_methods.join(", "),
               wrap: true,
-              grow: 2
+              grow: 2,
             },
 
-            {
-              name: "Referencia",
-              selector: (row) => row.reference,
-              wrap: true,
-              grow: 2
-            },
+
+
+            ...(showAllFields
+              ? [
+                {
+                  name: "Referencia",
+                  selector: (row) => row.reference,
+                  wrap: true,
+                  grow: 2,
+                },
+                ]
+              : []),
             {
               name: "Vendedor",
               wrap: true,
@@ -148,11 +171,10 @@ const SaleList = () => {
             },
             {
               name: "Accciones",
-              grow: 5,
+              grow: 4,
               cell: (row) => (
                 <>
-                  {(
-                    urlPrinter) && (
+                  {urlPrinter && (
                     <CustomButton onClick={() => handlePrintTicket(row)}>
                       Imprimir ticket
                     </CustomButton>

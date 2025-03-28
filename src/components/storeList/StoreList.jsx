@@ -231,7 +231,7 @@ const StoreList = () => {
               name="departament_id"
               //              disabled={isLoading}
             >
-              <option value="">Todas los departamentos</option>
+              <option value="">Todos</option>
               <option value="0">Sin departamento</option>
               {departaments.map((departament) => (
                 <option key={departament.id} value={departament.id}>
