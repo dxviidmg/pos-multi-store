@@ -78,8 +78,9 @@ const cartReducer = (state = initialState, action) => {
           case "agregar":
             return available_stock;
           case "venta":
-          default:
-            return available_stock || reserved_stock;
+            return available_stock;
+            case "traspaso":
+              return reserved_stock;              
         }
       };
     
