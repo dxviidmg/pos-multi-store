@@ -97,7 +97,8 @@ const CustomNavbar = () => {
       </NavDropdown>
       <Nav.Link href="/clientes/">Clientes</Nav.Link>
       {user.sellers > 0 && <Nav.Link href="/vendedores/">Vendedores</Nav.Link>}
-      <Nav.Link href="/pagos/">Pagos</Nav.Link>
+      <Nav.Link href="/pagos/">Mensualidades</Nav.Link>
+      <Nav.Link href="/servicios/">Otros servicios</Nav.Link>
     </>
   );
 
