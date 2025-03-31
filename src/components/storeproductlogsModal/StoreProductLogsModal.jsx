@@ -77,7 +77,8 @@ const StoreProductLogsModal = ({ onUpdateStoreProductList }) => {
       showOut={showLogsModal}
       title={adjustStock ? "Ajuste de stock" : "Movimientos de stock"}
     >
-      <Row>
+     <div className="custom-section">
+     <Row>
         <Col md={6}>
           <Form.Label>Codigo</Form.Label>
           <Form.Control
@@ -173,7 +174,9 @@ const StoreProductLogsModal = ({ onUpdateStoreProductList }) => {
           />
         </Col>
       </Row>
-    </CustomModal>
+
+      </div> 
+     </CustomModal>
   );
 };
 
