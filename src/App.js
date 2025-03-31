@@ -22,6 +22,7 @@ import SellerList from "./components/sellerList/SellerList";
 import { getUserData } from "./components/apis/utils";
 import DepartmentList from "./components/DepartmentList/DepartmentList";
 import StoreProductImport from "./components/storeProductImport/StoreProductImport";
+import ServiceList from "./components/serviceList/ServiceList";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -64,6 +65,7 @@ function App() {
             <Route path="/logs/" element={<LogList />} />
             <Route path="/pagos/" element={<TenantPaymentList />} />
             <Route path="/vendedores/" element={<SellerList />} />
+            <Route path="/servicios/" element={<ServiceList />} />            
             {user.store_id ? (<Route path="/*" element={<SaleCreate />} />): (<Route path="/*" element={<StoreList />} />)}
           </>
         ) : (

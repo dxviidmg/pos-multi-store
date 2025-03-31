@@ -22,9 +22,9 @@ const TenantPaymentList = () => {
         data={payments}
         columns={[
           {
-            name: "Validez",
+            name: "Vigencia",
             selector: (row) =>
-              row.start_of_validity + "-" + row.end_of_validity,
+              row.start_of_validity + " al " + row.end_of_validity,
           },
           { name: "Meses pagados", selector: (row) => row.months },
           {
