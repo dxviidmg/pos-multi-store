@@ -80,6 +80,8 @@ const CashFlowModal = ({ onUpdateCashFlowList }) => {
 
   return (
     <CustomModal showOut={showCashFlowModal} title={formData.id ? "Actualizar movimiento" : "Crear movimiento"}>
+      <div className="custom-section">
+
       <Row>
         <Col md={3}>
         <Form.Label>Tipo de movimiento</Form.Label>
@@ -129,6 +131,7 @@ const CashFlowModal = ({ onUpdateCashFlowList }) => {
           </CustomButton>
         </Col>
       </Row>
+      </div>
     </CustomModal>
   );
 };

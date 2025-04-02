@@ -106,11 +106,11 @@ const DepartmentList = () => {
             wrap: true,
           },
           {
-            name: "Numero de productos",
+            name: "Número de productos",
             selector: (row) => row.product_count,
           },
           {
-            name: "Accciones",
+            name: "Acciones",
             cell: (row) => (
               <CustomButton onClick={() => handleOpenModal(row)}>
                 Editar

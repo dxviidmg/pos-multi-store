@@ -7,6 +7,7 @@ import { useDispatch } from "react-redux";
 import { hideSellerModal, showSellerModal } from "../redux/sellerModal/SellerModalActions";
 import SellerModal from "../sellerModal/SellerModal";
 import { getDateDifference, getFormattedDate } from "../utils/utils";
+import { chooseIcon } from "../commons/icons/Icons";
 
 
 
@@ -123,6 +124,10 @@ const SellerList = () => {
             {
               name: "Nombre",
               selector: (row) => `${row.worker.first_name} ${row.worker.last_name}`,
+            },
+            {
+              name: "Esta activo",
+              selector: (row) => chooseIcon(row.worker.is_active),
             },
             {
               name: "Vendido",

@@ -242,7 +242,7 @@ const ProductList = () => {
           },
 
           {
-            name: "Accciones",
+            name: "Acciones",
             cell: (row) => (
               <CustomButton onClick={() => handleOpenModal(row)}>
                 Editar
