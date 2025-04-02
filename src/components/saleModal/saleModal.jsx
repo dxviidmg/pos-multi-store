@@ -17,9 +17,10 @@ const SaleModal = ({ onUpdateSaleList }) => {
     (state) => state.SaleModalReducer
   );
 
-  const [productsSaleToCancel, setProductsSaleToCancel] = useState([]);
 
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
+
+  const [selectedRows, setSelectedRows] = useState([])
 
   const dispatch = useDispatch();
 
@@ -32,26 +33,26 @@ const SaleModal = ({ onUpdateSaleList }) => {
   }, [sale]);
 
   const handleSaveClient = async () => {
-    const payload = {id: sale.id, products_sale_to_cancel: productsSaleToCancel}
+    const payload = {
+      id: sale.id,
+      products_sale_to_cancel: selectedRows,
+    };
     const response = await cancelSale(payload);
 
     if (response.status === 200) {
+      let cash_back = response.data.cash_back;
+      const sale_response = response.data.sale;
 
-      let cash_back = response.data.cash_back
-      const sale_response = response.data.sale
-
-      if ('id' in sale_response){
-
-        onUpdateSaleList(sale_response)
-        setFormData(INITIAL_FORM_DATA)
-        setProductsSaleToCancel([])
-        dispatch(hideSaleModal());        
-      }
-      else{
-        onUpdateSaleList({...sale, delete: true})
-        setFormData(INITIAL_FORM_DATA)
-        setProductsSaleToCancel([])
-        dispatch(hideSaleModal());        
+      if ("id" in sale_response) {
+        onUpdateSaleList(sale_response);
+        setFormData(INITIAL_FORM_DATA);
+        setSelectedRows([]);
+        dispatch(hideSaleModal());
+      } else {
+        onUpdateSaleList({ ...sale, delete: true });
+        setFormData(INITIAL_FORM_DATA);
+        setSelectedRows([]);
+        dispatch(hideSaleModal());
       }
 
       Swal.fire({
@@ -74,115 +75,100 @@ const SaleModal = ({ onUpdateSaleList }) => {
     });
   };
 
-  const handleSelectProduct = (row) => {
-    setProductsSaleToCancel((prev) => {
-      const updatedProducts = [...prev];
-
-      if (updatedProducts.includes(row.id)) {
-        return updatedProducts.filter((id) => id !== row.id); // Remove product if already selected
-      } else {
-        updatedProducts.push(row.id); // Add product to cancel list
-        return updatedProducts;
-      }
-    });
-  };
-
   return (
     <CustomModal showOut={showSaleModal} title="Devolución de productos">
-      <Row>
-        <Col md={3}>
-          <Form.Label>Folio</Form.Label>
-          <Form.Control
-            type="text"
-            value={formData.id}
-            placeholder="Folio"
-            disabled
-          />
-        </Col>
+      <div className="custom-section">
+        <Row>
+          <Col md={3}>
+            <Form.Label>Folio</Form.Label>
+            <Form.Control
+              type="text"
+              value={formData.id}
+              placeholder="Folio"
+              disabled
+            />
+          </Col>
 
-        <Col md={6}>
-          <Form.Label>Cliente</Form.Label>
-          <Form.Control
-            type="text"
-            value={formData.client?.full_name}
-            placeholder="Cliente"
-            disabled
-          />
-        </Col>
+          <Col md={6}>
+            <Form.Label>Cliente</Form.Label>
+            <Form.Control
+              type="text"
+              value={formData.client?.full_name}
+              placeholder="Cliente"
+              disabled
+            />
+          </Col>
 
-        <Col md={3}>
-          <Form.Label>Total</Form.Label>
-          <Form.Control
-            type="text"
-            value={formData.total}
-            placeholder="total"
-            name="Total"
-            disabled
-          />
-        </Col>
-        <Col md={7}>
-          <Form.Label>Creación</Form.Label>
-          <Form.Control
-            type="text"
-            value={formData.created_at}
-            placeholder="Creación"
-            disabled
-          />
-        </Col>
+          <Col md={3}>
+            <Form.Label>Total</Form.Label>
+            <Form.Control
+              type="text"
+              value={formData.total}
+              placeholder="total"
+              name="Total"
+              disabled
+            />
+          </Col>
+          <Col md={7}>
+            <Form.Label>Creación</Form.Label>
+            <Form.Control
+              type="text"
+              value={formData.created_at}
+              placeholder="Creación"
+              disabled
+            />
+          </Col>
 
-        <Col md={5}>
-          <Form.Label>Vendedor</Form.Label>
-          <Form.Control
-            type="text"
-            value={formData.seller_username}
-            placeholder="Vendedor"
-            disabled
-          />
-        </Col>
-        <Col md={12}>
-          <Form.Label className="fw-bold">Productos</Form.Label>
+          <Col md={5}>
+            <Form.Label>Vendedor</Form.Label>
+            <Form.Control
+              type="text"
+              value={formData.seller_username}
+              placeholder="Vendedor"
+              disabled
+            />
+          </Col>
+          <Col md={12}>
+            <Form.Label className="fw-bold">Productos comprados</Form.Label>
 
-          <CustomTable
-            data={formData.products_sale}
-            columns={[
-              {
-                name: "Descripción",
-                selector: (row) => row.description,
-                grow: 3,
-              },
-              {
-                name: "Cantidad",
-                selector: (row) => row.quantity,
-                grow: 2,
-              },
-              {
-                name: "Precio unitario",
-                selector: (row) => "$" + row.price,
-              },
-              {
-                name: "Precio",
-                selector: (row) => "$" + row.price * row.quantity ,
-              },
-              {
-                name: "Cancelar",
-                selector: (row) => (
-                  <Form.Check
-                    type="checkbox"
-                    id={`default-${row.id}`}
-                    checked={productsSaleToCancel.includes(row.id)}
-                    onChange={() => handleSelectProduct(row)}
-                  />
-                ),
-              },
-            ]}
-          />
-        </Col>
-        <Col md={12}>
-          <CustomButton fullWidth onClick={handleSaveClient} marginTop="10px" disabled={productsSaleToCancel.length === 0}>
-            Devolución de productos
-          </CustomButton>
-        </Col>
-      </Row>
+            <CustomTable
+              data={formData.products_sale}
+              setSelectedRows={setSelectedRows}
+              columns={[
+                {
+                  name: "Descripción",
+                  selector: (row) => row.name,
+                  grow: 3,
+                },
+                {
+                  name: "Cantidad",
+                  selector: (row) => row.quantity,
+                  grow: 2,
+                },
+                {
+                  name: "Precio unitario",
+                  selector: (row) => "$" + row.price,
+                },
+                {
+                  name: "Precio",
+                  selector: (row) => "$" + row.price * row.quantity,
+                },
+
+              ]}
+            />
+          </Col>
+          <Col md={12}>
+            <CustomButton
+              fullWidth
+              onClick={handleSaveClient}
+              marginTop="10px"
+              disabled={selectedRows.length === 0}
+            >
+              Devolución de productos
+            </CustomButton>
+          </Col>
+        </Row>
+      </div>
     </CustomModal>
   );
 };

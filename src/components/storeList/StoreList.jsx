@@ -370,7 +370,7 @@ const StoreList = () => {
                 ]
               : []),
             {
-              name: "Accciones",
+              name: "Acciones",
               cell: (row) => (
                 <>
                   <CustomButton onClick={() => handleSelectStore(row)}>

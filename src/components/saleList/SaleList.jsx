@@ -170,7 +170,7 @@ const SaleList = () => {
               selector: (row) => row.seller_username,
             },
             {
-              name: "Accciones",
+              name: "Acciones",
               grow: 4,
               cell: (row) => (
                 <>
