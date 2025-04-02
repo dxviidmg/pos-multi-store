@@ -155,7 +155,7 @@ const StoreProductList = () => {
             selector: (row) => row.stock,
           },
           {
-            name: "Accciones",
+            name: "Acciones",
             grow: 4,
             cell: (row) => (
               <>
