@@ -75,6 +75,7 @@ const CustomNavbar = () => {
     <>
       <Nav.Link href="/distribuir/">Distribuir</Nav.Link>
       <Nav.Link href="/inventario/">Inventario</Nav.Link>
+      <Nav.Link href="/logs/">Logs</Nav.Link>
       {user.role === "owner" && (
         <Nav.Link onClick={handleBack}>Regresar</Nav.Link>
       )}
