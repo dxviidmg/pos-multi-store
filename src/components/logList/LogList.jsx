@@ -109,6 +109,7 @@ const LogList = () => {
             {
               name: "Codigo",
               selector: (row) => row.product.code,
+              grow: 2,
             },
             {
               name: "Marca",
@@ -125,6 +126,7 @@ const LogList = () => {
             {
               name: "Descripción",
               selector: (row) => row.description,
+              grow: 2
             },
 
             {
