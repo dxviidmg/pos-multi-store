@@ -109,12 +109,6 @@ const Cart = () => {
       if (response.status === 200) {
         dispatch(cleanCart());
         showAlert("success", "Traspaso confirmado");
-      } else if (response.status === 404) {
-        showAlert(
-          "error",
-          "Transpaso no encontrado",
-          "Algunos productos no coinciden con el traspaso solicitado, ya sea en cantidad o en código."
-        );
       } else {
         showAlert(
           "error",
@@ -356,10 +350,10 @@ const Cart = () => {
                     value={selectedStore}
                     onChange={handleSelectChange}
                   >
-                    <option value="">Selecciona una tienda</option>
+                    <option value="">Selecciona destino</option>
                     {stores.map((store) => (
                       <option key={store.id} value={store.id}>
-                        {store.name}
+                        {store.name} ({store.store_type_display})
                       </option>
                     ))}
                   </Form.Select>
