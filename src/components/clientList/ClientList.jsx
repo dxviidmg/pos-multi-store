@@ -11,6 +11,7 @@ import {
   showClientModal,
 } from "../redux/clientModal/ClientModalActions";
 import ClientModal from "../clientModal/ClientModal";
+import { EditIcon } from "../commons/icons/Icons";
 
 const ClientList = () => {
   const [clients, setClients] = useState([]);
@@ -158,7 +159,7 @@ const ClientList = () => {
                 name: "Acciones",
                 cell: (row) => (
                   <CustomButton onClick={() => handleOpenModal(row)}>
-                    Editar
+                    <EditIcon></EditIcon>
                   </CustomButton>
                 ),
               },

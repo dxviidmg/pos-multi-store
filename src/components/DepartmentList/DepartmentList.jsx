@@ -6,14 +6,19 @@ import { deleteDepartments, getDepartments } from "../apis/departments";
 import { useDispatch } from "react-redux";
 
 import Swal from "sweetalert2";
-import { hideDepartmentModal, showDepartmentModal } from "../redux/departmentModal/DepartmentModalActions";
+import {
+  hideDepartmentModal,
+  showDepartmentModal,
+} from "../redux/departmentModal/DepartmentModalActions";
 import DepartmentModal from "../departmentModal /DepartmentModal";
+import { getUserData } from "../apis/utils";
+import { EditIcon } from "../commons/icons/Icons";
 
 const DepartmentList = () => {
   const [loading, setLoading] = useState(false);
   const [departments, setDepartments] = useState([]);
-  const [selectedRows, setSelectedRows] = useState([])
-  const [confirmDeletion, setConfirmDeletion] = useState(false)
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [confirmDeletion, setConfirmDeletion] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -34,14 +39,16 @@ const DepartmentList = () => {
 
   const handleUpdateDepartmentList = (updatedDepartment) => {
     setDepartments((prevDepartments) => {
-      const departmentExists = prevDepartments.some((b) => b.id === updatedDepartment.id);
+      const departmentExists = prevDepartments.some(
+        (b) => b.id === updatedDepartment.id
+      );
       return departmentExists
-        ? prevDepartments.map((b) => (b.id === updatedDepartment.id ? updatedDepartment : b))
+        ? prevDepartments.map((b) =>
+            b.id === updatedDepartment.id ? updatedDepartment : b
+          )
         : [...prevDepartments, updatedDepartment];
     });
   };
-
-  
 
   const handleDeleteDepartments = async () => {
     console.log(selectedRows);
@@ -75,24 +82,29 @@ const DepartmentList = () => {
   const handleCheck = (e) => {
     setConfirmDeletion(e.target.checked);
   };
-  
+
   return (
     <div className="custom-section">
-      <DepartmentModal onUpdateDepartmentList={handleUpdateDepartmentList}></DepartmentModal>{" "}
+      <DepartmentModal
+        onUpdateDepartmentList={handleUpdateDepartmentList}
+      ></DepartmentModal>{" "}
       <Form.Label className="fw-bold">Lista de departamentos</Form.Label>
       <br></br>
       <CustomButton onClick={() => handleOpenModal()}>Crear</CustomButton>
-
       <CustomButton
         onClick={handleDeleteDepartments}
-        disabled={selectedRows.length === 0 || !confirmDeletion}
+        disabled={
+          selectedRows.length === 0 ||
+          !confirmDeletion ||
+          getUserData().role !== "owner"
+        }
       >
         Borrar departamentos
       </CustomButton>
-      <FormCheck label={'Confirmar borrado'}
-      checked={confirmDeletion}
-      onChange={handleCheck}
-      
+      <FormCheck
+        label={"Confirmar borrado"}
+        checked={confirmDeletion}
+        onChange={handleCheck}
       ></FormCheck>
       <CustomTable
         progressPending={loading}
@@ -113,7 +125,7 @@ const DepartmentList = () => {
             name: "Acciones",
             cell: (row) => (
               <CustomButton onClick={() => handleOpenModal(row)}>
-                Editar
+                <EditIcon></EditIcon>
               </CustomButton>
             ),
           },
