@@ -10,12 +10,14 @@ import {
   showBrandModal,
 } from "../redux/brandModal/BrandModalActions";
 import Swal from "sweetalert2";
+import { getUserData } from "../apis/utils";
+import { EditIcon } from "../commons/icons/Icons";
 
 const BrandList = () => {
   const [loading, setLoading] = useState(false);
   const [brands, setBrands] = useState([]);
-  const [selectedRows, setSelectedRows] = useState([])
-  const [confirmDeletion, setConfirmDeletion] = useState(false)
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [confirmDeletion, setConfirmDeletion] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -42,8 +44,6 @@ const BrandList = () => {
         : [...prevBrands, updatedBrand];
     });
   };
-
-  
 
   const handleDeleteBrands = async () => {
     console.log(selectedRows);
@@ -77,24 +77,27 @@ const BrandList = () => {
   const handleCheck = (e) => {
     setConfirmDeletion(e.target.checked);
   };
-  
+
   return (
     <div className="custom-section">
       <BrandModal onUpdateBrandList={handleUpdateBrandList}></BrandModal>{" "}
       <Form.Label className="fw-bold">Lista de marcas</Form.Label>
       <br></br>
       <CustomButton onClick={() => handleOpenModal()}>Crear</CustomButton>
-
       <CustomButton
         onClick={handleDeleteBrands}
-        disabled={selectedRows.length === 0 || !confirmDeletion}
+        disabled={
+          selectedRows.length === 0 ||
+          !confirmDeletion ||
+          getUserData().role !== "owner"
+        }
       >
         Borrar marcas
       </CustomButton>
-      <FormCheck label={'Confirmar borrado'}
-      checked={confirmDeletion}
-      onChange={handleCheck}
-      
+      <FormCheck
+        label={"Confirmar borrado"}
+        checked={confirmDeletion}
+        onChange={handleCheck}
       ></FormCheck>
       <CustomTable
         progressPending={loading}
@@ -115,7 +118,7 @@ const BrandList = () => {
             name: "Acciones",
             cell: (row) => (
               <CustomButton onClick={() => handleOpenModal(row)}>
-                Editar
+                <EditIcon></EditIcon>
               </CustomButton>
             ),
           },
