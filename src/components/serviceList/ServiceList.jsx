@@ -14,8 +14,8 @@ const SERVICES = [
   },
   {
     description: "Instalación de impresora vía WiFi",
-    price: 200,
-    notes: "Tiempo de implementación: 2 a 4 semanas.",
+    price: 250,
+    notes: "Tiempo de implementación: 1 a 4 semanas.",
   },
   {
     description: "Módulo de vendedores (de 4 a 9)",
