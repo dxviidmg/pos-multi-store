@@ -15,14 +15,16 @@ import { getBrands } from "../apis/brands";
 import { getUserData } from "../apis/utils";
 import Swal from "sweetalert2";
 import { EditIcon, QrCodeIcon } from "../commons/icons/Icons";
+import { getDepartments } from "../apis/departments";
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [brands, setBrands] = useState([]);
+  const [departments, setDepartments] = useState([])
   const [params, setParams] = useState({});
   const [selectedRows, setSelectedRows] = useState([]);
-  const [confirmDeletion, setConfirmDeletion] = useState(false)
+  const [confirmDeletion, setConfirmDeletion] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -30,10 +32,13 @@ const ProductList = () => {
       setLoading(true);
       const response = await getBrands();
       setBrands(response.data);
-
-      if (Object.keys(params).length === 0 && response.data.length > 0) {
-        setParams({ brand_id: response.data[0].id });
-      }
+      const response2 = await getDepartments()
+      setDepartments(response2.data)
+      
+//quitamos marca default
+//      if (Object.keys(params).length === 0 && response.data.length > 0) {
+//        setParams({ brand_id: response.data[0].id });
+//      }
       setLoading(false);
     };
 
@@ -42,8 +47,6 @@ const ProductList = () => {
 
   useEffect(() => {
     const fetchStoreProducts = async () => {
-      if (Object.keys(params).length === 0) return;
-
       setLoading(true);
       const response = await getProducts(params);
       setProducts(response.data);
@@ -135,18 +138,19 @@ const ProductList = () => {
     setConfirmDeletion(e.target.checked);
   };
 
-
   const handleGenerate = (code) => {
     if (code.trim() === "") return;
-    const url = `https://barcodeapi.org/api/code128/${encodeURIComponent(code)}`;
+    const url = `https://barcodeapi.org/api/code128/${encodeURIComponent(
+      code
+    )}`;
     fetch(url)
-    .then(res => res.blob())
-    .then(blob => {
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = `barcode_${code}.png`;
-      link.click();
-    });
+      .then((res) => res.blob())
+      .then((blob) => {
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `barcode_${code}.png`;
+        link.click();
+      });
   };
 
   return (
@@ -155,33 +159,31 @@ const ProductList = () => {
       <ProductModal onUpdateProductList={handleUpdateProductList} />
       <Form.Label className="fw-bold">Lista de productos</Form.Label>
 
-
-
-
       <div className="d-flex align-items-center gap-3">
+        <CustomButton onClick={() => handleOpenModal()}>
+          Crear producto
+        </CustomButton>
+        <CustomButton onClick={handleDownload}>
+          Descargar productos
+        </CustomButton>
 
-      <CustomButton onClick={() => handleOpenModal()}>
-        Crear producto
-      </CustomButton>
-      <CustomButton onClick={handleDownload}>Descargar productos</CustomButton>
+        <CustomButton
+          onClick={handleDeleteProducts}
+          disabled={
+            selectedRows.length === 0 ||
+            !confirmDeletion ||
+            getUserData().role !== "owner"
+          }
+        >
+          Borrar productos
+        </CustomButton>
 
-  <CustomButton
-    onClick={handleDeleteProducts}
-    disabled={
-      selectedRows.length === 0 ||
-      !confirmDeletion ||
-      getUserData().role !== "owner"
-    }
-  >
-    Borrar productos
-  </CustomButton>
-
-  <FormCheck
-    label="Confirmar borrado"
-    checked={confirmDeletion}
-    onChange={handleCheck}
-  />
-</div>
+        <FormCheck
+          label="Confirmar borrado"
+          checked={confirmDeletion}
+          onChange={handleCheck}
+        />
+      </div>
 
       <Row className="mt-3">
         <Col>
@@ -201,6 +203,26 @@ const ProductList = () => {
             ))}
           </Form.Select>
         </Col>
+
+        <Col>
+          {" "}
+          <Form.Label>Departamento</Form.Label>
+          <Form.Select
+            value={params.department_id}
+            onChange={handleDataChange}
+            name="department_id"
+            //              disabled={isLoading}
+          >
+            <option value="">Todos los departamentos</option>
+            <option value="0">Sin departamento</option>
+            {departments.map((departments) => (
+              <option key={departments.id} value={departments.id}>
+                {departments.name} ({departments.product_count})
+              </option>
+            ))}
+          </Form.Select>
+        </Col>
+
         <Col>
           <Form.Label>Stock maximo</Form.Label>
           <Form.Control
@@ -225,7 +247,7 @@ const ProductList = () => {
           {
             name: "Marca",
             selector: (row) => row.brand_name,
-            wrap: true
+            wrap: true,
           },
 
           {
@@ -250,40 +272,36 @@ const ProductList = () => {
             wrap: true,
           },
 
-
-
           {
             grow: 2,
             name: "Precios",
             cell: (row) => (
               <>
-              Unitario: ${row.unit_price}<br/>
-              Mayoreo: {row.apply_wholesale
-                ? "$" +
-                  row.wholesale_price +
-                  " (" +
-                  row.min_wholesale_quantity + "+)"
-                : "NA"}
+                Unitario: ${row.unit_price}
+                <br />
+                Mayoreo:{" "}
+                {row.apply_wholesale
+                  ? "$" +
+                    row.wholesale_price +
+                    " (" +
+                    row.min_wholesale_quantity +
+                    "+)"
+                  : "NA"}
               </>
-
-              
             ),
           },
-
 
           {
             name: "Acciones",
             cell: (row) => (
               <>
-              <CustomButton onClick={() => handleOpenModal(row)}>
-                <EditIcon></EditIcon>
-              </CustomButton>
-              <CustomButton onClick={() => handleGenerate(row.code)}>
-                <QrCodeIcon></QrCodeIcon>
-              </CustomButton>
+                <CustomButton onClick={() => handleOpenModal(row)}>
+                  <EditIcon></EditIcon>
+                </CustomButton>
+                <CustomButton onClick={() => handleGenerate(row.code)}>
+                  <QrCodeIcon></QrCodeIcon>
+                </CustomButton>
               </>
-
-              
             ),
           },
         ]}
