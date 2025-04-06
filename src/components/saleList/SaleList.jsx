@@ -117,7 +117,7 @@ const SaleList = () => {
                   {
                     name: "Cliente",
                     selector: (row) => row.client?.full_name,
-                    grow: 2,
+                    grow: 1.5,
                   },
                 ]
               : []),
@@ -149,7 +149,7 @@ const SaleList = () => {
               name: "Metodos de pago",
               selector: (row) => row.payments_methods.join(", "),
               wrap: true,
-              grow: 2,
+              grow: 1.5,
             },
 
 
@@ -167,11 +167,12 @@ const SaleList = () => {
             {
               name: "Vendedor",
               wrap: true,
+              grow: 1.5,
               selector: (row) => row.seller_username,
             },
             {
               name: "Acciones",
-              grow: 4,
+              grow: showAllFields ? 6.1: 3.1,
               cell: (row) => (
                 <>
                   {urlPrinter && (
