@@ -97,7 +97,7 @@ const SaleList = () => {
               />
             </Form>
           </Col>
-          <Col>
+          <Col className="d-flex flex-column justify-content-end">
             <CustomButton onClick={() => setShowAllFields((prev) => !prev)}>
               Ver todos los campos
             </CustomButton>
