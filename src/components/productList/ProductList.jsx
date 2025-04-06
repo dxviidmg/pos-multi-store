@@ -35,9 +35,10 @@ const ProductList = () => {
       const response2 = await getDepartments()
       setDepartments(response2.data)
       
-      if (Object.keys(params).length === 0 && response.data.length > 0) {
-        setParams({ brand_id: response.data[0].id });
-      }
+//quitamos marca default
+//      if (Object.keys(params).length === 0 && response.data.length > 0) {
+//        setParams({ brand_id: response.data[0].id });
+//      }
       setLoading(false);
     };
 
@@ -46,8 +47,6 @@ const ProductList = () => {
 
   useEffect(() => {
     const fetchStoreProducts = async () => {
-      if (Object.keys(params).length === 0) return;
-
       setLoading(true);
       const response = await getProducts(params);
       setProducts(response.data);
@@ -214,7 +213,7 @@ const ProductList = () => {
             name="department_id"
             //              disabled={isLoading}
           >
-            <option value="">Todos las departamentos</option>
+            <option value="">Todos los departamentos</option>
             <option value="0">Sin departamento</option>
             {departments.map((departments) => (
               <option key={departments.id} value={departments.id}>
