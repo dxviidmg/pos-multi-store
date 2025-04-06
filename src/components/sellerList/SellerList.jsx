@@ -120,9 +120,11 @@ const SellerList = () => {
             {
               name: "Username",
               selector: (row) => row.worker.username,
+              grow: 2,
             },
             {
               name: "Nombre",
+
               selector: (row) => `${row.worker.first_name} ${row.worker.last_name}`,
             },
             {

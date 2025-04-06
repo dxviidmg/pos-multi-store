@@ -406,6 +406,7 @@ const ProductImport = () => {
             {
               name: "Código",
               selector: (row) => row.code,
+              grow: 1.1
             },
             {
               name: "Marca",

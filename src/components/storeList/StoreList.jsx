@@ -226,9 +226,9 @@ const StoreList = () => {
           <Col hidden={!tenantInfo.supports_departments}>
             <Form.Label>Departamento</Form.Label>
             <Form.Select
-              value={params.departament_id}
+              value={params.department_id}
               onChange={(e) => handleParams(e)}
-              name="departament_id"
+              name="department_id"
               //              disabled={isLoading}
             >
               <option value="">Todos</option>
