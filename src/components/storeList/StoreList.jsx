@@ -348,40 +348,47 @@ const StoreList = () => {
           ]}
         />
 
-        <Form.Label className="fw-bold">Almacenes</Form.Label>
+        {storages.length > 0 && (
 
-        <CustomTable
-          progressPending={loading}
-          data={storages}
-          columns={[
-            {
-              name: "Nombre",
-              selector: (row) => `${row.name}`,
-            },
-            ...(showInvestment
-              ? [
-                  {
-                    name: "Inversión",
-                    selector: (row) =>
-                      row.investment
-                        ? "$" + row.investment.toLocaleString()
-                        : "$0",
-                  },
-                ]
-              : []),
-            {
-              name: "Acciones",
-              cell: (row) => (
-                <>
-                  <CustomButton onClick={() => handleSelectStore(row)}>
-                    Entrar
-                  </CustomButton>
-                  {chooseIcon(row.products_count === tenantInfo.product_count)}
-                </>
-              ),
-            },
-          ]}
-        />
+          <>
+                  <Form.Label className="fw-bold">Almacenes</Form.Label>
+
+<CustomTable
+  progressPending={loading}
+  data={storages}
+  columns={[
+    {
+      name: "Nombre",
+      selector: (row) => `${row.name}`,
+    },
+    ...(showInvestment
+      ? [
+          {
+            name: "Inversión",
+            selector: (row) =>
+              row.investment
+                ? "$" + row.investment.toLocaleString()
+                : "$0",
+          },
+        ]
+      : []),
+    {
+      name: "Acciones",
+      cell: (row) => (
+        <>
+          <CustomButton onClick={() => handleSelectStore(row)}>
+            Entrar
+          </CustomButton>
+          {chooseIcon(row.products_count === tenantInfo.product_count)}
+        </>
+      ),
+    },
+  ]}
+/>
+          </>
+
+        )}
+
 
         <Form.Label className="fw-bold mt-3">Totales</Form.Label>
 
