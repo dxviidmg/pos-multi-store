@@ -110,11 +110,26 @@ const ProductList = () => {
   };
 
   const handleDeleteProducts = async () => {
+
+    const stockCount = selectedRows.reduce((sum, element) => sum + element.stock, 0);
+
+
+    if (stockCount > 0){
+      Swal.fire({
+        icon: "error",
+        title: "Error al borrar productos",
+        text: "Los productos no deben tener stock cero para ser borrados",
+        timer: 5000,
+      });
+      return
+    }
+
+
     const selectedIds = selectedRows.map((element) => element.id);
     const response = await deleteProducts(selectedIds);
 
     console.log(response);
-    if (response.status == 200) {
+    if (response.status === 200) {
       const updatedProducts = products.filter(
         (product) => !selectedIds.includes(product.id)
       );

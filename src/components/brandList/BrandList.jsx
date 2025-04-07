@@ -48,12 +48,23 @@ const BrandList = () => {
   const handleDeleteBrands = async () => {
     console.log(selectedRows);
 
-    const selectedIds = selectedRows.map((element) => element.id);
+    const productsCount = selectedRows.reduce((sum, element) => sum + element.product_count, 0);
 
+
+    if (productsCount > 0){
+      Swal.fire({
+        icon: "error",
+        title: "Error al borrar marcas",
+        text: "Las marcas no deben tener productos relacionados",
+        timer: 5000,
+      });
+      return
+    }
+    const selectedIds = selectedRows.map((element) => element.id);
     const response = await deleteBrands(selectedIds);
 
     console.log(response);
-    if (response.status == 200) {
+    if (response.status === 200) {
       const updatedBrands = brands.filter(
         (brand) => !selectedIds.includes(brand.id)
       );
@@ -62,13 +73,13 @@ const BrandList = () => {
 
       Swal.fire({
         icon: "success",
-        title: "Productos eliminados",
+        title: "Marcas eliminados",
         timer: 5000,
       });
     } else {
       Swal.fire({
         icon: "error",
-        title: "Error al borrar Productos",
+        title: "Error al borrar marcas",
         timer: 5000,
       });
     }
