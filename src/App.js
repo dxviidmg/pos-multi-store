@@ -23,6 +23,7 @@ import { getUserData } from "./components/apis/utils";
 import DepartmentList from "./components/DepartmentList/DepartmentList";
 import StoreProductImport from "./components/storeProductImport/StoreProductImport";
 import ServiceList from "./components/serviceList/ServiceList";
+import ProductReassign from "./components/productReassign/ProductReassign";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -62,6 +63,7 @@ function App() {
             <Route path="/importar-inventario/" element={<StoreProductImport />} />
             <Route path="/marcas/" element={<BrandList />} />
             <Route path="/departamentos/" element={<DepartmentList />} />
+            <Route path="/reasignacion/" element={<ProductReassign />} />
             <Route path="/logs/" element={<LogList />} />
             <Route path="/pagos/" element={<TenantPaymentList />} />
             <Route path="/vendedores/" element={<SellerList />} />

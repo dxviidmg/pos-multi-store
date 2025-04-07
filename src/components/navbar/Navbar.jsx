@@ -41,6 +41,7 @@ const CustomNavbar = () => {
         <NavDropdown.Item href="/departamentos/">
           Departamentos
         </NavDropdown.Item>
+        <NavDropdown.Item href="/reasignacion/">Reasignación</NavDropdown.Item>
         <NavDropdown.Divider />
         <NavDropdown.Item href="/productos/">Productos</NavDropdown.Item>
         <NavDropdown.Item href="/importar-productos/">
@@ -71,7 +72,7 @@ const CustomNavbar = () => {
     </>
   );
 
-  const renderAdminLinks = () => (
+  const renderStorageLinks = () => (
     <>
       <Nav.Link href="/distribuir/">Distribuir</Nav.Link>
       <Nav.Link href="/inventario/">Inventario</Nav.Link>
@@ -90,7 +91,9 @@ const CustomNavbar = () => {
         <NavDropdown.Item href="/departamentos/">
           Departamentos
         </NavDropdown.Item>
+        <NavDropdown.Item href="/reasignacion/">Reasignación</NavDropdown.Item>
         <NavDropdown.Divider />
+
         <NavDropdown.Item href="/productos/">Productos</NavDropdown.Item>
         <NavDropdown.Item href="/importar-productos/">
           Importar Productos
@@ -117,7 +120,7 @@ const CustomNavbar = () => {
         <Navbar.Collapse id="navbarScroll">
           <Nav className="me-auto my-2 my-lg-0" navbarScroll>
             {user.store_type === "T" && renderStoreLinks()}
-            {user.store_type === "A" && renderAdminLinks()}
+            {user.store_type === "A" && renderStorageLinks()}
             {user && !user.store_type && renderGeneralLinks()}
           </Nav>
           <Nav className="ms-auto">

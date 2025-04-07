@@ -53,12 +53,26 @@ const DepartmentList = () => {
   const handleDeleteDepartments = async () => {
     console.log(selectedRows);
 
-    const selectedIds = selectedRows.map((element) => element.id);
 
+    const productsCount = selectedRows.reduce((sum, element) => sum + element.product_count, 0);
+
+
+    if (productsCount > 0){
+      Swal.fire({
+        icon: "error",
+        title: "Error al borrar departamentos",
+        text: "Los departamentos no deben tener productos relacionados",
+        timer: 5000,
+      });
+      return
+    }
+  
+
+    const selectedIds = selectedRows.map((element) => element.id);
     const response = await deleteDepartments(selectedIds);
 
     console.log(response);
-    if (response.status == 200) {
+    if (response.status === 200) {
       const updatedDepartments = departments.filter(
         (department) => !selectedIds.includes(department.id)
       );
