@@ -19,7 +19,7 @@ const StoreList = () => {
   const [storages, setStorages] = useState([]);
   const [tenantInfo, setTenantInfo] = useState([]);
   const [showInvestment, setShowInvestment] = useState(false);
-  const [departaments, setDepartments] = useState([]);
+  const [departments, setDepartments] = useState([]);
   const [params, setParams] = useState({
     end_date: today,
     start_date: today,
@@ -223,7 +223,7 @@ const StoreList = () => {
             </Form>
           </Col>
 
-          <Col hidden={!tenantInfo.supports_departments}>
+          <Col hidden={departments.length === 0}>
             <Form.Label>Departamento</Form.Label>
             <Form.Select
               value={params.department_id}
@@ -233,7 +233,7 @@ const StoreList = () => {
             >
               <option value="">Todos</option>
               <option value="0">Sin departamento</option>
-              {departaments.map((departament) => (
+              {departments.map((departament) => (
                 <option key={departament.id} value={departament.id}>
                   {departament.name}
                 </option>

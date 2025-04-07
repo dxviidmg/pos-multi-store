@@ -204,7 +204,7 @@ const ProductList = () => {
           </Form.Select>
         </Col>
 
-        <Col>
+        <Col hidden={departments.length === 0}>
           {" "}
           <Form.Label>Departamento</Form.Label>
           <Form.Select
