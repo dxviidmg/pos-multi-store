@@ -24,7 +24,7 @@ const StoreList = () => {
     end_date: today,
     start_date: today,
   });
-  const [range, setRange] = useState('')
+  const [range, setRange] = useState("");
 
   const [totals, setTotals] = useState({
     profit: 0,
@@ -106,8 +106,8 @@ const StoreList = () => {
         cash,
       });
 
-      const dateRange = getDateDifference(params.start_date, params.end_date)
-      setRange(dateRange)
+      const dateRange = getDateDifference(params.start_date, params.end_date);
+      setRange(dateRange);
       setLoading(false);
     };
 
@@ -212,14 +212,9 @@ const StoreList = () => {
             </Form>
           </Col>
           <Col>
-          <Form>
+            <Form>
               <Form.Label>Rango</Form.Label>
-              <Form.Control
-                name="range"
-                type="input"
-                value={range}
-                disabled
-              />
+              <Form.Control name="range" type="input" value={range} disabled />
             </Form>
           </Col>
 
@@ -291,7 +286,6 @@ const StoreList = () => {
                 ]
               : []),
 
-
             ...(!params.brand_id
               ? [
                   {
@@ -302,17 +296,16 @@ const StoreList = () => {
                 ]
               : []),
 
-
-              {
-                name: "Total de ventas",
-                selector: (row) =>
-                  "$" + row.cash_summary[4]["amount"].toLocaleString(),
-              },
-              {
-                name: "Número de ventas",
-                selector: (row) =>
-                  row.cash_summary[12]["amount"].toLocaleString(),
-              },
+            {
+              name: "Total de ventas",
+              selector: (row) =>
+                "$" + row.cash_summary[4]["amount"].toLocaleString(),
+            },
+            {
+              name: "Número de ventas",
+              selector: (row) =>
+                row.cash_summary[12]["amount"].toLocaleString(),
+            },
 
             ...(showInvestment
               ? [
@@ -326,22 +319,22 @@ const StoreList = () => {
                 ]
               : []),
 
-              {
-                name: "Entrar",
-                cell: (row) => (
-                  <>
-                    <CustomButton onClick={() => handleSelectStore(row)}>
-                      Entrar
-                    </CustomButton>
-                  </>
-                ),
-              },
+            {
+              name: "Entrar",
+              cell: (row) => (
+                <>
+                  <CustomButton onClick={() => handleSelectStore(row)}>
+                    Entrar
+                  </CustomButton>
+                </>
+              ),
+            },
             {
               name: "Configuraciones",
               cell: (row) => (
                 <>
                   {chooseIcon(row.products_count === tenantInfo.product_count)}
-                  {row.url_printer && (<PrinterIcon/>)}
+                  {row.url_printer && <PrinterIcon />}
                 </>
               ),
             },
@@ -349,111 +342,114 @@ const StoreList = () => {
         />
 
         {storages.length > 0 && (
-
           <>
-                  <Form.Label className="fw-bold">Almacenes</Form.Label>
+            <Form.Label className="fw-bold">Almacenes</Form.Label>
+
+            <CustomTable
+              progressPending={loading}
+              data={storages}
+              columns={[
+                {
+                  name: "Nombre",
+                  selector: (row) => `${row.name}`,
+                },
+                ...(showInvestment
+                  ? [
+                      {
+                        name: "Inversión",
+                        selector: (row) =>
+                          row.investment
+                            ? "$" + row.investment.toLocaleString()
+                            : "$0",
+                      },
+                    ]
+                  : []),
+                {
+                  name: "Acciones",
+                  cell: (row) => (
+                    <>
+                      <CustomButton onClick={() => handleSelectStore(row)}>
+                        Entrar
+                      </CustomButton>
+                      {chooseIcon(
+                        row.products_count === tenantInfo.product_count
+                      )}
+                    </>
+                  ),
+                },
+              ]}
+            />
+          </>
+        )}
+
+        {stores.length + storages.length > 1 && (<>
+        
+          <Form.Label className="fw-bold mt-3">Totales</Form.Label>
 
 <CustomTable
   progressPending={loading}
-  data={storages}
+  data={[
+    {
+      profit: "$" + totals.profit,
+      paymentCash: "$" + totals.paymentCash,
+      paymentCard: "$" + totals.paymentCard,
+      paymentTransfer: "$" + totals.paymentTransfer,
+      totalPayment: "$" + totals.totalPayment,
+      cash: "$" + totals.cash,
+      investment: "$" + totals.investment,
+    },
+  ]}
   columns={[
     {
-      name: "Nombre",
-      selector: (row) => `${row.name}`,
+      name: "Ganancia",
+      selector: (row) => `${row.profit.toLocaleString()}`,
     },
+
+    ...(!params.brand_id
+      ? [
+          {
+            name: "Efectivo",
+            selector: (row) => `${row.paymentCash.toLocaleString()}`,
+          },
+
+          {
+            name: "Tarjeta",
+            selector: (row) => `${row.paymentCard.toLocaleString()}`,
+          },
+
+          {
+            name: "Transferencia",
+            selector: (row) =>
+              `${row.paymentTransfer.toLocaleString()}`,
+          },
+        ]
+      : []),
+
+    {
+      name: "Total de ventas",
+      selector: (row) => `${row.totalPayment.toLocaleString()}`,
+    },
+    ...(!params.brand_id
+      ? [
+          {
+            name: "Caja",
+            selector: (row) => `${row.cash.toLocaleString()}`,
+          },
+        ]
+      : []),
+
     ...(showInvestment
       ? [
           {
             name: "Inversión",
-            selector: (row) =>
-              row.investment
-                ? "$" + row.investment.toLocaleString()
-                : "$0",
+            selector: (row) => `${row.investment.toLocaleString()}`,
           },
         ]
       : []),
-    {
-      name: "Acciones",
-      cell: (row) => (
-        <>
-          <CustomButton onClick={() => handleSelectStore(row)}>
-            Entrar
-          </CustomButton>
-          {chooseIcon(row.products_count === tenantInfo.product_count)}
-        </>
-      ),
-    },
   ]}
-/>
-          </>
+></CustomTable>
+        </>)}
 
-        )}
-
-
-        <Form.Label className="fw-bold mt-3">Totales</Form.Label>
-
-        <CustomTable
-          progressPending={loading}
-          data={[
-            {
-              profit: "$" + totals.profit,
-              paymentCash: "$" + totals.paymentCash,
-              paymentCard: "$" + totals.paymentCard,
-              paymentTransfer: "$" + totals.paymentTransfer,
-              totalPayment: "$" + totals.totalPayment,
-              cash: "$" + totals.cash,
-              investment: "$" + totals.investment,
-            },
-          ]}
-          columns={[
-            {
-              name: "Ganancia",
-              selector: (row) => `${row.profit.toLocaleString()}`,
-            },
-
-            ...(!params.brand_id
-              ? [
-                  {
-                    name: "Efectivo",
-                    selector: (row) => `${row.paymentCash.toLocaleString()}`,
-                  },
-
-                  {
-                    name: "Tarjeta",
-                    selector: (row) => `${row.paymentCard.toLocaleString()}`,
-                  },
-
-                  {
-                    name: "Transferencia",
-                    selector: (row) =>
-                      `${row.paymentTransfer.toLocaleString()}`,
-                  },
-                ]
-              : []),
-
-            {
-              name: "Total de ventas",
-              selector: (row) => `${row.totalPayment.toLocaleString()}`,
-            },
-            ...(!params.brand_id
-              ? [
-                  {
-                    name: "Caja",
-                    selector: (row) => `${row.cash.toLocaleString()}`,
-                  },
-                ]
-              : []),
-
-            ...(showInvestment
-              ? [
-                  {
-                    name: "Inversión",
-                    selector: (row) => `${row.investment.toLocaleString()}`,
-                  },
-                ]
-              : []),
-          ]}
-        ></CustomTable>
       </div>
     </>
   );
