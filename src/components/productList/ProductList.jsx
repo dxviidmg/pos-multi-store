@@ -36,9 +36,9 @@ const ProductList = () => {
       setDepartments(response2.data)
       
 //quitamos marca default
-//      if (Object.keys(params).length === 0 && response.data.length > 0) {
-//        setParams({ brand_id: response.data[0].id });
-//      }
+      if (Object.keys(params).length === 0 && response.data.length > 0) {
+        setParams({ brand_id: response.data[0].id });
+      }
       setLoading(false);
     };
 
