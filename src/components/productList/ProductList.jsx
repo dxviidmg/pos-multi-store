@@ -86,6 +86,7 @@ const ProductList = () => {
         wholesale_price: PrecioMayoreo,
         min_wholesale_quantity: CantidadMinimaMayoreo,
         wholesale_price_on_client_discount: PMDC,
+        image: Imagen
       }) => ({
         Código,
         Marca,
@@ -96,6 +97,7 @@ const ProductList = () => {
         "Precio mayoreo": PrecioMayoreo,
         "Cantidad minima mayoreo": CantidadMinimaMayoreo,
         "Precio Mayoreo en descuento de clientes": PMDC,
+        Imagen
       })
     );
 
