@@ -205,3 +205,17 @@ export const getImportCanIncludeQuantity = async () => {
     return error;
   }
 };
+
+
+export const reassignProducts = async (data) => {
+  const apiUrl = new URL(getApiUrl("products/reassign"));
+
+  try {
+    const response = await axios.post(apiUrl, data, {
+      headers: getHeaders(),
+    });
+    return response;
+  } catch (error) {
+    return error;
+  }
+};

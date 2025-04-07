@@ -5,6 +5,7 @@ import { getBrands } from "../apis/brands";
 import Swal from "sweetalert2";
 import { getDepartments } from "../apis/departments";
 import CustomButton from "../commons/customButton/CustomButton";
+import { reassignProducts } from "../apis/products";
 
 const REASSIGN_TYPE = [
   {
@@ -16,10 +17,12 @@ const REASSIGN_TYPE = [
     label: "Departamento",
   },
 ]
+
+const INITIAL_FORM_DATA =  {reassign_type: "", origin_id: "", destination_id: ""}
 const ProductReassign = () => {
   const [loading, setLoading] = useState(false);
   const [options, setOptions] = useState([]);
-  const [params, setParams] = useState({reassign_type: "", origin_id: "", destination_id: ""});
+  const [params, setParams] = useState(INITIAL_FORM_DATA);
 
 
 
@@ -46,6 +49,30 @@ const ProductReassign = () => {
     fetchStoreProducts();
   }, [params.reassign_type]);
 
+
+
+
+  const handleReassignProducts = async () => {
+
+
+    const response = await reassignProducts(params);
+
+    console.log(response);
+    if (response.status === 200) {
+      setParams(INITIAL_FORM_DATA)
+      Swal.fire({
+        icon: "success",
+        title: "Productos reasignados",
+        timer: 5000,
+      });
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Error al reasignar Productos",
+        timer: 5000,
+      });
+    }
+  };
 
 
 
@@ -125,7 +152,7 @@ const ProductReassign = () => {
             <CustomButton fullWidth={true}
             disabled={Object.values(params).some(
               (value) => value === ""
-            ) || params.origin_id === params.destination_id}
+            ) || params.origin_id === params.destination_id} onClick={handleReassignProducts}
             >Reasignar</CustomButton>
             </Col>
       </Row>
