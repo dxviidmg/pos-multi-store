@@ -7,6 +7,7 @@ import { useDispatch } from "react-redux";
 import {
   hideProductModal,
   showProductModal,
+  showProductModal2,
 } from "../redux/productModal/ProductModalActions";
 import ProductModal from "../productModal/ProductModal";
 import { exportToExcel } from "../utils/utils";
@@ -14,14 +15,14 @@ import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
 import { getBrands } from "../apis/brands";
 import { getUserData } from "../apis/utils";
 import Swal from "sweetalert2";
-import { EditIcon, QrCodeIcon } from "../commons/icons/Icons";
+import { EditIcon, QrCodeIcon, SearchIcon } from "../commons/icons/Icons";
 import { getDepartments } from "../apis/departments";
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [brands, setBrands] = useState([]);
-  const [departments, setDepartments] = useState([])
+  const [departments, setDepartments] = useState([]);
   const [params, setParams] = useState({});
   const [selectedRows, setSelectedRows] = useState([]);
   const [confirmDeletion, setConfirmDeletion] = useState(false);
@@ -32,10 +33,10 @@ const ProductList = () => {
       setLoading(true);
       const response = await getBrands();
       setBrands(response.data);
-      const response2 = await getDepartments()
-      setDepartments(response2.data)
-      
-//quitamos marca default
+      const response2 = await getDepartments();
+      setDepartments(response2.data);
+
+      //quitamos marca default
       if (Object.keys(params).length === 0 && response.data.length > 0) {
         setParams({ brand_id: response.data[0].id });
       }
@@ -59,6 +60,11 @@ const ProductList = () => {
   const handleOpenModal = (brand) => {
     dispatch(hideProductModal());
     setTimeout(() => dispatch(showProductModal(brand)));
+  };
+
+  const handleOpenModal2 = (brand) => {
+    dispatch(hideProductModal());
+    setTimeout(() => dispatch(showProductModal2(brand)));
   };
 
   const handleUpdateProductList = (updatedProduct) => {
@@ -86,7 +92,7 @@ const ProductList = () => {
         wholesale_price: PrecioMayoreo,
         min_wholesale_quantity: CantidadMinimaMayoreo,
         wholesale_price_on_client_discount: PMDC,
-        image: Imagen
+        image: Imagen,
       }) => ({
         Código,
         Marca,
@@ -97,7 +103,7 @@ const ProductList = () => {
         "Precio mayoreo": PrecioMayoreo,
         "Cantidad minima mayoreo": CantidadMinimaMayoreo,
         "Precio Mayoreo en descuento de clientes": PMDC,
-        Imagen
+        Imagen,
       })
     );
 
@@ -112,20 +118,20 @@ const ProductList = () => {
   };
 
   const handleDeleteProducts = async () => {
+    const stockCount = selectedRows.reduce(
+      (sum, element) => sum + element.stock,
+      0
+    );
 
-    const stockCount = selectedRows.reduce((sum, element) => sum + element.stock, 0);
-
-
-    if (stockCount > 0){
+    if (stockCount > 0) {
       Swal.fire({
         icon: "error",
         title: "Error al borrar productos",
         text: "Los productos no deben tener stock cero para ser borrados",
         timer: 5000,
       });
-      return
+      return;
     }
-
 
     const selectedIds = selectedRows.map((element) => element.id);
     const response = await deleteProducts(selectedIds);
@@ -310,10 +316,17 @@ const ProductList = () => {
 
           {
             name: "Acciones",
+            grow: getUserData().role !== "owner" ? 1 : 2,
             cell: (row) => (
               <>
                 <CustomButton onClick={() => handleOpenModal(row)}>
                   <EditIcon></EditIcon>
+                </CustomButton>
+                <CustomButton
+                  onClick={() => handleOpenModal2(row)}
+                  hidden={getUserData().role !== "owner"}
+                >
+                  <SearchIcon></SearchIcon>
                 </CustomButton>
                 <CustomButton onClick={() => handleGenerate(row.code)}>
                   <QrCodeIcon></QrCodeIcon>
