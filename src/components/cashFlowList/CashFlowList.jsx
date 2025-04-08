@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { Form } from "react-bootstrap";
+import { Col, Form, Row } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import {
   getFormattedDate,
@@ -14,23 +14,25 @@ import CashFlowModal from "../cashFlowModal/CashFlowModal";
 import { hideCashFlowModal, showCashFlowModal } from "../redux/cashFlowModal/CashFlowModalActions";
 import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
 
+const today = getFormattedDate();
+
 const CashFlowList = () => {
   const [cashFlow, setCashFlow] = useState([]);
   const [loading, setLoading] = useState(false)
+  const [date, setDate] = useState(today)
 
   const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchCashData = async () => {
       setLoading(true)
-      const today = getFormattedDate();
-      const cashFlow = await getCashFlow(today);
+      const cashFlow = await getCashFlow(date);
       setCashFlow(cashFlow.data);
       setLoading(false)
     };
 
     fetchCashData();
-  }, []);
+  }, [date]);
 
 
 
@@ -56,8 +58,23 @@ const CashFlowList = () => {
       <CashFlowModal onUpdateCashFlowList={handleUpdateCashFlowList}/>
       <div className="custom-section">
         <Form.Label className="fw-bold">Lista de movimientos</Form.Label>
-        <br/>
-        <CustomButton onClick={()=> handleOpenModal()}>Crear movimiento</CustomButton>
+        
+        <Row>
+        <Col className="d-flex flex-column justify-content-end">
+        <CustomButton fullWidth={true} onClick={()=> handleOpenModal()}>Crear movimiento</CustomButton>
+          </Col>
+          <Col>
+            <Form>
+              <Form.Label>Fecha</Form.Label>
+              <Form.Control
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                max={today}
+              />
+            </Form>
+          </Col>
+        </Row>
         <CustomTable
           data={cashFlow}
           columns={[
