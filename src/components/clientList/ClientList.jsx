@@ -12,21 +12,16 @@ import {
 } from "../redux/clientModal/ClientModalActions";
 import ClientModal from "../clientModal/ClientModal";
 import { EditIcon } from "../commons/icons/Icons";
+import { getUserData } from "../apis/utils";
 
 const ClientList = () => {
   const [clients, setClients] = useState([]);
-  const [userType, setUserType] = useState(null);
   const dispatch = useDispatch();
 
   const [discountFormData, setDiscountFormData] = useState({
     discount_percentage: "",
   });
 
-  // Load userType from localStorage
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    setUserType(user?.store_type === null ? "admin" : "");
-  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -109,7 +104,7 @@ const ClientList = () => {
     <div className="">
       <ClientModal onUpdateClientList={handleUpdateClientList}></ClientModal>
       <div>
-        {userType === "admin" && (
+        {getUserData().role === 'owner' && (
             <div className="custom-section">
               <Form>
                 <Form.Label className="fw-bold">Crear descuento</Form.Label>
