@@ -1,8 +1,9 @@
-import { SHOW_MODAL, HIDE_MODAL } from './ProductModalActions';
+import { SHOW_MODAL, HIDE_MODAL, SHOW_MODAL2 } from './ProductModalActions';
 
 const initialState = {
   showProductModal: false,
-  product: {}
+  product: {},
+  showStoreProducts: false
 };
 
 const ProductModalReducer = (state = initialState, action) => {
@@ -10,14 +11,24 @@ const ProductModalReducer = (state = initialState, action) => {
     case SHOW_MODAL: {
         return {
           showProductModal: true,
-          product: action.payload
+          product: action.payload,
+          showStoreProducts: false
+        };
+      }
+
+      case SHOW_MODAL2: {
+        return {
+          showProductModal: true,
+          product: action.payload,
+          showStoreProducts: true
         };
       }
 
       case HIDE_MODAL: {
         return {
           showProductModal: false,
-          product: {}
+          product: {},
+          showStoreProducts: false
         };
       }
 
