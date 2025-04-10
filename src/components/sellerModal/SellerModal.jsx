@@ -23,7 +23,6 @@ const SellerModal = ({ onUpdateSellerList }) => {
     }
   };
 
-  console.log("INITIAL_FORM_DATA", INITIAL_FORM_DATA);
   const { showSellerModal, seller } = useSelector(
     (state) => state.SellerModalReducer
   );
@@ -64,7 +63,6 @@ const SellerModal = ({ onUpdateSellerList }) => {
           const storeName = store.name.toLowerCase();
           const workersCount = store.workers_count + 1;
           const username = `${short_name}.tienda.${storeName}.vendedor${workersCount}`;
-          console.log('username', username)
           updatedData["worker"]["username"] = username; // Se usa "username" como clave fija
         }
       }
@@ -78,7 +76,6 @@ const SellerModal = ({ onUpdateSellerList }) => {
     const apiCall = formData.id ? updateProduct : createSeller;
     const response = await apiCall(formData);
 
-    console.log("response", response.status);
     if ([200, 201].includes(response.status)) {
       dispatch(hideProductModal());
       onUpdateSellerList(response.data);
@@ -94,7 +91,6 @@ const SellerModal = ({ onUpdateSellerList }) => {
   };
 
   const handleClientError = (response) => {
-    console.log(response);
     let message = "Error desconocido. Por favor, contacte soporte.";
     if (response.response?.status === 400 && response.response.data?.code) {
       const codeError = response.response.data.code[0];
@@ -111,7 +107,6 @@ const SellerModal = ({ onUpdateSellerList }) => {
   };
 
   const isFormIncomplete = () => {
-    console.log(formData)
     return formData.store == ""
   };
 

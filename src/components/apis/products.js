@@ -1,13 +1,12 @@
 import axios from "axios";
 import { getApiUrl, getHeaders } from "./utils";
 
-
 export const getStoreProducts = async (params) => {
   const apiUrl = new URL(getApiUrl("store-product"));
 
   if (params) {
     Object.entries(params).forEach(([key, value]) => {
-        apiUrl.searchParams.append(key, value);
+      apiUrl.searchParams.append(key, value);
     });
   }
 
@@ -25,7 +24,7 @@ export const getProducts = async (params) => {
   const apiUrl = new URL(getApiUrl("product"));
   if (params) {
     Object.entries(params).forEach(([key, value]) => {
-        apiUrl.searchParams.append(key, value);
+      apiUrl.searchParams.append(key, value);
     });
   }
 
@@ -53,9 +52,7 @@ export const createProduct = async (data) => {
 };
 
 export const updateProduct = async (data) => {
-  console.log(typeof(data.image))
-
-  if (typeof(data.image) === "string"){
+  if (typeof data.image === "string") {
     delete data.image;
   }
   const apiUrl = new URL(getApiUrl("product/" + data.id));
@@ -88,7 +85,7 @@ export const getStoreProductLogs = async (params) => {
 
   if (params) {
     Object.entries(params).forEach(([key, value]) => {
-        apiUrl.searchParams.append(key, value);
+      apiUrl.searchParams.append(key, value);
     });
   }
 
@@ -102,10 +99,8 @@ export const getStoreProductLogs = async (params) => {
   }
 };
 
-
 export const getStoreProductLogsChoices = async () => {
   const apiUrl = new URL(getApiUrl("store-product-logs/choices"));
-
 
   try {
     const response = await axios.get(apiUrl, {
@@ -130,7 +125,6 @@ export const updateStoreProduct = async (data) => {
   }
 };
 
-
 export const importProductsValidation = async (data) => {
   const apiUrl = getApiUrl("products/import-validation");
   try {
@@ -154,7 +148,6 @@ export const importProducts = async (data) => {
     return error;
   }
 };
-
 
 export const deleteProducts = async (data) => {
   const apiUrl = new URL(getApiUrl("products/delete"));
@@ -181,7 +174,6 @@ export const importStoreProductsValidation = async (data) => {
   }
 };
 
-
 export const importStoreProducts = async (data) => {
   const apiUrl = getApiUrl("store-products/import");
   try {
@@ -205,7 +197,6 @@ export const getImportCanIncludeQuantity = async () => {
     return error;
   }
 };
-
 
 export const reassignProducts = async (data) => {
   const apiUrl = new URL(getApiUrl("products/reassign"));

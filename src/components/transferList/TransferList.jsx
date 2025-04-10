@@ -21,7 +21,6 @@ const TransferList = () => {
     const response = await deleteTransfer(transfer.id)
 
 
-    console.log(response)
     if (response.status === 204){
 
       setTransfers((prevTransfers) => {

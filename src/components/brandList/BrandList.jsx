@@ -46,7 +46,6 @@ const BrandList = () => {
   };
 
   const handleDeleteBrands = async () => {
-    console.log(selectedRows);
 
     const productsCount = selectedRows.reduce((sum, element) => sum + element.product_count, 0);
 
@@ -63,7 +62,6 @@ const BrandList = () => {
     const selectedIds = selectedRows.map((element) => element.id);
     const response = await deleteBrands(selectedIds);
 
-    console.log(response);
     if (response.status === 200) {
       const updatedBrands = brands.filter(
         (brand) => !selectedIds.includes(brand.id)

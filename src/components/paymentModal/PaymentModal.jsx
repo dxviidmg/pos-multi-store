@@ -96,7 +96,6 @@ const PaymentModal = () => {
       });
       setPayment({ paidWith: totalDiscount, change: 0 });
     } else {
-      console.log(paymentMethods);
       const updatedMethods =
         paymentMethods.type === "radio"
           ? { [value]: totalDiscount }
@@ -155,7 +154,6 @@ const PaymentModal = () => {
     }
     const paymentList = convertPaymentMethodsToList();
 
-    console.log(cart);
     const data = {
       client: client.id,
       total: totalDiscount,
@@ -170,8 +168,6 @@ const PaymentModal = () => {
       payments: paymentList,
       reference_payment: referencePayment
     };
-
-    console.log(data);
 
     const response = await createSale(data);
 
@@ -210,7 +206,6 @@ const PaymentModal = () => {
   };
 
   const handleDisableButton = () => {
-    console.log('fsdasdf', paymentMethods)
     return (
       (paymentMethods.type === "checkbox" && totalPaymentInput !== totalDiscount) ||
       Object.values(paymentMethods.methods).every((amount) => amount === 0) ||

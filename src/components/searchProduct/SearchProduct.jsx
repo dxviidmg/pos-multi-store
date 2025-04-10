@@ -230,7 +230,6 @@ const SearchProduct = () => {
         data: "Prueba de impresión",
       });
 
-      console.log(response2.code);
       showAlert(
         response2.status === 200 ? "success" : "error",
         response2.status === 200 ? "Imprimiendo" : "Error de impresión",

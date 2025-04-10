@@ -77,11 +77,9 @@ const ProductImport = () => {
   useEffect(() => {
     const fetchData = async () => {
       const response = await getImportCanIncludeQuantity();
-      console.log("da", response);
       setCanIncludeQuantity(!response.data);
 
       if (response.data) {
-        console.log("hola");
         setFormData((prevData) => ({ ...prevData, import_stock: "" }));
       }
     };
@@ -116,7 +114,6 @@ const ProductImport = () => {
       const productsError = response.data.filter(
         (item) => item.status !== "Exitoso"
       );
-      console.log(productsError);
       setProductsError(productsError);
 
       const text =
