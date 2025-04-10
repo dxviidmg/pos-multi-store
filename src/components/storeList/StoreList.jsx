@@ -56,7 +56,6 @@ const StoreList = () => {
     const fetchData = async () => {
       setLoading(true);
       const response = await getTenantInfo();
-      console.log(response);
       setTenantInfo(response.data);
 
       setTotals({

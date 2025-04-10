@@ -28,16 +28,13 @@ const ProductReassign = () => {
 
   useEffect(() => {
     const fetchStoreProducts = async () => {
-      console.log('params.reassign_type', params.reassign_type)
       setLoading(true);
       if (params.reassign_type === "department"){
         const departments = await getDepartments()
-        console.log(departments)
         setOptions(departments.data)
       }
       else if (params.reassign_type === "brand"){
         const departments = await getBrands()
-        console.log(departments)
         setOptions(departments.data)
       }
       else {
@@ -57,7 +54,6 @@ const ProductReassign = () => {
 
     const response = await reassignProducts(params);
 
-    console.log(response);
     if (response.status === 200) {
       setParams(INITIAL_FORM_DATA)
       Swal.fire({
@@ -80,7 +76,6 @@ const ProductReassign = () => {
 
   const handleDataChange = async (e) => {
     let { name, value } = e.target;
-    console.log(name, value);
     setParams((prevData) => ({ ...prevData, [name]: value }));
   };
 

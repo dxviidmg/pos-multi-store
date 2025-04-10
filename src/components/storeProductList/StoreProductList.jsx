@@ -84,7 +84,6 @@ const StoreProductList = () => {
 
   const handleDataChange = async (e) => {
     let { name, value } = e.target;
-    console.log(name, value);
     setParams((prevData) => ({ ...prevData, [name]: value }));
   };
 

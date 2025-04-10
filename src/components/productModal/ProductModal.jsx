@@ -43,17 +43,14 @@ const ProductModal = ({ onUpdateProductList }) => {
   useEffect(() => {
     const fetchData = async () => {
       if (product) {
-        console.log(product);
         setFormData(product);
         setPreviewImage(product.image || noPhoto);
 
         if (showStoreProducts) {
-          console.log(product);
           const r = await getStoreProducts({
             code: product.code,
             all_stores: "Y",
           });
-          console.log(r.data);
           setStoreProduct(r.data);
         }
       } else {

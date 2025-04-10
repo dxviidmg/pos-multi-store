@@ -1,10 +1,8 @@
 import axios from "axios";
 import { getApiUrl, getHeaders } from "./utils";
 
-
 export const createSale = async (data) => {
-
-    try {
+  try {
     const response = await axios.post(getApiUrl("sale"), data, {
       headers: getHeaders(),
     });
@@ -15,43 +13,38 @@ export const createSale = async (data) => {
   }
 };
 
-
 export const getSales = async (date) => {
-
   const apiUrl = new URL(getApiUrl("sale"));
-  if (date){
-    apiUrl.searchParams.append('date', date);
-
+  if (date) {
+    apiUrl.searchParams.append("date", date);
   }
 
   try {
-  const response = await axios.get(apiUrl, {
-    headers: getHeaders(),
-  });
-  return response;
-} catch (error) {
-  console.error("Error al obtener clientes:", error);
-  throw error;
-}
+    const response = await axios.get(apiUrl, {
+      headers: getHeaders(),
+    });
+    return response;
+  } catch (error) {
+    console.error("Error al obtener clientes:", error);
+    throw error;
+  }
 };
-
 
 export const getCashSummary = async (date) => {
   const apiUrl = new URL(getApiUrl("cash/summary"));
-  if (date){
-    apiUrl.searchParams.append('date', date);
-
+  if (date) {
+    apiUrl.searchParams.append("date", date);
   }
 
   try {
-  const response = await axios.get(apiUrl, {
-    headers: getHeaders(),
-  });
-  return response;
-} catch (error) {
-  console.error("Error al obtener clientes:", error);
-  throw error;
-}
+    const response = await axios.get(apiUrl, {
+      headers: getHeaders(),
+    });
+    return response;
+  } catch (error) {
+    console.error("Error al obtener clientes:", error);
+    throw error;
+  }
 };
 
 export const importSalesValidation = async (data) => {
@@ -90,10 +83,8 @@ export const cancelSale = async (data) => {
   }
 };
 
-
-export const getPrinter = async (data={}) => {
+export const getPrinter = async (data = {}) => {
   const apiUrl = getApiUrl("printer");
-  console.log(getHeaders())
   try {
     const response = await axios.post(apiUrl, data, {
       headers: getHeaders(),
@@ -106,8 +97,7 @@ export const getPrinter = async (data={}) => {
 
 export const printTicket = async (url, endpoint, data) => {
   try {
-    const response = await axios.post(url + endpoint, data, {
-    });
+    const response = await axios.post(url + endpoint, data, {});
     return response;
   } catch (error) {
     return error;
