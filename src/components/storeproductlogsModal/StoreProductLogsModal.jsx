@@ -83,7 +83,7 @@ const StoreProductLogsModal = ({ onUpdateStoreProductList }) => {
           <Form.Label>Codigo</Form.Label>
           <Form.Control
             type="text"
-            value={formData.product_code}
+            value={formData.product?.code}
             placeholder="Codigo"
             disabled
           />
@@ -93,7 +93,7 @@ const StoreProductLogsModal = ({ onUpdateStoreProductList }) => {
           <Form.Label>Marca</Form.Label>
           <Form.Control
             type="text"
-            value={formData.product_brand}
+            value={formData.product?.brand_name}
             placeholder="Marca"
             disabled
           />
@@ -103,7 +103,7 @@ const StoreProductLogsModal = ({ onUpdateStoreProductList }) => {
           <Form.Label>Nombre</Form.Label>
           <Form.Control
             type="text"
-            value={formData.product_name}
+            value={formData.product?.name}
             placeholder="Nombre"
             disabled
           />
