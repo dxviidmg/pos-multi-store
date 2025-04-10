@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
 import Swal from "sweetalert2";
 import { hideProductModal } from "../redux/productModal/ProductModalActions";
-import { createProduct, updateProduct } from "../apis/products";
+import { updateProduct } from "../apis/products";
 import { getStores } from "../apis/stores";
 import { getUserData } from "../apis/utils";
 import { createSeller } from "../apis/sellers";
@@ -23,7 +23,6 @@ const SellerModal = ({ onUpdateSellerList }) => {
     }
   };
 
-  console.log("INITIAL_FORM_DATA", INITIAL_FORM_DATA);
   const { showSellerModal, seller } = useSelector(
     (state) => state.SellerModalReducer
   );
@@ -59,12 +58,11 @@ const SellerModal = ({ onUpdateSellerList }) => {
       let updatedData = { ...prevData, [name]: value };
   
       if (name === "store_id") {  
-        const store = stores.find((s) => s.id == value);
+        const store = stores.find((s) => s.id === value);
         if (store) {
           const storeName = store.name.toLowerCase();
           const workersCount = store.workers_count + 1;
           const username = `${short_name}.tienda.${storeName}.vendedor${workersCount}`;
-          console.log('username', username)
           updatedData["worker"]["username"] = username; // Se usa "username" como clave fija
         }
       }
@@ -78,7 +76,6 @@ const SellerModal = ({ onUpdateSellerList }) => {
     const apiCall = formData.id ? updateProduct : createSeller;
     const response = await apiCall(formData);
 
-    console.log("response", response.status);
     if ([200, 201].includes(response.status)) {
       dispatch(hideProductModal());
       onUpdateSellerList(response.data);
@@ -94,7 +91,6 @@ const SellerModal = ({ onUpdateSellerList }) => {
   };
 
   const handleClientError = (response) => {
-    console.log(response);
     let message = "Error desconocido. Por favor, contacte soporte.";
     if (response.response?.status === 400 && response.response.data?.code) {
       const codeError = response.response.data.code[0];
@@ -111,8 +107,7 @@ const SellerModal = ({ onUpdateSellerList }) => {
   };
 
   const isFormIncomplete = () => {
-    console.log(formData)
-    return formData.store == ""
+    return formData.store === ""
   };
 
   return (

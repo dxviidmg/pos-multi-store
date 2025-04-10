@@ -113,7 +113,6 @@ const ProductList = () => {
 
   const handleDataChange = async (e) => {
     let { name, value } = e.target;
-    console.log(name, value);
     setParams((prevData) => ({ ...prevData, [name]: value }));
   };
 
@@ -136,7 +135,6 @@ const ProductList = () => {
     const selectedIds = selectedRows.map((element) => element.id);
     const response = await deleteProducts(selectedIds);
 
-    console.log(response);
     if (response.status === 200) {
       const updatedProducts = products.filter(
         (product) => !selectedIds.includes(product.id)

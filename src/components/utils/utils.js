@@ -88,7 +88,6 @@ export const handlePrintTicket = async (data) => {
       data,
     });
     
-    console.log()
     if (response.status !== 200){
       const text = response.code === "ERR_NETWORK" ? "Servidor no encontrado" : ""
       showAlert("error", "Error de impresión", text
