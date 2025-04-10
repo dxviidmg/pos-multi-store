@@ -4,7 +4,7 @@ import { Col, Form, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
 import { cleanCart, removeClientfromCart } from "../redux/cart/cartActions";
-import { createSale, printTicket } from "../apis/sales";
+import { createSale } from "../apis/sales";
 import { hidePaymentModal } from "../redux/paymentModal/PaymentModalActions";
 import Swal from "sweetalert2";
 import { getUserData } from "../apis/utils";
@@ -213,10 +213,6 @@ const PaymentModal = () => {
         paymentMethods.methods.EF > payment.paidWith)
         || ((paymentMethods.methods.TA > 0 && referencePayment === "") || (paymentMethods.methods.TR > 0 && referencePayment === ""))
     ) ;
-  };
-
-  const showAlert = (icon, title) => {
-    Swal.fire({ icon, title, timer: icon === "success" ? 2500 : 5000 });
   };
 
   return (

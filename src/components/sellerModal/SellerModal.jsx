@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
 import Swal from "sweetalert2";
 import { hideProductModal } from "../redux/productModal/ProductModalActions";
-import { createProduct, updateProduct } from "../apis/products";
+import { updateProduct } from "../apis/products";
 import { getStores } from "../apis/stores";
 import { getUserData } from "../apis/utils";
 import { createSeller } from "../apis/sellers";
@@ -58,7 +58,7 @@ const SellerModal = ({ onUpdateSellerList }) => {
       let updatedData = { ...prevData, [name]: value };
   
       if (name === "store_id") {  
-        const store = stores.find((s) => s.id == value);
+        const store = stores.find((s) => s.id === value);
         if (store) {
           const storeName = store.name.toLowerCase();
           const workersCount = store.workers_count + 1;
@@ -107,7 +107,7 @@ const SellerModal = ({ onUpdateSellerList }) => {
   };
 
   const isFormIncomplete = () => {
-    return formData.store == ""
+    return formData.store === ""
   };
 
   return (
