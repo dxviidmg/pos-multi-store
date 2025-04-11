@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
 import { Form, Row, Col, Alert } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
@@ -170,6 +170,7 @@ const StoreList = () => {
     setShowInvestment(true);
   };
 
+  const memoStores = useMemo(()=> stores, [stores])
   return (
     <>
       {tenantInfo.notices && tenantInfo.notices.length > 0 && (
@@ -252,7 +253,7 @@ const StoreList = () => {
 
         <CustomTable
           progressPending={loading}
-          data={stores}
+          data={memoStores}
           columns={[
             {
               name: "Nombre",
