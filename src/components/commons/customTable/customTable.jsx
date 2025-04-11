@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { memo, useState } from "react";
 import DataTable from "react-data-table-component";
 //import "./customTable.css";
 import { Form } from "react-bootstrap";
@@ -95,4 +95,4 @@ const CustomTable = ({
   );
 };
 
-export default CustomTable;
+export default memo(CustomTable);
