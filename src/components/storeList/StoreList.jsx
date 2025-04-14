@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
 import { Form, Row, Col, Alert } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
@@ -113,18 +113,24 @@ const StoreList = () => {
     fetchData();
   }, [params]);
 
-  const handleSelectStore = async (row) => {
+  const handleSelectStore = async ({
+    store_type,
+    full_name,
+    id,
+    url_printer,
+  }) => {
     const user = JSON.parse(localStorage.getItem("user"));
-    user.store_type = row.store_type;
-    user.store_name = row.full_name;
-    user.store_id = row.id;
-    user.store_url_printer = row.url_printer;
-
-    const updatedData = JSON.stringify(user);
+    const updatedData = JSON.stringify({
+      ...user,
+      store_type,
+      store_name: full_name,
+      store_id: id,
+      store_url_printer: url_printer,
+    });
     localStorage.setItem("user", updatedData);
 
-    navigate("/vender/");
-    window.location.reload();
+        navigate("/vender/");
+        window.location.reload();
   };
 
   const handleShowInvestment = async () => {
@@ -164,6 +170,7 @@ const StoreList = () => {
     setShowInvestment(true);
   };
 
+  const memoStores = useMemo(()=> stores, [stores])
   return (
     <>
       {tenantInfo.notices && tenantInfo.notices.length > 0 && (
@@ -246,7 +253,7 @@ const StoreList = () => {
 
         <CustomTable
           progressPending={loading}
-          data={stores}
+          data={memoStores}
           columns={[
             {
               name: "Nombre",
@@ -381,74 +388,76 @@ const StoreList = () => {
           </>
         )}
 
-        {stores.length + storages.length > 1 && (<>
-        
-          <Form.Label className="fw-bold mt-3">Totales</Form.Label>
+        {stores.length + storages.length > 1 && (
+          <>
+            <Form.Label className="fw-bold mt-3">Totales</Form.Label>
 
-<CustomTable
-  progressPending={loading}
-  data={[
-    {
-      profit: "$" + totals.profit,
-      paymentCash: "$" + totals.paymentCash,
-      paymentCard: "$" + totals.paymentCard,
-      paymentTransfer: "$" + totals.paymentTransfer,
-      totalPayment: "$" + totals.totalPayment,
-      cash: "$" + totals.cash,
-      investment: "$" + totals.investment,
-    },
-  ]}
-  columns={[
-    {
-      name: "Ganancia",
-      selector: (row) => `${row.profit.toLocaleString()}`,
-    },
+            <CustomTable
+              progressPending={loading}
+              data={[
+                {
+                  profit: "$" + totals.profit,
+                  paymentCash: "$" + totals.paymentCash,
+                  paymentCard: "$" + totals.paymentCard,
+                  paymentTransfer: "$" + totals.paymentTransfer,
+                  totalPayment: "$" + totals.totalPayment,
+                  cash: "$" + totals.cash,
+                  investment: "$" + totals.investment,
+                },
+              ]}
+              columns={[
+                {
+                  name: "Ganancia",
+                  selector: (row) => `${row.profit.toLocaleString()}`,
+                },
 
-    ...(!params.brand_id
-      ? [
-          {
-            name: "Efectivo",
-            selector: (row) => `${row.paymentCash.toLocaleString()}`,
-          },
+                ...(!params.brand_id
+                  ? [
+                      {
+                        name: "Efectivo",
+                        selector: (row) =>
+                          `${row.paymentCash.toLocaleString()}`,
+                      },
 
-          {
-            name: "Tarjeta",
-            selector: (row) => `${row.paymentCard.toLocaleString()}`,
-          },
+                      {
+                        name: "Tarjeta",
+                        selector: (row) =>
+                          `${row.paymentCard.toLocaleString()}`,
+                      },
 
-          {
-            name: "Transferencia",
-            selector: (row) =>
-              `${row.paymentTransfer.toLocaleString()}`,
-          },
-        ]
-      : []),
+                      {
+                        name: "Transferencia",
+                        selector: (row) =>
+                          `${row.paymentTransfer.toLocaleString()}`,
+                      },
+                    ]
+                  : []),
 
-    {
-      name: "Total de ventas",
-      selector: (row) => `${row.totalPayment.toLocaleString()}`,
-    },
-    ...(!params.brand_id
-      ? [
-          {
-            name: "Caja",
-            selector: (row) => `${row.cash.toLocaleString()}`,
-          },
-        ]
-      : []),
+                {
+                  name: "Total de ventas",
+                  selector: (row) => `${row.totalPayment.toLocaleString()}`,
+                },
+                ...(!params.brand_id
+                  ? [
+                      {
+                        name: "Caja",
+                        selector: (row) => `${row.cash.toLocaleString()}`,
+                      },
+                    ]
+                  : []),
 
-    ...(showInvestment
-      ? [
-          {
-            name: "Inversión",
-            selector: (row) => `${row.investment.toLocaleString()}`,
-          },
-        ]
-      : []),
-  ]}
-></CustomTable>
-        </>)}
-
+                ...(showInvestment
+                  ? [
+                      {
+                        name: "Inversión",
+                        selector: (row) => `${row.investment.toLocaleString()}`,
+                      },
+                    ]
+                  : []),
+              ]}
+            ></CustomTable>
+          </>
+        )}
       </div>
     </>
   );
