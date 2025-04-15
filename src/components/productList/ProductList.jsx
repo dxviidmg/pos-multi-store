@@ -29,32 +29,47 @@ const ProductList = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const fetchBrands = async () => {
+    const fetchOptions = async () => {
       setLoading(true);
       const response = await getBrands();
       setBrands(response.data);
       const response2 = await getDepartments();
       setDepartments(response2.data);
-
-      //quitamos marca default
-      if (Object.keys(params).length === 0 && response.data.length > 0) {
-        setParams({ brand_id: response.data[0].id });
+  
+      if (response.data.length > 0) {
+        // Solo establecemos params si aún no está definido
+        setParams((prev) => {
+          if (!("brand_id" in prev)) {
+            return { ...prev, brand_id: response.data[0].id };
+          }
+          return prev;
+        });
       }
+  
       setLoading(false);
     };
-
-    fetchBrands();
-  }, []); // Solo se ejecuta una vez al montar
-
+  
+    fetchOptions();
+  }, []); // solo se ejecuta una vez al montar
+  
   useEffect(() => {
-    const fetchStoreProducts = async () => {
+    // Para evitar llamada doble inicial cuando aún no hay brand_id
+    if (Object.keys(params).length === 0) return;
+  
+    const fetchProducts = async () => {
       setLoading(true);
       const response = await getProducts(params);
       setProducts(response.data);
-      setLoading(false);
-    };
 
-    fetchStoreProducts();
+      
+      setLoading(false);
+
+//      setTimeout(() => {
+//        setLoading(false);
+//      }, 1000);
+    };
+  
+    fetchProducts();
   }, [params]);
 
   const handleOpenModal = (brand) => {
