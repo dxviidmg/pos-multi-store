@@ -128,13 +128,20 @@ const ProductImport = () => {
         text: text,
       });
     } else if (response.status === 400) {
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ""; // Limpia el input de archivo
+      }
       Swal.fire({
         icon: "error",
         title: "Error al cargar archivo",
         text: response.response.data.error,
         timer: 5000,
       });
+      
     } else {
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ""; // Limpia el input de archivo
+      }
       Swal.fire({
         icon: "error",
         title: "Error al cargar archivo",

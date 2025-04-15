@@ -13,3 +13,8 @@
   min-height: 100vh;
   padding-bottom: 2px;
 }
+
+h1 {
+  font-size: 1.2rem !important;
+  font-weight: bold !important;
+}
