@@ -363,7 +363,7 @@ const StoreList = () => {
               ),
             },
             {
-              name: "Configuraciones",
+              name: "Opciones",
               cell: (row) => (
                 <>
                   {chooseIcon(row.products_count === tenantInfo.product_count)}
