@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
 import { Form, Row, Col, Alert } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
@@ -32,6 +32,7 @@ const StoreList = () => {
     paymentCard: 0,
     paymentTransfer: 0,
     totalPayment: 0,
+    totalSales: 0,
     cash: 0,
     investment: 0,
   });
@@ -64,6 +65,7 @@ const StoreList = () => {
         paymentCard: "Calculando...",
         paymentTransfer: "Calculando...",
         totalPayment: "Calculando...",
+        totalSales: "Calculando...",
         cash: "Calculando...",
       });
       const response2 = await getStores({ ...params, store_type: "T" });
@@ -77,6 +79,7 @@ const StoreList = () => {
         paymentCard,
         paymentTransfer,
         totalPayment,
+        totalSales,
         cash,
       } = response2.data.reduce(
         (acc, store) => ({
@@ -85,6 +88,7 @@ const StoreList = () => {
           paymentCard: acc.paymentCard + store.cash_summary[1].amount,
           paymentTransfer: acc.paymentTransfer + store.cash_summary[2].amount,
           totalPayment: acc.totalPayment + store.cash_summary[4].amount,
+          totalSales: acc.totalPayment + store.cash_summary[12].amount,
           cash: acc.paymentCash + store.cash_summary[9].amount,
         }),
         {
@@ -93,6 +97,7 @@ const StoreList = () => {
           paymentCard: 0,
           paymentTransfer: 0,
           totalPayment: 0,
+          totalSales: 0,
           cash: 0,
         }
       );
@@ -103,6 +108,7 @@ const StoreList = () => {
         paymentTransfer,
         totalPayment,
         cash,
+        totalSales
       });
 
       const dateRange = getDateDifference(params.start_date, params.end_date);
@@ -129,8 +135,8 @@ const StoreList = () => {
     });
     localStorage.setItem("user", updatedData);
 
-        navigate("/vender/");
-        window.location.reload();
+    navigate("/vender/");
+    window.location.reload();
   };
 
   const handleShowInvestment = async () => {
@@ -170,7 +176,8 @@ const StoreList = () => {
     setShowInvestment(true);
   };
 
-  const memoStores = useMemo(()=> stores, [stores])
+  const memoStores = useMemo(() => stores, [stores]);
+  
   return (
     <>
       {tenantInfo.notices && tenantInfo.notices.length > 0 && (
@@ -186,68 +193,72 @@ const StoreList = () => {
       <div className="custom-section">
         <CustomSpinner2 isLoading={loading}></CustomSpinner2>
 
-        <Form.Label className="fw-bold">
+        <h1>
           Lista de tiendas y almacenes ({tenantInfo.product_count} productos
           registrados)
-        </Form.Label>
-        <Row>
-          <Col>
-            {" "}
-            <Form>
-              <Form.Label>Fecha de inicio</Form.Label>
-              <Form.Control
-                name="start_date"
-                type="date"
-                value={params.start_date}
-                onChange={(e) => handleParams(e)}
-                max={today}
-              />
-            </Form>
-          </Col>
-          <Col>
-            {" "}
-            <Form>
-              <Form.Label>Fecha de fin</Form.Label>
-              <Form.Control
-                name="end_date"
-                type="date"
-                value={params.end_date}
-                onChange={(e) => handleParams(e)}
-                max={today}
-              />
-            </Form>
-          </Col>
-          <Col>
-            <Form>
-              <Form.Label>Rango</Form.Label>
-              <Form.Control name="range" type="input" value={range} disabled />
-            </Form>
-          </Col>
+        </h1>
 
-          <Col hidden={departments.length === 0}>
-            <Form.Label>Departamento</Form.Label>
-            <Form.Select
-              value={params.department_id}
-              onChange={(e) => handleParams(e)}
-              name="department_id"
-              //              disabled={isLoading}
-            >
-              <option value="">Todos</option>
-              <option value="0">Sin departamento</option>
-              {departments.map((departament) => (
-                <option key={departament.id} value={departament.id}>
-                  {departament.name}
-                </option>
-              ))}
-            </Form.Select>
-          </Col>
+        <Form>
+          <Row>
+            <Col>
+              <Form.Group controlId="start_date">
+                <Form.Label>Fecha de inicio</Form.Label>
+                <Form.Control
+                  name="start_date"
+                  type="date"
+                  value={params.start_date}
+                  onChange={handleParams}
+                  max={today}
+                />
+              </Form.Group>
+            </Col>
 
-          <Col className="d-flex align-items-end">
-            <CustomButton fullWidth onClick={handleShowInvestment}>
-              Ver inversión
-            </CustomButton>
-          </Col>
-        </Row>
+            <Col>
+              <Form.Group controlId="end_date">
+                <Form.Label>Fecha de fin</Form.Label>
+                <Form.Control
+                  name="end_date"
+                  type="date"
+                  value={params.end_date}
+                  onChange={handleParams}
+                  max={today}
+                />
+              </Form.Group>
+            </Col>
+
+            <Col>
+              <Form.Group controlId="range">
+                <Form.Label>Rango</Form.Label>
+                <Form.Control name="range" type="text" value={range} disabled />
+              </Form.Group>
+            </Col>
+
+            <Col hidden={departments.length === 0}>
+              <Form.Group controlId="department_id">
+                <Form.Label>Departamento</Form.Label>
+                <Form.Select
+                  value={params.department_id}
+                  onChange={handleParams}
+                  name="department_id"
+                >
+                  <option value="">Todos</option>
+                  <option value="0">Sin departamento</option>
+                  {departments.map((departament) => (
+                    <option key={departament.id} value={departament.id}>
+                      {departament.name}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Form.Group>
+            </Col>
+
+            <Col className="d-flex align-items-end">
+              <CustomButton fullWidth onClick={handleShowInvestment}>
+                Ver inversión
+              </CustomButton>
+            </Col>
+          </Row>
+        </Form>
 
         <Form.Label className="fw-bold">Tiendas</Form.Label>
 
@@ -266,7 +277,7 @@ const StoreList = () => {
                 "$" + row.cash_summary[10]["amount"].toLocaleString(),
             },
 
-            ...(!params.brand_id
+            ...(!params.department_id
               ? [
                   {
                     name: "Efectivo",
@@ -292,7 +303,7 @@ const StoreList = () => {
                 ]
               : []),
 
-            ...(!params.brand_id
+            ...(!params.department_id
               ? [
                   {
                     name: "Caja",
@@ -403,6 +414,7 @@ const StoreList = () => {
                   totalPayment: "$" + totals.totalPayment,
                   cash: "$" + totals.cash,
                   investment: "$" + totals.investment,
+                  totalSales: totals.totalSales
                 },
               ]}
               columns={[
@@ -411,7 +423,7 @@ const StoreList = () => {
                   selector: (row) => `${row.profit.toLocaleString()}`,
                 },
 
-                ...(!params.brand_id
+                ...(!params.department_id
                   ? [
                       {
                         name: "Efectivo",
@@ -433,18 +445,24 @@ const StoreList = () => {
                     ]
                   : []),
 
+                  ...(!params.department_id
+                    ? [
+                        {
+                          name: "Caja",
+                          selector: (row) => `${row.cash.toLocaleString()}`,
+                        },
+                      ]
+                    : []),
+  
                 {
                   name: "Total de ventas",
                   selector: (row) => `${row.totalPayment.toLocaleString()}`,
                 },
-                ...(!params.brand_id
-                  ? [
-                      {
-                        name: "Caja",
-                        selector: (row) => `${row.cash.toLocaleString()}`,
-                      },
-                    ]
-                  : []),
+
+                {
+                  name: "Numero de ventas",
+                  selector: (row) => `${row.totalSales.toLocaleString()}`,
+                },
 
                 ...(showInvestment
                   ? [
