@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
 import { Form, Row, Col, Alert } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
