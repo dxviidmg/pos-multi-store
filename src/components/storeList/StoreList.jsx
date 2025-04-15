@@ -67,6 +67,7 @@ const StoreList = () => {
         totalPayment: "Calculando...",
         totalSales: "Calculando...",
         cash: "Calculando...",
+        investment: "Calculando..."
       });
       const response2 = await getStores({ ...params, store_type: "T" });
       const response3 = await getStores({ ...params, store_type: "A" });
@@ -81,6 +82,7 @@ const StoreList = () => {
         totalPayment,
         totalSales,
         cash,
+        investment
       } = response2.data.reduce(
         (acc, store) => ({
           profit: acc.profit + store.cash_summary[10].amount,
@@ -90,6 +92,7 @@ const StoreList = () => {
           totalPayment: acc.totalPayment + store.cash_summary[4].amount,
           totalSales: acc.totalPayment + store.cash_summary[12].amount,
           cash: acc.paymentCash + store.cash_summary[9].amount,
+          investment: 0
         }),
         {
           profit: 0,
@@ -99,6 +102,7 @@ const StoreList = () => {
           totalPayment: 0,
           totalSales: 0,
           cash: 0,
+          investment: 0
         }
       );
       setTotals({
@@ -108,7 +112,8 @@ const StoreList = () => {
         paymentTransfer,
         totalPayment,
         cash,
-        totalSales
+        totalSales,
+        investment
       });
 
       const dateRange = getDateDifference(params.start_date, params.end_date);
@@ -273,14 +278,19 @@ const StoreList = () => {
             },
             {
               name: "Ganancia",
+              right: true,
               selector: (row) =>
                 "$" + row.cash_summary[10]["amount"].toLocaleString(),
+
+
+
             },
 
             ...(!params.department_id
               ? [
                   {
                     name: "Efectivo",
+                    right: true,
                     selector: (row) =>
                       `$${
                         row.cash_summary?.[0]?.amount?.toLocaleString() || "0"
@@ -288,6 +298,7 @@ const StoreList = () => {
                   },
                   {
                     name: "Tarjeta",
+                    right: true,
                     selector: (row) =>
                       `$${
                         row.cash_summary?.[1]?.amount?.toLocaleString() || "0"
@@ -295,6 +306,7 @@ const StoreList = () => {
                   },
                   {
                     name: "Transferencia",
+                    right: true,
                     selector: (row) =>
                       `$${
                         row.cash_summary?.[2]?.amount?.toLocaleString() || "0"
@@ -307,6 +319,7 @@ const StoreList = () => {
               ? [
                   {
                     name: "Caja",
+                    right: true,
                     selector: (row) =>
                       "$" + row.cash_summary[9]["amount"].toLocaleString(),
                   },
@@ -315,11 +328,13 @@ const StoreList = () => {
 
             {
               name: "Total de ventas",
+              right: true,
               selector: (row) =>
                 "$" + row.cash_summary[4]["amount"].toLocaleString(),
             },
             {
               name: "Número de ventas",
+              right: true,
               selector: (row) =>
                 row.cash_summary[12]["amount"].toLocaleString(),
             },
@@ -327,6 +342,7 @@ const StoreList = () => {
             ...(showInvestment
               ? [
                   {
+                    right: true,
                     name: "Inversión",
                     selector: (row) =>
                       row.investment
@@ -347,7 +363,7 @@ const StoreList = () => {
               ),
             },
             {
-              name: "Configuraciones",
+              name: "Opciones",
               cell: (row) => (
                 <>
                   {chooseIcon(row.products_count === tenantInfo.product_count)}
@@ -374,6 +390,7 @@ const StoreList = () => {
                   ? [
                       {
                         name: "Inversión",
+                        right: true,
                         selector: (row) =>
                           row.investment
                             ? "$" + row.investment.toLocaleString()
@@ -407,40 +424,44 @@ const StoreList = () => {
               progressPending={loading}
               data={[
                 {
-                  profit: "$" + totals.profit,
-                  paymentCash: "$" + totals.paymentCash,
-                  paymentCard: "$" + totals.paymentCard,
-                  paymentTransfer: "$" + totals.paymentTransfer,
-                  totalPayment: "$" + totals.totalPayment,
-                  cash: "$" + totals.cash,
-                  investment: "$" + totals.investment,
-                  totalSales: totals.totalSales
+                  profit: "$" + totals.profit.toLocaleString(),
+                  paymentCash: "$" + totals.paymentCash.toLocaleString(),
+                  paymentCard: "$" + totals.paymentCard.toLocaleString(),
+                  paymentTransfer: "$" + totals.paymentTransfer.toLocaleString(),
+                  totalPayment: "$" + totals.totalPayment.toLocaleString(),
+                  cash: "$" + totals.cash.toLocaleString(),
+                  investment: "$" + totals.investment.toLocaleString(),
+                  totalSales: totals.totalSales.toLocaleString()
                 },
               ]}
               columns={[
                 {
                   name: "Ganancia",
-                  selector: (row) => `${row.profit.toLocaleString()}`,
+                  right: true,
+                  selector: (row) => `${row.profit}`,
                 },
 
                 ...(!params.department_id
                   ? [
                       {
                         name: "Efectivo",
+                        right: true,
                         selector: (row) =>
-                          `${row.paymentCash.toLocaleString()}`,
+                          `${row.paymentCash}`,
                       },
 
                       {
                         name: "Tarjeta",
+                        right: true,
                         selector: (row) =>
-                          `${row.paymentCard.toLocaleString()}`,
+                          `${row.paymentCard}`,
                       },
 
                       {
                         name: "Transferencia",
+                        right: true,
                         selector: (row) =>
-                          `${row.paymentTransfer.toLocaleString()}`,
+                          `${row.paymentTransfer}`,
                       },
                     ]
                   : []),
@@ -449,26 +470,30 @@ const StoreList = () => {
                     ? [
                         {
                           name: "Caja",
-                          selector: (row) => `${row.cash.toLocaleString()}`,
+                          right: true,
+                          selector: (row) => `${row.cash}`,
                         },
                       ]
                     : []),
   
                 {
                   name: "Total de ventas",
-                  selector: (row) => `${row.totalPayment.toLocaleString()}`,
+                  right: true,
+                  selector: (row) => `${row.totalPayment}`,
                 },
 
                 {
                   name: "Numero de ventas",
-                  selector: (row) => `${row.totalSales.toLocaleString()}`,
+                  right: true,
+                  selector: (row) => `${row.totalSales}`,
                 },
 
                 ...(showInvestment
                   ? [
                       {
                         name: "Inversión",
-                        selector: (row) => `${row.investment.toLocaleString()}`,
+                        right: true,
+                        selector: (row) => `${row.investment}`,
                       },
                     ]
                   : []),
