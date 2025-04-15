@@ -61,12 +61,12 @@ const ProductList = () => {
       const response = await getProducts(params);
       setProducts(response.data);
 
-      
-      setLoading(false);
 
 //      setTimeout(() => {
 //        setLoading(false);
 //      }, 1000);
+
+    setLoading(false);
     };
   
     fetchProducts();
