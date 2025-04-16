@@ -22,11 +22,11 @@ const CashSummary = () => {
   const [cashFlow, setCashFlow] = useState([]);
   const [cashFlowSummary, setCashFlowSummary] = useState([]);
   const [totalSummary, setTotalSummary] = useState([]);
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchCashData = async () => {
-      setLoading(true)
+      setLoading(true);
       const cashSummary = await getCashSummary(date);
       const paymentMethods = cashSummary.data.filter(
         (cash) => cash.payment_method_data === true
@@ -47,12 +47,11 @@ const CashSummary = () => {
       setTotalSummary(totalSummary);
       const cashFlow = await getCashFlow(date);
       setCashFlow(cashFlow.data);
-      setLoading(false)
+      setLoading(false);
     };
 
     fetchCashData();
   }, [date]);
-
 
   useEffect(() => {
     const fetchCashData = async () => {
@@ -74,12 +73,10 @@ const CashSummary = () => {
       setCashSummary(cashSummary.data);
       setCashFlowSummary(cashFlowSummary);
       setTotalSummary(totalSummary);
-
     };
 
     fetchCashData();
   }, [date, cashFlow]);
-
 
   const handleExport = () => {
     // Definir valores iniciales
@@ -97,35 +94,33 @@ const CashSummary = () => {
   };
 
   const handleUpdateCashFlowList = (updateCashFlow) => {
-      setCashFlow((prevBrands) => {
-        const brandExists = prevBrands.some((b) => b.id === updateCashFlow.id);
-        return brandExists
-          ? prevBrands.map((b) => (b.id === updateCashFlow.id ? updateCashFlow : b))
-          : [...prevBrands, updateCashFlow];
-      });
-    };
-
-
+    setCashFlow((prevBrands) => {
+      const brandExists = prevBrands.some((b) => b.id === updateCashFlow.id);
+      return brandExists
+        ? prevBrands.map((b) =>
+            b.id === updateCashFlow.id ? updateCashFlow : b
+          )
+        : [...prevBrands, updateCashFlow];
+    });
+  };
 
   return (
     <>
-    <CustomSpinner2 isLoading={loading}></CustomSpinner2>
-      <CashFlowModal onUpdateCashFlowList={handleUpdateCashFlowList}/>
+      <CustomSpinner2 isLoading={loading}></CustomSpinner2>
+      <CashFlowModal onUpdateCashFlowList={handleUpdateCashFlowList} />
       <div className="custom-section">
         <h1>Corte de caja</h1>
         <Row>
           <Col md={6}>
-
-
             <Form>
-            <Form.Group className="">
-              <Form.Label className="">Fecha</Form.Label>
-              <Form.Control
-                type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-                max={today}
-              />
+              <Form.Group className="">
+                <Form.Label className="">Fecha</Form.Label>
+                <Form.Control
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  max={today}
+                />
               </Form.Group>
             </Form>
           </Col>
@@ -146,19 +141,18 @@ const CashSummary = () => {
                 },
                 {
                   name: "Cantidad",
-                  right: true,
+                  style: {
+                    justifyContent: "flex-end", // para alinear dentro del td con flexbox
+                    textAlign: "right",
+                  },
                   selector: (row) => "$" + row.amount,
                 },
               ]}
             />
           </Col>
 
-
-
           <Col md={3}>
-            <h2>
-              Revisión de ventas y pagos
-            </h2>
+            <h2>Revisión de ventas y pagos</h2>
             <CustomTable
               data={salesSummary}
               columns={[
@@ -168,13 +162,15 @@ const CashSummary = () => {
                 },
                 {
                   name: "Cantidad",
-                  right: true,
+                  style: {
+                    justifyContent: "flex-end", // para alinear dentro del td con flexbox
+                    textAlign: "right",
+                  },
                   selector: (row) => "$" + row.amount,
                 },
               ]}
             />
           </Col>
-
 
           <Col md={3}>
             <h2>Flujo de caja</h2>
@@ -187,13 +183,15 @@ const CashSummary = () => {
                 },
                 {
                   name: "Cantidad",
-                  right: true,
+                  style: {
+                    justifyContent: "flex-end", // para alinear dentro del td con flexbox
+                    textAlign: "right",
+                  },
                   selector: (row) => "$" + row.amount,
                 },
               ]}
             />
           </Col>
-
 
           <Col md={3}>
             <h2> Total en caja</h2>
@@ -206,7 +204,10 @@ const CashSummary = () => {
                 },
                 {
                   name: "Cantidad",
-                  right: true,
+                  style: {
+                    justifyContent: "flex-end", // para alinear dentro del td con flexbox
+                    textAlign: "right",
+                  },
                   selector: (row) => "$" + row.amount,
                 },
               ]}

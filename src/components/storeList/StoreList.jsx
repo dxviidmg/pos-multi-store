@@ -38,14 +38,14 @@ const StoreList = () => {
   });
 
   useEffect(() => {
-    const fetchBrands = async () => {
+    const fetchDepartments = async () => {
       setLoading(true);
       const response = await getDepartments();
       setDepartments(response.data);
       setLoading(false);
     };
 
-    fetchBrands();
+    fetchDepartments();
   }, []); // Solo se ejecuta una vez al montar
 
   const handleParams = async (e) => {
@@ -71,9 +71,11 @@ const StoreList = () => {
       });
       const response2 = await getStores({ ...params, store_type: "T" });
       const response3 = await getStores({ ...params, store_type: "A" });
+
+      console.log("a");
       setStores(response2.data);
       setStorages(response3.data);
-
+      console.log("b");
       const {
         profit,
         paymentCash,
@@ -118,6 +120,10 @@ const StoreList = () => {
 
       const dateRange = getDateDifference(params.start_date, params.end_date);
       setRange(dateRange);
+
+      setTimeout(() => {
+        setLoading(false);
+      }, 1000);
       setLoading(false);
     };
 
@@ -278,7 +284,10 @@ const StoreList = () => {
             },
             {
               name: "Ganancia",
-              right: true,
+              style: {
+                justifyContent: "flex-end", // para alinear dentro del td con flexbox
+                textAlign: "right",
+              },
               selector: (row) =>
                 "$" + row.cash_summary[10]["amount"].toLocaleString(),
             },
@@ -287,7 +296,10 @@ const StoreList = () => {
               ? [
                   {
                     name: "Efectivo",
-                    right: true,
+                    style: {
+                      justifyContent: "flex-end", // para alinear dentro del td con flexbox
+                      textAlign: "right",
+                    },
                     selector: (row) =>
                       `$${
                         row.cash_summary?.[0]?.amount?.toLocaleString() || "0"
@@ -295,7 +307,10 @@ const StoreList = () => {
                   },
                   {
                     name: "Tarjeta",
-                    right: true,
+                    style: {
+                      justifyContent: "flex-end", // para alinear dentro del td con flexbox
+                      textAlign: "right",
+                    },
                     selector: (row) =>
                       `$${
                         row.cash_summary?.[1]?.amount?.toLocaleString() || "0"
@@ -303,7 +318,10 @@ const StoreList = () => {
                   },
                   {
                     name: "Transferencia",
-                    right: true,
+                    style: {
+                      justifyContent: "flex-end", // para alinear dentro del td con flexbox
+                      textAlign: "right",
+                    },
                     selector: (row) =>
                       `$${
                         row.cash_summary?.[2]?.amount?.toLocaleString() || "0"
@@ -316,7 +334,10 @@ const StoreList = () => {
               ? [
                   {
                     name: "Caja",
-                    right: true,
+                    style: {
+                      justifyContent: "flex-end", // para alinear dentro del td con flexbox
+                      textAlign: "right",
+                    },
                     selector: (row) =>
                       "$" + row.cash_summary[9]["amount"].toLocaleString(),
                   },
@@ -325,13 +346,19 @@ const StoreList = () => {
 
             {
               name: "Total de ventas",
-              right: true,
+              style: {
+                justifyContent: "flex-end", // para alinear dentro del td con flexbox
+                textAlign: "right",
+              },
               selector: (row) =>
                 "$" + row.cash_summary[4]["amount"].toLocaleString(),
             },
             {
               name: "Número de ventas",
-              right: true,
+              style: {
+                justifyContent: "flex-end", // para alinear dentro del td con flexbox
+                textAlign: "right",
+              },
               selector: (row) =>
                 row.cash_summary[12]["amount"].toLocaleString(),
             },
@@ -339,7 +366,10 @@ const StoreList = () => {
             ...(showInvestment
               ? [
                   {
-                    right: true,
+                    style: {
+                      justifyContent: "flex-end", // para alinear dentro del td con flexbox
+                      textAlign: "right",
+                    },
                     name: "Inversión",
                     selector: (row) =>
                       row.investment
@@ -388,7 +418,10 @@ const StoreList = () => {
                   ? [
                       {
                         name: "Inversión",
-                        right: true,
+                        style: {
+                          justifyContent: "flex-end", // para alinear dentro del td con flexbox
+                          textAlign: "right",
+                        },
                         selector: (row) =>
                           row.investment
                             ? "$" + row.investment.toLocaleString()
@@ -445,7 +478,10 @@ const StoreList = () => {
                 {},
                 {
                   name: "Ganancia",
-                  right: true,
+                  style: {
+                    justifyContent: "flex-end", // para alinear dentro del td con flexbox
+                    textAlign: "right",
+                  },
                   selector: (row) => `${row.profit}`,
                 },
 
@@ -453,19 +489,28 @@ const StoreList = () => {
                   ? [
                       {
                         name: "Efectivo",
-                        right: true,
+                        style: {
+                          justifyContent: "flex-end", // para alinear dentro del td con flexbox
+                          textAlign: "right",
+                        },
                         selector: (row) => `${row.paymentCash}`,
                       },
 
                       {
                         name: "Tarjeta",
-                        right: true,
+                        style: {
+                          justifyContent: "flex-end", // para alinear dentro del td con flexbox
+                          textAlign: "right",
+                        },
                         selector: (row) => `${row.paymentCard}`,
                       },
 
                       {
                         name: "Transferencia",
-                        right: true,
+                        style: {
+                          justifyContent: "flex-end", // para alinear dentro del td con flexbox
+                          textAlign: "right",
+                        },
                         selector: (row) => `${row.paymentTransfer}`,
                       },
                     ]
@@ -475,7 +520,10 @@ const StoreList = () => {
                   ? [
                       {
                         name: "Caja",
-                        right: true,
+                        style: {
+                          justifyContent: "flex-end", // para alinear dentro del td con flexbox
+                          textAlign: "right",
+                        },
                         selector: (row) => `${row.cash}`,
                       },
                     ]
@@ -483,13 +531,19 @@ const StoreList = () => {
 
                 {
                   name: "Total de ventas",
-                  right: true,
+                  style: {
+                    justifyContent: "flex-end", // para alinear dentro del td con flexbox
+                    textAlign: "right",
+                  },
                   selector: (row) => `${row.totalPayment}`,
                 },
 
                 {
                   name: "Numero de ventas",
-                  right: true,
+                  style: {
+                    justifyContent: "flex-end", // para alinear dentro del td con flexbox
+                    textAlign: "right",
+                  },
                   selector: (row) => `${row.totalSales}`,
                 },
 
@@ -497,7 +551,10 @@ const StoreList = () => {
                   ? [
                       {
                         name: "Inversión",
-                        right: true,
+                        style: {
+                          justifyContent: "flex-end", // para alinear dentro del td con flexbox
+                          textAlign: "right",
+                        },
                         selector: (row) => `${row.investment}`,
                       },
                     ]
