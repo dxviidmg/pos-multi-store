@@ -48,7 +48,6 @@ const ProductList = () => {
       setTimeout(() => {
         setLoading(false);
       }, 500);
-      console.log('0.5 s')
     };
 
     fetchProducts();

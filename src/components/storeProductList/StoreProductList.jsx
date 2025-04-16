@@ -24,39 +24,33 @@ const StoreProductList = () => {
 
   useEffect(() => {
     const fetchBrands = async () => {
-        setLoading(true);
-        const response = await getBrands();
-        setBrands(response.data);
-  
-//        if (Object.keys(params).length === 0 && response.data.length > 0) {
-//          setParams({ brand_id: response.data[0].id });
-//        }
-//        setLoading(false);
-
-        setTimeout(() => {
-          setLoading(false);
-        }, 1000); // 1000 milisegundos = 1 segundo
+      const response = await getBrands();
+      setBrands(response.data);
     };
-  
+
     fetchBrands();
   }, []); // Solo se ejecuta una vez al montar
-  
+
   useEffect(() => {
     const fetchStoreProducts = async () => {
-//      if (Object.keys(params).length === 0) return;
-  
-        setLoading(true);
-        const response = await getStoreProducts(params);
-        setStoreProducts(response.data);
+      setLoading(true);
+      const response = await getStoreProducts(params);
+      setStoreProducts(response.data);
+
+      setTimeout(() => {
         setLoading(false);
+      }, 500); // 1000 milisegundos = 1 segundo
     };
-  
+
     fetchStoreProducts();
   }, [params]);
 
   const handleDownload = async () => {
     const storeProductsForReport = storeProducts.map(
-      ({ product: { code: Código, brand_name: Marca, name: Nombre }, stock: Stock }) => ({
+      ({
+        product: { code: Código, brand_name: Marca, name: Nombre },
+        stock: Stock,
+      }) => ({
         Código,
         Marca,
         Nombre,
