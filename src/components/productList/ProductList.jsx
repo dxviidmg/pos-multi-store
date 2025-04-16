@@ -50,7 +50,7 @@ const ProductList = () => {
 
       setTimeout(() => {
         setLoading(false);
-      }, 1000); // 1000 milisegundos = 1 segundo
+      }, 3000); // 1000 milisegundos = 1 segundo
 
     };
 
