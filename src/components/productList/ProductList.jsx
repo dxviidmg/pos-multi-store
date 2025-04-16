@@ -30,7 +30,6 @@ const ProductList = () => {
 
   useEffect(() => {
     const fetchOptions = async () => {
-      setLoading(true);
       const response = await getBrands();
       setBrands(response.data);
       const response2 = await getDepartments();
@@ -46,13 +45,6 @@ const ProductList = () => {
 //        });
 //      }
 
-      console.log('1')
-
-//      setLoading(false);
-
-      setTimeout(() => {
-        setLoading(false);
-      }, 20000); // 1000 milisegundos = 1 segundo
 
     };
 
@@ -72,8 +64,8 @@ const ProductList = () => {
             setTimeout(() => {
               setLoading(false);
             }, 3000);
-
-      setLoading(false);
+      console.log('3 seg despues')
+//      setLoading(false);
     };
 
     fetchProducts();
