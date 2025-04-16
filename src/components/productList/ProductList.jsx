@@ -34,38 +34,21 @@ const ProductList = () => {
       setBrands(response.data);
       const response2 = await getDepartments();
       setDepartments(response2.data);
-
-//      if (response.data.length > 0) {
-        // Solo establecemos params si aún no está definido
-//        setParams((prev) => {
-//          if (!("brand_id" in prev)) {
-//            return { ...prev, brand_id: response.data[0].id };
-//          }
-//          return prev;
-//        });
-//      }
-
-
     };
 
     fetchOptions();
-  }, []); // solo se ejecuta una vez al montar
+  }, []);
 
   useEffect(() => {
-    // Para evitar llamada doble inicial cuando aún no hay brand_id
-//    if (Object.keys(params).length === 0) return;
-
     const fetchProducts = async () => {
       setLoading(true);
       const response = await getProducts(params);
       setProducts(response.data);
 
-      console.log('2')
-            setTimeout(() => {
-              setLoading(false);
-            }, 1000);
-      console.log('3 seg despues')
-//      setLoading(false);
+      setTimeout(() => {
+        setLoading(false);
+      }, 500);
+      console.log('0.5 s')
     };
 
     fetchProducts();
