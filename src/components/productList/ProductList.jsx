@@ -52,7 +52,7 @@ const ProductList = () => {
 
       setTimeout(() => {
         setLoading(false);
-      }, 5000); // 1000 milisegundos = 1 segundo
+      }, 8000); // 1000 milisegundos = 1 segundo
 
     };
 
