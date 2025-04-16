@@ -63,7 +63,7 @@ const ProductList = () => {
       console.log('2')
             setTimeout(() => {
               setLoading(false);
-            }, 3000);
+            }, 1000);
       console.log('3 seg despues')
 //      setLoading(false);
     };
