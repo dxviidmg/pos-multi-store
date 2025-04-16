@@ -199,7 +199,7 @@ const ProductImport = () => {
     <div>
       <CustomSpinner2 isLoading={loading}></CustomSpinner2>
       <div className="custom-section">
-        <Form.Label className="fw-bold">Importación de productos</Form.Label>
+        <h1>Importación de productos</h1>
         <Row>
           <Col md={3} className="d-flex flex-column justify-content-end">
             <Form.Label>Archivo</Form.Label>
@@ -346,7 +346,7 @@ const ProductImport = () => {
       </div>
 
       <div className="custom-section" hidden={showExample}>
-        <Form.Label className="fw-bold">Ejemplo de plantilla</Form.Label>
+        <h1>Ejemplo de plantilla</h1>
 
         <CustomTable
           data={DATA_SAMPLE}
@@ -399,7 +399,7 @@ const ProductImport = () => {
       </div>
 
       <div className="custom-section">
-        <Form.Label className="fw-bold">Archivo actual</Form.Label>
+        <h1>Archivo actual</h1>
         <CustomTable
           data={products}
           columns={[

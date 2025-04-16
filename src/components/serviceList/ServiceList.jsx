@@ -1,6 +1,5 @@
 import React from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { Form } from "react-bootstrap";
 
 const SERVICES = [
   {
@@ -36,7 +35,7 @@ const ServiceList = () => {
   return (
     <>
       <div className="custom-section">
-        <Form.Label className="fw-bold">Estimado cliente.</Form.Label>
+        <h1>Estimado cliente.</h1>
 
         <p>
           Queremos tomarnos un momento para agradecerte por tu confianza y

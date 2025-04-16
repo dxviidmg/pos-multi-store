@@ -83,7 +83,7 @@ const ProductReassign = () => {
   return (
     <div className="custom-section">
       <CustomSpinner2 isLoading={loading}></CustomSpinner2>
-      <Form.Label className="fw-bold">Reasignación de productos</Form.Label>
+      <h1>Reasignación de productos</h1>
 
 
 

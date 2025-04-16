@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { Form, FormCheck } from "react-bootstrap";
+import { FormCheck } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import { deleteBrands, getBrands } from "../apis/brands";
 import BrandModal from "../brandModal/BrandModal";
@@ -46,18 +46,19 @@ const BrandList = () => {
   };
 
   const handleDeleteBrands = async () => {
+    const productsCount = selectedRows.reduce(
+      (sum, element) => sum + element.product_count,
+      0
+    );
 
-    const productsCount = selectedRows.reduce((sum, element) => sum + element.product_count, 0);
-
-
-    if (productsCount > 0){
+    if (productsCount > 0) {
       Swal.fire({
         icon: "error",
         title: "Error al borrar marcas",
         text: "Las marcas no deben tener productos relacionados",
         timer: 5000,
       });
-      return
+      return;
     }
     const selectedIds = selectedRows.map((element) => element.id);
     const response = await deleteBrands(selectedIds);
@@ -90,8 +91,7 @@ const BrandList = () => {
   return (
     <div className="custom-section">
       <BrandModal onUpdateBrandList={handleUpdateBrandList}></BrandModal>{" "}
-      <Form.Label className="fw-bold">Lista de marcas</Form.Label>
-      <br></br>
+      <h1>Marcas</h1>
       <CustomButton onClick={() => handleOpenModal()}>Crear</CustomButton>
       <CustomButton
         onClick={handleDeleteBrands}

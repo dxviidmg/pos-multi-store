@@ -129,7 +129,7 @@ const SaleModal = ({ onUpdateSaleList }) => {
             />
           </Col>
           <Col md={12}>
-            <Form.Label className="fw-bold">Productos comprados</Form.Label>
+            <h1>Productos comprados</h1>
 
             <CustomTable
               data={formData.products_sale}

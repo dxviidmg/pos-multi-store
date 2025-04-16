@@ -67,7 +67,7 @@ const StoreList = () => {
         totalPayment: "Calculando...",
         totalSales: "Calculando...",
         cash: "Calculando...",
-        investment: "Calculando..."
+        investment: "Calculando...",
       });
       const response2 = await getStores({ ...params, store_type: "T" });
       const response3 = await getStores({ ...params, store_type: "A" });
@@ -82,7 +82,7 @@ const StoreList = () => {
         totalPayment,
         totalSales,
         cash,
-        investment
+        investment,
       } = response2.data.reduce(
         (acc, store) => ({
           profit: acc.profit + store.cash_summary[10].amount,
@@ -92,7 +92,7 @@ const StoreList = () => {
           totalPayment: acc.totalPayment + store.cash_summary[4].amount,
           totalSales: acc.totalSales + store.cash_summary[12].amount,
           cash: acc.cash + store.cash_summary[9].amount,
-          investment: 0
+          investment: 0,
         }),
         {
           profit: 0,
@@ -102,7 +102,7 @@ const StoreList = () => {
           totalPayment: 0,
           totalSales: 0,
           cash: 0,
-          investment: 0
+          investment: 0,
         }
       );
       setTotals({
@@ -113,7 +113,7 @@ const StoreList = () => {
         totalPayment,
         cash,
         totalSales,
-        investment
+        investment,
       });
 
       const dateRange = getDateDifference(params.start_date, params.end_date);
@@ -182,7 +182,7 @@ const StoreList = () => {
   };
 
   const memoStores = useMemo(() => stores, [stores]);
-  
+
   return (
     <>
       {tenantInfo.notices && tenantInfo.notices.length > 0 && (
@@ -265,7 +265,7 @@ const StoreList = () => {
           </Row>
         </Form>
 
-        <Form.Label className="fw-bold">Tiendas</Form.Label>
+        <h2>Tiendas</h2>
 
         <CustomTable
           progressPending={loading}
@@ -281,9 +281,6 @@ const StoreList = () => {
               right: true,
               selector: (row) =>
                 "$" + row.cash_summary[10]["amount"].toLocaleString(),
-
-
-
             },
 
             ...(!params.department_id
@@ -357,7 +354,7 @@ const StoreList = () => {
               cell: (row) => (
                 <>
                   <CustomButton onClick={() => handleSelectStore(row)}>
-                    <HomeIcon/>
+                    <HomeIcon />
                   </CustomButton>
                 </>
               ),
@@ -376,7 +373,7 @@ const StoreList = () => {
 
         {storages.length > 0 && (
           <>
-            <Form.Label className="fw-bold">Almacenes</Form.Label>
+            <h2>Almacenes</h2>
 
             <CustomTable
               progressPending={loading}
@@ -386,7 +383,7 @@ const StoreList = () => {
                   name: "Nombre",
                   selector: (row) => `${row.name}`,
                 },
-                {grow: 10},
+                { grow: 10 },
                 ...(showInvestment
                   ? [
                       {
@@ -405,7 +402,7 @@ const StoreList = () => {
                   cell: (row) => (
                     <>
                       <CustomButton onClick={() => handleSelectStore(row)}>
-                      <HomeIcon/>
+                        <HomeIcon />
                       </CustomButton>
                     </>
                   ),
@@ -419,7 +416,7 @@ const StoreList = () => {
                       )}
                     </>
                   ),
-                }
+                },
               ]}
             />
           </>
@@ -427,7 +424,7 @@ const StoreList = () => {
 
         {stores.length + storages.length > 1 && (
           <>
-            <Form.Label className="fw-bold mt-3">Totales</Form.Label>
+            <h2>Totales</h2>
 
             <CustomTable
               progressPending={loading}
@@ -436,11 +433,12 @@ const StoreList = () => {
                   profit: "$" + totals.profit.toLocaleString(),
                   paymentCash: "$" + totals.paymentCash.toLocaleString(),
                   paymentCard: "$" + totals.paymentCard.toLocaleString(),
-                  paymentTransfer: "$" + totals.paymentTransfer.toLocaleString(),
+                  paymentTransfer:
+                    "$" + totals.paymentTransfer.toLocaleString(),
                   totalPayment: "$" + totals.totalPayment.toLocaleString(),
                   cash: "$" + totals.cash.toLocaleString(),
                   investment: "$" + totals.investment.toLocaleString(),
-                  totalSales: totals.totalSales.toLocaleString()
+                  totalSales: totals.totalSales.toLocaleString(),
                 },
               ]}
               columns={[
@@ -456,36 +454,33 @@ const StoreList = () => {
                       {
                         name: "Efectivo",
                         right: true,
-                        selector: (row) =>
-                          `${row.paymentCash}`,
+                        selector: (row) => `${row.paymentCash}`,
                       },
 
                       {
                         name: "Tarjeta",
                         right: true,
-                        selector: (row) =>
-                          `${row.paymentCard}`,
+                        selector: (row) => `${row.paymentCard}`,
                       },
 
                       {
                         name: "Transferencia",
                         right: true,
-                        selector: (row) =>
-                          `${row.paymentTransfer}`,
+                        selector: (row) => `${row.paymentTransfer}`,
                       },
                     ]
                   : []),
 
-                  ...(!params.department_id
-                    ? [
-                        {
-                          name: "Caja",
-                          right: true,
-                          selector: (row) => `${row.cash}`,
-                        },
-                      ]
-                    : []),
-  
+                ...(!params.department_id
+                  ? [
+                      {
+                        name: "Caja",
+                        right: true,
+                        selector: (row) => `${row.cash}`,
+                      },
+                    ]
+                  : []),
+
                 {
                   name: "Total de ventas",
                   right: true,
@@ -508,9 +503,9 @@ const StoreList = () => {
                     ]
                   : []),
 
-                  {
-                    grow: 2.4
-                  },
+                {
+                  grow: 2.4,
+                },
               ]}
             ></CustomTable>
           </>
