@@ -52,7 +52,7 @@ function App() {
             <Route path="/ventas/" element={<SaleList />} />
             <Route path="/vender/" element={<SaleCreate />} />
             <Route path="/importar-ventas/" element={<SaleImport />} />
-            <Route path="/resumen-caja/" element={<CashSummary />} />
+            <Route path="/corte-caja/" element={<CashSummary />} />
             <Route path="/movimientos/" element={<CashFlowList />} />
             <Route path="/distribuir/" element={<SaleCreate />} />
             <Route path="/traspasos/" element={<TransferList />} />
