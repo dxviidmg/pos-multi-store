@@ -35,7 +35,7 @@ const ProductList = () => {
       setBrands(response.data);
       const response2 = await getDepartments();
       setDepartments(response2.data);
-  
+
       if (response.data.length > 0) {
         // Solo establecemos params si aún no está definido
         setParams((prev) => {
@@ -45,30 +45,28 @@ const ProductList = () => {
           return prev;
         });
       }
-  
+
       setLoading(false);
     };
-  
+
     fetchOptions();
   }, []); // solo se ejecuta una vez al montar
-  
+
   useEffect(() => {
     // Para evitar llamada doble inicial cuando aún no hay brand_id
     if (Object.keys(params).length === 0) return;
-  
+
     const fetchProducts = async () => {
       setLoading(true);
       const response = await getProducts(params);
       setProducts(response.data);
+      //      setTimeout(() => {
+      //        setLoading(false);
+      //      }, 1000);
 
-
-//      setTimeout(() => {
-//        setLoading(false);
-//      }, 1000);
-
-    setLoading(false);
+      setLoading(false);
     };
-  
+
     fetchProducts();
   }, [params]);
 
@@ -193,7 +191,7 @@ const ProductList = () => {
     <div className="custom-section">
       <CustomSpinner2 isLoading={loading}></CustomSpinner2>
       <ProductModal onUpdateProductList={handleUpdateProductList} />
-      <Form.Label className="fw-bold">Lista de productos</Form.Label>
+      <h1>Productos</h1>
 
       <div className="d-flex align-items-center gap-3">
         <CustomButton onClick={() => handleOpenModal()}>
