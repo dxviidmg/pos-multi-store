@@ -39,10 +39,8 @@ const StoreList = () => {
 
   useEffect(() => {
     const fetchDepartments = async () => {
-      setLoading(true);
       const response = await getDepartments();
       setDepartments(response.data);
-      setLoading(false);
     };
 
     fetchDepartments();
