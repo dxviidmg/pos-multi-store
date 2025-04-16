@@ -81,7 +81,7 @@ function Login({ onLogin }) {
 
   return (
     <div id="login">
-      <Container style={{ height: "100vh" }}>
+      <Container style={{ height: "99.7vh" }}>
         <Row className="h-100 d-flex align-items-center justify-content-center">
           <Col
             sx={10}
