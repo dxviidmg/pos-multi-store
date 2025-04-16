@@ -54,8 +54,8 @@ const CustomNavbar = () => {
         <NavDropdown.Item href="/logs/">Logs</NavDropdown.Item>
       </NavDropdown>
       <NavDropdown title="Ventas" className="custom-dropdown">
-        <NavDropdown.Item href="/resumen-caja/" hidden={user.role === "seller"}>
-          Resumen
+        <NavDropdown.Item href="/corte-caja/" hidden={user.role === "seller"}>
+          Corte de caja
         </NavDropdown.Item>
         <NavDropdown.Item href="/movimientos/" hidden={user.role === "seller"}>
           Movimientos de caja
