@@ -98,7 +98,7 @@ const SaleImport = () => {
   return (
     <div>
       <div className="custom-section">
-        <Form.Label className="fw-bold">Importar ventas</Form.Label>
+        <h1>Importar ventas</h1>
         <Row>
           <Col md={4}>
             <Form.Group controlId="formFile" className="">
@@ -154,7 +154,7 @@ const SaleImport = () => {
 
       <div className="custom-section" hidden={showExample}>
 
-            <Form.Label className="fw-bold">Ejemplo de plantilla</Form.Label>
+            <h1>Ejemplo de plantilla</h1>
 
             <CustomTable
               data={DATA_SAMPLE}
@@ -174,7 +174,7 @@ const SaleImport = () => {
               ]}
             ></CustomTable>
 
-            <Form.Label className="fw-bold">Notas</Form.Label>
+            <h1>Notas</h1>
             <p>
               1-.Las descripciones pueden ser NO Exactas la información de la
               base de datos, pero si una referencia en caso de que haya escrito
@@ -185,7 +185,7 @@ const SaleImport = () => {
       </div>
 
       <div className="custom-section">
-        <Form.Label className="fw-bold">Archivo actual</Form.Label>
+        <h1>Archivo actual</h1>
         <CustomTable
           data={sales}
           columns={[

@@ -2,39 +2,36 @@ import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
 import { Col, Form, Row } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
-import {
-  getFormattedDate,
-  formatTimeFromDate,
-} from "../utils/utils";
+import { getFormattedDate, formatTimeFromDate } from "../utils/utils";
 import { useDispatch } from "react-redux";
-
 
 import { getCashFlow } from "../apis/cashflow";
 import CashFlowModal from "../cashFlowModal/CashFlowModal";
-import { hideCashFlowModal, showCashFlowModal } from "../redux/cashFlowModal/CashFlowModalActions";
+import {
+  hideCashFlowModal,
+  showCashFlowModal,
+} from "../redux/cashFlowModal/CashFlowModalActions";
 import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
 
 const today = getFormattedDate();
 
 const CashFlowList = () => {
   const [cashFlow, setCashFlow] = useState([]);
-  const [loading, setLoading] = useState(false)
-  const [date, setDate] = useState(today)
+  const [loading, setLoading] = useState(false);
+  const [date, setDate] = useState(today);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchCashData = async () => {
-      setLoading(true)
+      setLoading(true);
       const cashFlow = await getCashFlow(date);
       setCashFlow(cashFlow.data);
-      setLoading(false)
+      setLoading(false);
     };
 
     fetchCashData();
   }, [date]);
-
-
 
   const handleOpenModal = (cashFlow) => {
     dispatch(hideCashFlowModal());
@@ -42,26 +39,28 @@ const CashFlowList = () => {
   };
 
   const handleUpdateCashFlowList = (updateCashFlow) => {
-      setCashFlow((prevBrands) => {
-        const brandExists = prevBrands.some((b) => b.id === updateCashFlow.id);
-        return brandExists
-          ? prevBrands.map((b) => (b.id === updateCashFlow.id ? updateCashFlow : b))
-          : [...prevBrands, updateCashFlow];
-      });
-    };
-
-
+    setCashFlow((prevBrands) => {
+      const brandExists = prevBrands.some((b) => b.id === updateCashFlow.id);
+      return brandExists
+        ? prevBrands.map((b) =>
+            b.id === updateCashFlow.id ? updateCashFlow : b
+          )
+        : [...prevBrands, updateCashFlow];
+    });
+  };
 
   return (
     <>
-    <CustomSpinner2 isLoading={loading}></CustomSpinner2>
-      <CashFlowModal onUpdateCashFlowList={handleUpdateCashFlowList}/>
+      <CustomSpinner2 isLoading={loading}></CustomSpinner2>
+      <CashFlowModal onUpdateCashFlowList={handleUpdateCashFlowList} />
       <div className="custom-section">
-        <Form.Label className="fw-bold">Lista de movimientos</Form.Label>
-        
+        <h1>Movimientos en caja</h1>
+
         <Row>
-        <Col className="d-flex flex-column justify-content-end">
-        <CustomButton fullWidth={true} onClick={()=> handleOpenModal()}>Crear movimiento</CustomButton>
+          <Col className="d-flex flex-column justify-content-end">
+            <CustomButton fullWidth={true} onClick={() => handleOpenModal()}>
+              Crear movimiento
+            </CustomButton>
           </Col>
           <Col>
             <Form>

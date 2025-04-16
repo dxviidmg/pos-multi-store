@@ -248,7 +248,7 @@ const SearchProduct = () => {
   return (
     <>
       <StockModal />
-      <Form.Label className="fw-bold">Buscador de productos</Form.Label>
+      <h1>Buscador de productos</h1>
       <CustomButton disabled={!urlPrinter} onClick={handlePrintTicket}>
         Verificar impresora
       </CustomButton>

@@ -28,10 +28,14 @@ const StoreProductList = () => {
         const response = await getBrands();
         setBrands(response.data);
   
-        if (Object.keys(params).length === 0 && response.data.length > 0) {
-          setParams({ brand_id: response.data[0].id });
-        }
-        setLoading(false);
+//        if (Object.keys(params).length === 0 && response.data.length > 0) {
+//          setParams({ brand_id: response.data[0].id });
+//        }
+//        setLoading(false);
+
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000); // 1000 milisegundos = 1 segundo
     };
   
     fetchBrands();
@@ -93,7 +97,7 @@ const StoreProductList = () => {
       <StoreProductLogsModal
         onUpdateStoreProductList={handleUpdateStoreProductList}
       />
-      <Form.Label className="fw-bold">Inventario</Form.Label>
+      <h1>Inventario</h1>
 
       <br />
       <CustomButton onClick={handleDownload}>Descargar inventario</CustomButton>

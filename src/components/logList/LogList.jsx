@@ -50,7 +50,7 @@ const LogList = () => {
     <>
       <CustomSpinner2 isLoading={loading}></CustomSpinner2>
       <div className="custom-section">
-        <Form.Label className="fw-bold">Lista de logs</Form.Label>
+        <h1>Logs</h1>
 
         <Row>
           <Col>
@@ -81,7 +81,6 @@ const LogList = () => {
             </Form.Select>
           </Col>
 
-
           <Col>
             <Form.Label>Movimientos</Form.Label>
             <Form.Select
@@ -98,7 +97,6 @@ const LogList = () => {
               ))}
             </Form.Select>
           </Col>
-
         </Row>
 
         <CustomTable
@@ -125,7 +123,7 @@ const LogList = () => {
             {
               name: "Descripción",
               selector: (row) => row.description,
-              grow: 2
+              grow: 2,
             },
 
             {

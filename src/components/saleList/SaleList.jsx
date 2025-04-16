@@ -84,7 +84,7 @@ const SaleList = () => {
           </Alert>
         )}
 
-        <Form.Label className="fw-bold">Lista de ventas</Form.Label>
+        <h1>Ventas</h1>
         <Row>
           <Col>
             <Form>
@@ -152,16 +152,14 @@ const SaleList = () => {
               grow: 1.5,
             },
 
-
-
             ...(showAllFields
               ? [
-                {
-                  name: "Referencia",
-                  selector: (row) => row.reference,
-                  wrap: true,
-                  grow: 2,
-                },
+                  {
+                    name: "Referencia",
+                    selector: (row) => row.reference,
+                    wrap: true,
+                    grow: 2,
+                  },
                 ]
               : []),
             {
@@ -172,7 +170,7 @@ const SaleList = () => {
             },
             {
               name: "Acciones",
-              grow: showAllFields ? 6.1: 3.1,
+              grow: showAllFields ? 6.1 : 3.1,
               cell: (row) => (
                 <>
                   {urlPrinter && (

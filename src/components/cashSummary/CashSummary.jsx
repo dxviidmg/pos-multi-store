@@ -112,13 +112,14 @@ const CashSummary = () => {
     <CustomSpinner2 isLoading={loading}></CustomSpinner2>
       <CashFlowModal onUpdateCashFlowList={handleUpdateCashFlowList}/>
       <div className="custom-section">
+        <h1>Corte de caja</h1>
         <Row>
           <Col md={6}>
-            <Form.Label className="fw-bold">Resumen de caja</Form.Label>
+
 
             <Form>
-            <Form.Group className="d-flex align-items-center">
-              <Form.Label className="mr-5">Fecha</Form.Label>
+            <Form.Group className="">
+              <Form.Label className="">Fecha</Form.Label>
               <Form.Control
                 type="date"
                 value={date}
@@ -135,7 +136,7 @@ const CashSummary = () => {
           </Col>
 
           <Col md={3}>
-            <Form.Label className="fw-bold">Metodos de pago</Form.Label>
+            <h2>Métodos de pago</h2>
             <CustomTable
               data={paymentMethodsSummary}
               columns={[
@@ -145,6 +146,7 @@ const CashSummary = () => {
                 },
                 {
                   name: "Cantidad",
+                  right: true,
                   selector: (row) => "$" + row.amount,
                 },
               ]}
@@ -154,9 +156,9 @@ const CashSummary = () => {
 
 
           <Col md={3}>
-            <Form.Label className="fw-bold">
+            <h2>
               Revisión de ventas y pagos
-            </Form.Label>
+            </h2>
             <CustomTable
               data={salesSummary}
               columns={[
@@ -166,6 +168,7 @@ const CashSummary = () => {
                 },
                 {
                   name: "Cantidad",
+                  right: true,
                   selector: (row) => "$" + row.amount,
                 },
               ]}
@@ -174,7 +177,7 @@ const CashSummary = () => {
 
 
           <Col md={3}>
-            <Form.Label className="fw-bold">Flujo de caja</Form.Label>
+            <h2>Flujo de caja</h2>
             <CustomTable
               data={cashFlowSummary}
               columns={[
@@ -184,6 +187,7 @@ const CashSummary = () => {
                 },
                 {
                   name: "Cantidad",
+                  right: true,
                   selector: (row) => "$" + row.amount,
                 },
               ]}
@@ -192,7 +196,7 @@ const CashSummary = () => {
 
 
           <Col md={3}>
-            <Form.Label className="fw-bold"> Total en caja</Form.Label>
+            <h2> Total en caja</h2>
             <CustomTable
               data={totalSummary}
               columns={[
@@ -202,6 +206,7 @@ const CashSummary = () => {
                 },
                 {
                   name: "Cantidad",
+                  right: true,
                   selector: (row) => "$" + row.amount,
                 },
               ]}

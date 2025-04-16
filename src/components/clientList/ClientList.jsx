@@ -22,13 +22,10 @@ const ClientList = () => {
     discount_percentage: "",
   });
 
-
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [clientsResponse] = await Promise.all([
-          getClients(),
-        ]);
+        const [clientsResponse] = await Promise.all([getClients()]);
         setClients(clientsResponse.data);
       } catch (error) {
         console.error("Error fetching data", error);
@@ -54,8 +51,7 @@ const ClientList = () => {
         title: "Descuento creado",
         timer: 5000,
       });
-    }
-    else{
+    } else {
       handleDiscountError(response);
     }
   };
@@ -104,63 +100,62 @@ const ClientList = () => {
     <div className="">
       <ClientModal onUpdateClientList={handleUpdateClientList}></ClientModal>
       <div>
-        {getUserData().role === 'owner' && (
-            <div className="custom-section">
-              <Form>
-                <Form.Label className="fw-bold">Crear descuento</Form.Label>
-                <br></br>
-                <Form.Label>Descuento</Form.Label>
-                <Form.Control
-                  type="number"
-                  value={discountFormData.discount_percentage}
-                  placeholder="Descuento"
-                  name="discount_percentage"
-                  onChange={handleDiscountInputChange}
-                />
-                <CustomButton
-                  fullWidth
-                  onClick={handleSaveDiscount}
-                  disabled={!discountFormData.discount_percentage}
-                  marginTop="10px"
-                >
-                  Crear descuento
-                </CustomButton>
-              </Form>
-            </div>
+        {getUserData().role === "owner" && (
+          <div className="custom-section">
+            <Form>
+              <h1>Crear descuento</h1>
+              <br></br>
+              <Form.Label>Descuento</Form.Label>
+              <Form.Control
+                type="number"
+                value={discountFormData.discount_percentage}
+                placeholder="Descuento"
+                name="discount_percentage"
+                onChange={handleDiscountInputChange}
+              />
+              <CustomButton
+                fullWidth
+                onClick={handleSaveDiscount}
+                disabled={!discountFormData.discount_percentage}
+                marginTop="10px"
+              >
+                Crear descuento
+              </CustomButton>
+            </Form>
+          </div>
         )}
       </div>
       <div className="custom-section">
-          <Form.Label className="fw-bold">Lista de clientes</Form.Label>
-          <br></br>
-          <CustomButton onClick={() => handleOpenModal()}>Crear</CustomButton>
+        <h1>Clientes</h1>
+        <CustomButton onClick={() => handleOpenModal()}>Crear</CustomButton>
 
-          <CustomTable
-            searcher={true}
-            data={clients}
-            columns={[
-              { name: "#", selector: (row) => row.id },
-              { name: "Nombre", selector: (row) => row.full_name, grow: 2 },
-              {
-                name: "Teléfono",
-                selector: (row) => row.phone_number,
-                grow: 2,
-              },
-              {
-                name: "Descuento",
-                selector: (row) => `${row.discount_percentage}%`,
-              },
+        <CustomTable
+          searcher={true}
+          data={clients}
+          columns={[
+            { name: "#", selector: (row) => row.id },
+            { name: "Nombre", selector: (row) => row.full_name, grow: 2 },
+            {
+              name: "Teléfono",
+              selector: (row) => row.phone_number,
+              grow: 2,
+            },
+            {
+              name: "Descuento",
+              selector: (row) => `${row.discount_percentage}%`,
+            },
 
-              {
-                name: "Acciones",
-                cell: (row) => (
-                  <CustomButton onClick={() => handleOpenModal(row)}>
-                    <EditIcon></EditIcon>
-                  </CustomButton>
-                ),
-              },
-            ]}
-            highlightOnHover
-          />
+            {
+              name: "Acciones",
+              cell: (row) => (
+                <CustomButton onClick={() => handleOpenModal(row)}>
+                  <EditIcon></EditIcon>
+                </CustomButton>
+              ),
+            },
+          ]}
+          highlightOnHover
+        />
       </div>
     </div>
   );
