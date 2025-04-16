@@ -36,17 +36,22 @@ const ProductList = () => {
       const response2 = await getDepartments();
       setDepartments(response2.data);
 
-      if (response.data.length > 0) {
+//      if (response.data.length > 0) {
         // Solo establecemos params si aún no está definido
-        setParams((prev) => {
-          if (!("brand_id" in prev)) {
-            return { ...prev, brand_id: response.data[0].id };
-          }
-          return prev;
-        });
-      }
+//        setParams((prev) => {
+//          if (!("brand_id" in prev)) {
+//            return { ...prev, brand_id: response.data[0].id };
+//          }
+//          return prev;
+//        });
+//      }
 
-      setLoading(false);
+//      setLoading(false);
+
+      setTimeout(() => {
+        setLoading(false);
+      }, 1000); // 1000 milisegundos = 1 segundo
+
     };
 
     fetchOptions();
@@ -54,7 +59,7 @@ const ProductList = () => {
 
   useEffect(() => {
     // Para evitar llamada doble inicial cuando aún no hay brand_id
-    if (Object.keys(params).length === 0) return;
+//    if (Object.keys(params).length === 0) return;
 
     const fetchProducts = async () => {
       setLoading(true);

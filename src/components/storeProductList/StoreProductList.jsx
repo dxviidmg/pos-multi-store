@@ -43,7 +43,7 @@ const StoreProductList = () => {
   
   useEffect(() => {
     const fetchStoreProducts = async () => {
-      if (Object.keys(params).length === 0) return;
+//      if (Object.keys(params).length === 0) return;
   
         setLoading(true);
         const response = await getStoreProducts(params);
