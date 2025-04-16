@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { Form } from "react-bootstrap";
 import { getPayments } from "../apis/tenants";
 
 const TenantPaymentList = () => {
@@ -17,7 +16,7 @@ const TenantPaymentList = () => {
 
   return (
     <div className="custom-section">
-      <Form.Label className="fw-bold">Lista de pagos</Form.Label>
+      <h1>Pagos del servicio</h1>
       <CustomTable
         data={payments}
         columns={[

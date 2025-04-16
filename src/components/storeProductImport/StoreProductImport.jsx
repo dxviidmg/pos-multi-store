@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { importProducts, importProductsValidation, importStoreProducts, importStoreProductsValidation } from "../apis/products";
+import { importStoreProducts, importStoreProductsValidation } from "../apis/products";
 import { Form, Row, Col } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import Swal from "sweetalert2";
@@ -116,7 +116,7 @@ const StoreProductImport = () => {
   return (
     <div>
       <div className="custom-section">
-        <Form.Label className="fw-bold">Importación de inventario</Form.Label>
+        <h1>Importación de inventario</h1>
         <Row>
           <Col md={6} className="d-flex flex-column justify-content-end">
             <Form.Label>Archivo</Form.Label>
@@ -193,7 +193,7 @@ const StoreProductImport = () => {
       </div>
 
       <div className="custom-section" hidden={showExample}>
-        <Form.Label className="fw-bold">Ejemplo de plantilla</Form.Label>
+        <h1>Ejemplo de plantilla</h1>
 
         <CustomTable
           data={DATA_SAMPLE}
@@ -215,7 +215,7 @@ const StoreProductImport = () => {
       </div>
 
       <div className="custom-section">
-        <Form.Label className="fw-bold">Archivo actual</Form.Label>
+        <h1>Archivo actual</h1>
         <CustomTable
           data={products}
           columns={[

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { Form, FormCheck } from "react-bootstrap";
+import { FormCheck } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import { deleteDepartments, getDepartments } from "../apis/departments";
 import { useDispatch } from "react-redux";
@@ -51,21 +51,20 @@ const DepartmentList = () => {
   };
 
   const handleDeleteDepartments = async () => {
+    const productsCount = selectedRows.reduce(
+      (sum, element) => sum + element.product_count,
+      0
+    );
 
-
-    const productsCount = selectedRows.reduce((sum, element) => sum + element.product_count, 0);
-
-
-    if (productsCount > 0){
+    if (productsCount > 0) {
       Swal.fire({
         icon: "error",
         title: "Error al borrar departamentos",
         text: "Los departamentos no deben tener productos relacionados",
         timer: 5000,
       });
-      return
+      return;
     }
-  
 
     const selectedIds = selectedRows.map((element) => element.id);
     const response = await deleteDepartments(selectedIds);
@@ -100,8 +99,7 @@ const DepartmentList = () => {
       <DepartmentModal
         onUpdateDepartmentList={handleUpdateDepartmentList}
       ></DepartmentModal>{" "}
-      <Form.Label className="fw-bold">Lista de departamentos</Form.Label>
-      <br></br>
+      <h1>Departamentos</h1>
       <CustomButton onClick={() => handleOpenModal()}>Crear</CustomButton>
       <CustomButton
         onClick={handleDeleteDepartments}
