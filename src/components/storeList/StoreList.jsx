@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
 import { getDateDifference, getFormattedDate } from "../utils/utils";
 import { getTenantInfo } from "../apis/tenants";
-import { chooseIcon, PrinterIcon } from "../commons/icons/Icons";
+import { chooseIcon, HomeIcon, PrinterIcon } from "../commons/icons/Icons";
 import { getDepartments } from "../apis/departments";
 
 const StoreList = () => {
@@ -90,8 +90,8 @@ const StoreList = () => {
           paymentCard: acc.paymentCard + store.cash_summary[1].amount,
           paymentTransfer: acc.paymentTransfer + store.cash_summary[2].amount,
           totalPayment: acc.totalPayment + store.cash_summary[4].amount,
-          totalSales: acc.totalPayment + store.cash_summary[12].amount,
-          cash: acc.paymentCash + store.cash_summary[9].amount,
+          totalSales: acc.totalSales + store.cash_summary[12].amount,
+          cash: acc.cash + store.cash_summary[9].amount,
           investment: 0
         }),
         {
@@ -357,7 +357,7 @@ const StoreList = () => {
               cell: (row) => (
                 <>
                   <CustomButton onClick={() => handleSelectStore(row)}>
-                    Entrar
+                    <HomeIcon/>
                   </CustomButton>
                 </>
               ),
@@ -386,6 +386,7 @@ const StoreList = () => {
                   name: "Nombre",
                   selector: (row) => `${row.name}`,
                 },
+                {grow: 10},
                 ...(showInvestment
                   ? [
                       {
@@ -398,19 +399,27 @@ const StoreList = () => {
                       },
                     ]
                   : []),
+
                 {
-                  name: "Acciones",
+                  name: "Entrar",
                   cell: (row) => (
                     <>
                       <CustomButton onClick={() => handleSelectStore(row)}>
-                        Entrar
+                      <HomeIcon/>
                       </CustomButton>
+                    </>
+                  ),
+                },
+                {
+                  name: "Opciónes",
+                  cell: (row) => (
+                    <>
                       {chooseIcon(
                         row.products_count === tenantInfo.product_count
                       )}
                     </>
                   ),
-                },
+                }
               ]}
             />
           </>
@@ -435,6 +444,7 @@ const StoreList = () => {
                 },
               ]}
               columns={[
+                {},
                 {
                   name: "Ganancia",
                   right: true,
@@ -497,6 +507,10 @@ const StoreList = () => {
                       },
                     ]
                   : []),
+
+                  {
+                    grow: 2.4
+                  },
               ]}
             ></CustomTable>
           </>
