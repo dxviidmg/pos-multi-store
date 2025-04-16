@@ -46,11 +46,13 @@ const ProductList = () => {
 //        });
 //      }
 
-      setLoading(false);
+      console.log('1')
 
-//      setTimeout(() => {
-//        setLoading(false);
-//      }, 3000); // 1000 milisegundos = 1 segundo
+//      setLoading(false);
+
+      setTimeout(() => {
+        setLoading(false);
+      }, 5000); // 1000 milisegundos = 1 segundo
 
     };
 
@@ -65,6 +67,8 @@ const ProductList = () => {
       setLoading(true);
       const response = await getProducts(params);
       setProducts(response.data);
+
+      console.log('2')
             setTimeout(() => {
               setLoading(false);
             }, 3000);
