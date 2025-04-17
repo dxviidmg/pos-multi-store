@@ -17,60 +17,61 @@ const SaleModal = ({ onUpdateSaleList }) => {
     (state) => state.SaleModalReducer
   );
 
-
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
-
-  const [selectedRows, setSelectedRows] = useState([])
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [quantitiesToCancel, setQuantitiesToCancel] = useState({});
 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (sale.id) {
-      setFormData(sale);
-    } else {
-      setFormData(INITIAL_FORM_DATA);
-    }
+    setFormData(sale.id ? sale : INITIAL_FORM_DATA);
+    setQuantitiesToCancel({});
+    setSelectedRows([]);
   }, [sale]);
+
+  const handleQuantityChange = (rowId, max, value) => {
+    const quantity = Math.min(parseInt(value) || 0, max);
+    setQuantitiesToCancel((prev) => ({ ...prev, [rowId]: quantity }));
+  };
+
+  const getTotalQuantityToCancel = () =>
+    Object.entries(quantitiesToCancel)
+      .filter(([id, qty]) => selectedRows.some((r) => r.id === parseInt(id)))
+      .reduce((sum, [, qty]) => sum + qty, 0);
 
   const handleSaveClient = async () => {
     const payload = {
       id: sale.id,
-      products_sale_to_cancel: selectedRows,
+      products_sale_to_cancel: quantitiesToCancel,
     };
+
     const response = await cancelSale(payload);
-
     if (response.status === 200) {
-      let cash_back = response.data.cash_back;
-      const sale_response = response.data.sale;
+      const { sale: updatedSale, cash_back } = response.data;
 
-      if ("id" in sale_response) {
-        onUpdateSaleList(sale_response);
-        setFormData(INITIAL_FORM_DATA);
-        setSelectedRows([]);
-        dispatch(hideSaleModal());
+      if (updatedSale?.id) {
+        onUpdateSaleList(updatedSale);
       } else {
         onUpdateSaleList({ ...sale, delete: true });
-        setFormData(INITIAL_FORM_DATA);
-        setSelectedRows([]);
-        dispatch(hideSaleModal());
       }
+
+      dispatch(hideSaleModal());
 
       Swal.fire({
         icon: "success",
-        title: "Devolución exitosa. Devolver $" + cash_back,
+        title: `Devolución exitosa. Devolver $${cash_back}`,
         timer: 5000,
       });
     } else {
-      handleClientError(response);
+      handleClientError();
     }
   };
 
-  const handleClientError = (response) => {
-    let message = "Error desconocido. Por favor, contacte soporte.";
+  const handleClientError = () => {
     Swal.fire({
       icon: "error",
       title: "Error al cancelar venta",
-      text: message,
+      text: "Error desconocido. Por favor, contacte soporte.",
       timer: 5000,
     });
   };
@@ -79,90 +80,80 @@ const SaleModal = ({ onUpdateSaleList }) => {
     <CustomModal showOut={showSaleModal} title="Devolución de productos">
       <div className="custom-section">
         <Row>
+          {/* Información general de la venta */}
           <Col md={3}>
             <Form.Label>Folio</Form.Label>
-            <Form.Control
-              type="text"
-              value={formData.id}
-              placeholder="Folio"
-              disabled
-            />
+            <Form.Control type="text" value={formData.id} disabled />
           </Col>
-
           <Col md={6}>
             <Form.Label>Cliente</Form.Label>
             <Form.Control
               type="text"
               value={formData.client?.full_name}
-              placeholder="Cliente"
               disabled
             />
           </Col>
-
           <Col md={3}>
             <Form.Label>Total</Form.Label>
-            <Form.Control
-              type="text"
-              value={formData.total}
-              placeholder="total"
-              name="Total"
-              disabled
-            />
+            <Form.Control type="text" value={formData.total} disabled />
           </Col>
           <Col md={7}>
             <Form.Label>Creación</Form.Label>
-            <Form.Control
-              type="text"
-              value={formData.created_at}
-              placeholder="Creación"
-              disabled
-            />
+            <Form.Control type="text" value={formData.created_at} disabled />
           </Col>
-
           <Col md={5}>
             <Form.Label>Vendedor</Form.Label>
             <Form.Control
               type="text"
               value={formData.seller_username}
-              placeholder="Vendedor"
               disabled
             />
           </Col>
-          <Col md={12}>
-            <h1>Productos comprados</h1>
 
+          {/* Tabla de productos */}
+          <Col md={12}>
+            <h5>Productos comprados</h5>
             <CustomTable
               data={formData.products_sale}
               setSelectedRows={setSelectedRows}
               columns={[
+                { name: "Descripción", selector: (row) => row.name, grow: 3 },
+                { name: "C. Vendida", selector: (row) => row.quantity},
                 {
-                  name: "Descripción",
-                  selector: (row) => row.name,
-                  grow: 3,
+                  name: "Devolver",
+                  selector: (row) => (
+                    <Form.Control
+                      type="number"
+                      min={1}
+                      max={row.quantity}
+                      value={quantitiesToCancel[row.id] || 0}
+                      disabled={!selectedRows.some((r) => r.id === row.id)}
+                      onChange={(e) =>
+                        handleQuantityChange(
+                          row.id,
+                          row.quantity,
+                          e.target.value
+                        )
+                      }
+                    />
+                  ),
                 },
+                { name: "P. unitario", selector: (row) => `$${row.price}` },
                 {
-                  name: "Cantidad",
-                  selector: (row) => row.quantity,
-                  grow: 2,
+                  name: "Importe",
+                  selector: (row) => `$${row.price * row.quantity}`,
                 },
-                {
-                  name: "Precio unitario",
-                  selector: (row) => "$" + row.price,
-                },
-                {
-                  name: "Precio",
-                  selector: (row) => "$" + row.price * row.quantity,
-                },
-
               ]}
             />
           </Col>
+
+          {/* Botón de acción */}
           <Col md={12}>
             <CustomButton
               fullWidth
               onClick={handleSaveClient}
               marginTop="10px"
-              disabled={selectedRows.length === 0}
+              disabled={getTotalQuantityToCancel() === 0}
             >
               Devolución de productos
             </CustomButton>
