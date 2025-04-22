@@ -24,7 +24,7 @@ const SaleList = () => {
   const urlPrinter = user.store_url_printer;
   const [sales, setSales] = useState([]);
   const today = getFormattedDate();
-  const [date, setDate] = useState(today);
+  const [params, setParams] = useState({ date: today, is_canceled: 0 });
   const [loading, setLoading] = useState(false);
   const [salesDuplicated, setSalesDuplicated] = useState([]);
   const [showAllFields, setShowAllFields] = useState(false);
@@ -33,7 +33,7 @@ const SaleList = () => {
   useEffect(() => {
     const fetchSalesData = async () => {
       setLoading(true);
-      const salesResponse = await getSales(date);
+      const salesResponse = await getSales(params);
       setSales(salesResponse.data);
 
       salesResponse.data.forEach((sale) => {
@@ -45,7 +45,17 @@ const SaleList = () => {
     };
 
     fetchSalesData();
-  }, [date]);
+  }, [params]);
+
+  const handleDataChange = (e) => {
+    var { name, value } = e.target;
+    console.log("*", name, value);
+
+    setParams((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
 
   const handleOpenModal = (sale) => {
     dispatch(hideSaleModal());
@@ -88,12 +98,24 @@ const SaleList = () => {
         <Row>
           <Col>
             <Form>
+              <Form.Label>#</Form.Label>
+              <Form.Control
+                type="number"
+                value={params.sale_id}
+                onChange={(e) => handleDataChange(e)}
+                name="sale_id"
+              />
+            </Form>
+          </Col>
+          <Col>
+            <Form>
               <Form.Label>Fecha</Form.Label>
               <Form.Control
                 type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
+                value={params.date}
+                onChange={(e) => handleDataChange(e)}
                 max={today}
+                name="date"
               />
             </Form>
           </Col>
@@ -129,14 +151,17 @@ const SaleList = () => {
             {
               name: "Productos",
               selector: (row) => (
-                <ul>
+                <>
                   {/* Map over the array and render each item */}
-                  {row.products_sale.map((item, index) => (
-                    <li key={index}>
-                      {item.quantity} x {item.name} a ${item.price}{" "}
-                    </li>
-                  ))}
-                </ul>
+                  {row.products_sale
+                    .filter((item) => item.quantity !== 0)
+                    .map((item, index) => (
+                      <span key={index}>
+                        <b>{item.quantity}</b> x {item.name} a ${item.price}
+                        <br />{" "}
+                      </span>
+                    ))}
+                </>
               ),
               wrap: true,
               grow: 3,
@@ -168,9 +193,10 @@ const SaleList = () => {
               grow: 1.5,
               selector: (row) => row.seller_username,
             },
+
             {
               name: "Acciones",
-              grow: showAllFields ? 6.1 : 3.1,
+              grow: showAllFields ? 6.1 : 3.2,
               cell: (row) => (
                 <>
                   {urlPrinter && (
@@ -178,8 +204,7 @@ const SaleList = () => {
                       Imprimir ticket
                     </CustomButton>
                   )}
-                  {(row.is_cancelable ||
-                    user.role === "owner" ||
+                  {((row.is_cancelable && user.role === "owner") ||
                     row.is_duplicate) && (
                     <CustomButton onClick={() => handleOpenModal(row)}>
                       Devolución

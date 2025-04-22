@@ -81,12 +81,12 @@ const SearchClient = () => {
 
   return (
     <>
-      <Form.Label className="fw-bold me-3">Buscador de clientes</Form.Label>
-      <b>
-        {Object.keys(client).length === 0 && (
-          <Badge bg="success">Aviso: No hay cliente seleccionado</Badge>
-        )}
-      </b>
+<div className="d-flex align-items-center gap-3">
+  <h2 className="mb-0">Buscador de clientes</h2>
+  {Object.keys(client).length === 0 && (
+    <Badge bg="success">Aviso: No hay cliente seleccionado</Badge>
+  )}
+</div>
 
       <Form.Control
         ref={inputRefClient}

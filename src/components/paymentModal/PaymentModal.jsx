@@ -31,6 +31,9 @@ const PaymentModal = () => {
   const client = useSelector((state) => state.cartReducer.client);
   const [payment, setPayment] = useState(INITIAL_PAYMENT_STATE);
   const [referencePayment, setReferencePayment] = useState("");
+  const [hideClient, setHideClient] = useState(true);
+
+  const [hideExchange, setHideExchange] = useState(true);
 
   const [paymentMethods, setPaymentMethods] = useState({
     type: "radio", // Tipo de pago inicial.
@@ -166,7 +169,7 @@ const PaymentModal = () => {
           ((client?.discount_percentage_complement ?? 100) * 0.01),
       })),
       payments: paymentList,
-      reference_payment: referencePayment
+      reference_payment: referencePayment,
     };
 
     const response = await createSale(data);
@@ -179,7 +182,7 @@ const PaymentModal = () => {
         type: "radio",
         methods: { EF: 0, TA: 0, TR: 0 },
       });
-      setReferencePayment("")
+      setReferencePayment("");
       dispatch(removeClientfromCart());
       dispatch(cleanCart());
       dispatch(hidePaymentModal());
@@ -207,21 +210,48 @@ const PaymentModal = () => {
 
   const handleDisableButton = () => {
     return (
-      (paymentMethods.type === "checkbox" && totalPaymentInput !== totalDiscount) ||
+      (paymentMethods.type === "checkbox" &&
+        totalPaymentInput !== totalDiscount) ||
       Object.values(paymentMethods.methods).every((amount) => amount === 0) ||
       (paymentMethods.type === "radio" &&
-        paymentMethods.methods.EF > payment.paidWith)
-        || ((paymentMethods.methods.TA > 0 && referencePayment === "") || (paymentMethods.methods.TR > 0 && referencePayment === ""))
-    ) ;
+        paymentMethods.methods.EF > payment.paidWith) ||
+      (paymentMethods.methods.TA > 0 && referencePayment === "") ||
+      (paymentMethods.methods.TR > 0 && referencePayment === "")
+    );
   };
 
   return (
     <CustomModal showOut={showPaymentModal} title="Finalizar pago">
-      <div className="custom-section">
+      <div className="custom-section-buttons">
+        <CustomButton onClick={(e) => setHideClient((prevState) => !prevState)}>
+          Añadir cliente
+        </CustomButton>
+        <CustomButton
+          onClick={(e) => setHideExchange((prevState) => !prevState)}
+        >
+          Intercambio de mercancia
+        </CustomButton>
+      </div>
+      <div className="custom-section" hidden={hideClient}>
         <SearchClient />
         <ClientSelected />
       </div>
+
+      <div className="custom-section" hidden={hideExchange}>
+        <h2>Cambio de mercancia</h2>
+        <Row>
+          <Col md={3}>
+            <Form.Label># Venta</Form.Label>
+            <Form.Control type="number" value={total.toFixed(2)} />
+          </Col>
+
+          <Col md={3} className="d-flex flex-column justify-content-end">
+            <CustomButton fullWidth>Buscar</CustomButton>
+          </Col>
+        </Row>
+      </div>
       <div className="custom-section">
+        <h2>Totales</h2>
         <Row>
           <Col md={3}>
             <Form.Label>Total</Form.Label>
@@ -249,7 +279,11 @@ const PaymentModal = () => {
             {paymentMethods.methods.TA > 0 || paymentMethods.methods.TR > 0 ? (
               <>
                 <Form.Label>Referencia</Form.Label>
-                <Form.Control type="text" value={referencePayment} onChange={(e)=> setReferencePayment(e.target.value)}/>
+                <Form.Control
+                  type="text"
+                  value={referencePayment}
+                  onChange={(e) => setReferencePayment(e.target.value)}
+                />
               </>
             ) : (
               <>
