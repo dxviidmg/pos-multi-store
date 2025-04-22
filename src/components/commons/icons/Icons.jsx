@@ -43,13 +43,13 @@ export const WarningIcon = () => {
   );
 };
 
-export const PrinterIcon = () => {
+export const PrinterIcon = ({color="blue"}) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="20"
       height="20"
-      fill="blue"
+      fill={color}
       className="bi bi-printer-fill ms-1"
       viewBox="0 0 16 16"
     >
