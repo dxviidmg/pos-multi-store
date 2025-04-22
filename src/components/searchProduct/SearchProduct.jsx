@@ -4,7 +4,7 @@ import CustomTable from "../commons/customTable/customTable";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getStoreProducts } from "../apis/products";
 import { addToCart, updateMovementType } from "../redux/cart/cartActions";
-import { Badge, Form } from "react-bootstrap";
+import { Badge, Col, Form, Row } from "react-bootstrap";
 import { debounce } from "lodash";
 import StockModal from "../stockModal/StockModal";
 import {
@@ -14,6 +14,7 @@ import {
 import Swal from "sweetalert2";
 import { getUserData } from "../apis/utils";
 import { printTicket } from "../apis/sales";
+import { PrinterIcon } from "../commons/icons/Icons";
 
 const SearchProduct = () => {
   const inputRef = useRef(null);
@@ -248,11 +249,13 @@ const SearchProduct = () => {
   return (
     <>
       <StockModal />
-      <h1>Buscador de productos</h1>
-      <CustomButton disabled={!urlPrinter} onClick={handlePrintTicket}>
-        Verificar impresora
-      </CustomButton>
-      <br />
+
+
+          <h2>Buscador de productos           <CustomButton disabled={!urlPrinter} onClick={handlePrintTicket}>
+            <PrinterIcon color="white"/>
+          </CustomButton></h2>
+
+
       <Form.Label className="me-3">Tipo de búsqueda:</Form.Label>
       <Form.Check
         inline
