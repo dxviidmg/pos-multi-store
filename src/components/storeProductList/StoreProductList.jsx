@@ -21,6 +21,7 @@ const StoreProductList = () => {
   const [loading, setLoading] = useState(false);
   const [params, setParams] = useState({});
   const user = getUserData();
+  const [outOfStockPercentage, setoutOfStockPercentage] = useState(0);
 
   useEffect(() => {
     const fetchBrands = async () => {
@@ -31,19 +32,24 @@ const StoreProductList = () => {
     fetchBrands();
   }, []); // Solo se ejecuta una vez al montar
 
-  useEffect(() => {
     const fetchStoreProducts = async () => {
       setLoading(true);
       const response = await getStoreProducts(params);
-      setStoreProducts(response.data);
+      const storeProducts = response.data;
+      setStoreProducts(storeProducts);
+
+
+      const totalStoreProducts = storeProducts.length;
+
+
+      const outOfStockCount = storeProducts.filter(product => product.stock === 0).length;
+      const outOfStockPercentage = (outOfStockCount / totalStoreProducts) * 100;
+      setoutOfStockPercentage(outOfStockPercentage)
 
       setTimeout(() => {
         setLoading(false);
       }, 500); // 1000 milisegundos = 1 segundo
     };
-
-    fetchStoreProducts();
-  }, [params]);
 
   const handleDownload = async () => {
     const storeProductsForReport = storeProducts.map(
@@ -124,6 +130,15 @@ const StoreProductList = () => {
             name="max_stock"
           />
         </Col>
+
+        <Col className="d-flex flex-column justify-content-end">
+
+{storeProducts.length > 0 && (<>{outOfStockPercentage.toFixed(0)}% de los productos esta vacio</>)}
+
+  <CustomButton fullWidth onClick={fetchStoreProducts}>
+    Buscar
+  </CustomButton>
+</Col>
       </Row>
 
       <CustomTable

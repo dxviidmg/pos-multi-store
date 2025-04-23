@@ -26,7 +26,6 @@ const ProductList = () => {
   const [params, setParams] = useState({});
   const [selectedRows, setSelectedRows] = useState([]);
   const [confirmDeletion, setConfirmDeletion] = useState(false);
-
   const [outOfStockPercentage, setoutOfStockPercentage] = useState(0);
 
   const dispatch = useDispatch();
