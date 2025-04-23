@@ -4,7 +4,7 @@ import CustomTable from "../commons/customTable/customTable";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getStoreProducts } from "../apis/products";
 import { addToCart, updateMovementType } from "../redux/cart/cartActions";
-import { Badge, Col, Form, Row } from "react-bootstrap";
+import { Badge, Form } from "react-bootstrap";
 import { debounce } from "lodash";
 import StockModal from "../stockModal/StockModal";
 import {
@@ -209,7 +209,7 @@ const SearchProduct = () => {
       event.preventDefault(); // Evita la acción predeterminada del navegador
       dispatch(updateMovementType("checar"));
     }
-    if (event.ctrlKey && event.key === "a") {
+    if (event.ctrlKey && event.key === "s") {
       event.preventDefault(); // Evita la acción predeterminada del navegador
       inputRef.current?.focus();
     }
@@ -250,11 +250,12 @@ const SearchProduct = () => {
     <>
       <StockModal />
 
-
-          <h2>Buscador de productos           <CustomButton disabled={!urlPrinter} onClick={handlePrintTicket}>
-            <PrinterIcon color="white"/>
-          </CustomButton></h2>
-
+      <h1>
+        Buscador de productos{" "}
+        <CustomButton disabled={!urlPrinter} onClick={handlePrintTicket}>
+          <PrinterIcon color="white" />
+        </CustomButton>
+      </h1>
 
       <Form.Label className="me-3">Tipo de búsqueda:</Form.Label>
       <Form.Check
@@ -275,6 +276,7 @@ const SearchProduct = () => {
         value="q"
         checked={queryType === "q"}
       />
+      <br/>
       <Form.Label className="me-3">Tipo de operación:</Form.Label>
       <Form.Check
         inline

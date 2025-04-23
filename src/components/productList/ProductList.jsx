@@ -26,6 +26,9 @@ const ProductList = () => {
   const [params, setParams] = useState({});
   const [selectedRows, setSelectedRows] = useState([]);
   const [confirmDeletion, setConfirmDeletion] = useState(false);
+
+  const [outOfStockPercentage, setoutOfStockPercentage] = useState(0);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -39,19 +42,24 @@ const ProductList = () => {
     fetchOptions();
   }, []);
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      setLoading(true);
-      const response = await getProducts(params);
-      setProducts(response.data);
+  const fetchProducts = async () => {
+    setLoading(true);
+    const response = await getProducts(params);
+    const products = response.data;
 
-      setTimeout(() => {
-        setLoading(false);
-      }, 500);
-    };
+    setProducts(products);
 
-    fetchProducts();
-  }, [params]);
+    const totalProducts = products.length;
+
+    const outOfStockCount = products.filter(product => product.stock === 0).length;
+    const outOfStockPercentage = (outOfStockCount / totalProducts) * 100;
+    setoutOfStockPercentage(outOfStockPercentage)
+      
+
+    setTimeout(() => {
+      setLoading(false);
+    }, 500);
+  };
 
   const handleOpenModal = (brand) => {
     dispatch(hideProductModal());
@@ -146,7 +154,7 @@ const ProductList = () => {
     } else {
       Swal.fire({
         icon: "error",
-        title: "Error al borrar Productos",
+        title: "Error al borrar productos",
         timer: 5000,
       });
     }
@@ -249,6 +257,16 @@ const ProductList = () => {
             name="max_stock"
           />
         </Col>
+
+        <Col className="d-flex flex-column justify-content-end">
+
+        {products.length > 0 && (<>{outOfStockPercentage.toFixed(0)}% de los productos esta vacio</>)}
+        
+          <CustomButton fullWidth onClick={fetchProducts}>
+            Buscar
+          </CustomButton>
+        </Col>
+
       </Row>
       <CustomTable
         setSelectedRows={setSelectedRows}
@@ -290,7 +308,7 @@ const ProductList = () => {
           },
 
           {
-            grow: 2,
+            grow: 2.5,
             name: "Precios",
             cell: (row) => (
               <>
