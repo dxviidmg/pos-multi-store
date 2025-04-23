@@ -34,7 +34,7 @@ const PaymentModal = () => {
   const [hideClient, setHideClient] = useState(true);
 
   const [hideExchange, setHideExchange] = useState(true);
-  const [saleExchange, setSaleExchange] = useState({id: '', refunded: 0});
+  const [saleExchange, setSaleExchange] = useState({id: '', refunded: 0, payment: 0});
 
   const [paymentMethods, setPaymentMethods] = useState({
     type: "radio", // Tipo de pago inicial.
@@ -214,7 +214,7 @@ const PaymentModal = () => {
     console.log(saleExchange)
     const response = await getSale(saleExchange.id)
     console.log(response)
-    setSaleExchange(response.data)
+    setSaleExchange({ ...response.data, payment: totalDiscount - response.data.refunded });
 //    setPayment(prevState => ({ ...prevState, change: prevState.change + response.data.refunded }));
     
   };
@@ -283,10 +283,13 @@ const PaymentModal = () => {
 
           <Col md={3}>
             <Form.Label>$ de devolución</Form.Label>
-            <Form.Control type="number" value={saleExchange.refunded} />
+            <Form.Control type="number" value={saleExchange.refunded} disabled/>
           </Col>
 
-
+          <Col md={3}>
+            <Form.Label>Pagar</Form.Label>
+            <Form.Control type="number" value={saleExchange.payment} disabled/>
+          </Col>
 
 
         </Row>
