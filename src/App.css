@@ -7,8 +7,7 @@
 }
 
 .custom-section-buttons {
-  margin: 5px 15px 0px;
-
+  margin: 20px;
 }
 
 #root {
@@ -25,5 +24,4 @@ h1 {
 h2 {
   font-size: 1rem !important;
   font-weight: bold !important;
-  padding-top: 10px;
 }

@@ -312,9 +312,9 @@ const ProductList = () => {
             name: "Precios",
             cell: (row) => (
               <>
-                Uni.: ${row.unit_price}
+                Unitario: ${row.unit_price}
                 <br />
-                May:{" "}
+                Mayoreo:{" "}
                 {row.apply_wholesale
                   ? "$" +
                     row.wholesale_price +
