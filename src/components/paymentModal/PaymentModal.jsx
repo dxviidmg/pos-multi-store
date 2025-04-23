@@ -4,7 +4,7 @@ import { Col, Form, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
 import { cleanCart, removeClientfromCart } from "../redux/cart/cartActions";
-import { createSale } from "../apis/sales";
+import { createSale, getSale } from "../apis/sales";
 import { hidePaymentModal } from "../redux/paymentModal/PaymentModalActions";
 import Swal from "sweetalert2";
 import { getUserData } from "../apis/utils";
@@ -34,6 +34,7 @@ const PaymentModal = () => {
   const [hideClient, setHideClient] = useState(true);
 
   const [hideExchange, setHideExchange] = useState(true);
+  const [saleExchange, setSaleExchange] = useState({id: '', refunded: 0});
 
   const [paymentMethods, setPaymentMethods] = useState({
     type: "radio", // Tipo de pago inicial.
@@ -97,7 +98,7 @@ const PaymentModal = () => {
         type: value,
         methods: newMethods,
       });
-      setPayment({ paidWith: totalDiscount, change: 0 });
+      setPayment({ paidWith: totalDiscount - saleExchange.refunded, change: 0 });
     } else {
       const updatedMethods =
         paymentMethods.type === "radio"
@@ -109,7 +110,7 @@ const PaymentModal = () => {
 
       if (!("EF" in updatedMethods)) {
         const value = updatedMethods.TA || updatedMethods.TR;
-        setPayment({ paidWith: value, change: 0 });
+        setPayment({ paidWith: value - saleExchange.refunded, change: 0 });
       }
       setPaymentMethods((prev) => ({
         ...prev,
@@ -205,16 +206,30 @@ const PaymentModal = () => {
 
   const handlePaidWithChange = async (e) => {
     let value = Number(e.target.value);
-    setPayment({ paidWith: value, change: value - totalDiscount });
+    console.log('handlePaidWithChange')
+    setPayment({ paidWith: value, change: value + saleExchange.refunded - totalDiscount });
+  };
+
+  const handleSearchSaleForChange = async () => {
+    console.log(saleExchange)
+    const response = await getSale(saleExchange.id)
+    console.log(response)
+    setSaleExchange(response.data)
+//    setPayment(prevState => ({ ...prevState, change: prevState.change + response.data.refunded }));
+    
   };
 
   const handleDisableButton = () => {
+
+    console.log(paymentMethods)
+    console.log(totalPaymentInput)
+    console.log(totalDiscount)
     return (
       (paymentMethods.type === "checkbox" &&
         totalPaymentInput !== totalDiscount) ||
       Object.values(paymentMethods.methods).every((amount) => amount === 0) ||
       (paymentMethods.type === "radio" &&
-        paymentMethods.methods.EF > payment.paidWith) ||
+        paymentMethods.methods.EF > payment.paidWith + saleExchange.refunded) ||
       (paymentMethods.methods.TA > 0 && referencePayment === "") ||
       (paymentMethods.methods.TR > 0 && referencePayment === "")
     );
@@ -223,14 +238,29 @@ const PaymentModal = () => {
   return (
     <CustomModal showOut={showPaymentModal} title="Finalizar pago">
       <div className="custom-section-buttons">
-        <CustomButton onClick={(e) => setHideClient((prevState) => !prevState)}>
-          Añadir cliente
-        </CustomButton>
-        <CustomButton
+        <Row>
+          <Col md={6}>
+            {" "}
+            <CustomButton
+              fullWidth
+              onClick={(e) => setHideClient((prevState) => !prevState)}
+            >
+              Añadir cliente
+            </CustomButton>
+          </Col>
+
+          <Col md={6}>
+            {" "}
+            <CustomButton
+          fullWidth
           onClick={(e) => setHideExchange((prevState) => !prevState)}
         >
           Intercambio de mercancia
         </CustomButton>
+          </Col>
+        </Row>
+
+
       </div>
       <div className="custom-section" hidden={hideClient}>
         <SearchClient />
@@ -242,14 +272,27 @@ const PaymentModal = () => {
         <Row>
           <Col md={3}>
             <Form.Label># Venta</Form.Label>
-            <Form.Control type="number" value={total.toFixed(2)} />
+            <Form.Control type="number" value={saleExchange.id} onChange={e => setSaleExchange({ ...saleExchange, id: Number(e.target.value) })}/>
           </Col>
 
+
+
           <Col md={3} className="d-flex flex-column justify-content-end">
-            <CustomButton fullWidth>Buscar</CustomButton>
+            <CustomButton fullWidth onClick={handleSearchSaleForChange}>Buscar</CustomButton>
           </Col>
+
+          <Col md={3}>
+            <Form.Label>$ de devolución</Form.Label>
+            <Form.Control type="number" value={saleExchange.refunded} />
+          </Col>
+
+
+
+
         </Row>
       </div>
+
+
       <div className="custom-section">
         <h2>Totales</h2>
         <Row>
@@ -294,6 +337,7 @@ const PaymentModal = () => {
           </Col>
         </Row>
       </div>
+
 
       <div className="custom-section">
         <Row>

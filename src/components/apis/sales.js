@@ -34,6 +34,23 @@ export const getSales = async (params) => {
   }
 };
 
+export const getSale = async (id) => {
+  const apiUrl = new URL(getApiUrl("sale/" + id));
+
+
+
+
+  try {
+    const response = await axios.get(apiUrl, {
+      headers: getHeaders(),
+    });
+    return response;
+  } catch (error) {
+    console.error("Error al obtener clientes:", error);
+    throw error;
+  }
+};
+
 export const getCashSummary = async (date) => {
   const apiUrl = new URL(getApiUrl("cash/summary"));
   if (date) {
@@ -107,3 +124,5 @@ export const printTicket = async (url, endpoint, data) => {
     return error;
   }
 };
+
+
