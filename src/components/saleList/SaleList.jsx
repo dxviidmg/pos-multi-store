@@ -204,7 +204,7 @@ const SaleList = () => {
                       Imprimir ticket
                     </CustomButton>
                   )}
-                  {((row.is_cancelable && user.role === "owner") ||
+                  {((row.is_cancelable) ||
                     row.is_duplicate) && (
                     <CustomButton onClick={() => handleOpenModal(row)}>
                       Devolución

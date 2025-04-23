@@ -22,6 +22,8 @@ function roundUpCustom(value) {
 }
 
 const INITIAL_PAYMENT_STATE = { paidWith: 0, change: 0 };
+const INITIAL_SALE_EXCHANGE_STATE = {refunded: 0, payment: 0};
+
 const PaymentModal = () => {
   const inputPaymentRef = useRef(null);
   const { showPaymentModal } = useSelector(
@@ -34,7 +36,7 @@ const PaymentModal = () => {
   const [hideClient, setHideClient] = useState(true);
 
   const [hideExchange, setHideExchange] = useState(true);
-  const [saleExchange, setSaleExchange] = useState({id: '', refunded: 0, payment: 0});
+  const [saleExchange, setSaleExchange] = useState(INITIAL_SALE_EXCHANGE_STATE);
 
   const [paymentMethods, setPaymentMethods] = useState({
     type: "radio", // Tipo de pago inicial.
@@ -171,6 +173,7 @@ const PaymentModal = () => {
       })),
       payments: paymentList,
       reference_payment: referencePayment,
+      sale_exchange: saleExchange
     };
 
     const response = await createSale(data);
@@ -188,7 +191,8 @@ const PaymentModal = () => {
       dispatch(cleanCart());
       dispatch(hidePaymentModal());
       setPayment(INITIAL_PAYMENT_STATE);
-
+      setHideClient(true)
+      setSaleExchange(INITIAL_SALE_EXCHANGE_STATE)
       Swal.fire({
         icon: "success",
         title: "Venta exitosa",
