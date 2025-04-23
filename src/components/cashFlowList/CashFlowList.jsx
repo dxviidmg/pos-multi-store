@@ -84,6 +84,7 @@ const CashFlowList = () => {
             {
               name: "Concepto",
               selector: (row) => row.concept,
+              wrap: true
             },
 
             {
