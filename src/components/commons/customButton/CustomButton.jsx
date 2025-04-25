@@ -8,23 +8,19 @@ const CustomButton = ({
   disabled = false,
   href,
   fullWidth = false,
-  marginTop = "5px",
   ...props
 }) => {
   return (
     <Button
-      className="custom-button"
       onClick={onClick}
       size={size}
       disabled={disabled}
       href={href}
+      className={`custom-button d-inline-flex align-items-center justify-content-center ${fullWidth ? "w-100" : ""} mb-1 mx-1`}
       style={{
-        width: fullWidth ? "100%" : "auto",
-        marginBottom: "3px",
-        marginTop: marginTop,
+        marginTop: '3px',
         backgroundColor: "#04356b !important",
-        marginLeft: fullWidth ? "0px" : "5px",
-        marginRight: fullWidth ? "0px" : "5px",
+        whiteSpace: "nowrap",
       }}
       {...props}
     >

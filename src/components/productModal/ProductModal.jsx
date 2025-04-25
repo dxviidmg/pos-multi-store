@@ -155,7 +155,7 @@ const ProductModal = ({ onUpdateProductList }) => {
   return (
     <CustomModal
       showOut={showProductModal}
-      title={formData.id ? "Actualizar producto" : "Crear producto"}
+      title={showStoreProducts? "Ver stock": formData.id ? "Actualizar producto" : "Crear producto"}
     >
       <div className="custom-section">
         <Row hidden={showStoreProducts}>
