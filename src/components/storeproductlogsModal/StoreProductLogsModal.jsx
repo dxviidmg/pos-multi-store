@@ -80,11 +80,11 @@ const StoreProductLogsModal = ({ onUpdateStoreProductList }) => {
      <div className="custom-section">
      <Row>
         <Col md={6}>
-          <Form.Label>Codigo</Form.Label>
+          <Form.Label>Código</Form.Label>
           <Form.Control
             type="text"
             value={formData.product?.code}
-            placeholder="Codigo"
+            placeholder="Código"
             disabled
           />
         </Col>

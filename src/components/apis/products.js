@@ -162,6 +162,19 @@ export const deleteProducts = async (data) => {
   }
 };
 
+export const upperCodeProducts = async (data) => {
+  const apiUrl = new URL(getApiUrl("products/upper-code"));
+
+  try {
+    const response = await axios.post(apiUrl, data, {
+      headers: getHeaders(),
+    });
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
+
 export const importStoreProductsValidation = async (data) => {
   const apiUrl = getApiUrl("store-products/import-validation");
   try {
