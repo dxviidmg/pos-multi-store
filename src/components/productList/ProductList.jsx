@@ -327,7 +327,7 @@ const ProductList = () => {
 
           {
             name: "Acciones",
-            grow: getUserData().role !== "owner" ? 1 : 2,
+            grow: getUserData().role === "owner" ? 2.5 : 1,
             cell: (row) => (
               <>
                 <CustomButton onClick={() => handleOpenModal(row)}>
@@ -337,10 +337,10 @@ const ProductList = () => {
                   onClick={() => handleOpenModal2(row)}
                   hidden={getUserData().role !== "owner"}
                 >
-                  <SearchIcon></SearchIcon>
+                  <SearchIcon/>
                 </CustomButton>
-                <CustomButton onClick={() => handleGenerate(row.code)}>
-                  <QrCodeIcon></QrCodeIcon>
+                <CustomButton onClick={() => handleGenerate(row.code)} fullWidth heitgh>
+                <span style={{fontSize: '11px'}}>BC128</span>
                 </CustomButton>
               </>
             ),
