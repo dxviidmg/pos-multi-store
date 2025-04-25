@@ -104,7 +104,7 @@ const LogList = () => {
           loading={loading}
           columns={[
             {
-              name: "Codigo",
+              name: "Código",
               selector: (row) => row.product.code,
               grow: 2,
             },
