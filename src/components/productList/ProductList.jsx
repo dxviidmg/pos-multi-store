@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { deleteProducts, getProducts } from "../apis/products";
+import { deleteProducts, getProducts, upperCodeProducts } from "../apis/products";
 import { Col, Form, FormCheck, Row } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import { useDispatch } from "react-redux";
@@ -177,6 +177,28 @@ const ProductList = () => {
       });
   };
 
+
+  const handleUpperCodeProducts = async () => {
+    const response = await upperCodeProducts();
+
+    if (response.status === 200) {
+
+      await fetchProducts()
+
+      Swal.fire({
+        icon: "success",
+        title: "Códigos pasaron a mayusculas",
+        timer: 5000,
+      });
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Error al procesar códigos de productos",
+        timer: 5000,
+      });
+    }
+  };
+
   return (
     <div className="custom-section">
       <CustomSpinner2 isLoading={loading}></CustomSpinner2>
@@ -189,6 +211,10 @@ const ProductList = () => {
         </CustomButton>
         <CustomButton onClick={handleDownload}>
           Descargar productos
+        </CustomButton>
+
+        <CustomButton onClick={handleUpperCodeProducts}>
+          Cambiar códigos a mayusculas
         </CustomButton>
 
         <CustomButton
