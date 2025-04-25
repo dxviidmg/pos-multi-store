@@ -13,6 +13,7 @@ import { useDispatch } from "react-redux";
 import StoreProductLogsModal from "../storeproductlogsModal/StoreProductLogsModal";
 import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
 import { getBrands } from "../apis/brands";
+import { SearchIcon } from "../commons/icons/Icons";
 
 const StoreProductList = () => {
   const dispatch = useDispatch();
@@ -136,7 +137,7 @@ const StoreProductList = () => {
 {storeProducts.length > 0 && (<>{outOfStockPercentage.toFixed(0)}% de los productos esta vacio</>)}
 
   <CustomButton fullWidth onClick={fetchStoreProducts}>
-    Buscar
+  <SearchIcon/> Buscar
   </CustomButton>
 </Col>
       </Row>

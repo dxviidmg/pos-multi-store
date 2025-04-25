@@ -15,7 +15,7 @@ import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
 import { getBrands } from "../apis/brands";
 import { getUserData } from "../apis/utils";
 import Swal from "sweetalert2";
-import { EditIcon, QrCodeIcon, SearchIcon } from "../commons/icons/Icons";
+import { CheckIcon, EditIcon, SearchIcon } from "../commons/icons/Icons";
 import { getDepartments } from "../apis/departments";
 
 const ProductList = () => {
@@ -262,7 +262,7 @@ const ProductList = () => {
         {products.length > 0 && (<>{outOfStockPercentage.toFixed(0)}% de los productos esta vacio</>)}
         
           <CustomButton fullWidth onClick={fetchProducts}>
-            Buscar
+          <SearchIcon/> Buscar 
           </CustomButton>
         </Col>
 
@@ -327,7 +327,7 @@ const ProductList = () => {
 
           {
             name: "Acciones",
-            grow: getUserData().role !== "owner" ? 1 : 2,
+            grow: getUserData().role === "owner" ? 2.5 : 1,
             cell: (row) => (
               <>
                 <CustomButton onClick={() => handleOpenModal(row)}>
@@ -337,10 +337,10 @@ const ProductList = () => {
                   onClick={() => handleOpenModal2(row)}
                   hidden={getUserData().role !== "owner"}
                 >
-                  <SearchIcon></SearchIcon>
+                  <CheckIcon/>
                 </CustomButton>
-                <CustomButton onClick={() => handleGenerate(row.code)}>
-                  <QrCodeIcon></QrCodeIcon>
+                <CustomButton onClick={() => handleGenerate(row.code)} fullWidth heitgh>
+                <span style={{fontSize: '11px'}}>BC128</span>
                 </CustomButton>
               </>
             ),

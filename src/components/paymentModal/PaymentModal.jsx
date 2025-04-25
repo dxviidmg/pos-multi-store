@@ -11,6 +11,7 @@ import { getUserData } from "../apis/utils";
 import { handlePrintTicket } from "../utils/utils";
 import SearchClient from "../searchClient/SearchClient";
 import ClientSelected from "../clientSelected/ClientSelected";
+import { SearchIcon } from "../commons/icons/Icons";
 
 function roundUpCustom(value) {
   const intPart = Math.floor(value); // Parte entera
@@ -282,7 +283,7 @@ const PaymentModal = () => {
 
 
           <Col md={3} className="d-flex flex-column justify-content-end">
-            <CustomButton fullWidth onClick={handleSearchSaleForChange}>Buscar</CustomButton>
+            <CustomButton fullWidth onClick={handleSearchSaleForChange}><SearchIcon/> Buscar</CustomButton>
           </Col>
 
           <Col md={3}>
