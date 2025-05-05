@@ -31,6 +31,9 @@ const PaymentModal = () => {
     (state) => state.PaymentModalReducer
   );
   const cart = useSelector((state) => state.cartReducer.cart);
+  const movementType = useSelector((state) => state.cartReducer.movementType);
+
+
   const client = useSelector((state) => state.cartReducer.client);
   const [payment, setPayment] = useState(INITIAL_PAYMENT_STATE);
   const [referencePayment, setReferencePayment] = useState("");
@@ -83,11 +86,22 @@ const PaymentModal = () => {
   }, [totalDiscount, paymentMethods, cart, client, payment]);
 
   useEffect(() => {
-    setPaymentMethods({
-      type: "radio", // Por defecto, "Único".
-      methods: { EF: totalDiscount, TA: 0, TR: 0 }, // Efectivo seleccionado.
-    });
-  }, [totalDiscount]);
+    if (movementType==="apartado"){
+      console.log('estoy en apartado')
+      setPaymentMethods({
+        type: "radio", // Por defecto, "Único".
+        methods: { EF: 0, TA: 0, TR: 0 }, // Efectivo seleccionado.
+      });
+    }
+    else{
+      console.log('estoy en xventa')
+      setPaymentMethods({
+        type: "radio", // Por defecto, "Único".
+        methods: { EF: totalDiscount, TA: 0, TR: 0 }, // Efectivo seleccionado.
+      });
+    }
+
+  }, [totalDiscount, movementType]);
 
   const handleChangePayments = (e) => {
     const { name, value } = e.target;
@@ -150,7 +164,7 @@ const PaymentModal = () => {
   };
 
   const handleCreateSale = async (printTicket = false) => {
-    if (payment.paidWith === 0 || payment.change < 0) {
+    if (movementType === 'venta' && (payment.paidWith === 0 || payment.change < 0)) {
       Swal.fire({
         icon: "error",
         title: "Error al finalizar la venta",
@@ -174,9 +188,12 @@ const PaymentModal = () => {
       })),
       payments: paymentList,
       reference_payment: referencePayment,
-      sale_exchange: saleExchange
+      sale_exchange: saleExchange,
+      reservation_in_progress: movementType === 'apartado'
     };
 
+    console.log(movementType === 'apartado')
+    console.log('data', data)
     const response = await createSale(data);
 
     if (response.status === 201) {
@@ -209,10 +226,21 @@ const PaymentModal = () => {
     }
   };
 
+
+  
+
   const handlePaidWithChange = async (e) => {
     let value = Number(e.target.value);
-    console.log('handlePaidWithChange')
+    console.log('** handlePaidWithChange', )
+    console.log('***', movementType)
     setPayment({ paidWith: value, change: value + saleExchange.refunded - totalDiscount });
+    if (movementType === 'apartado'){
+      setPaymentMethods({
+        type: "radio",
+        methods: { EF: value, TA: 0, TR: 0 },
+      });
+    }
+
   };
 
   const handleSearchSaleForChange = async () => {
@@ -229,8 +257,12 @@ const PaymentModal = () => {
     console.log(paymentMethods)
     console.log(totalPaymentInput)
     console.log(totalDiscount)
+
+    if (movementType === 'apartado'){
+      return false
+    }
     return (
-      (paymentMethods.type === "checkbox" &&
+       (paymentMethods.type === "checkbox" &&
         totalPaymentInput !== totalDiscount) ||
       Object.values(paymentMethods.methods).every((amount) => amount === 0) ||
       (paymentMethods.type === "radio" &&
@@ -390,10 +422,12 @@ const PaymentModal = () => {
                     value={method}
                     name="paymentMethod"
                     checked={
+                      (movementType === "apartado" && method==="EF") ||
+                      (
                       paymentMethods.type === "radio"
                         ? paymentMethods.methods[method] === totalDiscount
                         : paymentMethods.methods[method] > 0
-                    }
+                      )}
                   />
                 </div>
                 {paymentMethods.type === "checkbox" &&
