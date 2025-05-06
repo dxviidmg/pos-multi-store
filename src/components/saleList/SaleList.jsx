@@ -15,7 +15,7 @@ import {
 } from "../redux/saleModal/SaleModalActions";
 import SaleModal from "../saleModal/saleModal";
 import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
-import { PrinterIcon, ReturnIcon, WarningIcon } from "../commons/icons/Icons";
+import { CashIcon, PrinterIcon, ReturnIcon, WarningIcon } from "../commons/icons/Icons";
 import Alert from "react-bootstrap/Alert";
 import { getUserData } from "../apis/utils";
 import { hidePaymentModal, showPaymentModal } from "../redux/paymentModal/PaymentModalActions";
@@ -257,9 +257,13 @@ const SaleList = () => {
                     </CustomButton>
                   )}
 
-                  <CustomButton fullWidth onClick={handleOpenModal2}>
-                    Pagar (En desarrollo)
-                  </CustomButton>
+                  {params.reservation_in_progress && (
+                                      <CustomButton fullWidth onClick={handleOpenModal2}>
+                                      <CashIcon/>
+                                    </CustomButton>
+                  )}
+
+
 
                   {((row.is_cancelable) ||
                     row.is_duplicate) && (
