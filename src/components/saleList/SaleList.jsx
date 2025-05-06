@@ -18,6 +18,8 @@ import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
 import { PrinterIcon, ReturnIcon, WarningIcon } from "../commons/icons/Icons";
 import Alert from "react-bootstrap/Alert";
 import { getUserData } from "../apis/utils";
+import { hidePaymentModal, showPaymentModal } from "../redux/paymentModal/PaymentModalActions";
+import PaymentModal from "../paymentModal/PaymentModal";
 
 
 const TYPE_OPTIONS = [
@@ -93,9 +95,16 @@ const SaleList = () => {
     }
   };
 
+  const handleOpenModal2 = () => {
+    dispatch(hidePaymentModal());
+    setTimeout(() => dispatch(showPaymentModal()), 1);
+  };
+
+
   return (
     <>
       <CustomSpinner2 isLoading={loading}></CustomSpinner2>
+      <PaymentModal/>
       <SaleModal onUpdateSaleList={handleUpdateSaleList}></SaleModal>
       <div className="custom-section">
         {salesDuplicated.length > 0 && (
@@ -247,6 +256,11 @@ const SaleList = () => {
                       <PrinterIcon color="white" size="16"/>
                     </CustomButton>
                   )}
+
+                  <CustomButton fullWidth onClick={handleOpenModal2}>
+                    Pagar (En desarrollo)
+                  </CustomButton>
+
                   {((row.is_cancelable) ||
                     row.is_duplicate) && (
                     <CustomButton onClick={() => handleOpenModal(row)}>
