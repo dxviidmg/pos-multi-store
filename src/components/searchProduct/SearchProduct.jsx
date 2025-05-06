@@ -38,7 +38,7 @@ const SearchProduct = () => {
 
   const fetchData = useCallback(
     debounce(async () => {
-      if (!query || (query.length < 3 && queryType === "q")) {
+      if (!query || (query.length < 4 && queryType === "q")) {
         setData([]);
         return;
       }
