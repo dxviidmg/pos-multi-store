@@ -20,6 +20,7 @@ import { confirmDistribution, confirmTransfers } from "../apis/transfers";
 import Swal from "sweetalert2";
 import { addProducts } from "../apis/products";
 import { getUserData } from "../apis/utils";
+import { RemoveInCartIcon } from "../commons/icons/Icons";
 
 const Cart = () => {
   const store_type = getUserData().store_type;
@@ -235,7 +236,7 @@ const Cart = () => {
       name: "Borrar",
       selector: (row) => (
         <CustomButton onClick={() => handleRemoveFromCart(row)}>
-          Borrar
+                    <RemoveInCartIcon/>
         </CustomButton>
       ),
     },
@@ -259,7 +260,7 @@ const Cart = () => {
       name: "Borrar",
       selector: (row) => (
         <CustomButton onClick={() => handleRemoveFromCart(row)}>
-          Borrar
+                    <RemoveInCartIcon/>
         </CustomButton>
       ),
     },
@@ -283,7 +284,7 @@ const Cart = () => {
       name: "Borrar",
       selector: (row) => (
         <CustomButton onClick={() => handleRemoveFromCart(row)}>
-          Borrar
+                    <RemoveInCartIcon/>
         </CustomButton>
       ),
     },
@@ -306,14 +307,14 @@ const Cart = () => {
       name: "Borrar",
       selector: (row) => (
         <CustomButton onClick={() => handleRemoveFromCart(row)}>
-          Borrar
+          <RemoveInCartIcon/>
         </CustomButton>
       ),
     },
   ];
 
   const getColumns = () => {
-    if (movementType === "venta") return saleColumns;
+    if (movementType === "venta" || movementType === "apartado") return saleColumns;
     if (movementType === "traspaso") return transferColumns;
     if (movementType === "distribucion") return distributionColumns;
     if (movementType === "agregar") return addToStockColumns;
@@ -326,7 +327,7 @@ const Cart = () => {
       <div>
         {cart.length !== 0 && (
           <Row>
-            {movementType === "venta" && (
+            {(movementType === "venta" || movementType === "apartado") && (
               <>
                 <Col md={4}></Col>
                 <Col md={5} className="d-flex gap-3 justify-content-end">

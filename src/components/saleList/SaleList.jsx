@@ -15,16 +15,31 @@ import {
 } from "../redux/saleModal/SaleModalActions";
 import SaleModal from "../saleModal/saleModal";
 import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
-import { WarningIcon } from "../commons/icons/Icons";
+import { PrinterIcon, ReturnIcon, WarningIcon } from "../commons/icons/Icons";
 import Alert from "react-bootstrap/Alert";
 import { getUserData } from "../apis/utils";
+import { hidePaymentModal, showPaymentModal } from "../redux/paymentModal/PaymentModalActions";
+import PaymentModal from "../paymentModal/PaymentModal";
+
+
+const TYPE_OPTIONS = [
+  {
+    value: false,
+    label: "Ventas",
+  },
+  {
+    value: true,
+    label: "Apartados",
+  },
+];
+
 
 const SaleList = () => {
   const user = getUserData();
   const urlPrinter = user.store_url_printer;
   const [sales, setSales] = useState([]);
   const today = getFormattedDate();
-  const [params, setParams] = useState({ date: today, is_canceled: 0 });
+  const [params, setParams] = useState({ date: today, is_canceled: 0, reservation_in_progress: false });
   const [loading, setLoading] = useState(false);
   const [salesDuplicated, setSalesDuplicated] = useState([]);
   const [showAllFields, setShowAllFields] = useState(false);
@@ -80,9 +95,16 @@ const SaleList = () => {
     }
   };
 
+  const handleOpenModal2 = () => {
+    dispatch(hidePaymentModal());
+    setTimeout(() => dispatch(showPaymentModal()), 1);
+  };
+
+
   return (
     <>
       <CustomSpinner2 isLoading={loading}></CustomSpinner2>
+      <PaymentModal/>
       <SaleModal onUpdateSaleList={handleUpdateSaleList}></SaleModal>
       <div className="custom-section">
         {salesDuplicated.length > 0 && (
@@ -96,7 +118,7 @@ const SaleList = () => {
 
         <h1>Ventas</h1>
         <Row>
-          <Col>
+        <Col>
             <Form>
               <Form.Label>#</Form.Label>
               <Form.Control
@@ -106,6 +128,21 @@ const SaleList = () => {
                 name="sale_id"
               />
             </Form>
+          </Col>
+          <Col>
+            <Form.Label>Tipo</Form.Label>
+            <Form.Select
+              value={params.reservation_in_progress}
+              onChange={handleDataChange}
+              name="reservation_in_progress"
+              //              disabled={isLoading}
+            >
+              {TYPE_OPTIONS.map((type_option) => (
+                <option key={type_option.value} value={type_option.value}>
+                  {type_option.label}
+                </option>
+              ))}
+            </Form.Select>
           </Col>
           <Col>
             <Form>
@@ -166,10 +203,25 @@ const SaleList = () => {
               wrap: true,
               grow: 3,
             },
+
             {
               name: "Total",
               selector: (row) => `$${row.total}`,
             },
+
+            ...(params.reservation_in_progress === 'true'
+              ? [
+                  {
+                    name: "Pagado",
+                    selector: (row) => "$"+row.paid,
+                  },
+                  {
+                    name: "Falta",
+                    selector: (row) => "$"+(row.total - row.paid),
+                  },
+                ]
+              : []),
+
             {
               name: "Metodos de pago",
               selector: (row) => row.payments_methods.join(", "),
@@ -196,18 +248,23 @@ const SaleList = () => {
 
             {
               name: "Acciones",
-              grow: showAllFields ? 6.1 : 3.2,
+              grow: showAllFields ? 3 : 2,
               cell: (row) => (
                 <>
                   {urlPrinter && (
                     <CustomButton onClick={() => handlePrintTicket(row)}>
-                      Imprimir ticket
+                      <PrinterIcon color="white" size="16"/>
                     </CustomButton>
                   )}
+
+                  <CustomButton fullWidth onClick={handleOpenModal2}>
+                    Pagar (En desarrollo)
+                  </CustomButton>
+
                   {((row.is_cancelable) ||
                     row.is_duplicate) && (
                     <CustomButton onClick={() => handleOpenModal(row)}>
-                      Devolución
+                      <ReturnIcon></ReturnIcon>
                     </CustomButton>
                   )}
                   {row.is_duplicate && <WarningIcon></WarningIcon>}
