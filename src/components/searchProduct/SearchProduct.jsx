@@ -288,6 +288,16 @@ const SearchProduct = () => {
         checked={movementType === "venta"}
         className={storeType === "A" ? "d-none" : ""}
       />
+            <Form.Check
+        inline
+        id="apartado"
+        label="Apartado (Ctrl + ***)"
+        type="radio"
+        onChange={handleMovementTypeChange}
+        value="apartado"
+        checked={movementType === "apartado"}
+        className={storeType === "A" ? "d-none" : ""}
+      />
       <Form.Check
         inline
         id="traspaso"
