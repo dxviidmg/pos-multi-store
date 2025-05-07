@@ -19,7 +19,8 @@ import { CashIcon, PrinterIcon, ReturnIcon, WarningIcon } from "../commons/icons
 import Alert from "react-bootstrap/Alert";
 import { getUserData } from "../apis/utils";
 import { hidePaymentModal, showPaymentModal } from "../redux/paymentModal/PaymentModalActions";
-import PaymentModal from "../paymentModal/PaymentModal";
+import PaymentModal2 from "../paymentModal2/PaymentModal2";
+import { hidePaymentReservationModal, showPaymentReservationModal } from "../redux/paymentReservationModal/PaymentReservationModalActions";
 
 
 const TYPE_OPTIONS = [
@@ -70,9 +71,12 @@ const SaleList = () => {
       ...prevData,
       [name]: value,
     }));
+    dispatch(hideSaleModal());    
+    dispatch(hidePaymentModal());
   };
 
   const handleOpenModal = (sale) => {
+    console.log('handleOpenModal')
     dispatch(hideSaleModal());
     setTimeout(() => dispatch(showSaleModal(sale)));
   };
@@ -95,16 +99,17 @@ const SaleList = () => {
     }
   };
 
-  const handleOpenModal2 = () => {
-    dispatch(hidePaymentModal());
-    setTimeout(() => dispatch(showPaymentModal()), 1);
+  const handleOpenModal2 = (row) => {
+    console.log('handleOpenModal2')
+    dispatch(hidePaymentReservationModal());
+    setTimeout(() => dispatch(showPaymentReservationModal()), 1);
   };
 
 
   return (
     <>
       <CustomSpinner2 isLoading={loading}></CustomSpinner2>
-      <PaymentModal/>
+      <PaymentModal2/>
       <SaleModal onUpdateSaleList={handleUpdateSaleList}></SaleModal>
       <div className="custom-section">
         {salesDuplicated.length > 0 && (
@@ -258,7 +263,7 @@ const SaleList = () => {
                   )}
 
                   {params.reservation_in_progress && (
-                                      <CustomButton fullWidth onClick={handleOpenModal2}>
+                                      <CustomButton fullWidth onClick={() => handleOpenModal2(row)}>
                                       <CashIcon/>
                                     </CustomButton>
                   )}
