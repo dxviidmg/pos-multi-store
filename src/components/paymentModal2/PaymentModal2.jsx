@@ -13,17 +13,15 @@ const PaymentModal2 = () => {
   );
 
   const [action, setAction] = useState("Liquidar");
-
   const [payment, setPayment] = useState(INITIAL_PAYMENT_STATE);
   const [referencePayment, setReferencePayment] = useState("");
-
   const [paymentMethod, setPaymentMethod] = useState("EF");
+
+  const remaining = reservation.total - reservation.paid;
 
   useEffect(() => {
     if (showPaymentReservationModal) {
-      setTimeout(() => {
-        inputPaymentRef.current?.focus();
-      }, 100);
+      setTimeout(() => inputPaymentRef.current?.focus(), 100);
     }
   }, [showPaymentReservationModal]);
 
@@ -32,28 +30,25 @@ const PaymentModal2 = () => {
       sale: reservation.id,
       payment: payment.paidWith - payment.change,
       paymentMethod,
-      action
-    }
-
-    console.log(data)
+      action,
+    };
+    console.log(data);
+    // Aquí va el dispatch o lógica para enviar el pago
   };
 
-  const handlePaidWithChange = async (e) => {
-    let value = Number(e.target.value);
+  const handlePaidWithChange = (e) => {
+    const value = Number(e.target.value) || 0;
     setPayment({
       paidWith: value,
-      change: value + reservation.paid - reservation.total,
+      change: Math.max(0, value + reservation.paid - reservation.total),
     });
   };
 
   const handleDisableButton = () => {
-    if (payment.paidWith === 0) return true;
-    if (payment.paidWith >= (reservation.total - reservation.paid)) return true;
-    if (action === 'Liquidar') {
-      console.log()
-      return payment.paidWith <= (reservation.total - reservation.paid);
+    if (action !== "Liquidar") {
+      return payment.paidWith === 0 || payment.paidWith >= remaining;
     }
-    return false;
+    return payment.paidWith < remaining;
   };
 
   return (
@@ -91,7 +86,7 @@ const PaymentModal2 = () => {
             <Form.Label className="me-3">Medios de pago:</Form.Label>
             {["EF", "TA", "TR"].map((method) => (
               <div key={method} className="d-flex align-items-center mb-1">
-                <div className="me-3" style={{ flex: "1" }}>
+                <div className="me-3" style={{ flex: 1 }}>
                   <Form.Check
                     id={method}
                     label={
@@ -124,11 +119,7 @@ const PaymentModal2 = () => {
 
           <Col md={3}>
             <Form.Label>Deuda</Form.Label>
-            <Form.Control
-              type="number"
-              value={reservation.total - reservation.paid}
-              disabled
-            />
+            <Form.Control type="number" value={remaining} disabled />
           </Col>
 
           <Col md={3}>
@@ -140,6 +131,7 @@ const PaymentModal2 = () => {
               ref={inputPaymentRef}
             />
           </Col>
+
           <Col md={3}>
             {paymentMethod !== "EF" ? (
               <>
@@ -165,18 +157,17 @@ const PaymentModal2 = () => {
           <Col md={6}>
             <CustomButton
               disabled={handleDisableButton()}
-              fullWidth={true}
+              fullWidth
               onClick={() => handleCreatePayment(true)}
             >
               Pagar con ticket (Ctrl + G)
             </CustomButton>
           </Col>
-
           <Col md={6}>
             <CustomButton
               disabled={handleDisableButton()}
-              fullWidth={true}
-              onClick={(e) => handleCreatePayment()}
+              fullWidth
+              onClick={() => handleCreatePayment()}
             >
               Pagar sin ticket (Ctrl + F)
             </CustomButton>
