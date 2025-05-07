@@ -71,8 +71,6 @@ const SaleList = () => {
       ...prevData,
       [name]: value,
     }));
-    dispatch(hideSaleModal());    
-    dispatch(hidePaymentModal());
   };
 
   const handleOpenModal = (sale) => {
@@ -102,7 +100,7 @@ const SaleList = () => {
   const handleOpenModal2 = (row) => {
     console.log('handleOpenModal2')
     dispatch(hidePaymentReservationModal());
-    setTimeout(() => dispatch(showPaymentReservationModal()), 1);
+    setTimeout(() => dispatch(showPaymentReservationModal(row)), 1);
   };
 
 

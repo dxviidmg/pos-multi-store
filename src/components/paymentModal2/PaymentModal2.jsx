@@ -24,14 +24,12 @@ const INITIAL_SALE_EXCHANGE_STATE = { refunded: 0, payment: 0 };
 
 const PaymentModal2 = () => {
   const inputPaymentRef = useRef(null);
-  const { showPaymentReservationModal } = useSelector(
+  const { showPaymentReservationModal, reservation } = useSelector(
     (state) => state.PaymentModal2Reducer
   );
 
-  console.log('showPaymentModal22', showPaymentReservationModal)
-//  const sale = useSelector((state) => state.saleReduce.sale);
-  const sale = {}
-//  console.log(sale)
+  console.log("showPaymentModal22", showPaymentReservationModal, reservation);
+  //  const sale = useSelector((state) => state.saleReduce.sale);
   const movementType = useSelector((state) => state.cartReducer.movementType);
 
   const [action, setAction] = useState("Liquidar");
@@ -40,7 +38,7 @@ const PaymentModal2 = () => {
   const [referencePayment, setReferencePayment] = useState("");
   const [saleExchange, setSaleExchange] = useState(INITIAL_SALE_EXCHANGE_STATE);
 
-  const [paymentMethod, setPaymentMethod] = useState('EF');
+  const [paymentMethod, setPaymentMethod] = useState("EF");
   const urlPrinter = getUserData().store_url_printer;
 
   const dispatch = useDispatch();
@@ -54,12 +52,12 @@ const PaymentModal2 = () => {
   }, [showPaymentReservationModal]);
 
   const { total, totalDiscount } = useMemo(() => {
-    const total = 100
+    const total = 100;
 
     const totalDiscount = 100;
 
     return { total, totalDiscount };
-  }, [sale]);
+  }, [reservation]);
 
   useEffect(() => {
     const handleShortcut = (event) => {
@@ -74,25 +72,15 @@ const PaymentModal2 = () => {
 
     window.addEventListener("keydown", handleShortcut);
     return () => window.removeEventListener("keydown", handleShortcut);
-  }, [totalDiscount, paymentMethod, sale, payment]);
-
-
+  }, [totalDiscount, paymentMethod, reservation, payment]);
 
   const handleChangePayments = (e) => {
     const { name, value } = e.target;
-
-
   };
 
+  const totalPaymentInput = (0 * 100) / 100;
 
-  const totalPaymentInput =
-    (0 *
-      100) /
-    100;
-
-  const handleCreateSale = async (printTicket = false) => {
-
-  };
+  const handleCreateSale = async (printTicket = false) => {};
 
   const handlePaidWithChange = async (e) => {
     let value = Number(e.target.value);
@@ -100,28 +88,32 @@ const PaymentModal2 = () => {
     console.log("***", movementType);
     setPayment({
       paidWith: value,
-      change: value + saleExchange.refunded - totalDiscount,
+      change: value + reservation.paid - reservation.total
     });
-
   };
 
-
-
   const handleDisableButton = () => {
-
     if (movementType === "apartado") {
       return false;
     }
-    return (false
-    );
+    return false;
   };
 
   return (
     <CustomModal showOut={showPaymentReservationModal} title="Pagar apartado">
-
-
       <div className="custom-section">
         <Row>
+          <h2>Información</h2>
+          <Col md={3}>
+            <Form.Label>Folio</Form.Label>
+            <Form.Control type="number" value={reservation.id} disabled />
+          </Col>
+
+          <Col md={3}>
+            <Form.Label>Total de la compra</Form.Label>
+            <Form.Control type="number" value={reservation.total} disabled />
+          </Col>
+
           <Col md={3}>
             <Form.Label className="me-1">Acción:</Form.Label>
             {["Liquidar", "Abonar"].map((option) => (
@@ -138,7 +130,7 @@ const PaymentModal2 = () => {
             ))}
           </Col>
 
-          <Col md={6}>
+          <Col md={3}>
             <Form.Label className="me-3">Medios de pago:</Form.Label>
             {["EF", "TA", "TR"].map((method) => (
               <div key={method} className="d-flex align-items-center mb-1">
@@ -152,37 +144,33 @@ const PaymentModal2 = () => {
                         ? "Tarjeta"
                         : "Transferencia"
                     }
-                    type='radio'
+                    type="radio"
                     onChange={() => setPaymentMethod(method)}
                     value={method}
                     name="paymentMethod"
-                    checked={paymentMethod===method}
-                    
+                    checked={paymentMethod === method}
                   />
                 </div>
               </div>
             ))}
           </Col>
-
         </Row>
       </div>
 
       <div className="custom-section">
         <h2>Totales</h2>
         <Row>
-          <Col md={3}>
-            <Form.Label>Total</Form.Label>
-            <Form.Control type="number" value={total.toFixed(2)} disabled />
+        <Col md={3}>
+            <Form.Label>Pagado</Form.Label>
+            <Form.Control type="number" value={reservation.paid} disabled />
           </Col>
 
           <Col md={3}>
-            <Form.Label>Total con descuento</Form.Label>
-            <Form.Control
-              type="number"
-              value={totalDiscount.toFixed(2)}
-              disabled
-            />
+            <Form.Label>Deuda</Form.Label>
+            <Form.Control type="number" value={reservation.total - reservation.paid} disabled />
           </Col>
+
+
           <Col md={3}>
             <Form.Label>Pago con</Form.Label>
             <Form.Control
@@ -193,7 +181,7 @@ const PaymentModal2 = () => {
             />
           </Col>
           <Col md={3}>
-            {paymentMethod !== 'EF' ? (
+            {paymentMethod !== "EF" ? (
               <>
                 <Form.Label>Referencia</Form.Label>
                 <Form.Control
@@ -214,17 +202,8 @@ const PaymentModal2 = () => {
 
       <div className="custom-section">
         <Row>
+          <Col md={6}>
 
-          <Col md={3}>
-            <CustomButton
-              disabled={handleDisableButton()}
-              fullWidth={true}
-              onClick={(e) => handleCreateSale()}
-            >
-              Pagar sin ticket
-              <br />
-              (Ctrl + F)
-            </CustomButton>
 
             <CustomButton
               disabled={handleDisableButton()}
@@ -232,8 +211,21 @@ const PaymentModal2 = () => {
               onClick={(e) => handleCreateSale(true)}
             >
               Pagar con ticket
-              <br /> (Ctrl + G)
+               (Ctrl + G)
             </CustomButton>
+          </Col>
+
+          <Col md={6}>
+            <CustomButton
+              disabled={handleDisableButton()}
+              fullWidth={true}
+              onClick={(e) => handleCreateSale()}
+            >
+              Pagar sin ticket
+              
+              (Ctrl + F)
+            </CustomButton>
+
           </Col>
         </Row>
       </div>
