@@ -10,6 +10,7 @@ import LogsModalReducer from "./components/redux/logsModal/LogsModalReducer";
 import CashFlowModalReducer from "./components/redux/cashFlowModal/CashFlowModalReducer";
 import SellerModalReducer from "./components/redux/sellerModal/SellerModalReducer";
 import DepartmentModalReducer from "./components/redux/departmentModal/DepartmentModalReducer";
+import PaymentModal2Reducer from "./components/redux/paymentReservationModal/PaymentReservationModalReducer";
 
 const rootReducer = combineReducers({
   cartReducer,
@@ -22,7 +23,8 @@ const rootReducer = combineReducers({
   LogsModalReducer,
   CashFlowModalReducer,
   SellerModalReducer,
-  DepartmentModalReducer
+  DepartmentModalReducer,
+  PaymentModal2Reducer
 });
 
 export default rootReducer;

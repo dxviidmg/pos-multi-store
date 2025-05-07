@@ -23,7 +23,7 @@ function roundUpCustom(value) {
 }
 
 const INITIAL_PAYMENT_STATE = { paidWith: 0, change: 0 };
-const INITIAL_SALE_EXCHANGE_STATE = {refunded: 0, payment: 0};
+const INITIAL_SALE_EXCHANGE_STATE = { refunded: 0, payment: 0 };
 
 const PaymentModal = () => {
   const inputPaymentRef = useRef(null);
@@ -32,7 +32,6 @@ const PaymentModal = () => {
   );
   const cart = useSelector((state) => state.cartReducer.cart);
   const movementType = useSelector((state) => state.cartReducer.movementType);
-
 
   const client = useSelector((state) => state.cartReducer.client);
   const [payment, setPayment] = useState(INITIAL_PAYMENT_STATE);
@@ -86,21 +85,17 @@ const PaymentModal = () => {
   }, [totalDiscount, paymentMethods, cart, client, payment]);
 
   useEffect(() => {
-    if (movementType==="apartado"){
-      console.log('estoy en apartado')
+    if (movementType === "apartado") {
       setPaymentMethods({
         type: "radio", // Por defecto, "Único".
         methods: { EF: 0, TA: 0, TR: 0 }, // Efectivo seleccionado.
       });
-    }
-    else{
-      console.log('estoy en xventa')
+    } else {
       setPaymentMethods({
         type: "radio", // Por defecto, "Único".
         methods: { EF: totalDiscount, TA: 0, TR: 0 }, // Efectivo seleccionado.
       });
     }
-
   }, [totalDiscount, movementType]);
 
   const handleChangePayments = (e) => {
@@ -115,7 +110,10 @@ const PaymentModal = () => {
         type: value,
         methods: newMethods,
       });
-      setPayment({ paidWith: totalDiscount - saleExchange.refunded, change: 0 });
+      setPayment({
+        paidWith: totalDiscount - saleExchange.refunded,
+        change: 0,
+      });
     } else {
       const updatedMethods =
         paymentMethods.type === "radio"
@@ -164,7 +162,10 @@ const PaymentModal = () => {
   };
 
   const handleCreateSale = async (printTicket = false) => {
-    if (movementType === 'venta' && (payment.paidWith === 0 || payment.change < 0)) {
+    if (
+      movementType === "venta" &&
+      (payment.paidWith === 0 || payment.change < 0)
+    ) {
       Swal.fire({
         icon: "error",
         title: "Error al finalizar la venta",
@@ -189,11 +190,9 @@ const PaymentModal = () => {
       payments: paymentList,
       reference_payment: referencePayment,
       sale_exchange: saleExchange,
-      reservation_in_progress: movementType === 'apartado'
+      reservation_in_progress: movementType === "apartado",
     };
 
-    console.log(movementType === 'apartado')
-    console.log('data', data)
     const response = await createSale(data);
 
     if (response.status === 201) {
@@ -209,8 +208,8 @@ const PaymentModal = () => {
       dispatch(cleanCart());
       dispatch(hidePaymentModal());
       setPayment(INITIAL_PAYMENT_STATE);
-      setHideClient(true)
-      setSaleExchange(INITIAL_SALE_EXCHANGE_STATE)
+      setHideClient(true);
+      setSaleExchange(INITIAL_SALE_EXCHANGE_STATE);
       Swal.fire({
         icon: "success",
         title: "Venta exitosa",
@@ -226,43 +225,34 @@ const PaymentModal = () => {
     }
   };
 
-
-  
-
   const handlePaidWithChange = async (e) => {
     let value = Number(e.target.value);
-    console.log('** handlePaidWithChange', )
-    console.log('***', movementType)
-    setPayment({ paidWith: value, change: value + saleExchange.refunded - totalDiscount });
-    if (movementType === 'apartado'){
+    setPayment({
+      paidWith: value,
+      change: value + saleExchange.refunded - totalDiscount,
+    });
+    if (movementType === "apartado") {
       setPaymentMethods({
         type: "radio",
         methods: { EF: value, TA: 0, TR: 0 },
       });
     }
-
   };
 
   const handleSearchSaleForChange = async () => {
-    console.log(saleExchange)
-    const response = await getSale(saleExchange.id)
-    console.log(response)
-    setSaleExchange({ ...response.data, payment: totalDiscount - response.data.refunded });
-//    setPayment(prevState => ({ ...prevState, change: prevState.change + response.data.refunded }));
-    
+    const response = await getSale(saleExchange.id);
+    setSaleExchange({
+      ...response.data,
+      payment: totalDiscount - response.data.refunded,
+    });
   };
 
   const handleDisableButton = () => {
-
-    console.log(paymentMethods)
-    console.log(totalPaymentInput)
-    console.log(totalDiscount)
-
-    if (movementType === 'apartado'){
-      return false
+    if (movementType === "apartado") {
+      return false;
     }
     return (
-       (paymentMethods.type === "checkbox" &&
+      (paymentMethods.type === "checkbox" &&
         totalPaymentInput !== totalDiscount) ||
       Object.values(paymentMethods.methods).every((amount) => amount === 0) ||
       (paymentMethods.type === "radio" &&
@@ -289,15 +279,13 @@ const PaymentModal = () => {
           <Col md={6}>
             {" "}
             <CustomButton
-          fullWidth
-          onClick={(e) => setHideExchange((prevState) => !prevState)}
-        >
-          Intercambio de mercancia
-        </CustomButton>
+              fullWidth
+              onClick={(e) => setHideExchange((prevState) => !prevState)}
+            >
+              Intercambio de mercancia
+            </CustomButton>
           </Col>
         </Row>
-
-
       </div>
       <div className="custom-section" hidden={hideClient}>
         <SearchClient />
@@ -309,29 +297,36 @@ const PaymentModal = () => {
         <Row>
           <Col md={3}>
             <Form.Label># Venta</Form.Label>
-            <Form.Control type="number" value={saleExchange.id} onChange={e => setSaleExchange({ ...saleExchange, id: Number(e.target.value) })}/>
+            <Form.Control
+              type="number"
+              value={saleExchange.id}
+              onChange={(e) =>
+                setSaleExchange({ ...saleExchange, id: Number(e.target.value) })
+              }
+            />
           </Col>
 
-
-
           <Col md={3} className="d-flex flex-column justify-content-end">
-            <CustomButton fullWidth onClick={handleSearchSaleForChange}><SearchIcon/> Buscar</CustomButton>
+            <CustomButton fullWidth onClick={handleSearchSaleForChange}>
+              <SearchIcon /> Buscar
+            </CustomButton>
           </Col>
 
           <Col md={3}>
             <Form.Label>$ de devolución</Form.Label>
-            <Form.Control type="number" value={saleExchange.refunded} disabled/>
+            <Form.Control
+              type="number"
+              value={saleExchange.refunded}
+              disabled
+            />
           </Col>
 
           <Col md={3}>
             <Form.Label>Pagar</Form.Label>
-            <Form.Control type="number" value={saleExchange.payment} disabled/>
+            <Form.Control type="number" value={saleExchange.payment} disabled />
           </Col>
-
-
         </Row>
       </div>
-
 
       <div className="custom-section">
         <h2>Totales</h2>
@@ -378,7 +373,6 @@ const PaymentModal = () => {
         </Row>
       </div>
 
-
       <div className="custom-section">
         <Row>
           <Col md={3}>
@@ -422,12 +416,11 @@ const PaymentModal = () => {
                     value={method}
                     name="paymentMethod"
                     checked={
-                      (movementType === "apartado" && method==="EF") ||
-                      (
-                      paymentMethods.type === "radio"
+                      (movementType === "apartado" && method === "EF") ||
+                      (paymentMethods.type === "radio"
                         ? paymentMethods.methods[method] === totalDiscount
-                        : paymentMethods.methods[method] > 0
-                      )}
+                        : paymentMethods.methods[method] > 0)
+                    }
                   />
                 </div>
                 {paymentMethods.type === "checkbox" &&
