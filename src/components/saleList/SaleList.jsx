@@ -15,13 +15,19 @@ import {
 } from "../redux/saleModal/SaleModalActions";
 import SaleModal from "../saleModal/saleModal";
 import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
-import { CashIcon, PrinterIcon, ReturnIcon, WarningIcon } from "../commons/icons/Icons";
+import {
+  CashIcon,
+  PrinterIcon,
+  ReturnIcon,
+  WarningIcon,
+} from "../commons/icons/Icons";
 import Alert from "react-bootstrap/Alert";
 import { getUserData } from "../apis/utils";
-import { hidePaymentModal, showPaymentModal } from "../redux/paymentModal/PaymentModalActions";
 import PaymentModal2 from "../paymentModal2/PaymentModal2";
-import { hidePaymentReservationModal, showPaymentReservationModal } from "../redux/paymentReservationModal/PaymentReservationModalActions";
-
+import {
+  hidePaymentReservationModal,
+  showPaymentReservationModal,
+} from "../redux/paymentReservationModal/PaymentReservationModalActions";
 
 const TYPE_OPTIONS = [
   {
@@ -34,13 +40,16 @@ const TYPE_OPTIONS = [
   },
 ];
 
-
 const SaleList = () => {
   const user = getUserData();
   const urlPrinter = user.store_url_printer;
   const [sales, setSales] = useState([]);
   const today = getFormattedDate();
-  const [params, setParams] = useState({ date: today, is_canceled: 0, reservation_in_progress: false });
+  const [params, setParams] = useState({
+    date: today,
+    is_canceled: 0,
+    reservation_in_progress: false,
+  });
   const [loading, setLoading] = useState(false);
   const [salesDuplicated, setSalesDuplicated] = useState([]);
   const [showAllFields, setShowAllFields] = useState(false);
@@ -71,12 +80,11 @@ const SaleList = () => {
       ...prevData,
       [name]: value,
     }));
-    dispatch(hideSaleModal());    
-    dispatch(hidePaymentModal());
+
   };
 
   const handleOpenModal = (sale) => {
-    console.log('handleOpenModal')
+    console.log("handleOpenModal");
     dispatch(hideSaleModal());
     setTimeout(() => dispatch(showSaleModal(sale)));
   };
@@ -100,16 +108,15 @@ const SaleList = () => {
   };
 
   const handleOpenModal2 = (row) => {
-    console.log('handleOpenModal2')
+    console.log("handleOpenModal2");
     dispatch(hidePaymentReservationModal());
-    setTimeout(() => dispatch(showPaymentReservationModal()), 1);
+    setTimeout(() => dispatch(showPaymentReservationModal(row)), 1);
   };
-
 
   return (
     <>
       <CustomSpinner2 isLoading={loading}></CustomSpinner2>
-      <PaymentModal2/>
+      <PaymentModal2 onUpdateSaleList={handleUpdateSaleList}/>
       <SaleModal onUpdateSaleList={handleUpdateSaleList}></SaleModal>
       <div className="custom-section">
         {salesDuplicated.length > 0 && (
@@ -123,18 +130,8 @@ const SaleList = () => {
 
         <h1>Ventas</h1>
         <Row>
+
         <Col>
-            <Form>
-              <Form.Label>#</Form.Label>
-              <Form.Control
-                type="number"
-                value={params.sale_id}
-                onChange={(e) => handleDataChange(e)}
-                name="sale_id"
-              />
-            </Form>
-          </Col>
-          <Col>
             <Form.Label>Tipo</Form.Label>
             <Form.Select
               value={params.reservation_in_progress}
@@ -149,6 +146,7 @@ const SaleList = () => {
               ))}
             </Form.Select>
           </Col>
+
           <Col>
             <Form>
               <Form.Label>Fecha</Form.Label>
@@ -161,6 +159,21 @@ const SaleList = () => {
               />
             </Form>
           </Col>
+
+
+          <Col>
+            <Form>
+              <Form.Label>#</Form.Label>
+              <Form.Control
+                type="number"
+                value={params.sale_id}
+                onChange={(e) => handleDataChange(e)}
+                name="sale_id"
+              />
+            </Form>
+          </Col>
+
+
           <Col className="d-flex flex-column justify-content-end">
             <CustomButton onClick={() => setShowAllFields((prev) => !prev)}>
               Ver todos los campos
@@ -214,15 +227,15 @@ const SaleList = () => {
               selector: (row) => `$${row.total}`,
             },
 
-            ...(params.reservation_in_progress === 'true'
+            ...(params.reservation_in_progress === "true"
               ? [
                   {
                     name: "Pagado",
-                    selector: (row) => "$"+row.paid,
+                    selector: (row) => "$" + row.paid,
                   },
                   {
                     name: "Falta",
-                    selector: (row) => "$"+(row.total - row.paid),
+                    selector: (row) => "$" + (row.total - row.paid),
                   },
                 ]
               : []),
@@ -258,20 +271,20 @@ const SaleList = () => {
                 <>
                   {urlPrinter && (
                     <CustomButton onClick={() => handlePrintTicket(row)}>
-                      <PrinterIcon color="white" size="16"/>
+                      <PrinterIcon color="white" size="16" />
                     </CustomButton>
                   )}
 
-                  {params.reservation_in_progress && (
-                                      <CustomButton fullWidth onClick={() => handleOpenModal2(row)}>
-                                      <CashIcon/>
-                                    </CustomButton>
+                  {params.reservation_in_progress === 'true' && (
+                    <CustomButton
+                      fullWidth
+                      onClick={() => handleOpenModal2(row)}
+                    >
+                      <CashIcon />
+                    </CustomButton>
                   )}
 
-
-
-                  {((row.is_cancelable) ||
-                    row.is_duplicate) && (
+                  {(row.is_cancelable || row.is_duplicate) && (
                     <CustomButton onClick={() => handleOpenModal(row)}>
                       <ReturnIcon></ReturnIcon>
                     </CustomButton>

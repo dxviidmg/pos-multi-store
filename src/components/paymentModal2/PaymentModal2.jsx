@@ -1,127 +1,120 @@
-import React, { useMemo, useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import CustomModal from "../commons/customModal/customModal";
 import { Col, Form, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
-import { cleanCart, removeClientfromCart } from "../redux/cart/cartActions";
-import { createSale } from "../apis/sales";
-import { hidePaymentModal } from "../redux/paymentModal/PaymentModalActions";
+import { updateSale } from "../apis/sales";
+import { hidePaymentReservationModal } from "../redux/paymentReservationModal/PaymentReservationModalActions";
 import Swal from "sweetalert2";
-import { getUserData } from "../apis/utils";
-import { handlePrintTicket } from "../utils/utils";
-
-function roundUpCustom(value) {
-  const intPart = Math.floor(value); // Parte entera
-  const decimalPart = value - intPart; // Parte decimal
-
-  if (decimalPart === 0) return value; // Si es entero, se queda igual
-  if (decimalPart <= 0.5) return intPart + 0.5; // Si es hasta 0.5, sube a 0.5
-  return Math.ceil(value); // Si es mayor a 0.5, sube al siguiente entero
-}
 
 const INITIAL_PAYMENT_STATE = { paidWith: 0, change: 0 };
-const INITIAL_SALE_EXCHANGE_STATE = { refunded: 0, payment: 0 };
 
-const PaymentModal2 = () => {
+const PaymentModal2 = ({ onUpdateSaleList }) => {
   const inputPaymentRef = useRef(null);
-  const { showPaymentReservationModal } = useSelector(
+  const { showPaymentReservationModal, reservation } = useSelector(
     (state) => state.PaymentModal2Reducer
   );
 
-  console.log('showPaymentModal22', showPaymentReservationModal)
-//  const sale = useSelector((state) => state.saleReduce.sale);
-  const sale = {}
-//  console.log(sale)
-  const movementType = useSelector((state) => state.cartReducer.movementType);
-
   const [action, setAction] = useState("Liquidar");
-
   const [payment, setPayment] = useState(INITIAL_PAYMENT_STATE);
   const [referencePayment, setReferencePayment] = useState("");
-  const [saleExchange, setSaleExchange] = useState(INITIAL_SALE_EXCHANGE_STATE);
-
-  const [paymentMethod, setPaymentMethod] = useState('EF');
-  const urlPrinter = getUserData().store_url_printer;
-
+  const [paymentMethod, setPaymentMethod] = useState("EF");
+  const remaining = reservation.total - reservation.paid;
   const dispatch = useDispatch();
 
   useEffect(() => {
     if (showPaymentReservationModal) {
-      setTimeout(() => {
-        inputPaymentRef.current?.focus();
-      }, 100); // Pequeño retraso para permitir el renderizado
+      setTimeout(() => inputPaymentRef.current?.focus(), 100);
     }
   }, [showPaymentReservationModal]);
 
-  const { total, totalDiscount } = useMemo(() => {
-    const total = 100
-
-    const totalDiscount = 100;
-
-    return { total, totalDiscount };
-  }, [sale]);
-
-  useEffect(() => {
-    const handleShortcut = (event) => {
-      if (event.ctrlKey && event.key === "f") {
-        event.preventDefault();
-        handleCreateSale();
-      } else if (event.ctrlKey && event.key === "g") {
-        event.preventDefault();
-        handleCreateSale(true);
-      }
+  const handleCreatePayment = async (printTicket = false) => {
+    const reservation_in_progress = action === "Abonar";
+    const data = {
+      id: reservation.id,
+      payment: {
+        sale_id: reservation.id,
+        amount: payment.paidWith - payment.change,
+        payment_method: paymentMethod,
+      },
+      reservation_in_progress,
     };
+    console.log(data);
 
-    window.addEventListener("keydown", handleShortcut);
-    return () => window.removeEventListener("keydown", handleShortcut);
-  }, [totalDiscount, paymentMethod, sale, payment]);
+    const response = await updateSale(data);
+
+    console.log(response)
+    if (response.status === 200) {
+      setPaymentMethod(INITIAL_PAYMENT_STATE);
+      setReferencePayment("");
+      dispatch(hidePaymentReservationModal());
+      setPayment(INITIAL_PAYMENT_STATE);
+
+            if (reservation_in_progress) {
+              onUpdateSaleList(response.data);
+
+              Swal.fire({
+                icon: "success",
+                title: "Abono exitoso exitoso",
+                timer: 5000,
+              });
+
+            } 
+
+            
+            else {
+
+              Swal.fire({
+                icon: "success",
+                title: "Liquidación exitosa",
+                timer: 5000,
+              });
+              onUpdateSaleList({ ...response.data, delete: true });
+            }
 
 
-
-  const handleChangePayments = (e) => {
-    const { name, value } = e.target;
-
-
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Error al añadir un pago de apartado",
+        text: "Por favor llame a soporte técnico",
+        timer: 5000,
+      });
+    }
+    console.log(response);
+    // Aquí va el dispatch o lógica para enviar el pago
   };
 
-
-  const totalPaymentInput =
-    (0 *
-      100) /
-    100;
-
-  const handleCreateSale = async (printTicket = false) => {
-
-  };
-
-  const handlePaidWithChange = async (e) => {
-    let value = Number(e.target.value);
-    console.log("** handlePaidWithChange");
-    console.log("***", movementType);
+  const handlePaidWithChange = (e) => {
+    const value = Number(e.target.value) || 0;
     setPayment({
       paidWith: value,
-      change: value + saleExchange.refunded - totalDiscount,
+      change: Math.max(0, value + reservation.paid - reservation.total),
     });
-
   };
 
-
-
   const handleDisableButton = () => {
-
-    if (movementType === "apartado") {
-      return false;
+    if (action !== "Liquidar") {
+      return payment.paidWith === 0 || payment.paidWith >= remaining;
     }
-    return (false
-    );
+    return payment.paidWith < remaining;
   };
 
   return (
     <CustomModal showOut={showPaymentReservationModal} title="Pagar apartado">
-
-
       <div className="custom-section">
         <Row>
+          <h2>Información</h2>
+          <Col md={3}>
+            <Form.Label>Folio</Form.Label>
+            <Form.Control type="number" value={reservation.id} disabled />
+          </Col>
+
+          <Col md={3}>
+            <Form.Label>Total de la compra</Form.Label>
+            <Form.Control type="number" value={reservation.total} disabled />
+          </Col>
+
           <Col md={3}>
             <Form.Label className="me-1">Acción:</Form.Label>
             {["Liquidar", "Abonar"].map((option) => (
@@ -138,11 +131,11 @@ const PaymentModal2 = () => {
             ))}
           </Col>
 
-          <Col md={6}>
+          <Col md={3}>
             <Form.Label className="me-3">Medios de pago:</Form.Label>
             {["EF", "TA", "TR"].map((method) => (
               <div key={method} className="d-flex align-items-center mb-1">
-                <div className="me-3" style={{ flex: "1" }}>
+                <div className="me-3" style={{ flex: 1 }}>
                   <Form.Check
                     id={method}
                     label={
@@ -152,18 +145,16 @@ const PaymentModal2 = () => {
                         ? "Tarjeta"
                         : "Transferencia"
                     }
-                    type='radio'
+                    type="radio"
                     onChange={() => setPaymentMethod(method)}
                     value={method}
                     name="paymentMethod"
-                    checked={paymentMethod===method}
-                    
+                    checked={paymentMethod === method}
                   />
                 </div>
               </div>
             ))}
           </Col>
-
         </Row>
       </div>
 
@@ -171,18 +162,15 @@ const PaymentModal2 = () => {
         <h2>Totales</h2>
         <Row>
           <Col md={3}>
-            <Form.Label>Total</Form.Label>
-            <Form.Control type="number" value={total.toFixed(2)} disabled />
+            <Form.Label>Pagado</Form.Label>
+            <Form.Control type="number" value={reservation.paid} disabled />
           </Col>
 
           <Col md={3}>
-            <Form.Label>Total con descuento</Form.Label>
-            <Form.Control
-              type="number"
-              value={totalDiscount.toFixed(2)}
-              disabled
-            />
+            <Form.Label>Deuda</Form.Label>
+            <Form.Control type="number" value={remaining} disabled />
           </Col>
+
           <Col md={3}>
             <Form.Label>Pago con</Form.Label>
             <Form.Control
@@ -192,8 +180,9 @@ const PaymentModal2 = () => {
               ref={inputPaymentRef}
             />
           </Col>
+
           <Col md={3}>
-            {paymentMethod !== 'EF' ? (
+            {paymentMethod !== "EF" ? (
               <>
                 <Form.Label>Referencia</Form.Label>
                 <Form.Control
@@ -214,25 +203,22 @@ const PaymentModal2 = () => {
 
       <div className="custom-section">
         <Row>
-
-          <Col md={3}>
+          <Col md={6}>
             <CustomButton
               disabled={handleDisableButton()}
-              fullWidth={true}
-              onClick={(e) => handleCreateSale()}
+              fullWidth
+              onClick={() => handleCreatePayment(true)}
             >
-              Pagar sin ticket
-              <br />
-              (Ctrl + F)
+              Pagar con ticket (Ctrl + G)
             </CustomButton>
-
+          </Col>
+          <Col md={6}>
             <CustomButton
               disabled={handleDisableButton()}
-              fullWidth={true}
-              onClick={(e) => handleCreateSale(true)}
+              fullWidth
+              onClick={() => handleCreatePayment()}
             >
-              Pagar con ticket
-              <br /> (Ctrl + G)
+              Pagar sin ticket (Ctrl + F)
             </CustomButton>
           </Col>
         </Row>

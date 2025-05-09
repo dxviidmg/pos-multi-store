@@ -18,7 +18,7 @@ export const getSales = async (params) => {
 
   if (params) {
     Object.entries(params).forEach(([key, value]) => {
-      console.log('params', key, value)
+      console.log("params", key, value);
       apiUrl.searchParams.append(key, value);
     });
   }
@@ -36,9 +36,6 @@ export const getSales = async (params) => {
 
 export const getSale = async (id) => {
   const apiUrl = new URL(getApiUrl("sale/" + id));
-
-
-
 
   try {
     const response = await axios.get(apiUrl, {
@@ -125,4 +122,15 @@ export const printTicket = async (url, endpoint, data) => {
   }
 };
 
+export const updateSale = async (data) => {
+  const apiUrl = new URL(getApiUrl("sale/" + data.id));
 
+  try {
+    const response = await axios.patch(apiUrl, data, {
+      headers: getHeaders(),
+    });
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
