@@ -88,6 +88,7 @@ const ProductList = () => {
       ({
         code: Código,
         brand_name: Marca,
+        department_name: Departamento,
         name: Nombre,
         stock: Stock,
         cost: Costo,
@@ -99,6 +100,7 @@ const ProductList = () => {
       }) => ({
         Código,
         Marca,
+        Departamento,
         Nombre,
         Stock,
         Costo,
@@ -209,7 +211,7 @@ const ProductList = () => {
         <CustomButton onClick={() => handleOpenModal()}>
           Crear producto
         </CustomButton>
-        <CustomButton onClick={handleDownload}>
+        <CustomButton onClick={handleDownload} disabled={products.length === 0}>
           Descargar productos
         </CustomButton>
 
