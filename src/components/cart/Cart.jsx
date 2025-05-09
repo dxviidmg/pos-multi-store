@@ -331,7 +331,7 @@ const Cart = () => {
               <>
                 <Col md={4}></Col>
                 <Col md={5} className="d-flex gap-3 justify-content-end">
-                  <h3>Productos: {totalProducts}</h3>
+                  <h3>Productos: <span style={{color: '#da0000'}}>{totalProducts}</span></h3>
                   <h3>Total: ${total.toFixed(2)}</h3>
                 </Col>
                 <Col md={3}>
@@ -394,6 +394,7 @@ const Cart = () => {
           noDataComponent="Sin productos"
           data={cart}
           columns={getColumns()}
+          pagination={false}
         />
       </div>
     </div>
