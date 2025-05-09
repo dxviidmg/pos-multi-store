@@ -1,12 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
 import CustomModal from "../commons/customModal/customModal";
 import { Col, Form, Row } from "react-bootstrap";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
+import { updateSale } from "../apis/sales";
+import { hidePaymentReservationModal } from "../redux/paymentReservationModal/PaymentReservationModalActions";
+import Swal from "sweetalert2";
 
 const INITIAL_PAYMENT_STATE = { paidWith: 0, change: 0 };
 
-const PaymentModal2 = () => {
+const PaymentModal2 = ({ onUpdateSaleList }) => {
   const inputPaymentRef = useRef(null);
   const { showPaymentReservationModal, reservation } = useSelector(
     (state) => state.PaymentModal2Reducer
@@ -16,8 +19,8 @@ const PaymentModal2 = () => {
   const [payment, setPayment] = useState(INITIAL_PAYMENT_STATE);
   const [referencePayment, setReferencePayment] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("EF");
-
   const remaining = reservation.total - reservation.paid;
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (showPaymentReservationModal) {
@@ -26,13 +29,59 @@ const PaymentModal2 = () => {
   }, [showPaymentReservationModal]);
 
   const handleCreatePayment = async (printTicket = false) => {
+    const reservation_in_progress = action === "Abonar";
     const data = {
-      sale: reservation.id,
-      payment: payment.paidWith - payment.change,
-      paymentMethod,
-      action,
+      id: reservation.id,
+      payment: {
+        sale_id: reservation.id,
+        amount: payment.paidWith - payment.change,
+        payment_method: paymentMethod,
+      },
+      reservation_in_progress,
     };
     console.log(data);
+
+    const response = await updateSale(data);
+
+    console.log(response)
+    if (response.status === 200) {
+      setPaymentMethod(INITIAL_PAYMENT_STATE);
+      setReferencePayment("");
+      dispatch(hidePaymentReservationModal());
+      setPayment(INITIAL_PAYMENT_STATE);
+
+            if (reservation_in_progress) {
+              onUpdateSaleList(response.data);
+
+              Swal.fire({
+                icon: "success",
+                title: "Abono exitoso exitoso",
+                timer: 5000,
+              });
+
+            } 
+
+            
+            else {
+
+              Swal.fire({
+                icon: "success",
+                title: "Liquidación exitosa",
+                timer: 5000,
+              });
+              onUpdateSaleList({ ...response.data, delete: true });
+            }
+
+
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Error al añadir un pago de apartado",
+        text: "Por favor llame a soporte técnico",
+        timer: 5000,
+      });
+    }
+    console.log(response);
     // Aquí va el dispatch o lógica para enviar el pago
   };
 

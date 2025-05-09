@@ -80,6 +80,7 @@ const SaleList = () => {
       ...prevData,
       [name]: value,
     }));
+
   };
 
   const handleOpenModal = (sale) => {
@@ -115,7 +116,7 @@ const SaleList = () => {
   return (
     <>
       <CustomSpinner2 isLoading={loading}></CustomSpinner2>
-      <PaymentModal2 />
+      <PaymentModal2 onUpdateSaleList={handleUpdateSaleList}/>
       <SaleModal onUpdateSaleList={handleUpdateSaleList}></SaleModal>
       <div className="custom-section">
         {salesDuplicated.length > 0 && (
@@ -129,18 +130,8 @@ const SaleList = () => {
 
         <h1>Ventas</h1>
         <Row>
-          <Col>
-            <Form>
-              <Form.Label>#</Form.Label>
-              <Form.Control
-                type="number"
-                value={params.sale_id}
-                onChange={(e) => handleDataChange(e)}
-                name="sale_id"
-              />
-            </Form>
-          </Col>
-          <Col>
+
+        <Col>
             <Form.Label>Tipo</Form.Label>
             <Form.Select
               value={params.reservation_in_progress}
@@ -155,6 +146,7 @@ const SaleList = () => {
               ))}
             </Form.Select>
           </Col>
+
           <Col>
             <Form>
               <Form.Label>Fecha</Form.Label>
@@ -167,6 +159,21 @@ const SaleList = () => {
               />
             </Form>
           </Col>
+
+
+          <Col>
+            <Form>
+              <Form.Label>#</Form.Label>
+              <Form.Control
+                type="number"
+                value={params.sale_id}
+                onChange={(e) => handleDataChange(e)}
+                name="sale_id"
+              />
+            </Form>
+          </Col>
+
+
           <Col className="d-flex flex-column justify-content-end">
             <CustomButton onClick={() => setShowAllFields((prev) => !prev)}>
               Ver todos los campos
@@ -268,7 +275,7 @@ const SaleList = () => {
                     </CustomButton>
                   )}
 
-                  {params.reservation_in_progress && (
+                  {params.reservation_in_progress === 'true' && (
                     <CustomButton
                       fullWidth
                       onClick={() => handleOpenModal2(row)}
