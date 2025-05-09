@@ -4,7 +4,7 @@ import CustomTable from "../commons/customTable/customTable";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getStoreProducts } from "../apis/products";
 import { addToCart, updateMovementType } from "../redux/cart/cartActions";
-import { Badge, Form } from "react-bootstrap";
+import { Badge, Col, Form, Row } from "react-bootstrap";
 import { debounce } from "lodash";
 import StockModal from "../stockModal/StockModal";
 import {
@@ -25,12 +25,14 @@ const SearchProduct = () => {
 
   const storeType = getUserData().store_type;
   const urlPrinter = getUserData().store_url_printer;
+  const supports_reservations = getUserData().supports_reservations;
   const [query, setQuery] = useState("");
   const [data, setData] = useState([]);
   const [queryType, setQueryType] = useState("code");
   const [barcode, setBarcode] = useState("");
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [minQ, setMinQ] = useState(7);
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -38,7 +40,7 @@ const SearchProduct = () => {
 
   const fetchData = useCallback(
     debounce(async () => {
-      if (!query || (query.length < 4 && queryType === "q")) {
+      if (!query || (query.length < minQ && queryType === "q")) {
         setData([]);
         return;
       }
@@ -246,6 +248,11 @@ const SearchProduct = () => {
     Swal.fire({ icon, title, text, timer: icon === "success" ? 2500 : 5000 });
   };
 
+  const handleMinQChange = (e) => {
+    setMinQ(e.target.value);
+    setQuery("");
+    setData([]);
+  };
   return (
     <>
       <StockModal />
@@ -276,7 +283,7 @@ const SearchProduct = () => {
         value="q"
         checked={queryType === "q"}
       />
-      <br/>
+      <br />
       <Form.Label className="me-3">Tipo de operación:</Form.Label>
       <Form.Check
         inline
@@ -288,16 +295,7 @@ const SearchProduct = () => {
         checked={movementType === "venta"}
         className={storeType === "A" ? "d-none" : ""}
       />
-            <Form.Check
-        inline
-        id="apartado"
-        label="Apartado (Ctrl + ***)"
-        type="radio"
-        onChange={handleMovementTypeChange}
-        value="apartado"
-        checked={movementType === "apartado"}
-        className={storeType === "A" ? "d-none" : ""}
-      />
+
       <Form.Check
         inline
         id="traspaso"
@@ -335,6 +333,17 @@ const SearchProduct = () => {
         value="checar"
         checked={movementType === "checar"}
       />
+      {supports_reservations && (      <Form.Check
+        inline
+        id="apartado"
+        label="Apartado (Sin atajo)"
+        type="radio"
+        onChange={handleMovementTypeChange}
+        value="apartado"
+        checked={movementType === "apartado"}
+        className={storeType === "A" ? "d-none" : ""}
+      />)}
+
       <br />
 
       <Badge bg="success" className="text-wrap" hidden={isInputFocused}>
@@ -356,86 +365,107 @@ const SearchProduct = () => {
       </Badge>
 
       {!loading && isInputFocused && <br />}
-      <Form.Control
-        className=""
-        ref={inputRef}
-        type="text"
-        value={queryType === "code" ? barcode : query}
-        placeholder="Buscar producto (Ctrl + S)"
-        onChange={
-          queryType === "q"
-            ? handleQueryChange
-            : (e) => setBarcode(e.target.value)
-        }
-        onKeyDown={queryType === "code" ? handleBarcodeSearch : undefined}
-        onFocus={() => setIsInputFocused(true)}
-        onBlur={() => setIsInputFocused(false)}
-      />
-      <CustomTable
-        showNoDataComponent={false}
-        data={data}
-        pagination={false}
-        columns={[
-          { name: "Código", selector: (row) => row.product.code, grow: 2 },
-          {
-            name: "Marca",
-            selector: (row) => row.product.brand_name,
-          },
-          {
-            name: "Nombre",
-            selector: (row) => row.product.name,
-            grow: 3,
-            wrap: true,
-          },
-          { name: "Stock", selector: (row) => row.available_stock },
-          {
-            name: "Precio unitario",
-            selector: (row) => `$${row.product.prices.unit_price.toFixed(2)}`,
-          },
-          {
-            name: "Precio mayoreo",
-            wrap: true,
-            selector: (row) =>
-              row.product.prices.apply_wholesale
-                ? `${
-                    row.product.prices.min_wholesale_quantity
-                  } o más a $${row.product.prices.wholesale_price.toFixed(2)}`
-                : "N/A",
-          },
-          {
-            name: "Acciones",
-            grow: 5,
-            cell: (row) => (
-              <>
-                <CustomButton
-                  onClick={() => handleAddToCartIfAvailable(row)}
-                  disabled={
-                    movementType === "venta" && row.available_stock === 0
-                  }
-                  variant="primary"
-                >
-                  Agregar
-                </CustomButton>
+      <Row>
+        <Col md={11}>
+          <Form.Control
+            className=""
+            ref={inputRef}
+            type="text"
+            value={queryType === "code" ? barcode : query}
+            placeholder="Buscar producto (Ctrl + S)"
+            onChange={
+              queryType === "q"
+                ? handleQueryChange
+                : (e) => setBarcode(e.target.value)
+            }
+            onKeyDown={queryType === "code" ? handleBarcodeSearch : undefined}
+            onFocus={() => setIsInputFocused(true)}
+            onBlur={() => setIsInputFocused(false)}
+          />
+          <CustomTable
+            showNoDataComponent={false}
+            data={data}
+            pagination={false}
+            columns={[
+              { name: "Código", selector: (row) => row.product.code, grow: 2 },
+              {
+                name: "Marca",
+                selector: (row) => row.product.brand_name,
+              },
+              {
+                name: "Nombre",
+                selector: (row) => row.product.name,
+                grow: 3,
+                wrap: true,
+              },
+              { name: "Stock", selector: (row) => row.available_stock },
+              {
+                name: "Precio unitario",
+                selector: (row) =>
+                  `$${row.product.prices.unit_price.toFixed(2)}`,
+              },
+              {
+                name: "Precio mayoreo",
+                wrap: true,
+                selector: (row) =>
+                  row.product.prices.apply_wholesale
+                    ? `${
+                        row.product.prices.min_wholesale_quantity
+                      } o más a $${row.product.prices.wholesale_price.toFixed(
+                        2
+                      )}`
+                    : "N/A",
+              },
+              {
+                name: "Acciones",
+                grow: 5,
+                cell: (row) => (
+                  <>
+                    <CustomButton
+                      onClick={() => handleAddToCartIfAvailable(row)}
+                      disabled={
+                        movementType === "venta" && row.available_stock === 0
+                      }
+                      variant="primary"
+                    >
+                      Agregar
+                    </CustomButton>
 
-                <CustomButton
-                  onClick={() => handleOpenModal({ ...row, onlyRead: true })}
-                  variant="danger"
-                >
-                  Ver stock
-                </CustomButton>
+                    <CustomButton
+                      onClick={() =>
+                        handleOpenModal({ ...row, onlyRead: true })
+                      }
+                      variant="danger"
+                    >
+                      Ver stock
+                    </CustomButton>
 
-                <CustomButton
-                  onClick={() => handleOpenModal({ ...row, showImage: true })}
-                  variant="danger"
-                  disabled={!row.product.image}
-                >
-                  Ver imagen
-                </CustomButton>
-              </>
-            ),
-          },
-        ]}
-      />
+                    <CustomButton
+                      onClick={() =>
+                        handleOpenModal({ ...row, showImage: true })
+                      }
+                      variant="danger"
+                      disabled={!row.product.image}
+                    >
+                      Ver imagen
+                    </CustomButton>
+                  </>
+                ),
+              },
+            ]}
+          />
+        </Col>
+        <Col>
+          <Form.Control
+            type="number"
+            value={minQ}
+            placeholder="Min Q"
+            onChange={(e) => handleMinQChange(e)}
+            min={1}
+            max={50}
+          />
+        </Col>
+      </Row>
     </>
   );
 };
