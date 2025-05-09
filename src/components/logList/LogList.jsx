@@ -140,13 +140,8 @@ const LogList = () => {
               selector: (row) => row.difference,
             },
             {
-              name: "S. actualizado",
+              name: "S. nuevo",
               selector: (row) => row.updated_stock,
-            },
-
-            {
-              name: "Venta",
-              selector: (row) => row.sale,
             },
           ]}
         />

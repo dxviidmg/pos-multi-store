@@ -3,8 +3,9 @@ export const HIDE_PAYMENT_RESERVATION_MODAL = 'HIDE_PAYMENT_RESERVATION_MODAL';
 
 
 
-export const showPaymentReservationModal = () => ({
+export const showPaymentReservationModal = (reservation) => ({
   type: SHOW_PAYMENT_RESERVATION_MODAL,
+  payload: reservation,
 });
 
 export const hidePaymentReservationModal = () => ({

@@ -85,12 +85,12 @@ const StoreList = () => {
         investment,
       } = response2.data.reduce(
         (acc, store) => ({
-          profit: acc.profit + store.cash_summary[10].amount,
+          profit: acc.profit + store.cash_summary[8].amount,
           paymentCash: acc.paymentCash + store.cash_summary[0].amount,
           paymentCard: acc.paymentCard + store.cash_summary[1].amount,
           paymentTransfer: acc.paymentTransfer + store.cash_summary[2].amount,
           totalPayment: acc.totalPayment + store.cash_summary[4].amount,
-          totalSales: acc.totalSales + store.cash_summary[12].amount,
+          totalSales: acc.totalSales + store.cash_summary[3].amount,
           cash: acc.cash + store.cash_summary[9].amount,
           investment: 0,
         }),
@@ -287,7 +287,7 @@ const StoreList = () => {
                 textAlign: "right",
               },
               selector: (row) =>
-                "$" + row.cash_summary[10]["amount"].toLocaleString(),
+                "$" + row.cash_summary[8]["amount"].toLocaleString(),
             },
 
             ...(!params.department_id
@@ -358,7 +358,7 @@ const StoreList = () => {
                 textAlign: "right",
               },
               selector: (row) =>
-                row.cash_summary[12]["amount"].toLocaleString(),
+                row.cash_summary[10]["amount"].toLocaleString(),
             },
 
             ...(showInvestment

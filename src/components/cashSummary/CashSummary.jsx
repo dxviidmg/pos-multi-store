@@ -16,7 +16,6 @@ import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
 const CashSummary = () => {
   const [cashSummary, setCashSummary] = useState([]);
   const [paymentMethodsSummary, setPaymentMethodsSummary] = useState([]);
-  const [salesSummary, setSalesSummary] = useState([]);
   const today = getFormattedDate();
   const [date, setDate] = useState(today);
   const [cashFlow, setCashFlow] = useState([]);
@@ -31,16 +30,12 @@ const CashSummary = () => {
       const paymentMethods = cashSummary.data.filter(
         (cash) => cash.payment_method_data === true
       );
-      const salesSummary = cashSummary.data.filter(
-        (cash) => cash.sales_data === true
-      );
       const cashFlowSummary = cashSummary.data.filter(
         (cash) => cash.cashflow_data === true
       );
       const totalSummary = cashSummary.data.filter(
         (cash) => cash.total_data === true
       );
-      setSalesSummary(salesSummary);
       setPaymentMethodsSummary(paymentMethods);
       setCashSummary(cashSummary.data);
       setCashFlowSummary(cashFlowSummary);
@@ -59,16 +54,12 @@ const CashSummary = () => {
       const paymentMethods = cashSummary.data.filter(
         (cash) => cash.payment_method_data === true
       );
-      const salesSummary = cashSummary.data.filter(
-        (cash) => cash.sales_data === true
-      );
       const cashFlowSummary = cashSummary.data.filter(
         (cash) => cash.cashflow_data === true
       );
       const totalSummary = cashSummary.data.filter(
         (cash) => cash.total_data === true
       );
-      setSalesSummary(salesSummary);
       setPaymentMethodsSummary(paymentMethods);
       setCashSummary(cashSummary.data);
       setCashFlowSummary(cashFlowSummary);
@@ -130,7 +121,7 @@ const CashSummary = () => {
             </CustomButton>
           </Col>
 
-          <Col md={3}>
+          <Col md={4}>
             <h2>Métodos de pago</h2>
             <CustomTable
               data={paymentMethodsSummary}
@@ -151,28 +142,9 @@ const CashSummary = () => {
             />
           </Col>
 
-          <Col md={3}>
-            <h2>Revisión de ventas y pagos</h2>
-            <CustomTable
-              data={salesSummary}
-              columns={[
-                {
-                  name: "Tipo",
-                  selector: (row) => row.name,
-                },
-                {
-                  name: "Cantidad",
-                  style: {
-                    justifyContent: "flex-end", // para alinear dentro del td con flexbox
-                    textAlign: "right",
-                  },
-                  selector: (row) => "$" + row.amount,
-                },
-              ]}
-            />
-          </Col>
 
-          <Col md={3}>
+
+          <Col md={4}>
             <h2>Flujo de caja</h2>
             <CustomTable
               data={cashFlowSummary}
@@ -193,7 +165,7 @@ const CashSummary = () => {
             />
           </Col>
 
-          <Col md={3}>
+          <Col md={4}>
             <h2> Total en caja</h2>
             <CustomTable
               data={totalSummary}
