@@ -89,9 +89,9 @@ const StoreList = () => {
           paymentCash: acc.paymentCash + store.cash_summary[0].amount,
           paymentCard: acc.paymentCard + store.cash_summary[1].amount,
           paymentTransfer: acc.paymentTransfer + store.cash_summary[2].amount,
-          totalPayment: acc.totalPayment + store.cash_summary[4].amount,
-          totalSales: acc.totalSales + store.cash_summary[3].amount,
-          cash: acc.cash + store.cash_summary[9].amount,
+          totalPayment: acc.totalPayment + store.cash_summary[3].amount,
+          totalSales: acc.totalSales + store.cash_summary[10].amount,
+          cash: acc.cash + store.cash_summary[7].amount,
           investment: 0,
         }),
         {
