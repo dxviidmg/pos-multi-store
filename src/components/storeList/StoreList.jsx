@@ -293,6 +293,108 @@ const StoreList = () => {
     },
   ];
 
+  const columnsStorages = [
+    {
+      name: "Nombre",
+      selector: ({ name }) => `${name}`,
+    },
+    { grow: 10 },
+    ...(showInvestment
+      ? [
+          {
+            name: "Inversión",
+            style: alignTdStyles,
+            selector: ({ investment }) =>
+              investment ? `$${investment.toLocaleString()}` : "$0",
+          },
+        ]
+      : []),
+
+    {
+      name: "Entrar",
+      cell: (row) => (
+        <>
+          <CustomButton onClick={() => handleSelectStore(row)}>
+            <HomeIcon />
+          </CustomButton>
+        </>
+      ),
+    },
+    {
+      name: "Opciónes",
+      cell: ({ products_count }) => (
+        <>{chooseIcon(products_count === tenantInfo.product_count)}</>
+      ),
+    },
+  ];
+
+  const columnsTotals = [
+    {},
+    {
+      name: "Ganancia",
+      style: alignTdStyles,
+      selector: ({ profit }) => `${profit}`,
+    },
+
+    ...(!params.department_id
+      ? [
+          {
+            name: "Efectivo",
+            style: alignTdStyles,
+            selector: ({ paymentCash }) => `${paymentCash}`,
+          },
+
+          {
+            name: "Tarjeta",
+            style: alignTdStyles,
+            selector: ({ paymentCard }) => `${paymentCard}`,
+          },
+
+          {
+            name: "Transferencia",
+            style: alignTdStyles,
+            selector: ({ paymentTransfer }) => `${paymentTransfer}`,
+          },
+        ]
+      : []),
+
+    ...(!params.department_id
+      ? [
+          {
+            name: "Caja",
+            style: alignTdStyles,
+            selector: (row) => `${row.cash}`,
+          },
+        ]
+      : []),
+
+    {
+      name: "Total de ventas",
+      style: alignTdStyles,
+      selector: ({ totalPayment }) => `${totalPayment}`,
+    },
+
+    {
+      name: "Numero de ventas",
+      style: alignTdStyles,
+      selector: ({ totalSales }) => `${totalSales}`,
+    },
+
+    ...(showInvestment
+      ? [
+          {
+            name: "Inversión",
+            style: alignTdStyles,
+            selector: ({ investment }) => `${investment}`,
+          },
+        ]
+      : []),
+
+    {
+      grow: 2.4,
+    },
+  ];
+
   return (
     <>
       {tenantInfo.notices && tenantInfo.notices.length > 0 && (
@@ -336,42 +438,7 @@ const StoreList = () => {
             <CustomTable
               progressPending={loading}
               data={storages}
-              columns={[
-                {
-                  name: "Nombre",
-                  selector: ({ name }) => `${name}`,
-                },
-                { grow: 10 },
-                ...(showInvestment
-                  ? [
-                      {
-                        name: "Inversión",
-                        style: alignTdStyles,
-                        selector: ({ investment }) =>
-                          investment ? `$${investment.toLocaleString()}` : "$0",
-                      },
-                    ]
-                  : []),
-
-                {
-                  name: "Entrar",
-                  cell: (row) => (
-                    <>
-                      <CustomButton onClick={() => handleSelectStore(row)}>
-                        <HomeIcon />
-                      </CustomButton>
-                    </>
-                  ),
-                },
-                {
-                  name: "Opciónes",
-                  cell: ({ products_count }) => (
-                    <>
-                      {chooseIcon(products_count === tenantInfo.product_count)}
-                    </>
-                  ),
-                },
-              ]}
+              columns={columnsStorages}
             />
           </>
         )}
@@ -394,72 +461,7 @@ const StoreList = () => {
                   totalSales: totals.totalSales.toLocaleString(),
                 },
               ]}
-              columns={[
-                {},
-                {
-                  name: "Ganancia",
-                  style: alignTdStyles,
-                  selector: ({ profit }) => `${profit}`,
-                },
-
-                ...(!params.department_id
-                  ? [
-                      {
-                        name: "Efectivo",
-                        style: alignTdStyles,
-                        selector: ({ paymentCash }) => `${paymentCash}`,
-                      },
-
-                      {
-                        name: "Tarjeta",
-                        style: alignTdStyles,
-                        selector: ({ paymentCard }) => `${paymentCard}`,
-                      },
-
-                      {
-                        name: "Transferencia",
-                        style: alignTdStyles,
-                        selector: ({ paymentTransfer }) => `${paymentTransfer}`,
-                      },
-                    ]
-                  : []),
-
-                ...(!params.department_id
-                  ? [
-                      {
-                        name: "Caja",
-                        style: alignTdStyles,
-                        selector: (row) => `${row.cash}`,
-                      },
-                    ]
-                  : []),
-
-                {
-                  name: "Total de ventas",
-                  style: alignTdStyles,
-                  selector: ({ totalPayment }) => `${totalPayment}`,
-                },
-
-                {
-                  name: "Numero de ventas",
-                  style: alignTdStyles,
-                  selector: ({ totalSales }) => `${totalSales}`,
-                },
-
-                ...(showInvestment
-                  ? [
-                      {
-                        name: "Inversión",
-                        style: alignTdStyles,
-                        selector: ({ investment }) => `${investment}`,
-                      },
-                    ]
-                  : []),
-
-                {
-                  grow: 2.4,
-                },
-              ]}
+              columns={columnsTotals}
             ></CustomTable>
           </>
         )}
