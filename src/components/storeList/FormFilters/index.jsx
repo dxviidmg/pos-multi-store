@@ -1,5 +1,6 @@
-import { Form, Row, Col, Alert } from "react-bootstrap";
+import { Form, Row, Col } from "react-bootstrap";
 import CustomButton from "../../commons/customButton/CustomButton";
+import PropTypes from "prop-types";
 
 export const FormFilters = ({
   params,
@@ -76,4 +77,22 @@ export const FormFilters = ({
   );
 };
 
-export default FormFilters
+FormFilters.propTypes = {
+  params: PropTypes.shape({
+    end_date: PropTypes.string,
+    start_date: PropTypes.string,
+  }),
+  handleParams: PropTypes.func.isRequired,
+  today: PropTypes.string.isRequired,
+  range: PropTypes.string,
+  departments: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number,
+      name: PropTypes.string,
+      product_count: PropTypes.number,
+    })
+  ),
+  handleShowInvestment: PropTypes.func.isRequired,
+};
+
+export default FormFilters;
