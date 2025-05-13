@@ -202,7 +202,7 @@ const StoreList = () => {
       name: "Ganancia",
       style: alignTdStyles,
       selector: ({ cash_summary }) =>
-        `$ ${cash_summary[8]["amount"].toLocaleString()}`,
+        `$${cash_summary[8]["amount"].toLocaleString()}`,
     },
 
     ...(!params.department_id
@@ -210,20 +210,20 @@ const StoreList = () => {
           {
             name: "Efectivo",
             style: alignTdStyles,
-            selector: (row) =>
-              `$${row.cash_summary?.[0]?.amount?.toLocaleString() || "0"}`,
+            selector: ({ cash_summary }) =>
+              `$${cash_summary?.[0]?.amount?.toLocaleString() || "0"}`,
           },
           {
             name: "Tarjeta",
             style: alignTdStyles,
-            selector: (row) =>
-              `$${row.cash_summary?.[1]?.amount?.toLocaleString() || "0"}`,
+            selector: ({ cash_summary }) =>
+              `$${cash_summary?.[1]?.amount?.toLocaleString() || "0"}`,
           },
           {
             name: "Transferencia",
             style: alignTdStyles,
-            selector: (row) =>
-              `$${row.cash_summary?.[2]?.amount?.toLocaleString() || "0"}`,
+            selector: ({ cash_summary }) =>
+              `$${cash_summary?.[2]?.amount?.toLocaleString() || "0"}`,
           },
         ]
       : []),
@@ -233,8 +233,8 @@ const StoreList = () => {
           {
             name: "Caja",
             style: alignTdStyles,
-            selector: (row) =>
-              "$" + row.cash_summary[7]["amount"].toLocaleString(),
+            selector: ({ cash_summary }) =>
+              `$${cash_summary[7]["amount"].toLocaleString()}`,
           },
         ]
       : []),
@@ -242,12 +242,13 @@ const StoreList = () => {
     {
       name: "Total de ventas",
       style: alignTdStyles,
-      selector: (row) => "$" + row.cash_summary[4]["amount"].toLocaleString(),
+      selector: ({ cash_summary }) =>
+        `$${cash_summary[4]["amount"].toLocaleString()}`,
     },
     {
       name: "Número de ventas",
       style: alignTdStyles,
-      selector: (row) => row.cash_summary[10]["amount"].toLocaleString(),
+      selector: (cash_summary) => cash_summary[10]["amount"].toLocaleString(),
     },
 
     ...(showInvestment
@@ -255,8 +256,8 @@ const StoreList = () => {
           {
             style: alignTdStyles,
             name: "Inversión",
-            selector: (row) =>
-              row.investment ? "$" + row.investment.toLocaleString() : "$0",
+            selector: ({ investment }) =>
+              investment ? `$${investment.toLocaleString()}` : "$0",
           },
         ]
       : []),
@@ -382,21 +383,16 @@ const StoreList = () => {
               columns={[
                 {
                   name: "Nombre",
-                  selector: (row) => `${row.name}`,
+                  selector: ({ name }) => `${name}`,
                 },
                 { grow: 10 },
                 ...(showInvestment
                   ? [
                       {
                         name: "Inversión",
-                        style: {
-                          justifyContent: "flex-end", // para alinear dentro del td con flexbox
-                          textAlign: "right",
-                        },
-                        selector: (row) =>
-                          row.investment
-                            ? "$" + row.investment.toLocaleString()
-                            : "$0",
+                        style: alignTdStyles,
+                        selector: ({ investment }) =>
+                          investment ? `$${investment.toLocaleString()}` : "$0",
                       },
                     ]
                   : []),
@@ -413,11 +409,9 @@ const StoreList = () => {
                 },
                 {
                   name: "Opciónes",
-                  cell: (row) => (
+                  cell: ({ products_count }) => (
                     <>
-                      {chooseIcon(
-                        row.products_count === tenantInfo.product_count
-                      )}
+                      {chooseIcon(products_count === tenantInfo.product_count)}
                     </>
                   ),
                 },
@@ -434,14 +428,13 @@ const StoreList = () => {
               progressPending={loading}
               data={[
                 {
-                  profit: "$" + totals.profit.toLocaleString(),
-                  paymentCash: "$" + totals.paymentCash.toLocaleString(),
-                  paymentCard: "$" + totals.paymentCard.toLocaleString(),
-                  paymentTransfer:
-                    "$" + totals.paymentTransfer.toLocaleString(),
-                  totalPayment: "$" + totals.totalPayment.toLocaleString(),
-                  cash: "$" + totals.cash.toLocaleString(),
-                  investment: "$" + totals.investment.toLocaleString(),
+                  profit: `$${totals.profit.toLocaleString()}`,
+                  paymentCash: `$${totals.paymentCash.toLocaleString()}`,
+                  paymentCard: `$${totals.paymentCard.toLocaleString()}`,
+                  paymentTransfer: `$${totals.paymentTransfer.toLocaleString()}`,
+                  totalPayment: `$${totals.totalPayment.toLocaleString()}`,
+                  cash: `$${totals.cash.toLocaleString()}`,
+                  investment: `$${totals.investment.toLocaleString()}`,
                   totalSales: totals.totalSales.toLocaleString(),
                 },
               ]}
@@ -453,36 +446,27 @@ const StoreList = () => {
                     justifyContent: "flex-end", // para alinear dentro del td con flexbox
                     textAlign: "right",
                   },
-                  selector: (row) => `${row.profit}`,
+                  selector: ({ profit }) => `${profit}`,
                 },
 
                 ...(!params.department_id
                   ? [
                       {
                         name: "Efectivo",
-                        style: {
-                          justifyContent: "flex-end", // para alinear dentro del td con flexbox
-                          textAlign: "right",
-                        },
-                        selector: (row) => `${row.paymentCash}`,
+                        style: alignTdStyles,
+                        selector: ({ paymentCash }) => `${paymentCash}`,
                       },
 
                       {
                         name: "Tarjeta",
-                        style: {
-                          justifyContent: "flex-end", // para alinear dentro del td con flexbox
-                          textAlign: "right",
-                        },
-                        selector: (row) => `${row.paymentCard}`,
+                        style: alignTdStyles,
+                        selector: ({ paymentCard }) => `${paymentCard}`,
                       },
 
                       {
                         name: "Transferencia",
-                        style: {
-                          justifyContent: "flex-end", // para alinear dentro del td con flexbox
-                          textAlign: "right",
-                        },
-                        selector: (row) => `${row.paymentTransfer}`,
+                        style: alignTdStyles,
+                        selector: ({ paymentTransfer }) => `${paymentTransfer}`,
                       },
                     ]
                   : []),
@@ -491,10 +475,7 @@ const StoreList = () => {
                   ? [
                       {
                         name: "Caja",
-                        style: {
-                          justifyContent: "flex-end", // para alinear dentro del td con flexbox
-                          textAlign: "right",
-                        },
+                        style: alignTdStyles,
                         selector: (row) => `${row.cash}`,
                       },
                     ]
@@ -502,31 +483,22 @@ const StoreList = () => {
 
                 {
                   name: "Total de ventas",
-                  style: {
-                    justifyContent: "flex-end", // para alinear dentro del td con flexbox
-                    textAlign: "right",
-                  },
-                  selector: (row) => `${row.totalPayment}`,
+                  style: alignTdStyles,
+                  selector: ({ totalPayment }) => `${totalPayment}`,
                 },
 
                 {
                   name: "Numero de ventas",
-                  style: {
-                    justifyContent: "flex-end", // para alinear dentro del td con flexbox
-                    textAlign: "right",
-                  },
-                  selector: (row) => `${row.totalSales}`,
+                  style: alignTdStyles,
+                  selector: ({ totalSales }) => `${totalSales}`,
                 },
 
                 ...(showInvestment
                   ? [
                       {
                         name: "Inversión",
-                        style: {
-                          justifyContent: "flex-end", // para alinear dentro del td con flexbox
-                          textAlign: "right",
-                        },
-                        selector: (row) => `${row.investment}`,
+                        style: alignTdStyles,
+                        selector: ({ investment }) => `${investment}`,
                       },
                     ]
                   : []),
