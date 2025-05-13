@@ -18,7 +18,7 @@ const SearchClient = () => {
   useEffect(() => {
     const fetchData = async () => {
       if (query) {
-        const response = await getClients(query);
+        const response = await getClients({q: query});
         setClients(response.data.slice(0, 5));
       } else {
         setClients([]);
@@ -31,7 +31,7 @@ const SearchClient = () => {
   useEffect(() => {
     const fetchData = async () => {
       if (query) {
-        const response = await getClients(query);
+        const response = await getClients({q: query});
         setClients(response.data);
       } else {
         setClients([]);
