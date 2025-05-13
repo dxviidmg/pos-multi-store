@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
 import { getClients } from "../apis/clients";
-import { Form } from "react-bootstrap";
+import { Col, Form, Row } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import { createDiscount } from "../apis/discounts";
 import Swal from "sweetalert2";
@@ -13,8 +13,11 @@ import {
 import ClientModal from "../clientModal/ClientModal";
 import { EditIcon } from "../commons/icons/Icons";
 import { getUserData } from "../apis/utils";
+import { getDateDifference, getFormattedDate } from "../utils/utils";
+
 
 const ClientList = () => {
+  const today = getFormattedDate();
   const [clients, setClients] = useState([]);
   const dispatch = useDispatch();
 
@@ -22,18 +25,26 @@ const ClientList = () => {
     discount_percentage: "",
   });
 
+
+  const [params, setParams] = useState({
+    end_date: today,
+    start_date: today,
+  });
+  const [range, setRange] = useState("");
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [clientsResponse] = await Promise.all([getClients()]);
+        const [clientsResponse] = await Promise.all([getClients(params)]);
         setClients(clientsResponse.data);
+        setRange(getDateDifference(params.start_date, params.end_date));
       } catch (error) {
         console.error("Error fetching data", error);
       }
     };
 
     fetchData();
-  }, []);
+  }, [params]);
 
   const handleDiscountInputChange = (e) => {
     const { name, value } = e.target;
@@ -96,6 +107,11 @@ const ClientList = () => {
     });
   };
 
+  const handleParams = async (e) => {
+    let { name, value } = e.target;
+    setParams((prevData) => ({ ...prevData, [name]: value }));
+  };
+
   return (
     <div className="">
       <ClientModal onUpdateClientList={handleUpdateClientList}></ClientModal>
@@ -128,7 +144,41 @@ const ClientList = () => {
       <div className="custom-section">
         <h1>Clientes</h1>
         <CustomButton onClick={() => handleOpenModal()}>Crear</CustomButton>
+        <Row>
+          <Col>
+            {" "}
+            <Form>
+              <Form.Label>Fecha de inicio</Form.Label>
+              <Form.Control
+                name="start_date"
+                type="date"
+                value={params.start_date}
+                onChange={(e) => handleParams(e)}
+                max={today}
+              />
+            </Form>
+          </Col>
+          <Col>
+            {" "}
+            <Form>
+              <Form.Label>Fecha de fin</Form.Label>
+              <Form.Control
+                name="end_date"
+                type="date"
+                value={params.end_date}
+                onChange={(e) => handleParams(e)}
+                max={today}
+              />
+            </Form>
+          </Col>
 
+          <Col>
+            <Form>
+              <Form.Label>Rango</Form.Label>
+              <Form.Control name="range" type="input" value={range} disabled />
+            </Form>
+          </Col>
+        </Row>
         <CustomTable
           searcher={true}
           data={clients}
@@ -141,10 +191,14 @@ const ClientList = () => {
               grow: 2,
             },
             {
+              name: "Suma de ventas",
+              sortable: true,
+              selector: (row) => row.total_sales_amount,
+            },
+            {
               name: "Descuento",
               selector: (row) => `${row.discount_percentage}%`,
             },
-
             {
               name: "Acciones",
               cell: (row) => (
