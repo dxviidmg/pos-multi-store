@@ -1,13 +1,16 @@
 import axios from "axios";
 import { getApiUrl, getHeaders } from "./utils";
 
-export const getClients = async (query) => {
+export const getClients = async (params) => {
   const apiUrl = new URL(getApiUrl("client"));
 
-  if (query) {
-    apiUrl.searchParams.append("q", query);
+  if (params) {
+    Object.entries(params).forEach(([key, value]) => {
+      apiUrl.searchParams.append(key, value);
+    });
   }
 
+  console.log('apiUrl', apiUrl)
   try {
     const response = await axios.get(apiUrl, {
       headers: getHeaders(),
