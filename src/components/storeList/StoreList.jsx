@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { Form, Row, Col, Alert } from "react-bootstrap";
+import { Alert } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getInvestment, getStores } from "../apis/stores";
 import { useNavigate } from "react-router-dom";
@@ -9,6 +9,8 @@ import { getDateDifference, getFormattedDate } from "../utils/utils";
 import { getTenantInfo } from "../apis/tenants";
 import { chooseIcon, HomeIcon, PrinterIcon } from "../commons/icons/Icons";
 import { getDepartments } from "../apis/departments";
+import FormFilters from "./FormFilters";
+import { getStorage, setStorage } from "../utils/storage";
 
 const StoreList = () => {
   const navigate = useNavigate();
@@ -134,15 +136,22 @@ const StoreList = () => {
     id,
     url_printer,
   }) => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    const updatedData = JSON.stringify({
+    const user = getStorage("user");
+    // const updatedData = JSON.stringify({
+    //   ...user,
+    //   store_type,
+    //   store_name: full_name,
+    //   store_id: id,
+    //   store_url_printer: url_printer,
+    // });
+    // localStorage.setItem("user", updatedData);
+    setStorage("user", {
       ...user,
       store_type,
       store_name: full_name,
       store_id: id,
       store_url_printer: url_printer,
     });
-    localStorage.setItem("user", updatedData);
 
     navigate("/vender/");
     window.location.reload();
@@ -202,7 +211,7 @@ const StoreList = () => {
       name: "Ganancia",
       style: alignTdStyles,
       selector: ({ cash_summary }) =>
-        `$${cash_summary[8]["amount"].toLocaleString()}`,
+        `$${cash_summary?.[8]["amount"]?.toLocaleString()}`,
     },
 
     ...(!params.department_id
@@ -234,7 +243,7 @@ const StoreList = () => {
             name: "Caja",
             style: alignTdStyles,
             selector: ({ cash_summary }) =>
-              `$${cash_summary[7]["amount"].toLocaleString()}`,
+              `$${cash_summary[7]["amount"]?.toLocaleString()}`,
           },
         ]
       : []),
@@ -243,12 +252,13 @@ const StoreList = () => {
       name: "Total de ventas",
       style: alignTdStyles,
       selector: ({ cash_summary }) =>
-        `$${cash_summary[4]["amount"].toLocaleString()}`,
+        `$${cash_summary[4]["amount"]?.toLocaleString()}`,
     },
     {
       name: "Número de ventas",
       style: alignTdStyles,
-      selector: (cash_summary) => cash_summary[10]["amount"].toLocaleString(),
+      selector: ({ cash_summary }) =>
+        `${cash_summary[10]["amount"]?.toLocaleString()}`,
     },
 
     ...(showInvestment
@@ -303,68 +313,14 @@ const StoreList = () => {
           registrados)
         </h1>
 
-        <Form>
-          <Row>
-            <Col>
-              <Form.Group controlId="start_date">
-                <Form.Label>Fecha de inicio</Form.Label>
-                <Form.Control
-                  name="start_date"
-                  type="date"
-                  value={params.start_date}
-                  onChange={handleParams}
-                  max={today}
-                />
-              </Form.Group>
-            </Col>
-
-            <Col>
-              <Form.Group controlId="end_date">
-                <Form.Label>Fecha de fin</Form.Label>
-                <Form.Control
-                  name="end_date"
-                  type="date"
-                  value={params.end_date}
-                  onChange={handleParams}
-                  max={today}
-                />
-              </Form.Group>
-            </Col>
-
-            <Col>
-              <Form.Group controlId="range">
-                <Form.Label>Rango</Form.Label>
-                <Form.Control name="range" type="text" value={range} disabled />
-              </Form.Group>
-            </Col>
-
-            <Col hidden={departments.length === 0}>
-              <Form.Group controlId="department_id">
-                <Form.Label>Departamento</Form.Label>
-                <Form.Select
-                  value={params.department_id}
-                  onChange={handleParams}
-                  name="department_id"
-                >
-                  <option value="">Todos</option>
-                  <option value="0">Sin departamento</option>
-                  {departments.map((departament) => (
-                    <option key={departament.id} value={departament.id}>
-                      {departament.name}
-                    </option>
-                  ))}
-                </Form.Select>
-              </Form.Group>
-            </Col>
-
-            <Col className="d-flex align-items-end">
-              <CustomButton fullWidth onClick={handleShowInvestment}>
-                Ver inversión
-              </CustomButton>
-            </Col>
-          </Row>
-        </Form>
-
+        <FormFilters
+          params={params}
+          handleParams={handleParams}
+          today={today}
+          range={range}
+          departments={departments}
+          handleShowInvestment={handleShowInvestment}
+        />
         <h2>Tiendas</h2>
 
         <CustomTable
@@ -442,10 +398,7 @@ const StoreList = () => {
                 {},
                 {
                   name: "Ganancia",
-                  style: {
-                    justifyContent: "flex-end", // para alinear dentro del td con flexbox
-                    textAlign: "right",
-                  },
+                  style: alignTdStyles,
                   selector: ({ profit }) => `${profit}`,
                 },
 
