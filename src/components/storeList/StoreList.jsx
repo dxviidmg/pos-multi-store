@@ -187,6 +187,101 @@ const StoreList = () => {
 
   const memoStores = useMemo(() => stores, [stores]);
 
+  const alignTdStyles = {
+    justifyContent: "flex-end", // para alinear dentro del td con flexbox
+    textAlign: "right",
+  };
+
+  const columnsStore = [
+    {
+      name: "Nombre",
+      wrap: true,
+      selector: ({ name }) => <>{name}</>,
+    },
+    {
+      name: "Ganancia",
+      style: alignTdStyles,
+      selector: ({ cash_summary }) =>
+        `$ ${cash_summary[8]["amount"].toLocaleString()}`,
+    },
+
+    ...(!params.department_id
+      ? [
+          {
+            name: "Efectivo",
+            style: alignTdStyles,
+            selector: (row) =>
+              `$${row.cash_summary?.[0]?.amount?.toLocaleString() || "0"}`,
+          },
+          {
+            name: "Tarjeta",
+            style: alignTdStyles,
+            selector: (row) =>
+              `$${row.cash_summary?.[1]?.amount?.toLocaleString() || "0"}`,
+          },
+          {
+            name: "Transferencia",
+            style: alignTdStyles,
+            selector: (row) =>
+              `$${row.cash_summary?.[2]?.amount?.toLocaleString() || "0"}`,
+          },
+        ]
+      : []),
+
+    ...(!params.department_id
+      ? [
+          {
+            name: "Caja",
+            style: alignTdStyles,
+            selector: (row) =>
+              "$" + row.cash_summary[7]["amount"].toLocaleString(),
+          },
+        ]
+      : []),
+
+    {
+      name: "Total de ventas",
+      style: alignTdStyles,
+      selector: (row) => "$" + row.cash_summary[4]["amount"].toLocaleString(),
+    },
+    {
+      name: "Número de ventas",
+      style: alignTdStyles,
+      selector: (row) => row.cash_summary[10]["amount"].toLocaleString(),
+    },
+
+    ...(showInvestment
+      ? [
+          {
+            style: alignTdStyles,
+            name: "Inversión",
+            selector: (row) =>
+              row.investment ? "$" + row.investment.toLocaleString() : "$0",
+          },
+        ]
+      : []),
+
+    {
+      name: "Entrar",
+      cell: (row) => (
+        <>
+          <CustomButton onClick={() => handleSelectStore(row)}>
+            <HomeIcon />
+          </CustomButton>
+        </>
+      ),
+    },
+    {
+      name: "Opciones",
+      cell: (row) => (
+        <>
+          {chooseIcon(row.products_count === tenantInfo.product_count)}
+          {row.url_printer && <PrinterIcon />}
+        </>
+      ),
+    },
+  ];
+
   return (
     <>
       {tenantInfo.notices && tenantInfo.notices.length > 0 && (
@@ -274,129 +369,7 @@ const StoreList = () => {
         <CustomTable
           progressPending={loading}
           data={memoStores}
-          columns={[
-            {
-              name: "Nombre",
-              wrap: true,
-              selector: (row) => <>{row.name}</>,
-            },
-            {
-              name: "Ganancia",
-              style: {
-                justifyContent: "flex-end", // para alinear dentro del td con flexbox
-                textAlign: "right",
-              },
-              selector: (row) =>
-                "$" + row.cash_summary[8]["amount"].toLocaleString(),
-            },
-
-            ...(!params.department_id
-              ? [
-                  {
-                    name: "Efectivo",
-                    style: {
-                      justifyContent: "flex-end", // para alinear dentro del td con flexbox
-                      textAlign: "right",
-                    },
-                    selector: (row) =>
-                      `$${
-                        row.cash_summary?.[0]?.amount?.toLocaleString() || "0"
-                      }`,
-                  },
-                  {
-                    name: "Tarjeta",
-                    style: {
-                      justifyContent: "flex-end", // para alinear dentro del td con flexbox
-                      textAlign: "right",
-                    },
-                    selector: (row) =>
-                      `$${
-                        row.cash_summary?.[1]?.amount?.toLocaleString() || "0"
-                      }`,
-                  },
-                  {
-                    name: "Transferencia",
-                    style: {
-                      justifyContent: "flex-end", // para alinear dentro del td con flexbox
-                      textAlign: "right",
-                    },
-                    selector: (row) =>
-                      `$${
-                        row.cash_summary?.[2]?.amount?.toLocaleString() || "0"
-                      }`,
-                  },
-                ]
-              : []),
-
-            ...(!params.department_id
-              ? [
-                  {
-                    name: "Caja",
-                    style: {
-                      justifyContent: "flex-end", // para alinear dentro del td con flexbox
-                      textAlign: "right",
-                    },
-                    selector: (row) =>
-                      "$" + row.cash_summary[7]["amount"].toLocaleString(),
-                  },
-                ]
-              : []),
-
-            {
-              name: "Total de ventas",
-              style: {
-                justifyContent: "flex-end", // para alinear dentro del td con flexbox
-                textAlign: "right",
-              },
-              selector: (row) =>
-                "$" + row.cash_summary[4]["amount"].toLocaleString(),
-            },
-            {
-              name: "Número de ventas",
-              style: {
-                justifyContent: "flex-end", // para alinear dentro del td con flexbox
-                textAlign: "right",
-              },
-              selector: (row) =>
-                row.cash_summary[10]["amount"].toLocaleString(),
-            },
-
-            ...(showInvestment
-              ? [
-                  {
-                    style: {
-                      justifyContent: "flex-end", // para alinear dentro del td con flexbox
-                      textAlign: "right",
-                    },
-                    name: "Inversión",
-                    selector: (row) =>
-                      row.investment
-                        ? "$" + row.investment.toLocaleString()
-                        : "$0",
-                  },
-                ]
-              : []),
-
-            {
-              name: "Entrar",
-              cell: (row) => (
-                <>
-                  <CustomButton onClick={() => handleSelectStore(row)}>
-                    <HomeIcon />
-                  </CustomButton>
-                </>
-              ),
-            },
-            {
-              name: "Opciones",
-              cell: (row) => (
-                <>
-                  {chooseIcon(row.products_count === tenantInfo.product_count)}
-                  {row.url_printer && <PrinterIcon />}
-                </>
-              ),
-            },
-          ]}
+          columns={columnsStore}
         />
 
         {storages.length > 0 && (
