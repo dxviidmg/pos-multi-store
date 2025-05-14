@@ -349,7 +349,7 @@ const StoreList = () => {
                 textAlign: "right",
               },
               selector: (row) =>
-                "$" + row.cash_summary[4]["amount"].toLocaleString(),
+                "$" + row.cash_summary[3]["amount"].toLocaleString(),
             },
             {
               name: "Número de ventas",
