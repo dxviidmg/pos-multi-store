@@ -10,7 +10,7 @@ import {
   hideDepartmentModal,
   showDepartmentModal,
 } from "../redux/departmentModal/DepartmentModalActions";
-import DepartmentModal from "../departmentModal /DepartmentModal";
+import DepartmentModal from "../departmentModal/DepartmentModal";
 import { getUserData } from "../apis/utils";
 import { EditIcon } from "../commons/icons/Icons";
 
