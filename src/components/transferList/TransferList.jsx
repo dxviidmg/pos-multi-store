@@ -4,6 +4,7 @@ import { deleteTransfer, getTransfers } from "../apis/transfers";
 import { calculateTimeAgo } from "../utils/utils";
 import CustomButton from "../commons/customButton/CustomButton";
 import Swal from "sweetalert2";
+import { RemoveInCartIcon } from "../commons/icons/Icons";
 
 const TransferList = () => {
   const [transfers, setTransfers] = useState([]);
@@ -74,7 +75,7 @@ const TransferList = () => {
             },
 
             {
-              name: "Descripcion",
+              name: "Descripción",
               selector: (row) => row.description,
 
               grow: 4,
@@ -87,8 +88,8 @@ const TransferList = () => {
             {
               name: "Acciones",
               selector: (row) => (
-                <CustomButton onClick={() => handleOpenModal(row)}>
-                  Eliminar
+                <CustomButton onClick={() => handleOpenModal(row)} disabled={row.description.includes('prov')}>
+                  <RemoveInCartIcon></RemoveInCartIcon>
                 </CustomButton>
               ),
               grow: 2,

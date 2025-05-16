@@ -32,7 +32,7 @@ const SearchProduct = () => {
   const [barcode, setBarcode] = useState("");
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [minQ, setMinQ] = useState(7);
+  const [minQ, setMinQ] = useState(3);
 
   useEffect(() => {
     inputRef.current?.focus();
