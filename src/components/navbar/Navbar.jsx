@@ -60,7 +60,7 @@ const CustomNavbar = () => {
         <NavDropdown.Item href="/movimientos/" hidden={user.role === "seller"}>
           Movimientos de caja
         </NavDropdown.Item>
-        <NavDropdown.Item href="/ventas/">Ventas</NavDropdown.Item>
+        <NavDropdown.Item href="/ventas/">Ventas y apartados</NavDropdown.Item>
         <NavDropdown.Divider />
         <NavDropdown.Item href="/importar-ventas/">
           Importar ventas

@@ -12,9 +12,10 @@ import {
   showStockModal,
 } from "../redux/stockModal/StockModalActions";
 import Swal from "sweetalert2";
-import { getUserData } from "../apis/utils";
-import { printTicket } from "../apis/sales";
+import { getPrinterUrl, getUserData } from "../apis/utils";
 import { PrinterIcon } from "../commons/icons/Icons";
+import { handlePrintTicket } from "../utils/utils";
+
 
 const SearchProduct = () => {
   const inputRef = useRef(null);
@@ -24,7 +25,7 @@ const SearchProduct = () => {
   const movementType = useSelector((state) => state.cartReducer.movementType);
 
   const storeType = getUserData().store_type;
-  const urlPrinter = getUserData().store_url_printer;
+  const urlPrinter = getPrinterUrl();
   const supports_reservations = getUserData().supports_reservations;
   const [query, setQuery] = useState("");
   const [data, setData] = useState([]);
@@ -32,7 +33,7 @@ const SearchProduct = () => {
   const [barcode, setBarcode] = useState("");
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [minQ, setMinQ] = useState(7);
+  const [minQ, setMinQ] = useState(3);
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -227,26 +228,8 @@ const SearchProduct = () => {
     };
   }, []);
 
-  const handlePrintTicket = async () => {
-    try {
-      const response2 = await printTicket(urlPrinter, "test/", {
-        data: "Prueba de impresión",
-      });
 
-      showAlert(
-        response2.status === 200 ? "success" : "error",
-        response2.status === 200 ? "Imprimiendo" : "Error de impresión",
-        response2.code === "ERR_NETWORK" ? "Servidor no encontrado" : ""
-      );
-    } catch (error) {
-      showAlert("error", "Error inesperado");
-    }
-  };
 
-  // Función auxiliar para mostrar alertas
-  const showAlert = (icon, title, text = "") => {
-    Swal.fire({ icon, title, text, timer: icon === "success" ? 2500 : 5000 });
-  };
 
   const handleMinQChange = (e) => {
     setMinQ(e.target.value);
@@ -259,7 +242,7 @@ const SearchProduct = () => {
 
       <h1>
         Buscador de productos{" "}
-        <CustomButton disabled={!urlPrinter} onClick={handlePrintTicket}>
+        <CustomButton disabled={!urlPrinter} onClick={e=>handlePrintTicket("test", {})}>
           <PrinterIcon color="white" />
         </CustomButton>
       </h1>
@@ -333,16 +316,18 @@ const SearchProduct = () => {
         value="checar"
         checked={movementType === "checar"}
       />
-      {supports_reservations && (      <Form.Check
-        inline
-        id="apartado"
-        label="Apartado (Sin atajo)"
-        type="radio"
-        onChange={handleMovementTypeChange}
-        value="apartado"
-        checked={movementType === "apartado"}
-        className={storeType === "A" ? "d-none" : ""}
-      />)}
+      {supports_reservations && (
+        <Form.Check
+          inline
+          id="apartado"
+          label="Apartado (Sin atajo)"
+          type="radio"
+          onChange={handleMovementTypeChange}
+          value="apartado"
+          checked={movementType === "apartado"}
+          className={storeType === "A" ? "d-none" : ""}
+        />
+      )}
 
       <br />
 

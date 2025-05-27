@@ -329,12 +329,13 @@ const Cart = () => {
           <Row>
             {(movementType === "venta" || movementType === "apartado") && (
               <>
-                <Col md={4}></Col>
-                <Col md={5} className="d-flex gap-3 justify-content-end">
-                  <h3>Productos: <span style={{color: '#da0000'}}>{totalProducts}</span></h3>
-                  <h3>Total: ${total.toFixed(2)}</h3>
+                <Col md={4}>                <h1>Productos: {totalProducts}</h1></Col>
+
+
+                <Col md={4} className="text-center">
+                  <h1>Total: ${total.toFixed(2)}</h1>
                 </Col>
-                <Col md={3}>
+                <Col md={4}>
                   <CustomButton fullWidth onClick={handleOpenModal}>
                     Pagar (Ctrl + D)
                   </CustomButton>

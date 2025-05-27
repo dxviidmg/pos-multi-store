@@ -7,6 +7,7 @@ import {
   getFormattedDate,
   formatTimeFromDate,
   handlePrintTicket,
+  getFormattedDateTime,
 } from "../utils/utils";
 import { useDispatch } from "react-redux";
 import {
@@ -40,25 +41,38 @@ const TYPE_OPTIONS = [
   },
 ];
 
+const SEARCH_BY_OPTIONS = [
+  {
+    value: "date",
+    label: "Fecha",
+  },
+  {
+    value: "id",
+    label: "Id",
+  },
+];
+
 const SaleList = () => {
   const user = getUserData();
-  const urlPrinter = user.store_url_printer;
+  const printer = user.store_printer;
   const [sales, setSales] = useState([]);
   const today = getFormattedDate();
   const [params, setParams] = useState({
     date: today,
-    is_canceled: 0,
     reservation_in_progress: false,
   });
   const [loading, setLoading] = useState(false);
   const [salesDuplicated, setSalesDuplicated] = useState([]);
   const [showAllFields, setShowAllFields] = useState(false);
+  const [searchBy, setSearchBy] = useState("date");
   const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchSalesData = async () => {
       setLoading(true);
+
       const salesResponse = await getSales(params);
+
       setSales(salesResponse.data);
 
       salesResponse.data.forEach((sale) => {
@@ -80,7 +94,6 @@ const SaleList = () => {
       ...prevData,
       [name]: value,
     }));
-
   };
 
   const handleOpenModal = (sale) => {
@@ -116,7 +129,7 @@ const SaleList = () => {
   return (
     <>
       <CustomSpinner2 isLoading={loading}></CustomSpinner2>
-      <PaymentModal2 onUpdateSaleList={handleUpdateSaleList}/>
+      <PaymentModal2 onUpdateSaleList={handleUpdateSaleList} />
       <SaleModal onUpdateSaleList={handleUpdateSaleList}></SaleModal>
       <div className="custom-section">
         {salesDuplicated.length > 0 && (
@@ -128,10 +141,9 @@ const SaleList = () => {
           </Alert>
         )}
 
-        <h1>Ventas</h1>
+        <h1>Ventas y apartados</h1>
         <Row>
-
-        <Col>
+          <Col>
             <Form.Label>Tipo</Form.Label>
             <Form.Select
               value={params.reservation_in_progress}
@@ -148,31 +160,47 @@ const SaleList = () => {
           </Col>
 
           <Col>
-            <Form>
-              <Form.Label>Fecha</Form.Label>
-              <Form.Control
-                type="date"
-                value={params.date}
-                onChange={(e) => handleDataChange(e)}
-                max={today}
-                name="date"
-              />
-            </Form>
+            <Form.Label>Busqueda por</Form.Label>
+            <Form.Select
+              value={searchBy}
+              onChange={(e) => setSearchBy(e.target.value)}
+
+              //              disabled={isLoading}
+            >
+              {SEARCH_BY_OPTIONS.map((search_option) => (
+                <option key={search_option.value} value={search_option.value}>
+                  {search_option.label}
+                </option>
+              ))}
+            </Form.Select>
           </Col>
 
-
-          <Col>
-            <Form>
-              <Form.Label>#</Form.Label>
-              <Form.Control
-                type="number"
-                value={params.sale_id}
-                onChange={(e) => handleDataChange(e)}
-                name="sale_id"
-              />
-            </Form>
-          </Col>
-
+          {searchBy === "date" ? (
+            <Col>
+              <Form>
+                <Form.Label>Fecha</Form.Label>
+                <Form.Control
+                  type="date"
+                  value={params.date}
+                  onChange={(e) => handleDataChange(e)}
+                  max={today}
+                  name="date"
+                />
+              </Form>
+            </Col>
+          ) : (
+            <Col>
+              <Form>
+                <Form.Label>#</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={params.sale_id}
+                  onChange={(e) => handleDataChange(e)}
+                  name="sale_id"
+                />
+              </Form>
+            </Col>
+          )}
 
           <Col className="d-flex flex-column justify-content-end">
             <CustomButton onClick={() => setShowAllFields((prev) => !prev)}>
@@ -201,7 +229,8 @@ const SaleList = () => {
 
             {
               name: "Hora",
-              selector: (row) => formatTimeFromDate(row.created_at),
+              selector: (row) => getFormattedDateTime(row.created_at),
+              wrap: true,
             },
             {
               name: "Productos",
@@ -269,17 +298,14 @@ const SaleList = () => {
               grow: showAllFields ? 3 : 2,
               cell: (row) => (
                 <>
-                  {urlPrinter && (
-                    <CustomButton onClick={() => handlePrintTicket(row)}>
+                  {printer && (
+                    <CustomButton onClick={() => handlePrintTicket("ticket", row)}>
                       <PrinterIcon color="white" size="16" />
                     </CustomButton>
                   )}
 
-                  {params.reservation_in_progress === 'true' && (
-                    <CustomButton
-                      fullWidth
-                      onClick={() => handleOpenModal2(row)}
-                    >
+                  {params.reservation_in_progress === "true" && (
+                    <CustomButton onClick={() => handleOpenModal2(row)}>
                       <CashIcon />
                     </CustomButton>
                   )}

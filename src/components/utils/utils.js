@@ -1,10 +1,6 @@
 import * as XLSX from "xlsx";
-import {printTicket } from "../apis/sales";
 import Swal from "sweetalert2";
-import { getUserData } from "../apis/utils";
-
-
-
+import { getPrint } from "../apis/printers";
 
 export const getFormattedDate = (date = new Date()) => {
   const year = date.getFullYear();
@@ -75,57 +71,49 @@ export const calculateTimeAgo = (creationDate) => {
   }
 };
 
-
 const showAlert = (icon, title, text = "", timer = 5000) => {
   Swal.fire({ icon, title, text, timer });
 };
 
-export const handlePrintTicket = async (data) => {
-
-  const urlPrinter = getUserData().store_url_printer
-  try {
-    const response = await printTicket(urlPrinter, "ticket/", {
-      data,
-    });
-    
-    if (response.status !== 200){
-      const text = response.code === "ERR_NETWORK" ? "Servidor no encontrado" : ""
-      showAlert("error", "Error de impresión", text
-      );
-    }
-
-  } catch (error) {
-    showAlert("error", "Error inesperado");
-  }
-};
 
 
 export function getDateDifference(startDate, endDate) {
-    let start = new Date(startDate);
-    let end = new Date(endDate);
-    end.setDate(end.getDate() + 1);
+  let start = new Date(startDate);
+  let end = new Date(endDate);
+  end.setDate(end.getDate() + 1);
 
-    let years = end.getFullYear() - start.getFullYear();
-    let months = end.getMonth() - start.getMonth();
-    let days = end.getDate() - start.getDate();
+  let years = end.getFullYear() - start.getFullYear();
+  let months = end.getMonth() - start.getMonth();
+  let days = end.getDate() - start.getDate();
 
-    // Ajuste si los días son negativos
-    if (days < 0) {
-        months--;
-        let prevMonth = new Date(end.getFullYear(), end.getMonth(), 0);
-        days += prevMonth.getDate();
-    }
+  // Ajuste si los días son negativos
+  if (days < 0) {
+    months--;
+    let prevMonth = new Date(end.getFullYear(), end.getMonth(), 0);
+    days += prevMonth.getDate();
+  }
 
-    // Ajuste si los meses son negativos
-    if (months < 0) {
-        years--;
-        months += 12;
-    }
+  // Ajuste si los meses son negativos
+  if (months < 0) {
+    years--;
+    months += 12;
+  }
 
-    let result = [];
-    if (years > 0) result.push(`${years} año${years > 1 ? 's' : ''}`);
-    if (months > 0) result.push(`${months} mes${months > 1 ? 'es' : ''}`);
-    if (days > 0) result.push(`${days} día${days > 1 ? 's' : ''}`);
+  let result = [];
+  if (years > 0) result.push(`${years} año${years > 1 ? "s" : ""}`);
+  if (months > 0) result.push(`${months} mes${months > 1 ? "es" : ""}`);
+  if (days > 0) result.push(`${days} día${days > 1 ? "s" : ""}`);
 
-    return result.join(" ");
+  return result.join(" ");
 }
+
+
+export const handlePrintTicket = async (endpoint, data) => {
+  const response2 = await getPrint(endpoint, data);
+
+  showAlert(
+    response2.status === 200 ? "success" : "error",
+    response2.status === 200 ? "Imprimiendo" : "Error de impresión",
+    response2.code === "ERR_NETWORK" ? "Servidor no encontrado" : ""
+  );
+};

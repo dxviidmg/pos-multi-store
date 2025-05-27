@@ -12,3 +12,7 @@ export const getHeaders = (isMultipart = false) => {
 export const getApiUrl = (endpoint) => {
   return `${process.env.REACT_APP_API_URL}/api/${endpoint}/`;
 };
+
+export const getPrinterUrl = (endpoint) => {
+  return `${process.env.REACT_APP_PRINTER_URL}/api/${endpoint}/`;
+};
