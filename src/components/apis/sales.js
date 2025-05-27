@@ -101,26 +101,6 @@ export const cancelSale = async (data) => {
   }
 };
 
-export const getPrinter = async (data = {}) => {
-  const apiUrl = getApiUrl("printer");
-  try {
-    const response = await axios.post(apiUrl, data, {
-      headers: getHeaders(),
-    });
-    return response;
-  } catch (error) {
-    return error;
-  }
-};
-
-export const printTicket = async (url, endpoint, data) => {
-  try {
-    const response = await axios.post(url + endpoint, data, {});
-    return response;
-  } catch (error) {
-    return error;
-  }
-};
 
 export const updateSale = async (data) => {
   const apiUrl = new URL(getApiUrl("sale/" + data.id));
