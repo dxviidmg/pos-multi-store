@@ -14,5 +14,5 @@ export const getApiUrl = (endpoint) => {
 };
 
 export const getPrinterUrl = (endpoint) => {
-  return `${process.env.REACT_APP_PRINTER_URL}/api/${endpoint}/`;
+  return `${process.env.REACT_APP_PRINTER_URL}/${endpoint}/`;
 };
