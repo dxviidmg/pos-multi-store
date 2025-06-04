@@ -52,24 +52,39 @@ const SellerModal = ({ onUpdateSellerList }) => {
   const dispatch = useDispatch();
 
   const handleDataChange = (e) => {
-    const { name, value } = e.target;
-  
+    const { name, value } = e.target;  
     setFormData((prevData) => {
-      let updatedData = { ...prevData, [name]: value };
+      const updatedData = { ...prevData };
   
-      if (name === "store_id") {  
-        const store = stores.find((s) => s.id === value);
+      // Asegurarse de que worker existe
+      if (!updatedData.worker) {
+        updatedData.worker = {};
+      }
+  
+      if (name === "store_id") {
+        updatedData.store_id = value;
+  
+        const store = stores.find((s) => s.id == value);
+        console.log(store);
+  
         if (store) {
           const storeName = store.name.toLowerCase();
           const workersCount = store.workers_count + 1;
           const username = `${short_name}.tienda.${storeName}.vendedor${workersCount}`;
-          updatedData["worker"]["username"] = username; // Se usa "username" como clave fija
+  
+          console.log(username);
+          updatedData.worker.username = username;
         }
+      } else if (["first_name", "last_name"].includes(name)) {
+        updatedData.worker[name] = value;
+      } else {
+        updatedData[name] = value;
       }
   
       return updatedData;
     });
   };
+  
   
 
   const handleProductSubmit = async (e) => {
