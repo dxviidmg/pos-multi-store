@@ -197,6 +197,7 @@ const PaymentModal = () => {
 
     if (response.status === 201) {
       if (printer && printTicket) {
+        data.id = response.data.id
         handlePrintTicket("ticket", data);
       }
       setPaymentMethods({
