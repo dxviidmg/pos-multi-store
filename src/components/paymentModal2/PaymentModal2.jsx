@@ -6,6 +6,8 @@ import CustomButton from "../commons/customButton/CustomButton";
 import { updateSale } from "../apis/sales";
 import { hidePaymentReservationModal } from "../redux/paymentReservationModal/PaymentReservationModalActions";
 import Swal from "sweetalert2";
+import { handlePrintTicket } from "../utils/utils";
+import { getUserData } from "../apis/utils";
 
 const INITIAL_PAYMENT_STATE = { paidWith: 0, change: 0 };
 
@@ -22,6 +24,8 @@ const PaymentModal2 = ({ onUpdateSaleList }) => {
   const remaining = reservation.total - reservation.paid;
   const dispatch = useDispatch();
 
+  const printer = getUserData().store_printer;
+
   useEffect(() => {
     if (showPaymentReservationModal) {
       setTimeout(() => inputPaymentRef.current?.focus(), 100);
@@ -33,9 +37,9 @@ const PaymentModal2 = ({ onUpdateSaleList }) => {
     const data = {
       id: reservation.id,
       payment: {
+        payment_method: paymentMethod,
         sale_id: reservation.id,
         amount: payment.paidWith - payment.change,
-        payment_method: paymentMethod,
       },
       reservation_in_progress,
     };
@@ -45,7 +49,7 @@ const PaymentModal2 = ({ onUpdateSaleList }) => {
 
     console.log(response)
     if (response.status === 200) {
-      setPaymentMethod(INITIAL_PAYMENT_STATE);
+      setPaymentMethod("EF");
       setReferencePayment("");
       dispatch(hidePaymentReservationModal());
       setPayment(INITIAL_PAYMENT_STATE);
@@ -72,6 +76,9 @@ const PaymentModal2 = ({ onUpdateSaleList }) => {
               onUpdateSaleList({ ...response.data, delete: true });
             }
 
+            if (printer && printTicket) {
+              handlePrintTicket("ticket", response.data);
+            }
 
     } else {
       Swal.fire({
