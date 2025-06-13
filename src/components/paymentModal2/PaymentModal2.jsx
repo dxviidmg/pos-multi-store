@@ -37,9 +37,9 @@ const PaymentModal2 = ({ onUpdateSaleList }) => {
     const data = {
       id: reservation.id,
       payment: {
+        payment_method: paymentMethod,
         sale_id: reservation.id,
         amount: payment.paidWith - payment.change,
-        payment_method: paymentMethod,
       },
       reservation_in_progress,
     };
@@ -49,7 +49,7 @@ const PaymentModal2 = ({ onUpdateSaleList }) => {
 
     console.log(response)
     if (response.status === 200) {
-      setPaymentMethod(INITIAL_PAYMENT_STATE);
+      setPaymentMethod("EF");
       setReferencePayment("");
       dispatch(hidePaymentReservationModal());
       setPayment(INITIAL_PAYMENT_STATE);
