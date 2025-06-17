@@ -47,8 +47,12 @@ const SEARCH_BY_OPTIONS = [
     label: "Fecha",
   },
   {
-    value: "id",
+    value: "sale_id",
     label: "Id",
+  },
+  {
+    value: "client",
+    label: "Cliente",
   },
 ];
 
@@ -188,7 +192,7 @@ const SaleList = () => {
                 />
               </Form>
             </Col>
-          ) : (
+          ) : searchBy === "sale_id" ? (
             <Col>
               <Form>
                 <Form.Label>#</Form.Label>
@@ -200,7 +204,34 @@ const SaleList = () => {
                 />
               </Form>
             </Col>
-          )}
+          ) : searchBy === "client" ? (
+            <>
+              <Col>
+                <Form>
+                  <Form.Label>Nombre</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={params.first_name}
+                    onChange={(e) => handleDataChange(e)}
+                    name="first_name"
+                    placeholder="Nombre"
+                  />
+                </Form>
+              </Col>
+              <Col>
+                <Form>
+                  <Form.Label>Apellidos</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={params.last_name}
+                    onChange={(e) => handleDataChange(e)}
+                    name="last_name"
+                    placeholder="Apellidos"
+                  />
+                </Form>
+              </Col>
+            </>
+          ) : null}
 
           <Col className="d-flex flex-column justify-content-end">
             <CustomButton onClick={() => setShowAllFields((prev) => !prev)}>
@@ -284,14 +315,14 @@ const SaleList = () => {
                     wrap: true,
                     grow: 2,
                   },
+                  {
+                    name: "Vendedor",
+                    wrap: true,
+                    grow: 1.5,
+                    selector: (row) => row.seller_username,
+                  },
                 ]
               : []),
-            {
-              name: "Vendedor",
-              wrap: true,
-              grow: 1.5,
-              selector: (row) => row.seller_username,
-            },
 
             {
               name: "Acciones",
@@ -299,7 +330,9 @@ const SaleList = () => {
               cell: (row) => (
                 <>
                   {printer && (
-                    <CustomButton onClick={() => handlePrintTicket("ticket", row)}>
+                    <CustomButton
+                      onClick={() => handlePrintTicket("ticket", row)}
+                    >
                       <PrinterIcon color="white" size="16" />
                     </CustomButton>
                   )}
