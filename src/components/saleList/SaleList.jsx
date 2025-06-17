@@ -5,7 +5,6 @@ import { getSales } from "../apis/sales";
 import CustomButton from "../commons/customButton/CustomButton";
 import {
   getFormattedDate,
-  formatTimeFromDate,
   handlePrintTicket,
   getFormattedDateTime,
 } from "../utils/utils";
