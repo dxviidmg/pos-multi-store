@@ -3,8 +3,9 @@ import { getPrinterUrl, getUserData } from "./utils";
 
 export const getPrint = async (endpoint, data) => {
   const printerUrl = new URL(getPrinterUrl(endpoint));
-  data.cut_command = getUserData.store_printer?.cut_command
-
+  const user = getUserData()
+  data.token = user.token
+  
   try {
     const response = await axios.post(printerUrl, data, {});
     return response;
