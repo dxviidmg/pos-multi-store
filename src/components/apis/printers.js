@@ -6,6 +6,7 @@ export const getPrint = async (endpoint, data) => {
   const user = getUserData()
   data.token = user.token
   data.api_url = getApiUrl('store-printer')
+  data.store_printer = user.store_printer
 
   
   
