@@ -278,7 +278,7 @@ const StoreList = () => {
             {
               name: "Nombre",
               wrap: true,
-              selector: (row) => <>{row.name}</>,
+              selector: (row) => <>{row.name} <br/>({row.manager_username})</>,
             },
             {
               name: "Ganancia",
@@ -315,7 +315,7 @@ const StoreList = () => {
                       }`,
                   },
                   {
-                    name: "Transferencia",
+                    name: "T. Bancaria",
                     style: {
                       justifyContent: "flex-end", // para alinear dentro del td con flexbox
                       textAlign: "right",
@@ -343,7 +343,7 @@ const StoreList = () => {
               : []),
 
             {
-              name: "Total de ventas",
+              name: "Vendido",
               style: {
                 justifyContent: "flex-end", // para alinear dentro del td con flexbox
                 textAlign: "right",
@@ -352,7 +352,7 @@ const StoreList = () => {
                 "$" + row.cash_summary[3]["amount"].toLocaleString(),
             },
             {
-              name: "Número de ventas",
+              name: "# de ventas",
               style: {
                 justifyContent: "flex-end", // para alinear dentro del td con flexbox
                 textAlign: "right",
@@ -408,8 +408,9 @@ const StoreList = () => {
               data={storages}
               columns={[
                 {
+                  wrap: true,
                   name: "Nombre",
-                  selector: (row) => `${row.name}`,
+                  selector: (row) => <>{row.name} <br/>({row.manager_username})</>,
                 },
                 { grow: 10 },
                 ...(showInvestment
@@ -504,7 +505,7 @@ const StoreList = () => {
                       },
 
                       {
-                        name: "Transferencia",
+                        name: "T. Bancaria",
                         style: {
                           justifyContent: "flex-end", // para alinear dentro del td con flexbox
                           textAlign: "right",
@@ -528,7 +529,7 @@ const StoreList = () => {
                   : []),
 
                 {
-                  name: "Total de ventas",
+                  name: "Vendido",
                   style: {
                     justifyContent: "flex-end", // para alinear dentro del td con flexbox
                     textAlign: "right",
@@ -537,7 +538,7 @@ const StoreList = () => {
                 },
 
                 {
-                  name: "Numero de ventas",
+                  name: "# de ventas",
                   style: {
                     justifyContent: "flex-end", // para alinear dentro del td con flexbox
                     textAlign: "right",
