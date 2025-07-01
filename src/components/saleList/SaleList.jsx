@@ -107,21 +107,12 @@ const SaleList = () => {
   };
 
   const handleUpdateSaleList = (updatedSale) => {
-    if ("delete" in updatedSale) {
-      setSales((prevSales) => {
-        const updatedList = prevSales.filter(
-          (item) => item.id !== updatedSale.id
-        );
-        return updatedList;
-      });
-    } else {
       setSales((prevSales) => {
         const saleExists = prevSales.some((b) => b.id === updatedSale.id);
         return saleExists
           ? prevSales.map((b) => (b.id === updatedSale.id ? updatedSale : b))
           : [...prevSales, updatedSale];
       });
-    }
   };
 
   const handleOpenModal2 = (row) => {
