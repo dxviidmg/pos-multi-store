@@ -17,6 +17,7 @@ import SaleModal from "../saleModal/saleModal";
 import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
 import {
   CashIcon,
+  ErrorIcon,
   PrinterIcon,
   ReturnIcon,
   WarningIcon,
@@ -106,21 +107,12 @@ const SaleList = () => {
   };
 
   const handleUpdateSaleList = (updatedSale) => {
-    if ("delete" in updatedSale) {
-      setSales((prevSales) => {
-        const updatedList = prevSales.filter(
-          (item) => item.id !== updatedSale.id
-        );
-        return updatedList;
-      });
-    } else {
       setSales((prevSales) => {
         const saleExists = prevSales.some((b) => b.id === updatedSale.id);
         return saleExists
           ? prevSales.map((b) => (b.id === updatedSale.id ? updatedSale : b))
           : [...prevSales, updatedSale];
       });
-    }
   };
 
   const handleOpenModal2 = (row) => {
@@ -262,24 +254,30 @@ const SaleList = () => {
               selector: (row) => getFormattedDateTime(row.created_at),
               wrap: true,
             },
+
+
             {
               name: "Productos",
-              selector: (row) => (
-                <>
-                  {/* Map over the array and render each item */}
-                  {row.products_sale
-                    .filter((item) => item.quantity !== 0)
-                    .map((item, index) => (
+              selector: (row) => {
+                const productsToShow = row.is_canceled
+                  ? row.products_sale.filter((item) => item.quantity === 0)
+                  : row.products_sale.filter((item) => item.quantity !== 0);
+            
+                return (
+                  <>
+                    {productsToShow.map((item, index) => (
                       <span key={index}>
-                        <b>{item.quantity}</b> x {item.name} a ${item.price}
-                        <br />{" "}
+                        <b>{row.is_canceled ? item.returned_quantity : item.quantity}</b> x {item.name} a ${item.price}
+                        <br />
                       </span>
                     ))}
-                </>
-              ),
+                  </>
+                );
+              },
               wrap: true,
               grow: 3,
             },
+            
 
             {
               name: "Total",
@@ -328,6 +326,8 @@ const SaleList = () => {
               grow: showAllFields ? 3 : 2,
               cell: (row) => (
                 <>
+                {row.is_canceled ? <ErrorIcon/>: <>
+                
                   {printer && (
                     <CustomButton
                       onClick={() => handlePrintTicket("ticket", row)}
@@ -348,6 +348,9 @@ const SaleList = () => {
                     </CustomButton>
                   )}
                   {row.is_duplicate && <WarningIcon></WarningIcon>}
+
+                </>}
+
                 </>
               ),
             },
