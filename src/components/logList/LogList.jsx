@@ -1,17 +1,22 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
 import { Col, Form, Row } from "react-bootstrap";
-import { formatTimeFromDate, getFormattedDate } from "../utils/utils";
+import {
+  exportToExcel,
+  formatTimeFromDate,
+  getFormattedDate,
+} from "../utils/utils";
 import {
   getStoreProductLogs,
   getStoreProductLogsChoices,
 } from "../apis/products";
 import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
 import { getBrands } from "../apis/brands";
+import CustomButton from "../commons/customButton/CustomButton";
 
 const LogList = () => {
   const today = getFormattedDate();
-  const [sales, setSales] = useState([]);
+  const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(false);
   const [brands, setBrands] = useState([]);
   const [actions, setActions] = useState([]);
@@ -34,7 +39,7 @@ const LogList = () => {
     const fetchSalesData = async () => {
       setLoading(true);
       const salesResponse = await getStoreProductLogs(params);
-      setSales(salesResponse.data);
+      setLogs(salesResponse.data);
       setLoading(false);
     };
 
@@ -46,11 +51,40 @@ const LogList = () => {
     setParams((prevData) => ({ ...prevData, [name]: value }));
   };
 
+  const handleDownload = async () => {
+    console.log(logs);
+    const logsForReport = logs.map(
+      ({
+        product: { code: Código, brand_name: Marca, name: Nombre },
+        description: Descripcíon,
+        previous_stock,
+        difference: diferencia,
+        updated_stock
+
+      }) => ({
+        Código,
+        Marca,
+        Nombre,
+        Descripcíon,
+        'Stock anterior': previous_stock,
+        diferencia,
+        'Stock actualizado': updated_stock
+      })
+    );
+
+    const prefixName = "Logs " + params.date;
+    exportToExcel(logsForReport, prefixName, false);
+  };
+
   return (
     <>
       <CustomSpinner2 isLoading={loading}></CustomSpinner2>
       <div className="custom-section">
         <h1>Logs</h1>
+
+        <CustomButton onClick={handleDownload} disabled={logs.length === 0}>
+          Descargar productos
+        </CustomButton>
 
         <Row>
           <Col>
@@ -100,7 +134,7 @@ const LogList = () => {
         </Row>
 
         <CustomTable
-          data={sales}
+          data={logs}
           loading={loading}
           columns={[
             {
