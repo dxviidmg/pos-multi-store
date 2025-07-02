@@ -83,7 +83,7 @@ const LogList = () => {
         <h1>Logs</h1>
 
         <CustomButton onClick={handleDownload} disabled={logs.length === 0}>
-          Descargar productos
+          Descargar logs
         </CustomButton>
 
         <Row>
