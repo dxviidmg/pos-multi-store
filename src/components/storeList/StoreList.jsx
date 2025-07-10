@@ -11,6 +11,7 @@ import { chooseIcon, HomeIcon, PrinterIcon } from "../commons/icons/Icons";
 import { getDepartments } from "../apis/departments";
 import FormFilters from "./FormFilters";
 import { getStorage, setStorage } from "../utils/storage";
+import CustomTooltip from "../commons/Tooltip";
 
 const StoreList = () => {
   const navigate = useNavigate();
@@ -276,9 +277,11 @@ const StoreList = () => {
       name: "Entrar",
       cell: (row) => (
         <>
-          <CustomButton onClick={() => handleSelectStore(row)}>
-            <HomeIcon />
-          </CustomButton>
+          <CustomTooltip text={"Ver información de la sucursal"}>
+            <CustomButton onClick={() => handleSelectStore(row)}>
+              <HomeIcon />
+            </CustomButton>
+          </CustomTooltip>
         </>
       ),
     },
@@ -314,9 +317,11 @@ const StoreList = () => {
       name: "Entrar",
       cell: (row) => (
         <>
-          <CustomButton onClick={() => handleSelectStore(row)}>
-            <HomeIcon />
-          </CustomButton>
+          <CustomTooltip text={"Ver información del almacen"}>
+            <CustomButton onClick={() => handleSelectStore(row)}>
+              <HomeIcon />
+            </CustomButton>
+          </CustomTooltip>
         </>
       ),
     },

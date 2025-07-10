@@ -14,7 +14,7 @@ import ClientModal from "../clientModal/ClientModal";
 import { EditIcon } from "../commons/icons/Icons";
 import { getUserData } from "../apis/utils";
 import { getDateDifference, getFormattedDate } from "../utils/utils";
-
+import CustomTooltip from "../commons/Tooltip";
 
 const ClientList = () => {
   const today = getFormattedDate();
@@ -24,7 +24,6 @@ const ClientList = () => {
   const [discountFormData, setDiscountFormData] = useState({
     discount_percentage: "",
   });
-
 
   const [params, setParams] = useState({
     end_date: today,
@@ -202,9 +201,11 @@ const ClientList = () => {
             {
               name: "Acciones",
               cell: (row) => (
-                <CustomButton onClick={() => handleOpenModal(row)}>
-                  <EditIcon></EditIcon>
-                </CustomButton>
+                <CustomTooltip text={"Editar usuario"} >
+                  <CustomButton onClick={() => handleOpenModal(row)}>
+                    <EditIcon></EditIcon>
+                  </CustomButton>
+                </CustomTooltip>
               ),
             },
           ]}

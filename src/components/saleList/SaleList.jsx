@@ -28,6 +28,7 @@ import {
   hidePaymentReservationModal,
   showPaymentReservationModal,
 } from "../redux/paymentReservationModal/PaymentReservationModalActions";
+import CustomTooltip from "../commons/Tooltip";
 
 const TYPE_OPTIONS = [
   {
@@ -80,7 +81,6 @@ const SaleList = () => {
       ...prevData,
       [name]: value,
     }));
-
   };
 
   const handleOpenModal = (sale) => {
@@ -116,7 +116,7 @@ const SaleList = () => {
   return (
     <>
       <CustomSpinner2 isLoading={loading}></CustomSpinner2>
-      <PaymentModal2 onUpdateSaleList={handleUpdateSaleList}/>
+      <PaymentModal2 onUpdateSaleList={handleUpdateSaleList} />
       <SaleModal onUpdateSaleList={handleUpdateSaleList}></SaleModal>
       <div className="custom-section">
         {salesDuplicated.length > 0 && (
@@ -130,8 +130,7 @@ const SaleList = () => {
 
         <h1>Ventas</h1>
         <Row>
-
-        <Col>
+          <Col>
             <Form.Label>Tipo</Form.Label>
             <Form.Select
               value={params.reservation_in_progress}
@@ -160,7 +159,6 @@ const SaleList = () => {
             </Form>
           </Col>
 
-
           <Col>
             <Form>
               <Form.Label>#</Form.Label>
@@ -172,7 +170,6 @@ const SaleList = () => {
               />
             </Form>
           </Col>
-
 
           <Col className="d-flex flex-column justify-content-end">
             <CustomButton onClick={() => setShowAllFields((prev) => !prev)}>
@@ -275,7 +272,7 @@ const SaleList = () => {
                     </CustomButton>
                   )}
 
-                  {params.reservation_in_progress === 'true' && (
+                  {params.reservation_in_progress === "true" && (
                     <CustomButton
                       fullWidth
                       onClick={() => handleOpenModal2(row)}
@@ -285,9 +282,11 @@ const SaleList = () => {
                   )}
 
                   {(row.is_cancelable || row.is_duplicate) && (
-                    <CustomButton onClick={() => handleOpenModal(row)}>
-                      <ReturnIcon></ReturnIcon>
-                    </CustomButton>
+                    <CustomTooltip text={"Generar devolución"}>
+                      <CustomButton onClick={() => handleOpenModal(row)}>
+                        <ReturnIcon></ReturnIcon>
+                      </CustomButton>
+                    </CustomTooltip>
                   )}
                   {row.is_duplicate && <WarningIcon></WarningIcon>}
                 </>
