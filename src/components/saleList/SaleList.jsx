@@ -29,6 +29,7 @@ import {
   hidePaymentReservationModal,
   showPaymentReservationModal,
 } from "../redux/paymentReservationModal/PaymentReservationModalActions";
+import CustomTooltip from "../commons/Tooltip";
 
 const TYPE_OPTIONS = [
   {
@@ -337,15 +338,20 @@ const SaleList = () => {
                   )}
 
                   {params.reservation_in_progress === "true" && (
-                    <CustomButton onClick={() => handleOpenModal2(row)}>
+                    <CustomButton
+                      fullWidth
+                      onClick={() => handleOpenModal2(row)}
+                    >
                       <CashIcon />
                     </CustomButton>
                   )}
 
                   {(row.is_cancelable || row.is_duplicate) && (
-                    <CustomButton onClick={() => handleOpenModal(row)}>
-                      <ReturnIcon></ReturnIcon>
-                    </CustomButton>
+                    <CustomTooltip text={"Generar devolución"}>
+                      <CustomButton onClick={() => handleOpenModal(row)}>
+                        <ReturnIcon></ReturnIcon>
+                      </CustomButton>
+                    </CustomTooltip>
                   )}
                   {row.is_duplicate && <WarningIcon></WarningIcon>}
 
