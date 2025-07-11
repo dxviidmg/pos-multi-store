@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { deleteProducts, getProducts, upperCodeProducts } from "../apis/products";
+import {
+  deleteProducts,
+  getProducts,
+  upperCodeProducts,
+} from "../apis/products";
 import { Col, Form, FormCheck, Row } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import { useDispatch } from "react-redux";
@@ -17,6 +21,7 @@ import { getUserData } from "../apis/utils";
 import Swal from "sweetalert2";
 import { CheckIcon, EditIcon, SearchIcon } from "../commons/icons/Icons";
 import { getDepartments } from "../apis/departments";
+import CustomTooltip from "../commons/Tooltip";
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
@@ -50,10 +55,11 @@ const ProductList = () => {
 
     const totalProducts = products.length;
 
-    const outOfStockCount = products.filter(product => product.stock === 0).length;
+    const outOfStockCount = products.filter(
+      (product) => product.stock === 0
+    ).length;
     const outOfStockPercentage = (outOfStockCount / totalProducts) * 100;
-    setoutOfStockPercentage(outOfStockPercentage)
-      
+    setoutOfStockPercentage(outOfStockPercentage);
 
     setTimeout(() => {
       setLoading(false);
@@ -179,13 +185,11 @@ const ProductList = () => {
       });
   };
 
-
   const handleUpperCodeProducts = async () => {
     const response = await upperCodeProducts();
 
     if (response.status === 200) {
-
-      await fetchProducts()
+      await fetchProducts();
 
       Swal.fire({
         icon: "success",
@@ -286,14 +290,14 @@ const ProductList = () => {
         </Col>
 
         <Col className="d-flex flex-column justify-content-end">
+          {products.length > 0 && (
+            <>{outOfStockPercentage.toFixed(0)}% de los productos esta vacio</>
+          )}
 
-        {products.length > 0 && (<>{outOfStockPercentage.toFixed(0)}% de los productos esta vacio</>)}
-        
           <CustomButton fullWidth onClick={fetchProducts}>
-          <SearchIcon/> Buscar 
+            <SearchIcon /> Buscar
           </CustomButton>
         </Col>
-
       </Row>
       <CustomTable
         setSelectedRows={setSelectedRows}
@@ -358,18 +362,31 @@ const ProductList = () => {
             grow: getUserData().role === "owner" ? 2.5 : 1,
             cell: (row) => (
               <>
-                <CustomButton onClick={() => handleOpenModal(row)}>
-                  <EditIcon></EditIcon>
-                </CustomButton>
-                <CustomButton
-                  onClick={() => handleOpenModal2(row)}
-                  hidden={getUserData().role !== "owner"}
+                <CustomTooltip text={"Editar producto"} position={"top"}>
+                  <CustomButton onClick={() => handleOpenModal(row)}>
+                    <EditIcon></EditIcon>
+                  </CustomButton>
+                </CustomTooltip>
+                <CustomTooltip text={"Mostrar stock"} position={"top"}>
+                  <CustomButton
+                    onClick={() => handleOpenModal2(row)}
+                    hidden={getUserData().role !== "owner"}
+                  >
+                    <CheckIcon />
+                  </CustomButton>
+                </CustomTooltip>
+                <CustomTooltip
+                  text={"Generar Código de barras"}
+                  position={"top"}
                 >
-                  <CheckIcon/>
-                </CustomButton>
-                <CustomButton onClick={() => handleGenerate(row.code)} fullWidth heitgh>
-                <span style={{fontSize: '11px'}}>BC128</span>
-                </CustomButton>
+                  <CustomButton
+                    onClick={() => handleGenerate(row.code)}
+                    fullWidth
+                    heitgh
+                  >
+                    <span style={{ fontSize: "11px" }}>BC128</span>
+                  </CustomButton>
+                </CustomTooltip>
               </>
             ),
           },

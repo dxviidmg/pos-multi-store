@@ -12,6 +12,7 @@ import {
 import Swal from "sweetalert2";
 import { getUserData } from "../apis/utils";
 import { EditIcon } from "../commons/icons/Icons";
+import CustomTooltip from "../commons/Tooltip";
 
 const BrandList = () => {
   const [loading, setLoading] = useState(false);
@@ -126,9 +127,11 @@ const BrandList = () => {
           {
             name: "Acciones",
             cell: (row) => (
-              <CustomButton onClick={() => handleOpenModal(row)}>
-                <EditIcon></EditIcon>
-              </CustomButton>
+              <CustomTooltip text={"Editar marca"}>
+                <CustomButton onClick={() => handleOpenModal(row)}>
+                  <EditIcon></EditIcon>
+                </CustomButton>
+              </CustomTooltip>
             ),
           },
         ]}
