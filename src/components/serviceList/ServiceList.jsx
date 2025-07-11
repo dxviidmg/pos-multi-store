@@ -8,26 +8,26 @@ const SERVICES = [
   },
   {
     description: "Instalación de impresora vía USB",
-    price: 100,
+    price: 0,
     notes: "Tiempo de implementación: 1 a 2 semanas.",
   },
   {
     description: "Instalación de impresora vía WiFi",
-    price: 250,
+    price: 100,
     notes: "Tiempo de implementación: 1 a 4 semanas.",
   },
   {
-    description: "Módulo de vendedores (de 4 a 9)",
-    price: 200,
+    description: "Módulo de vendedores (0 a 9)",
+    price: 0,
   },
   {
     description: "Módulo de vendedores (+9)",
-    price: 500,
+    price: 200,
   },
   {
     description: "Integración con sistemas de terceros",
     price: 500,
-    notes: "El precio puede variar según los requerimientos específicos.",
+    notes: "El precio puede variar según los requerimientos.",
   },
 ];
 
