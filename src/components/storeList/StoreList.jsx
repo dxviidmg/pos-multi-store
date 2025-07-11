@@ -230,7 +230,7 @@ const StoreList = () => {
               `$${cash_summary?.[1]?.amount?.toLocaleString() || "0"}`,
           },
           {
-            name: "Transferencia",
+            name: "T. Bancaria",
             style: alignTdStyles,
             selector: ({ cash_summary }) =>
               `$${cash_summary?.[2]?.amount?.toLocaleString() || "0"}`,
@@ -250,13 +250,13 @@ const StoreList = () => {
       : []),
 
     {
-      name: "Total de ventas",
+      name: "Vendido",
       style: alignTdStyles,
       selector: ({ cash_summary }) =>
         `$${cash_summary[4]["amount"]?.toLocaleString()}`,
     },
     {
-      name: "Número de ventas",
+      name: "# de ventas",
       style: alignTdStyles,
       selector: ({ cash_summary }) =>
         `${cash_summary[10]["amount"]?.toLocaleString()}`,
@@ -356,7 +356,7 @@ const StoreList = () => {
           },
 
           {
-            name: "Transferencia",
+            name: "T. Bancaria",
             style: alignTdStyles,
             selector: ({ paymentTransfer }) => `${paymentTransfer}`,
           },
@@ -374,13 +374,13 @@ const StoreList = () => {
       : []),
 
     {
-      name: "Total de ventas",
+      name: "Vendido",
       style: alignTdStyles,
       selector: ({ totalPayment }) => `${totalPayment}`,
     },
 
     {
-      name: "Numero de ventas",
+      name: "# de ventas",
       style: alignTdStyles,
       selector: ({ totalSales }) => `${totalSales}`,
     },
