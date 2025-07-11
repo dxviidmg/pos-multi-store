@@ -13,6 +13,7 @@ import {
 import DepartmentModal from "../departmentModal/DepartmentModal";
 import { getUserData } from "../apis/utils";
 import { EditIcon } from "../commons/icons/Icons";
+import CustomTooltip from "../commons/Tooltip";
 
 const DepartmentList = () => {
   const [loading, setLoading] = useState(false);
@@ -134,9 +135,11 @@ const DepartmentList = () => {
           {
             name: "Acciones",
             cell: (row) => (
-              <CustomButton onClick={() => handleOpenModal(row)}>
-                <EditIcon></EditIcon>
-              </CustomButton>
+              <CustomTooltip text={"Editar Departamento"}>
+                <CustomButton onClick={() => handleOpenModal(row)}>
+                  <EditIcon></EditIcon>
+                </CustomButton>
+              </CustomTooltip>
             ),
           },
         ]}
