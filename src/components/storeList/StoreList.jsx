@@ -277,7 +277,7 @@ const StoreList = () => {
       name: "Entrar",
       cell: (row) => (
         <>
-          <CustomTooltip text={"Ver información de la sucursal"}>
+          <CustomTooltip text={"Ingresar a la tienda"}>
             <CustomButton onClick={() => handleSelectStore(row)}>
               <HomeIcon />
             </CustomButton>
@@ -317,7 +317,7 @@ const StoreList = () => {
       name: "Entrar",
       cell: (row) => (
         <>
-          <CustomTooltip text={"Ver información del almacen"}>
+          <CustomTooltip text={"Ingresar al almacen"}>
             <CustomButton onClick={() => handleSelectStore(row)}>
               <HomeIcon />
             </CustomButton>
