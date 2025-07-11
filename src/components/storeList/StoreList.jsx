@@ -135,7 +135,7 @@ const StoreList = () => {
     store_type,
     full_name,
     id,
-    url_printer,
+    printer,
   }) => {
     const user = getStorage("user");
     // const updatedData = JSON.stringify({
@@ -151,7 +151,7 @@ const StoreList = () => {
       store_type,
       store_name: full_name,
       store_id: id,
-      store_url_printer: url_printer,
+      store_printer: printer,
     });
 
     navigate("/vender/");
@@ -290,7 +290,7 @@ const StoreList = () => {
       cell: (row) => (
         <>
           {chooseIcon(row.products_count === tenantInfo.product_count)}
-          {row.url_printer && <PrinterIcon />}
+          {row.printer && <PrinterIcon />}
         </>
       ),
     },

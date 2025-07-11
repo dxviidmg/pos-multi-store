@@ -49,12 +49,7 @@ const SaleModal = ({ onUpdateSaleList }) => {
     if (response.status === 200) {
       const { sale: updatedSale, cash_back } = response.data;
 
-      if (updatedSale?.id) {
-        onUpdateSaleList(updatedSale);
-      } else {
-        onUpdateSaleList({ ...sale, delete: true });
-      }
-
+      onUpdateSaleList(updatedSale)
       dispatch(hideSaleModal());
 
       Swal.fire({

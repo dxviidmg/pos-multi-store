@@ -5,8 +5,8 @@ import { getSales } from "../apis/sales";
 import CustomButton from "../commons/customButton/CustomButton";
 import {
   getFormattedDate,
-  formatTimeFromDate,
   handlePrintTicket,
+  getFormattedDateTime,
 } from "../utils/utils";
 import { useDispatch } from "react-redux";
 import {
@@ -17,6 +17,7 @@ import SaleModal from "../saleModal/saleModal";
 import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
 import {
   CashIcon,
+  ErrorIcon,
   PrinterIcon,
   ReturnIcon,
   WarningIcon,
@@ -41,25 +42,42 @@ const TYPE_OPTIONS = [
   },
 ];
 
+const SEARCH_BY_OPTIONS = [
+  {
+    value: "date",
+    label: "Fecha",
+  },
+  {
+    value: "sale_id",
+    label: "Id",
+  },
+  {
+    value: "client",
+    label: "Cliente",
+  },
+];
+
 const SaleList = () => {
   const user = getUserData();
-  const urlPrinter = user.store_url_printer;
+  const printer = user.store_printer;
   const [sales, setSales] = useState([]);
   const today = getFormattedDate();
   const [params, setParams] = useState({
     date: today,
-    is_canceled: 0,
     reservation_in_progress: false,
   });
   const [loading, setLoading] = useState(false);
   const [salesDuplicated, setSalesDuplicated] = useState([]);
   const [showAllFields, setShowAllFields] = useState(false);
+  const [searchBy, setSearchBy] = useState("date");
   const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchSalesData = async () => {
       setLoading(true);
+
       const salesResponse = await getSales(params);
+
       setSales(salesResponse.data);
 
       salesResponse.data.forEach((sale) => {
@@ -90,21 +108,12 @@ const SaleList = () => {
   };
 
   const handleUpdateSaleList = (updatedSale) => {
-    if ("delete" in updatedSale) {
-      setSales((prevSales) => {
-        const updatedList = prevSales.filter(
-          (item) => item.id !== updatedSale.id
-        );
-        return updatedList;
-      });
-    } else {
       setSales((prevSales) => {
         const saleExists = prevSales.some((b) => b.id === updatedSale.id);
         return saleExists
           ? prevSales.map((b) => (b.id === updatedSale.id ? updatedSale : b))
           : [...prevSales, updatedSale];
       });
-    }
   };
 
   const handleOpenModal2 = (row) => {
@@ -128,7 +137,7 @@ const SaleList = () => {
           </Alert>
         )}
 
-        <h1>Ventas</h1>
+        <h1>Ventas y apartados</h1>
         <Row>
           <Col>
             <Form.Label>Tipo</Form.Label>
@@ -147,29 +156,74 @@ const SaleList = () => {
           </Col>
 
           <Col>
-            <Form>
-              <Form.Label>Fecha</Form.Label>
-              <Form.Control
-                type="date"
-                value={params.date}
-                onChange={(e) => handleDataChange(e)}
-                max={today}
-                name="date"
-              />
-            </Form>
+            <Form.Label>Busqueda por</Form.Label>
+            <Form.Select
+              value={searchBy}
+              onChange={(e) => setSearchBy(e.target.value)}
+
+              //              disabled={isLoading}
+            >
+              {SEARCH_BY_OPTIONS.map((search_option) => (
+                <option key={search_option.value} value={search_option.value}>
+                  {search_option.label}
+                </option>
+              ))}
+            </Form.Select>
           </Col>
 
-          <Col>
-            <Form>
-              <Form.Label>#</Form.Label>
-              <Form.Control
-                type="number"
-                value={params.sale_id}
-                onChange={(e) => handleDataChange(e)}
-                name="sale_id"
-              />
-            </Form>
-          </Col>
+          {searchBy === "date" ? (
+            <Col>
+              <Form>
+                <Form.Label>Fecha</Form.Label>
+                <Form.Control
+                  type="date"
+                  value={params.date}
+                  onChange={(e) => handleDataChange(e)}
+                  max={today}
+                  name="date"
+                />
+              </Form>
+            </Col>
+          ) : searchBy === "sale_id" ? (
+            <Col>
+              <Form>
+                <Form.Label>#</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={params.sale_id}
+                  onChange={(e) => handleDataChange(e)}
+                  name="sale_id"
+                />
+              </Form>
+            </Col>
+          ) : searchBy === "client" ? (
+            <>
+              <Col>
+                <Form>
+                  <Form.Label>Nombre</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={params.first_name}
+                    onChange={(e) => handleDataChange(e)}
+                    name="first_name"
+                    placeholder="Nombre"
+                  />
+                </Form>
+              </Col>
+              <Col>
+                <Form>
+                  <Form.Label>Apellidos</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={params.last_name}
+                    onChange={(e) => handleDataChange(e)}
+                    name="last_name"
+                    placeholder="Apellidos"
+                  />
+                </Form>
+              </Col>
+            </>
+          ) : null}
 
           <Col className="d-flex flex-column justify-content-end">
             <CustomButton onClick={() => setShowAllFields((prev) => !prev)}>
@@ -198,26 +252,33 @@ const SaleList = () => {
 
             {
               name: "Hora",
-              selector: (row) => formatTimeFromDate(row.created_at),
+              selector: (row) => getFormattedDateTime(row.created_at),
+              wrap: true,
             },
+
+
             {
               name: "Productos",
-              selector: (row) => (
-                <>
-                  {/* Map over the array and render each item */}
-                  {row.products_sale
-                    .filter((item) => item.quantity !== 0)
-                    .map((item, index) => (
+              selector: (row) => {
+                const productsToShow = row.is_canceled
+                  ? row.products_sale.filter((item) => item.quantity === 0)
+                  : row.products_sale.filter((item) => item.quantity !== 0);
+            
+                return (
+                  <>
+                    {productsToShow.map((item, index) => (
                       <span key={index}>
-                        <b>{item.quantity}</b> x {item.name} a ${item.price}
-                        <br />{" "}
+                        <b>{row.is_canceled ? item.returned_quantity : item.quantity}</b> x {item.name} a ${item.price}
+                        <br />
                       </span>
                     ))}
-                </>
-              ),
+                  </>
+                );
+              },
               wrap: true,
               grow: 3,
             },
+            
 
             {
               name: "Total",
@@ -252,22 +313,26 @@ const SaleList = () => {
                     wrap: true,
                     grow: 2,
                   },
+                  {
+                    name: "Vendedor",
+                    wrap: true,
+                    grow: 1.5,
+                    selector: (row) => row.seller_username,
+                  },
                 ]
               : []),
-            {
-              name: "Vendedor",
-              wrap: true,
-              grow: 1.5,
-              selector: (row) => row.seller_username,
-            },
 
             {
               name: "Acciones",
               grow: showAllFields ? 3 : 2,
               cell: (row) => (
                 <>
-                  {urlPrinter && (
-                    <CustomButton onClick={() => handlePrintTicket(row)}>
+                {row.is_canceled ? <ErrorIcon/>: <>
+                
+                  {printer && (
+                    <CustomButton
+                      onClick={() => handlePrintTicket("ticket", row)}
+                    >
                       <PrinterIcon color="white" size="16" />
                     </CustomButton>
                   )}
@@ -289,6 +354,9 @@ const SaleList = () => {
                     </CustomTooltip>
                   )}
                   {row.is_duplicate && <WarningIcon></WarningIcon>}
+
+                </>}
+
                 </>
               ),
             },

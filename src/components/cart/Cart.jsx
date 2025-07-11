@@ -21,6 +21,7 @@ import Swal from "sweetalert2";
 import { addProducts } from "../apis/products";
 import { getUserData } from "../apis/utils";
 import { RemoveInCartIcon } from "../commons/icons/Icons";
+import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
 
 const Cart = () => {
   const store_type = getUserData().store_type;
@@ -29,7 +30,7 @@ const Cart = () => {
   const dispatch = useDispatch();
   const [stores, setStores] = useState([]);
   const [selectedStore, setSelectedStore] = useState("");
-
+  const [loading, setLoading] = useState(false)
   useEffect(() => {
     const handleShortcut = (event) => {
       if (event.ctrlKey && event.key === "d") {
@@ -148,13 +149,17 @@ const Cart = () => {
   };
 
   const handleAddToStock = async (cart) => {
+    setLoading(true)
     const data = { store_products: cart };
     try {
       const response = await addProducts(data);
       if (response.status === 200) {
         dispatch(cleanCart());
+        setLoading(false)
         showAlert("success", "Producto añadido al inventario");
+
       } else {
+        setLoading(false)
         showAlert(
           "error",
           "Error en el inventario",
@@ -323,18 +328,20 @@ const Cart = () => {
 
   return (
     <div>
+      <CustomSpinner2 isLoading={loading}/>
       <PaymentModal />
       <div>
         {cart.length !== 0 && (
           <Row>
             {(movementType === "venta" || movementType === "apartado") && (
               <>
-                <Col md={4}></Col>
-                <Col md={5} className="d-flex gap-3 justify-content-end">
-                  <h3>Productos: <span style={{color: '#da0000'}}>{totalProducts}</span></h3>
-                  <h3>Total: ${total.toFixed(2)}</h3>
+                <Col md={4}>                <h1>Productos: {totalProducts}</h1></Col>
+
+
+                <Col md={4} className="text-center">
+                  <h1>Total: ${total.toFixed(2)}</h1>
                 </Col>
-                <Col md={3}>
+                <Col md={4}>
                   <CustomButton fullWidth onClick={handleOpenModal}>
                     Pagar (Ctrl + D)
                   </CustomButton>
