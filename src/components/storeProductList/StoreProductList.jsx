@@ -14,11 +14,13 @@ import StoreProductLogsModal from "../storeproductlogsModal/StoreProductLogsModa
 import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
 import { getBrands } from "../apis/brands";
 import { SearchIcon } from "../commons/icons/Icons";
+import { getDepartments } from "../apis/departments";
 
 const StoreProductList = () => {
   const dispatch = useDispatch();
   const [storeProducts, setStoreProducts] = useState([]);
   const [brands, setBrands] = useState([]);
+  const [departments, setDepartments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [params, setParams] = useState({});
   const user = getUserData();
@@ -28,6 +30,8 @@ const StoreProductList = () => {
     const fetchBrands = async () => {
       const response = await getBrands();
       setBrands(response.data);
+      const response2 = await getDepartments()
+      setDepartments(response2.data)
     };
 
     fetchBrands();
@@ -39,10 +43,7 @@ const StoreProductList = () => {
       const storeProducts = response.data;
       setStoreProducts(storeProducts);
 
-
       const totalStoreProducts = storeProducts.length;
-
-
       const outOfStockCount = storeProducts.filter(product => product.stock === 0).length;
       const outOfStockPercentage = (outOfStockCount / totalStoreProducts) * 100;
       setoutOfStockPercentage(outOfStockPercentage)
@@ -122,6 +123,33 @@ const StoreProductList = () => {
             ))}
           </Form.Select>
         </Col>
+        <Col>
+          {" "}
+          <Form.Label>Departamento</Form.Label>
+          <Form.Select
+            value={params.department_id}
+            onChange={handleDataChange}
+            name="department_id"
+            //              disabled={isLoading}
+          >
+            <option value="">Todos las departamentos</option>
+            {departments.map((department) => (
+              <option key={department.id} value={department.id}>
+                {department.name}
+              </option>
+            ))}
+          </Form.Select>
+        </Col>
+        <Col>
+          <Form.Label>Código</Form.Label>
+          <Form.Control
+            type="text"
+            value={params.code}
+            onChange={handleDataChange}
+            name="code"
+          />
+        </Col>
+
         <Col>
           <Form.Label>Stock maximo</Form.Label>
           <Form.Control
