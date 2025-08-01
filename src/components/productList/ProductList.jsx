@@ -367,7 +367,7 @@ const ProductList = () => {
                     <EditIcon></EditIcon>
                   </CustomButton>
                 </CustomTooltip>
-                <CustomTooltip text={"Mostrar stock"} position={"top"}>
+                <CustomTooltip text={"Mostrar stock en todas las tiendas y almacenes"} position={"top"}>
                   <CustomButton
                     onClick={() => handleOpenModal2(row)}
                     hidden={getUserData().role !== "owner"}
@@ -376,7 +376,7 @@ const ProductList = () => {
                   </CustomButton>
                 </CustomTooltip>
                 <CustomTooltip
-                  text={"Generar Código de barras"}
+                  text={"Generar código de barras"}
                   position={"top"}
                 >
                   <CustomButton
