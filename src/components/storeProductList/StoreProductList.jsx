@@ -73,12 +73,23 @@ const StoreProductList = () => {
     setLoading(true);
 
     if (Object.keys(params).length === 1){
-      const response2 = await getStoreProductsAsync(params);
-      console.log(response2)
-
-      pollEvery3Seconds(response2.data.task_id)
+//      const response2 = await getStoreProductsAsync(params);
+//      console.log(response2)
+//      pollEvery3Seconds(response2.data.task_id)
              
-    }
+    const responsex = await getStoreProducts(params);
+    console.log(responsex);
+    const storeProducts = responsex.data;
+    setStoreProducts(storeProducts);
+
+    const totalStoreProducts = storeProducts.length;
+    const outOfStockCount = storeProducts.filter(
+      (product) => product.stock === 0
+    ).length;
+    const outOfStockPercentage = (outOfStockCount / totalStoreProducts) * 100;
+    setoutOfStockPercentage(outOfStockPercentage);
+    setLoading(false);
+  }
     else {
       const response = await getStoreProducts(params);
       console.log(response);
