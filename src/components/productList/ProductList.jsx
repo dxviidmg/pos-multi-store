@@ -382,7 +382,6 @@ const ProductList = () => {
                   <CustomButton
                     onClick={() => handleGenerate(row.code)}
                     fullWidth
-                    heitgh
                   >
                     <span style={{ fontSize: "11px" }}>BC128</span>
                   </CustomButton>

@@ -22,7 +22,7 @@ const StoreProductList = () => {
   const [brands, setBrands] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [params, setParams] = useState({});
+  const [params, setParams] = useState({ only_stock: true });
   const user = getUserData();
   const [outOfStockPercentage, setoutOfStockPercentage] = useState(0);
 
@@ -30,28 +30,30 @@ const StoreProductList = () => {
     const fetchBrands = async () => {
       const response = await getBrands();
       setBrands(response.data);
-      const response2 = await getDepartments()
-      setDepartments(response2.data)
+      const response2 = await getDepartments();
+      setDepartments(response2.data);
     };
 
     fetchBrands();
   }, []); // Solo se ejecuta una vez al montar
 
-    const fetchStoreProducts = async () => {
-      setLoading(true);
-      const response = await getStoreProducts(params);
-      const storeProducts = response.data;
-      setStoreProducts(storeProducts);
+  const fetchStoreProducts = async () => {
+    console.log(params);
+    setLoading(true);
 
-      const totalStoreProducts = storeProducts.length;
-      const outOfStockCount = storeProducts.filter(product => product.stock === 0).length;
-      const outOfStockPercentage = (outOfStockCount / totalStoreProducts) * 100;
-      setoutOfStockPercentage(outOfStockPercentage)
+    const response = await getStoreProducts(params);
+    console.log(response);
+    const storeProducts = response.data;
+    setStoreProducts(storeProducts);
 
-      setTimeout(() => {
-        setLoading(false);
-      }, 500); // 1000 milisegundos = 1 segundo
-    };
+    const totalStoreProducts = storeProducts.length;
+    const outOfStockCount = storeProducts.filter(
+      (product) => product.stock === 0
+    ).length;
+    const outOfStockPercentage = (outOfStockCount / totalStoreProducts) * 100;
+    setoutOfStockPercentage(outOfStockPercentage);
+    setLoading(false);
+  };
 
   const handleDownload = async () => {
     const storeProductsForReport = storeProducts.map(
@@ -161,13 +163,14 @@ const StoreProductList = () => {
         </Col>
 
         <Col className="d-flex flex-column justify-content-end">
+          {storeProducts.length > 0 && (
+            <>{outOfStockPercentage.toFixed(0)}% de los productos esta vacio</>
+          )}
 
-{storeProducts.length > 0 && (<>{outOfStockPercentage.toFixed(0)}% de los productos esta vacio</>)}
-
-  <CustomButton fullWidth onClick={fetchStoreProducts}>
-  <SearchIcon/> Buscar
-  </CustomButton>
-</Col>
+          <CustomButton fullWidth onClick={fetchStoreProducts}>
+            <SearchIcon /> Buscar
+          </CustomButton>
+        </Col>
       </Row>
 
       <CustomTable

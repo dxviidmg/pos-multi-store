@@ -72,7 +72,6 @@ const cartReducer = (state = initialState, action) => {
       } = action.payload;
       
       const getStockTemp = (movementType) => {
-        console.log('getStockTemp', movementType)
         switch (movementType) {
           case "distribucion":
             return stock;

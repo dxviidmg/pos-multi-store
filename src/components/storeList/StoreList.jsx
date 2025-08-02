@@ -73,10 +73,9 @@ const StoreList = () => {
       const response2 = await getStores({ ...params, store_type: "T" });
       const response3 = await getStores({ ...params, store_type: "A" });
 
-      console.log("a");
       setStores(response2.data);
       setStorages(response3.data);
-      console.log("b");
+
       const {
         profit,
         paymentCash,

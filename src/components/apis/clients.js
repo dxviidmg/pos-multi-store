@@ -10,7 +10,6 @@ export const getClients = async (params) => {
     });
   }
 
-  console.log('apiUrl', apiUrl)
   try {
     const response = await axios.get(apiUrl, {
       headers: getHeaders(),
