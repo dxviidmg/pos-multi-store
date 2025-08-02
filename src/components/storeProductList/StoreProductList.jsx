@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { getStoreProducts } from "../apis/products";
+import { getStoreProducts, getStoreProductsAsync, getStoreProductsAsyncResult } from "../apis/products";
 import { Col, Form, Row } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getUserData } from "../apis/utils";
@@ -37,22 +37,65 @@ const StoreProductList = () => {
     fetchBrands();
   }, []); // Solo se ejecuta una vez al montar
 
+
+
+
+  function pollEvery3Seconds(taskId) {
+    const interval = 3000;
+  
+    const intervalId = setInterval(async () => {
+      try {
+        const response = await getStoreProductsAsyncResult(taskId); // tu llamada a la API
+        console.log("Estado de la tarea:", response.data);
+  
+        if (response.data.status === "SUCCESS") {
+          setStoreProducts(response.data.result);
+          setLoading(false);
+          clearInterval(intervalId); // detenemos el polling
+        } else if (response.data.status === "FAILURE") {
+          setLoading(false);
+          clearInterval(intervalId); // también detenemos si falló
+        }
+  
+      } catch (error) {
+        console.error("Error al consultar tarea:", error);
+        // Puedes decidir si parar el polling si hay error repetido
+        // clearInterval(intervalId);
+      }
+    }, interval);
+  }
+  
+
+  
+
   const fetchStoreProducts = async () => {
     console.log(params);
     setLoading(true);
 
-    const response = await getStoreProducts(params);
-    console.log(response);
-    const storeProducts = response.data;
-    setStoreProducts(storeProducts);
+    if (Object.keys(params).length === 1){
+      const response2 = await getStoreProductsAsync(params);
+      console.log(response2)
 
-    const totalStoreProducts = storeProducts.length;
-    const outOfStockCount = storeProducts.filter(
-      (product) => product.stock === 0
-    ).length;
-    const outOfStockPercentage = (outOfStockCount / totalStoreProducts) * 100;
-    setoutOfStockPercentage(outOfStockPercentage);
-    setLoading(false);
+      pollEvery3Seconds(response2.data.task_id)
+             
+    }
+    else {
+      const response = await getStoreProducts(params);
+      console.log(response);
+      const storeProducts = response.data;
+      setStoreProducts(storeProducts);
+  
+      const totalStoreProducts = storeProducts.length;
+      const outOfStockCount = storeProducts.filter(
+        (product) => product.stock === 0
+      ).length;
+      const outOfStockPercentage = (outOfStockCount / totalStoreProducts) * 100;
+      setoutOfStockPercentage(outOfStockPercentage);
+      setLoading(false);
+
+    }
+
+
   };
 
   const handleDownload = async () => {
