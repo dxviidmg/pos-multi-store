@@ -49,7 +49,7 @@ const StoreProductList = () => {
         console.log("Estado de la tarea:", response.data);
   
         if (response.data.status === "SUCCESS") {
-          setStoreProducts(response.data.result);
+          setStoreProducts(response.data.result.data);
           setLoading(false);
           clearInterval(intervalId); // detenemos el polling
         } else if (response.data.status === "FAILURE") {
