@@ -223,3 +223,32 @@ export const reassignProducts = async (data) => {
     return error;
   }
 };
+
+
+export const getStoreProductsAsync = async () => {
+  const apiUrl = new URL(getApiUrl("async-store-product"));
+
+
+  try {
+    const response = await axios.get(apiUrl, {
+      headers: getHeaders(),
+    });
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const getStoreProductsAsyncResult = async (id) => {
+  const apiUrl = new URL(getApiUrl("async-store-products/result/" + id));
+
+
+  try {
+    const response = await axios.get(apiUrl, {
+      headers: getHeaders(),
+    });
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
