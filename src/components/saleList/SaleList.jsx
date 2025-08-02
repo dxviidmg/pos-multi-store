@@ -93,7 +93,6 @@ const SaleList = () => {
 
   const handleDataChange = (e) => {
     var { name, value } = e.target;
-    console.log("*", name, value);
 
     setParams((prevData) => ({
       ...prevData,
@@ -102,7 +101,6 @@ const SaleList = () => {
   };
 
   const handleOpenModal = (sale) => {
-    console.log("handleOpenModal");
     dispatch(hideSaleModal());
     setTimeout(() => dispatch(showSaleModal(sale)));
   };
@@ -117,7 +115,6 @@ const SaleList = () => {
   };
 
   const handleOpenModal2 = (row) => {
-    console.log("handleOpenModal2");
     dispatch(hidePaymentReservationModal());
     setTimeout(() => dispatch(showPaymentReservationModal(row)), 1);
   };

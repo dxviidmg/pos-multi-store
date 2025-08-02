@@ -7,7 +7,6 @@ const initialState = {
 };
 
 const PaymentModal2Reducer = (state = initialState, action) => {
-  console.log(action)
   switch (action.type) {
     case SHOW_PAYMENT_RESERVATION_MODAL: {
       return {

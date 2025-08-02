@@ -18,7 +18,6 @@ export const getSales = async (params) => {
 
   if (params) {
     Object.entries(params).forEach(([key, value]) => {
-      console.log("params", key, value);
       apiUrl.searchParams.append(key, value);
     });
   }

@@ -43,11 +43,9 @@ const PaymentModal2 = ({ onUpdateSaleList }) => {
       },
       reservation_in_progress,
     };
-    console.log(data);
 
     const response = await updateSale(data);
 
-    console.log(response)
     if (response.status === 200) {
       setPaymentMethod("EF");
       setReferencePayment("");
@@ -88,7 +86,6 @@ const PaymentModal2 = ({ onUpdateSaleList }) => {
         timer: 5000,
       });
     }
-    console.log(response);
     // Aquí va el dispatch o lógica para enviar el pago
   };
 
