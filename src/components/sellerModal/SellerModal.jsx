@@ -65,14 +65,11 @@ const SellerModal = ({ onUpdateSellerList }) => {
         updatedData.store_id = value;
   
         const store = stores.find((s) => s.id == value);
-        console.log(store);
   
         if (store) {
           const storeName = store.name.toLowerCase();
           const workersCount = store.workers_count + 1;
           const username = `${short_name}.tienda.${storeName}.vendedor${workersCount}`;
-  
-          console.log(username);
           updatedData.worker.username = username;
         }
       } else if (["first_name", "last_name"].includes(name)) {

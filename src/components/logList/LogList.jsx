@@ -52,7 +52,6 @@ const LogList = () => {
   };
 
   const handleDownload = async () => {
-    console.log(logs);
     const logsForReport = logs.map(
       ({
         product: { code: Código, brand_name: Marca, name: Nombre },

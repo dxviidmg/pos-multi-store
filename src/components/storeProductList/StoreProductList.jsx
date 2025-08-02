@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { getStoreProducts } from "../apis/products";
+import { getStoreProducts, getStoreProductsAsync, getStoreProductsAsyncResult } from "../apis/products";
 import { Col, Form, Row } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getUserData } from "../apis/utils";
@@ -14,13 +14,15 @@ import StoreProductLogsModal from "../storeproductlogsModal/StoreProductLogsModa
 import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
 import { getBrands } from "../apis/brands";
 import { SearchIcon } from "../commons/icons/Icons";
+import { getDepartments } from "../apis/departments";
 
 const StoreProductList = () => {
   const dispatch = useDispatch();
   const [storeProducts, setStoreProducts] = useState([]);
   const [brands, setBrands] = useState([]);
+  const [departments, setDepartments] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [params, setParams] = useState({});
+  const [params, setParams] = useState({ only_stock: true });
   const user = getUserData();
   const [outOfStockPercentage, setoutOfStockPercentage] = useState(0);
 
@@ -28,29 +30,73 @@ const StoreProductList = () => {
     const fetchBrands = async () => {
       const response = await getBrands();
       setBrands(response.data);
+      const response2 = await getDepartments();
+      setDepartments(response2.data);
     };
 
     fetchBrands();
   }, []); // Solo se ejecuta una vez al montar
 
-    const fetchStoreProducts = async () => {
-      setLoading(true);
+
+
+
+  function pollEvery3Seconds(taskId) {
+    const interval = 3000;
+  
+    const intervalId = setInterval(async () => {
+      try {
+        const response = await getStoreProductsAsyncResult(taskId); // tu llamada a la API
+        console.log("Estado de la tarea:", response.data);
+  
+        if (response.data.status === "SUCCESS") {
+          setStoreProducts(response.data.result);
+          setLoading(false);
+          clearInterval(intervalId); // detenemos el polling
+        } else if (response.data.status === "FAILURE") {
+          setLoading(false);
+          clearInterval(intervalId); // también detenemos si falló
+        }
+  
+      } catch (error) {
+        console.error("Error al consultar tarea:", error);
+        // Puedes decidir si parar el polling si hay error repetido
+        // clearInterval(intervalId);
+      }
+    }, interval);
+  }
+  
+
+  
+
+  const fetchStoreProducts = async () => {
+    console.log(params);
+    setLoading(true);
+
+    if (Object.keys(params).length === 1){
+      const response2 = await getStoreProductsAsync(params);
+      console.log(response2)
+
+      pollEvery3Seconds(response2.data.task_id)
+             
+    }
+    else {
       const response = await getStoreProducts(params);
+      console.log(response);
       const storeProducts = response.data;
       setStoreProducts(storeProducts);
-
-
+  
       const totalStoreProducts = storeProducts.length;
-
-
-      const outOfStockCount = storeProducts.filter(product => product.stock === 0).length;
+      const outOfStockCount = storeProducts.filter(
+        (product) => product.stock === 0
+      ).length;
       const outOfStockPercentage = (outOfStockCount / totalStoreProducts) * 100;
-      setoutOfStockPercentage(outOfStockPercentage)
+      setoutOfStockPercentage(outOfStockPercentage);
+      setLoading(false);
 
-      setTimeout(() => {
-        setLoading(false);
-      }, 500); // 1000 milisegundos = 1 segundo
-    };
+    }
+
+
+  };
 
   const handleDownload = async () => {
     const storeProductsForReport = storeProducts.map(
@@ -123,6 +169,33 @@ const StoreProductList = () => {
           </Form.Select>
         </Col>
         <Col>
+          {" "}
+          <Form.Label>Departamento</Form.Label>
+          <Form.Select
+            value={params.department_id}
+            onChange={handleDataChange}
+            name="department_id"
+            //              disabled={isLoading}
+          >
+            <option value="">Todos las departamentos</option>
+            {departments.map((department) => (
+              <option key={department.id} value={department.id}>
+                {department.name}
+              </option>
+            ))}
+          </Form.Select>
+        </Col>
+        <Col>
+          <Form.Label>Código</Form.Label>
+          <Form.Control
+            type="text"
+            value={params.code}
+            onChange={handleDataChange}
+            name="code"
+          />
+        </Col>
+
+        <Col>
           <Form.Label>Stock maximo</Form.Label>
           <Form.Control
             type="number"
@@ -133,13 +206,14 @@ const StoreProductList = () => {
         </Col>
 
         <Col className="d-flex flex-column justify-content-end">
+          {storeProducts.length > 0 && (
+            <>{outOfStockPercentage.toFixed(0)}% de los productos esta vacio</>
+          )}
 
-{storeProducts.length > 0 && (<>{outOfStockPercentage.toFixed(0)}% de los productos esta vacio</>)}
-
-  <CustomButton fullWidth onClick={fetchStoreProducts}>
-  <SearchIcon/> Buscar
-  </CustomButton>
-</Col>
+          <CustomButton fullWidth onClick={fetchStoreProducts}>
+            <SearchIcon /> Buscar
+          </CustomButton>
+        </Col>
       </Row>
 
       <CustomTable
