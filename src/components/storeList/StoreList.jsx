@@ -252,7 +252,7 @@ const StoreList = () => {
       name: "Vendido",
       style: alignTdStyles,
       selector: ({ cash_summary }) =>
-        `$${cash_summary[4]["amount"]?.toLocaleString()}`,
+        `$${cash_summary[3]["amount"]?.toLocaleString()}`,
     },
     {
       name: "# de ventas",
