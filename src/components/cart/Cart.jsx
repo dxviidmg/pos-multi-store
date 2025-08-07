@@ -111,7 +111,12 @@ const Cart = () => {
       if (response.status === 200) {
         dispatch(cleanCart());
         showAlert("success", "Traspaso confirmado");
-      } else {
+      }
+      else if (response.status === 404) {
+        dispatch(cleanCart());
+        showAlert("error", "Traspaso inexistente. Checa cantidad y/o destino");
+      }      
+    else {
         showAlert(
           "error",
           "Error desconocido",
