@@ -77,13 +77,13 @@ const TransferList = () => {
             {
               name: "Descripción",
               selector: (row) => row.description,
-
+              wrap: true,
               grow: 4,
             },
             {
               name: "Creado hace",
               selector: (row) => calculateTimeAgo(row.created_at),
-              grow: 2,
+              grow: 2
             },
             {
               name: "Acciones",
