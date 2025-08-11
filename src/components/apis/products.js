@@ -1,7 +1,7 @@
 import axios from "axios";
 import { getApiUrl, getHeaders } from "./utils";
 
-export const getStoreProducts = async (params) => {
+export const getStoreProducts = async (params, config = {}) => {
   const apiUrl = new URL(getApiUrl("store-product"));
 
   if (params) {
@@ -13,6 +13,7 @@ export const getStoreProducts = async (params) => {
   try {
     const response = await axios.get(apiUrl, {
       headers: getHeaders(),
+      ...config
     });
     return response;
   } catch (error) {
