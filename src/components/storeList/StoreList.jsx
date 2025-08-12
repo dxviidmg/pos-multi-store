@@ -164,31 +164,29 @@ const StoreList = () => {
         if (response.data.status === "SUCCESS") {
           //          setStoreProducts(response.data.result);
 
+          setStores((prevData) =>
+            prevData.map((store) => {
+              console.log(response.data.result);
+              const matchingInvestment = response.data.result.find(
+                (investment) => investment.store === store.id
+              );
+              return matchingInvestment
+                ? { ...store, investment: matchingInvestment.investment }
+                : store;
+            })
+          );
 
-        setStores((prevData) =>
-          prevData.map((store) => {
-            console.log(response.data.result)
-            const matchingInvestment = response.data.result.find(
-              (investment) => investment.store === store.id
-            );
-            return matchingInvestment
-              ? { ...store, investment: matchingInvestment.investment }
-              : store;
-          })
-        );
-
-
-        setStorages((prevData) =>
-          prevData.map((storage) => {
-            console.log(response.data.result)
-            const matchingInvestment = response.data.result.find(
-              (investment) => investment.store === storage.id
-            );
-            return matchingInvestment
-              ? { ...storage, investment: matchingInvestment.investment }
-              : storage;
-          })
-        );
+          setStorages((prevData) =>
+            prevData.map((storage) => {
+              console.log(response.data.result);
+              const matchingInvestment = response.data.result.find(
+                (investment) => investment.store === storage.id
+              );
+              return matchingInvestment
+                ? { ...storage, investment: matchingInvestment.investment }
+                : storage;
+            })
+          );
 
           setLoading(false);
           setShowInvestment(true);
@@ -208,7 +206,7 @@ const StoreList = () => {
   const handleShowInvestment = async () => {
     setLoading(true);
     const response = await getInvestment();
-    pollEvery3Seconds(response.data.task_id)
+    pollEvery3Seconds(response.data.task_id);
     //    setStores((prevData) =>
     //      prevData.map((store) => {
     //        const matchingInvestment = response.data.find(
@@ -231,16 +229,16 @@ const StoreList = () => {
     //      })
     //    );
 
-//    const { investment } = response.data.reduce(
-//      (acc, store) => ({
-//        investment: acc.investment + store.investment,
-//      }),
-//      { investment: 0 }
-//    );
+    //    const { investment } = response.data.reduce(
+    //      (acc, store) => ({
+    //        investment: acc.investment + store.investment,
+    //      }),
+    //      { investment: 0 }
+    //    );
 
-//    setTotals((prevData) => ({ ...prevData, investment }));
-//    setLoading(false);
-//    setShowInvestment(true);
+    //    setTotals((prevData) => ({ ...prevData, investment }));
+    //    setLoading(false);
+    //    setShowInvestment(true);
   };
 
   const memoStores = useMemo(() => stores, [stores]);
@@ -256,14 +254,19 @@ const StoreList = () => {
       wrap: true,
       selector: ({ name }) => <>{name}</>,
     },
-    {
-      name: "Ganancia",
-      style: alignTdStyles,
-      selector: ({ cash_summary }) =>
-        `$${cash_summary?.[8]["amount"]?.toLocaleString()}`,
-    },
 
-    ...(!params.department_id
+    ...(!showInvestment
+      ? [
+          {
+            name: "Ganancia",
+            style: alignTdStyles,
+            selector: ({ cash_summary }) =>
+              `$${cash_summary?.[8]["amount"]?.toLocaleString()}`,
+          },
+        ]
+      : []),
+
+    ...(!params.department_id && !showInvestment
       ? [
           {
             name: "Efectivo",
@@ -286,7 +289,7 @@ const StoreList = () => {
         ]
       : []),
 
-    ...(!params.department_id
+    ...(!params.department_id && !showInvestment
       ? [
           {
             name: "Caja",
@@ -297,18 +300,22 @@ const StoreList = () => {
         ]
       : []),
 
-    {
-      name: "Vendido",
-      style: alignTdStyles,
-      selector: ({ cash_summary }) =>
-        `$${cash_summary[3]["amount"]?.toLocaleString()}`,
-    },
-    {
-      name: "# de ventas",
-      style: alignTdStyles,
-      selector: ({ cash_summary }) =>
-        `${cash_summary[10]["amount"]?.toLocaleString()}`,
-    },
+    ...(!params.department_id && !showInvestment
+      ? [
+          {
+            name: "Vendido",
+            style: alignTdStyles,
+            selector: ({ cash_summary }) =>
+              `$${cash_summary[3]["amount"]?.toLocaleString()}`,
+          },
+          {
+            name: "# de ventas",
+            style: alignTdStyles,
+            selector: ({ cash_summary }) =>
+              `${cash_summary[10]["amount"]?.toLocaleString()}`,
+          },
+        ]
+      : []),
 
     ...(showInvestment
       ? [
@@ -349,7 +356,14 @@ const StoreList = () => {
       name: "Nombre",
       selector: ({ name }) => `${name}`,
     },
-    { grow: 10 },
+
+    ...(!showInvestment
+      ? [    { grow: 10 },
+        ]
+      : []),
+
+    ,
+
     ...(showInvestment
       ? [
           {
