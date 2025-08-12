@@ -105,7 +105,7 @@ const PaymentModal2 = ({ onUpdateSaleList }) => {
   };
 
   return (
-    <CustomModal showOut={showPaymentReservationModal} title="Pagar apartado">
+    <CustomModal showOut={showPaymentReservationModal} title="Cobrar apartado">
       <div className="custom-section">
         <Row>
           <h2>Información</h2>
@@ -213,7 +213,7 @@ const PaymentModal2 = ({ onUpdateSaleList }) => {
               fullWidth
               onClick={() => handleCreatePayment(true)}
             >
-              Pagar con ticket (Ctrl + G)
+              Cobrar con ticket (Ctrl + G)
             </CustomButton>
           </Col>
           <Col md={6}>
@@ -222,7 +222,7 @@ const PaymentModal2 = ({ onUpdateSaleList }) => {
               fullWidth
               onClick={() => handleCreatePayment()}
             >
-              Pagar sin ticket (Ctrl + F)
+              Cobrar sin ticket (Ctrl + F)
             </CustomButton>
           </Col>
         </Row>
