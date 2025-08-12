@@ -68,7 +68,7 @@ const SearchProduct = () => {
       } else {
         setData(fetchedData);
       }
-    }, 300),
+    }, 500),
     [query, queryType, movementType]
   );
 
