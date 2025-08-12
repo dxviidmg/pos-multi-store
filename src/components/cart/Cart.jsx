@@ -348,7 +348,7 @@ const Cart = () => {
                 </Col>
                 <Col md={4}>
                   <CustomButton fullWidth onClick={handleOpenModal}>
-                    Pagar (Ctrl + D)
+                    Cobrar (Ctrl + D)
                   </CustomButton>
                 </Col>
               </>

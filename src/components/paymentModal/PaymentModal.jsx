@@ -12,6 +12,7 @@ import { handlePrintTicket } from "../utils/utils";
 import SearchClient from "../searchClient/SearchClient";
 import ClientSelected from "../clientSelected/ClientSelected";
 import { SearchIcon } from "../commons/icons/Icons";
+import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
 
 function roundUpCustom(value) {
   const intPart = Math.floor(value); // Parte entera
@@ -46,8 +47,9 @@ const PaymentModal = () => {
     methods: { EF: 0, TA: 0, TR: 0 }, // Valores iniciales de los métodos de pago.
   });
   const printer = getUserData().store_printer;
-
   const dispatch = useDispatch();
+
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     if (showPaymentModal) {
@@ -162,14 +164,16 @@ const PaymentModal = () => {
   };
 
   const handleCreateSale = async (printTicket = false) => {
+    setIsLoading(true)
     if (
       movementType === "venta" &&
       (payment.paidWith === 0 || payment.change < 0)
     ) {
+      setIsLoading(false)
       Swal.fire({
         icon: "error",
         title: "Error al finalizar la venta",
-        text: "Pago con debe igual o mayor a la cantidad a pagar",
+        text: "Pago con debe igual o mayor a la cantidad a cobrar",
         timer: 5000,
       });
       return;
@@ -211,12 +215,14 @@ const PaymentModal = () => {
       setPayment(INITIAL_PAYMENT_STATE);
       setHideClient(true);
       setSaleExchange(INITIAL_SALE_EXCHANGE_STATE);
+      setIsLoading(false)
       Swal.fire({
         icon: "success",
         title: "Venta exitosa",
         timer: 5000,
       });
     } else {
+      setIsLoading(false)
       Swal.fire({
         icon: "error",
         title: "Error al finalizar la venta",
@@ -264,7 +270,9 @@ const PaymentModal = () => {
   };
 
   return (
-    <CustomModal showOut={showPaymentModal} title="Finalizar pago">
+    <>
+    <CustomSpinner2 isLoading={isLoading}></CustomSpinner2>
+    <CustomModal showOut={showPaymentModal} title="Finalizar venta">
       <div className="custom-section-buttons">
         <Row>
           <Col md={6}>
@@ -323,7 +331,7 @@ const PaymentModal = () => {
           </Col>
 
           <Col md={3}>
-            <Form.Label>Pagar</Form.Label>
+            <Form.Label>Cobrar</Form.Label>
             <Form.Control type="number" value={saleExchange.payment} disabled />
           </Col>
         </Row>
@@ -445,7 +453,7 @@ const PaymentModal = () => {
               fullWidth={true}
               onClick={(e) => handleCreateSale()}
             >
-              Pagar sin ticket
+              Cobrar sin ticket
               <br />
               (Ctrl + F)
             </CustomButton>
@@ -455,13 +463,14 @@ const PaymentModal = () => {
               fullWidth={true}
               onClick={(e) => handleCreateSale(true)}
             >
-              Pagar con ticket
+              Cobrar con ticket
               <br /> (Ctrl + G)
             </CustomButton>
           </Col>
         </Row>
       </div>
     </CustomModal>
+    </>
   );
 };
 
