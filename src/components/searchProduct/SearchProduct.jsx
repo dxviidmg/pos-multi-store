@@ -34,6 +34,7 @@ const SearchProduct = () => {
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [loading, setLoading] = useState(false);
   const [minQ, setMinQ] = useState(3);
+  let controller
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -46,7 +47,13 @@ const SearchProduct = () => {
         return;
       }
       setLoading(true);
-      const response = await getStoreProducts({ [queryType]: query });
+
+      if (controller) {
+        controller.abort();
+      }
+      controller = new AbortController();
+
+      const response = await getStoreProducts({ [queryType]: query }, { signal: controller.signal });
       const fetchedData = response.data;
       setLoading(false);
       if (queryType === "code" && fetchedData.length === 0) {
