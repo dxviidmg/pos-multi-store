@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { getStoreProducts, getStoreProductsAsync, getStoreProductsAsyncResult } from "../apis/products";
+import { getStoreProducts, getStoreProductsAsync, getTaskResult } from "../apis/products";
 import { Col, Form, Row } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getUserData } from "../apis/utils";
@@ -45,7 +45,7 @@ const StoreProductList = () => {
   
     const intervalId = setInterval(async () => {
       try {
-        const response = await getStoreProductsAsyncResult(taskId); // tu llamada a la API
+        const response = await getTaskResult(taskId); // tu llamada a la API
         console.log("Estado de la tarea:", response.data);
   
         if (response.data.status === "SUCCESS") {

@@ -240,8 +240,8 @@ export const getStoreProductsAsync = async () => {
   }
 };
 
-export const getStoreProductsAsyncResult = async (id) => {
-  const apiUrl = new URL(getApiUrl("async-store-products/result/" + id));
+export const getTaskResult = async (id) => {
+  const apiUrl = new URL(getApiUrl("task-result/" + id));
 
 
   try {

@@ -12,6 +12,7 @@ import { getDepartments } from "../apis/departments";
 import FormFilters from "./FormFilters";
 import { getStorage, setStorage } from "../utils/storage";
 import CustomTooltip from "../commons/Tooltip";
+import { getTaskResult } from "../apis/products";
 
 const StoreList = () => {
   const navigate = useNavigate();
@@ -130,12 +131,7 @@ const StoreList = () => {
     fetchData();
   }, [params]);
 
-  const handleSelectStore = async ({
-    store_type,
-    full_name,
-    id,
-    printer,
-  }) => {
+  const handleSelectStore = async ({ store_type, full_name, id, printer }) => {
     const user = getStorage("user");
     // const updatedData = JSON.stringify({
     //   ...user,
@@ -157,41 +153,94 @@ const StoreList = () => {
     window.location.reload();
   };
 
+  function pollEvery3Seconds(taskId) {
+    const interval = 3000;
+
+    const intervalId = setInterval(async () => {
+      try {
+        const response = await getTaskResult(taskId); // tu llamada a la API
+        console.log("Estado de la tarea:", response.data);
+
+        if (response.data.status === "SUCCESS") {
+          //          setStoreProducts(response.data.result);
+
+
+        setStores((prevData) =>
+          prevData.map((store) => {
+            console.log(response.data.result)
+            const matchingInvestment = response.data.result.find(
+              (investment) => investment.store === store.id
+            );
+            return matchingInvestment
+              ? { ...store, investment: matchingInvestment.investment }
+              : store;
+          })
+        );
+
+
+        setStorages((prevData) =>
+          prevData.map((storage) => {
+            console.log(response.data.result)
+            const matchingInvestment = response.data.result.find(
+              (investment) => investment.store === storage.id
+            );
+            return matchingInvestment
+              ? { ...storage, investment: matchingInvestment.investment }
+              : storage;
+          })
+        );
+
+          setLoading(false);
+          setShowInvestment(true);
+          clearInterval(intervalId); // detenemos el polling
+        } else if (response.data.status === "FAILURE") {
+          setLoading(false);
+          clearInterval(intervalId); // también detenemos si falló
+        }
+      } catch (error) {
+        console.error("Error al consultar tarea:", error);
+        // Puedes decidir si parar el polling si hay error repetido
+        // clearInterval(intervalId);
+      }
+    }, interval);
+  }
+
   const handleShowInvestment = async () => {
     setLoading(true);
     const response = await getInvestment();
-    setStores((prevData) =>
-      prevData.map((store) => {
-        const matchingInvestment = response.data.find(
-          (investment) => investment.id === store.id
-        );
-        return matchingInvestment
-          ? { ...store, investment: matchingInvestment.investment }
-          : store;
-      })
-    );
+    pollEvery3Seconds(response.data.task_id)
+    //    setStores((prevData) =>
+    //      prevData.map((store) => {
+    //        const matchingInvestment = response.data.find(
+    //          (investment) => investment.id === store.id
+    //        );
+    //        return matchingInvestment
+    //          ? { ...store, investment: matchingInvestment.investment }
+    //          : store;
+    //      })
+    //    );
 
-    setStorages((prevData) =>
-      prevData.map((store) => {
-        const matchingInvestment = response.data.find(
-          (investment) => investment.id === store.id
-        );
-        return matchingInvestment
-          ? { ...store, investment: matchingInvestment.investment }
-          : store;
-      })
-    );
+    //    setStorages((prevData) =>
+    //      prevData.map((store) => {
+    //        const matchingInvestment = response.data.find(
+    //          (investment) => investment.id === store.id
+    //        );
+    //        return matchingInvestment
+    //          ? { ...store, investment: matchingInvestment.investment }
+    //          : store;
+    //      })
+    //    );
 
-    const { investment } = response.data.reduce(
-      (acc, store) => ({
-        investment: acc.investment + store.investment,
-      }),
-      { investment: 0 }
-    );
+//    const { investment } = response.data.reduce(
+//      (acc, store) => ({
+//        investment: acc.investment + store.investment,
+//      }),
+//      { investment: 0 }
+//    );
 
-    setTotals((prevData) => ({ ...prevData, investment }));
-    setLoading(false);
-    setShowInvestment(true);
+//    setTotals((prevData) => ({ ...prevData, investment }));
+//    setLoading(false);
+//    setShowInvestment(true);
   };
 
   const memoStores = useMemo(() => stores, [stores]);
