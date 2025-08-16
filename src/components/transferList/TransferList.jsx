@@ -5,14 +5,17 @@ import { calculateTimeAgo } from "../utils/utils";
 import CustomButton from "../commons/customButton/CustomButton";
 import Swal from "sweetalert2";
 import { RemoveInCartIcon } from "../commons/icons/Icons";
+import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
 
 const TransferList = () => {
   const [transfers, setTransfers] = useState([]);
-
+  const [isLoading, setIsLoading] = useState(false)
   useEffect(() => {
     const fetchData = async () => {
+      setIsLoading(true)
       const response = await getTransfers();
       setTransfers(response.data);
+      setIsLoading(false)
     };
 
     fetchData();
@@ -49,6 +52,7 @@ const TransferList = () => {
 
   return (
     <>
+      <CustomSpinner2 isLoading={isLoading}></CustomSpinner2>
       <div className="">
         <CustomTable
           noDataComponent="Sin traspasos pendientes"
