@@ -265,7 +265,8 @@ const SaleList = () => {
                   <>
                     {productsToShow.map((item, index) => (
                       <span key={index}>
-                        <b>{row.is_canceled ? item.returned_quantity : item.quantity}</b> x {item.name} a ${item.price}
+                        
+                        {row.is_canceled ? item.returned_quantity : item.quantity} x {item.name} - ${item.price} - Código: {item.code}
                         <br />
                       </span>
                     ))}
