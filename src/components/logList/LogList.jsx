@@ -157,6 +157,7 @@ const LogList = () => {
               name: "Descripción",
               selector: (row) => row.description,
               grow: 2,
+              wrap: true
             },
 
             {

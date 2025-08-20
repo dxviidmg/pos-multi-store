@@ -30,7 +30,9 @@ const Cart = () => {
   const dispatch = useDispatch();
   const [stores, setStores] = useState([]);
   const [selectedStore, setSelectedStore] = useState("");
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
+  const user = getUserData();
+
   useEffect(() => {
     const handleShortcut = (event) => {
       if (event.ctrlKey && event.key === "d") {
@@ -111,12 +113,10 @@ const Cart = () => {
       if (response.status === 200) {
         dispatch(cleanCart());
         showAlert("success", "Traspaso confirmado");
-      }
-      else if (response.status === 404) {
+      } else if (response.status === 404) {
         dispatch(cleanCart());
         showAlert("error", "Traspaso inexistente. Checa cantidad y/o destino");
-      }      
-    else {
+      } else {
         showAlert(
           "error",
           "Error desconocido",
@@ -154,17 +154,16 @@ const Cart = () => {
   };
 
   const handleAddToStock = async (cart) => {
-    setLoading(true)
+    setLoading(true);
     const data = { store_products: cart };
     try {
       const response = await addProducts(data);
       if (response.status === 200) {
         dispatch(cleanCart());
-        setLoading(false)
+        setLoading(false);
         showAlert("success", "Producto añadido al inventario");
-
       } else {
-        setLoading(false)
+        setLoading(false);
         showAlert(
           "error",
           "Error en el inventario",
@@ -246,7 +245,65 @@ const Cart = () => {
       name: "Borrar",
       selector: (row) => (
         <CustomButton onClick={() => handleRemoveFromCart(row)}>
-                    <RemoveInCartIcon/>
+          <RemoveInCartIcon />
+        </CustomButton>
+      ),
+    },
+  ];
+
+
+
+  const saleColumns2 = [
+    ...commonColumns2,
+    {
+      name: "Cantidad",
+      selector: (row) => (
+        <Form.Control
+          type="number"
+          value={row.quantity}
+          onChange={(e) => handleQuantityChangeToCart(e, row)} // Implementa esta función para manejar el cambio
+          min="1" // Opcional, para establecer un valor mínimo
+          max={row.stock}
+        />
+      ),
+    },
+    { name: "Stock", selector: (row) => row.stock },
+    { name: "Precio", selector: (row) => `$${row.product_price.toFixed(2)}` },
+    {
+      name: "Total por producto",
+      selector: (row) => `$${(row.product_price * row.quantity).toFixed(2)}`,
+    },
+    {
+      name: "Precio mayorista",
+      selector: (row) => (
+        <Form.Check
+          type="switch"
+          id="custom-switch"
+          checked={row.product_price === row.product.prices.wholesale_price}
+          onClick={() => handleChangePrice(row)}
+          disabled={!row.product.prices.wholesale_price}
+        />
+      ),
+    },
+    {
+      name: "Stock General",
+      wrap: true,
+      grow: 3,
+      cell: (row) => (
+        <ul style={{ paddingLeft: "1rem", margin: 0 }}>
+          {row.stock_in_other_stores.map((s) => (
+            <li key={s.store_id}>
+              {s.store_name}: {s.available_stock}
+            </li>
+          ))}
+        </ul>
+      ),
+    },
+    {
+      name: "Borrar",
+      selector: (row) => (
+        <CustomButton onClick={() => handleRemoveFromCart(row)}>
+          <RemoveInCartIcon />
         </CustomButton>
       ),
     },
@@ -270,7 +327,7 @@ const Cart = () => {
       name: "Borrar",
       selector: (row) => (
         <CustomButton onClick={() => handleRemoveFromCart(row)}>
-                    <RemoveInCartIcon/>
+          <RemoveInCartIcon />
         </CustomButton>
       ),
     },
@@ -292,7 +349,7 @@ const Cart = () => {
     },
 
     {
-      name: "Stock",
+      name: "Stock General",
       wrap: true,
       cell: (row) => (
         <ul style={{ paddingLeft: "1rem", margin: 0 }}>
@@ -302,14 +359,14 @@ const Cart = () => {
             </li>
           ))}
         </ul>
-      )
+      ),
     },
 
     {
       name: "Borrar",
       selector: (row) => (
         <CustomButton onClick={() => handleRemoveFromCart(row)}>
-                    <RemoveInCartIcon/>
+          <RemoveInCartIcon />
         </CustomButton>
       ),
     },
@@ -332,31 +389,46 @@ const Cart = () => {
       name: "Borrar",
       selector: (row) => (
         <CustomButton onClick={() => handleRemoveFromCart(row)}>
-          <RemoveInCartIcon/>
+          <RemoveInCartIcon />
         </CustomButton>
       ),
     },
   ];
 
   const getColumns = () => {
-    if (movementType === "venta" || movementType === "apartado") return saleColumns;
-    if (movementType === "traspaso") return transferColumns;
-    if (movementType === "distribucion") return distributionColumns;
-    if (movementType === "agregar") return addToStockColumns;
-    return commonColumns;
+    switch (movementType) {
+      case "venta":
+      case "apartado":
+        // Si es multi-store, usamos saleColumns2
+        return user.is_multi_store === true ? saleColumns2 : saleColumns;
+  
+      case "traspaso":
+        return transferColumns;
+  
+      case "distribucion":
+        return distributionColumns;
+  
+      case "agregar":
+        return addToStockColumns;
+  
+      default:
+        return commonColumns;
+    }
   };
 
   return (
     <div>
-      <CustomSpinner2 isLoading={loading}/>
+      <CustomSpinner2 isLoading={loading} />
       <PaymentModal />
       <div>
         {cart.length !== 0 && (
           <Row>
             {(movementType === "venta" || movementType === "apartado") && (
               <>
-                <Col md={4}>                <h1>Productos: {totalProducts}</h1></Col>
-
+                <Col md={4}>
+                  {" "}
+                  <h1>Productos: {totalProducts}</h1>
+                </Col>
 
                 <Col md={4} className="text-center">
                   <h1>Total: ${total.toFixed(2)}</h1>
