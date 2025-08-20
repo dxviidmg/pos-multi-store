@@ -29,7 +29,7 @@ const StockModal = () => {
       };
 
       const response = await createTransfer(data);
-      if (response.status === 202) {
+      if ([201, 202].includes(response.status)) {
         setRequestedQuantities({});
         dispatch(hideStockModal());
       }
