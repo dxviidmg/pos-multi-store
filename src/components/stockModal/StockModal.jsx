@@ -6,12 +6,14 @@ import CustomTable from "../commons/customTable/customTable";
 import CustomButton from "../commons/customButton/CustomButton";
 import { hideStockModal } from "../redux/stockModal/StockModalActions";
 import { createTransfer } from "../apis/transfers";
+import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
 
 const StockModal = () => {
   const { showStockModal, storeProduct } = useSelector((state) => state.StockModalReducer);
-  const dispatch = useDispatch();
-
   const [requestedQuantities, setRequestedQuantities] = useState({});
+  const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false)
+
 
   const handleQuantityChange = (rowId, max, value) => {
     const quantity = Math.min(parseInt(value) || 0, max);
@@ -19,6 +21,7 @@ const StockModal = () => {
   };
 
   const handleCreateTransfer = async (row) => {
+    setIsLoading(true)
     try {
       const quantity = requestedQuantities[row.store_id];
       const data = {
@@ -32,8 +35,10 @@ const StockModal = () => {
       if ([201, 202].includes(response.status)) {
         setRequestedQuantities({});
         dispatch(hideStockModal());
+        setIsLoading(false)
       }
     } catch (error) {
+      setIsLoading(false)
       console.error("Error creating transfer:", error);
     }
   };
@@ -51,7 +56,9 @@ const StockModal = () => {
   };
 
   return (
-    <CustomModal showOut={showStockModal} title="Revisión de Stock">
+   <>
+        <CustomSpinner2 isLoading={false}></CustomSpinner2>
+       <CustomModal showOut={showStockModal} title="Revisión de Stock">
       <div className="text-center custom-section">
         <p>
           <b>Código:</b> {storeProduct.product?.code} <b>Nombre:</b> {storeProduct.product?.brand_name} {storeProduct.product?.name}
@@ -106,7 +113,8 @@ const StockModal = () => {
       
 
       </div>
-    </CustomModal>
+    </CustomModal></> 
+
   );
 };
 
