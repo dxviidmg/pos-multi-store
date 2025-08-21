@@ -57,7 +57,7 @@ const StockModal = () => {
 
   return (
    <>
-        <CustomSpinner2 isLoading={false}></CustomSpinner2>
+        <CustomSpinner2 isLoading={isLoading}></CustomSpinner2>
        <CustomModal showOut={showStockModal} title="Revisión de Stock">
       <div className="text-center custom-section">
         <p>
