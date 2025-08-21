@@ -285,20 +285,20 @@ const Cart = () => {
         />
       ),
     },
-    {
-      name: "Stock General",
-      wrap: true,
-      grow: 3,
-      cell: (row) => (
-        <ul style={{ paddingLeft: "1rem", margin: 0 }}>
-          {row.stock_in_other_stores.map((s) => (
-            <li key={s.store_id}>
-              {s.store_name}: {s.available_stock}
-            </li>
-          ))}
-        </ul>
-      ),
-    },
+//    {
+//      name: "Stock General",
+//      wrap: true,
+//      grow: 3,
+//      cell: (row) => (
+//        <ul style={{ paddingLeft: "1rem", margin: 0 }}>
+//          {row.stock_in_other_stores.map((s) => (
+//            <li key={s.store_id}>
+//              {s.store_name}: {s.available_stock}
+//            </li>
+//          ))}
+//        </ul>
+//      ),
+//    },
     {
       name: "Borrar",
       selector: (row) => (
