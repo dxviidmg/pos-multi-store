@@ -187,6 +187,7 @@ const PaymentModal = () => {
         id: store_product.id,
         quantity: store_product.quantity,
         name: store_product.product.name,
+        code: store_product.product.code,
         price:
           store_product.product_price *
           ((client?.discount_percentage_complement ?? 100) * 0.01),
@@ -202,6 +203,7 @@ const PaymentModal = () => {
     if (response.status === 201) {
       if (printer && printTicket) {
         data.id = response.data.id
+        data.payment = payment
         handlePrintTicket("ticket", data);
       }
       setPaymentMethods({

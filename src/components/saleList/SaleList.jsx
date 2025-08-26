@@ -242,7 +242,7 @@ const SaleList = () => {
                   {
                     name: "Cliente",
                     selector: (row) => row.client?.full_name,
-                    grow: 1.5,
+                    wrap: true
                   },
                 ]
               : []),
