@@ -211,35 +211,53 @@ const ProductList = () => {
       <ProductModal onUpdateProductList={handleUpdateProductList} />
       <h1>Productos</h1>
 
-      <div className="d-flex align-items-center gap-3">
-        <CustomButton onClick={() => handleOpenModal()}>
-          Crear producto
-        </CustomButton>
-        <CustomButton onClick={handleDownload} disabled={products.length === 0}>
-          Descargar productos
-        </CustomButton>
+      <Row className="d-flex align-items-center gap-3">
+        <Col>
+          {" "}
+          <CustomButton onClick={() => handleOpenModal()} fullWidth={true}>
+            Crear producto
+          </CustomButton>
+        </Col>
+        <Col>
+          <CustomButton
+            onClick={handleDownload}
+            disabled={products.length === 0}
+            fullWidth={true}
+          >
+            Descargar productos
+          </CustomButton>
+        </Col>
+        <Col>
+          <CustomTooltip text={"Formatea a mayusculas y reemplaza la comilla simple (') por guión medio (-)"}>
+          <CustomButton onClick={handleUpperCodeProducts} fullWidth={true}>
+            Formatear códigos
+          </CustomButton>
+          </CustomTooltip>
 
-        <CustomButton onClick={handleUpperCodeProducts}>
-          Cambiar códigos a mayusculas
-        </CustomButton>
-
-        <CustomButton
-          onClick={handleDeleteProducts}
-          disabled={
-            selectedRows.length === 0 ||
-            !confirmDeletion ||
-            getUserData().role !== "owner"
-          }
-        >
-          Borrar productos
-        </CustomButton>
-
-        <FormCheck
-          label="Confirmar borrado"
-          checked={confirmDeletion}
-          onChange={handleCheck}
-        />
-      </div>
+        </Col>
+        <Col>
+          {" "}
+          <CustomButton
+            onClick={handleDeleteProducts}
+            disabled={
+              selectedRows.length === 0 ||
+              !confirmDeletion ||
+              getUserData().role !== "owner"
+            }
+            fullWidth={true}
+          >
+            Borrar productos
+          </CustomButton>
+        </Col>
+        <Col>
+          {" "}
+          <FormCheck
+            label="Confirmar borrado"
+            checked={confirmDeletion}
+            onChange={handleCheck}
+          />
+        </Col>
+      </Row>
 
       <Row className="mt-3">
         <Col>
@@ -367,7 +385,10 @@ const ProductList = () => {
                     <EditIcon></EditIcon>
                   </CustomButton>
                 </CustomTooltip>
-                <CustomTooltip text={"Mostrar stock en todas las tiendas y almacenes"} position={"top"}>
+                <CustomTooltip
+                  text={"Mostrar stock en todas las tiendas y almacenes"}
+                  position={"top"}
+                >
                   <CustomButton
                     onClick={() => handleOpenModal2(row)}
                     hidden={getUserData().role !== "owner"}
