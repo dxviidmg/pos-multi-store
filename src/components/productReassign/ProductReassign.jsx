@@ -16,29 +16,41 @@ const REASSIGN_TYPE = [
     value: "department",
     label: "Departamento",
   },
-]
+];
 
-const INITIAL_FORM_DATA =  {reassign_type: "", origin_id: "", destination_id: ""}
+const DELETE_ORIGIN = [
+  {
+    value: true,
+    label: "Si",
+  },
+  {
+    value: false,
+    label: "No",
+  },
+];
+
+const INITIAL_FORM_DATA = {
+  reassign_type: "",
+  origin_id: "",
+  destination_id: "",
+  delete_origin: ""
+};
 const ProductReassign = () => {
   const [loading, setLoading] = useState(false);
   const [options, setOptions] = useState([]);
   const [params, setParams] = useState(INITIAL_FORM_DATA);
 
-
-
   useEffect(() => {
     const fetchStoreProducts = async () => {
       setLoading(true);
-      if (params.reassign_type === "department"){
-        const departments = await getDepartments()
-        setOptions(departments.data)
-      }
-      else if (params.reassign_type === "brand"){
-        const departments = await getBrands()
-        setOptions(departments.data)
-      }
-      else {
-        setOptions([])
+      if (params.reassign_type === "department") {
+        const departments = await getDepartments();
+        setOptions(departments.data);
+      } else if (params.reassign_type === "brand") {
+        const departments = await getBrands();
+        setOptions(departments.data);
+      } else {
+        setOptions([]);
       }
       setLoading(false);
     };
@@ -46,16 +58,11 @@ const ProductReassign = () => {
     fetchStoreProducts();
   }, [params.reassign_type]);
 
-
-
-
   const handleReassignProducts = async () => {
-
-
     const response = await reassignProducts(params);
 
     if (response.status === 200) {
-      setParams(INITIAL_FORM_DATA)
+      setParams(INITIAL_FORM_DATA);
       Swal.fire({
         icon: "success",
         title: "Productos reasignados",
@@ -70,26 +77,17 @@ const ProductReassign = () => {
     }
   };
 
-
-
-
-
   const handleDataChange = async (e) => {
     let { name, value } = e.target;
     setParams((prevData) => ({ ...prevData, [name]: value }));
   };
 
-
   return (
     <div className="custom-section">
       <CustomSpinner2 isLoading={loading}></CustomSpinner2>
       <h1>Reasignación de productos</h1>
-
-
-
       <Row className="mt-3">
-
-      <Col>
+        <Col>
           {" "}
           <Form.Label>Tipo de reasignación</Form.Label>
           <Form.Select
@@ -125,7 +123,6 @@ const ProductReassign = () => {
           </Form.Select>
         </Col>
 
-
         <Col>
           {" "}
           <Form.Label>Destino</Form.Label>
@@ -143,13 +140,37 @@ const ProductReassign = () => {
             ))}
           </Form.Select>
         </Col>
-            <Col className="d-flex flex-column justify-content-end">
-            <CustomButton fullWidth={true}
-            disabled={Object.values(params).some(
-              (value) => value === ""
-            ) || params.origin_id === params.destination_id} onClick={handleReassignProducts}
-            >Reasignar</CustomButton>
-            </Col>
+
+        <Col>
+          {" "}
+          <Form.Label>Borrar origen</Form.Label>
+          <Form.Select
+            value={options.delete_origin}
+            onChange={handleDataChange}
+            name="delete_origin"
+            //              disabled={isLoading}
+          >
+            <option value="">Selecciona</option>
+            {DELETE_ORIGIN.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </Form.Select>
+        </Col>
+
+        <Col className="d-flex flex-column justify-content-end">
+          <CustomButton
+            fullWidth={true}
+            disabled={
+              Object.values(params).some((value) => value === "") ||
+              params.origin_id === params.destination_id
+            }
+            onClick={handleReassignProducts}
+          >
+            Reasignar
+          </CustomButton>
+        </Col>
       </Row>
     </div>
   );

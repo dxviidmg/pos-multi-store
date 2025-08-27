@@ -368,7 +368,7 @@ const SearchProduct = () => {
             onChange={
               queryType === "q"
                 ? handleQueryChange
-                : (e) => setBarcode(e.target.value)
+                : (e) => setBarcode(e.target.value.replace("'", "-"))
             }
             onKeyDown={queryType === "code" ? handleBarcodeSearch : undefined}
             onFocus={() => setIsInputFocused(true)}
