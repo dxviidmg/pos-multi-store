@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CustomModal from "../commons/customModal/customModal";
-import { Col, Form, Row } from "react-bootstrap";
+import { Col, Form, FormCheck, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
 import Swal from "sweetalert2";
@@ -20,7 +20,8 @@ const SaleModal = ({ onUpdateSaleList }) => {
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
   const [selectedRows, setSelectedRows] = useState([]);
   const [quantitiesToCancel, setQuantitiesToCancel] = useState({});
-
+  const [totalCancel, setTotalCancel] = useState(false);
+  const [reasonCancel, setReasonCancel] = useState("");
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -31,25 +32,58 @@ const SaleModal = ({ onUpdateSaleList }) => {
 
   const handleQuantityChange = (rowId, max, value) => {
     const quantity = Math.min(parseInt(value) || 0, max);
+
     setQuantitiesToCancel((prev) => ({ ...prev, [rowId]: quantity }));
   };
 
-  const getTotalQuantityToCancel = () =>
-    Object.entries(quantitiesToCancel)
-      .filter(([id, qty]) => selectedRows.some((r) => r.id === parseInt(id)))
+  const disabledButton = () => {
+    if (totalCancel) {
+      return reasonCancel.trim() === "";
+    }
+  
+    const total = Object.entries(quantitiesToCancel)
+      .filter(([id]) => selectedRows.some((r) => r.id === +id))
       .reduce((sum, [, qty]) => sum + qty, 0);
+  
+    return total === 0;
+  };
+
+  const handleCheck = (e) => {
+    console.log("e.target.checked", e.target.checked);
+    if (e.target.checked) {
+      console.log("verdadero");
+      formData.products_sale.forEach((product_sale) => {
+        console.log(product_sale);
+        setQuantitiesToCancel((prev) => ({
+          ...prev,
+          [product_sale.id]: product_sale.quantity,
+        }));
+        setSelectedRows((prev) => [...prev, product_sale]);
+      });
+    } else {
+      console.log("falso feo");
+      formData.products_sale.forEach((product_sale) => {
+        console.log(product_sale);
+        setQuantitiesToCancel((prev) => ({ ...prev, [product_sale.id]: 0 }));
+        setSelectedRows([]);
+      });
+      setReasonCancel("");
+    }
+    setTotalCancel(e.target.checked);
+  };
 
   const handleSaveClient = async () => {
     const payload = {
       id: sale.id,
       products_sale_to_cancel: quantitiesToCancel,
+      reason_cancel: reasonCancel
     };
 
     const response = await cancelSale(payload);
     if (response.status === 200) {
       const { sale: updatedSale, cash_back } = response.data;
 
-      onUpdateSaleList(updatedSale)
+      onUpdateSaleList(updatedSale);
       dispatch(hideSaleModal());
 
       Swal.fire({
@@ -72,15 +106,18 @@ const SaleModal = ({ onUpdateSaleList }) => {
   };
 
   return (
-    <CustomModal showOut={showSaleModal} title="Devolución de productos">
+    <CustomModal
+      showOut={showSaleModal}
+      title={totalCancel ? "Cancelación de compra" : "Devolución de productos"}
+    >
       <div className="custom-section">
         <Row>
           {/* Información general de la venta */}
-          <Col md={3}>
+          <Col md={2}>
             <Form.Label>Folio</Form.Label>
             <Form.Control type="text" value={formData.id} disabled />
           </Col>
-          <Col md={6}>
+          <Col md={4}>
             <Form.Label>Cliente</Form.Label>
             <Form.Control
               type="text"
@@ -88,15 +125,15 @@ const SaleModal = ({ onUpdateSaleList }) => {
               disabled
             />
           </Col>
-          <Col md={3}>
+          <Col md={2}>
             <Form.Label>Total</Form.Label>
             <Form.Control type="text" value={formData.total} disabled />
           </Col>
-          <Col md={7}>
+          <Col md={4}>
             <Form.Label>Creación</Form.Label>
             <Form.Control type="text" value={formData.created_at} disabled />
           </Col>
-          <Col md={5}>
+          <Col md={3}>
             <Form.Label>Vendedor</Form.Label>
             <Form.Control
               type="text"
@@ -104,7 +141,26 @@ const SaleModal = ({ onUpdateSaleList }) => {
               disabled
             />
           </Col>
-
+          <Col md={4}>
+            <Form.Label></Form.Label>
+            <div className="d-flex flex-column justify-content-end">
+              <FormCheck
+                label="Cancelación total"
+                className="m-3"
+                checked={totalCancel}
+                onChange={handleCheck}
+              />
+            </div>
+          </Col>
+          <Col md={5}>
+            <Form.Label>Razon cancelacion</Form.Label>
+            <Form.Control
+              type="text"
+              value={reasonCancel}
+              disabled={!totalCancel}
+              onChange={(e) => setReasonCancel(e.target.value)}
+            />
+          </Col>
           {/* Tabla de productos */}
           <Col md={12}>
             <h5>Productos comprados</h5>
@@ -113,7 +169,7 @@ const SaleModal = ({ onUpdateSaleList }) => {
               setSelectedRows={setSelectedRows}
               columns={[
                 { name: "Descripción", selector: (row) => row.name, grow: 3 },
-                { name: "C. Vendida", selector: (row) => row.quantity},
+                { name: "C. Vendida", selector: (row) => row.quantity },
                 {
                   name: "Devolver",
                   selector: (row) => (
@@ -148,9 +204,9 @@ const SaleModal = ({ onUpdateSaleList }) => {
               fullWidth
               onClick={handleSaveClient}
               marginTop="10px"
-              disabled={getTotalQuantityToCancel() === 0}
+              disabled={disabledButton()}
             >
-              Devolución de productos
+              {totalCancel ? "Cancelar" : "Devolver"}
             </CustomButton>
           </Col>
         </Row>
