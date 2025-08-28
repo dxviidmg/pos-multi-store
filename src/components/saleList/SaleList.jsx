@@ -325,7 +325,9 @@ const SaleList = () => {
               grow: showAllFields ? 3 : 2,
               cell: (row) => (
                 <>
-                {row.is_canceled ? <ErrorIcon/>: <>
+                {row.is_canceled ? <>
+                  <ErrorIcon/> Razón cancelacion: {row.reason_cancel ? row.reason_cancel: 'Desconocida'} 
+                </> : <>
                 
                   {printer && (
                     <CustomButton
