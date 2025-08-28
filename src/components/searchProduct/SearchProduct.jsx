@@ -86,7 +86,7 @@ const SearchProduct = () => {
         console.error(err);
         setSearching(false);
       }
-    }, 300), // debounce 1 segundo
+    }, 1000), // debounce 1 segundo
     [query, queryType, movementType]
   );
 
