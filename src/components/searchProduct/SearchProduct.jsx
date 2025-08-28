@@ -291,7 +291,6 @@ const SearchProduct = () => {
         value="q"
         checked={queryType === "q"}
       />
-      {queryType === "q" ? <CustomButton>Buscar</CustomButton> : ""}
 
       <br />
       <Form.Label className="me-3">Tipo de operación:</Form.Label>
