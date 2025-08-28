@@ -16,7 +16,6 @@ import { getPrinterUrl, getUserData } from "../apis/utils";
 import { PrinterIcon } from "../commons/icons/Icons";
 import { handlePrintTicket } from "../utils/utils";
 
-
 const SearchProduct = () => {
   const inputRef = useRef(null);
 
@@ -32,9 +31,11 @@ const SearchProduct = () => {
   const [queryType, setQueryType] = useState("code");
   const [barcode, setBarcode] = useState("");
   const [isInputFocused, setIsInputFocused] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [searching, setSearching] = useState(false);
   const [minQ, setMinQ] = useState(3);
-  let controller
+
+  const controllerRef = useRef(null);        // mantiene el AbortController
+  const latestFetchRef = useRef(0);      
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -46,29 +47,46 @@ const SearchProduct = () => {
         setData([]);
         return;
       }
-      setLoading(true);
-
-      if (controller) {
-        controller.abort();
+  
+      setSearching(true);
+      const fetchId = ++latestFetchRef.current; // id único de esta búsqueda
+  
+      // cancelar petición anterior
+      if (controllerRef.current) {
+        controllerRef.current.abort();
       }
-      controller = new AbortController();
-
-      const response = await getStoreProducts({ [queryType]: query }, { signal: controller.signal });
-      const fetchedData = response.data;
-      setLoading(false);
-      if (queryType === "code" && fetchedData.length === 0) {
-        Swal.fire({
-          icon: "error",
-          title: "Producto no encontrado",
-          text: "No se pudo encontrar este producto mediante su código",
-          timer: 5000,
-        });
-      } else if (queryType === "code" && fetchedData.length === 1) {
-        handleSingleProductFetch(fetchedData[0]);
-      } else {
-        setData(fetchedData);
+      controllerRef.current = new AbortController();
+  
+      try {
+        const response = await getStoreProducts(
+          { [queryType]: query },
+          { signal: controllerRef.current.signal }
+        );
+        const fetchedData = response.data;
+  
+        // ⚠️ Solo actualizar si esta es la última búsqueda
+        if (fetchId === latestFetchRef.current) {
+          setSearching(false);
+  
+          if (queryType === "code" && fetchedData.length === 0) {
+            Swal.fire({
+              icon: "error",
+              title: "Producto no encontrado",
+              text: "No se pudo encontrar este producto mediante su código",
+              timer: 5000,
+            });
+          } else if (queryType === "code" && fetchedData.length === 1) {
+            handleSingleProductFetch(fetchedData[0]);
+          } else {
+            setData(fetchedData);
+          }
+        }
+      } catch (err) {
+        if (err.name === "AbortError") return; // petición cancelada, no hacer nada
+        console.error(err);
+        setSearching(false);
       }
-    }, 750),
+    }, 1000), // debounce 1 segundo
     [query, queryType, movementType]
   );
 
@@ -235,9 +253,6 @@ const SearchProduct = () => {
     };
   }, []);
 
-
-
-
   const handleMinQChange = (e) => {
     setMinQ(e.target.value);
     setQuery("");
@@ -249,7 +264,10 @@ const SearchProduct = () => {
 
       <h1>
         Buscador de productos{" "}
-        <CustomButton disabled={!urlPrinter} onClick={e=>handlePrintTicket("test", {})}>
+        <CustomButton
+          disabled={!urlPrinter}
+          onClick={(e) => handlePrintTicket("test", {})}
+        >
           <PrinterIcon color="white" />
         </CustomButton>
       </h1>
@@ -273,6 +291,7 @@ const SearchProduct = () => {
         value="q"
         checked={queryType === "q"}
       />
+
       <br />
       <Form.Label className="me-3">Tipo de operación:</Form.Label>
       <Form.Check
@@ -343,20 +362,20 @@ const SearchProduct = () => {
         campo de búsqueda de productos.
       </Badge>
 
-      <Badge bg="success" className="text-wrap" hidden={!loading}>
+      <Badge bg="success" className="text-wrap" hidden={!searching}>
         Buscando...
       </Badge>
 
       <Badge
         bg="success"
         className="text-wrap"
-        hidden={loading || data.length === 0}
+        hidden={searching || data.length === 0}
       >
         {data.length} resultados{" "}
         {data.length === 200 && "(puede haber mas coincidencias)"}
       </Badge>
 
-      {!loading && isInputFocused && <br />}
+      {!searching && isInputFocused && <br />}
       <Row>
         <Col md={11}>
           <Form.Control
