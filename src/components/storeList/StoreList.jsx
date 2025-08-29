@@ -206,39 +206,39 @@ const StoreList = () => {
   const handleShowInvestment = async () => {
     setLoading(true);
     const response = await getInvestment();
-    pollEvery3Seconds(response.data.task_id);
-    //    setStores((prevData) =>
-    //      prevData.map((store) => {
-    //        const matchingInvestment = response.data.find(
-    //          (investment) => investment.id === store.id
-    //        );
-    //        return matchingInvestment
-    //          ? { ...store, investment: matchingInvestment.investment }
-    //          : store;
-    //      })
-    //    );
+//    pollEvery3Seconds(response.data.task_id);
+        setStores((prevData) =>
+          prevData.map((store) => {
+            const matchingInvestment = response.data.find(
+              (investment) => investment.id === store.id
+            );
+            return matchingInvestment
+              ? { ...store, investment: matchingInvestment.investment }
+              : store;
+          })
+        );
 
-    //    setStorages((prevData) =>
-    //      prevData.map((store) => {
-    //        const matchingInvestment = response.data.find(
-    //          (investment) => investment.id === store.id
-    //        );
-    //        return matchingInvestment
-    //          ? { ...store, investment: matchingInvestment.investment }
-    //          : store;
-    //      })
-    //    );
+        setStorages((prevData) =>
+          prevData.map((store) => {
+            const matchingInvestment = response.data.find(
+              (investment) => investment.id === store.id
+            );
+            return matchingInvestment
+              ? { ...store, investment: matchingInvestment.investment }
+              : store;
+          })
+        );
 
-    //    const { investment } = response.data.reduce(
-    //      (acc, store) => ({
-    //        investment: acc.investment + store.investment,
-    //      }),
-    //      { investment: 0 }
-    //    );
+        const { investment } = response.data.reduce(
+          (acc, store) => ({
+            investment: acc.investment + store.investment,
+          }),
+          { investment: 0 }
+        );
 
-    //    setTotals((prevData) => ({ ...prevData, investment }));
-    //    setLoading(false);
-    //    setShowInvestment(true);
+        setTotals((prevData) => ({ ...prevData, investment }));
+        setLoading(false);
+        setShowInvestment(true);
   };
 
   const memoStores = useMemo(() => stores, [stores]);
@@ -357,13 +357,7 @@ const StoreList = () => {
       selector: ({ name }) => `${name}`,
     },
 
-    ...(!showInvestment
-      ? [    { grow: 10 },
-        ]
-      : []),
-
-    ,
-
+    ...(!showInvestment ? [{ grow: 10 }] : []),
     ...(showInvestment
       ? [
           {
@@ -490,7 +484,7 @@ const StoreList = () => {
           departments={departments}
           handleShowInvestment={handleShowInvestment}
         />
-        <h2>Tiendas</h2>
+        <h2 className="pt-2">Tiendas</h2>
 
         <CustomTable
           progressPending={loading}
@@ -500,7 +494,7 @@ const StoreList = () => {
 
         {storages.length > 0 && (
           <>
-            <h2>Almacenes</h2>
+            <h2 className="pt-2">Almacenes</h2>
 
             <CustomTable
               progressPending={loading}
@@ -512,7 +506,7 @@ const StoreList = () => {
 
         {stores.length + storages.length > 1 && (
           <>
-            <h2>Totales</h2>
+            <h2 className="pt-2">Totales</h2>
 
             <CustomTable
               progressPending={loading}

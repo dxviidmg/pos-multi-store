@@ -111,8 +111,8 @@ const CustomNavbar = () => {
       <Container fluid>
         <img
           src={Logo}
-          width="120"
-          height="60"
+          width="90"
+          height="40"
           className="d-inline-block align-top"
           alt="Logo"
         />
