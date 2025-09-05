@@ -19,6 +19,7 @@ function TabCart() {
     }
   };
 
+  
   return (
     <div style={{minHeight: '45vh'}}>
     <Tabs
@@ -32,7 +33,7 @@ function TabCart() {
       <Tab eventKey="venta-actual" title={movementType.charAt(0).toUpperCase() + movementType.slice(1) + " actual"} >
         <Cart />
       </Tab>
-      <Tab eventKey="traspasos" title="Traspasos pendientes">
+      <Tab eventKey="traspasos" title="Ver traspasos pendientes">
         <TransferList key={refreshKey} /> {/* key cambia cada vez que se selecciona */}
       </Tab>
     </Tabs>

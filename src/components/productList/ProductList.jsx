@@ -172,7 +172,7 @@ const ProductList = () => {
 
   const handleGenerate = (code) => {
     if (code.trim() === "") return;
-    const url = `https://barcodeapi.org/api/code128/${encodeURIComponent(
+    const url = `https://barcodeapi.org/api/code39/${encodeURIComponent(
       code
     )}`;
     fetch(url)
@@ -404,7 +404,7 @@ const ProductList = () => {
                     onClick={() => handleGenerate(row.code)}
                     fullWidth
                   >
-                    <span style={{ fontSize: "11px" }}>BC128</span>
+                    <span style={{ fontSize: "11px" }}>BC39</span>
                   </CustomButton>
                 </CustomTooltip>
               </>
