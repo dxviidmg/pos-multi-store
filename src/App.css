@@ -1,13 +1,14 @@
 .custom-section {
-  background-color: white;
-  margin: 20px;
-  padding: 15px 20px 20px;
-  box-shadow: 0px 0px 2px 0px #000;
-  border-radius: 5px;
+  border-radius: 1rem;        /* equivalente a rounded-3 */
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2), 
+              0 4px 6px rgba(0, 0, 0, 0.05); /* shadow-lg de Tailwind */
+  padding: 1rem;              /* p-4 */
+  background-color: white; 
+  margin: 1rem;
 }
 
 .custom-section-buttons {
-  margin: 20px;
+  margin: 1rem;
 }
 
 #root {
