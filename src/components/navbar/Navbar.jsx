@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Navbar, Nav, NavDropdown, Container } from "react-bootstrap";
+import { Navbar, Nav, NavDropdown, Container, Offcanvas } from "react-bootstrap";
 import { getUserData } from "../apis/utils";
 import Logo from "../../assets/images/logo.jpg";
 import "./navbar.css";
@@ -8,6 +8,7 @@ import "./navbar.css";
 const CustomNavbar = () => {
   const navigate = useNavigate();
   const user = getUserData();
+  const expand = false;
 
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -15,127 +16,142 @@ const CustomNavbar = () => {
   };
 
   const handleBack = () => {
-    const updatedUser = {
-      ...user,
-      store_type: "",
-      store_name: "",
-      store_id: "",
-    };
+    const updatedUser = { ...user, store_type: "", store_name: "", store_id: "" };
     localStorage.setItem("user", JSON.stringify(updatedUser));
     navigate("/tiendas/");
     window.location.reload();
   };
 
-  const renderStoreLinks = () => (
-    <>
-      <Nav.Link href="/vender/">Vender</Nav.Link>
-      <Nav.Link href="/clientes/" hidden={user.role === "seller"}>
-        Clientes
-      </Nav.Link>
-      <NavDropdown
-        title="Productos"
-        className="custom-dropdown"
-        hidden={user.role === "seller"}
-      >
-        <NavDropdown.Item href="/marcas/">Marcas</NavDropdown.Item>
-        <NavDropdown.Item href="/departamentos/">
-          Departamentos
-        </NavDropdown.Item>
-        <NavDropdown.Item href="/reasignacion/">Reasignación</NavDropdown.Item>
-        <NavDropdown.Divider />
-        <NavDropdown.Item href="/productos/">Productos</NavDropdown.Item>
-        <NavDropdown.Item href="/importar-productos/">
-          Importar Productos
-        </NavDropdown.Item>
-        <NavDropdown.Divider />
-        <NavDropdown.Item href="/inventario/">Inventario</NavDropdown.Item>
-        <NavDropdown.Item href="/importar-inventario/">Importar inventario</NavDropdown.Item>
-        <NavDropdown.Divider />
-        <NavDropdown.Item href="/logs/">Logs</NavDropdown.Item>
-      </NavDropdown>
-      <NavDropdown title="Ventas" className="custom-dropdown">
-        <NavDropdown.Item href="/corte-caja/" hidden={user.role === "seller"}>
-          Corte de caja
-        </NavDropdown.Item>
-        <NavDropdown.Item href="/movimientos/" hidden={user.role === "seller"}>
-          Movimientos de caja
-        </NavDropdown.Item>
-        <NavDropdown.Item href="/ventas/">Ventas y apartados</NavDropdown.Item>
-        <NavDropdown.Divider />
-        <NavDropdown.Item href="/importar-ventas/">
-          Importar ventas
-        </NavDropdown.Item>
-      </NavDropdown>
-      {user.role === "owner" && (
-        <Nav.Link onClick={handleBack}>Regresar</Nav.Link>
-      )}
-    </>
-  );
+  // Define enlaces por tipo de usuario/store
+  const linksByType = {
+    T: [
+      { label: "Vender", href: "/vender/" },
+      { label: "Clientes", href: "/clientes/", hidden: user.role === "seller" },
+      {
+        label: "Productos",
+        dropdown: [
+          { label: "Marcas", href: "/marcas/" },
+          { label: "Departamentos", href: "/departamentos/" },
+          { label: "Reasignación", href: "/reasignacion/" },
+          { divider: true },
+          { label: "Productos", href: "/productos/" },
+          { label: "Importar Productos", href: "/importar-productos/" },
+          { divider: true },
+          { label: "Inventario", href: "/inventario/" },
+          { label: "Importar inventario", href: "/importar-inventario/" },
+          { divider: true },
+          { label: "Logs", href: "/logs/" },
+        ],
+      },
+      {
+        label: "Ventas",
+        dropdown: [
+          { label: "Corte de caja", href: "/corte-caja/", hidden: user.role === "seller" },
+          { label: "Movimientos de caja", href: "/movimientos/", hidden: user.role === "seller" },
+          { label: "Ventas y apartados", href: "/ventas/" },
+          { divider: true },
+          { label: "Importar ventas", href: "/importar-ventas/" },
+        ],
+      },
+    ],
+    A: [
+      { label: "Distribuir", href: "/distribuir/" },
+      { label: "Inventario", href: "/inventario/" },
+      { label: "Logs", href: "/logs/" },
+    ],
+    G: [
+      { label: "Tiendas", href: "/tiendas/" },
+      {
+        label: "Productos",
+        dropdown: [
+          { label: "Marcas", href: "/marcas/" },
+          { label: "Departamentos", href: "/departamentos/" },
+          { label: "Reasignación", href: "/reasignacion/" },
+          { divider: true },
+          { label: "Productos", href: "/productos/" },
+          { label: "Importar Productos", href: "/importar-productos/" },
+        ],
+      },
+      { label: "Clientes", href: "/clientes/" },
+      ...(user.sellers > 0 ? [{ label: "Vendedores", href: "/vendedores/" }] : []),
+      { label: "Mensualidades", href: "/pagos/" },
+      { label: "Otros servicios", href: "/servicios/" },
+    ],
+  };
 
-  const renderStorageLinks = () => (
-    <>
-      <Nav.Link href="/distribuir/">Distribuir</Nav.Link>
-      <Nav.Link href="/inventario/">Inventario</Nav.Link>
-      <Nav.Link href="/logs/">Logs</Nav.Link>
-      {user.role === "owner" && (
-        <Nav.Link onClick={handleBack}>Regresar</Nav.Link>
-      )}
-    </>
-  );
-
-  const renderGeneralLinks = () => (
-    <>
-      <Nav.Link href="/tiendas/">Tiendas</Nav.Link>
-      <NavDropdown title="Productos" className="custom-dropdown">
-        <NavDropdown.Item href="/marcas/">Marcas</NavDropdown.Item>
-        <NavDropdown.Item href="/departamentos/">
-          Departamentos
-        </NavDropdown.Item>
-        <NavDropdown.Item href="/reasignacion/">Reasignación</NavDropdown.Item>
-        <NavDropdown.Divider />
-
-        <NavDropdown.Item href="/productos/">Productos</NavDropdown.Item>
-        <NavDropdown.Item href="/importar-productos/">
-          Importar Productos
-        </NavDropdown.Item>
-      </NavDropdown>
-      <Nav.Link href="/clientes/">Clientes</Nav.Link>
-      {user.sellers > 0 && <Nav.Link href="/vendedores/">Vendedores</Nav.Link>}
-      <Nav.Link href="/pagos/">Mensualidades</Nav.Link>
-      <Nav.Link href="/servicios/">Otros servicios</Nav.Link>
-    </>
-  );
+  const renderLinks = () => {
+    const type = user.store_type === "T" ? "T" : user.store_type === "A" ? "A" : "G";
+    return linksByType[type].map((item, idx) => {
+      if (item.hidden) return null;
+      if (item.dropdown) {
+        return (
+          <NavDropdown key={idx} title={item.label} className="custom-dropdown">
+            {item.dropdown.map((d, i) =>
+              d.divider ? (
+                <NavDropdown.Divider key={i} />
+              ) : d.hidden ? null : (
+                <NavDropdown.Item key={i} href={d.href}>
+                  {d.label}
+                </NavDropdown.Item>
+              )
+            )}
+          </NavDropdown>
+        );
+      }
+      return (
+        <Nav.Link key={idx} href={item.href} onClick={item.onClick}>
+          {item.label}
+        </Nav.Link>
+      );
+    });
+  };
 
   return (
-    <Navbar expand="lg" className="custom-navbar">
+    <Navbar key={expand} expand={expand} className="mb-3 custom-navbar">
       <Container fluid>
-        <img
-          src={Logo}
-          width="90"
-          height="40"
-          className="d-inline-block align-top"
-          alt="Logo"
-        />
-        <Navbar.Toggle aria-controls="navbarScroll" />
-        <Navbar.Collapse id="navbarScroll">
-          <Nav className="me-auto my-2 my-lg-0" navbarScroll>
-            {user.store_type === "T" && renderStoreLinks()}
-            {user.store_type === "A" && renderStorageLinks()}
-            {user && !user.store_type && renderGeneralLinks()}
-          </Nav>
-          <Nav className="ms-auto">
-            <NavDropdown
-              title={user.store_name || user.tenant_name}
-              className="custom-dropdown"
-            >
-              <NavDropdown.Item>Negocio: {user.tenant_name}</NavDropdown.Item>
-              <NavDropdown.Item>Usuario: {user.full_name}</NavDropdown.Item>
-            </NavDropdown>
-            <Nav.Link href="/" onClick={handleLogout}>
-              Salir
-            </Nav.Link>
-          </Nav>
-        </Navbar.Collapse>
+        <Navbar.Toggle aria-controls={`offcanvasNavbar-expand-${expand}`}>
+          <img
+            src={Logo}
+            width="100"
+            height="40"
+            className="d-inline-block align-top"
+            alt="Logo"
+            aria-controls={`offcanvasNavbar-expand-${expand}`}
+          />
+        </Navbar.Toggle>
+
+        <div className="d-flex align-items-center gap-3">
+          <NavDropdown
+            title={user.store_name || user.tenant_name}
+            className="custom-dropdown"
+          >
+            <NavDropdown.Item>Negocio: {user.tenant_name}</NavDropdown.Item>
+            <NavDropdown.Item>Usuario: {user.full_name}</NavDropdown.Item>
+          </NavDropdown>
+
+          {user.role === "owner" && user.store_id && (
+            <Nav.Link onClick={handleBack}>Regresar</Nav.Link>
+          )}
+
+          <Nav.Link href="/" onClick={handleLogout}>
+            Salir
+          </Nav.Link>
+        </div>
+
+        <Navbar.Offcanvas
+          id={`offcanvasNavbar-expand-${expand}`}
+          aria-labelledby={`offcanvasNavbarLabel-expand-${expand}`}
+          placement="start"
+        >
+          <Offcanvas.Header closeButton className="custom-navbar">
+            <Offcanvas.Title id={`offcanvasNavbarLabel-expand-${expand}`}>
+              Menú
+            </Offcanvas.Title>
+          </Offcanvas.Header>
+          <Offcanvas.Body className="custom-navbar">
+            <Nav className="justify-content-end flex-grow-1 pe-3">{renderLinks()}</Nav>
+          </Offcanvas.Body>
+        </Navbar.Offcanvas>
       </Container>
     </Navbar>
   );
