@@ -198,39 +198,39 @@ const StoreList = () => {
   const handleShowInvestment = async () => {
     setLoading(true);
     const response = await getInvestment();
-//    pollEvery3Seconds(response.data.task_id);
-        setStores((prevData) =>
-          prevData.map((store) => {
-            const matchingInvestment = response.data.find(
-              (investment) => investment.id === store.id
-            );
-            return matchingInvestment
-              ? { ...store, investment: matchingInvestment.investment }
-              : store;
-          })
+    //    pollEvery3Seconds(response.data.task_id);
+    setStores((prevData) =>
+      prevData.map((store) => {
+        const matchingInvestment = response.data.find(
+          (investment) => investment.id === store.id
         );
+        return matchingInvestment
+          ? { ...store, investment: matchingInvestment.investment }
+          : store;
+      })
+    );
 
-        setStorages((prevData) =>
-          prevData.map((store) => {
-            const matchingInvestment = response.data.find(
-              (investment) => investment.id === store.id
-            );
-            return matchingInvestment
-              ? { ...store, investment: matchingInvestment.investment }
-              : store;
-          })
+    setStorages((prevData) =>
+      prevData.map((store) => {
+        const matchingInvestment = response.data.find(
+          (investment) => investment.id === store.id
         );
+        return matchingInvestment
+          ? { ...store, investment: matchingInvestment.investment }
+          : store;
+      })
+    );
 
-        const { investment } = response.data.reduce(
-          (acc, store) => ({
-            investment: acc.investment + store.investment,
-          }),
-          { investment: 0 }
-        );
+    const { investment } = response.data.reduce(
+      (acc, store) => ({
+        investment: acc.investment + store.investment,
+      }),
+      { investment: 0 }
+    );
 
-        setTotals((prevData) => ({ ...prevData, investment }));
-        setLoading(false);
-        setShowInvestment(true);
+    setTotals((prevData) => ({ ...prevData, investment }));
+    setLoading(false);
+    setShowInvestment(true);
   };
 
   const memoStores = useMemo(() => stores, [stores]);
@@ -450,18 +450,18 @@ const StoreList = () => {
 
   return (
     <>
-      {tenantInfo.notices && tenantInfo.notices.length > 0 && (
-        <div>
-          {tenantInfo.notices.map((variant) => (
-            <Alert key={"success"} variant={"success"}>
-              {variant}
-            </Alert>
-          ))}
-        </div>
-      )}
-
       <div className="custom-section">
         <CustomSpinner2 isLoading={loading}></CustomSpinner2>
+
+        {tenantInfo.notices && tenantInfo.notices.length > 0 && (
+          <div>
+            {tenantInfo.notices.map((variant) => (
+              <Alert key={"success"} variant={"success"}>
+                {variant}
+              </Alert>
+            ))}
+          </div>
+        )}
 
         <h1>
           Lista de tiendas y almacenes ({tenantInfo.product_count} productos

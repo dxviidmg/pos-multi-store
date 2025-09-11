@@ -253,3 +253,19 @@ export const getTaskResult = async (id) => {
     return error;
   }
 };
+
+
+
+export const getStockOtherStores = async (code) => {
+  const apiUrl = new URL(getApiUrl("products/stock-other-stores/?code=" + code, false));
+
+
+  try {
+    const response = await axios.get(apiUrl, {
+      headers: getHeaders(),
+    });
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
