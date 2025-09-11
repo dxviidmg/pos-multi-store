@@ -6,7 +6,8 @@ import {
   CLEAN_CART,
   UPDATE_MOVEMENT_TYPE,
   UPDATE_QUANTITY_IN_CART,
-  CHANGE_PRICE
+  CHANGE_PRICE,
+  COUNT_STOCK_OTHER_STORES
 } from "./cartActions";
 
 const initialState = {
@@ -159,6 +160,16 @@ const cartReducer = (state = initialState, action) => {
             : item
         ),
       };
+
+      case COUNT_STOCK_OTHER_STORES:
+        return {
+          ...state,
+          cart: state.cart.map((item) =>
+            item.id === action.payload.product.id
+              ? { ...item, stockOtherStores: action.payload.stock_other_storages }
+              : item
+          ),
+        };
 
     default:
       return state;

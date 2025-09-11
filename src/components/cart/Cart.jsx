@@ -7,6 +7,7 @@ import {
   updateMovementType,
   updateQuantityInCart,
   changePrice,
+  countStockOtherStores,
 } from "../redux/cart/cartActions";
 import CustomButton from "../commons/customButton/CustomButton";
 import { Col, Form, Row } from "react-bootstrap";
@@ -18,7 +19,7 @@ import {
 import { getStores } from "../apis/stores";
 import { confirmDistribution, confirmTransfers } from "../apis/transfers";
 import Swal from "sweetalert2";
-import { addProducts } from "../apis/products";
+import { addProducts, getStockOtherStores } from "../apis/products";
 import { getUserData } from "../apis/utils";
 import { RemoveInCartIcon } from "../commons/icons/Icons";
 import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
@@ -80,6 +81,14 @@ const Cart = () => {
   }, [cart]);
 
   const handleRemoveFromCart = (product) => dispatch(removeFromCart(product));
+
+  const handleStockOtherStores = async (product) => {
+    console.log("hola", product.product.code);
+
+    const response = await getStockOtherStores(product.product.code);
+    console.log(response);
+    dispatch(countStockOtherStores(product, response.data));
+  };
 
   const handleChangePrice = (product) => {
     dispatch(changePrice(product));
@@ -251,8 +260,6 @@ const Cart = () => {
     },
   ];
 
-
-
   const saleColumns2 = [
     ...commonColumns2,
     {
@@ -337,14 +344,23 @@ const Cart = () => {
     {
       name: "Stock General",
       wrap: true,
+      grow: 1.5,
       cell: (row) => (
-        <ul style={{ paddingLeft: "1rem", margin: 0 }}>
-          {row.stock_in_other_stores.map((s) => (
-            <li key={s.store_id}>
-              {s.store_name}: {s.available_stock}
-            </li>
-          ))}
-        </ul>
+        <div>
+          {row.stockOtherStores && row.stockOtherStores.length > 0 ? (
+            <ul style={{ paddingLeft: "1rem", margin: "0.5rem 0 0 0" }}>
+              {row.stockOtherStores.map((s) => (
+                <li key={s.store_id}>
+                  {s.store_name}: {s.available_stock}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <CustomButton onClick={() => handleStockOtherStores(row)}>
+              Contar
+            </CustomButton>
+          )}
+        </div>
       ),
     },
 
@@ -387,16 +403,16 @@ const Cart = () => {
       case "apartado":
         // Si es multi-store, usamos saleColumns2
         return user.is_multi_store === true ? saleColumns2 : saleColumns;
-  
+
       case "traspaso":
         return transferColumns;
-  
+
       case "distribucion":
         return distributionColumns;
-  
+
       case "agregar":
         return addToStockColumns;
-  
+
       default:
         return commonColumns;
     }
