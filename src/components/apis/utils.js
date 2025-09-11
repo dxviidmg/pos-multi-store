@@ -9,9 +9,8 @@ export const getHeaders = (isMultipart = false) => {
   };
 };
 
-export const getApiUrl = (endpoint) => {
-  return `${process.env.REACT_APP_API_URL}/api/${endpoint}/`;
-};
+export const getApiUrl = (endpoint, end_slash = true) =>
+  `${process.env.REACT_APP_API_URL}/api/${endpoint}${end_slash ? '/' : ''}`;
 
 export const getPrinterUrl = (endpoint) => {
   return `${process.env.REACT_APP_PRINTER_URL}/${endpoint}/`;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Col, Form, Image, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import CustomModal from "../commons/customModal/customModal";
@@ -7,18 +7,37 @@ import CustomButton from "../commons/customButton/CustomButton";
 import { hideStockModal } from "../redux/stockModal/StockModalActions";
 import { createTransfer } from "../apis/transfers";
 import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
+import { getStockOtherStores } from "../apis/products";
+
 
 const StockModal = () => {
   const { showStockModal, storeProduct } = useSelector((state) => state.StockModalReducer);
   const [requestedQuantities, setRequestedQuantities] = useState({});
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false)
+  const [stockOtherStores, setStockOtherStores] = useState([])
 
 
   const handleQuantityChange = (rowId, max, value) => {
     const quantity = Math.min(parseInt(value) || 0, max);
     setRequestedQuantities((prev) => ({ ...prev, [rowId]: quantity }));
   };
+
+
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await getStockOtherStores(storeProduct.product?.code);
+      setStockOtherStores(response.data)
+      console.log(response);
+    };
+  
+    if (storeProduct && storeProduct.product) {
+      fetchData();
+    }
+  }, [storeProduct?.product]);
+
+
 
   const handleCreateTransfer = async (row) => {
     setIsLoading(true)
@@ -72,9 +91,9 @@ const StockModal = () => {
           </Col>
         </Row>
       ) : (
-        storeProduct.stock_in_other_stores?.length > 0 && (
+        stockOtherStores.length > 0 && (
           <CustomTable
-            data={storeProduct.stock_in_other_stores}
+            data={stockOtherStores}
             columns={[
               { name: "Locación", selector: (row) => row.store_name, sortable: true },
               { name: "Stock disponible", selector: (row) => row.available_stock, sortable: true },
@@ -88,7 +107,7 @@ const StockModal = () => {
                     max={row.available_stock}
                     placeholder="Cantidad a solicitar"
                     onChange={(e) => handleQuantityChange(row.store_id, row.available_stock, e.target.value)}
-                    value={requestedQuantities[row.store_id] || ""}
+                    value={requestedQuantities[row.store_id] || 0}
                   />
                 ),
                 sortable: true,
