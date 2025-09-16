@@ -24,8 +24,11 @@ import DepartmentList from "./components/DepartmentList/DepartmentList";
 import StoreProductImport from "./components/storeProductImport/StoreProductImport";
 import ServiceList from "./components/serviceList/ServiceList";
 import ProductReassign from "./components/productReassign/ProductReassign";
+import useKeepAlive from "./components/apis/keepAlive";
 
 function App() {
+
+  useKeepAlive()
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const user = getUserData();
