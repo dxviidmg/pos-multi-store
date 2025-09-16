@@ -46,7 +46,7 @@ const StockModal = () => {
       const data = {
         quantity,
         origin_store: row.store_id,
-        destination_store: storeProduct.store.id,
+        destination_store: storeProduct.store,
         product: storeProduct.product.id,
       };
 
