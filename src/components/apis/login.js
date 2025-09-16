@@ -1,9 +1,8 @@
 import axios from 'axios';
-
-const entertainmentStreamingUrl = process.env.REACT_APP_API_URL;
-const apiUrl = `${entertainmentStreamingUrl}/api/api-token-auth/`;
-
+import { getApiUrl } from "./utils";
 export const loginUser = async (credentials) => {
+
+  const apiUrl = new URL(getApiUrl("api-token-auth"));
   try {
     const response = await axios.post(apiUrl, credentials, {
       headers: {
