@@ -1,6 +1,42 @@
 import axios from "axios";
 import { getApiUrl, getHeaders } from "./utils";
 
+const timedRequest = async (axiosCall, meta = {}) => {
+  const localString = localStorage.getItem("monitoring");
+  let local = localString ? JSON.parse(localString) : {};
+  const start = performance.now();
+  try {
+    const response = await axiosCall();
+    const end = performance.now();
+
+    const duration = Math.round((end - start) / 1000);
+
+    if (duration in local) {
+      local[duration] += 1;
+    } else {
+      local[duration] = 1;
+    }
+
+    localStorage.setItem("monitoring", JSON.stringify(local));
+    console.log(`[OK] ${meta.name || "request"}: ${duration} ms`);
+    return response;
+  } catch (error) {
+    const end = performance.now();
+    const duration = Math.round((end - start) / 1000);
+
+    if (duration in local) {
+      local[duration] += 1;
+    } else {
+      local[duration] = 1;
+    }
+
+    localStorage.setItem("monitoring", JSON.stringify(local));
+    console.log(`[FAIL] ${meta.name || "request"}: ${duration} s`);
+    throw error;
+  }
+};
+
+// --- Ejemplo aplicado ---
 export const getStoreProducts = async (params, config = {}) => {
   const apiUrl = new URL(getApiUrl("store-product"));
 
@@ -10,15 +46,14 @@ export const getStoreProducts = async (params, config = {}) => {
     });
   }
 
-  try {
-    const response = await axios.get(apiUrl, {
-      headers: getHeaders(),
-      ...config
-    });
-    return response;
-  } catch (error) {
-    return error;
-  }
+  return timedRequest(
+    () =>
+      axios.get(apiUrl, {
+        headers: getHeaders(),
+        ...config,
+      }),
+    { name: "getStoreProducts" }
+  );
 };
 
 export const getProducts = async (params) => {
@@ -225,10 +260,8 @@ export const reassignProducts = async (data) => {
   }
 };
 
-
 export const getStoreProductsAsync = async () => {
   const apiUrl = new URL(getApiUrl("async-store-product"));
-
 
   try {
     const response = await axios.get(apiUrl, {
@@ -243,7 +276,6 @@ export const getStoreProductsAsync = async () => {
 export const getTaskResult = async (id) => {
   const apiUrl = new URL(getApiUrl("task-result/" + id));
 
-
   try {
     const response = await axios.get(apiUrl, {
       headers: getHeaders(),
@@ -254,11 +286,10 @@ export const getTaskResult = async (id) => {
   }
 };
 
-
-
 export const getStockOtherStores = async (code) => {
-  const apiUrl = new URL(getApiUrl("products/stock-other-stores/?code=" + code, false));
-
+  const apiUrl = new URL(
+    getApiUrl("products/stock-other-stores/?code=" + code, false)
+  );
 
   try {
     const response = await axios.get(apiUrl, {
