@@ -48,7 +48,7 @@ const CustomNavbar = () => {
         dropdown: [
           { label: "Corte de caja", href: "/corte-caja/", hidden: user.role === "seller" },
           { label: "Movimientos de caja", href: "/movimientos/", hidden: user.role === "seller" },
-          { label: "Ventas y apartados", href: "/ventas/" },
+          { label: "Ventas", href: "/ventas/" },
           { divider: true },
           { label: "Importar ventas", href: "/importar-ventas/" },
         ],
