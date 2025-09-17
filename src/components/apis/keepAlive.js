@@ -13,7 +13,7 @@ export default function useKeepAlive() {
     };
 
     pingServer(); // primer ping inmediato
-    const interval = setInterval(pingServer, 4 * 60 * 1000); // cada 4 minutos
+    const interval = setInterval(pingServer, 3 * 60 * 1000); // cada 3 minutos
 
     return () => clearInterval(interval); // cleanup al desmontar
   }, []);
