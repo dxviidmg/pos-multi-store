@@ -36,10 +36,10 @@ const TYPE_OPTIONS = [
     value: false,
     label: "Ventas",
   },
-  {
-    value: true,
-    label: "Apartados",
-  },
+//  {
+//    value: true,
+//    label: "Apartados",
+//  },
 ];
 
 const SEARCH_BY_OPTIONS = [
@@ -134,7 +134,7 @@ const SaleList = () => {
           </Alert>
         )}
 
-        <h1>Ventas y apartados</h1>
+        <h1>Ventas</h1>
         <Row>
           <Col>
             <Form.Label>Tipo</Form.Label>
