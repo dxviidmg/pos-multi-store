@@ -131,6 +131,9 @@ const SearchProduct = () => {
             : storeProduct.available_stock;
         if (quantity < stock) {
           dispatch(addToCart({ ...storeProduct, quantity: 1 }));
+          setData([])
+          setQuery('')
+  
         } else {
           displayStockLimitAlert();
         }
@@ -146,6 +149,9 @@ const SearchProduct = () => {
         dispatch(addToCart({ ...storeProduct, quantity: 1 }));
       } else if (existingProduct.quantity < stock) {
         dispatch(addToCart({ ...storeProduct, quantity: 1 }));
+        setData([])
+        setQuery('')
+
       } else if (
         movementType === "venta" &&
         existingProduct.quantity >= stock
