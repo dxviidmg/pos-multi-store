@@ -32,64 +32,109 @@ const SearchProduct = () => {
   const [barcode, setBarcode] = useState("");
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [searching, setSearching] = useState(false);
-  const [minQ, setMinQ] = useState(3);
 
-  const controllerRef = useRef(null);        // mantiene el AbortController
-  const latestFetchRef = useRef(0);      
+  const controllerRef = useRef(null); // mantiene el AbortController
 
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
 
-  const fetchData = useCallback(
-    debounce(async () => {
-      if (!query || (query.length < minQ && queryType === "q")) {
-        setData([]);
-        return;
-      }
+
+  async function fetchWithTimeout(query, queryType, maxRetries = 1) {
+    let attempts = 0;
   
-      setSearching(true);
-      const fetchId = ++latestFetchRef.current; // id único de esta búsqueda
-  
-      // cancelar petición anterior
-      if (controllerRef.current) {
-        controllerRef.current.abort();
-      }
-      controllerRef.current = new AbortController();
+    while (attempts <= maxRetries) {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3000); // ⏱️ 2 segundos
   
       try {
         const response = await getStoreProducts(
           { [queryType]: query },
-          { signal: controllerRef.current.signal }
+          { signal: controller.signal }
         );
-        const fetchedData = response.data;
   
-        // ⚠️ Solo actualizar si esta es la última búsqueda
-        if (fetchId === latestFetchRef.current) {
-          setSearching(false);
+        clearTimeout(timeoutId); // cancelar timeout si respondió a tiempo
+        return response.data;
   
-          if (queryType === "code" && fetchedData.length === 0) {
-            Swal.fire({
-              icon: "error",
-              title: "Producto no encontrado",
-              text: "No se pudo encontrar este producto mediante su código",
-              timer: 5000,
-            });
-          } else if (queryType === "code" && fetchedData.length === 1) {
-            handleSingleProductFetch(fetchedData[0]);
-          } else {
-            setData(fetchedData);
+      } catch (err) {
+        console.log(err)
+        clearTimeout(timeoutId);
+  
+        if (err.name === "CanceledError") {
+          console.warn(`Intento ${attempts + 1}: la petición se canceló por timeout`);
+          attempts++;
+  
+          if (attempts > maxRetries) {
+            console.error("❌ Se alcanzó el máximo de reintentos. Abortando.");
+            return null;
           }
+          // sigue el ciclo → reintenta
+        } else {
+          // otro error → no reintentar
+          throw err;
+        }
+      }
+    }
+    return null;
+  }
+
+  
+  const fetchData = useCallback(
+    async () => {
+      if (!query || queryType === "q") {
+        setData([]);
+        return;
+      }
+
+      setSearching(true);
+
+      // cancelar petición anterior
+
+      try {
+        const fetchedData = await fetchWithTimeout(query, queryType);
+
+        // ⚠️ Solo actualizar si esta es la última búsqueda
+        setSearching(false);
+
+        if (!fetchedData) {
+          console.log("No se pudo completar la búsqueda después de 2 intentos.");
+
+          Swal.fire({
+            icon: "error",
+            title: "Busqueda tardada",
+            text: "La busqueda tardo mas de 6 segundos. Reintentar o buscar de manera manual",
+            timer: 5000,
+          })
+
+          return;
+        }
+
+        if (fetchedData.length === 0) {
+          Swal.fire({
+            icon: "error",
+            title: "Producto no encontrado",
+            text: "No se pudo encontrar este producto mediante su código",
+            timer: 5000,
+          });
+        } else if (fetchedData.length === 1) {
+          handleSingleProductFetch(fetchedData[0]);
         }
       } catch (err) {
         if (err.name === "AbortError") return; // petición cancelada, no hacer nada
         console.error(err);
         setSearching(false);
       }
-    }, 1000), // debounce 1 segundo
+    },
     [query, queryType, movementType]
   );
 
+  const handleSearchProduct = async () => {
+    setSearching(true);
+    const response = await getStoreProducts({ [queryType]: query });
+    const fetchedData = response.data;
+    setData(fetchedData);
+    setSearching(false);
+  };
   const handleSingleProductFetch = (storeProduct) => {
     if (movementType === "venta" && storeProduct.available_stock === 0) {
       handleOpenModal(storeProduct);
@@ -131,9 +176,8 @@ const SearchProduct = () => {
             : storeProduct.available_stock;
         if (quantity < stock) {
           dispatch(addToCart({ ...storeProduct, quantity: 1 }));
-          setData([])
-          setQuery('')
-  
+          setData([]);
+          setQuery("");
         } else {
           displayStockLimitAlert();
         }
@@ -149,9 +193,8 @@ const SearchProduct = () => {
         dispatch(addToCart({ ...storeProduct, quantity: 1 }));
       } else if (existingProduct.quantity < stock) {
         dispatch(addToCart({ ...storeProduct, quantity: 1 }));
-        setData([])
-        setQuery('')
-
+        setData([]);
+        setQuery("");
       } else if (
         movementType === "venta" &&
         existingProduct.quantity >= stock
@@ -180,9 +223,6 @@ const SearchProduct = () => {
     } else {
       setData([]);
     }
-    return () => {
-      fetchData.cancel();
-    };
   }, [fetchData, query]);
 
   const handleQueryTypeChange = (e) => {
@@ -259,11 +299,6 @@ const SearchProduct = () => {
     };
   }, []);
 
-  const handleMinQChange = (e) => {
-    setMinQ(e.target.value);
-    setQuery("");
-    setData([]);
-  };
   return (
     <>
       <StockModal />
@@ -472,16 +507,11 @@ const SearchProduct = () => {
             ]}
           />
         </Col>
-        <Col>
-          <Form.Control
-            type="number"
-            value={minQ}
-            placeholder="Min Q"
-            onChange={(e) => handleMinQChange(e)}
-            min={1}
-            max={50}
-          />
-        </Col>
+        {queryType === "q" && (
+          <Col>
+            <CustomButton onClick={handleSearchProduct}>Buscar</CustomButton>
+          </Col>
+        )}
       </Row>
     </>
   );
