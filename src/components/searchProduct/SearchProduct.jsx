@@ -39,6 +39,46 @@ const SearchProduct = () => {
     inputRef.current?.focus();
   }, []);
 
+
+  async function fetchWithTimeout(query, queryType, maxRetries = 1) {
+    let attempts = 0;
+  
+    while (attempts <= maxRetries) {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3000); // ⏱️ 2 segundos
+  
+      try {
+        const response = await getStoreProducts(
+          { [queryType]: query },
+          { signal: controller.signal }
+        );
+  
+        clearTimeout(timeoutId); // cancelar timeout si respondió a tiempo
+        return response.data;
+  
+      } catch (err) {
+        console.log(err)
+        clearTimeout(timeoutId);
+  
+        if (err.name === "CanceledError") {
+          console.warn(`Intento ${attempts + 1}: la petición se canceló por timeout`);
+          attempts++;
+  
+          if (attempts > maxRetries) {
+            console.error("❌ Se alcanzó el máximo de reintentos. Abortando.");
+            return null;
+          }
+          // sigue el ciclo → reintenta
+        } else {
+          // otro error → no reintentar
+          throw err;
+        }
+      }
+    }
+    return null;
+  }
+
+  
   const fetchData = useCallback(
     async () => {
       if (!query || queryType === "q") {
@@ -51,11 +91,23 @@ const SearchProduct = () => {
       // cancelar petición anterior
 
       try {
-        const response = await getStoreProducts({ [queryType]: query });
-        const fetchedData = response.data;
+        const fetchedData = await fetchWithTimeout(query, queryType);
 
         // ⚠️ Solo actualizar si esta es la última búsqueda
         setSearching(false);
+
+        if (!fetchedData) {
+          console.log("No se pudo completar la búsqueda después de 2 intentos.");
+
+          Swal.fire({
+            icon: "error",
+            title: "Busqueda tardada",
+            text: "La busqueda tardo mas de 6 segundos. Reintentar o buscar de manera manual",
+            timer: 5000,
+          })
+
+          return;
+        }
 
         if (fetchedData.length === 0) {
           Swal.fire({
@@ -77,8 +129,6 @@ const SearchProduct = () => {
   );
 
   const handleSearchProduct = async () => {
-    console.log("hola", query);
-
     setSearching(true);
     const response = await getStoreProducts({ [queryType]: query });
     const fetchedData = response.data;
