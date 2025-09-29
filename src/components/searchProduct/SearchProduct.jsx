@@ -33,8 +33,6 @@ const SearchProduct = () => {
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [searching, setSearching] = useState(false);
 
-  const controllerRef = useRef(null); // mantiene el AbortController
-
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
@@ -42,6 +40,9 @@ const SearchProduct = () => {
 
   async function fetchWithTimeout(query, queryType, maxRetries = 1) {
     let attempts = 0;
+
+    const localString = localStorage.getItem("attempts");
+    let local = localString ? JSON.parse(localString) : {};
   
     while (attempts <= maxRetries) {
       const controller = new AbortController();
@@ -52,12 +53,14 @@ const SearchProduct = () => {
           { [queryType]: query },
           { signal: controller.signal }
         );
-  
+        
+        local[attempts+1] = (local[attempts+1] || 0) + 1;
+        localStorage.setItem("attempts", JSON.stringify(local));
         clearTimeout(timeoutId); // cancelar timeout si respondió a tiempo
         return response.data;
   
       } catch (err) {
-        console.log(err)
+        console.log('**', err)
         clearTimeout(timeoutId);
   
         if (err.name === "CanceledError") {
@@ -65,6 +68,10 @@ const SearchProduct = () => {
           attempts++;
   
           if (attempts > maxRetries) {
+
+            local['Error'] = local['Error'] || [];
+            local['Error'].push(query);  // someValue es lo que quieras añadir
+            localStorage.setItem("attempts", JSON.stringify(local));
             console.error("❌ Se alcanzó el máximo de reintentos. Abortando.");
             return null;
           }
