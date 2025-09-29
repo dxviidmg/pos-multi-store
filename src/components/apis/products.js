@@ -11,11 +11,7 @@ const timedRequest = async (axiosCall, meta = {}) => {
 
     const duration = Math.round((end - start) / 1000);
 
-    if (duration in local) {
-      local[duration] += 1;
-    } else {
-      local[duration] = 1;
-    }
+    local[duration] = (local[duration] || 0) + 1;
 
     localStorage.setItem("monitoring", JSON.stringify(local));
     console.log(`[OK] ${meta.name || "request"}: ${duration} ms`);
@@ -24,11 +20,7 @@ const timedRequest = async (axiosCall, meta = {}) => {
     const end = performance.now();
     const duration = Math.round((end - start) / 1000);
 
-    if (duration in local) {
-      local[duration] += 1;
-    } else {
-      local[duration] = 1;
-    }
+    local[duration] = (local[duration] || 0) + 1;
 
     localStorage.setItem("monitoring", JSON.stringify(local));
     console.log(`[FAIL] ${meta.name || "request"}: ${duration} s`);

@@ -249,11 +249,18 @@ const StoreList = () => {
 
     ...(!showInvestment
       ? [
+        
           {
             name: "Ganancia",
             style: alignTdStyles,
             selector: ({ cash_summary }) =>
               `$${cash_summary?.[8]["amount"]?.toLocaleString()}`,
+          },
+          {
+            name: "Vendido",
+            style: alignTdStyles,
+            selector: ({ cash_summary }) =>
+              `$${cash_summary[3]["amount"]?.toLocaleString()}`,
           },
         ]
       : []),
