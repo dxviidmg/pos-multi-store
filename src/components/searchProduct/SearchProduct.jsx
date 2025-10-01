@@ -38,17 +38,19 @@ const SearchProduct = () => {
   }, []);
 
 
-  async function fetchWithTimeout(query, queryType, maxRetries = 1) {
+  async function fetchWithTimeout(query, queryType, maxRetries = 2) {
     let attempts = 0;
 
     const localString = localStorage.getItem("attempts");
     let local = localString ? JSON.parse(localString) : {};
-  
+    const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+
     while (attempts <= maxRetries) {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 3000); // ⏱️ 2 segundos
-  
+
       try {
+        
         const response = await getStoreProducts(
           { [queryType]: query },
           { signal: controller.signal }
@@ -65,6 +67,7 @@ const SearchProduct = () => {
   
         if (err.name === "CanceledError") {
           console.warn(`Intento ${attempts + 1}: la petición se canceló por timeout`);
+          await delay(1000);
           attempts++;
   
           if (attempts > maxRetries) {
