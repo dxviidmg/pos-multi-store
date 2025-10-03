@@ -109,7 +109,7 @@ export const addProducts = async (data) => {
 };
 
 export const getStoreProductLogs = async (params) => {
-  const apiUrl = new URL(getApiUrl("store-product-logs"));
+  const apiUrl = new URL(getApiUrl("store-product-log"));
 
   if (params) {
     Object.entries(params).forEach(([key, value]) => {
@@ -128,7 +128,7 @@ export const getStoreProductLogs = async (params) => {
 };
 
 export const getStoreProductLogsChoices = async () => {
-  const apiUrl = new URL(getApiUrl("store-product-logs/choices"));
+  const apiUrl = new URL(getApiUrl("store-product-log/choices"));
 
   try {
     const response = await axios.get(apiUrl, {
