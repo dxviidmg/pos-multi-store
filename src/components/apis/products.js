@@ -109,7 +109,7 @@ export const addProducts = async (data) => {
 };
 
 export const getStoreProductLogs = async (params) => {
-  const apiUrl = new URL(getApiUrl("store-product-log"));
+  const apiUrl = new URL(getApiUrl("store-product-logs"));
 
   if (params) {
     Object.entries(params).forEach(([key, value]) => {
