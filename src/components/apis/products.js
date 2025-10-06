@@ -128,7 +128,7 @@ export const getStoreProductLogs = async (params) => {
 };
 
 export const getStoreProductLogsChoices = async () => {
-  const apiUrl = new URL(getApiUrl("store-product-log/choices"));
+  const apiUrl = new URL(getApiUrl("store-product-logs/choices"));
 
   try {
     const response = await axios.get(apiUrl, {
