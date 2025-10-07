@@ -164,6 +164,7 @@ const PaymentModal = () => {
   };
 
   const handleCreateSale = async (printTicket = false) => {
+    if (isLoading) return; // Previene reenvío
     setIsLoading(true)
     if (
       movementType === "venta" &&
