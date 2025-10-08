@@ -8,6 +8,7 @@ import { getFormattedDateTime } from "../utils/utils";
 import Swal from "sweetalert2";
 import CustomButton from "../commons/customButton/CustomButton";
 import { hideLogsModal } from "../redux/logsModal/LogsModalActions";
+import { chooseIcon } from "../commons/icons/Icons";
 
 const INITIAL_FORM_DATA = {};
 
@@ -153,16 +154,20 @@ const StoreProductLogsModal = ({ onUpdateStoreProductList }) => {
                 wrap: true,
               },
               {
-                name: "Stock anterior",
+                name: "S. anterior",
                 selector: (row) => row.previous_stock,
               },
               {
-                name: "Stock actualizado",
+                name: "S. actualizado",
                 selector: (row) => row.updated_stock,
               },
               {
-                name: "Conteo(E/S)",
+                name: "Dif",
                 selector: (row) => row.difference,
+              },
+              {
+                name: "Const",
+                selector: (row) => chooseIcon(row.is_consistent),
               },
               {
                 name: "Hecho por",
