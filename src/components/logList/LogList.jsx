@@ -13,6 +13,7 @@ import {
 import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
 import { getBrands } from "../apis/brands";
 import CustomButton from "../commons/customButton/CustomButton";
+import { chooseIcon } from "../commons/icons/Icons";
 
 const LogList = () => {
   const today = getFormattedDate();
@@ -177,6 +178,10 @@ const LogList = () => {
               name: "S. nuevo",
               selector: (row) => row.updated_stock,
             },
+            {
+              name: "Es constente",
+              selector: (row) => chooseIcon(row.is_consistent),
+            }
           ]}
         />
       </div>
