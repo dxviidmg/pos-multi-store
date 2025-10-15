@@ -17,7 +17,7 @@ const CashFlowModal = ({ onUpdateCashFlowList }) => {
   });
 
   const [options, setOptions] = useState([])
-
+  const [loading, setLoading] = useState(false)
   useEffect(() => {
     const fetchData = async () => {
       const response = await getCashFlowChoices();
@@ -44,6 +44,8 @@ const CashFlowModal = ({ onUpdateCashFlowList }) => {
   };
 
   const handleBrandSubmit = async () => {
+    if (loading) return;
+    setLoading(true)
     let response;
     if (formData.id) {
 //      response = await updateBrand(formData);
@@ -55,6 +57,7 @@ const CashFlowModal = ({ onUpdateCashFlowList }) => {
     if (response.status === 200) {
       dispatch(hideCashFlowModal());
       setFormData({});
+      setLoading(false)
       Swal.fire({
         icon: "success",
         title: "Mov actualizada",
@@ -62,6 +65,7 @@ const CashFlowModal = ({ onUpdateCashFlowList }) => {
       });
     } else if (response.status === 201) {
       dispatch(hideCashFlowModal());
+      setLoading(false)
       setFormData({});
       Swal.fire({
         icon: "success",
