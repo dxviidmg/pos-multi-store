@@ -72,6 +72,13 @@ const CustomNavbar = () => {
           { label: "Importar Productos", href: "/importar-productos/" },
         ],
       },
+      {
+        label: "Dashboard",
+        dropdown: [
+          { label: "General", href: "/dashboard/" },
+          { label: "Auditoria", href: "/tablero-auditoria/" },
+        ],
+      },
       { label: "Clientes", href: "/clientes/" },
       ...(user.sellers > 0 ? [{ label: "Vendedores", href: "/vendedores/" }] : []),
       { label: "Mensualidades", href: "/pagos/" },
