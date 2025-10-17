@@ -166,14 +166,14 @@ const StoreProductLogsModal = ({ onUpdateStoreProductList }) => {
                 selector: (row) => row.difference,
               },
               {
-                name: "Const",
-                selector: (row) => chooseIcon(row.is_consistent),
-              },
-              {
                 name: "Hecho por",
                 selector: (row) => row.user_username,
                 grow: 3,
                 wrap: true,
+              },
+              {
+                name: "OK",
+                selector: (row) => chooseIcon(row.is_consistent),
               },
             ]}
           />

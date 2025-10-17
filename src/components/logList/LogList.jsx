@@ -179,7 +179,7 @@ const LogList = () => {
               selector: (row) => row.updated_stock,
             },
             {
-              name: "Es constente",
+              name: "OK",
               selector: (row) => chooseIcon(row.is_consistent),
             }
           ]}

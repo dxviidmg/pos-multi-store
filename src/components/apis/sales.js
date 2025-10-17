@@ -113,3 +113,17 @@ export const updateSale = async (data) => {
     return error;
   }
 };
+
+
+export const getSalesAsync = async () => {
+  const apiUrl = new URL(getApiUrl("async-sale"));
+
+  try {
+    const response = await axios.get(apiUrl, {
+      headers: getHeaders(),
+    });
+    return response;
+  } catch (error) {
+    return error;
+  }
+};

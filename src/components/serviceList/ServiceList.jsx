@@ -33,7 +33,6 @@ const SERVICES = [
 
 const ServiceList = () => {
   return (
-    <>
       <div className="custom-section">
         <h1>Estimado cliente.</h1>
 
@@ -63,7 +62,6 @@ const ServiceList = () => {
           ]}
         />
       </div>
-    </>
   );
 };
 

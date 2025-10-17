@@ -25,6 +25,7 @@ import StoreProductImport from "./components/storeProductImport/StoreProductImpo
 import ServiceList from "./components/serviceList/ServiceList";
 import ProductReassign from "./components/productReassign/ProductReassign";
 import useKeepAlive from "./components/apis/keepAlive";
+import AuditDashboard from "./components/auditDashboard/AuditDashboard";
 
 function App() {
 
@@ -70,7 +71,8 @@ function App() {
             <Route path="/logs/" element={<LogList />} />
             <Route path="/pagos/" element={<TenantPaymentList />} />
             <Route path="/vendedores/" element={<SellerList />} />
-            <Route path="/servicios/" element={<ServiceList />} />            
+            <Route path="/servicios/" element={<ServiceList />} />
+            <Route path="/tablero-auditoria/" element={<AuditDashboard />} />            
             {user.store_id ? (<Route path="/*" element={<SaleCreate />} />): (<Route path="/*" element={<StoreList />} />)}
           </>
         ) : (
