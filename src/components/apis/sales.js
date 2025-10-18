@@ -115,9 +115,15 @@ export const updateSale = async (data) => {
 };
 
 
-export const getSalesAsync = async () => {
+export const getSalesAsync = async (params) => {
   const apiUrl = new URL(getApiUrl("async-sale"));
 
+  if (params) {
+    Object.entries(params).forEach(([key, value]) => {
+      apiUrl.searchParams.append(key, value);
+    });
+  }
+  
   try {
     const response = await axios.get(apiUrl, {
       headers: getHeaders(),
