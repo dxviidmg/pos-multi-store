@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import customTable from "../commons/customTable/customTable";
-import { Row, Col, Form } from "react-bootstrap";
+import { Row, Col, Form, ProgressBar } from "react-bootstrap";
 import { getFormattedDate } from "../utils/utils";
 import { getSales, getSalesAsync } from "../apis/sales";
 import { getTaskResult } from "../apis/products";
@@ -9,12 +9,12 @@ import { getTaskResult } from "../apis/products";
 const AuditDashboard = () => {
 
     const today = getFormattedDate();
-    const [sales, setSales] = useState([])
     const [taskId, setTaskId] = useState()
     const [params, setParams] = useState({
       end_date: today,
       start_date: today,
     });
+    const [progress, setProgress] = useState(0)
 
 
     useEffect(() => {
@@ -34,11 +34,15 @@ const AuditDashboard = () => {
         if (!taskId) return;
         const interval = setInterval(async () => {
           const response = await getTaskResult(taskId);
+          console.log(response.data)
           if (response.data.result !== null) {
-            setSales(response.data.result);
+
             clearInterval(interval);
           }
-        }, 2000); // cada 2 segundos
+          else{
+            setProgress(response.data.info.percent)
+          }
+        }, 3000); // cada 2 segundos
       
         return () => clearInterval(interval);
       }, [taskId]);
@@ -83,7 +87,7 @@ const AuditDashboard = () => {
             </Form>
           </Col>
 
-        <Col>Ventas duplicadas</Col>
+        <Col>Ventas duplicadas <ProgressBar animated now={progress} /></Col>
         <Col>Logs duplicados</Col>
         <Col>Logs inconsistentes</Col>
         <Col>Almacen inconsistente</Col>
