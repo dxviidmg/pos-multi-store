@@ -76,15 +76,18 @@ const AuditDashboard = () => {
         <Col>
           {" "}
           <AuditDashboardData
-            title={"Logs duplicados"}
+            title={"Logs duplicados o inconsistentes"}
             taskId={tasks?.task2}
           ></AuditDashboardData>
         </Col>
+
         <Col>
           {" "}
+          <AuditDashboardData
+            title={"Stock vs ultimo log"}
+            taskId={tasks?.task3}
+          ></AuditDashboardData>
         </Col>
-        <Col>Logs inconsistentes</Col>
-        <Col>Almacen inconsistente</Col>
       </Row>
     </div>
   );
