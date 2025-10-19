@@ -1,39 +1,46 @@
 import React, { useEffect, useState } from "react";
 import { Row, Col, Form } from "react-bootstrap";
 import { getFormattedDate } from "../utils/utils";
-import { getSalesAsync } from "../apis/sales";
 import AuditDashboardData from "./AuditDashboardData";
+import CustomButton from "../commons/customButton/CustomButton";
+import { getAudit } from "../apis/audit";
 
 const AuditDashboard = () => {
   const today = getFormattedDate();
-  const [taskId, setTaskId] = useState();
+  const [tasks, setTasks] = useState({});
   const [params, setParams] = useState({
     end_date: today,
     start_date: today,
   });
 
-  useEffect(() => {
-    const fetchSalesData = async () => {
-      const salesResponse = await getSalesAsync(params);
 
-      setTaskId(salesResponse.data.task_id);
-    };
+  const fetchSalesData = async () => {
+    const salesResponse = await getAudit(params);
+
+    setTasks(salesResponse.data);
+  };
+
+  useEffect(() => {
+
 
     fetchSalesData();
-  }, [params]);
+  }, []);
 
   const handleParams = async (e) => {
     let { name, value } = e.target;
     setParams((prevData) => ({ ...prevData, [name]: value }));
   };
 
+  const handleSubmit = () => {
+    fetchSalesData()
+  }
   return (
     <div className="custom-section">
       <h1>Tablero de auditoria</h1>
 
       <Row>
         {" "}
-        <Col md={6}>
+        <Col md={4}>
           {" "}
           <Form>
             <Form.Label>Fecha de inicio</Form.Label>
@@ -46,7 +53,7 @@ const AuditDashboard = () => {
             />
           </Form>
         </Col>
-        <Col md={6}>
+        <Col md={4}>
           {" "}
           <Form>
             <Form.Label>Fecha de fin</Form.Label>
@@ -59,17 +66,25 @@ const AuditDashboard = () => {
             />
           </Form>
         </Col>
+        <Col md={4} className="d-flex flex-column justify-content-end"><CustomButton fullWidth onClick={()=>(handleSubmit())}>Buscar</CustomButton></Col>
         <Col>
           <AuditDashboardData
             title={"Ventas duplicadas"}
-            taskId={taskId}
+            taskId={tasks?.task1}
           ></AuditDashboardData>
         </Col>
         <Col>
           {" "}
           <AuditDashboardData
-            title={"Logs duplicados ejemplo"}
-            taskId={taskId}
+            title={"Logs duplicados"}
+            taskId={tasks?.task2}
+          ></AuditDashboardData>
+        </Col>
+        <Col>
+          {" "}
+          <AuditDashboardData
+            title={"Logs duplicados"}
+            taskId={tasks?.task3}
           ></AuditDashboardData>
         </Col>
         <Col>Logs inconsistentes</Col>
