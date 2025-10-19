@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import { ProgressBar } from "react-bootstrap";
 import { getTaskResult } from "../apis/products";
 
-const POLL_INTERVAL = 3000; // ms
+const POLL_INTERVAL = 5000; // ms
 
-const AuditDashboardData = ({ title, taskId }) => {
+const AuditDashboardData = ({ title, taskId, name }) => {
   const [data, setData] = useState([]);
   const [info, setInfo] = useState({ total: "por definir", progress: 0 });
 
@@ -22,7 +22,7 @@ const AuditDashboardData = ({ title, taskId }) => {
 
           setInfo(prev => ({
             ...prev,
-            total: result.length === 0 ? 0 : prev.total,
+            total: prev.total,
             progress: 100,
           }));
         } else {
