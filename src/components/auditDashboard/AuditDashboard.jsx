@@ -20,11 +20,11 @@ const AuditDashboard = () => {
     setTasks(salesResponse.data);
   };
 
-  useEffect(() => {
+//  useEffect(() => {
 
 
-    fetchSalesData();
-  }, []);
+//    fetchSalesData();
+//  }, []);
 
   const handleParams = async (e) => {
     let { name, value } = e.target;
@@ -82,10 +82,6 @@ const AuditDashboard = () => {
         </Col>
         <Col>
           {" "}
-          <AuditDashboardData
-            title={"Logs duplicados"}
-            taskId={tasks?.task3}
-          ></AuditDashboardData>
         </Col>
         <Col>Logs inconsistentes</Col>
         <Col>Almacen inconsistente</Col>
