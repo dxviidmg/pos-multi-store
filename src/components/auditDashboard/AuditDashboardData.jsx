@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { ProgressBar } from "react-bootstrap";
 import { getTaskResult } from "../apis/products";
 
-const POLL_INTERVAL = 5000; // ms
+const POLL_INTERVAL = 10000; // ms
 
 const AuditDashboardData = ({ title, taskId, name }) => {
   const [data, setData] = useState([]);
