@@ -13,10 +13,10 @@ const AuditDashboardData = ({ title, taskId, pollInterval=5000 }) => {
     const fetchTask = async () => {
       try {
         const { data: taskData } = await getTaskResult(taskId);
-        const { result, info: taskInfo } = taskData;
+        const { result, info: taskInfo, status } = taskData;
   
-        if (result !== null) {
-          setData(result);
+        if (status === "SUCCESS") {
+          setData(result || []);
           setInfo(prev => ({ ...prev, total: prev.total, progress: 100 }));
           return true; // tarea completada
         } else {
