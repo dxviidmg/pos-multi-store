@@ -2,42 +2,44 @@ import React, { useEffect, useState } from "react";
 import { ProgressBar } from "react-bootstrap";
 import { getTaskResult } from "../apis/products";
 
-const POLL_INTERVAL = 7500; // ms
 
-const AuditDashboardData = ({ title, taskId, name }) => {
+const AuditDashboardData = ({ title, taskId, pollInterval=5000 }) => {
   const [data, setData] = useState([]);
   const [info, setInfo] = useState({ total: "por definir", progress: 0 });
 
   useEffect(() => {
     if (!taskId) return;
-
-    const interval = setInterval(async () => {
+  
+    const fetchTask = async () => {
       try {
         const { data: taskData } = await getTaskResult(taskId);
         const { result, info: taskInfo } = taskData;
-
+  
         if (result !== null) {
           setData(result);
-          clearInterval(interval);
-
-          setInfo(prev => ({
-            ...prev,
-            total: prev.total,
-            progress: 100,
-          }));
+          setInfo(prev => ({ ...prev, total: prev.total, progress: 100 }));
+          return true; // tarea completada
         } else {
-          setInfo({
-            total: taskInfo.total,
-            progress: taskInfo.percent,
-          });
+          setInfo({ total: taskInfo.total, progress: taskInfo.percent });
+          return false; // tarea no completada
         }
       } catch (error) {
         console.error("Error fetching task result:", error);
-        clearInterval(interval);
+        return true; // parar en caso de error
       }
-    }, POLL_INTERVAL);
-
-    return () => clearInterval(interval);
+    };
+  
+    let intervalId;
+  
+    // Llamada inmediata
+    fetchTask().then(finished => {
+      if (!finished) {
+        // luego iniciar polling
+        intervalId = setInterval(fetchTask, pollInterval);
+      }
+    });
+  
+    return () => clearInterval(intervalId);
   }, [taskId]);
 
   const isComplete = info.progress === 100;
