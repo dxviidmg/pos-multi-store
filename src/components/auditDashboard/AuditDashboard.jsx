@@ -106,31 +106,31 @@ const AuditDashboard = () => {
           </Col>
           <Col lg={3} md={3} className="d-flex flex-column justify-content-end">
             <CustomButton fullWidth onClick={() => handleSubmit()}>
-              Buscar ventas y logs
+              Analizar ventas y logs
             </CustomButton>
           </Col>
           <Col lg={3} md={3} className="d-flex flex-column justify-content-end">
             <CustomButton fullWidth onClick={() => handleSubmit2()}>
-              Buscar stock
+              Analizar stock
             </CustomButton>
           </Col>
           <Col lg={4}>
             <AuditDashboardData
-              title={"Ventas duplicadas"}
+              title={"Ventas repetidas"}
               taskId={tasks?.task1}
             ></AuditDashboardData>
           </Col>
           <Col lg={4}>
             {" "}
             <AuditDashboardData
-              title={"Logs duplicados o inconsistentes"}
+              title={"Logs repetidos o inconsistentes"}
               taskId={tasks?.task2}
             ></AuditDashboardData>
           </Col>
           <Col lg={4}>
             {" "}
             <AuditDashboardData
-              title={"Stock vs ultimo log"}
+              title={"Stock y ultimo log"}
               taskId={tasks?.task3}
               pollInterval={30000}
             ></AuditDashboardData>
