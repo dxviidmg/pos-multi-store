@@ -18,6 +18,7 @@ const AuditDashboardData = ({ title, taskId, pollInterval=5000 }) => {
         if (status === "SUCCESS") {
           setData(result || []);
           setInfo(prev => ({ ...prev, total: prev.total, progress: 100 }));
+          clearInterval(intervalId)
           return true; // tarea completada
         } else {
           console.log('aun sigo')
@@ -26,6 +27,7 @@ const AuditDashboardData = ({ title, taskId, pollInterval=5000 }) => {
         }
       } catch (error) {
         console.error("Error fetching task result:", error);
+        clearInterval(intervalId)
         return true; // parar en caso de error
       }
     };
