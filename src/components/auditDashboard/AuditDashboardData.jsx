@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { ProgressBar } from "react-bootstrap";
 import { getTaskResult } from "../apis/products";
+import CustomButton from "../commons/customButton/CustomButton";
+import { exportToExcel } from "../utils/utils";
 
 
 const AuditDashboardData = ({ title, taskId, pollInterval=5000 }) => {
@@ -12,6 +14,7 @@ const AuditDashboardData = ({ title, taskId, pollInterval=5000 }) => {
   
     const fetchTask = async () => {
       try {
+        setData([])
         const { data: taskData } = await getTaskResult(taskId);
         const { result, info: taskInfo, status } = taskData;
   
@@ -47,6 +50,11 @@ const AuditDashboardData = ({ title, taskId, pollInterval=5000 }) => {
 
   const isComplete = info.progress === 100;
 
+  const handleDownload = () => {
+    exportToExcel(data, title, false)
+  };
+
+
   return (
     <div className={`text-center custom-section2 ${
       info.progress !== 100
@@ -65,6 +73,7 @@ const AuditDashboardData = ({ title, taskId, pollInterval=5000 }) => {
         label={`${info.progress}%`}
         variant={isComplete ? "success" : undefined}
       />
+      <CustomButton fullWidth disabled={!data || data.length === 0} onClick={handleDownload}>Descargar</CustomButton>
     </div>
   );
 };
