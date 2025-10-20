@@ -245,6 +245,7 @@ const StoreProductList = () => {
           {
             name: "Stock",
             selector: (row) => row.stock,
+            sort: true
           },
           {
             name: "Acciones",
