@@ -44,7 +44,11 @@ const AuditDashboardData = ({ title, taskId, name }) => {
 
   return (
     <div className={`text-center custom-section2 ${
-      info.progress === 100 ? "bg-success bg-opacity-75" : data.length > 0 ? "bg-danger bg-opacity-75" : "bg-primary bg-opacity-75"
+      info.progress !== 100
+        ? "bg-primary bg-opacity-75"
+        : data.length === 0
+          ? "bg-success bg-opacity-75"
+          : "bg-danger bg-opacity-75"
     }`}>
       <h2 className="pt-3 pb-0 m-0">{title}</h2>
       <span className="fs-1">{data.length}</span>

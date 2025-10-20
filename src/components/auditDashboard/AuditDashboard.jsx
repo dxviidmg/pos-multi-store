@@ -4,6 +4,7 @@ import { getFormattedDate } from "../utils/utils";
 import AuditDashboardData from "./AuditDashboardData";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getAudit } from "../apis/audit";
+import { getStores } from "../apis/stores";
 
 const AuditDashboard = () => {
   const today = getFormattedDate();
@@ -12,7 +13,17 @@ const AuditDashboard = () => {
     end_date: today,
     start_date: today,
   });
+  const [stores, setStores] = useState([])
 
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await getStores();
+      setStores(response.data);
+    };
+
+    fetchData();
+  }, []);
 
   const fetchSalesData = async () => {
     const salesResponse = await getAudit(params);
@@ -40,7 +51,24 @@ const AuditDashboard = () => {
 
       <Row>
         {" "}
-        <Col md={4}>
+        <Col md={3}>
+          {" "}
+          <Form.Label>Tienda o Almacen</Form.Label>
+          <Form.Select
+            value={params.store_id}
+            onChange={(e) => handleParams(e)}
+            name="store_id"
+            //              disabled={isLoading}
+          >
+            <option value="">Todas las tiendas y almacenes</option>
+            {stores.map((store) => (
+              <option key={store.id} value={store.id}>
+                {store.full_name}
+              </option>
+            ))}
+          </Form.Select>
+        </Col>
+        <Col md={3}>
           {" "}
           <Form>
             <Form.Label>Fecha de inicio</Form.Label>
@@ -53,7 +81,7 @@ const AuditDashboard = () => {
             />
           </Form>
         </Col>
-        <Col md={4}>
+        <Col md={3}>
           {" "}
           <Form>
             <Form.Label>Fecha de fin</Form.Label>
@@ -66,7 +94,7 @@ const AuditDashboard = () => {
             />
           </Form>
         </Col>
-        <Col md={4} className="d-flex flex-column justify-content-end"><CustomButton fullWidth onClick={()=>(handleSubmit())}>Buscar</CustomButton></Col>
+        <Col md={3} className="d-flex flex-column justify-content-end"><CustomButton fullWidth onClick={()=>(handleSubmit())}>Buscar</CustomButton></Col>
         <Col>
           <AuditDashboardData
             title={"Ventas duplicadas"}
