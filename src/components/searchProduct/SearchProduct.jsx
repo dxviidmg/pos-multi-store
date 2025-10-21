@@ -243,7 +243,6 @@ const SearchProduct = () => {
 
   const handleMovementTypeChange = (e) => {
     dispatch(updateMovementType(e.target.value));
-
     setData([]);
   };
 

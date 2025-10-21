@@ -31,6 +31,7 @@ const Cart = () => {
   const dispatch = useDispatch();
   const [stores, setStores] = useState([]);
   const [selectedStore, setSelectedStore] = useState("");
+  const [confirmedStore, setConfirmedStore] = useState("");
   const [loading, setLoading] = useState(false);
   const user = getUserData();
 
@@ -48,6 +49,10 @@ const Cart = () => {
 
   const handleSelectChange = (event) => {
     setSelectedStore(event.target.value);
+  };
+
+  const handleSelectChange2 = (event) => {
+    setConfirmedStore(event.target.value);
   };
 
   useEffect(() => {
@@ -467,13 +472,26 @@ const Cart = () => {
             {(movementType === "traspaso" ||
               movementType === "distribucion") && (
               <>
-                <Col md={6}></Col>
+                <Col md={3}><h1>Productos: {totalProducts}</h1></Col>
                 <Col md={3}>
                   <Form.Select
                     value={selectedStore}
                     onChange={handleSelectChange}
                   >
-                    <option value="">Selecciona destino</option>
+                    <option value="">Selecciona un destino</option>
+                    {stores.map((store) => (
+                      <option key={store.id} value={store.id}>
+                        <b>{store.name} ({store.store_type_display})</b>
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Col>
+                <Col md={3}>
+                  <Form.Select
+                    value={confirmedStore}
+                    onChange={handleSelectChange2}
+                  >
+                    <option value="">Confirma el destino</option>
                     {stores.map((store) => (
                       <option key={store.id} value={store.id}>
                         {store.name} ({store.store_type_display})
@@ -488,7 +506,7 @@ const Cart = () => {
                         ? handleTranserFromCart(cart)
                         : handleDistributionFromCart(cart)
                     }
-                    disabled={!selectedStore}
+                    disabled={!selectedStore || selectedStore != confirmedStore}
                     fullWidth
                   >
                     {movementType === "traspaso" ? "Transferir" : "Distribuir"}
