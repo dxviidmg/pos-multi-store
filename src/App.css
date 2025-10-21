@@ -67,3 +67,7 @@ h2 {
   margin: 0rem;
   margin-top: 1rem;
 }
+
+select option {
+  font-weight: bold;
+}
