@@ -81,7 +81,7 @@ const SaleList = () => {
       setSales(salesResponse.data);
 
       salesResponse.data.forEach((sale) => {
-        if (sale.is_duplicate) {
+        if (sale.is_repeated) {
           setSalesDuplicated((prev) => [...prev, sale.id]);
         }
       });
@@ -346,14 +346,14 @@ const SaleList = () => {
                     </CustomButton>
                   )}
 
-                  {(row.is_cancelable || row.is_duplicate) && (
+                  {(row.is_cancelable || row.is_repeated) && (
                     <CustomTooltip text={"Generar devolución"}>
                       <CustomButton onClick={() => handleOpenModal(row)}>
                         <ReturnIcon></ReturnIcon>
                       </CustomButton>
                     </CustomTooltip>
                   )}
-                  {row.is_duplicate && <WarningIcon></WarningIcon>}
+                  {row.is_repeated && <WarningIcon></WarningIcon>}
 
                 </>}
 
