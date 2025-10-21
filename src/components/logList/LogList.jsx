@@ -14,12 +14,14 @@ import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
 import { getBrands } from "../apis/brands";
 import CustomButton from "../commons/customButton/CustomButton";
 import { chooseIcon } from "../commons/icons/Icons";
+import { getStores } from "../apis/stores";
 
 const LogList = () => {
   const today = getFormattedDate();
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(false);
   const [brands, setBrands] = useState([]);
+  const [stores, setStores] = useState([]);
   const [actions, setActions] = useState([]);
   const [params, setParams] = useState({ date: today });
 
@@ -30,6 +32,9 @@ const LogList = () => {
       setBrands(response.data);
       const response2 = await getStoreProductLogsChoices();
       setActions(response2.data);
+      const response3 = await getStores();
+      console.log(response3)
+      setStores(response3.data);
       setLoading(false);
     };
 
@@ -87,6 +92,9 @@ const LogList = () => {
         </CustomButton>
 
         <Row>
+
+
+
           <Col>
             <Form.Label>Fecha</Form.Label>
             <Form.Control
@@ -98,6 +106,22 @@ const LogList = () => {
             />
           </Col>
 
+          <Col>
+            <Form.Label>Tiendas o almacenes</Form.Label>
+            <Form.Select
+              value={params.store_related}
+              onChange={handleDataChange}
+              name="store_related"
+              //              disabled={isLoading}
+            >
+              <option value="">Selecciona un movimiento</option>
+              {stores.map((store) => (
+                <option key={store.id} value={store.id}>
+                  {store.full_name}
+                </option>
+              ))}
+            </Form.Select>
+          </Col>
           <Col>
             <Form.Label>Marca</Form.Label>
             <Form.Select
