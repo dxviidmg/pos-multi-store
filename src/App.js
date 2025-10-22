@@ -20,12 +20,13 @@ import TenantPaymentList from "./components/tenantPaymentList/TenantPaymentList"
 import CashFlowList from "./components/cashFlowList/CashFlowList";
 import SellerList from "./components/sellerList/SellerList";
 import { getUserData } from "./components/apis/utils";
-import DepartmentList from "./components/DepartmentList/DepartmentList";
+import DepartmentList from "./components/departmentList/DepartmentList";
 import StoreProductImport from "./components/storeProductImport/StoreProductImport";
 import ServiceList from "./components/serviceList/ServiceList";
 import ProductReassign from "./components/productReassign/ProductReassign";
 import useKeepAlive from "./components/apis/keepAlive";
 import AuditDashboard from "./components/auditDashboard/AuditDashboard";
+import Dashboard from "./components/dashboard/Dashboard";
 
 function App() {
 
@@ -72,7 +73,8 @@ function App() {
             <Route path="/pagos/" element={<TenantPaymentList />} />
             <Route path="/vendedores/" element={<SellerList />} />
             <Route path="/servicios/" element={<ServiceList />} />
-            <Route path="/tablero-auditoria/" element={<AuditDashboard />} />            
+            <Route path="/tablero-auditoria/" element={<AuditDashboard />} />
+            <Route path="/tablero/" element={<Dashboard />} />
             {user.store_id ? (<Route path="/*" element={<SaleCreate />} />): (<Route path="/*" element={<StoreList />} />)}
           </>
         ) : (
