@@ -132,7 +132,6 @@ const AuditDashboard = () => {
             <AuditDashboardData
               title={"Stock y ultimo log"}
               taskId={tasks?.task3}
-              pollInterval={30000}
             ></AuditDashboardData>
           </Col>
         </Row>
