@@ -113,3 +113,24 @@ export const updateSale = async (data) => {
     return error;
   }
 };
+
+
+
+export const getSalesDashboard = async (params) => {
+  const apiUrl = new URL(getApiUrl("sales-dashboard"));
+
+  if (params) {
+    Object.entries(params).forEach(([key, value]) => {
+      apiUrl.searchParams.append(key, value);
+    });
+  }
+  
+  try {
+    const response = await axios.get(apiUrl, {
+      headers: getHeaders(),
+    });
+    return response;
+  } catch (error) {
+    return error;
+  }
+};

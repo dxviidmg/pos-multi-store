@@ -55,6 +55,7 @@ const StoreList = () => {
 
   const handleStoreType = (e) => {
     setParams((prev) => ({ ...prev, store_type: e.target.value }));
+    setShowInvestment(false);
   };
 
   useEffect(() => {
@@ -286,8 +287,6 @@ const StoreList = () => {
       name: "Nombre",
       selector: ({ name }) => `${name}`,
     },
-
-    ...(!showInvestment ? [{ grow: 9 }] : []),
     ...(showInvestment
       ? [
           {
@@ -401,34 +400,47 @@ const StoreList = () => {
           </div>
         )}
 
-        <h1>
-          {params.store_type === "T" ? "Tiendas" : "Almacenes"} (
-          {tenantInfo.product_count} productos registrados)
-        </h1>
+        <h1>{params.store_type === "T" ? "Tiendas" : "Almacenes"}</h1>
 
-        <Form.Label className="me-3">Ver</Form.Label>
-        <Form.Check
-          inline
-          id="tiendas"
-          label="Tiendas"
-          type="radio"
-          onChange={handleStoreType}
-          value="T"
-          checked={params.store_type === "T"}
-        />
+        <Row>
+          <Col>
+            {" "}
+            <Form.Label className="me-3">Ver</Form.Label>
+            <Form.Check
+              inline
+              id="tiendas"
+              label="Tiendas"
+              type="radio"
+              onChange={handleStoreType}
+              value="T"
+              checked={params.store_type === "T"}
+            />
+            <Form.Check
+              inline
+              id="tiendas"
+              label="Almacenes"
+              type="radio"
+              onChange={handleStoreType}
+              value="A"
+              checked={params.store_type === "A"}
+            />
+          </Col>
 
-        <Form.Check
-          inline
-          id="tiendas"
-          label="Almacenes"
-          type="radio"
-          onChange={handleStoreType}
-          value="A"
-          checked={params.store_type === "A"}
-        />
+          <Col className="text-center">
+            <b> {tenantInfo.product_count} productos registrados</b>
+          </Col>
+
+          <Col>
+            <CustomButton fullWidth onClick={handleShowInvestment}>
+              Ver inversión
+            </CustomButton>
+          </Col>
+
+
+        </Row>
 
         {params.store_type === "T" ? (
-          <Form className="pt-2">
+          <Form className="pb-2">
             <Row>
               <Col>
                 <Form.Group controlId="start_date">
@@ -485,12 +497,6 @@ const StoreList = () => {
                     ))}
                   </Form.Select>
                 </Form.Group>
-              </Col>
-
-              <Col className="d-flex align-items-end">
-                <CustomButton fullWidth onClick={handleShowInvestment}>
-                  Ver inversión
-                </CustomButton>
               </Col>
             </Row>
           </Form>

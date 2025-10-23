@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
 import {
   getStoreProducts,
-  getStoreProductsAsync,
-  getTaskResult,
 } from "../apis/products";
 import { Col, Form, Row } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
@@ -40,30 +38,6 @@ const StoreProductList = () => {
 
     fetchBrands();
   }, []); // Solo se ejecuta una vez al montar
-
-  function pollEvery3Seconds(taskId) {
-    const interval = 3000;
-
-    const intervalId = setInterval(async () => {
-      try {
-        const response = await getTaskResult(taskId); // tu llamada a la API
-        console.log("Estado de la tarea:", response.data);
-
-        if (response.data.status === "SUCCESS") {
-          setStoreProducts(response.data.result);
-          setLoading(false);
-          clearInterval(intervalId); // detenemos el polling
-        } else if (response.data.status === "FAILURE") {
-          setLoading(false);
-          clearInterval(intervalId); // también detenemos si falló
-        }
-      } catch (error) {
-        console.error("Error al consultar tarea:", error);
-        // Puedes decidir si parar el polling si hay error repetido
-        // clearInterval(intervalId);
-      }
-    }, interval);
-  }
 
   const fetchStoreProducts = async () => {
     console.log(params);
