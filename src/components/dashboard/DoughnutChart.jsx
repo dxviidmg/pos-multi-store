@@ -28,7 +28,8 @@ const DoughnutChart = ({
         backgroundColor: [
           "blue",
           "red",
-          "yellow",
+          "green",
+          "yellow"
         ],
         hoverOffset: 4,
       },
