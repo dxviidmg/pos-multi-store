@@ -1,36 +1,39 @@
 import React, { useEffect, useState } from "react";
-import { ProgressBar } from "react-bootstrap";
 import { getTaskResult } from "../apis/products";
-import CustomButton from "../commons/customButton/CustomButton";
-import { exportToExcel } from "../utils/utils";
-
-
 
 import {
   Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
   Tooltip,
   Legend,
+  ArcElement,
 } from "chart.js";
-import { Line } from "react-chartjs-2";
+import { Doughnut } from "react-chartjs-2";
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+ChartJS.register(ArcElement, Tooltip, Legend);
 
-const LineChart = ({ title, taskId, labels, xText, yText, pollInterval = 5000 }) => {
-  const [datasets, setDatasets] = useState([]);
-  const [info, setInfo] = useState({ total: "por definir", progress: 0 });
-
-
+const DoughnutChart = ({
+  title,
+  taskId,
+  pollInterval = 5000,
+}) => {
+  const [labels, setLabels] = useState([]);
+  const [d, setD] = useState([]);
 
   const data = {
     labels: labels,
-    datasets: datasets,
+    datasets: [
+      {
+        label: title,
+        data: d,
+        backgroundColor: [
+          "blue",
+          "red",
+          "black",
+        ],
+        hoverOffset: 4,
+      },
+    ],
   };
-
 
   const options = {
     responsive: true,
@@ -47,41 +50,26 @@ const LineChart = ({ title, taskId, labels, xText, yText, pollInterval = 5000 })
         text: title,
       },
     },
-    scales: {
-      y: {
-        beginAtZero: true,
-        title: {
-          display: true,
-          text: yText,
-        },
-      },
-      x: {
-        title: {
-          display: true,
-          text: xText,
-        },
-      },
-    },
   };
 
-  
   useEffect(() => {
     if (!taskId) return;
 
     const fetchTask = async () => {
       try {
-  //      setData([]);
+        //      setData([]);
         const { data: taskData } = await getTaskResult(taskId);
         const { result, info: taskInfo, status } = taskData;
 
         if (status === "SUCCESS") {
-          setDatasets(result || []);
-          setInfo((prev) => ({ ...prev, total: prev.total, progress: 100 }));
+          console.log(data);
+          const labels2 = Object.keys(result).map((code) => code);
+          const values = Object.values(result);
+          setLabels(labels2);
+          setD(values);
           clearInterval(intervalId);
           return true; // tarea completada
         } else {
-          console.log("aun sigo");
-          setInfo({ total: taskInfo.total, progress: taskInfo.percent });
           return false; // tarea no completada
         }
       } catch (error) {
@@ -104,19 +92,11 @@ const LineChart = ({ title, taskId, labels, xText, yText, pollInterval = 5000 })
     return () => clearInterval(intervalId);
   }, [taskId]);
 
-  const isComplete = info.progress === 100;
-
-  const handleDownload = () => {
-    exportToExcel(data, title, false);
-  };
-
   return (
     <div>
-
-<Line data={data} options={options} />
-
+      <Doughnut data={data} options={options} />
     </div>
   );
 };
 
-export default LineChart;
+export default DoughnutChart;
