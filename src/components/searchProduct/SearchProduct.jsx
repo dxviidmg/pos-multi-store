@@ -5,7 +5,6 @@ import CustomButton from "../commons/customButton/CustomButton";
 import { getStoreProducts } from "../apis/products";
 import { addToCart, updateMovementType } from "../redux/cart/cartActions";
 import { Badge, Col, Form, Row } from "react-bootstrap";
-import { debounce } from "lodash";
 import StockModal from "../stockModal/StockModal";
 import {
   hideStockModal,

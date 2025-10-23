@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { Alert } from "react-bootstrap";
+import { Alert, Col, Form, Row } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getInvestment, getStores } from "../apis/stores";
 import { useNavigate } from "react-router-dom";
@@ -9,10 +9,8 @@ import { getDateDifference, getFormattedDate } from "../utils/utils";
 import { getTenantInfo } from "../apis/tenants";
 import { chooseIcon, HomeIcon, PrinterIcon } from "../commons/icons/Icons";
 import { getDepartments } from "../apis/departments";
-import FormFilters from "./FormFilters";
 import { getStorage, setStorage } from "../utils/storage";
 import CustomTooltip from "../commons/Tooltip";
-import { getTaskResult } from "../apis/products";
 
 const StoreList = () => {
   const navigate = useNavigate();
@@ -20,13 +18,13 @@ const StoreList = () => {
 
   const [loading, setLoading] = useState(false);
   const [stores, setStores] = useState([]);
-  const [storages, setStorages] = useState([]);
   const [tenantInfo, setTenantInfo] = useState([]);
   const [showInvestment, setShowInvestment] = useState(false);
   const [departments, setDepartments] = useState([]);
   const [params, setParams] = useState({
     end_date: today,
     start_date: today,
+    store_type: "T",
   });
   const [range, setRange] = useState("");
 
@@ -55,9 +53,14 @@ const StoreList = () => {
     setParams((prevData) => ({ ...prevData, [name]: value }));
   };
 
+  const handleStoreType = (e) => {
+    setParams((prev) => ({ ...prev, store_type: e.target.value }));
+    setShowInvestment(false);
+  };
+
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true);
+      //      setLoading(true);
       const response = await getTenantInfo();
       setTenantInfo(response.data);
 
@@ -71,11 +74,9 @@ const StoreList = () => {
         cash: "Calculando...",
         investment: "Calculando...",
       });
-      const response2 = await getStores({ ...params, store_type: "T" });
-      const response3 = await getStores({ ...params, store_type: "A" });
+      const response2 = await getStores({ ...params });
 
       setStores(response2.data);
-      setStorages(response3.data);
 
       const {
         profit,
@@ -145,72 +146,10 @@ const StoreList = () => {
     window.location.reload();
   };
 
-  function pollEvery3Seconds(taskId) {
-    const interval = 3000;
-
-    const intervalId = setInterval(async () => {
-      try {
-        const response = await getTaskResult(taskId); // tu llamada a la API
-        console.log("Estado de la tarea:", response.data);
-
-        if (response.data.status === "SUCCESS") {
-          //          setStoreProducts(response.data.result);
-
-          setStores((prevData) =>
-            prevData.map((store) => {
-              console.log(response.data.result);
-              const matchingInvestment = response.data.result.find(
-                (investment) => investment.store === store.id
-              );
-              return matchingInvestment
-                ? { ...store, investment: matchingInvestment.investment }
-                : store;
-            })
-          );
-
-          setStorages((prevData) =>
-            prevData.map((storage) => {
-              console.log(response.data.result);
-              const matchingInvestment = response.data.result.find(
-                (investment) => investment.store === storage.id
-              );
-              return matchingInvestment
-                ? { ...storage, investment: matchingInvestment.investment }
-                : storage;
-            })
-          );
-
-          setLoading(false);
-          setShowInvestment(true);
-          clearInterval(intervalId); // detenemos el polling
-        } else if (response.data.status === "FAILURE") {
-          setLoading(false);
-          clearInterval(intervalId); // también detenemos si falló
-        }
-      } catch (error) {
-        console.error("Error al consultar tarea:", error);
-        // Puedes decidir si parar el polling si hay error repetido
-        // clearInterval(intervalId);
-      }
-    }, interval);
-  }
-
   const handleShowInvestment = async () => {
     setLoading(true);
     const response = await getInvestment();
-    //    pollEvery3Seconds(response.data.task_id);
     setStores((prevData) =>
-      prevData.map((store) => {
-        const matchingInvestment = response.data.find(
-          (investment) => investment.id === store.id
-        );
-        return matchingInvestment
-          ? { ...store, investment: matchingInvestment.investment }
-          : store;
-      })
-    );
-
-    setStorages((prevData) =>
       prevData.map((store) => {
         const matchingInvestment = response.data.find(
           (investment) => investment.id === store.id
@@ -249,18 +188,11 @@ const StoreList = () => {
 
     ...(!showInvestment
       ? [
-        
           {
             name: "Ganancia",
             style: alignTdStyles,
             selector: ({ cash_summary }) =>
               `$${cash_summary?.[8]["amount"]?.toLocaleString()}`,
-          },
-          {
-            name: "Vendido",
-            style: alignTdStyles,
-            selector: ({ cash_summary }) =>
-              `$${cash_summary[3]["amount"]?.toLocaleString()}`,
           },
         ]
       : []),
@@ -355,8 +287,6 @@ const StoreList = () => {
       name: "Nombre",
       selector: ({ name }) => `${name}`,
     },
-
-    ...(!showInvestment ? [{ grow: 10 }] : []),
     ...(showInvestment
       ? [
           {
@@ -470,40 +400,116 @@ const StoreList = () => {
           </div>
         )}
 
-        <h1>
-          Lista de tiendas y almacenes ({tenantInfo.product_count} productos
-          registrados)
-        </h1>
+        <h1>{params.store_type === "T" ? "Tiendas" : "Almacenes"}</h1>
 
-        <FormFilters
-          params={params}
-          handleParams={handleParams}
-          today={today}
-          range={range}
-          departments={departments}
-          handleShowInvestment={handleShowInvestment}
-        />
-        <h2 className="pt-2">Tiendas</h2>
+        <Row>
+          <Col>
+            {" "}
+            <Form.Label className="me-3">Ver</Form.Label>
+            <Form.Check
+              inline
+              id="tiendas"
+              label="Tiendas"
+              type="radio"
+              onChange={handleStoreType}
+              value="T"
+              checked={params.store_type === "T"}
+            />
+            <Form.Check
+              inline
+              id="tiendas"
+              label="Almacenes"
+              type="radio"
+              onChange={handleStoreType}
+              value="A"
+              checked={params.store_type === "A"}
+            />
+          </Col>
+
+          <Col className="text-center">
+            <b> {tenantInfo.product_count} productos registrados</b>
+          </Col>
+
+          <Col>
+            <CustomButton fullWidth onClick={handleShowInvestment}>
+              Ver inversión
+            </CustomButton>
+          </Col>
+
+
+        </Row>
+
+        {params.store_type === "T" ? (
+          <Form className="pb-2">
+            <Row>
+              <Col>
+                <Form.Group controlId="start_date">
+                  <Form.Label>Fecha de inicio</Form.Label>
+                  <Form.Control
+                    name="start_date"
+                    type="date"
+                    value={params.start_date}
+                    onChange={handleParams}
+                    max={today}
+                  />
+                </Form.Group>
+              </Col>
+
+              <Col>
+                <Form.Group controlId="end_date">
+                  <Form.Label>Fecha de fin</Form.Label>
+                  <Form.Control
+                    name="end_date"
+                    type="date"
+                    value={params.end_date}
+                    onChange={handleParams}
+                    max={today}
+                  />
+                </Form.Group>
+              </Col>
+
+              <Col>
+                <Form.Group controlId="range">
+                  <Form.Label>Rango</Form.Label>
+                  <Form.Control
+                    name="range"
+                    type="text"
+                    value={range}
+                    disabled
+                  />
+                </Form.Group>
+              </Col>
+
+              <Col hidden={departments.length === 0}>
+                <Form.Group controlId="department_id">
+                  <Form.Label>Departamento</Form.Label>
+                  <Form.Select
+                    value={params.department_id}
+                    onChange={handleParams}
+                    name="department_id"
+                  >
+                    <option value="">Todos</option>
+                    <option value="0">Sin departamento</option>
+                    {departments.map((departament) => (
+                      <option key={departament.id} value={departament.id}>
+                        {departament.name}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+              </Col>
+            </Row>
+          </Form>
+        ) : (
+          ""
+        )}
 
         <CustomTable
           progressPending={loading}
           data={memoStores}
-          columns={columnsStore}
+          columns={params.store_type === "T" ? columnsStore : columnsStorages}
         />
-
-        {storages.length > 0 && (
-          <>
-            <h2 className="pt-2">Almacenes</h2>
-
-            <CustomTable
-              progressPending={loading}
-              data={storages}
-              columns={columnsStorages}
-            />
-          </>
-        )}
-
-        {stores.length + storages.length > 1 && (
+        {params.store_type === "T" && (
           <>
             <h2 className="pt-2">Totales</h2>
 
