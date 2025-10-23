@@ -20,14 +20,14 @@ import { Line } from "react-chartjs-2";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
-const LineChart = ({ title, taskId, pollInterval = 5000 }) => {
+const LineChart = ({ title, taskId, labels, pollInterval = 5000 }) => {
   const [datasets, setDatasets] = useState([]);
   const [info, setInfo] = useState({ total: "por definir", progress: 0 });
 
 
 
   const data = {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Juli", "a", "S", "O", "N", "D"],
+    labels: labels,
     datasets: datasets,
   };
 
@@ -44,7 +44,7 @@ const LineChart = ({ title, taskId, pollInterval = 5000 }) => {
       },
       title: {
         display: true,
-        text: "Sales Comparison 2024 vs 2025",
+        text: "Ventas por mes",
       },
     },
     scales: {
