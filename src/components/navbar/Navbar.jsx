@@ -75,7 +75,7 @@ const CustomNavbar = () => {
       {
         label: "Dashboard",
         dropdown: [
-          { label: "General", href: "/dashboard/" },
+          { label: "General", href: "/tablero/" },
           { label: "Auditoria", href: "/tablero-auditoria/" },
         ],
       },

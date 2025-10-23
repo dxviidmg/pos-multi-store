@@ -55,6 +55,7 @@ const StoreList = () => {
 
   const handleStoreType = (e) => {
     setParams((prev) => ({ ...prev, store_type: e.target.value }));
+    setShowInvestment(false)
   };
 
   useEffect(() => {
@@ -286,8 +287,6 @@ const StoreList = () => {
       name: "Nombre",
       selector: ({ name }) => `${name}`,
     },
-
-    ...(!showInvestment ? [{ grow: 9 }] : []),
     ...(showInvestment
       ? [
           {
@@ -401,10 +400,7 @@ const StoreList = () => {
           </div>
         )}
 
-        <h1>
-          {params.store_type === "T" ? "Tiendas" : "Almacenes"} (
-          {tenantInfo.product_count} productos registrados)
-        </h1>
+        <h1>{params.store_type === "T" ? "Tiendas" : "Almacenes"}</h1>
 
         <Form.Label className="me-3">Ver</Form.Label>
         <Form.Check
@@ -426,6 +422,8 @@ const StoreList = () => {
           value="A"
           checked={params.store_type === "A"}
         />
+
+        <b> {tenantInfo.product_count} productos registrados en cada tienda</b>
 
         {params.store_type === "T" ? (
           <Form className="pt-2">
@@ -495,7 +493,9 @@ const StoreList = () => {
             </Row>
           </Form>
         ) : (
-          ""
+          <Row><Col md={2}><CustomButton fullWidth onClick={handleShowInvestment}>
+          Ver inversión
+        </CustomButton></Col></Row>
         )}
 
         <CustomTable
