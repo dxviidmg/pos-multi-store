@@ -218,7 +218,9 @@ const PaymentModal = () => {
       setPayment(INITIAL_PAYMENT_STATE);
       setHideClient(true);
       setSaleExchange(INITIAL_SALE_EXCHANGE_STATE);
-      setIsLoading(false)
+      setTimeout(() => {
+        setIsLoading(false)
+      }, 10);
       Swal.fire({
         icon: "success",
         title: "Venta exitosa",
