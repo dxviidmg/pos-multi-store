@@ -60,7 +60,7 @@ const StoreList = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      //      setLoading(true);
+      setLoading(true);
       const response = await getTenantInfo();
       setTenantInfo(response.data);
 
@@ -122,10 +122,6 @@ const StoreList = () => {
 
       const dateRange = getDateDifference(params.start_date, params.end_date);
       setRange(dateRange);
-
-      setTimeout(() => {
-        setLoading(false);
-      }, 1000);
       setLoading(false);
     };
 
