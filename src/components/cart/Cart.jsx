@@ -23,6 +23,7 @@ import { addProducts, getStockOtherStores } from "../apis/products";
 import { getUserData } from "../apis/utils";
 import { RemoveInCartIcon } from "../commons/icons/Icons";
 import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
+import { hideStockModal, showStockModal } from "../redux/stockModal/StockModalActions";
 
 const Cart = () => {
   const store_type = getUserData().store_type;
@@ -111,6 +112,11 @@ const Cart = () => {
       movementType === "venta"
         ? Math.min(newQuantity, product.available_stock)
         : newQuantity;
+
+      if (newQuantity > product.available_stock){
+        dispatch(hideStockModal());
+        setTimeout(() => dispatch(showStockModal(product)), 1);
+      }
 
     // Despachar acción para actualizar la cantidad en el carrito
     dispatch(updateQuantityInCart(product, validQuantity));
