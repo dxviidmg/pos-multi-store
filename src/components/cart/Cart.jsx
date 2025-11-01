@@ -163,7 +163,9 @@ const Cart = () => {
       const response = await confirmDistribution(data);
       if (response.status === 200) {
         dispatch(cleanCart());
+      setTimeout(() => {
         setLoading(false)
+      }, 17);
         showAlert("success", "Distribución confirmada");
       } else if (response.status === 404) {
         setLoading(false)
