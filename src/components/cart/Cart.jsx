@@ -17,7 +17,7 @@ import {
   showPaymentModal,
 } from "../redux/paymentModal/PaymentModalActions";
 import { getStores } from "../apis/stores";
-import { confirmDistribution, confirmTransfers } from "../apis/transfers";
+import { confirmDistribution, confirmTransfers, createDistribution } from "../apis/transfers";
 import Swal from "sweetalert2";
 import { addProducts, getStockOtherStores } from "../apis/products";
 import { getUserData } from "../apis/utils";
@@ -160,13 +160,13 @@ const Cart = () => {
     setLoading(true)
     const data = { products: cart, destination_store: selectedStore };
     try {
-      const response = await confirmDistribution(data);
-      if (response.status === 200) {
+      const response = await createDistribution(data);
+      if (response.status === 201) {
         dispatch(cleanCart());
       setTimeout(() => {
         setLoading(false)
       }, 17);
-        showAlert("success", "Distribución confirmada");
+        showAlert("success", "Distribución creada");
       } else if (response.status === 404) {
         setLoading(false)
         showAlert(

@@ -56,6 +56,7 @@ const CustomNavbar = () => {
     ],
     A: [
       { label: "Distribuir", href: "/distribuir/" },
+      { label: "Distribuciones", href: "/distribuciones/" },
       { label: "Inventario", href: "/inventario/" },
       { label: "Logs", href: "/logs/" },
     ],
