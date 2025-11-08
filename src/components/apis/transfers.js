@@ -2,35 +2,32 @@ import axios from "axios";
 import { getApiUrl, getHeaders } from "./utils";
 
 export const createTransfer = async (data) => {
-
   try {
-  const response = await axios.post(getApiUrl("transfer"), data, {
-    headers: getHeaders(),
-  });
-  return response;
-} catch (error) {
-  console.error("Error al obtener clientes:", error);
-  throw error;
-}
+    const response = await axios.post(getApiUrl("transfer"), data, {
+      headers: getHeaders(),
+    });
+    return response;
+  } catch (error) {
+    console.error("Error al obtener clientes:", error);
+    throw error;
+  }
 };
 
 export const getTransfers = async () => {
-    const apiUrl = new URL(getApiUrl("transfer"));
-  
-    try {
-      const response = await axios.get(apiUrl, {
-        headers: getHeaders(),
-      });
-      return response;
-    } catch (error) {
-      return error;
-    }
-  };
+  const apiUrl = new URL(getApiUrl("transfer"));
 
-  
-  export const confirmTransfers = async (data) => {
+  try {
+    const response = await axios.get(apiUrl, {
+      headers: getHeaders(),
+    });
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
 
-    try {
+export const confirmTransfers = async (data) => {
+  try {
     const response = await axios.post(getApiUrl("transfers/confirm"), data, {
       headers: getHeaders(),
     });
@@ -39,26 +36,26 @@ export const getTransfers = async () => {
     console.error("Error al obtener clientes:", error);
     return error;
   }
-  };
+};
 
-
-  export const confirmDistribution = async (data) => {
-
-    try {
-    const response = await axios.post(getApiUrl("store-product/distribution/confirm"), data, {
-      headers: getHeaders(),
-    });
+export const confirmDistribution = async (data) => {
+  try {
+    const response = await axios.post(
+      getApiUrl("store-product/distribution/confirm"),
+      data,
+      {
+        headers: getHeaders(),
+      }
+    );
     return response;
   } catch (error) {
     console.error("Error al obtener clientes:", error);
     return error;
   }
-  };
+};
 
-
-  export const deleteTransfer = async (id) => {
-
-    try {
+export const deleteTransfer = async (id) => {
+  try {
     const response = await axios.delete(getApiUrl("transfer/" + id), {
       headers: getHeaders(),
     });
@@ -67,12 +64,10 @@ export const getTransfers = async () => {
     console.error("Error al obtener clientes:", error);
     return error;
   }
-  };
+};
 
-
-  export const createDistribution = async (data) => {
-
-    try {
+export const createDistribution = async (data) => {
+  try {
     const response = await axios.post(getApiUrl("distribution"), data, {
       headers: getHeaders(),
     });
@@ -81,12 +76,10 @@ export const getTransfers = async () => {
     console.error("Error al obtener clientes:", error);
     return error;
   }
-  };
+};
 
-
-  export const getDistributions = async () => {
-
-    try {
+export const getDistributions = async () => {
+  try {
     const response = await axios.get(getApiUrl("distribution"), {
       headers: getHeaders(),
     });
@@ -95,33 +88,30 @@ export const getTransfers = async () => {
     console.error("Error al obtener clientes:", error);
     return error;
   }
-  };
+};
 
+export const updateTranfer = async (data) => {
+  const apiUrl = new URL(getApiUrl("transfer/" + data.id));
 
-  export const updateTranfer = async (data) => {
-    const apiUrl = new URL(getApiUrl("transfer/" + data.id));
-  
-    try {
-      const response = await axios.patch(apiUrl, data, {
-        headers: getHeaders(),
-      });
-      return response;
-    } catch (error) {
-      return error;
-    }
-  };
+  try {
+    const response = await axios.patch(apiUrl, data, {
+      headers: getHeaders(),
+    });
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
 
+export const deleteTranfer = async (data) => {
+  const apiUrl = new URL(getApiUrl("transfer/" + data.id));
 
-
-  export const deleteTranfer = async (data) => {
-    const apiUrl = new URL(getApiUrl("transfer/" + data.id));
-  
-    try {
-      const response = await axios.delete(apiUrl, {
-        headers: getHeaders(),
-      });
-      return response;
-    } catch (error) {
-      return error;
-    }
-  };
+  try {
+    const response = await axios.delete(apiUrl, {
+      headers: getHeaders(),
+    });
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
