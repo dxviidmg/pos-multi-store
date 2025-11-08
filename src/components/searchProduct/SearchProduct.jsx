@@ -366,7 +366,7 @@ const SearchProduct = () => {
       <Form.Check
         inline
         id="distribucion"
-        label="Distribucion  (Ctrl + O)"
+        label="Distribucion (Ctrl + O)"
         type="radio"
         onChange={handleMovementTypeChange}
         value="distribucion"

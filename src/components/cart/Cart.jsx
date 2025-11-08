@@ -17,7 +17,7 @@ import {
   showPaymentModal,
 } from "../redux/paymentModal/PaymentModalActions";
 import { getStores } from "../apis/stores";
-import { confirmDistribution, confirmTransfers } from "../apis/transfers";
+import { confirmDistribution, confirmTransfers, createDistribution } from "../apis/transfers";
 import Swal from "sweetalert2";
 import { addProducts, getStockOtherStores } from "../apis/products";
 import { getUserData } from "../apis/utils";
@@ -160,13 +160,13 @@ const Cart = () => {
     setLoading(true)
     const data = { products: cart, destination_store: selectedStore };
     try {
-      const response = await confirmDistribution(data);
-      if (response.status === 200) {
+      const response = await createDistribution(data);
+      if (response.status === 201) {
         dispatch(cleanCart());
       setTimeout(() => {
         setLoading(false)
       }, 17);
-        showAlert("success", "Distribución confirmada");
+        showAlert("success", "Distribución creada");
       } else if (response.status === 404) {
         setLoading(false)
         showAlert(
@@ -235,7 +235,7 @@ const Cart = () => {
       grow: 3,
       wrap: true,
     },
-    { name: "Stock", selector: (row) => row.stock },
+    { name: "Stock", selector: (row) => row.available_stock },
   ];
 
   const commonColumns2 = [
@@ -266,7 +266,7 @@ const Cart = () => {
         />
       ),
     },
-    { name: "Stock", selector: (row) => row.stock },
+    { name: "Stock", selector: (row) => row.available_stock },
     { name: "Precio", selector: (row) => `$${row.product_price.toFixed(2)}` },
     {
       name: "Total por producto",
@@ -304,11 +304,11 @@ const Cart = () => {
           value={row.quantity}
           onChange={(e) => handleQuantityChangeToCart(e, row)} // Implementa esta función para manejar el cambio
           min="1" // Opcional, para establecer un valor mínimo
-          max={row.stock}
+          max={row.available_stock}
         />
       ),
     },
-    { name: "Stock", selector: (row) => row.stock },
+    { name: "Stock", selector: (row) => row.available_stock },
     { name: "Precio", selector: (row) => `$${row.product_price.toFixed(2)}` },
     {
       name: "Total por producto",
@@ -346,7 +346,7 @@ const Cart = () => {
           value={row.quantity}
           onChange={(e) => handleQuantityChangeToCart(e, row)} // Implementa esta función para manejar el cambio
           min="1" // Opcional, para establecer un valor mínimo
-          max={row.stock}
+          max={row.available_stock}
         />
       ),
     },
@@ -370,7 +370,7 @@ const Cart = () => {
           value={row.quantity}
           onChange={(e) => handleQuantityChangeToCart(e, row)} // Implementa esta función para manejar el cambio
           min="1" // Opcional, para establecer un valor mínimo
-          max={row.stock}
+          max={row.available_stock}
         />
       ),
     },
