@@ -67,7 +67,7 @@ const ProductModal = ({ onUpdateProductList }) => {
     };
 
     fetchData();
-  }, [product]);
+  }, [product, showStoreProducts]);
 
   const dispatch = useDispatch();
 
