@@ -28,14 +28,14 @@ const StockModal = () => {
   useEffect(() => {
     const fetchData = async () => {
       const response = await getStockOtherStores(storeProduct.product?.code);
-      setStockOtherStores(response.data)
+      setStockOtherStores(response.data);
       console.log(response);
     };
   
-    if (storeProduct && storeProduct.product) {
+    if (storeProduct?.product?.code) {
       fetchData();
     }
-  }, [storeProduct?.product]);
+  }, [storeProduct?.product?.code]);
 
 
 
