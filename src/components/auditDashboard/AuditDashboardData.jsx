@@ -45,7 +45,7 @@ const AuditDashboardData = ({ title, taskId, pollInterval = 5000 }) => {
     });
 
     return () => clearInterval(intervalId);
-  }, [taskId]);
+  }, [taskId, pollInterval]);
 
   const isComplete = info.progress === 100;
 

@@ -163,6 +163,8 @@ const Cart = () => {
       const response = await createDistribution(data);
       if (response.status === 201) {
         dispatch(cleanCart());
+      setSelectedStore("")
+      setConfirmedStore("")
       setTimeout(() => {
         setLoading(false)
       }, 17);
