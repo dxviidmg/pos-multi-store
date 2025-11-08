@@ -60,7 +60,7 @@ const DoughnutChart = ({
       try {
         //      setData([]);
         const { data: taskData } = await getTaskResult(taskId);
-        const { result, info: taskInfo, status } = taskData;
+        const { result, status } = taskData;
 
         if (status === "SUCCESS") {
           console.log(data);
