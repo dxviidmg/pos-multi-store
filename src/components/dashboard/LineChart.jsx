@@ -1,11 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ProgressBar } from "react-bootstrap";
 import { getTaskResult } from "../apis/products";
-import CustomButton from "../commons/customButton/CustomButton";
-import { exportToExcel } from "../utils/utils";
-
-
-
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -22,9 +16,6 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, T
 
 const LineChart = ({ title, taskId, labels, xText, yText, pollInterval = 5000 }) => {
   const [datasets, setDatasets] = useState([]);
-  const [info, setInfo] = useState({ total: "por definir", progress: 0 });
-
-
 
   const data = {
     labels: labels,
@@ -72,16 +63,14 @@ const LineChart = ({ title, taskId, labels, xText, yText, pollInterval = 5000 })
       try {
   //      setData([]);
         const { data: taskData } = await getTaskResult(taskId);
-        const { result, info: taskInfo, status } = taskData;
+        const { result, status } = taskData;
 
         if (status === "SUCCESS") {
           setDatasets(result || []);
-          setInfo((prev) => ({ ...prev, total: prev.total, progress: 100 }));
           clearInterval(intervalId);
           return true; // tarea completada
         } else {
           console.log("aun sigo");
-          setInfo({ total: taskInfo.total, progress: taskInfo.percent });
           return false; // tarea no completada
         }
       } catch (error) {
@@ -103,12 +92,6 @@ const LineChart = ({ title, taskId, labels, xText, yText, pollInterval = 5000 })
 
     return () => clearInterval(intervalId);
   }, [taskId]);
-
-  const isComplete = info.progress === 100;
-
-  const handleDownload = () => {
-    exportToExcel(data, title, false);
-  };
 
   return (
     <div>

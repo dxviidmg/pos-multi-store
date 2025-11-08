@@ -17,7 +17,7 @@ import {
   showPaymentModal,
 } from "../redux/paymentModal/PaymentModalActions";
 import { getStores } from "../apis/stores";
-import { confirmDistribution, confirmTransfers, createDistribution } from "../apis/transfers";
+import { confirmTransfers, createDistribution } from "../apis/transfers";
 import Swal from "sweetalert2";
 import { addProducts, getStockOtherStores } from "../apis/products";
 import { getUserData } from "../apis/utils";
@@ -514,7 +514,7 @@ const Cart = () => {
                         ? handleTranserFromCart(cart)
                         : handleDistributionFromCart(cart)
                     }
-                    disabled={!selectedStore || selectedStore != confirmedStore}
+                    disabled={!selectedStore || selectedStore !== confirmedStore}
                     fullWidth
                   >
                     {movementType === "traspaso" ? "Transferir" : "Distribuir"}
