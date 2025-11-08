@@ -27,6 +27,7 @@ import ProductReassign from "./components/productReassign/ProductReassign";
 import useKeepAlive from "./components/apis/keepAlive";
 import AuditDashboard from "./components/auditDashboard/AuditDashboard";
 import Dashboard from "./components/dashboard/Dashboard";
+import DistributionList from "./components/distributionList/DistributionList";
 
 function App() {
 
@@ -60,6 +61,7 @@ function App() {
             <Route path="/corte-caja/" element={<CashSummary />} />
             <Route path="/movimientos/" element={<CashFlowList />} />
             <Route path="/distribuir/" element={<SaleCreate />} />
+            <Route path="/distribuciones/" element={<DistributionList />} />
             <Route path="/traspasos/" element={<TransferList />} />
             <Route path="/clientes/" element={<ClientList />} />
             <Route path="/productos/" element={<ProductList />} />

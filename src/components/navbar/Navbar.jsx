@@ -27,6 +27,7 @@ const CustomNavbar = () => {
     T: [
       { label: "Vender", href: "/vender/" },
       { label: "Clientes", href: "/clientes/", hidden: user.role === "seller" },
+      { label: "Distribuciones", href: "/distribuciones/" },
       {
         label: "Productos",
         dropdown: [
@@ -56,6 +57,7 @@ const CustomNavbar = () => {
     ],
     A: [
       { label: "Distribuir", href: "/distribuir/" },
+      { label: "Distribuciones", href: "/distribuciones/" },
       { label: "Inventario", href: "/inventario/" },
       { label: "Logs", href: "/logs/" },
     ],
