@@ -235,7 +235,7 @@ const Cart = () => {
       grow: 3,
       wrap: true,
     },
-    { name: "Stock", selector: (row) => row.stock },
+    { name: "Stock", selector: (row) => row.available_stock },
   ];
 
   const commonColumns2 = [
@@ -266,7 +266,7 @@ const Cart = () => {
         />
       ),
     },
-    { name: "Stock", selector: (row) => row.stock },
+    { name: "Stock", selector: (row) => row.available_stock },
     { name: "Precio", selector: (row) => `$${row.product_price.toFixed(2)}` },
     {
       name: "Total por producto",
@@ -304,11 +304,11 @@ const Cart = () => {
           value={row.quantity}
           onChange={(e) => handleQuantityChangeToCart(e, row)} // Implementa esta función para manejar el cambio
           min="1" // Opcional, para establecer un valor mínimo
-          max={row.stock}
+          max={row.available_stock}
         />
       ),
     },
-    { name: "Stock", selector: (row) => row.stock },
+    { name: "Stock", selector: (row) => row.available_stock },
     { name: "Precio", selector: (row) => `$${row.product_price.toFixed(2)}` },
     {
       name: "Total por producto",
@@ -346,7 +346,7 @@ const Cart = () => {
           value={row.quantity}
           onChange={(e) => handleQuantityChangeToCart(e, row)} // Implementa esta función para manejar el cambio
           min="1" // Opcional, para establecer un valor mínimo
-          max={row.stock}
+          max={row.available_stock}
         />
       ),
     },
@@ -370,7 +370,7 @@ const Cart = () => {
           value={row.quantity}
           onChange={(e) => handleQuantityChangeToCart(e, row)} // Implementa esta función para manejar el cambio
           min="1" // Opcional, para establecer un valor mínimo
-          max={row.stock}
+          max={row.available_stock}
         />
       ),
     },

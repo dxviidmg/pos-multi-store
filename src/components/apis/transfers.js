@@ -96,3 +96,32 @@ export const getTransfers = async () => {
     return error;
   }
   };
+
+
+  export const updateTranfer = async (data) => {
+    const apiUrl = new URL(getApiUrl("transfer/" + data.id));
+  
+    try {
+      const response = await axios.patch(apiUrl, data, {
+        headers: getHeaders(),
+      });
+      return response;
+    } catch (error) {
+      return error;
+    }
+  };
+
+
+
+  export const deleteTranfer = async (data) => {
+    const apiUrl = new URL(getApiUrl("transfer/" + data.id));
+  
+    try {
+      const response = await axios.delete(apiUrl, {
+        headers: getHeaders(),
+      });
+      return response;
+    } catch (error) {
+      return error;
+    }
+  };
