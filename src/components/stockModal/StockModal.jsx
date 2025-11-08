@@ -35,7 +35,7 @@ const StockModal = () => {
     if (storeProduct && storeProduct.product) {
       fetchData();
     }
-  }, [storeProduct?.product]);
+  }, [storeProduct]);
 
 
 
