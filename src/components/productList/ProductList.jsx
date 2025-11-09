@@ -355,7 +355,7 @@ const ProductList = () => {
             selector: (row) => "$" + row.cost,
             wrap: true,
           },
-
+          
           {
             grow: 2.5,
             name: "Precios",
