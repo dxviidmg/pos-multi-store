@@ -37,6 +37,7 @@ const StoreList = () => {
     totalSales: 0,
     cash: 0,
     investment: 0,
+    canceledSales: 0
   });
 
   useEffect(() => {
@@ -73,6 +74,7 @@ const StoreList = () => {
         totalSales: "Calculando...",
         cash: "Calculando...",
         investment: "Calculando...",
+        canceledSales: "Calculando..."
       });
       const response2 = await getStores({ ...params });
 
@@ -87,6 +89,7 @@ const StoreList = () => {
         totalSales,
         cash,
         investment,
+        canceledSales
       } = response2.data.reduce(
         (acc, store) => ({
           profit: acc.profit + store.cash_summary[8].amount,
@@ -97,6 +100,7 @@ const StoreList = () => {
           totalSales: acc.totalSales + store.cash_summary[10].amount,
           cash: acc.cash + store.cash_summary[7].amount,
           investment: 0,
+          canceledSales: acc.canceledSales + store.cash_summary[11].amount,
         }),
         {
           profit: 0,
@@ -107,6 +111,7 @@ const StoreList = () => {
           totalSales: 0,
           cash: 0,
           investment: 0,
+          canceledSales: 0
         }
       );
       setTotals({
@@ -118,6 +123,7 @@ const StoreList = () => {
         cash,
         totalSales,
         investment,
+        canceledSales
       });
 
       const dateRange = getDateDifference(params.start_date, params.end_date);
@@ -175,98 +181,92 @@ const StoreList = () => {
     textAlign: "right",
   };
 
+  const getCashValue = (cash_summary, index) =>
+    `$${(cash_summary?.[index]?.amount || 0).toLocaleString("es-MX", {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+})}`;
+  
   const columnsStore = [
     {
       name: "Nombre",
       wrap: true,
       selector: ({ name }) => <>{name}</>,
     },
-
+  
+    // Mostrar ganancia (si no es inversión)
     ...(!showInvestment
       ? [
           {
             name: "Ganancia",
             style: alignTdStyles,
-            selector: ({ cash_summary }) =>
-              `$${cash_summary?.[8]["amount"]?.toLocaleString()}`,
+            selector: ({ cash_summary }) => getCashValue(cash_summary, 8),
           },
         ]
       : []),
-
+  
+    // Mostrar detalles de pagos y ventas
     ...(!params.department_id && !showInvestment
       ? [
+          { name: "Efectivo", style: alignTdStyles, selector: ({ cash_summary }) => getCashValue(cash_summary, 0) },
+          { name: "Tarjeta", style: alignTdStyles, selector: ({ cash_summary }) => getCashValue(cash_summary, 1) },
+          { name: "T. Bancaria", style: alignTdStyles, selector: ({ cash_summary }) => getCashValue(cash_summary, 2) },
+          { name: "Caja", style: alignTdStyles, selector: ({ cash_summary }) => getCashValue(cash_summary, 7) },
+          { name: "Vendido", style: alignTdStyles, selector: ({ cash_summary }) => getCashValue(cash_summary, 3) },
           {
-            name: "Efectivo",
+            name: "Ventas",
             style: alignTdStyles,
             selector: ({ cash_summary }) =>
-              `$${cash_summary?.[0]?.amount?.toLocaleString() || "0"}`,
+              `${cash_summary?.[10]?.amount?.toLocaleString() || "0"}`,
           },
           {
-            name: "Tarjeta",
+            name: "V. Canceladas",
             style: alignTdStyles,
             selector: ({ cash_summary }) =>
-              `$${cash_summary?.[1]?.amount?.toLocaleString() || "0"}`,
-          },
-          {
-            name: "T. Bancaria",
-            style: alignTdStyles,
-            selector: ({ cash_summary }) =>
-              `$${cash_summary?.[2]?.amount?.toLocaleString() || "0"}`,
-          },
-        ]
-      : []),
-
-    ...(!params.department_id && !showInvestment
-      ? [
-          {
-            name: "Caja",
-            style: alignTdStyles,
-            selector: ({ cash_summary }) =>
-              `$${cash_summary[7]["amount"]?.toLocaleString()}`,
+              `${cash_summary?.[11]?.amount?.toLocaleString() || "0"}`,
           },
         ]
-      : []),
-
-    ...(!params.department_id && !showInvestment
-      ? [
+      : [
+          { name: "Vendido", style: alignTdStyles, selector: ({ cash_summary }) => getCashValue(cash_summary, 3) },
           {
-            name: "Vendido",
+            name: "Ventas",
             style: alignTdStyles,
             selector: ({ cash_summary }) =>
-              `$${cash_summary[3]["amount"]?.toLocaleString()}`,
+              `${cash_summary?.[10]?.amount?.toLocaleString() || "0"}`,
           },
           {
-            name: "# de ventas",
+            name: "V. Canceladas",
             style: alignTdStyles,
             selector: ({ cash_summary }) =>
-              `${cash_summary[10]["amount"]?.toLocaleString()}`,
+              `${cash_summary?.[11]?.amount?.toLocaleString() || "0"}`,
           },
-        ]
-      : []),
-
+        ]),
+  
+    // Mostrar inversión (si aplica)
     ...(showInvestment
       ? [
           {
             style: alignTdStyles,
             name: "Inversión",
             selector: ({ investment }) =>
-              investment ? `$${investment.toLocaleString()}` : "$0",
+              `$${investment?.toLocaleString() || "0"}`,
           },
         ]
       : []),
-
+  
+    // Entrar
     {
       name: "Entrar",
       cell: (row) => (
-        <>
-          <CustomTooltip text={"Ingresar a la tienda"}>
-            <CustomButton onClick={() => handleSelectStore(row)}>
-              <HomeIcon />
-            </CustomButton>
-          </CustomTooltip>
-        </>
+        <CustomTooltip text="Ingresar a la tienda">
+          <CustomButton onClick={() => handleSelectStore(row)}>
+            <HomeIcon />
+          </CustomButton>
+        </CustomTooltip>
       ),
     },
+  
+    // Opciones
     {
       name: "Opciones",
       cell: (row) => (
@@ -314,71 +314,92 @@ const StoreList = () => {
     },
   ];
 
+
+
   const columnsTotals = [
     {},
-    {
-      name: "Ganancia",
-      style: alignTdStyles,
-      selector: ({ profit }) => `${profit}`,
-    },
-
-    ...(!params.department_id
+  
+    // Ganancia (si no es inversión)
+    ...(!showInvestment
+      ? [
+          {
+            name: "Ganancia",
+            style: alignTdStyles,
+            selector: ({ profit }) => getCashValue(profit),
+          },
+        ]
+      : []),
+  
+    // Pagos y caja
+    ...(!params.department_id && !showInvestment
       ? [
           {
             name: "Efectivo",
             style: alignTdStyles,
-            selector: ({ paymentCash }) => `${paymentCash}`,
+            selector: ({ paymentCash }) => getCashValue(paymentCash),
           },
-
           {
             name: "Tarjeta",
             style: alignTdStyles,
-            selector: ({ paymentCard }) => `${paymentCard}`,
+            selector: ({ paymentCard }) => getCashValue(paymentCard),
           },
-
           {
             name: "T. Bancaria",
             style: alignTdStyles,
-            selector: ({ paymentTransfer }) => `${paymentTransfer}`,
+            selector: ({ paymentTransfer }) => getCashValue(paymentTransfer),
           },
-        ]
-      : []),
-
-    ...(!params.department_id
-      ? [
           {
             name: "Caja",
             style: alignTdStyles,
-            selector: (row) => `${row.cash}`,
+            selector: ({ cash }) => getCashValue(cash),
+          },
+          {
+            name: "Vendido",
+            style: alignTdStyles,
+            selector: ({ totalPayment }) => getCashValue(totalPayment),
+          },
+          {
+            name: "Ventas",
+            style: alignTdStyles,
+            selector: ({ totalSales }) => totalSales,
+          },
+          {
+            name: "V. Canceladas",
+            style: alignTdStyles,
+            selector: ({ canceledSales }) => canceledSales,
           },
         ]
-      : []),
-
-    {
-      name: "Vendido",
-      style: alignTdStyles,
-      selector: ({ totalPayment }) => `${totalPayment}`,
-    },
-
-    {
-      name: "# de ventas",
-      style: alignTdStyles,
-      selector: ({ totalSales }) => `${totalSales}`,
-    },
-
+      : [
+          {
+            name: "Vendido",
+            style: alignTdStyles,
+            selector: ({ totalPayment }) => getCashValue(totalPayment),
+          },
+          {
+            name: "Ventas",
+            style: alignTdStyles,
+            selector: ({ totalSales }) => totalSales,
+          },
+          {
+            name: "V. Canceladas",
+            style: alignTdStyles,
+            selector: ({ canceledSales }) => canceledSales,
+          },
+        ]),
+  
+    // Inversión (si aplica)
     ...(showInvestment
       ? [
           {
             name: "Inversión",
             style: alignTdStyles,
-            selector: ({ investment }) => `${investment}`,
+            selector: ({ investment }) => getCashValue(investment),
           },
         ]
       : []),
-
-    {
-      grow: 2.4,
-    },
+  
+    // Espaciador
+    { grow: 2.4 },
   ];
 
   return (
@@ -521,6 +542,7 @@ const StoreList = () => {
                   cash: `$${totals.cash.toLocaleString()}`,
                   investment: `$${totals.investment.toLocaleString()}`,
                   totalSales: totals.totalSales.toLocaleString(),
+                  canceledSales: totals.canceledSales.toLocaleString(),
                 },
               ]}
               columns={columnsTotals}
