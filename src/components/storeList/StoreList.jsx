@@ -76,6 +76,8 @@ const StoreList = () => {
         investment: "Calculando...",
         canceledSales: "Calculando..."
       });
+
+      
       const response2 = await getStores({ ...params });
 
       setStores(response2.data);
@@ -185,6 +187,12 @@ const StoreList = () => {
     `$${(cash_summary?.[index]?.amount || 0).toLocaleString("es-MX", {
   minimumFractionDigits: 2,
   maximumFractionDigits: 2,
+})}`;
+
+const getCashValueTotal = (value) =>
+  `$${(value || 0).toLocaleString("es-MX", {
+minimumFractionDigits: 2,
+maximumFractionDigits: 2,
 })}`;
   
   const columnsStore = [
@@ -325,7 +333,7 @@ const StoreList = () => {
           {
             name: "Ganancia",
             style: alignTdStyles,
-            selector: ({ profit }) => getCashValue(profit),
+            selector: ({ profit }) => getCashValueTotal(profit),
           },
         ]
       : []),
@@ -336,27 +344,27 @@ const StoreList = () => {
           {
             name: "Efectivo",
             style: alignTdStyles,
-            selector: ({ paymentCash }) => getCashValue(paymentCash),
+            selector: ({ paymentCash }) => getCashValueTotal(paymentCash),
           },
           {
             name: "Tarjeta",
             style: alignTdStyles,
-            selector: ({ paymentCard }) => getCashValue(paymentCard),
+            selector: ({ paymentCard }) => getCashValueTotal(paymentCard),
           },
           {
             name: "T. Bancaria",
             style: alignTdStyles,
-            selector: ({ paymentTransfer }) => getCashValue(paymentTransfer),
+            selector: ({ paymentTransfer }) => getCashValueTotal(paymentTransfer),
           },
           {
             name: "Caja",
             style: alignTdStyles,
-            selector: ({ cash }) => getCashValue(cash),
+            selector: ({ cash }) => getCashValueTotal(cash),
           },
           {
             name: "Vendido",
             style: alignTdStyles,
-            selector: ({ totalPayment }) => getCashValue(totalPayment),
+            selector: ({ totalPayment }) => getCashValueTotal(totalPayment),
           },
           {
             name: "Ventas",
@@ -534,13 +542,13 @@ const StoreList = () => {
               progressPending={loading}
               data={[
                 {
-                  profit: `$${totals.profit.toLocaleString()}`,
-                  paymentCash: `$${totals.paymentCash.toLocaleString()}`,
-                  paymentCard: `$${totals.paymentCard.toLocaleString()}`,
-                  paymentTransfer: `$${totals.paymentTransfer.toLocaleString()}`,
-                  totalPayment: `$${totals.totalPayment.toLocaleString()}`,
-                  cash: `$${totals.cash.toLocaleString()}`,
-                  investment: `$${totals.investment.toLocaleString()}`,
+                  profit: `${totals.profit.toLocaleString()}`,
+                  paymentCash: `${totals.paymentCash.toLocaleString()}`,
+                  paymentCard: `${totals.paymentCard.toLocaleString()}`,
+                  paymentTransfer: `${totals.paymentTransfer.toLocaleString()}`,
+                  totalPayment: `${totals.totalPayment.toLocaleString()}`,
+                  cash: `${totals.cash.toLocaleString()}`,
+                  investment: `${totals.investment.toLocaleString()}`,
                   totalSales: totals.totalSales.toLocaleString(),
                   canceledSales: totals.canceledSales.toLocaleString(),
                 },
