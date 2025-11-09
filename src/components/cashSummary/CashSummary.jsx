@@ -180,7 +180,7 @@ const CashSummary = () => {
                     justifyContent: "flex-end", // para alinear dentro del td con flexbox
                     textAlign: "right",
                   },
-                  selector: (row) => "$" + row.amount,
+                  selector: (row) => row.name === "Ventas canceladas" ? row.amount : "$" + row.amount,
                 },
               ]}
             />
