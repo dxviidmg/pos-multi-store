@@ -401,7 +401,7 @@ maximumFractionDigits: 2,
           {
             name: "Inversión",
             style: alignTdStyles,
-            selector: ({ investment }) => getCashValue(investment),
+            selector: ({ investment }) => investment,
           },
         ]
       : []),
@@ -542,15 +542,15 @@ maximumFractionDigits: 2,
               progressPending={loading}
               data={[
                 {
-                  profit: `${totals.profit.toLocaleString()}`,
-                  paymentCash: `${totals.paymentCash.toLocaleString()}`,
-                  paymentCard: `${totals.paymentCard.toLocaleString()}`,
-                  paymentTransfer: `${totals.paymentTransfer.toLocaleString()}`,
-                  totalPayment: `${totals.totalPayment.toLocaleString()}`,
-                  cash: `${totals.cash.toLocaleString()}`,
-                  investment: `${totals.investment.toLocaleString()}`,
-                  totalSales: totals.totalSales.toLocaleString(),
-                  canceledSales: totals.canceledSales.toLocaleString(),
+                  profit: totals.profit,
+                  paymentCash: totals.paymentCash,
+                  paymentCard: totals.paymentCard,
+                  paymentTransfer: totals.paymentTransfer,
+                  totalPayment: totals.totalPayment,
+                  cash: totals.cash,
+                  investment: totals.investment,
+                  totalSales: `${totals.totalSales}`,
+                  canceledSales: totals.canceledSales,
                 },
               ]}
               columns={columnsTotals}

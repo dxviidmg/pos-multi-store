@@ -23,6 +23,7 @@ const SaleModal = ({ onUpdateSaleList }) => {
   const [totalCancel, setTotalCancel] = useState(false);
   const [reasonCancel, setReasonCancel] = useState("");
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     setFormData(sale.id ? sale : INITIAL_FORM_DATA);
@@ -80,11 +81,17 @@ const SaleModal = ({ onUpdateSaleList }) => {
     };
 
     const response = await cancelSale(payload);
+    if (loading) return
+    setLoading(true)
+
     if (response.status === 200) {
       const { sale: updatedSale, cash_back } = response.data;
 
       onUpdateSaleList(updatedSale);
       dispatch(hideSaleModal());
+      setTimeout(() => {
+        setLoading(false)
+      }, 28);
 
       Swal.fire({
         icon: "success",
@@ -92,6 +99,7 @@ const SaleModal = ({ onUpdateSaleList }) => {
         timer: 5000,
       });
     } else {
+      setLoading(false)
       handleClientError();
     }
   };
