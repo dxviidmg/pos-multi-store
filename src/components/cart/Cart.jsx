@@ -167,7 +167,7 @@ const Cart = () => {
       setConfirmedStore("")
       setTimeout(() => {
         setLoading(false)
-      }, 17);
+      }, 28);
         showAlert("success", "Distribución creada");
       } else if (response.status === 404) {
         setLoading(false)

@@ -51,7 +51,7 @@ const DistributionList = () => {
       setDistributionSelected({});
       setTimeout(() => {
         setLoading(false);
-      }, 17);
+      }, 28);
       Swal.fire({
         icon: "success",
         title: "Distribición realizada",
