@@ -112,11 +112,13 @@ const Cart = () => {
       movementType === "venta"
         ? Math.min(newQuantity, product.available_stock)
         : newQuantity;
-
-      if (newQuantity > product.available_stock){
-        dispatch(hideStockModal());
-        setTimeout(() => dispatch(showStockModal(product)), 1);
+      if (movementType !== "agregar"){
+        if (newQuantity > product.available_stock){
+          dispatch(hideStockModal());
+          setTimeout(() => dispatch(showStockModal(product)), 1);
+        }
       }
+
 
     // Despachar acción para actualizar la cantidad en el carrito
     dispatch(updateQuantityInCart(product, validQuantity));
@@ -167,7 +169,7 @@ const Cart = () => {
       setConfirmedStore("")
       setTimeout(() => {
         setLoading(false)
-      }, 17);
+      }, 28);
         showAlert("success", "Distribución creada");
       } else if (response.status === 404) {
         setLoading(false)
