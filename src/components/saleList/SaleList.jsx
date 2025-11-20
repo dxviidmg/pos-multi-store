@@ -13,7 +13,7 @@ import {
   hideSaleModal,
   showSaleModal,
 } from "../redux/saleModal/SaleModalActions";
-import SaleModal from "../saleModal/saleModal";
+import SaleModal from "../saleModal/SaleModal";
 import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
 import {
   CashIcon,

@@ -220,7 +220,7 @@ const PaymentModal = () => {
       setSaleExchange(INITIAL_SALE_EXCHANGE_STATE);
       setTimeout(() => {
         setIsLoading(false)
-      }, 28);
+      }, 164);
       Swal.fire({
         icon: "success",
         title: "Venta exitosa",
