@@ -36,10 +36,10 @@ const TYPE_OPTIONS = [
     value: false,
     label: "Ventas",
   },
-//  {
-//    value: true,
-//    label: "Apartados",
-//  },
+  //  {
+  //    value: true,
+  //    label: "Apartados",
+  //  },
 ];
 
 const SEARCH_BY_OPTIONS = [
@@ -106,12 +106,12 @@ const SaleList = () => {
   };
 
   const handleUpdateSaleList = (updatedSale) => {
-      setSales((prevSales) => {
-        const saleExists = prevSales.some((b) => b.id === updatedSale.id);
-        return saleExists
-          ? prevSales.map((b) => (b.id === updatedSale.id ? updatedSale : b))
-          : [...prevSales, updatedSale];
-      });
+    setSales((prevSales) => {
+      const saleExists = prevSales.some((b) => b.id === updatedSale.id);
+      return saleExists
+        ? prevSales.map((b) => (b.id === updatedSale.id ? updatedSale : b))
+        : [...prevSales, updatedSale];
+    });
   };
 
   const handleOpenModal2 = (row) => {
@@ -242,7 +242,7 @@ const SaleList = () => {
                   {
                     name: "Cliente",
                     selector: (row) => row.client?.full_name,
-                    wrap: true
+                    wrap: true,
                   },
                 ]
               : []),
@@ -253,20 +253,21 @@ const SaleList = () => {
               wrap: true,
             },
 
-
             {
               name: "Productos",
               selector: (row) => {
                 const productsToShow = row.is_canceled
                   ? row.products_sale.filter((item) => item.quantity === 0)
                   : row.products_sale.filter((item) => item.quantity !== 0);
-            
+
                 return (
                   <>
                     {productsToShow.map((item, index) => (
                       <span key={index}>
-                        
-                        {row.is_canceled ? item.returned_quantity : item.quantity} x {item.name} - ${item.price} - Código: {item.code}
+                        {row.is_canceled
+                          ? item.returned_quantity
+                          : item.quantity}{" "}
+                        x {item.name} - ${item.price} - Código: {item.code}
                         <br />
                       </span>
                     ))}
@@ -276,7 +277,6 @@ const SaleList = () => {
               wrap: true,
               grow: 3,
             },
-            
 
             {
               name: "Total",
@@ -325,38 +325,40 @@ const SaleList = () => {
               grow: showAllFields ? 3 : 2,
               cell: (row) => (
                 <>
-                {row.is_canceled ? <>
-                  <ErrorIcon/> Razón cancelacion: {row.reason_cancel ? row.reason_cancel: 'Desconocida'} 
-                </> : <>
-                
-                  {printer && (
-                    <CustomButton
-                      onClick={() => handlePrintTicket("ticket", row)}
-                    >
-                      <PrinterIcon color="white" size="16" />
-                    </CustomButton>
+                  {row.is_canceled ? (
+                    <>
+                      <ErrorIcon /> Razón cancelacion:{" "}
+                      {row.reason_cancel ? row.reason_cancel : "Desconocida"}
+                    </>
+                  ) : (
+                    <>
+                      {printer && (
+                        <CustomButton
+                          onClick={() => handlePrintTicket("ticket", row)}
+                        >
+                          <PrinterIcon color="white" size="16" />
+                        </CustomButton>
+                      )}
+
+                      {params.reservation_in_progress === "true" && (
+                        <CustomButton
+                          fullWidth
+                          onClick={() => handleOpenModal2(row)}
+                        >
+                          <CashIcon />
+                        </CustomButton>
+                      )}
+
+                      {(row.is_cancelable || row.is_repeated) && (
+                        <CustomTooltip text={"Generar devolución"}>
+                          <CustomButton onClick={() => handleOpenModal(row)}>
+                            <ReturnIcon></ReturnIcon>
+                          </CustomButton>
+                        </CustomTooltip>
+                      )}
+                      {row.is_repeated && <WarningIcon></WarningIcon>}
+                    </>
                   )}
-
-                  {params.reservation_in_progress === "true" && (
-                    <CustomButton
-                      fullWidth
-                      onClick={() => handleOpenModal2(row)}
-                    >
-                      <CashIcon />
-                    </CustomButton>
-                  )}
-
-                  {(row.is_cancelable || row.is_repeated) && (
-                    <CustomTooltip text={"Generar devolución"}>
-                      <CustomButton onClick={() => handleOpenModal(row)}>
-                        <ReturnIcon></ReturnIcon>
-                      </CustomButton>
-                    </CustomTooltip>
-                  )}
-                  {row.is_repeated && <WarningIcon></WarningIcon>}
-
-                </>}
-
                 </>
               ),
             },
