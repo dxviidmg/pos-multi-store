@@ -89,10 +89,7 @@ const Cart = () => {
   const handleRemoveFromCart = (product) => dispatch(removeFromCart(product));
 
   const handleStockOtherStores = async (product) => {
-    console.log("hola", product.product.code);
-
     const response = await getStockOtherStores(product.product.code);
-    console.log(response);
     dispatch(countStockOtherStores(product, response.data));
   };
 

@@ -63,7 +63,6 @@ const DoughnutChart = ({
         const { result, status } = taskData;
 
         if (status === "SUCCESS") {
-          console.log(data);
           const labels2 = Object.keys(result).map((code) => code);
           const values = Object.values(result);
           setLabels(labels2);
