@@ -91,7 +91,7 @@ const DoughnutChart = ({
     });
 
     return () => clearInterval(intervalId);
-  }, [taskId, pollInterval, data]);
+  }, [taskId, pollInterval]);
 
   return (
     <div>
