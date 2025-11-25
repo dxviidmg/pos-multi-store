@@ -46,7 +46,7 @@ const Dashboard = () => {
           </Col>
           <Col md={6}>
             <LineChart
-              title={"Ventas por dia (ultimo mes)"}
+              title={"Promedio ventas por dia (ultimo mes)"}
               taskId={tasks?.task2}
               labels={[
                 "Domingo",
@@ -64,7 +64,7 @@ const Dashboard = () => {
 
           <Col md={6}>
             <LineChart
-              title={"Ventas por hora (ultimo mes)"}
+              title={"Promedio de ventas por hora (ultimo mes)"}
               taskId={tasks?.task3}
               labels={[
                 "0:00",
