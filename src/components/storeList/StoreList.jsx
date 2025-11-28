@@ -230,8 +230,8 @@ const StoreList = () => {
             name: "Ventas ($)",
             style: alignTdStyles,
             selector: ({ cash_summary }) => {
-              const vendido = cash_summary?.[3]?.amount?.toLocaleString() || 0;
-              const realizadas = cash_summary?.[10]?.amount?.toLocaleString() || 0;
+              const vendido = cash_summary?.[3]?.amount || 0;
+              const realizadas = cash_summary?.[10]?.amount || 0;
               const promedio = realizadas === 0 ? 0 : vendido / realizadas;
 
               return (
