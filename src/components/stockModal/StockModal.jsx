@@ -29,7 +29,6 @@ const StockModal = () => {
     const fetchData = async () => {
       const response = await getStockOtherStores(storeProduct.product?.code);
       setStockOtherStores(response.data);
-      console.log(response);
     };
   
     if (storeProduct?.product?.code) {

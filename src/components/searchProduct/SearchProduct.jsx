@@ -61,7 +61,6 @@ const SearchProduct = () => {
         return response.data;
   
       } catch (err) {
-        console.log('**', err)
         clearTimeout(timeoutId);
   
         if (err.name === "CanceledError") {

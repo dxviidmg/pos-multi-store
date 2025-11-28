@@ -33,7 +33,6 @@ const LogList = () => {
       const response2 = await getStoreProductLogsChoices();
       setActions(response2.data);
       const response3 = await getStores();
-      console.log(response3)
       setStores(response3.data);
       setLoading(false);
     };
