@@ -227,7 +227,9 @@ const PaymentModal = () => {
         timer: 5000,
       });
     } else {
-      setIsLoading(false)
+      setTimeout(() => {
+        setIsLoading(false)
+      }, 164);
       Swal.fire({
         icon: "error",
         title: "Error al finalizar la venta",
