@@ -219,16 +219,15 @@ const StoreList = () => {
         
             return (
               <>
-                <div>EF: {getCashValue(cash_summary, 0)}</div>
-                <div>TA: {getCashValue(cash_summary, 1)}</div>
-                <div>TR: {getCashValue(cash_summary, 2)}</div>
+                <div>Ef: {getCashValue(cash_summary, 0)}</div>
+                <div>Ta: {getCashValue(cash_summary, 1)}</div>
+                <div>Tr: {getCashValue(cash_summary, 2)}</div>
               </>
             );
           },
         },
           {
             name: "Ventas ($)",
-            grow: 1.2,  
             style: alignTdStyles,
             selector: ({ cash_summary }) => {
               const vendido = cash_summary?.[3]?.amount?.toLocaleString() || 0;
@@ -281,7 +280,6 @@ const StoreList = () => {
           },
           {
             name: "Otros",
-            grow: 1.2,
             style: alignTdStyles,
             selector: ({ cash_summary }) => {
 
