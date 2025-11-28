@@ -40,17 +40,10 @@ const StoreProductList = () => {
   }, []); // Solo se ejecuta una vez al montar
 
   const fetchStoreProducts = async () => {
-    console.log(params);
     setLoading(true);
 
     if (Object.keys(params).length === 1) {
-      //      const response2 = await getStoreProductsAsync(params);
-      //      console.log(response2);
-
-      //      pollEvery3Seconds(response2.data.task_id)
-
       const response = await getStoreProducts(params);
-      console.log(response);
       const storeProducts = response.data;
       setStoreProducts(storeProducts);
 
@@ -63,7 +56,6 @@ const StoreProductList = () => {
       setLoading(false);
     } else {
       const response = await getStoreProducts(params);
-      console.log(response);
       const storeProducts = response.data;
       setStoreProducts(storeProducts);
 

@@ -23,7 +23,6 @@ const AuditDashboardData = ({ title, taskId, pollInterval = 5000 }) => {
           clearInterval(intervalId);
           return true; // tarea completada
         } else {
-          console.log("aun sigo");
           setInfo({ total: taskInfo.total, progress: taskInfo.percent });
           return false; // tarea no completada
         }

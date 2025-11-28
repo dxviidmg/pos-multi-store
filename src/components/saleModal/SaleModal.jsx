@@ -50,11 +50,8 @@ const SaleModal = ({ onUpdateSaleList }) => {
   };
 
   const handleCheck = (e) => {
-    console.log("e.target.checked", e.target.checked);
     if (e.target.checked) {
-      console.log("verdadero");
       formData.products_sale.forEach((product_sale) => {
-        console.log(product_sale);
         setQuantitiesToCancel((prev) => ({
           ...prev,
           [product_sale.id]: product_sale.quantity,
@@ -62,9 +59,7 @@ const SaleModal = ({ onUpdateSaleList }) => {
         setSelectedRows((prev) => [...prev, product_sale]);
       });
     } else {
-      console.log("falso feo");
       formData.products_sale.forEach((product_sale) => {
-        console.log(product_sale);
         setQuantitiesToCancel((prev) => ({ ...prev, [product_sale.id]: 0 }));
         setSelectedRows([]);
       });

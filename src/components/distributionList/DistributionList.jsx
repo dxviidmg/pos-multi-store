@@ -21,8 +21,6 @@ const DistributionList = () => {
 
       const distributions = await getDistributions();
 
-      console.log(distributions.data);
-
       setDistributions(distributions.data);
       setLoading(false);
     };
@@ -31,16 +29,13 @@ const DistributionList = () => {
   }, []);
 
   const handleOpenModal = (distribution) => {
-    console.log("effe");
     setDistributionSelected(distribution);
   };
 
   const handleSubmit = async () => {
     if (loading) return;
     setLoading(true);
-    console.log(distributionSelected.id);
     const response = await confirmDistribution({ id: distributionSelected.id });
-    console.log(response);
 
     if (response.status === 200) {
       const distributions2 = distributions.filter(
@@ -77,24 +72,14 @@ const DistributionList = () => {
   };
 
   const handleSaveClick = async (row) => {
-    console.log(row)
-    // Aquí puedes manejar la lógica para guardar el cambio (API o estado padre)
-    console.log("Nueva cantidad:", editedQuantity, "para:", row.product_code);
-
     row.quantity = editedQuantity
     const response = await updateTranfer(row)
-    console.log(response)
     setEditingRow(null);
   };
 
 
   const handleDeleteTransfer = async (row) => {
-    console.log(row)
-    // Aquí puedes manejar la lógica para guardar el cambio (API o estado padre)
-    console.log("Nueva cantidad:", editedQuantity, "para:", row.product_code);
-
     const updatedList = distributionSelected.transfers.filter(transfer => transfer.id !== row.id);
-
     const response = await deleteTranfer(row)
 
     if (response.status === 204){

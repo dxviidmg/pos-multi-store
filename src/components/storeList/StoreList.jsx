@@ -37,7 +37,7 @@ const StoreList = () => {
     totalSales: 0,
     cash: 0,
     investment: 0,
-    canceledSales: 0
+    canceledSales: 0,
   });
 
   useEffect(() => {
@@ -74,10 +74,9 @@ const StoreList = () => {
         totalSales: "Calculando...",
         cash: "Calculando...",
         investment: "Calculando...",
-        canceledSales: "Calculando..."
+        canceledSales: "Calculando...",
       });
 
-      
       const response2 = await getStores({ ...params });
 
       setStores(response2.data);
@@ -91,7 +90,7 @@ const StoreList = () => {
         totalSales,
         cash,
         investment,
-        canceledSales
+        canceledSales,
       } = response2.data.reduce(
         (acc, store) => ({
           profit: acc.profit + store.cash_summary[8].amount,
@@ -113,9 +112,10 @@ const StoreList = () => {
           totalSales: 0,
           cash: 0,
           investment: 0,
-          canceledSales: 0
+          canceledSales: 0,
         }
       );
+
       setTotals({
         profit,
         paymentCash,
@@ -125,7 +125,7 @@ const StoreList = () => {
         cash,
         totalSales,
         investment,
-        canceledSales
+        canceledSales,
       });
 
       const dateRange = getDateDifference(params.start_date, params.end_date);
@@ -185,57 +185,119 @@ const StoreList = () => {
 
   const getCashValue = (cash_summary, index) =>
     `$${(cash_summary?.[index]?.amount || 0).toLocaleString("es-MX", {
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 2,
-})}`;
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`;
 
-const getCashValueTotal = (value) =>
-  `$${(value || 0).toLocaleString("es-MX", {
-minimumFractionDigits: 2,
-maximumFractionDigits: 2,
-})}`;
-  
+  const getCashValueTotal = (value) =>
+    `$${(value || 0).toLocaleString("es-MX", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`;
+
   const columnsStore = [
     {
       name: "Nombre",
       wrap: true,
       selector: ({ name }) => <>{name}</>,
     },
-  
+
     // Mostrar ganancia (si no es inversión)
     ...(!showInvestment
       ? [
-          {
-            name: "Ganancia",
-            style: alignTdStyles,
-            selector: ({ cash_summary }) => getCashValue(cash_summary, 8),
-          },
         ]
       : []),
-  
+
     // Mostrar detalles de pagos y ventas
     ...(!params.department_id && !showInvestment
       ? [
-          { name: "Efectivo", style: alignTdStyles, selector: ({ cash_summary }) => getCashValue(cash_summary, 0) },
-          { name: "Tarjeta", style: alignTdStyles, selector: ({ cash_summary }) => getCashValue(cash_summary, 1) },
-          { name: "T. Bancaria", style: alignTdStyles, selector: ({ cash_summary }) => getCashValue(cash_summary, 2) },
-          { name: "Caja", style: alignTdStyles, selector: ({ cash_summary }) => getCashValue(cash_summary, 7) },
-          { name: "Vendido", style: alignTdStyles, selector: ({ cash_summary }) => getCashValue(cash_summary, 3) },
+
+        {
+          name: "Pagos",
+          style: alignTdStyles,
+          selector: ({ cash_summary }) => {
+        
+            return (
+              <>
+                <div>Efe: {getCashValue(cash_summary, 0)}</div>
+                <div>Tarje: {getCashValue(cash_summary, 1)}</div>
+                <div>Tran: {getCashValue(cash_summary, 2)}</div>
+              </>
+            );
+          },
+        },
           {
-            name: "Ventas",
+            name: "Ventas ($)",
             style: alignTdStyles,
-            selector: ({ cash_summary }) =>
-              `${cash_summary?.[10]?.amount?.toLocaleString() || "0"}`,
+            selector: ({ cash_summary }) => {
+              const vendido = cash_summary?.[3]?.amount?.toLocaleString() || 0;
+              const realizadas = cash_summary?.[10]?.amount?.toLocaleString() || 0;
+              const promedio = realizadas === 0 ? 0 : vendido / realizadas;
+
+              return (
+                <>
+                  <div>Vendido: {getCashValue(cash_summary, 3)}</div>
+                  <div>Promedio: {getCashValueTotal(promedio)}</div>
+                </>
+              );
+            },
+          },
+
+
+
+          {
+            name: "Ventas (#)",
+            style: alignTdStyles,
+            selector: ({ cash_summary }) => {
+              const realizadas = cash_summary?.[10]?.amount?.toLocaleString() || "0";
+              const canceladas = cash_summary?.[11]?.amount?.toLocaleString() || "0";
+          
+              return (
+                <>
+                  <div>Realizadas: {realizadas}</div>
+                  <div>Canceladas: {canceladas}</div>
+                </>
+              );
+            },
+          },
+          
+          {
+            name: "Pendientes",
+            style: alignTdStyles,
+            selector: ({ cash_summary }) => {
+              const distributions = cash_summary?.[12]?.amount?.toLocaleString() || "0";
+              const transfers = cash_summary?.[13]?.amount?.toLocaleString() || "0";
+          
+              return (
+                <>
+                  <div>Distribuciones: {distributions}</div>
+                  <div>Traspasos: {transfers}</div>
+                </>
+              );
+            },
+
+            
           },
           {
-            name: "V. Canceladas",
+            name: "Otros",
             style: alignTdStyles,
-            selector: ({ cash_summary }) =>
-              `${cash_summary?.[11]?.amount?.toLocaleString() || "0"}`,
+            selector: ({ cash_summary }) => {
+
+              return (
+                <>
+                  <div>Ganancia: {getCashValue(cash_summary, 8)}</div>
+                  <div>Caja: {getCashValue(cash_summary, 7)}</div>
+                </>
+              );
+            },
           },
         ]
       : [
-          { name: "Vendido", style: alignTdStyles, selector: ({ cash_summary }) => getCashValue(cash_summary, 3) },
+          {
+            name: "Vendido",
+            style: alignTdStyles,
+            selector: ({ cash_summary }) => getCashValue(cash_summary, 3),
+          },
           {
             name: "Ventas",
             style: alignTdStyles,
@@ -249,7 +311,7 @@ maximumFractionDigits: 2,
               `${cash_summary?.[11]?.amount?.toLocaleString() || "0"}`,
           },
         ]),
-  
+
     // Mostrar inversión (si aplica)
     ...(showInvestment
       ? [
@@ -261,7 +323,7 @@ maximumFractionDigits: 2,
           },
         ]
       : []),
-  
+
     // Entrar
     {
       name: "Entrar",
@@ -273,7 +335,7 @@ maximumFractionDigits: 2,
         </CustomTooltip>
       ),
     },
-  
+
     // Opciones
     {
       name: "Opciones",
@@ -322,11 +384,9 @@ maximumFractionDigits: 2,
     },
   ];
 
-
-
   const columnsTotals = [
     {},
-  
+
     // Ganancia (si no es inversión)
     ...(!showInvestment
       ? [
@@ -337,7 +397,7 @@ maximumFractionDigits: 2,
           },
         ]
       : []),
-  
+
     // Pagos y caja
     ...(!params.department_id && !showInvestment
       ? [
@@ -354,7 +414,8 @@ maximumFractionDigits: 2,
           {
             name: "T. Bancaria",
             style: alignTdStyles,
-            selector: ({ paymentTransfer }) => getCashValueTotal(paymentTransfer),
+            selector: ({ paymentTransfer }) =>
+              getCashValueTotal(paymentTransfer),
           },
           {
             name: "Caja",
@@ -381,7 +442,7 @@ maximumFractionDigits: 2,
           {
             name: "Vendido",
             style: alignTdStyles,
-            selector: ({ totalPayment }) => getCashValue(totalPayment),
+            selector: ({ totalPayment }) => getCashValueTotal(totalPayment),
           },
           {
             name: "Ventas",
@@ -394,7 +455,7 @@ maximumFractionDigits: 2,
             selector: ({ canceledSales }) => canceledSales,
           },
         ]),
-  
+
     // Inversión (si aplica)
     ...(showInvestment
       ? [
@@ -405,7 +466,7 @@ maximumFractionDigits: 2,
           },
         ]
       : []),
-  
+
     // Espaciador
     { grow: 2.4 },
   ];
@@ -460,8 +521,6 @@ maximumFractionDigits: 2,
               Ver inversión
             </CustomButton>
           </Col>
-
-
         </Row>
 
         {params.store_type === "T" ? (
@@ -534,7 +593,7 @@ maximumFractionDigits: 2,
           data={memoStores}
           columns={params.store_type === "T" ? columnsStore : columnsStorages}
         />
-        {params.store_type === "T" && (
+        {params.store_type === "T" && stores.length > 1 && (
           <>
             <h2 className="pt-2">Totales</h2>
 

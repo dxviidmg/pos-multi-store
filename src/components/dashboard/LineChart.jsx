@@ -70,7 +70,6 @@ const LineChart = ({ title, taskId, labels, xText, yText, pollInterval = 5000 })
           clearInterval(intervalId);
           return true; // tarea completada
         } else {
-          console.log("aun sigo");
           return false; // tarea no completada
         }
       } catch (error) {
