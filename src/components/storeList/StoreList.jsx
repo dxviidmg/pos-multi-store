@@ -205,6 +205,7 @@ const StoreList = () => {
       
     {
       name: "Pagos",
+      style: alignTdStyles,
       selector: ({ cash_summary }) => {
         return (
           <>
