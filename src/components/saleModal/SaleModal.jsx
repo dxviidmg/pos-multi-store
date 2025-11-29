@@ -86,7 +86,7 @@ const SaleModal = ({ onUpdateSaleList }) => {
       dispatch(hideSaleModal());
       setTimeout(() => {
         setLoading(false)
-      }, 164);
+      }, 200);
 
       Swal.fire({
         icon: "success",
