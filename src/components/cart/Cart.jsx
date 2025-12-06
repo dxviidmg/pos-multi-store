@@ -98,11 +98,18 @@ const Cart = () => {
   };
 
   const handleQuantityChangeToCart = (e, product) => {
+    //Optimizar
     const newQuantity = parseInt(e.target.value, 10); // Usar base 10 para parsear
 
     // Validaciones
     if (newQuantity <= 0) {
       return;
+    }
+
+    if (movementType === "traspaso"){
+      const v = Math.min(newQuantity, product.stock)
+      dispatch(updateQuantityInCart(product, v));
+      return
     }
 
     const validQuantity =
@@ -270,7 +277,7 @@ const Cart = () => {
     { name: "Stock", selector: (row) => row.available_stock },
     { name: "Precio", selector: (row) => `$${row.product_price.toFixed(2)}` },
     {
-      name: "Total por producto",
+      name: "Total x prod",
       selector: (row) => `$${(row.product_price * row.quantity).toFixed(2)}`,
     },
     {
@@ -312,7 +319,7 @@ const Cart = () => {
     { name: "Stock", selector: (row) => row.available_stock },
     { name: "Precio", selector: (row) => `$${row.product_price.toFixed(2)}` },
     {
-      name: "Total por producto",
+      name: "Total x prod",
       selector: (row) => `$${(row.product_price * row.quantity).toFixed(2)}`,
     },
     {
@@ -338,7 +345,20 @@ const Cart = () => {
   ];
 
   const transferColumns = [
-    ...commonColumns,
+    { name: "Código", selector: (row) => row.product.code },
+    {
+      name: "Marca",
+      selector: (row) => row.product.brand_name,
+    },
+    {
+      name: "Nombre",
+      selector: (row) => row.product.name,
+      grow: 3,
+      wrap: true,
+    },
+    { name: "Stock disponible", selector: (row) => row.available_stock },
+    { name: "Stock apartado", selector: (row) => row.reserved_stock },
+    { name: "Stock total", selector: (row) => row.available_stock + row.reserved_stock },
     {
       name: "Cantidad",
       selector: (row) => (
