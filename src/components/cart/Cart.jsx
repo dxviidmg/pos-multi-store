@@ -98,35 +98,30 @@ const Cart = () => {
   };
 
   const handleQuantityChangeToCart = (e, product) => {
-    //Optimizar
-    const newQuantity = parseInt(e.target.value, 10); // Usar base 10 para parsear
-
-    // Validaciones
-    if (newQuantity <= 0) {
-      return;
+    const newQuantity = Number(e.target.value);
+  
+    // Cantidades inválidas
+    if (!newQuantity || newQuantity <= 0) return;
+  
+    // --- Control de límites según movimiento ---
+    const stockLimit =
+      movementType === "traspaso"
+        ? product.stock
+        : movementType === "venta"
+        ? product.available_stock
+        : Infinity;
+  
+    const quantity = Math.min(newQuantity, stockLimit);
+  
+    // --- Mostrar modal si se excede el stock (excepto agregar) ---
+    if (movementType !== "agregar" && newQuantity > product.available_stock) {
+      dispatch(hideStockModal());
+      setTimeout(() => dispatch(showStockModal(product)), 1);
     }
-
-    if (movementType === "traspaso"){
-      const v = Math.min(newQuantity, product.stock)
-      dispatch(updateQuantityInCart(product, v));
-      return
-    }
-
-    const validQuantity =
-      movementType === "venta"
-        ? Math.min(newQuantity, product.available_stock)
-        : newQuantity;
-      if (movementType !== "agregar"){
-        if (newQuantity > product.available_stock){
-          dispatch(hideStockModal());
-          setTimeout(() => dispatch(showStockModal(product)), 1);
-        }
-      }
-
-
-    // Despachar acción para actualizar la cantidad en el carrito
-    dispatch(updateQuantityInCart(product, validQuantity));
+  
+    dispatch(updateQuantityInCart(product, quantity));
   };
+  
 
   const showAlert = (icon, title, text = "", timer = 5000) => {
     Swal.fire({ icon, title, text, timer });
