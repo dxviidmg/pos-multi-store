@@ -58,8 +58,22 @@ const CustomNavbar = () => {
     A: [
       { label: "Distribuir", href: "/distribuir/" },
       { label: "Distribuciones", href: "/distribuciones/" },
-      { label: "Inventario", href: "/inventario/" },
-      { label: "Logs", href: "/logs/" },
+      {
+        label: "Productos",
+        dropdown: [
+          { label: "Marcas", href: "/marcas/" },
+          { label: "Departamentos", href: "/departamentos/" },
+          { label: "Reasignación", href: "/reasignacion/" },
+          { divider: true },
+          { label: "Productos", href: "/productos/" },
+          { label: "Importar Productos", href: "/importar-productos/" },
+          { divider: true },
+          { label: "Inventario", href: "/inventario/" },
+          { label: "Importar inventario", href: "/importar-inventario/" },
+          { divider: true },
+          { label: "Logs", href: "/logs/" },
+        ],
+      },
     ],
     G: [
       { label: "Tiendas", href: "/tiendas/" },

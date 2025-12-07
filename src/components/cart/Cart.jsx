@@ -98,28 +98,30 @@ const Cart = () => {
   };
 
   const handleQuantityChangeToCart = (e, product) => {
-    const newQuantity = parseInt(e.target.value, 10); // Usar base 10 para parsear
-
-    // Validaciones
-    if (newQuantity <= 0) {
-      return;
+    const newQuantity = Number(e.target.value);
+  
+    // Cantidades inválidas
+    if (!newQuantity || newQuantity <= 0) return;
+  
+    // --- Control de límites según movimiento ---
+    const stockLimit =
+      movementType === "traspaso"
+        ? product.stock
+        : movementType === "venta"
+        ? product.available_stock
+        : Infinity;
+  
+    const quantity = Math.min(newQuantity, stockLimit);
+  
+    // --- Mostrar modal si se excede el stock (excepto agregar) ---
+    if (movementType !== "agregar" && newQuantity > product.available_stock) {
+      dispatch(hideStockModal());
+      setTimeout(() => dispatch(showStockModal(product)), 1);
     }
-
-    const validQuantity =
-      movementType === "venta"
-        ? Math.min(newQuantity, product.available_stock)
-        : newQuantity;
-      if (movementType !== "agregar"){
-        if (newQuantity > product.available_stock){
-          dispatch(hideStockModal());
-          setTimeout(() => dispatch(showStockModal(product)), 1);
-        }
-      }
-
-
-    // Despachar acción para actualizar la cantidad en el carrito
-    dispatch(updateQuantityInCart(product, validQuantity));
+  
+    dispatch(updateQuantityInCart(product, quantity));
   };
+  
 
   const showAlert = (icon, title, text = "", timer = 5000) => {
     Swal.fire({ icon, title, text, timer });
@@ -166,7 +168,7 @@ const Cart = () => {
       setConfirmedStore("")
       setTimeout(() => {
         setLoading(false)
-      }, 164);
+      }, 200);
         showAlert("success", "Distribución creada");
       } else if (response.status === 404) {
         setLoading(false)
@@ -270,7 +272,7 @@ const Cart = () => {
     { name: "Stock", selector: (row) => row.available_stock },
     { name: "Precio", selector: (row) => `$${row.product_price.toFixed(2)}` },
     {
-      name: "Total por producto",
+      name: "Total x prod",
       selector: (row) => `$${(row.product_price * row.quantity).toFixed(2)}`,
     },
     {
@@ -312,7 +314,7 @@ const Cart = () => {
     { name: "Stock", selector: (row) => row.available_stock },
     { name: "Precio", selector: (row) => `$${row.product_price.toFixed(2)}` },
     {
-      name: "Total por producto",
+      name: "Total x prod",
       selector: (row) => `$${(row.product_price * row.quantity).toFixed(2)}`,
     },
     {
@@ -338,7 +340,20 @@ const Cart = () => {
   ];
 
   const transferColumns = [
-    ...commonColumns,
+    { name: "Código", selector: (row) => row.product.code },
+    {
+      name: "Marca",
+      selector: (row) => row.product.brand_name,
+    },
+    {
+      name: "Nombre",
+      selector: (row) => row.product.name,
+      grow: 3,
+      wrap: true,
+    },
+    { name: "Stock disponible", selector: (row) => row.available_stock },
+    { name: "Stock apartado", selector: (row) => row.reserved_stock },
+    { name: "Stock total", selector: (row) => row.available_stock + row.reserved_stock },
     {
       name: "Cantidad",
       selector: (row) => (
