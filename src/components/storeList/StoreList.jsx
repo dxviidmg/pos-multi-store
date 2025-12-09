@@ -301,7 +301,7 @@ const StoreList = () => {
             style: alignTdStyles,
             name: "Inversión",
             selector: ({ investment }) =>
-              `$${investment?.toLocaleString() || "0"}`,
+              getCashValueTotal(investment),
           },
         ]
       : []),
@@ -388,18 +388,8 @@ const StoreList = () => {
   ];
 
   const columnsTotals = [
-    {},
 
-    // Ganancia (si no es inversión)
-    ...(!showInvestment
-      ? [
-          {
-            name: "Ganancia",
-            style: alignTdStyles,
-            selector: ({ profit }) => getCashValueTotal(profit),
-          },
-        ]
-      : []),
+
 
     // Pagos y caja
     ...(!params.department_id && !showInvestment
@@ -421,14 +411,14 @@ const StoreList = () => {
               getCashValueTotal(paymentTransfer),
           },
           {
-            name: "Caja",
-            style: alignTdStyles,
-            selector: ({ cash }) => getCashValueTotal(cash),
-          },
-          {
             name: "Vendido",
             style: alignTdStyles,
             selector: ({ totalPayment }) => getCashValueTotal(totalPayment),
+          },
+          {
+            name: "Promedio",
+            style: alignTdStyles,
+            selector: ({ totalPayment, totalSales }) => getCashValueTotal(totalPayment/totalSales),
           },
           {
             name: "Ventas",
@@ -440,6 +430,18 @@ const StoreList = () => {
             style: alignTdStyles,
             selector: ({ canceledSales }) => canceledSales,
           },
+          {
+            name: "Ganancia",
+            style: alignTdStyles,
+            selector: ({ profit }) => getCashValueTotal(profit),
+          },
+
+          {
+            name: "Caja",
+            style: alignTdStyles,
+            selector: ({ cash }) => getCashValueTotal(cash),
+          },
+
         ]
       : [
           {
@@ -468,11 +470,7 @@ const StoreList = () => {
             selector: ({ investment }) => investment,
           },
         ]
-      : []),
-
-    // Espaciador
-    { grow: 2.4 },
-  ];
+      : [])  ];
 
   return (
     <>
