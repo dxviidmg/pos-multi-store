@@ -49,7 +49,8 @@ const PaymentModal = () => {
   const printer = getUserData().store_printer;
   const dispatch = useDispatch();
 
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
+  const isSubmittingRef = useRef(false);
 
   useEffect(() => {
     if (showPaymentModal) {
@@ -71,20 +72,23 @@ const PaymentModal = () => {
     return { total, totalDiscount };
   }, [cart, client]);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     const handleShortcut = (event) => {
       if (event.ctrlKey && event.key === "f") {
         event.preventDefault();
         handleCreateSale();
-      } else if (event.ctrlKey && event.key === "g") {
+      }
+      if (event.ctrlKey && event.key === "g") {
         event.preventDefault();
         handleCreateSale(true);
       }
     };
-
+  
     window.addEventListener("keydown", handleShortcut);
     return () => window.removeEventListener("keydown", handleShortcut);
-  }, [totalDiscount, paymentMethods, cart, client, payment]);
+  }, []); // 👈 SOLO UNA VEZ
+
 
   useEffect(() => {
     if (movementType === "apartado") {
@@ -164,78 +168,80 @@ const PaymentModal = () => {
   };
 
   const handleCreateSale = async (printTicket = false) => {
-    if (isLoading) return; // Previene reenvío
-    setIsLoading(true)
-    if (
-      movementType === "venta" &&
-      (payment.paidWith === 0 || payment.change < 0)
-    ) {
-      setIsLoading(false)
-      Swal.fire({
-        icon: "error",
-        title: "Error al finalizar la venta",
-        text: "Pago con debe igual o mayor a la cantidad a cobrar",
-        timer: 5000,
-      });
-      return;
-    }
-    const paymentList = convertPaymentMethodsToList();
+    if (isSubmittingRef.current) return; // 🔒 lock inmediato
+    isSubmittingRef.current = true;
+    setIsLoading(true);
 
-    const data = {
-      client: client.id,
-      total: totalDiscount,
-      store_products: cart.map((store_product) => ({
-        id: store_product.id,
-        quantity: store_product.quantity,
-        name: store_product.product.name,
-        code: store_product.product.code,
-        price:
-          store_product.product_price *
-          ((client?.discount_percentage_complement ?? 100) * 0.01),
-      })),
-      payments: paymentList,
-      reference_payment: referencePayment,
-      sale_exchange: saleExchange,
-      reservation_in_progress: movementType === "apartado",
-    };
-
-    const response = await createSale(data);
-
-    if (response.status === 201) {
-      if (printer && printTicket) {
-        data.id = response.data.id
-        data.payment = payment
-        handlePrintTicket("ticket", data);
+    try {
+      console.log(payment)
+      if (
+        movementType === "venta" &&
+        (payment.paidWith === 0 || payment.change < 0)
+      ) {
+        Swal.fire({
+          icon: "error",
+          title: "Error al finalizar la venta",
+          text: "Pago debe igual o mayor a la cantidad a cobrar",
+          timer: 5000,
+        });
+        return;
       }
-      setPaymentMethods({
-        type: "radio",
-        methods: { EF: 0, TA: 0, TR: 0 },
-      });
-      setReferencePayment("");
-      dispatch(removeClientfromCart());
-      dispatch(cleanCart());
-      dispatch(hidePaymentModal());
-      setPayment(INITIAL_PAYMENT_STATE);
-      setHideClient(true);
-      setSaleExchange(INITIAL_SALE_EXCHANGE_STATE);
-      setTimeout(() => {
-        setIsLoading(false)
-      }, 200);
-      Swal.fire({
-        icon: "success",
-        title: "Venta exitosa",
-        timer: 5000,
-      });
-    } else {
-      setTimeout(() => {
-        setIsLoading(false)
-      }, 200);
+
+      const paymentList = convertPaymentMethodsToList();
+
+      const data = {
+        client: client?.id,
+        total: totalDiscount,
+        store_products: cart.map((store_product) => ({
+          id: store_product.id,
+          quantity: store_product.quantity,
+          name: store_product.product.name,
+          code: store_product.product.code,
+          price:
+            store_product.product_price *
+            ((client?.discount_percentage_complement ?? 100) * 0.01),
+        })),
+        payments: paymentList,
+        reference_payment: referencePayment,
+        sale_exchange: saleExchange,
+        reservation_in_progress: movementType === "apartado",
+      };
+
+      const response = await createSale(data);
+
+      if (response.status === 201) {
+        if (printer && printTicket) {
+          handlePrintTicket("ticket", {
+            ...data,
+            id: response.data.id,
+            payment,
+          });
+        }
+
+        dispatch(removeClientfromCart());
+        dispatch(cleanCart());
+        dispatch(hidePaymentModal());
+        setPayment(INITIAL_PAYMENT_STATE);
+        setHideClient(true);
+        setSaleExchange(INITIAL_SALE_EXCHANGE_STATE);
+
+        Swal.fire({
+          icon: "success",
+          title: "Venta exitosa",
+          timer: 3000,
+        });
+      } else {
+        throw new Error("Sale error");
+      }
+    } catch (error) {
       Swal.fire({
         icon: "error",
         title: "Error al finalizar la venta",
         text: "Por favor llame a soporte técnico",
-        timer: 5000,
       });
+    } finally {
+      isSubmittingRef.current = false; // 🔓 libera lock
+      setIsLoading(false);
     }
   };
 
@@ -278,205 +284,213 @@ const PaymentModal = () => {
 
   return (
     <>
-    <CustomSpinner2 isLoading={isLoading}></CustomSpinner2>
-    <CustomModal showOut={showPaymentModal} title="Finalizar venta">
-      <div className="custom-section-buttons">
-        <Row>
-          <Col md={6}>
-            {" "}
-            <CustomButton
-              fullWidth
-              onClick={(e) => setHideClient((prevState) => !prevState)}
-            >
-              Añadir cliente
-            </CustomButton>
-          </Col>
+      <CustomSpinner2 isLoading={isLoading}></CustomSpinner2>
+      <CustomModal showOut={showPaymentModal} title="Finalizar venta">
+        <div className="custom-section-buttons">
+          <Row>
+            <Col md={6}>
+              {" "}
+              <CustomButton
+                fullWidth
+                onClick={(e) => setHideClient((prevState) => !prevState)}
+              >
+                Añadir cliente
+              </CustomButton>
+            </Col>
 
-          <Col md={6}>
-            {" "}
-            <CustomButton
-              fullWidth
-              onClick={(e) => setHideExchange((prevState) => !prevState)}
-            >
-              Intercambio de mercancia
-            </CustomButton>
-          </Col>
-        </Row>
-      </div>
-      <div className="custom-section" hidden={hideClient}>
-        <SearchClient />
-        <ClientSelected />
-      </div>
+            <Col md={6}>
+              {" "}
+              <CustomButton
+                fullWidth
+                onClick={(e) => setHideExchange((prevState) => !prevState)}
+              >
+                Intercambio de mercancia
+              </CustomButton>
+            </Col>
+          </Row>
+        </div>
+        <div className="custom-section" hidden={hideClient}>
+          <SearchClient />
+          <ClientSelected />
+        </div>
 
-      <div className="custom-section" hidden={hideExchange}>
-        <h2>Cambio de mercancia</h2>
-        <Row>
-          <Col md={3}>
-            <Form.Label># Venta</Form.Label>
-            <Form.Control
-              type="number"
-              value={saleExchange.id}
-              onChange={(e) =>
-                setSaleExchange({ ...saleExchange, id: Number(e.target.value) })
-              }
-            />
-          </Col>
+        <div className="custom-section" hidden={hideExchange}>
+          <h2>Cambio de mercancia</h2>
+          <Row>
+            <Col md={3}>
+              <Form.Label># Venta</Form.Label>
+              <Form.Control
+                type="number"
+                value={saleExchange.id}
+                onChange={(e) =>
+                  setSaleExchange({
+                    ...saleExchange,
+                    id: Number(e.target.value),
+                  })
+                }
+              />
+            </Col>
 
-          <Col md={3} className="d-flex flex-column justify-content-end">
-            <CustomButton fullWidth onClick={handleSearchSaleForChange}>
-              <SearchIcon /> Buscar
-            </CustomButton>
-          </Col>
+            <Col md={3} className="d-flex flex-column justify-content-end">
+              <CustomButton fullWidth onClick={handleSearchSaleForChange}>
+                <SearchIcon /> Buscar
+              </CustomButton>
+            </Col>
 
-          <Col md={3}>
-            <Form.Label>$ de devolución</Form.Label>
-            <Form.Control
-              type="number"
-              value={saleExchange.refunded}
-              disabled
-            />
-          </Col>
+            <Col md={3}>
+              <Form.Label>$ de devolución</Form.Label>
+              <Form.Control
+                type="number"
+                value={saleExchange.refunded}
+                disabled
+              />
+            </Col>
 
-          <Col md={3}>
-            <Form.Label>Cobrar</Form.Label>
-            <Form.Control type="number" value={saleExchange.payment} disabled />
-          </Col>
-        </Row>
-      </div>
+            <Col md={3}>
+              <Form.Label>Cobrar</Form.Label>
+              <Form.Control
+                type="number"
+                value={saleExchange.payment}
+                disabled
+              />
+            </Col>
+          </Row>
+        </div>
 
-      <div className="custom-section">
-        <h2>Totales</h2>
-        <Row>
-          <Col md={3}>
-            <Form.Label>Total</Form.Label>
-            <Form.Control type="number" value={total.toFixed(2)} disabled />
-          </Col>
+        <div className="custom-section">
+          <h2>Totales</h2>
+          <Row>
+            <Col md={3}>
+              <Form.Label>Total</Form.Label>
+              <Form.Control type="number" value={total.toFixed(2)} disabled />
+            </Col>
 
-          <Col md={3}>
-            <Form.Label>Total con descuento</Form.Label>
-            <Form.Control
-              type="number"
-              value={totalDiscount.toFixed(2)}
-              disabled
-            />
-          </Col>
-          <Col md={3}>
-            <Form.Label>Pago con</Form.Label>
-            <Form.Control
-              type="text"
-              value={payment.paidWith}
-              onChange={handlePaidWithChange}
-              ref={inputPaymentRef}
-            />
-          </Col>
-          <Col md={3}>
-            {paymentMethods.methods.TA > 0 || paymentMethods.methods.TR > 0 ? (
-              <>
-                <Form.Label>Referencia</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={referencePayment}
-                  onChange={(e) => setReferencePayment(e.target.value)}
-                />
-              </>
-            ) : (
-              <>
-                <Form.Label>Cambio</Form.Label>
-                <Form.Control type="number" value={payment.change} disabled />
-              </>
-            )}
-          </Col>
-        </Row>
-      </div>
-
-      <div className="custom-section">
-        <Row>
-          <Col md={3}>
-            <Form.Label className="me-1">Tipo de pago:</Form.Label>
-            <Form.Check
-              id="single"
-              label="Único"
-              type="radio"
-              onChange={handleChangePayments}
-              value="radio"
-              name="paymentType"
-              checked={paymentMethods.type === "radio"}
-            />
-            <Form.Check
-              id="mixed"
-              label="Mixto"
-              type="radio"
-              onChange={handleChangePayments}
-              value="checkbox"
-              name="paymentType"
-              checked={paymentMethods.type === "checkbox"}
-            />
-          </Col>
-
-          <Col md={6}>
-            <Form.Label className="me-3">Medios de pago:</Form.Label>
-            {["EF", "TA", "TR"].map((method) => (
-              <div key={method} className="d-flex align-items-center mb-1">
-                <div className="me-3" style={{ flex: "1" }}>
-                  <Form.Check
-                    id={method}
-                    label={
-                      method === "EF"
-                        ? "Efectivo"
-                        : method === "TA"
-                        ? "Tarjeta"
-                        : "Transferencia"
-                    }
-                    type={paymentMethods.type}
-                    onChange={handleChangePayments}
-                    value={method}
-                    name="paymentMethod"
-                    checked={
-                      (movementType === "apartado" && method === "EF") ||
-                      (paymentMethods.type === "radio"
-                        ? paymentMethods.methods[method] === totalDiscount
-                        : paymentMethods.methods[method] > 0)
-                    }
+            <Col md={3}>
+              <Form.Label>Total con descuento</Form.Label>
+              <Form.Control
+                type="number"
+                value={totalDiscount.toFixed(2)}
+                disabled
+              />
+            </Col>
+            <Col md={3}>
+              <Form.Label>Pago con</Form.Label>
+              <Form.Control
+                type="text"
+                value={payment.paidWith}
+                onChange={handlePaidWithChange}
+                ref={inputPaymentRef}
+              />
+            </Col>
+            <Col md={3}>
+              {paymentMethods.methods.TA > 0 ||
+              paymentMethods.methods.TR > 0 ? (
+                <>
+                  <Form.Label>Referencia</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={referencePayment}
+                    onChange={(e) => setReferencePayment(e.target.value)}
                   />
-                </div>
-                {paymentMethods.type === "checkbox" &&
-                  paymentMethods.methods[method] > 0 && (
-                    <Form.Control
-                      type="number"
-                      placeholder="$"
-                      style={{ width: "120px", height: "calc(1.5rem + 2px)" }}
-                      className="align-self-center"
-                      onChange={(e) =>
-                        handlePaymentValueChange(method, e.target.value)
+                </>
+              ) : (
+                <>
+                  <Form.Label>Cambio</Form.Label>
+                  <Form.Control type="number" value={payment.change} disabled />
+                </>
+              )}
+            </Col>
+          </Row>
+        </div>
+
+        <div className="custom-section">
+          <Row>
+            <Col md={3}>
+              <Form.Label className="me-1">Tipo de pago:</Form.Label>
+              <Form.Check
+                id="single"
+                label="Único"
+                type="radio"
+                onChange={handleChangePayments}
+                value="radio"
+                name="paymentType"
+                checked={paymentMethods.type === "radio"}
+              />
+              <Form.Check
+                id="mixed"
+                label="Mixto"
+                type="radio"
+                onChange={handleChangePayments}
+                value="checkbox"
+                name="paymentType"
+                checked={paymentMethods.type === "checkbox"}
+              />
+            </Col>
+
+            <Col md={6}>
+              <Form.Label className="me-3">Medios de pago:</Form.Label>
+              {["EF", "TA", "TR"].map((method) => (
+                <div key={method} className="d-flex align-items-center mb-1">
+                  <div className="me-3" style={{ flex: "1" }}>
+                    <Form.Check
+                      id={method}
+                      label={
+                        method === "EF"
+                          ? "Efectivo"
+                          : method === "TA"
+                          ? "Tarjeta"
+                          : "Transferencia"
+                      }
+                      type={paymentMethods.type}
+                      onChange={handleChangePayments}
+                      value={method}
+                      name="paymentMethod"
+                      checked={
+                        (movementType === "apartado" && method === "EF") ||
+                        (paymentMethods.type === "radio"
+                          ? paymentMethods.methods[method] === totalDiscount
+                          : paymentMethods.methods[method] > 0)
                       }
                     />
-                  )}
-              </div>
-            ))}
-          </Col>
-          <Col md={3}>
-            <CustomButton
-              disabled={handleDisableButton()}
-              fullWidth={true}
-              onClick={(e) => handleCreateSale()}
-            >
-              Cobrar sin ticket
-              <br />
-              (Ctrl + F)
-            </CustomButton>
+                  </div>
+                  {paymentMethods.type === "checkbox" &&
+                    paymentMethods.methods[method] > 0 && (
+                      <Form.Control
+                        type="number"
+                        placeholder="$"
+                        style={{ width: "120px", height: "calc(1.5rem + 2px)" }}
+                        className="align-self-center"
+                        onChange={(e) =>
+                          handlePaymentValueChange(method, e.target.value)
+                        }
+                      />
+                    )}
+                </div>
+              ))}
+            </Col>
+            <Col md={3}>
+              <CustomButton
+                disabled={handleDisableButton()}
+                fullWidth={true}
+                onClick={(e) => handleCreateSale()}
+              >
+                Cobrar sin ticket
+                <br />
+                (Ctrl + F)
+              </CustomButton>
 
-            <CustomButton
-              disabled={handleDisableButton()}
-              fullWidth={true}
-              onClick={(e) => handleCreateSale(true)}
-            >
-              Cobrar con ticket
-              <br /> (Ctrl + G)
-            </CustomButton>
-          </Col>
-        </Row>
-      </div>
-    </CustomModal>
+              <CustomButton
+                disabled={handleDisableButton()}
+                fullWidth={true}
+                onClick={(e) => handleCreateSale(true)}
+              >
+                Cobrar con ticket
+                <br /> (Ctrl + G)
+              </CustomButton>
+            </Col>
+          </Row>
+        </div>
+      </CustomModal>
     </>
   );
 };
