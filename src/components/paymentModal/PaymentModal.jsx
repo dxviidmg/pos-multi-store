@@ -75,11 +75,11 @@ const PaymentModal = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     const handleShortcut = (event) => {
-      if (event.ctrlKey && event.key === "f") {
+      if (event.ctrlKey && event.key === "g") {
         event.preventDefault();
         handleCreateSale();
       }
-      if (event.ctrlKey && event.key === "g") {
+      if (event.ctrlKey && event.key === "h") {
         event.preventDefault();
         handleCreateSale(true);
       }
@@ -87,7 +87,7 @@ const PaymentModal = () => {
   
     window.addEventListener("keydown", handleShortcut);
     return () => window.removeEventListener("keydown", handleShortcut);
-  }, []); // 👈 SOLO UNA VEZ
+  }, [payment]); // 👈 SOLO UNA VEZ
 
 
   useEffect(() => {
@@ -245,12 +245,20 @@ const PaymentModal = () => {
     }
   };
 
-  const handlePaidWithChange = async (e) => {
+  const handlePaidWithChange = (e) => {
     let value = Number(e.target.value);
+
+    if (isNaN(value)) {
+      setPayment({
+        paidWith: 0,
+        change: 0,
+      });
+  } else {
     setPayment({
       paidWith: value,
       change: value + saleExchange.refunded - totalDiscount,
     });
+  }
     if (movementType === "apartado") {
       setPaymentMethods({
         type: "radio",
@@ -476,7 +484,7 @@ const PaymentModal = () => {
               >
                 Cobrar sin ticket
                 <br />
-                (Ctrl + F)
+                (Ctrl + G)
               </CustomButton>
 
               <CustomButton
@@ -485,7 +493,7 @@ const PaymentModal = () => {
                 onClick={(e) => handleCreateSale(true)}
               >
                 Cobrar con ticket
-                <br /> (Ctrl + G)
+                <br /> (Ctrl + H)
               </CustomButton>
             </Col>
           </Row>
