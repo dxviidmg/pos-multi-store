@@ -74,6 +74,7 @@ const CashFlowList = () => {
               <Form.Control
                 type="date"
                 value={params.start_date}
+                name="start_date"
                 onChange={handleDataChange}
                 max={today}
               />
@@ -86,6 +87,7 @@ const CashFlowList = () => {
               <Form.Control
                 type="date"
                 value={params.end_date}
+                name="end_date"
                 onChange={handleDataChange}
                 max={today}
               />
