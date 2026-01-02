@@ -38,7 +38,7 @@ function RestartService() {
 
     if (response.status === 200) {
       const createdAt = new Date(response.data.deploy.createdAt);
-      createdAt.setMinutes(createdAt.getMinutes() + 5);
+      createdAt.setMinutes(createdAt.getMinutes() + 3);
 
       const finishAt = createdAt.toISOString();
 
