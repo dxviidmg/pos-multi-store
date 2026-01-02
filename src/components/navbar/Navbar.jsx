@@ -99,6 +99,7 @@ const CustomNavbar = () => {
       ...(user.sellers > 0 ? [{ label: "Vendedores", href: "/vendedores/" }] : []),
       { label: "Mensualidades", href: "/pagos/" },
       { label: "Otros servicios", href: "/servicios/" },
+      { label: "Reiniciar", href: "/reset/" },
     ],
   };
 
