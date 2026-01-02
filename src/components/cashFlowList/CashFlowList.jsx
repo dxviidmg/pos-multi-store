@@ -18,20 +18,20 @@ const today = getFormattedDate();
 const CashFlowList = () => {
   const [cashFlow, setCashFlow] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [date, setDate] = useState(today);
+  const [params, setParams] = useState({'start_date': today, 'end_date': today})
 
   const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchCashData = async () => {
       setLoading(true);
-      const cashFlow = await getCashFlow(date);
+      const cashFlow = await getCashFlow(params);
       setCashFlow(cashFlow.data);
       setLoading(false);
     };
 
     fetchCashData();
-  }, [date]);
+  }, [params]);
 
   const handleOpenModal = (cashFlow) => {
     dispatch(hideCashFlowModal());
@@ -49,6 +49,12 @@ const CashFlowList = () => {
     });
   };
 
+
+  const handleDataChange = async (e) => {
+    let { name, value } = e.target;
+    setParams((prevData) => ({ ...prevData, [name]: value }));
+  };
+
   return (
     <>
       <CustomSpinner2 isLoading={loading}></CustomSpinner2>
@@ -64,18 +70,32 @@ const CashFlowList = () => {
           </Col>
           <Col>
             <Form>
-              <Form.Label>Fecha</Form.Label>
+              <Form.Label>Fecha de inicio</Form.Label>
               <Form.Control
                 type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
+                value={params.start_date}
+                onChange={handleDataChange}
                 max={today}
               />
             </Form>
           </Col>
+
+          <Col>
+            <Form>
+              <Form.Label>Fecha de fin</Form.Label>
+              <Form.Control
+                type="date"
+                value={params.end_date}
+                onChange={handleDataChange}
+                max={today}
+              />
+            </Form>
+          </Col>
+
         </Row>
         <CustomTable
           data={cashFlow}
+          searcher={true}
           columns={[
             {
               name: "Creación",
