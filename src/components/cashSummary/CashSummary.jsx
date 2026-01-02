@@ -40,7 +40,7 @@ const CashSummary = () => {
       setCashSummary(cashSummary.data);
       setCashFlowSummary(cashFlowSummary);
       setTotalSummary(totalSummary);
-      const cashFlow = await getCashFlow(date);
+      const cashFlow = await getCashFlow({start_date: date, end_date: date});
       setCashFlow(cashFlow.data);
       setLoading(false);
     };
