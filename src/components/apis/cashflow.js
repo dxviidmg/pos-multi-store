@@ -1,11 +1,12 @@
 import axios from "axios";
 import { getApiUrl, getHeaders } from "./utils";
 
-export const getCashFlow = async (date) => {
+export const getCashFlow = async (params) => {
     const apiUrl = new URL(getApiUrl("cash-flow"));
-    if (date){
-      apiUrl.searchParams.append('date', date);
-  
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        apiUrl.searchParams.append(key, value);
+      });
     }
   
     try {

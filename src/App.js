@@ -28,6 +28,7 @@ import useKeepAlive from "./components/apis/keepAlive";
 import AuditDashboard from "./components/auditDashboard/AuditDashboard";
 import Dashboard from "./components/dashboard/Dashboard";
 import DistributionList from "./components/distributionList/DistributionList";
+import RestartRervice from "./components/restartService/RestartService";
 
 function App() {
 
@@ -77,6 +78,7 @@ function App() {
             <Route path="/servicios/" element={<ServiceList />} />
             <Route path="/tablero-auditoria/" element={<AuditDashboard />} />
             <Route path="/tablero/" element={<Dashboard />} />
+            <Route path="/reset/" element={<RestartRervice />} />
             {user.store_id ? (<Route path="/*" element={<SaleCreate />} />): (<Route path="/*" element={<StoreList />} />)}
           </>
         ) : (
