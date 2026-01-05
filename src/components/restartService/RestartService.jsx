@@ -69,7 +69,7 @@ function RestartService() {
         onClick={handleRedeploy}
         disabled={isDisabled || isLoading}
       >
-        Reiniciar servicio
+        Sincronizar servicio
       </CustomButton>
 
       {data?.deploy && (

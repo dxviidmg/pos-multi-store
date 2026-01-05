@@ -78,7 +78,7 @@ function App() {
             <Route path="/servicios/" element={<ServiceList />} />
             <Route path="/tablero-auditoria/" element={<AuditDashboard />} />
             <Route path="/tablero/" element={<Dashboard />} />
-            <Route path="/reset/" element={<RestartRervice />} />
+            <Route path="/sincronizar/" element={<RestartRervice />} />
             {user.store_id ? (<Route path="/*" element={<SaleCreate />} />): (<Route path="/*" element={<StoreList />} />)}
           </>
         ) : (
