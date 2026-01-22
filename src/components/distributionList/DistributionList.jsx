@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getFormattedDateTime } from "../utils/utils";
-import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
+import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 import { CheckIcon, EditIcon, RemoveInCartIcon } from "../commons/icons/Icons";
 import CustomTooltip from "../commons/Tooltip";
 import { confirmDistribution, deleteTranfer, getDistributions, updateTranfer } from "../apis/transfers";
@@ -93,7 +93,7 @@ const DistributionList = () => {
 
   return (
     <>
-      <CustomSpinner2 isLoading={loading}></CustomSpinner2>
+      <CustomSpinner isLoading={loading}></CustomSpinner>
       <div className="custom-section">
         <h1>Distribuciones</h1>
         <CustomTable

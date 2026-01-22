@@ -6,7 +6,7 @@ import CustomTable from "../commons/customTable/customTable";
 import CustomButton from "../commons/customButton/CustomButton";
 import { hideStockModal } from "../redux/stockModal/StockModalActions";
 import { createTransfer } from "../apis/transfers";
-import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
+import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 import { getStockOtherStores } from "../apis/products";
 
 
@@ -75,7 +75,7 @@ const StockModal = () => {
 
   return (
    <>
-        <CustomSpinner2 isLoading={isLoading}></CustomSpinner2>
+        <CustomSpinner isLoading={isLoading}></CustomSpinner>
        <CustomModal showOut={showStockModal} title="Revisión de Stock">
       <div className="text-center custom-section">
         <p>

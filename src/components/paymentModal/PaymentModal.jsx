@@ -12,7 +12,7 @@ import { handlePrintTicket } from "../utils/utils";
 import SearchClient from "../searchClient/SearchClient";
 import ClientSelected from "../clientSelected/ClientSelected";
 import { SearchIcon } from "../commons/icons/Icons";
-import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
+import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 
 function roundUpCustom(value) {
   const intPart = Math.floor(value); // Parte entera
@@ -292,7 +292,7 @@ const PaymentModal = () => {
 
   return (
     <>
-      <CustomSpinner2 isLoading={isLoading}></CustomSpinner2>
+      <CustomSpinner isLoading={isLoading}></CustomSpinner>
       <CustomModal showOut={showPaymentModal} title="Finalizar venta">
         <div className="custom-section-buttons">
           <Row>
