@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Col, Form, Row } from "react-bootstrap";
-import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
+import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 import { getBrands } from "../apis/brands";
 import Swal from "sweetalert2";
 import { getDepartments } from "../apis/departments";
@@ -84,7 +84,7 @@ const ProductReassign = () => {
 
   return (
     <div className="custom-section">
-      <CustomSpinner2 isLoading={loading}></CustomSpinner2>
+      <CustomSpinner isLoading={loading}></CustomSpinner>
       <h1>Reasignación de productos</h1>
       <Row className="mt-3">
         <Col>

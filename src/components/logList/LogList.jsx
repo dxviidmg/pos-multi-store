@@ -10,7 +10,7 @@ import {
   getStoreProductLogs,
   getStoreProductLogsChoices,
 } from "../apis/products";
-import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
+import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 import { getBrands } from "../apis/brands";
 import CustomButton from "../commons/customButton/CustomButton";
 import { chooseIcon } from "../commons/icons/Icons";
@@ -82,7 +82,7 @@ const LogList = () => {
 
   return (
     <>
-      <CustomSpinner2 isLoading={loading}></CustomSpinner2>
+      <CustomSpinner isLoading={loading}></CustomSpinner>
       <div className="custom-section">
         <h1>Logs</h1>
 

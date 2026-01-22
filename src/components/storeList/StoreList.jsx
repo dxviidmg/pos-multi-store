@@ -4,7 +4,7 @@ import { Alert, Col, Form, Row } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getInvestment, getStores } from "../apis/stores";
 import { useNavigate } from "react-router-dom";
-import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
+import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 import { getDateDifference, getFormattedDate } from "../utils/utils";
 import { getTenantInfo } from "../apis/tenants";
 import { BankIcon, CardIcon, CashIcon, chooseIcon, HomeIcon, PrinterIcon } from "../commons/icons/Icons";
@@ -475,7 +475,7 @@ const StoreList = () => {
   return (
     <>
       <div className="custom-section">
-        <CustomSpinner2 isLoading={loading}></CustomSpinner2>
+        <CustomSpinner isLoading={loading}></CustomSpinner>
 
         {tenantInfo.notices && tenantInfo.notices.length > 0 && (
           <div>

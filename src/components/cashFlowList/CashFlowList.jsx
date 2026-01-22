@@ -11,7 +11,7 @@ import {
   hideCashFlowModal,
   showCashFlowModal,
 } from "../redux/cashFlowModal/CashFlowModalActions";
-import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
+import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 
 const today = getFormattedDate();
 
@@ -57,7 +57,7 @@ const CashFlowList = () => {
 
   return (
     <>
-      <CustomSpinner2 isLoading={loading}></CustomSpinner2>
+      <CustomSpinner isLoading={loading}></CustomSpinner>
       <CashFlowModal onUpdateCashFlowList={handleUpdateCashFlowList} />
       <div className="custom-section">
         <h1>Movimientos en caja</h1>
