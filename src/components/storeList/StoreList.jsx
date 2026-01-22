@@ -231,7 +231,7 @@ const StoreList = () => {
           {
             name: "Ventas ($)",
             style: alignTdStyles,
-            grow: 2,
+            grow: 1.25,
             selector: ({ cash_summary }) => {
               const vendido = cash_summary?.[3]?.amount || 0;
               const realizadas = cash_summary?.[10]?.amount || 0;
