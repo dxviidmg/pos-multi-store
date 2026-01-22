@@ -22,7 +22,7 @@ import Swal from "sweetalert2";
 import { addProducts, getStockOtherStores } from "../apis/products";
 import { getUserData } from "../apis/utils";
 import { RemoveInCartIcon } from "../commons/icons/Icons";
-import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
+import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 import { hideStockModal, showStockModal } from "../redux/stockModal/StockModalActions";
 
 const Cart = () => {
@@ -470,7 +470,7 @@ const Cart = () => {
 
   return (
     <div>
-      <CustomSpinner2 isLoading={loading} />
+      <CustomSpinner isLoading={loading} />
       <PaymentModal />
       <div>
         {cart.length !== 0 && (

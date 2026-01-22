@@ -14,7 +14,7 @@ import {
   showSaleModal,
 } from "../redux/saleModal/SaleModalActions";
 import SaleModal from "../saleModal/SaleModal";
-import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
+import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 import {
   CashIcon,
   ErrorIcon,
@@ -121,7 +121,7 @@ const SaleList = () => {
 
   return (
     <>
-      <CustomSpinner2 isLoading={loading}></CustomSpinner2>
+      <CustomSpinner isLoading={loading}></CustomSpinner>
       <PaymentModal2 onUpdateSaleList={handleUpdateSaleList} />
       <SaleModal onUpdateSaleList={handleUpdateSaleList}></SaleModal>
       <div className="custom-section">

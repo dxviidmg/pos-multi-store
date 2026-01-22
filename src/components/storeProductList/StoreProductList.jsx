@@ -13,7 +13,7 @@ import {
 } from "../redux/logsModal/LogsModalActions";
 import { useDispatch } from "react-redux";
 import StoreProductLogsModal from "../storeproductlogsModal/StoreProductLogsModal";
-import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
+import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 import { getBrands } from "../apis/brands";
 import { SearchIcon } from "../commons/icons/Icons";
 import { getDepartments } from "../apis/departments";
@@ -111,7 +111,7 @@ const StoreProductList = () => {
 
   return (
     <div className="custom-section">
-      <CustomSpinner2 isLoading={loading}></CustomSpinner2>
+      <CustomSpinner isLoading={loading}></CustomSpinner>
       <StoreProductLogsModal
         onUpdateStoreProductList={handleUpdateStoreProductList}
       />

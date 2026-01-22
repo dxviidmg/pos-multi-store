@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getRedeployRender } from "../apis/restart";
-import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
+import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 import { formatTimeFromDate } from "../utils/utils";
 
 function RestartService() {
@@ -63,7 +63,7 @@ function RestartService() {
 
   return (
     <div className="custom-section">
-      <CustomSpinner2 isLoading={isLoading} />
+      <CustomSpinner isLoading={isLoading} />
 
       <CustomButton
         onClick={handleRedeploy}

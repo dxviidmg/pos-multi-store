@@ -11,7 +11,7 @@ import {
 } from "../utils/utils";
 import { getCashFlow } from "../apis/cashflow";
 import CashFlowModal from "../cashFlowModal/CashFlowModal";
-import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
+import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 
 const CashSummary = () => {
   const [cashSummary, setCashSummary] = useState([]);
@@ -97,7 +97,7 @@ const CashSummary = () => {
 
   return (
     <>
-      <CustomSpinner2 isLoading={loading}></CustomSpinner2>
+      <CustomSpinner isLoading={loading}></CustomSpinner>
       <CashFlowModal onUpdateCashFlowList={handleUpdateCashFlowList} />
       <div className="custom-section">
         <h1>Corte de caja</h1>

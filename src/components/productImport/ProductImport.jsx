@@ -10,7 +10,7 @@ import CustomButton from "../commons/customButton/CustomButton";
 import Swal from "sweetalert2";
 import { chooseIcon } from "../commons/icons/Icons";
 import { useRef } from "react";
-import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
+import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 
 const URL_TEMPLATE =
   process.env.REACT_APP_API_URL +
@@ -197,7 +197,7 @@ const ProductImport = () => {
 
   return (
     <div>
-      <CustomSpinner2 isLoading={loading}></CustomSpinner2>
+      <CustomSpinner isLoading={loading}></CustomSpinner>
       <div className="custom-section">
         <h1>Importación de productos</h1>
         <Row>

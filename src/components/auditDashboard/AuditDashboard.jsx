@@ -5,7 +5,7 @@ import AuditDashboardData from "./AuditDashboardData";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getAudit, getAudit2 } from "../apis/audit";
 import { getStores } from "../apis/stores";
-import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
+import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 
 const AuditDashboard = () => {
   const today = getFormattedDate();
@@ -56,7 +56,7 @@ const AuditDashboard = () => {
   };
   return (
     <div>
-      <CustomSpinner2 isLoading={isLoading}></CustomSpinner2>
+      <CustomSpinner isLoading={isLoading}></CustomSpinner>
       <div className="custom-section">
         <h1>Tablero de auditoria</h1>
         <Row>

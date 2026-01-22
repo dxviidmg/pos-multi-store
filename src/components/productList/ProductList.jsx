@@ -15,7 +15,7 @@ import {
 } from "../redux/productModal/ProductModalActions";
 import ProductModal from "../productModal/ProductModal";
 import { exportToExcel } from "../utils/utils";
-import { CustomSpinner2 } from "../commons/customSpinner/CustomSpinner";
+import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 import { getBrands } from "../apis/brands";
 import { getUserData } from "../apis/utils";
 import Swal from "sweetalert2";
@@ -207,7 +207,7 @@ const ProductList = () => {
 
   return (
     <div className="custom-section">
-      <CustomSpinner2 isLoading={loading}></CustomSpinner2>
+      <CustomSpinner isLoading={loading}></CustomSpinner>
       <ProductModal onUpdateProductList={handleUpdateProductList} />
       <h1>Productos</h1>
 
