@@ -5,9 +5,18 @@ import { getFormattedDateTime } from "../utils/utils";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 import { CheckIcon, EditIcon, RemoveInCartIcon } from "../commons/icons/Icons";
 import CustomTooltip from "../commons/Tooltip";
-import { confirmDistribution, deleteTranfer, getDistributions, updateTranfer } from "../apis/transfers";
+import {
+  confirmDistribution,
+  deleteTranfer,
+  getDistributions,
+  updateTranfer,
+} from "../apis/transfers";
 import { Col, Form, Row } from "react-bootstrap";
 import Swal from "sweetalert2";
+import { getUserData } from "../apis/utils";
+
+
+
 
 const DistributionList = () => {
   const [distributions, setDistributions] = useState([]);
@@ -62,7 +71,6 @@ const DistributionList = () => {
     }
   };
 
-
   const [editingRow, setEditingRow] = useState(null);
   const [editedQuantity, setEditedQuantity] = useState("");
 
@@ -72,23 +80,23 @@ const DistributionList = () => {
   };
 
   const handleSaveClick = async (row) => {
-    row.quantity = editedQuantity
-    const response = await updateTranfer(row)
+    row.quantity = editedQuantity;
+    const response = await updateTranfer(row);
     setEditingRow(null);
   };
 
-
   const handleDeleteTransfer = async (row) => {
-    const updatedList = distributionSelected.transfers.filter(transfer => transfer.id !== row.id);
-    const response = await deleteTranfer(row)
+    const updatedList = distributionSelected.transfers.filter(
+      (transfer) => transfer.id !== row.id
+    );
+    const response = await deleteTranfer(row);
 
-    if (response.status === 204){
+    if (response.status === 204) {
       setDistributionSelected({
-        ...distributionSelected,      // conserva las demás propiedades
-        transfers: updatedList,       // actualiza solo la lista de transfers
+        ...distributionSelected, // conserva las demás propiedades
+        transfers: updatedList, // actualiza solo la lista de transfers
       });
     }
-
   };
 
   return (
@@ -155,7 +163,7 @@ const DistributionList = () => {
                 name: "Producto",
                 selector: (row) => row.product_description,
               },
-               {
+              {
                 name: "Cantidad",
                 cell: (row) =>
                   editingRow === row.product_code ? (
@@ -174,27 +182,30 @@ const DistributionList = () => {
               {
                 name: "Acciones",
                 cell: (row) =>
-                  editingRow === row.product_code ? (
-                    <CustomButton onClick={() => handleSaveClick(row)}>Guardar</CustomButton>
+                  getUserData().role === "owner" ? (
+                    editingRow === row.product_code ? (
+                      <CustomButton onClick={() => handleSaveClick(row)}>
+                        Guardar
+                      </CustomButton>
+                    ) : (
+                      <>
+                        <CustomTooltip text="Editar cantidad">
+                          <CustomButton onClick={() => handleEditClick(row)}>
+                            <EditIcon />
+                          </CustomButton>
+                        </CustomTooltip>
+              
+                        <CustomTooltip text="Borrar producto">
+                          <CustomButton onClick={() => handleDeleteTransfer(row)}>
+                            <RemoveInCartIcon />
+                          </CustomButton>
+                        </CustomTooltip>
+                      </>
+                    )
                   ) : (
-                    <>
-                                        <CustomTooltip text="Editar cantidad">
-                      <CustomButton onClick={() => handleEditClick(row)}>
-                        <EditIcon />
-                      </CustomButton>
-                    </CustomTooltip>
-
-                    <CustomTooltip text="Borrar producto">
-                      <CustomButton onClick={() => handleDeleteTransfer(row)}>
-                        <RemoveInCartIcon />
-                      </CustomButton>
-                    </CustomTooltip>
-                    </>
-
-
-                    
-                  ),
-              },
+                    "Solo el propietario puede editar o eliminar"
+                  )
+              }
             ]}
           />
         </div>
@@ -204,4 +215,3 @@ const DistributionList = () => {
 };
 
 export default DistributionList;
-
