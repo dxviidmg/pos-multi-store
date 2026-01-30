@@ -227,7 +227,7 @@ const PaymentModal = () => {
 
         Swal.fire({
           icon: "success",
-          title: "Venta exitosa",
+          title: "Venta exitosa. Folio " + response.data.id,
           timer: 3000,
         });
       } else {
