@@ -4,7 +4,7 @@ import { getTaskResult } from "../apis/products";
 import CustomButton from "../commons/customButton/CustomButton";
 import { exportToExcel } from "../utils/utils";
 
-const AuditDashboardData = ({ title, taskId, pollInterval = 5000 }) => {
+const AuditDashboardData = ({ title, taskId, pollInterval = 7500 }) => {
   const [data, setData] = useState([]);
   const [info, setInfo] = useState({ total: "por definir", progress: 0 });
 
