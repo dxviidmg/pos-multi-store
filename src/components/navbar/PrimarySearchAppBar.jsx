@@ -3,7 +3,6 @@ import {
   Toolbar,
   IconButton,
   Typography,
-  Box,
   Menu,
   MenuItem,
 } from "@mui/material";
