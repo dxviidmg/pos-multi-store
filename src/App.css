@@ -2,9 +2,8 @@
   border-radius: 1rem;        /* equivalente a rounded-3 */
   box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2), 
               0 4px 6px rgba(0, 0, 0, 0.05); /* shadow-lg de Tailwind */
-  padding: 1rem;              /* p-4 */
+  padding: 1.2rem;              /* p-4 */
   background-color: white; 
-  margin: 1rem;
 }
 
 .custom-section-buttons {

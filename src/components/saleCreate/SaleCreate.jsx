@@ -1,6 +1,7 @@
 import React from "react";
 import SearchProduct from "../searchProduct/SearchProduct";
 import TabCart from "../cart/TabCart";
+import { padding } from "@mui/system";
 
 const SaleCreate = () => {
   return (
@@ -9,7 +10,7 @@ const SaleCreate = () => {
         <SearchProduct />
       </div>
 
-      <div className="custom-section">
+      <div className="custom-section" style={{marginTop: '1rem'}}>
         <TabCart />
       </div>
     </div>
