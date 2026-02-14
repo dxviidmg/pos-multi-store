@@ -24,27 +24,25 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import { Outlet, useNavigate } from "react-router-dom";
 import { getUserData } from "../apis/utils";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import PersonSearchIcon from '@mui/icons-material/PersonSearch';
-import LocalShippingIcon from '@mui/icons-material/LocalShipping';
-import InventoryIcon from '@mui/icons-material/Inventory';
-import ReceiptIcon from '@mui/icons-material/Receipt';
-import StoreIcon from '@mui/icons-material/Store';
-import EngineeringIcon from '@mui/icons-material/Engineering';
-import PaymentsIcon from '@mui/icons-material/Payments';
+import PersonSearchIcon from "@mui/icons-material/PersonSearch";
+import LocalShippingIcon from "@mui/icons-material/LocalShipping";
+import InventoryIcon from "@mui/icons-material/Inventory";
+import ReceiptIcon from "@mui/icons-material/Receipt";
+import StoreIcon from "@mui/icons-material/Store";
+import EngineeringIcon from "@mui/icons-material/Engineering";
+import PaymentsIcon from "@mui/icons-material/Payments";
 
 const iconMap = {
   Vender: <ShoppingCartIcon />,
   Clientes: <PersonSearchIcon />,
   Dashboard: <DashboardIcon />,
-  Distribuciones: <LocalShippingIcon/>,
-  Productos: <InventoryIcon/>,
-  Ventas: <ReceiptIcon/>,
-  Tiendas: <StoreIcon/>,
-  Vendedores: <EngineeringIcon/>,
-  Mensualidades: <PaymentsIcon/>,
+  Distribuciones: <LocalShippingIcon />,
+  Productos: <InventoryIcon />,
+  Ventas: <ReceiptIcon />,
+  Tiendas: <StoreIcon />,
+  Vendedores: <EngineeringIcon />,
+  Mensualidades: <PaymentsIcon />,
 };
-
-
 
 const drawerWidth = 240;
 
@@ -235,11 +233,23 @@ export default function MainLayout() {
 
       {/* DRAWER */}
       <Drawer variant="permanent" open={open}>
-        <DrawerHeader>
-          <IconButton onClick={handleDrawerToggle}>
-            <ChevronLeftIcon />
-          </IconButton>
-        </DrawerHeader>
+      <DrawerHeader
+  sx={{
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  }}
+>
+  <Typography
+    variant="h6"
+    sx={{
+      fontWeight: 600,
+      textAlign: "center",
+    }}
+  >
+    Menú
+  </Typography>
+</DrawerHeader>
 
         <Divider />
 
@@ -255,7 +265,7 @@ export default function MainLayout() {
                       onClick={() => handleToggleMenu(item.label)}
                     >
                       <ListItemIcon>
-                      {iconMap[item.label] || <DashboardIcon />}
+                        {iconMap[item.label] || <DashboardIcon />}
                       </ListItemIcon>
                       <ListItemText primary={item.label} />
                       {openMenus[item.label] ? <ExpandLess /> : <ExpandMore />}
@@ -291,7 +301,7 @@ export default function MainLayout() {
               <ListItem key={idx} disablePadding>
                 <ListItemButton onClick={() => navigate(item.href)}>
                   <ListItemIcon>
-                  {iconMap[item.label] || <DashboardIcon />}
+                    {iconMap[item.label] || <DashboardIcon />}
                   </ListItemIcon>
                   <ListItemText primary={item.label} />
                 </ListItemButton>
