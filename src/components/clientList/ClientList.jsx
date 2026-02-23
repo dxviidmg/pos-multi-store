@@ -15,6 +15,7 @@ import { EditIcon } from "../commons/icons/Icons";
 import { getUserData } from "../apis/utils";
 import { getDateDifference, getFormattedDate } from "../utils/utils";
 import CustomTooltip from "../commons/Tooltip";
+import Grid from "@mui/material/Grid";
 
 const ClientList = () => {
   const today = getFormattedDate();
@@ -112,35 +113,33 @@ const ClientList = () => {
   };
 
   return (
-    <div className="">
+    <Grid container spacing={2}>
       <ClientModal onUpdateClientList={handleUpdateClientList}></ClientModal>
-      <div>
-        {getUserData().role === "owner" && (
-          <div className="custom-section">
-            <Form>
-              <h1>Crear descuento</h1>
-              <br></br>
-              <Form.Label>Descuento</Form.Label>
-              <Form.Control
-                type="number"
-                value={discountFormData.discount_percentage}
-                placeholder="Descuento"
-                name="discount_percentage"
-                onChange={handleDiscountInputChange}
-              />
-              <CustomButton
-                fullWidth
-                onClick={handleSaveDiscount}
-                disabled={!discountFormData.discount_percentage}
-                marginTop="10px"
-              >
-                Crear descuento
-              </CustomButton>
-            </Form>
-          </div>
-        )}
-      </div>
-      <div className="custom-section">
+      {getUserData().role === "owner" && (
+        <Grid xs={12} className="custom-section">
+          <Form>
+            <h1>Crear descuento</h1>
+            <br></br>
+            <Form.Label>Descuento</Form.Label>
+            <Form.Control
+              type="number"
+              value={discountFormData.discount_percentage}
+              placeholder="Descuento"
+              name="discount_percentage"
+              onChange={handleDiscountInputChange}
+            />
+            <CustomButton
+              fullWidth
+              onClick={handleSaveDiscount}
+              disabled={!discountFormData.discount_percentage}
+              marginTop="10px"
+            >
+              Crear descuento
+            </CustomButton>
+          </Form>
+        </Grid>
+      )}
+      <Grid xs={12} className="custom-section">
         <h1>Clientes</h1>
         <CustomButton onClick={() => handleOpenModal()}>Crear</CustomButton>
         <Row>
@@ -201,7 +200,7 @@ const ClientList = () => {
             {
               name: "Acciones",
               cell: (row) => (
-                <CustomTooltip text={"Editar usuario"} >
+                <CustomTooltip text={"Editar usuario"}>
                   <CustomButton onClick={() => handleOpenModal(row)}>
                     <EditIcon></EditIcon>
                   </CustomButton>
@@ -211,8 +210,8 @@ const ClientList = () => {
           ]}
           highlightOnHover
         />
-      </div>
-    </div>
+      </Grid>
+    </Grid>
   );
 };
 

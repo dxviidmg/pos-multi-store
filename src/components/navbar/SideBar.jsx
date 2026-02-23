@@ -128,8 +128,7 @@ export default function MainLayout() {
       store_id: "",
     };
     localStorage.setItem("user", JSON.stringify(updatedUser));
-    navigate("/tiendas/");
-    window.location.reload();
+    navigate("/tiendas/", { replace: true });
   };
 
   // ===============================

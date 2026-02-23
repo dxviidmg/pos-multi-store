@@ -146,8 +146,7 @@ const StoreList = () => {
       store_printer: printer,
     });
 
-    navigate("/vender/");
-    window.location.reload();
+    navigate("/vender/", { replace: true });
   };
 
   const handleShowInvestment = async () => {

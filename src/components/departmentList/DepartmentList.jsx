@@ -14,6 +14,7 @@ import DepartmentModal from "../departmentModal/DepartmentModal";
 import { getUserData } from "../apis/utils";
 import { EditIcon } from "../commons/icons/Icons";
 import CustomTooltip from "../commons/Tooltip";
+import Grid from '@mui/material/Grid';
 
 const DepartmentList = () => {
   const [loading, setLoading] = useState(false);
@@ -96,10 +97,11 @@ const DepartmentList = () => {
   };
 
   return (
-    <div className="custom-section">
+    <Grid container spacing={2} className="custom-section">
       <DepartmentModal
         onUpdateDepartmentList={handleUpdateDepartmentList}
       ></DepartmentModal>{" "}
+      <Grid xs={12}>
       <h1>Departamentos</h1>
       <CustomButton onClick={() => handleOpenModal()}>Crear</CustomButton>
       <CustomButton
@@ -144,7 +146,8 @@ const DepartmentList = () => {
           },
         ]}
       />
-    </div>
+      </Grid>
+    </Grid>
   );
 };
 
