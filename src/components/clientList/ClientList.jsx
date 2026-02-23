@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { getClients } from "../apis/clients";
 import { Col, Form, Row } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import { createDiscount } from "../apis/discounts";
@@ -16,10 +15,10 @@ import { getUserData } from "../apis/utils";
 import { getDateDifference, getFormattedDate } from "../utils/utils";
 import CustomTooltip from "../commons/Tooltip";
 import Grid from "@mui/material/Grid";
+import { useClients } from "../../hooks/useClients";
 
 const ClientList = () => {
   const today = getFormattedDate();
-  const [clients, setClients] = useState([]);
   const dispatch = useDispatch();
 
   const [discountFormData, setDiscountFormData] = useState({
@@ -30,21 +29,9 @@ const ClientList = () => {
     end_date: today,
     start_date: today,
   });
-  const [range, setRange] = useState("");
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [clientsResponse] = await Promise.all([getClients(params)]);
-        setClients(clientsResponse.data);
-        setRange(getDateDifference(params.start_date, params.end_date));
-      } catch (error) {
-        console.error("Error fetching data", error);
-      }
-    };
-
-    fetchData();
-  }, [params]);
+  const { data: clients = [], isLoading, refetch } = useClients(params);
+  const range = getDateDifference(params.start_date, params.end_date);
 
   const handleDiscountInputChange = (e) => {
     const { name, value } = e.target;
@@ -95,15 +82,8 @@ const ClientList = () => {
     dispatch(showClientModal(client));
   };
 
-  const handleUpdateClientList = (updatedClient) => {
-    setClients((prevClients) => {
-      const clientExists = prevClients.some((b) => b.id === updatedClient.id);
-      return clientExists
-        ? prevClients.map((b) =>
-            b.id === updatedClient.id ? updatedClient : b
-          )
-        : [...prevClients, updatedClient];
-    });
+  const handleUpdateClientList = () => {
+    refetch();
   };
 
   const handleParams = async (e) => {

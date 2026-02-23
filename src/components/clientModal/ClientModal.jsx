@@ -3,10 +3,9 @@ import CustomModal from "../commons/customModal/customModal";
 import { Col, Form, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
-import Swal from "sweetalert2";
-import { getDiscounts } from "../apis/discounts";
-import { createClient, updateClient } from "../apis/clients";
 import { hideClientModal } from "../redux/clientModal/ClientModalActions";
+import { useDiscounts } from "../../hooks/useDiscounts";
+import { useCreateClient, useUpdateClient } from "../../hooks/useClientMutations";
 
 const INITIAL_FORM_DATA = {
   first_name: "",
@@ -20,34 +19,19 @@ const ClientModal = ({ onUpdateClientList }) => {
     (state) => state.ClientModalReducer
   );
 
-  const [discounts, setDiscounts] = useState([]);
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
-
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    const fetchDiscounts = async () => {
-      try {
-        const response = await getDiscounts();
-        setDiscounts(response.data);
-      } catch (error) {
-        console.error("Error fetching discounts", error);
-        Swal.fire({
-          icon: "error",
-          title: "Error al cargar descuentos",
-          text: "Por favor, intente de nuevo más tarde.",
-          timer: 5000,
-        });
-      }
-    };
+  const { data: discounts = [] } = useDiscounts();
+  const createMutation = useCreateClient();
+  const updateMutation = useUpdateClient();
 
+  useEffect(() => {
     if (client) {
       setFormData(client);
     } else {
       setFormData(INITIAL_FORM_DATA);
     }
-
-    fetchDiscounts();
   }, [client]);
 
   const handleInputChange = (e) => {
@@ -58,43 +42,17 @@ const ClientModal = ({ onUpdateClientList }) => {
   const isFormIncomplete = Object.values(formData).some((value) => value === "");
 
   const handleSaveClient = async () => {
-      const apiCall = formData.id ? updateClient : createClient;
-      const response = await apiCall(formData);
-
-      if ([200, 201].includes(response.status)) {
+    const mutation = formData.id ? updateMutation : createMutation;
+    
+    mutation.mutate(formData, {
+      onSuccess: () => {
         dispatch(hideClientModal());
-        onUpdateClientList(response.data);
+        onUpdateClientList();
         setFormData(INITIAL_FORM_DATA);
-
-        Swal.fire({
-          icon: "success",
-          title: `Cliente ${formData.id ? "actualizado" : "creado"}`,
-          timer: 5000,
-        });
-      } else {
-        handleClientError(response);
-      }
-  };
-
-  const handleClientError = (response) => {
-    let message = "Error desconocido. Por favor, contacte soporte.";
-
-    if (response?.status === 400 && response.data.phone_number) {
-      const phoneError = response.data.phone_number[0];
-      if (phoneError === "Ensure this field has at least 10 characters.") {
-        message = "El teléfono debe tener al menos 10 dígitos.";
-      } else if (phoneError === "client with this phone number already exists.") {
-        message = "El teléfono ya existe.";
-      }
-    }
-
-    Swal.fire({
-      icon: "error",
-      title: "Error al guardar cliente",
-      text: message,
-      timer: 5000,
+      },
     });
   };
+  
   return (
     <CustomModal
       showOut={showClientModal}

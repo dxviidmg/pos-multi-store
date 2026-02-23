@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
 import { FormCheck } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
-import { deleteBrands, getBrands } from "../apis/brands";
+import { deleteBrands } from "../apis/brands";
 import BrandModal from "../brandModal/BrandModal";
 import { useDispatch } from "react-redux";
 import {
@@ -13,37 +13,21 @@ import Swal from "sweetalert2";
 import { getUserData } from "../apis/utils";
 import { EditIcon } from "../commons/icons/Icons";
 import CustomTooltip from "../commons/Tooltip";
+import { useBrands } from "../../hooks/useBrands";
 
 const BrandList = () => {
-  const [loading, setLoading] = useState(false);
-  const [brands, setBrands] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
   const [confirmDeletion, setConfirmDeletion] = useState(false);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      const response = await getBrands();
-      setBrands(response.data);
-      setLoading(false);
-    };
-
-    fetchData();
-  }, []);
+  const { data: brands = [], isLoading: loading, refetch } = useBrands();
 
   const handleOpenModal = (brand) => {
-    dispatch(hideBrandModal());
-    setTimeout(() => dispatch(showBrandModal(brand)));
+    dispatch(showBrandModal(brand));
   };
 
-  const handleUpdateBrandList = (updatedBrand) => {
-    setBrands((prevBrands) => {
-      const brandExists = prevBrands.some((b) => b.id === updatedBrand.id);
-      return brandExists
-        ? prevBrands.map((b) => (b.id === updatedBrand.id ? updatedBrand : b))
-        : [...prevBrands, updatedBrand];
-    });
+  const handleUpdateBrandList = () => {
+    refetch();
   };
 
   const handleDeleteBrands = async () => {
@@ -69,13 +53,14 @@ const BrandList = () => {
         (brand) => !selectedIds.includes(brand.id)
       );
 
-      setBrands(updatedBrands);
+//      setBrands(updatedBrands);
 
       Swal.fire({
         icon: "success",
-        title: "Marcas eliminados",
+        title: "Marcas eliminadas",
         timer: 5000,
       });
+      refetch();
     } else {
       Swal.fire({
         icon: "error",

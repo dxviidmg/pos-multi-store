@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
 import { FormCheck } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
-import { deleteDepartments, getDepartments } from "../apis/departments";
+import { deleteDepartments } from "../apis/departments";
 import { useDispatch } from "react-redux";
-
 import Swal from "sweetalert2";
 import {
   hideDepartmentModal,
@@ -15,41 +14,21 @@ import { getUserData } from "../apis/utils";
 import { EditIcon } from "../commons/icons/Icons";
 import CustomTooltip from "../commons/Tooltip";
 import Grid from '@mui/material/Grid';
+import { useDepartments } from "../../hooks/useDepartments";
 
 const DepartmentList = () => {
-  const [loading, setLoading] = useState(false);
-  const [departments, setDepartments] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
   const [confirmDeletion, setConfirmDeletion] = useState(false);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      const response = await getDepartments();
-      setDepartments(response.data);
-      setLoading(false);
-    };
-
-    fetchData();
-  }, []);
+  const { data: departments = [], isLoading: loading, refetch } = useDepartments();
 
   const handleOpenModal = (department) => {
-    dispatch(hideDepartmentModal());
-    setTimeout(() => dispatch(showDepartmentModal(department)));
+    dispatch(showDepartmentModal(department));
   };
 
-  const handleUpdateDepartmentList = (updatedDepartment) => {
-    setDepartments((prevDepartments) => {
-      const departmentExists = prevDepartments.some(
-        (b) => b.id === updatedDepartment.id
-      );
-      return departmentExists
-        ? prevDepartments.map((b) =>
-            b.id === updatedDepartment.id ? updatedDepartment : b
-          )
-        : [...prevDepartments, updatedDepartment];
-    });
+  const handleUpdateDepartmentList = () => {
+    refetch();
   };
 
   const handleDeleteDepartments = async () => {
@@ -76,13 +55,14 @@ const DepartmentList = () => {
         (department) => !selectedIds.includes(department.id)
       );
 
-      setDepartments(updatedDepartments);
+//      setDepartments(updatedDepartments);
 
       Swal.fire({
         icon: "success",
         title: "Departamentos eliminados",
         timer: 5000,
       });
+      refetch();
     } else {
       Swal.fire({
         icon: "error",
