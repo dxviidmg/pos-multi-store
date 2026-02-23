@@ -72,7 +72,11 @@ const DepartmentModal = ({ onUpdateDepartmentList }) => {
   };
 
   return (
-    <CustomModal showOut={showDepartmentModal} title={formData.id ? "Actualizar departamento" : "Crear departamento"}>
+    <CustomModal 
+      showOut={showDepartmentModal} 
+      onClose={() => dispatch(hideDepartmentModal())}
+      title={formData.id ? "Actualizar departamento" : "Crear departamento"}
+    >
 
       <div className="custom-section">
 

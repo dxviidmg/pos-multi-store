@@ -155,6 +155,7 @@ const ProductModal = ({ onUpdateProductList }) => {
   return (
     <CustomModal
       showOut={showProductModal}
+      onClose={() => dispatch(hideProductModal())}
       title={showStoreProducts? "Ver stock": formData.id ? "Actualizar producto" : "Crear producto"}
     >
       <div className="custom-section">

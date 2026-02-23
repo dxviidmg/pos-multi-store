@@ -111,6 +111,7 @@ const SaleModal = ({ onUpdateSaleList }) => {
   return (
     <CustomModal
       showOut={showSaleModal}
+      onClose={() => dispatch(hideSaleModal())}
       title={totalCancel ? "Cancelación de compra" : "Devolución de productos"}
     >
       <div className="custom-section">

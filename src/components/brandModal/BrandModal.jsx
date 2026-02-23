@@ -72,7 +72,11 @@ const BrandModal = ({ onUpdateBrandList }) => {
   };
 
   return (
-    <CustomModal showOut={showBrandModal} title={formData.id ? "Actualizar marca" : "Crear marca"}>
+    <CustomModal 
+      showOut={showBrandModal} 
+      onClose={() => dispatch(hideBrandModal())}
+      title={formData.id ? "Actualizar marca" : "Crear marca"}
+    >
       <div className="custom-section">
 
       <Row>

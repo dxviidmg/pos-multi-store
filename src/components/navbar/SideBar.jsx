@@ -109,6 +109,7 @@ export default function MainLayout() {
   };
 
   const handleToggleMenu = (label) => {
+    setOpen(true)
     setOpenMenus((prev) => ({
       ...prev,
       [label]: !prev[label],

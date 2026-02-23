@@ -76,6 +76,7 @@ const StoreProductLogsModal = ({ onUpdateStoreProductList }) => {
   return (
     <CustomModal
       showOut={showLogsModal}
+      onClose={() => dispatch(hideLogsModal())}
       title={adjustStock ? "Ajuste de stock" : "Movimientos de stock"}
     >
      <div className="custom-section">

@@ -98,6 +98,7 @@ const ClientModal = ({ onUpdateClientList }) => {
   return (
     <CustomModal
       showOut={showClientModal}
+      onClose={() => dispatch(hideClientModal())}
       title={formData ? "Actualizar cliente" : "Crear cliente"}
     >
       <div className={`custom-section`}>

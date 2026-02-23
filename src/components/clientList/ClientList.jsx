@@ -92,8 +92,7 @@ const ClientList = () => {
   };
 
   const handleOpenModal = (client) => {
-    dispatch(hideClientModal());
-    setTimeout(() => dispatch(showClientModal(client)));
+    dispatch(showClientModal(client));
   };
 
   const handleUpdateClientList = (updatedClient) => {
