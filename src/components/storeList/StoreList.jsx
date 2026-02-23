@@ -2,7 +2,6 @@ import { useMemo, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
 import { Alert, Col, Form, Row } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
-import { getInvestment } from "../apis/stores";
 import { useNavigate } from "react-router-dom";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 import { getDateDifference, getFormattedDate } from "../utils/utils";
@@ -12,6 +11,7 @@ import CustomTooltip from "../commons/Tooltip";
 import { useStores } from "../../hooks/useStores";
 import { useTenantInfo } from "../../hooks/useTenantInfo";
 import { useDepartments } from "../../hooks/useDepartments";
+import { useInvestment } from "../../hooks/useInvestment";
 
 const StoreList = () => {
   const navigate = useNavigate();
@@ -27,10 +27,28 @@ const StoreList = () => {
   const { data: storesData, isLoading: loadingStores } = useStores(params);
   const { data: tenantInfo = {}, isLoading: loadingTenant } = useTenantInfo();
   const { data: departments = [] } = useDepartments();
+  const { data: investmentData, isLoading: loadingInvestment } = useInvestment(showInvestment);
 
-  const stores = storesData?.stores || [];
-  const totals = storesData?.totals || {};
-  const loading = loadingStores || loadingTenant;
+  // Merge investment data with stores if available
+  const storesWithInvestment = useMemo(() => {
+    if (!showInvestment || !investmentData) return storesData?.stores || [];
+    
+    return (storesData?.stores || []).map((store) => {
+      const matchingInvestment = investmentData.investments.find(
+        (inv) => inv.id === store.id
+      );
+      return matchingInvestment
+        ? { ...store, investment: matchingInvestment.investment }
+        : store;
+    });
+  }, [storesData, investmentData, showInvestment]);
+
+  const stores = storesWithInvestment;
+  const totals = {
+    ...(storesData?.totals || {}),
+    investment: investmentData?.total || 0,
+  };
+  const loading = loadingStores || loadingTenant || loadingInvestment;
   const range = getDateDifference(params.start_date, params.end_date);
 
   const handleParams = async (e) => {
@@ -56,29 +74,7 @@ const StoreList = () => {
     navigate("/vender/", { replace: true });
   };
 
-  const handleShowInvestment = async () => {
-//    setLoading(true);
-//    const response = await getInvestment();
-//    setStores((prevData) =>
-//      prevData.map((store) => {
-//        const matchingInvestment = response.data.find(
-//          (investment) => investment.id === store.id
-//        );
-//        return matchingInvestment
-//          ? { ...store, investment: matchingInvestment.investment }
-//          : store;
-//      })
-//    );
-
-//    const { investment } = response.data.reduce(
-//      (acc, store) => ({
-//        investment: acc.investment + store.investment,
-//      }),
-//      { investment: 0 }
-//    );
-
-//    setTotals((prevData) => ({ ...prevData, investment }));
-//    setLoading(false);
+  const handleShowInvestment = () => {
     setShowInvestment(true);
   };
 
