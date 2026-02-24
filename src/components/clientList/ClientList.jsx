@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { getClients } from "../apis/clients";
 import { Col, Form, Row } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import { createDiscount } from "../apis/discounts";
@@ -15,10 +14,11 @@ import { EditIcon } from "../commons/icons/Icons";
 import { getUserData } from "../apis/utils";
 import { getDateDifference, getFormattedDate } from "../utils/utils";
 import CustomTooltip from "../commons/Tooltip";
+import Grid from "@mui/material/Grid";
+import { useClients } from "../../hooks/useClients";
 
 const ClientList = () => {
   const today = getFormattedDate();
-  const [clients, setClients] = useState([]);
   const dispatch = useDispatch();
 
   const [discountFormData, setDiscountFormData] = useState({
@@ -29,21 +29,9 @@ const ClientList = () => {
     end_date: today,
     start_date: today,
   });
-  const [range, setRange] = useState("");
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [clientsResponse] = await Promise.all([getClients(params)]);
-        setClients(clientsResponse.data);
-        setRange(getDateDifference(params.start_date, params.end_date));
-      } catch (error) {
-        console.error("Error fetching data", error);
-      }
-    };
-
-    fetchData();
-  }, [params]);
+  const { data: clients = [], isLoading, refetch } = useClients(params);
+  const range = getDateDifference(params.start_date, params.end_date);
 
   const handleDiscountInputChange = (e) => {
     const { name, value } = e.target;
@@ -91,19 +79,11 @@ const ClientList = () => {
   };
 
   const handleOpenModal = (client) => {
-    dispatch(hideClientModal());
-    setTimeout(() => dispatch(showClientModal(client)));
+    dispatch(showClientModal(client));
   };
 
-  const handleUpdateClientList = (updatedClient) => {
-    setClients((prevClients) => {
-      const clientExists = prevClients.some((b) => b.id === updatedClient.id);
-      return clientExists
-        ? prevClients.map((b) =>
-            b.id === updatedClient.id ? updatedClient : b
-          )
-        : [...prevClients, updatedClient];
-    });
+  const handleUpdateClientList = () => {
+    refetch();
   };
 
   const handleParams = async (e) => {
@@ -112,35 +92,33 @@ const ClientList = () => {
   };
 
   return (
-    <div className="">
+    <Grid container spacing={2}>
       <ClientModal onUpdateClientList={handleUpdateClientList}></ClientModal>
-      <div>
-        {getUserData().role === "owner" && (
-          <div className="custom-section">
-            <Form>
-              <h1>Crear descuento</h1>
-              <br></br>
-              <Form.Label>Descuento</Form.Label>
-              <Form.Control
-                type="number"
-                value={discountFormData.discount_percentage}
-                placeholder="Descuento"
-                name="discount_percentage"
-                onChange={handleDiscountInputChange}
-              />
-              <CustomButton
-                fullWidth
-                onClick={handleSaveDiscount}
-                disabled={!discountFormData.discount_percentage}
-                marginTop="10px"
-              >
-                Crear descuento
-              </CustomButton>
-            </Form>
-          </div>
-        )}
-      </div>
-      <div className="custom-section">
+      {getUserData().role === "owner" && (
+        <Grid xs={12} className="custom-section">
+          <Form>
+            <h1>Crear descuento</h1>
+            <br></br>
+            <Form.Label>Descuento</Form.Label>
+            <Form.Control
+              type="number"
+              value={discountFormData.discount_percentage}
+              placeholder="Descuento"
+              name="discount_percentage"
+              onChange={handleDiscountInputChange}
+            />
+            <CustomButton
+              fullWidth
+              onClick={handleSaveDiscount}
+              disabled={!discountFormData.discount_percentage}
+              marginTop="10px"
+            >
+              Crear descuento
+            </CustomButton>
+          </Form>
+        </Grid>
+      )}
+      <Grid xs={12} className="custom-section">
         <h1>Clientes</h1>
         <CustomButton onClick={() => handleOpenModal()}>Crear</CustomButton>
         <Row>
@@ -201,7 +179,7 @@ const ClientList = () => {
             {
               name: "Acciones",
               cell: (row) => (
-                <CustomTooltip text={"Editar usuario"} >
+                <CustomTooltip text={"Editar usuario"}>
                   <CustomButton onClick={() => handleOpenModal(row)}>
                     <EditIcon></EditIcon>
                   </CustomButton>
@@ -211,8 +189,8 @@ const ClientList = () => {
           ]}
           highlightOnHover
         />
-      </div>
-    </div>
+      </Grid>
+    </Grid>
   );
 };
 

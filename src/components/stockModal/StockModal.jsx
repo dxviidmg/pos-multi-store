@@ -12,6 +12,8 @@ import { getStockOtherStores } from "../apis/products";
 
 const StockModal = () => {
   const { showStockModal, storeProduct } = useSelector((state) => state.StockModalReducer);
+
+  console.log('showStockModal', showStockModal)
   const [requestedQuantities, setRequestedQuantities] = useState({});
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false)
@@ -76,7 +78,11 @@ const StockModal = () => {
   return (
    <>
         <CustomSpinner isLoading={isLoading}></CustomSpinner>
-       <CustomModal showOut={showStockModal} title="Revisión de Stock">
+       <CustomModal 
+         showOut={showStockModal} 
+         onClose={() => dispatch(hideStockModal())}
+         title="Revisión de Stock"
+       >
       <div className="text-center custom-section">
         <p>
           <b>Código:</b> {storeProduct.product?.code} <b>Nombre:</b> {storeProduct.product?.brand_name} {storeProduct.product?.name}

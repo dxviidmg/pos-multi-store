@@ -293,7 +293,11 @@ const PaymentModal = () => {
   return (
     <>
       <CustomSpinner isLoading={isLoading}></CustomSpinner>
-      <CustomModal showOut={showPaymentModal} title="Finalizar venta">
+      <CustomModal 
+        showOut={showPaymentModal} 
+        onClose={() => dispatch(hidePaymentModal())}
+        title="Finalizar venta"
+      >
         <div className="custom-section-buttons">
           <Row>
             <Col md={6}>

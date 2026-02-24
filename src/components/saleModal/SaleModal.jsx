@@ -3,10 +3,9 @@ import CustomModal from "../commons/customModal/customModal";
 import { Col, Form, FormCheck, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
-import Swal from "sweetalert2";
-import { cancelSale } from "../apis/sales";
 import CustomTable from "../commons/customTable/customTable";
 import { hideSaleModal } from "../redux/saleModal/SaleModalActions";
+import { useCancelSale } from "../../hooks/useSaleMutations";
 
 const INITIAL_FORM_DATA = {
   products_sale: [],
@@ -23,7 +22,7 @@ const SaleModal = ({ onUpdateSaleList }) => {
   const [totalCancel, setTotalCancel] = useState(false);
   const [reasonCancel, setReasonCancel] = useState("");
   const dispatch = useDispatch();
-  const [loading, setLoading] = useState(false)
+  const cancelMutation = useCancelSale();
 
   useEffect(() => {
     setFormData(sale.id ? sale : INITIAL_FORM_DATA);
@@ -75,42 +74,18 @@ const SaleModal = ({ onUpdateSaleList }) => {
       reason_cancel: reasonCancel
     };
 
-    const response = await cancelSale(payload);
-    if (loading) return
-    setLoading(true)
-
-    if (response.status === 200) {
-      const { sale: updatedSale, cash_back } = response.data;
-
-      onUpdateSaleList(updatedSale);
-      dispatch(hideSaleModal());
-      setTimeout(() => {
-        setLoading(false)
-      }, 200);
-
-      Swal.fire({
-        icon: "success",
-        title: `Devolución exitosa. Devolver $${cash_back}`,
-        timer: 5000,
-      });
-    } else {
-      setLoading(false)
-      handleClientError();
-    }
-  };
-
-  const handleClientError = () => {
-    Swal.fire({
-      icon: "error",
-      title: "Error al cancelar venta",
-      text: "Error desconocido. Por favor, contacte soporte.",
-      timer: 5000,
+    cancelMutation.mutate(payload, {
+      onSuccess: () => {
+        onUpdateSaleList();
+        dispatch(hideSaleModal());
+      },
     });
   };
 
   return (
     <CustomModal
       showOut={showSaleModal}
+      onClose={() => dispatch(hideSaleModal())}
       title={totalCancel ? "Cancelación de compra" : "Devolución de productos"}
     >
       <div className="custom-section">

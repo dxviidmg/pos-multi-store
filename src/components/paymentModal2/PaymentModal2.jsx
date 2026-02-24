@@ -105,7 +105,11 @@ const PaymentModal2 = ({ onUpdateSaleList }) => {
   };
 
   return (
-    <CustomModal showOut={showPaymentReservationModal} title="Cobrar apartado">
+    <CustomModal 
+      showOut={showPaymentReservationModal} 
+      onClose={() => dispatch(hidePaymentReservationModal())}
+      title="Cobrar apartado"
+    >
       <div className="custom-section">
         <Row>
           <h2>Información</h2>
