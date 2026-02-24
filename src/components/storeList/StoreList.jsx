@@ -5,7 +5,14 @@ import CustomButton from "../commons/customButton/CustomButton";
 import { useNavigate } from "react-router-dom";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 import { getDateDifference, getFormattedDate } from "../utils/utils";
-import { BankIcon, CardIcon, CashIcon, chooseIcon, HomeIcon, PrinterIcon } from "../commons/icons/Icons";
+import {
+  BankIcon,
+  CardIcon,
+  CashIcon,
+  chooseIcon,
+  HomeIcon,
+  PrinterIcon,
+} from "../commons/icons/Icons";
 import { getStorage, setStorage } from "../utils/storage";
 import CustomTooltip from "../commons/Tooltip";
 import { useStores } from "../../hooks/useStores";
@@ -27,12 +34,13 @@ const StoreList = () => {
   const { data: storesData, isLoading: loadingStores } = useStores(params);
   const { data: tenantInfo = {}, isLoading: loadingTenant } = useTenantInfo();
   const { data: departments = [] } = useDepartments();
-  const { data: investmentData, isLoading: loadingInvestment } = useInvestment(showInvestment);
+  const { data: investmentData, isLoading: loadingInvestment } =
+    useInvestment(showInvestment);
 
   // Merge investment data with stores if available
   const storesWithInvestment = useMemo(() => {
     if (!showInvestment || !investmentData) return storesData?.stores || [];
-    
+
     return (storesData?.stores || []).map((store) => {
       const matchingInvestment = investmentData.investments.find(
         (inv) => inv.id === store.id
@@ -104,98 +112,122 @@ const StoreList = () => {
       selector: ({ name }) => <>{name}</>,
     },
     // Mostrar detalles de pagos y ventas
-      
+
     {
       name: "Pagos",
       style: alignTdStyles,
-      selector: ({ cash_summary }) => {
+      cell: ({ cash_summary }) => {
         return (
-          <>
-            <div className="d-flex justify-content-between align-items-center w-100">
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "4px",
+              width: "100%",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                width: "100%",
+              }}
+            >
               <CashIcon />
               <span>{getCashValue(cash_summary, 0)}</span>
             </div>
-    
-            <div className="d-flex justify-content-between align-items-center w-100">
+
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                width: "100%",
+              }}
+            >
               <CardIcon />
               <span>{getCashValue(cash_summary, 1)}</span>
             </div>
-    
-            <div className="d-flex justify-content-between align-items-center w-100">
+
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                width: "100%",
+              }}
+            >
               <BankIcon />
               <span>{getCashValue(cash_summary, 2)}</span>
             </div>
-          </>
+          </div>
         );
       },
     },
-    
-          {
-            name: "Ventas ($)",
-            style: alignTdStyles,
-            grow: 1.1,
-            selector: ({ cash_summary }) => {
-              const vendido = cash_summary?.[3]?.amount || 0;
-              const realizadas = cash_summary?.[10]?.amount || 0;
-              const promedio = realizadas === 0 ? 0 : vendido / realizadas;
 
-              return (
-                <>
-                  <div>Vendido: {getCashValue(cash_summary, 3)}</div>
-                  <div>Promedio: {getCashValueTotal(promedio)}</div>
-                </>
-              );
-            },
-          },
+    {
+      name: "Ventas ($)",
+      style: alignTdStyles,
+      grow: 1.1,
+      cell: ({ cash_summary }) => {
+        const vendido = cash_summary?.[3]?.amount || 0;
+        const realizadas = cash_summary?.[10]?.amount || 0;
+        const promedio = realizadas === 0 ? 0 : vendido / realizadas;
 
-          {
-            name: "Ventas (#)",
-            style: alignTdStyles,
-            selector: ({ cash_summary }) => {
-              const realizadas =
-                cash_summary?.[10]?.amount?.toLocaleString() || "0";
-              const canceladas =
-                cash_summary?.[11]?.amount?.toLocaleString() || "0";
+        return (
+          <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+            <div>Vendido: {getCashValue(cash_summary, 3)}</div>
+            <div>Promedio: {getCashValueTotal(promedio)}</div>
+          </div>
+        );
+      },
+    },
 
-              return (
-                <>
-                  <div>Realizadas: {realizadas}</div>
-                  <div>Canceladas: {canceladas}</div>
-                </>
-              );
-            },
-          },
+    {
+      name: "Ventas (#)",
+      style: alignTdStyles,
+      cell: ({ cash_summary }) => {
+        const realizadas = cash_summary?.[10]?.amount?.toLocaleString() || "0";
+        const canceladas = cash_summary?.[11]?.amount?.toLocaleString() || "0";
 
-          {
-            name: "Pendientes",
-            style: alignTdStyles,
-            selector: ({ cash_summary }) => {
-              const distributions =
-                cash_summary?.[12]?.amount?.toLocaleString() || "0";
-              const transfers =
-                cash_summary?.[13]?.amount?.toLocaleString() || "0";
+        return (
+          <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+            <div>Realizadas: {realizadas}</div>
+            <div>Canceladas: {canceladas}</div>
+          </div>
+        );
+      },
+    },
 
-              return (
-                <>
-                  <div>Distribuciones: {distributions}</div>
-                  <div>Traspasos: {transfers}</div>
-                </>
-              );
-            },
-          },
-          {
-            name: "Otros",
-            style: alignTdStyles,
-            selector: ({ cash_summary }) => {
-              return (
-                <>
-                  <div>Ganancia: {getCashValue(cash_summary, 8)}</div>
-                  <div>Caja: {getCashValue(cash_summary, 7)}</div>
-                </>
-              );
-            },
-          },
-        
+    {
+      name: "Pendientes",
+      style: alignTdStyles,
+      cell: ({ cash_summary }) => {
+        const distributions =
+          cash_summary?.[12]?.amount?.toLocaleString() || "0";
+        const transfers = cash_summary?.[13]?.amount?.toLocaleString() || "0";
+
+        return (
+          <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+            <div>Distribuciones: {distributions}</div>
+            <div>Traspasos: {transfers}</div>
+          </div>
+        );
+      },
+    },
+    {
+      name: "Otros",
+      style: alignTdStyles,
+      cell: ({ cash_summary }) => {
+        return (
+          <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+            <div>Ganancia: {getCashValue(cash_summary, 8)}</div>
+            <div>Caja: {getCashValue(cash_summary, 7)}</div>
+          </div>
+        );
+      },
+    },
 
     // Mostrar inversión (si aplica)
     ...(showInvestment
@@ -203,8 +235,7 @@ const StoreList = () => {
           {
             style: alignTdStyles,
             name: "Inversión",
-            selector: ({ investment }) =>
-              getCashValueTotal(investment),
+            selector: ({ investment }) => getCashValueTotal(investment),
           },
         ]
       : []),
@@ -242,17 +273,16 @@ const StoreList = () => {
     {
       name: "Pendientes",
       style: alignTdStyles,
-      selector: ({ cash_summary }) => {
+      cell: ({ cash_summary }) => {
         const distributions =
           cash_summary?.[12]?.amount?.toLocaleString() || "0";
-        const transfers =
-          cash_summary?.[13]?.amount?.toLocaleString() || "0";
+        const transfers = cash_summary?.[13]?.amount?.toLocaleString() || "0";
 
         return (
-          <>
+          <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
             <div>Distribuciones: {distributions}</div>
             <div>Traspasos: {transfers}</div>
-          </>
+          </div>
         );
       },
     },
@@ -267,8 +297,6 @@ const StoreList = () => {
           },
         ]
       : []),
-
-      
 
     {
       name: "Entrar",
@@ -291,9 +319,6 @@ const StoreList = () => {
   ];
 
   const columnsTotals = [
-
-
-
     // Pagos y caja
     ...(!params.department_id && !showInvestment
       ? [
@@ -321,7 +346,8 @@ const StoreList = () => {
           {
             name: "Promedio",
             style: alignTdStyles,
-            selector: ({ totalPayment, totalSales }) => getCashValueTotal(totalPayment/totalSales),
+            selector: ({ totalPayment, totalSales }) =>
+              getCashValueTotal(totalPayment / totalSales),
           },
           {
             name: "Ventas",
@@ -344,7 +370,6 @@ const StoreList = () => {
             style: alignTdStyles,
             selector: ({ cash }) => getCashValueTotal(cash),
           },
-
         ]
       : [
           {
@@ -373,7 +398,8 @@ const StoreList = () => {
             selector: ({ investment }) => investment,
           },
         ]
-      : [])  ];
+      : []),
+  ];
 
   return (
     <>
@@ -492,11 +518,14 @@ const StoreList = () => {
           ""
         )}
 
+        <div>
         <CustomTable
           progressPending={loading}
           data={memoStores}
           columns={params.store_type === "T" ? columnsStore : columnsStorages}
         />
+        </div>
+
         {params.store_type === "T" && stores.length > 1 && (
           <>
             <h2 className="pt-2">Totales</h2>

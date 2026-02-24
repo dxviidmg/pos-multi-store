@@ -21,7 +21,7 @@ function TabCart() {
 
   
   return (
-    <div style={{minHeight: '50vh'}}>
+    <div style={{minHeight: '40vh'}}>
     <Tabs
       activeKey={activeTab}
       onSelect={handleSelect}
