@@ -1,8 +1,7 @@
-import React, { memo, useState } from "react";
-import DataTable from "react-data-table-component";
-//import "./customTable.css";
+import React, { memo, useState, useMemo } from "react";
+import { DataGrid } from '@mui/x-data-grid';
 import { Form } from "react-bootstrap";
-
+import { Box } from "@mui/material";
 
 const CustomTable = ({
   columns,
@@ -11,17 +10,15 @@ const CustomTable = ({
   noDataComponent = "Sin datos que mostrar",
   showNoDataComponent = true,
   searcher = false,
-  pagination=true,
+  pagination = true,
   setSelectedRows
 }) => {
 
-  const handleSelectedRowsChange = ({ selectedRows }) => {
-    setSelectedRows(selectedRows);
-  };
-
   const [searchTerm, setSearchTerm] = useState("");
-
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [paginationModel, setPaginationModel] = useState({
+    pageSize: 10,
+    page: 0,
+  });
 
   const searchInObject = (obj, searchTerm) => {
     if (typeof obj === 'string') {
@@ -35,35 +32,57 @@ const CustomTable = ({
     return false;
   };
   
-  const filteredData = data.filter((item) =>
-    searchInObject(item, searchTerm)
+  const filteredData = useMemo(() => 
+    data.filter((item) => searchInObject(item, searchTerm)),
+    [data, searchTerm]
   );
 
-  const customStyles = {
-    rows: {
-      style: {
-        backgroundColor: '#f0f8ff', // Light blue background
-      },
-    },
-    headCells: {
-      style: {
-        backgroundColor: '#04356b', // Dark blue for header
-        color: '#ffffff',
-        border: '1px solid gray', // Border between rows
-      },
-    },
-    cells: {
-      style: {
-        backgroundColor: '#CFD7E1', // Slightly different blue for cells
-        border: '1px solid gray', // Border between rows
-      },
-    },
-  };
+  // Convertir columnas de react-data-table a DataGrid
+  const muiColumns = useMemo(() => 
+    columns.map((col, index) => {
+      const column = {
+        field: col.field || `field_${index}`,
+        headerName: col.name,
+        flex: col.grow || 1,
+        minWidth: col.width || 100,
+        sortable: col.sortable !== false,
+      };
+
+      // Si tiene cell, usarlo directamente
+      if (col.cell) {
+        column.renderCell = (params) => col.cell(params.row);
+      } 
+      // Si tiene selector, usarlo
+      else if (col.selector) {
+        column.renderCell = (params) => {
+          const value = col.selector(params.row);
+          // Si el selector retorna JSX, renderizarlo
+          if (React.isValidElement(value)) {
+            return value;
+          }
+          // Si es primitivo, mostrarlo como texto
+          return value;
+        };
+      }
+
+      return column;
+    }),
+    [columns]
+  );
+
+  // Agregar IDs a las filas si no existen
+  const rowsWithIds = useMemo(() => 
+    filteredData.map((row, index) => ({
+      ...row,
+      _id: row.id || row._id || index,
+    })),
+    [filteredData]
+  );
 
   return (
-    <div className="mt-1">
+    <Box sx={{ width: '100%', mt: 1, overflowX: 'auto' }}>
       {searcher && (
-        <div className="mb-2">
+        <Box sx={{ mb: 2 }}>
           <Form.Label>Buscar</Form.Label>
           <Form.Control
             placeholder="Buscar"
@@ -71,27 +90,52 @@ const CustomTable = ({
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-        </div>
+        </Box>
       )}
 
-      {/* Tabla */}
-      <DataTable
-        noDataComponent={showNoDataComponent && noDataComponent}
-        columns={columns}
-        data={filteredData}
-        pagination={pagination && filteredData.length > 10}
-        striped
-        highlightOnHover
-        progressPending={progressPending}
-        dense
-        paginationRowsPerPageOptions={[10, 25, 50, 100, 500]} // Opciones para cambiar filas por página
-      onChangeRowsPerPage={(currentRowsPerPage) => setRowsPerPage(currentRowsPerPage)}
-      paginationPerPage={rowsPerPage}
-      selectableRows={setSelectedRows ? true: false}
-      onSelectedRowsChange={handleSelectedRowsChange}
-      customStyles={customStyles}
-/>
-    </div>
+      <DataGrid
+        rows={rowsWithIds}
+        columns={muiColumns}
+        getRowId={(row) => row._id}
+        loading={progressPending}
+        pagination={pagination}
+        paginationModel={paginationModel}
+        onPaginationModelChange={setPaginationModel}
+        pageSizeOptions={[10, 25, 50, 100]}
+        checkboxSelection={!!setSelectedRows}
+        onRowSelectionModelChange={(ids) => {
+          if (setSelectedRows) {
+            const selectedRows = rowsWithIds.filter((row) => ids.includes(row._id));
+            setSelectedRows(selectedRows);
+          }
+        }}
+        disableRowSelectionOnClick
+        autoHeight
+        getRowHeight={() => 'auto'}
+        localeText={{
+          noRowsLabel: showNoDataComponent ? noDataComponent : '',
+        }}
+        hideFooter={data.length <= 10}
+        sx={{
+          width: '100%',
+          minWidth: '800px',
+          '& .MuiDataGrid-cell': {
+            py: 1.5,
+          },
+          '& .MuiDataGrid-columnHeaders': {
+            backgroundColor: '#04356b',
+            color: '#ffffff',
+          },
+          '& .MuiDataGrid-cell': {
+            backgroundColor: '#CFD7E1',
+            borderBottom: '1px solid gray',
+          },
+          '& .MuiDataGrid-row': {
+            backgroundColor: '#f0f8ff',
+          },
+        }}
+      />
+    </Box>
   );
 };
 

@@ -83,7 +83,11 @@ const CashFlowModal = ({ onUpdateCashFlowList }) => {
   };
 
   return (
-    <CustomModal showOut={showCashFlowModal} title={formData.id ? "Actualizar movimiento" : "Crear movimiento"}>
+    <CustomModal 
+      showOut={showCashFlowModal} 
+      onClose={() => dispatch(hideCashFlowModal())}
+      title={formData.id ? "Actualizar movimiento" : "Crear movimiento"}
+    >
       <div className="custom-section">
 
       <Row>

@@ -441,7 +441,8 @@ const SearchProduct = () => {
             onFocus={() => setIsInputFocused(true)}
             onBlur={() => setIsInputFocused(false)}
           />
-          <CustomTable
+          {data.length > 0 && (
+            <CustomTable
             showNoDataComponent={false}
             data={data}
             pagination={false}
@@ -513,6 +514,9 @@ const SearchProduct = () => {
               },
             ]}
           />
+          )}
+
+
         </Col>
         {queryType === "q" && (
           <Col>

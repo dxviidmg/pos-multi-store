@@ -3,9 +3,8 @@ import CustomModal from "../commons/customModal/customModal";
 import { Col, Form, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
-import { createDepartment, updateDepartment } from "../apis/departments";
-import Swal from "sweetalert2";
 import { hideDepartmentModal } from "../redux/departmentModal/DepartmentModalActions";
+import { useCreateDepartment, useUpdateDepartment } from "../../hooks/useDepartmentMutations";
 
 const DepartmentModal = ({ onUpdateDepartmentList }) => {
   const { showDepartmentModal, department } = useSelector(
@@ -16,16 +15,20 @@ const DepartmentModal = ({ onUpdateDepartmentList }) => {
     name: "",
   });
 
+  const dispatch = useDispatch();
+  const createMutation = useCreateDepartment();
+  const updateMutation = useUpdateDepartment();
+
   useEffect(() => {
     if (department) {
       setFormData({
         id: department.id || "",
         name: department.name || "",
       });
+    } else {
+      setFormData({ name: "" });
     }
   }, [department]);
-
-  const dispatch = useDispatch();
 
   const handleDataChange = async (e) => {
     let { name, value } = e.target;
@@ -33,46 +36,23 @@ const DepartmentModal = ({ onUpdateDepartmentList }) => {
   };
 
   const handleDepartmentSubmit = async () => {
-    let response;
-    if (formData.id) {
-      response = await updateDepartment(formData);
-    } else {
-      response = await createDepartment(formData);
-    }
-
-    onUpdateDepartmentList(response.data);
-    if (response.status === 200) {
-      dispatch(hideDepartmentModal());
-      setFormData({
-        name: "",
-      });
-      Swal.fire({
-        icon: "success",
-        title: "Marca actualizada",
-        timer: 5000,
-      });
-    } else if (response.status === 201) {
-      dispatch(hideDepartmentModal());
-      setFormData({
-        name: "",
-      });
-      Swal.fire({
-        icon: "success",
-        title: "Marca creada",
-        timer: 5000,
-      });
-    } else {
-      Swal.fire({
-        icon: "error",
-        title: "Error al crear la marca",
-        timer: 5000,
-        text: "Error desconocido, por favor comuniquese con soporte",
-      });
-    }
+    const mutation = formData.id ? updateMutation : createMutation;
+    
+    mutation.mutate(formData, {
+      onSuccess: () => {
+        dispatch(hideDepartmentModal());
+        onUpdateDepartmentList();
+        setFormData({ name: "" });
+      },
+    });
   };
 
   return (
-    <CustomModal showOut={showDepartmentModal} title={formData.id ? "Actualizar departamento" : "Crear departamento"}>
+    <CustomModal 
+      showOut={showDepartmentModal} 
+      onClose={() => dispatch(hideDepartmentModal())}
+      title={formData.id ? "Actualizar departamento" : "Crear departamento"}
+    >
 
       <div className="custom-section">
 
