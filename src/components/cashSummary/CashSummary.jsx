@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { Col, Form, Row } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import { getCashSummary } from "../apis/sales";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getUserData } from "../apis/utils";
@@ -12,6 +12,7 @@ import {
 import { getCashFlow } from "../apis/cashflow";
 import CashFlowModal from "../cashFlowModal/CashFlowModal";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
+import { Grid } from "@mui/material";
 
 const CashSummary = () => {
   const [cashSummary, setCashSummary] = useState([]);
@@ -101,8 +102,8 @@ const CashSummary = () => {
       <CashFlowModal onUpdateCashFlowList={handleUpdateCashFlowList} />
       <div className="custom-section">
         <h1>Corte de caja</h1>
-        <Row>
-          <Col md={6}>
+        <Grid container>
+          <Grid item xs={12} md={6}>
             <Form>
               <Form.Group className="">
                 <Form.Label className="">Fecha</Form.Label>
@@ -114,14 +115,14 @@ const CashSummary = () => {
                 />
               </Form.Group>
             </Form>
-          </Col>
-          <Col md={6} className="d-flex flex-column justify-content-end">
+          </Grid>
+          <Grid item xs={12} md={6} className="d-flex flex-column justify-content-end">
             <CustomButton onClick={handleExport} fullWidth>
               Descargar corte del dia
             </CustomButton>
-          </Col>
+          </Grid>
 
-          <Col md={4}>
+          <Grid item xs={12} md={4}>
             <h2>Métodos de pago</h2>
             <CustomTable
               data={paymentMethodsSummary}
@@ -140,11 +141,11 @@ const CashSummary = () => {
                 },
               ]}
             />
-          </Col>
+          </Grid>
 
 
 
-          <Col md={4}>
+          <Grid item xs={12} md={4}>
             <h2>Flujo de caja</h2>
             <CustomTable
               data={cashFlowSummary}
@@ -163,9 +164,9 @@ const CashSummary = () => {
                 },
               ]}
             />
-          </Col>
+          </Grid>
 
-          <Col md={4}>
+          <Grid item xs={12} md={4}>
             <h2> Total en caja</h2>
             <CustomTable
               data={totalSummary}
@@ -184,8 +185,8 @@ const CashSummary = () => {
                 },
               ]}
             />
-          </Col>
-        </Row>
+          </Grid>
+        </Grid>
       </div>
     </>
   );

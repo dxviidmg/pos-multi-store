@@ -4,7 +4,7 @@ import CustomTable from "../commons/customTable/customTable";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getStoreProducts } from "../apis/products";
 import { addToCart, updateMovementType } from "../redux/cart/cartActions";
-import { Badge, Col, Form, Row } from "react-bootstrap";
+import { Badge, Form } from "react-bootstrap";
 import StockModal from "../stockModal/StockModal";
 import {
   hideStockModal,
@@ -14,6 +14,7 @@ import Swal from "sweetalert2";
 import { getPrinterUrl, getUserData } from "../apis/utils";
 import { PrinterIcon } from "../commons/icons/Icons";
 import { handlePrintTicket } from "../utils/utils";
+import { Grid } from "@mui/material";
 
 const SearchProduct = () => {
   const inputRef = useRef(null);
@@ -424,8 +425,8 @@ const SearchProduct = () => {
       </Badge>
 
       {!searching && isInputFocused && <br />}
-      <Row>
-        <Col md={11}>
+      <Grid container>
+        <Grid item xs={12} md={11}>
           <Form.Control
             className=""
             ref={inputRef}
@@ -517,13 +518,13 @@ const SearchProduct = () => {
           )}
 
 
-        </Col>
+        </Grid>
         {queryType === "q" && (
-          <Col>
+          <Grid item xs={12}>
             <CustomButton onClick={handleSearchProduct}>Buscar</CustomButton>
-          </Col>
+          </Grid>
         )}
-      </Row>
+      </Grid>
     </>
   );
 };

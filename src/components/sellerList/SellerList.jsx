@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { Col, Form, Row } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import { getSellers } from "../apis/sellers";
 import CustomButton from "../commons/customButton/CustomButton";
 import { useDispatch } from "react-redux";
@@ -11,6 +11,7 @@ import {
 import SellerModal from "../sellerModal/SellerModal";
 import { getDateDifference, getFormattedDate } from "../utils/utils";
 import { chooseIcon } from "../commons/icons/Icons";
+import { Grid } from "@mui/material";
 
 const SellerList = () => {
   const today = getFormattedDate();
@@ -56,46 +57,46 @@ const SellerList = () => {
   };
 
   return (
-    <>
-      <div className="custom-section">
+    <Grid container spacing={2}>
+      <Grid xs={12} className="custom-section">
         <SellerModal onUpdateSellerList={handleUpdateSellerList}></SellerModal>
         <h1>Vendedores</h1>
         <CustomButton onClick={() => handleOpenModal()}>Crear</CustomButton>
-        <Row>
-          <Col>
-            {" "}
-            <Form>
-              <Form.Label>Fecha de inicio</Form.Label>
-              <Form.Control
-                name="start_date"
-                type="date"
-                value={params.start_date}
-                onChange={(e) => handleParams(e)}
-                max={today}
-              />
-            </Form>
-          </Col>
-          <Col>
-            {" "}
-            <Form>
-              <Form.Label>Fecha de fin</Form.Label>
-              <Form.Control
-                name="end_date"
-                type="date"
-                value={params.end_date}
-                onChange={(e) => handleParams(e)}
-                max={today}
-              />
-            </Form>
-          </Col>
+        <Form className="pb-2">
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6} md={4}>
+              <Form.Group controlId="start_date">
+                <Form.Label>Fecha de inicio</Form.Label>
+                <Form.Control
+                  name="start_date"
+                  type="date"
+                  value={params.start_date}
+                  onChange={(e) => handleParams(e)}
+                  max={today}
+                />
+              </Form.Group>
+            </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <Form.Group controlId="end_date">
+                <Form.Label>Fecha de fin</Form.Label>
+                <Form.Control
+                  name="end_date"
+                  type="date"
+                  value={params.end_date}
+                  onChange={(e) => handleParams(e)}
+                  max={today}
+                />
+              </Form.Group>
+            </Grid>
 
-          <Col>
-            <Form>
-              <Form.Label>Rango</Form.Label>
-              <Form.Control name="range" type="input" value={range} disabled />
-            </Form>
-          </Col>
-        </Row>
+            <Grid item xs={12} sm={6} md={4}>
+              <Form.Group controlId="range">
+                <Form.Label>Rango</Form.Label>
+                <Form.Control name="range" type="input" value={range} disabled />
+              </Form.Group>
+            </Grid>
+          </Grid>
+        </Form>
         <CustomTable
           progressPending={loading}
           data={sellers}
@@ -127,8 +128,8 @@ const SellerList = () => {
             },
           ]}
         />
-      </div>
-    </>
+      </Grid>
+    </Grid>
   );
 };
 

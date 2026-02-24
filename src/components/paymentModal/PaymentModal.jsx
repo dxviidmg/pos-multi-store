@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useEffect, useRef } from "react";
 import CustomModal from "../commons/customModal/customModal";
-import { Col, Form, Row } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
 import { cleanCart, removeClientfromCart } from "../redux/cart/cartActions";
@@ -13,6 +13,7 @@ import SearchClient from "../searchClient/SearchClient";
 import ClientSelected from "../clientSelected/ClientSelected";
 import { SearchIcon } from "../commons/icons/Icons";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
+import { Grid } from "@mui/material";
 
 function roundUpCustom(value) {
   const intPart = Math.floor(value); // Parte entera
@@ -299,8 +300,8 @@ const PaymentModal = () => {
         title="Finalizar venta"
       >
         <div className="custom-section-buttons">
-          <Row>
-            <Col md={6}>
+          <Grid container>
+            <Grid item xs={12} md={6}>
               {" "}
               <CustomButton
                 fullWidth
@@ -308,9 +309,9 @@ const PaymentModal = () => {
               >
                 Añadir cliente
               </CustomButton>
-            </Col>
+            </Grid>
 
-            <Col md={6}>
+            <Grid item xs={12} md={6}>
               {" "}
               <CustomButton
                 fullWidth
@@ -318,8 +319,8 @@ const PaymentModal = () => {
               >
                 Intercambio de mercancia
               </CustomButton>
-            </Col>
-          </Row>
+            </Grid>
+          </Grid>
         </div>
         <div className="custom-section" hidden={hideClient}>
           <SearchClient />
@@ -328,8 +329,8 @@ const PaymentModal = () => {
 
         <div className="custom-section" hidden={hideExchange}>
           <h2>Cambio de mercancia</h2>
-          <Row>
-            <Col md={3}>
+          <Grid container>
+            <Grid item xs={12} md={3}>
               <Form.Label># Venta</Form.Label>
               <Form.Control
                 type="number"
@@ -341,51 +342,51 @@ const PaymentModal = () => {
                   })
                 }
               />
-            </Col>
+            </Grid>
 
-            <Col md={3} className="d-flex flex-column justify-content-end">
+            <Grid item xs={12} md={3} className="d-flex flex-column justify-content-end">
               <CustomButton fullWidth onClick={handleSearchSaleForChange}>
                 <SearchIcon /> Buscar
               </CustomButton>
-            </Col>
+            </Grid>
 
-            <Col md={3}>
+            <Grid item xs={12} md={3}>
               <Form.Label>$ de devolución</Form.Label>
               <Form.Control
                 type="number"
                 value={saleExchange.refunded}
                 disabled
               />
-            </Col>
+            </Grid>
 
-            <Col md={3}>
+            <Grid item xs={12} md={3}>
               <Form.Label>Cobrar</Form.Label>
               <Form.Control
                 type="number"
                 value={saleExchange.payment}
                 disabled
               />
-            </Col>
-          </Row>
+            </Grid>
+          </Grid>
         </div>
 
         <div className="custom-section">
           <h2>Totales</h2>
-          <Row>
-            <Col md={3}>
+          <Grid container>
+            <Grid item xs={12} md={3}>
               <Form.Label>Total</Form.Label>
               <Form.Control type="number" value={total.toFixed(2)} disabled />
-            </Col>
+            </Grid>
 
-            <Col md={3}>
+            <Grid item xs={12} md={3}>
               <Form.Label>Total con descuento</Form.Label>
               <Form.Control
                 type="number"
                 value={totalDiscount.toFixed(2)}
                 disabled
               />
-            </Col>
-            <Col md={3}>
+            </Grid>
+            <Grid item xs={12} md={3}>
               <Form.Label>Pago con</Form.Label>
               <Form.Control
                 type="text"
@@ -393,8 +394,8 @@ const PaymentModal = () => {
                 onChange={handlePaidWithChange}
                 ref={inputPaymentRef}
               />
-            </Col>
-            <Col md={3}>
+            </Grid>
+            <Grid item xs={12} md={3}>
               {paymentMethods.methods.TA > 0 ||
               paymentMethods.methods.TR > 0 ? (
                 <>
@@ -411,13 +412,13 @@ const PaymentModal = () => {
                   <Form.Control type="number" value={payment.change} disabled />
                 </>
               )}
-            </Col>
-          </Row>
+            </Grid>
+          </Grid>
         </div>
 
         <div className="custom-section">
-          <Row>
-            <Col md={3}>
+          <Grid container>
+            <Grid item xs={12} md={3}>
               <Form.Label className="me-1">Tipo de pago:</Form.Label>
               <Form.Check
                 id="single"
@@ -437,9 +438,9 @@ const PaymentModal = () => {
                 name="paymentType"
                 checked={paymentMethods.type === "checkbox"}
               />
-            </Col>
+            </Grid>
 
-            <Col md={6}>
+            <Grid item xs={12} md={6}>
               <Form.Label className="me-3">Medios de pago:</Form.Label>
               {["EF", "TA", "TR"].map((method) => (
                 <div key={method} className="d-flex align-items-center mb-1">
@@ -479,8 +480,8 @@ const PaymentModal = () => {
                     )}
                 </div>
               ))}
-            </Col>
-            <Col md={3}>
+            </Grid>
+            <Grid item xs={12} md={3}>
               <CustomButton
                 disabled={handleDisableButton()}
                 fullWidth={true}
@@ -499,8 +500,8 @@ const PaymentModal = () => {
                 Cobrar con ticket
                 <br /> (Ctrl + H)
               </CustomButton>
-            </Col>
-          </Row>
+            </Grid>
+          </Grid>
         </div>
       </CustomModal>
     </>

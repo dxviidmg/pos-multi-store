@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Row, Col, Form } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import { getFormattedDate } from "../utils/utils";
 import AuditDashboardData from "./AuditDashboardData";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getAudit, getAudit2 } from "../apis/audit";
 import { getStores } from "../apis/stores";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
+import { Grid } from "@mui/material";
 
 const AuditDashboard = () => {
   const today = getFormattedDate();
@@ -59,9 +60,9 @@ const AuditDashboard = () => {
       <CustomSpinner isLoading={isLoading}></CustomSpinner>
       <div className="custom-section">
         <h1>Tablero de auditoria</h1>
-        <Row>
+        <Grid container>
           {" "}
-          <Col md={6} lg={2}>
+          <Grid item xs={12} md={6} lg={2}>
             {" "}
             <Form.Label>Tienda o Almacen</Form.Label>
             <Form.Select
@@ -77,8 +78,8 @@ const AuditDashboard = () => {
                 </option>
               ))}
             </Form.Select>
-          </Col>
-          <Col md={6} lg={2}>
+          </Grid>
+          <Grid item xs={12} md={6} lg={2}>
             {" "}
             <Form>
               <Form.Label>Fecha de inicio</Form.Label>
@@ -90,8 +91,8 @@ const AuditDashboard = () => {
                 max={today}
               />
             </Form>
-          </Col>
-          <Col md={6} lg={2}>
+          </Grid>
+          <Grid item xs={12} md={6} lg={2}>
             {" "}
             <Form>
               <Form.Label>Fecha de fin</Form.Label>
@@ -103,38 +104,38 @@ const AuditDashboard = () => {
                 max={today}
               />
             </Form>
-          </Col>
-          <Col lg={3} md={3} className="d-flex flex-column justify-content-end">
+          </Grid>
+          <Grid item xs={12} md={3} lg={3} className="d-flex flex-column justify-content-end">
             <CustomButton fullWidth onClick={() => handleSubmit()}>
               Analizar ventas y logs
             </CustomButton>
-          </Col>
-          <Col lg={3} md={3} className="d-flex flex-column justify-content-end">
+          </Grid>
+          <Grid item xs={12} md={3} lg={3} className="d-flex flex-column justify-content-end">
             <CustomButton fullWidth onClick={() => handleSubmit2()}>
               Analizar stock
             </CustomButton>
-          </Col>
-          <Col lg={4}>
+          </Grid>
+          <Grid item xs={12} lg={4}>
             <AuditDashboardData
               title={"Ventas repetidas"}
               taskId={tasks?.task1}
             ></AuditDashboardData>
-          </Col>
-          <Col lg={4}>
+          </Grid>
+          <Grid item xs={12} lg={4}>
             {" "}
             <AuditDashboardData
               title={"Logs repetidos o inconsistentes"}
               taskId={tasks?.task2}
             ></AuditDashboardData>
-          </Col>
-          <Col lg={4}>
+          </Grid>
+          <Grid item xs={12} lg={4}>
             {" "}
             <AuditDashboardData
               title={"Stock y ultimo log"}
               taskId={tasks?.task3}
             ></AuditDashboardData>
-          </Col>
-        </Row>
+          </Grid>
+        </Grid>
       </div>
     </div>
   );

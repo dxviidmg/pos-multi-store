@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { Col, Form, Row } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import { createDiscount } from "../apis/discounts";
 import Swal from "sweetalert2";
@@ -14,8 +14,11 @@ import { EditIcon } from "../commons/icons/Icons";
 import { getUserData } from "../apis/utils";
 import { getDateDifference, getFormattedDate } from "../utils/utils";
 import CustomTooltip from "../commons/Tooltip";
-import Grid from "@mui/material/Grid";
 import { useClients } from "../../hooks/useClients";
+import { Grid } from "@mui/material";
+
+
+
 
 const ClientList = () => {
   const today = getFormattedDate();
@@ -92,6 +95,7 @@ const ClientList = () => {
   };
 
   return (
+
     <Grid container spacing={2}>
       <ClientModal onUpdateClientList={handleUpdateClientList}></ClientModal>
       {getUserData().role === "owner" && (
@@ -121,8 +125,8 @@ const ClientList = () => {
       <Grid xs={12} className="custom-section">
         <h1>Clientes</h1>
         <CustomButton onClick={() => handleOpenModal()}>Crear</CustomButton>
-        <Row>
-          <Col>
+        <Grid container>
+          <Grid item xs={12}>
             {" "}
             <Form>
               <Form.Label>Fecha de inicio</Form.Label>
@@ -134,8 +138,8 @@ const ClientList = () => {
                 max={today}
               />
             </Form>
-          </Col>
-          <Col>
+          </Grid>
+          <Grid item xs={12}>
             {" "}
             <Form>
               <Form.Label>Fecha de fin</Form.Label>
@@ -147,15 +151,15 @@ const ClientList = () => {
                 max={today}
               />
             </Form>
-          </Col>
+          </Grid>
 
-          <Col>
+          <Grid item xs={12}>
             <Form>
               <Form.Label>Rango</Form.Label>
               <Form.Control name="range" type="input" value={range} disabled />
             </Form>
-          </Col>
-        </Row>
+          </Grid>
+        </Grid>
         <CustomTable
           searcher={true}
           data={clients}

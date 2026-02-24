@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import CustomModal from "../commons/customModal/customModal";
-import { Col, Form, Row } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
 import { updateSale } from "../apis/sales";
@@ -8,6 +8,7 @@ import { hidePaymentReservationModal } from "../redux/paymentReservationModal/Pa
 import Swal from "sweetalert2";
 import { handlePrintTicket } from "../utils/utils";
 import { getUserData } from "../apis/utils";
+import { Grid } from "@mui/material";
 
 const INITIAL_PAYMENT_STATE = { paidWith: 0, change: 0 };
 
@@ -111,19 +112,19 @@ const PaymentModal2 = ({ onUpdateSaleList }) => {
       title="Cobrar apartado"
     >
       <div className="custom-section">
-        <Row>
+        <Grid container>
           <h2>Información</h2>
-          <Col md={3}>
+          <Grid item xs={12} md={3}>
             <Form.Label>Folio</Form.Label>
             <Form.Control type="number" value={reservation.id} disabled />
-          </Col>
+          </Grid>
 
-          <Col md={3}>
+          <Grid item xs={12} md={3}>
             <Form.Label>Total de la compra</Form.Label>
             <Form.Control type="number" value={reservation.total} disabled />
-          </Col>
+          </Grid>
 
-          <Col md={3}>
+          <Grid item xs={12} md={3}>
             <Form.Label className="me-1">Acción:</Form.Label>
             {["Liquidar", "Abonar"].map((option) => (
               <Form.Check
@@ -137,9 +138,9 @@ const PaymentModal2 = ({ onUpdateSaleList }) => {
                 checked={action === option}
               />
             ))}
-          </Col>
+          </Grid>
 
-          <Col md={3}>
+          <Grid item xs={12} md={3}>
             <Form.Label className="me-3">Medios de pago:</Form.Label>
             {["EF", "TA", "TR"].map((method) => (
               <div key={method} className="d-flex align-items-center mb-1">
@@ -162,24 +163,24 @@ const PaymentModal2 = ({ onUpdateSaleList }) => {
                 </div>
               </div>
             ))}
-          </Col>
-        </Row>
+          </Grid>
+        </Grid>
       </div>
 
       <div className="custom-section">
         <h2>Totales</h2>
-        <Row>
-          <Col md={3}>
+        <Grid container>
+          <Grid item xs={12} md={3}>
             <Form.Label>Pagado</Form.Label>
             <Form.Control type="number" value={reservation.paid} disabled />
-          </Col>
+          </Grid>
 
-          <Col md={3}>
+          <Grid item xs={12} md={3}>
             <Form.Label>Deuda</Form.Label>
             <Form.Control type="number" value={remaining} disabled />
-          </Col>
+          </Grid>
 
-          <Col md={3}>
+          <Grid item xs={12} md={3}>
             <Form.Label>Pago con</Form.Label>
             <Form.Control
               type="text"
@@ -187,9 +188,9 @@ const PaymentModal2 = ({ onUpdateSaleList }) => {
               onChange={handlePaidWithChange}
               ref={inputPaymentRef}
             />
-          </Col>
+          </Grid>
 
-          <Col md={3}>
+          <Grid item xs={12} md={3}>
             {paymentMethod !== "EF" ? (
               <>
                 <Form.Label>Referencia</Form.Label>
@@ -205,13 +206,13 @@ const PaymentModal2 = ({ onUpdateSaleList }) => {
                 <Form.Control type="number" value={payment.change} disabled />
               </>
             )}
-          </Col>
-        </Row>
+          </Grid>
+        </Grid>
       </div>
 
       <div className="custom-section">
-        <Row>
-          <Col md={6}>
+        <Grid container>
+          <Grid item xs={12} md={6}>
             <CustomButton
               disabled={handleDisableButton()}
               fullWidth
@@ -219,8 +220,8 @@ const PaymentModal2 = ({ onUpdateSaleList }) => {
             >
               Cobrar con ticket (Ctrl + G)
             </CustomButton>
-          </Col>
-          <Col md={6}>
+          </Grid>
+          <Grid item xs={12} md={6}>
             <CustomButton
               disabled={handleDisableButton()}
               fullWidth
@@ -228,8 +229,8 @@ const PaymentModal2 = ({ onUpdateSaleList }) => {
             >
               Cobrar sin ticket (Ctrl + F)
             </CustomButton>
-          </Col>
-        </Row>
+          </Grid>
+        </Grid>
       </div>
     </CustomModal>
   );

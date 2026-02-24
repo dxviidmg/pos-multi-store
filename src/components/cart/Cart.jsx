@@ -10,7 +10,7 @@ import {
   countStockOtherStores,
 } from "../redux/cart/cartActions";
 import CustomButton from "../commons/customButton/CustomButton";
-import { Col, Form, Row } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import PaymentModal from "../paymentModal/PaymentModal";
 import {
   hidePaymentModal,
@@ -24,6 +24,7 @@ import { getUserData } from "../apis/utils";
 import { RemoveInCartIcon } from "../commons/icons/Icons";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 import { hideStockModal, showStockModal } from "../redux/stockModal/StockModalActions";
+import { Grid } from "@mui/material";
 
 const Cart = () => {
   const store_type = getUserData().store_type;
@@ -474,30 +475,30 @@ const Cart = () => {
       <PaymentModal />
       <div>
         {cart.length !== 0 && (
-          <Row>
+          <Grid container>
             {(movementType === "venta" || movementType === "apartado") && (
               <>
-                <Col md={4}>
+                <Grid item xs={12} md={4}>
                   {" "}
                   <h1>Productos: {totalProducts}</h1>
-                </Col>
+                </Grid>
 
-                <Col md={4} className="text-center">
+                <Grid item xs={12} md={4} className="text-center">
                   <h1>Total: ${total.toFixed(2)}</h1>
-                </Col>
-                <Col md={4}>
+                </Grid>
+                <Grid item xs={12} md={4}>
                   <CustomButton fullWidth onClick={handleOpenModal}>
                     Cobrar (Ctrl + D)
                   </CustomButton>
-                </Col>
+                </Grid>
               </>
             )}
 
             {(movementType === "traspaso" ||
               movementType === "distribucion") && (
               <>
-                <Col md={3}><h1>Productos: {totalProducts}</h1></Col>
-                <Col md={3}>
+                <Grid item xs={12} md={3}><h1>Productos: {totalProducts}</h1></Grid>
+                <Grid item xs={12} md={3}>
                   <Form.Select
                     value={selectedStore}
                     onChange={handleSelectChange}
@@ -509,8 +510,8 @@ const Cart = () => {
                       </option>
                     ))}
                   </Form.Select>
-                </Col>
-                <Col md={3}>
+                </Grid>
+                <Grid item xs={12} md={3}>
                   <Form.Select
                     value={confirmedStore}
                     onChange={handleSelectChange2}
@@ -522,8 +523,8 @@ const Cart = () => {
                       </option>
                     ))}
                   </Form.Select>
-                </Col>
-                <Col md={3}>
+                </Grid>
+                <Grid item xs={12} md={3}>
                   <CustomButton
                     onClick={() =>
                       movementType === "traspaso"
@@ -535,24 +536,24 @@ const Cart = () => {
                   >
                     {movementType === "traspaso" ? "Transferir" : "Distribuir"}
                   </CustomButton>
-                </Col>
+                </Grid>
               </>
             )}
 
             {movementType === "agregar" && (
               <>
-                <Col md={9}></Col>
-                <Col md={3}>
+                <Grid item xs={12} md={9}></Grid>
+                <Grid item xs={12} md={3}>
                   <CustomButton
                     fullWidth
                     onClick={() => handleAddToStock(cart)}
                   >
                     Añadir
                   </CustomButton>
-                </Col>
+                </Grid>
               </>
             )}
-          </Row>
+          </Grid>
         )}
         <CustomTable
           noDataComponent="Sin productos"

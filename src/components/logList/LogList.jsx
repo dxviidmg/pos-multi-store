@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { Col, Form, Row } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import {
   exportToExcel,
   formatTimeFromDate,
@@ -15,6 +15,7 @@ import { getBrands } from "../apis/brands";
 import CustomButton from "../commons/customButton/CustomButton";
 import { chooseIcon } from "../commons/icons/Icons";
 import { getStores } from "../apis/stores";
+import { Grid } from "@mui/material";
 
 const LogList = () => {
   const today = getFormattedDate();
@@ -90,11 +91,11 @@ const LogList = () => {
           Descargar logs
         </CustomButton>
 
-        <Row>
+        <Grid container>
 
 
 
-          <Col>
+          <Grid item xs={12}>
             <Form.Label>Fecha</Form.Label>
             <Form.Control
               type="date"
@@ -103,9 +104,9 @@ const LogList = () => {
               max={today}
               name="date"
             />
-          </Col>
+          </Grid>
 
-          <Col>
+          <Grid item xs={12}>
             <Form.Label>Tiendas o almacenes</Form.Label>
             <Form.Select
               value={params.store_related}
@@ -120,8 +121,8 @@ const LogList = () => {
                 </option>
               ))}
             </Form.Select>
-          </Col>
-          <Col>
+          </Grid>
+          <Grid item xs={12}>
             <Form.Label>Marca</Form.Label>
             <Form.Select
               value={params.brand_id}
@@ -136,9 +137,9 @@ const LogList = () => {
                 </option>
               ))}
             </Form.Select>
-          </Col>
+          </Grid>
 
-          <Col>
+          <Grid item xs={12}>
             <Form.Label>Movimientos</Form.Label>
             <Form.Select
               value={params.action}
@@ -153,8 +154,8 @@ const LogList = () => {
                 </option>
               ))}
             </Form.Select>
-          </Col>
-        </Row>
+          </Grid>
+        </Grid>
 
         <CustomTable
           data={logs}

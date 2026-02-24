@@ -3,7 +3,7 @@ import CustomTable from "../commons/customTable/customTable";
 import {
   getStoreProducts,
 } from "../apis/products";
-import { Col, Form, Row } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getUserData } from "../apis/utils";
 import { exportToExcel } from "../utils/utils";
@@ -17,6 +17,7 @@ import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 import { getBrands } from "../apis/brands";
 import { SearchIcon } from "../commons/icons/Icons";
 import { getDepartments } from "../apis/departments";
+import { Grid } from "@mui/material";
 
 const StoreProductList = () => {
   const dispatch = useDispatch();
@@ -121,8 +122,8 @@ const StoreProductList = () => {
       <CustomButton onClick={handleDownload}>Descargar inventario</CustomButton>
 
       <br />
-      <Row>
-        <Col>
+      <Grid container>
+        <Grid item xs={12}>
           {" "}
           <Form.Label>Marca</Form.Label>
           <Form.Select
@@ -138,8 +139,8 @@ const StoreProductList = () => {
               </option>
             ))}
           </Form.Select>
-        </Col>
-        <Col>
+        </Grid>
+        <Grid item xs={12}>
           {" "}
           <Form.Label>Departamento</Form.Label>
           <Form.Select
@@ -155,8 +156,8 @@ const StoreProductList = () => {
               </option>
             ))}
           </Form.Select>
-        </Col>
-        <Col>
+        </Grid>
+        <Grid item xs={12}>
           <Form.Label>Código</Form.Label>
           <Form.Control
             type="text"
@@ -164,9 +165,9 @@ const StoreProductList = () => {
             onChange={handleDataChange}
             name="code"
           />
-        </Col>
+        </Grid>
 
-        <Col>
+        <Grid item xs={12}>
           <Form.Label>Stock maximo</Form.Label>
           <Form.Control
             type="number"
@@ -174,9 +175,9 @@ const StoreProductList = () => {
             onChange={handleDataChange}
             name="max_stock"
           />
-        </Col>
+        </Grid>
 
-        <Col className="d-flex flex-column justify-content-end">
+        <Grid item xs={12} className="d-flex flex-column justify-content-end">
           {storeProducts.length > 0 && (
             <>{outOfStockPercentage.toFixed(0)}% de los productos esta vacio</>
           )}
@@ -184,8 +185,8 @@ const StoreProductList = () => {
           <CustomButton fullWidth onClick={fetchStoreProducts}>
             <SearchIcon /> Buscar
           </CustomButton>
-        </Col>
-      </Row>
+        </Grid>
+      </Grid>
 
       <CustomTable
         searcher={true}

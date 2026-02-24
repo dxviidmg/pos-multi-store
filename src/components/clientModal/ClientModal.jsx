@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import CustomModal from "../commons/customModal/customModal";
-import { Col, Form, Row } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
 import { hideClientModal } from "../redux/clientModal/ClientModalActions";
 import { useDiscounts } from "../../hooks/useDiscounts";
 import { useCreateClient, useUpdateClient } from "../../hooks/useClientMutations";
+import { Grid } from "@mui/material";
 
 const INITIAL_FORM_DATA = {
   first_name: "",
@@ -61,8 +62,8 @@ const ClientModal = ({ onUpdateClientList }) => {
     >
       <div className={`custom-section`}>
 
-      <Row >
-        <Col>
+      <Grid container >
+        <Grid item xs={12}>
           <Form.Label>Nombre</Form.Label>
           <Form.Control
             type="text"
@@ -71,8 +72,8 @@ const ClientModal = ({ onUpdateClientList }) => {
             name="first_name"
             onChange={handleInputChange}
           />
-        </Col>
-        <Col md={3}>
+        </Grid>
+        <Grid item xs={12} md={3}>
           <Form.Label>Apellidos</Form.Label>
           <Form.Control
             type="text"
@@ -81,8 +82,8 @@ const ClientModal = ({ onUpdateClientList }) => {
             name="last_name"
             onChange={handleInputChange}
           />
-        </Col>
-        <Col md={3}>
+        </Grid>
+        <Grid item xs={12} md={3}>
           <Form.Label>Teléfono</Form.Label>
           <Form.Control
             type="text"
@@ -91,8 +92,8 @@ const ClientModal = ({ onUpdateClientList }) => {
             name="phone_number"
             onChange={handleInputChange}
           />
-        </Col>
-        <Col md={3}>
+        </Grid>
+        <Grid item xs={12} md={3}>
           <Form.Label>Descuento</Form.Label>
           <Form.Select
             aria-label="Select discount"
@@ -107,8 +108,8 @@ const ClientModal = ({ onUpdateClientList }) => {
               </option>
             ))}
           </Form.Select>
-        </Col>
-        <Col md={3}>
+        </Grid>
+        <Grid item xs={12} md={3}>
           <CustomButton
             fullWidth
             onClick={handleSaveClient}
@@ -117,8 +118,8 @@ const ClientModal = ({ onUpdateClientList }) => {
           >
             {formData.id ? "Actualizar" : "Crear"} cliente
           </CustomButton>
-        </Col>
-      </Row>
+        </Grid>
+      </Grid>
       </div>
 
     </CustomModal>

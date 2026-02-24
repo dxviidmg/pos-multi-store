@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import CustomModal from "../commons/customModal/customModal";
-import { Col, Form, Row } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
 import { hideDepartmentModal } from "../redux/departmentModal/DepartmentModalActions";
 import { useCreateDepartment, useUpdateDepartment } from "../../hooks/useDepartmentMutations";
+import { Grid } from "@mui/material";
 
 const DepartmentModal = ({ onUpdateDepartmentList }) => {
   const { showDepartmentModal, department } = useSelector(
@@ -56,8 +57,8 @@ const DepartmentModal = ({ onUpdateDepartmentList }) => {
 
       <div className="custom-section">
 
-      <Row>
-        <Col md={6}>
+      <Grid container>
+        <Grid item xs={12} md={6}>
           <Form.Label>Nombre</Form.Label>
           <Form.Control
             type="text"
@@ -66,9 +67,9 @@ const DepartmentModal = ({ onUpdateDepartmentList }) => {
             name="name"
             onChange={handleDataChange}
           />
-        </Col>
+        </Grid>
 
-        <Col md={6} className="d-flex flex-column justify-content-end">
+        <Grid item xs={12} md={6} className="d-flex flex-column justify-content-end">
           <CustomButton
             fullWidth={true}
             onClick={handleDepartmentSubmit}
@@ -77,8 +78,8 @@ const DepartmentModal = ({ onUpdateDepartmentList }) => {
           >
             {formData.id ? "Actualizar" : "Crear"}
           </CustomButton>
-        </Col>
-      </Row>
+        </Grid>
+      </Grid>
       </div>
     </CustomModal>
   );

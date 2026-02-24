@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CustomModal from "../commons/customModal/customModal";
-import { Col, Form, Row } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import CustomTable from "../commons/customTable/customTable";
 import { getStoreProductLogs, updateStoreProduct } from "../apis/products";
@@ -9,6 +9,7 @@ import Swal from "sweetalert2";
 import CustomButton from "../commons/customButton/CustomButton";
 import { hideLogsModal } from "../redux/logsModal/LogsModalActions";
 import { chooseIcon } from "../commons/icons/Icons";
+import { Grid } from "@mui/material";
 
 const INITIAL_FORM_DATA = {};
 
@@ -80,8 +81,8 @@ const StoreProductLogsModal = ({ onUpdateStoreProductList }) => {
       title={adjustStock ? "Ajuste de stock" : "Movimientos de stock"}
     >
      <div className="custom-section">
-     <Row>
-        <Col md={6}>
+     <Grid container>
+        <Grid item xs={12} md={6}>
           <Form.Label>Código</Form.Label>
           <Form.Control
             type="text"
@@ -89,9 +90,9 @@ const StoreProductLogsModal = ({ onUpdateStoreProductList }) => {
             placeholder="Código"
             disabled
           />
-        </Col>
+        </Grid>
 
-        <Col md={6}>
+        <Grid item xs={12} md={6}>
           <Form.Label>Marca</Form.Label>
           <Form.Control
             type="text"
@@ -99,9 +100,9 @@ const StoreProductLogsModal = ({ onUpdateStoreProductList }) => {
             placeholder="Marca"
             disabled
           />
-        </Col>
+        </Grid>
 
-        <Col md={6}>
+        <Grid item xs={12} md={6}>
           <Form.Label>Nombre</Form.Label>
           <Form.Control
             type="text"
@@ -109,8 +110,8 @@ const StoreProductLogsModal = ({ onUpdateStoreProductList }) => {
             placeholder="Nombre"
             disabled
           />
-        </Col>
-        <Col md={adjustStock ? 3 : 6}>
+        </Grid>
+        <Grid item xs={12} md={adjustStock ? 3 : 6}>
           <Form.Label>Cantidad</Form.Label>
           <Form.Control
             type="text"
@@ -120,10 +121,9 @@ const StoreProductLogsModal = ({ onUpdateStoreProductList }) => {
             name={"stock"}
             onChange={handleInputChange}
           />
-        </Col>
+        </Grid>
 
-        <Col
-          md={3}
+        <Grid item xs={12} md={3}
           className={`d-flex flex-column justify-content-end ${
             !adjustStock ? "d-none" : ""
           }`}
@@ -135,9 +135,9 @@ const StoreProductLogsModal = ({ onUpdateStoreProductList }) => {
           >
             Ajustar
           </CustomButton>
-        </Col>
+        </Grid>
 
-        <Col md={12} className={adjustStock ? "d-none" : ""}>
+        <Grid item xs={12} md={12} className={adjustStock ? "d-none" : ""}>
         <h1>Utimos movimientos</h1>
           <CustomTable
             data={logs}
@@ -178,8 +178,8 @@ const StoreProductLogsModal = ({ onUpdateStoreProductList }) => {
               },
             ]}
           />
-        </Col>
-      </Row>
+        </Grid>
+      </Grid>
 
       </div> 
      </CustomModal>

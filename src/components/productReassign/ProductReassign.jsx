@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Col, Form, Row } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 import { getBrands } from "../apis/brands";
 import Swal from "sweetalert2";
 import { getDepartments } from "../apis/departments";
 import CustomButton from "../commons/customButton/CustomButton";
 import { reassignProducts } from "../apis/products";
+import { Grid } from "@mui/material";
 
 const REASSIGN_TYPE = [
   {
@@ -86,8 +87,8 @@ const ProductReassign = () => {
     <div className="custom-section">
       <CustomSpinner isLoading={loading}></CustomSpinner>
       <h1>Reasignación de productos</h1>
-      <Row className="mt-3">
-        <Col>
+      <Grid container className="mt-3">
+        <Grid item xs={12}>
           {" "}
           <Form.Label>Tipo de reasignación</Form.Label>
           <Form.Select
@@ -103,9 +104,9 @@ const ProductReassign = () => {
               </option>
             ))}
           </Form.Select>
-        </Col>
+        </Grid>
 
-        <Col>
+        <Grid item xs={12}>
           {" "}
           <Form.Label>Origen</Form.Label>
           <Form.Select
@@ -121,9 +122,9 @@ const ProductReassign = () => {
               </option>
             ))}
           </Form.Select>
-        </Col>
+        </Grid>
 
-        <Col>
+        <Grid item xs={12}>
           {" "}
           <Form.Label>Destino</Form.Label>
           <Form.Select
@@ -139,9 +140,9 @@ const ProductReassign = () => {
               </option>
             ))}
           </Form.Select>
-        </Col>
+        </Grid>
 
-        <Col>
+        <Grid item xs={12}>
           {" "}
           <Form.Label>Borrar origen</Form.Label>
           <Form.Select
@@ -157,9 +158,9 @@ const ProductReassign = () => {
               </option>
             ))}
           </Form.Select>
-        </Col>
+        </Grid>
 
-        <Col className="d-flex flex-column justify-content-end">
+        <Grid item xs={12} className="d-flex flex-column justify-content-end">
           <CustomButton
             fullWidth={true}
             disabled={
@@ -170,8 +171,8 @@ const ProductReassign = () => {
           >
             Reasignar
           </CustomButton>
-        </Col>
-      </Row>
+        </Grid>
+      </Grid>
     </div>
   );
 };

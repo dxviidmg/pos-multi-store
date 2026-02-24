@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Col, Form, Image, Row } from "react-bootstrap";
+import { Form, Image } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import CustomModal from "../commons/customModal/customModal";
 import CustomTable from "../commons/customTable/customTable";
@@ -8,6 +8,7 @@ import { hideStockModal } from "../redux/stockModal/StockModalActions";
 import { createTransfer } from "../apis/transfers";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 import { getStockOtherStores } from "../apis/products";
+import { Grid } from "@mui/material";
 
 
 const StockModal = () => {
@@ -90,11 +91,11 @@ const StockModal = () => {
         {renderStockInfo()}
 
       {storeProduct.showImage ? (
-        <Row className="justify-content-center">
-          <Col md={3}>
+        <Grid container className="justify-content-center">
+          <Grid item xs={12} md={3}>
             <Image src={storeProduct.product?.image} fluid />
-          </Col>
-        </Row>
+          </Grid>
+        </Grid>
       ) : (
         stockOtherStores.length > 0 && (
           <CustomTable

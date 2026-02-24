@@ -5,12 +5,13 @@ import {
   importProducts,
   importProductsValidation,
 } from "../apis/products";
-import { Form, Row, Col, Alert } from "react-bootstrap";
+import { Form, Alert } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import Swal from "sweetalert2";
 import { chooseIcon } from "../commons/icons/Icons";
 import { useRef } from "react";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
+import { Grid } from "@mui/material";
 
 const URL_TEMPLATE =
   process.env.REACT_APP_API_URL +
@@ -200,8 +201,8 @@ const ProductImport = () => {
       <CustomSpinner isLoading={loading}></CustomSpinner>
       <div className="custom-section">
         <h1>Importación de productos</h1>
-        <Row>
-          <Col md={3} className="d-flex flex-column justify-content-end">
+        <Grid container>
+          <Grid item xs={12} md={3} className="d-flex flex-column justify-content-end">
             <Form.Label>Archivo</Form.Label>
 
             <Form.Group controlId="formFile" className="">
@@ -213,9 +214,9 @@ const ProductImport = () => {
                 name="file"
               />
             </Form.Group>
-          </Col>
+          </Grid>
 
-          <Col md={3}>
+          <Grid item xs={12} md={3}>
             <Form.Label>¿Crear marcas en caso que no existan?</Form.Label>
             <Form.Select
               value={formData.create_brands}
@@ -230,9 +231,9 @@ const ProductImport = () => {
                 </option>
               ))}
             </Form.Select>
-          </Col>
+          </Grid>
 
-          <Col md={3}>
+          <Grid item xs={12} md={3}>
             <Form.Label>
               ¿Crear departamentos en caso que no existan?
             </Form.Label>
@@ -249,9 +250,9 @@ const ProductImport = () => {
                 </option>
               ))}
             </Form.Select>
-          </Col>
+          </Grid>
 
-          <Col md={3}>
+          <Grid item xs={12} md={3}>
             <Form.Label>¿El campo "Departamentos" es obligatorio?</Form.Label>
             <Form.Select
               value={formData.departments_mandatory}
@@ -266,9 +267,9 @@ const ProductImport = () => {
                 </option>
               ))}
             </Form.Select>
-          </Col>
+          </Grid>
 
-          <Col md={12} hidden={canIncludeQuantity} className="mt-3">
+          <Grid item xs={12} md={12} hidden={canIncludeQuantity} className="mt-3">
             <Alert key={"primary"} variant={"primary"}>
               Posiblemente sea tu primera vez aqui y tienes solo una tienda, por
               lo que aparte de importar tus productos puedes ponerle tu stick en
@@ -292,9 +293,9 @@ const ProductImport = () => {
                 </option>
               ))}
             </Form.Select>
-          </Col>
+          </Grid>
 
-          <Col md={3}>
+          <Grid item xs={12} md={3}>
             <CustomButton
               onClick={handleValidation}
               disabled={
@@ -308,9 +309,9 @@ const ProductImport = () => {
             >
               Validar
             </CustomButton>
-          </Col>
+          </Grid>
 
-          <Col md={3}>
+          <Grid item xs={12} md={3}>
             {productsError.length > 0 ? (
               <CustomButton onClick={handleShowData} fullWidth>
                 Ver registros con error
@@ -324,25 +325,25 @@ const ProductImport = () => {
                 Importar
               </CustomButton>
             )}
-          </Col>
+          </Grid>
 
-          <Col md={3}>
+          <Grid item xs={12} md={3}>
             <CustomButton href={URL_TEMPLATE} fullWidth>
               Descargar plantilla
             </CustomButton>
-          </Col>
+          </Grid>
 
-          <Col md={3}>
+          <Grid item xs={12} md={3}>
             <CustomButton
               onClick={() => setShowExample(!showExample)}
               fullWidth
             >
               Ver Ejemplo
             </CustomButton>
-          </Col>
-        </Row>
+          </Grid>
+        </Grid>
 
-        <Row hidden={canIncludeQuantity}></Row>
+        <Grid container hidden={canIncludeQuantity}></Grid>
       </div>
 
       <div className="custom-section" hidden={showExample}>

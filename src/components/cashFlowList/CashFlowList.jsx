@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { Col, Form, Row } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getFormattedDate, formatTimeFromDate } from "../utils/utils";
 import { useDispatch } from "react-redux";
@@ -12,6 +12,7 @@ import {
   showCashFlowModal,
 } from "../redux/cashFlowModal/CashFlowModalActions";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
+import { Grid } from "@mui/material";
 
 const today = getFormattedDate();
 
@@ -62,13 +63,13 @@ const CashFlowList = () => {
       <div className="custom-section">
         <h1>Movimientos en caja</h1>
 
-        <Row>
-          <Col className="d-flex flex-column justify-content-end">
+        <Grid container>
+          <Grid item xs={12} className="d-flex flex-column justify-content-end">
             <CustomButton fullWidth={true} onClick={() => handleOpenModal()}>
               Crear movimiento
             </CustomButton>
-          </Col>
-          <Col>
+          </Grid>
+          <Grid item xs={12}>
             <Form>
               <Form.Label>Fecha de inicio</Form.Label>
               <Form.Control
@@ -79,9 +80,9 @@ const CashFlowList = () => {
                 max={today}
               />
             </Form>
-          </Col>
+          </Grid>
 
-          <Col>
+          <Grid item xs={12}>
             <Form>
               <Form.Label>Fecha de fin</Form.Label>
               <Form.Control
@@ -92,9 +93,9 @@ const CashFlowList = () => {
                 max={today}
               />
             </Form>
-          </Col>
+          </Grid>
 
-        </Row>
+        </Grid>
         <CustomTable
           data={cashFlow}
           searcher={true}

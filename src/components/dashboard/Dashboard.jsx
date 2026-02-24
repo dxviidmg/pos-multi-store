@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Col, Row } from "react-bootstrap";
 import { getSalesDashboard } from "../apis/sales";
 import LineChart from "./LineChart";
 import DoughnutChart from "./DoughnutChart";
+import { Grid } from "@mui/material";
 
 const Dashboard = () => {
   const [tasks, setTasks] = useState();
@@ -21,8 +21,8 @@ const Dashboard = () => {
       <div className="custom-section">
         <h1>Tablero</h1>
 
-        <Row>
-          <Col md={6}>
+        <Grid container>
+          <Grid item xs={12} md={6}>
             <LineChart
               title={"Ventas por mes"}
               taskId={tasks?.task1}
@@ -43,8 +43,8 @@ const Dashboard = () => {
               yText={"Ventas"}
               xText={"Meses"}
             />
-          </Col>
-          <Col md={6}>
+          </Grid>
+          <Grid item xs={12} md={6}>
             <LineChart
               title={"Promedio ventas por dia (ultimo mes)"}
               taskId={tasks?.task2}
@@ -60,9 +60,9 @@ const Dashboard = () => {
               yText={"Ventas"}
               xText={"Dias"}
             />
-          </Col>
+          </Grid>
 
-          <Col md={6}>
+          <Grid item xs={12} md={6}>
             <LineChart
               title={"Promedio de ventas por hora (ultimo mes)"}
               taskId={tasks?.task3}
@@ -95,20 +95,20 @@ const Dashboard = () => {
               yText={"Ventas"}
               xText={"Dias"}
             />
-          </Col>
-          <Col md={3}>
+          </Grid>
+          <Grid item xs={12} md={3}>
             <DoughnutChart
               title={"% de metodos de pago"}
               taskId={tasks?.task4}
             />
-          </Col>
-          <Col md={3}>
+          </Grid>
+          <Grid item xs={12} md={3}>
             <DoughnutChart
               title={"% Ventas por tienda"}
               taskId={tasks?.task5}
             />
-          </Col>
-        </Row>
+          </Grid>
+        </Grid>
       </div>
     </div>
   );

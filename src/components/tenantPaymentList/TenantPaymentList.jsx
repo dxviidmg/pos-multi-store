@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
 import { getPayments } from "../apis/tenants";
+import { Grid } from "@mui/material";
 
 const TenantPaymentList = () => {
   const [payments, setPayments] = useState([]);
@@ -15,7 +16,8 @@ const TenantPaymentList = () => {
   }, []);
 
   return (
-    <div className="custom-section">
+    <Grid container spacing={2}>
+      <Grid xs={12} className="custom-section">
       <h1>Pagos del servicio</h1>
       <CustomTable
         data={payments}
@@ -32,7 +34,8 @@ const TenantPaymentList = () => {
           },
         ]}
       />
-    </div>
+    </Grid>
+    </Grid>
   );
 };
 

@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { Alert, Col, Form, Row } from "react-bootstrap";
+import { Alert, Form } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import { useNavigate } from "react-router-dom";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
@@ -19,6 +19,7 @@ import { useStores } from "../../hooks/useStores";
 import { useTenantInfo } from "../../hooks/useTenantInfo";
 import { useDepartments } from "../../hooks/useDepartments";
 import { useInvestment } from "../../hooks/useInvestment";
+import { Grid } from "@mui/material";
 
 const StoreList = () => {
   const navigate = useNavigate();
@@ -402,25 +403,24 @@ const StoreList = () => {
   ];
 
   return (
-    <>
-      <div className="custom-section">
+    <Grid container spacing={2}>
+      <Grid xs={12} className="custom-section">
         <CustomSpinner isLoading={loading}></CustomSpinner>
 
         {tenantInfo.notices && tenantInfo.notices.length > 0 && (
-          <div>
-            {tenantInfo.notices.map((variant) => (
-              <Alert key={"success"} variant={"success"}>
-                {variant}
-              </Alert>
+          <Grid container spacing={1}>
+            {tenantInfo.notices.map((variant, index) => (
+              <Grid item xs={12} key={index}>
+                <Alert variant={"success"}>{variant}</Alert>
+              </Grid>
             ))}
-          </div>
+          </Grid>
         )}
 
         <h1>{params.store_type === "T" ? "Tiendas" : "Almacenes"}</h1>
 
-        <Row>
-          <Col>
-            {" "}
+        <Grid container spacing={2} alignItems="center">
+          <Grid item xs={12} md={4}>
             <Form.Label className="me-3">Ver</Form.Label>
             <Form.Check
               inline
@@ -433,30 +433,30 @@ const StoreList = () => {
             />
             <Form.Check
               inline
-              id="tiendas"
+              id="almacenes"
               label="Almacenes"
               type="radio"
               onChange={handleStoreType}
               value="A"
               checked={params.store_type === "A"}
             />
-          </Col>
+          </Grid>
 
-          <Col className="text-center">
-            <b> {tenantInfo.product_count} productos registrados</b>
-          </Col>
+          <Grid item xs={12} md={4} style={{ textAlign: "center" }}>
+            <b>{tenantInfo.product_count} productos registrados</b>
+          </Grid>
 
-          <Col>
+          <Grid item xs={12} md={4}>
             <CustomButton fullWidth onClick={handleShowInvestment}>
               Ver inversión
             </CustomButton>
-          </Col>
-        </Row>
+          </Grid>
+        </Grid>
 
-        {params.store_type === "T" ? (
+        {params.store_type === "T" && (
           <Form className="pb-2">
-            <Row>
-              <Col>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6} md={3}>
                 <Form.Group controlId="start_date">
                   <Form.Label>Fecha de inicio</Form.Label>
                   <Form.Control
@@ -467,9 +467,9 @@ const StoreList = () => {
                     max={today}
                   />
                 </Form.Group>
-              </Col>
+              </Grid>
 
-              <Col>
+              <Grid item xs={12} sm={6} md={3}>
                 <Form.Group controlId="end_date">
                   <Form.Label>Fecha de fin</Form.Label>
                   <Form.Control
@@ -480,9 +480,9 @@ const StoreList = () => {
                     max={today}
                   />
                 </Form.Group>
-              </Col>
+              </Grid>
 
-              <Col>
+              <Grid item xs={12} sm={6} md={3}>
                 <Form.Group controlId="range">
                   <Form.Label>Rango</Form.Label>
                   <Form.Control
@@ -492,65 +492,72 @@ const StoreList = () => {
                     disabled
                   />
                 </Form.Group>
-              </Col>
+              </Grid>
 
-              <Col hidden={departments.length === 0}>
-                <Form.Group controlId="department_id">
-                  <Form.Label>Departamento</Form.Label>
-                  <Form.Select
-                    value={params.department_id}
-                    onChange={handleParams}
-                    name="department_id"
-                  >
-                    <option value="">Todos</option>
-                    <option value="0">Sin departamento</option>
-                    {departments.map((departament) => (
-                      <option key={departament.id} value={departament.id}>
-                        {departament.name}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </Form.Group>
-              </Col>
-            </Row>
+              {departments.length > 0 && (
+                <Grid item xs={12} sm={6} md={3}>
+                  <Form.Group controlId="department_id">
+                    <Form.Label>Departamento</Form.Label>
+                    <Form.Select
+                      value={params.department_id}
+                      onChange={handleParams}
+                      name="department_id"
+                    >
+                      <option value="">Todos</option>
+                      <option value="0">Sin departamento</option>
+                      {departments.map((departament) => (
+                        <option key={departament.id} value={departament.id}>
+                          {departament.name}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </Form.Group>
+                </Grid>
+              )}
+            </Grid>
           </Form>
-        ) : (
-          ""
         )}
 
-        <div>
-        <CustomTable
-          progressPending={loading}
-          data={memoStores}
-          columns={params.store_type === "T" ? columnsStore : columnsStorages}
-        />
-        </div>
-
-        {params.store_type === "T" && stores.length > 1 && (
-          <>
-            <h2 className="pt-2">Totales</h2>
-
+        <Grid container>
+          <Grid item xs={12}>
             <CustomTable
               progressPending={loading}
-              data={[
-                {
-                  profit: totals.profit,
-                  paymentCash: totals.paymentCash,
-                  paymentCard: totals.paymentCard,
-                  paymentTransfer: totals.paymentTransfer,
-                  totalPayment: totals.totalPayment,
-                  cash: totals.cash,
-                  investment: totals.investment,
-                  totalSales: `${totals.totalSales}`,
-                  canceledSales: totals.canceledSales,
-                },
-              ]}
-              columns={columnsTotals}
-            ></CustomTable>
-          </>
+              data={memoStores}
+              columns={
+                params.store_type === "T" ? columnsStore : columnsStorages
+              }
+            />
+          </Grid>
+        </Grid>
+
+        {params.store_type === "T" && stores.length > 1 && (
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <h2 className="pt-2">Totales</h2>
+            </Grid>
+            <Grid item xs={12}>
+              <CustomTable
+                progressPending={loading}
+                data={[
+                  {
+                    profit: totals.profit,
+                    paymentCash: totals.paymentCash,
+                    paymentCard: totals.paymentCard,
+                    paymentTransfer: totals.paymentTransfer,
+                    totalPayment: totals.totalPayment,
+                    cash: totals.cash,
+                    investment: totals.investment,
+                    totalSales: `${totals.totalSales}`,
+                    canceledSales: totals.canceledSales,
+                  },
+                ]}
+                columns={columnsTotals}
+              />
+            </Grid>
+          </Grid>
         )}
-      </div>
-    </>
+      </Grid>
+    </Grid>
   );
 };
 

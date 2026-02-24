@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CustomModal from "../commons/customModal/customModal";
-import { Col, Form, Image, Row } from "react-bootstrap";
+import { Form, Image } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getBrands } from "../apis/brands";
@@ -14,6 +14,7 @@ import {
 import noPhoto from "../../assets/images/noPhoto.jpg";
 import { getDepartments } from "../apis/departments";
 import CustomTable from "../commons/customTable/customTable";
+import { Grid } from "@mui/material";
 
 const INITIAL_FORM_DATA = {
   brand: "",
@@ -159,8 +160,8 @@ const ProductModal = ({ onUpdateProductList }) => {
       title={showStoreProducts? "Ver stock": formData.id ? "Actualizar producto" : "Crear producto"}
     >
       <div className="custom-section">
-        <Row hidden={showStoreProducts}>
-          <Col md={4} className="">
+        <Grid container hidden={showStoreProducts}>
+          <Grid item xs={12} md={4} className="">
             <Image src={previewImage} fluid rounded />
             <Form.Group controlId="formFile" className="mt-3">
               <Form.Label>Selecciona una imagen</Form.Label>
@@ -170,11 +171,11 @@ const ProductModal = ({ onUpdateProductList }) => {
                 onChange={handleImageChange}
               />
             </Form.Group>
-          </Col>
+          </Grid>
 
-          <Col md={8}>
-            <Row>
-              <Col md={6}>
+          <Grid item xs={12} md={8}>
+            <Grid container>
+              <Grid item xs={12} md={6}>
                 <Form.Label>Marca</Form.Label>
                 <Form.Select
                   value={formData.brand}
@@ -188,9 +189,9 @@ const ProductModal = ({ onUpdateProductList }) => {
                     </option>
                   ))}
                 </Form.Select>
-              </Col>
+              </Grid>
 
-              <Col md={6}>
+              <Grid item xs={12} md={6}>
                 <Form.Label>Departamento</Form.Label>
                 <Form.Select
                   value={formData.department}
@@ -204,9 +205,9 @@ const ProductModal = ({ onUpdateProductList }) => {
                     </option>
                   ))}
                 </Form.Select>
-              </Col>
+              </Grid>
 
-              <Col md={6}>
+              <Grid item xs={12} md={6}>
                 <Form.Label>Código</Form.Label>
                 <Form.Control
                   type="text"
@@ -215,8 +216,8 @@ const ProductModal = ({ onUpdateProductList }) => {
                   name="code"
                   onChange={handleDataChange}
                 />
-              </Col>
-              <Col md={6}>
+              </Grid>
+              <Grid item xs={12} md={6}>
                 <Form.Label>Nombre</Form.Label>
                 <Form.Control
                   type="text"
@@ -225,9 +226,9 @@ const ProductModal = ({ onUpdateProductList }) => {
                   name="name"
                   onChange={handleDataChange}
                 />
-              </Col>
+              </Grid>
 
-              <Col md={3}>
+              <Grid item xs={12} md={3}>
                 <Form.Label>Costo</Form.Label>
                 <Form.Control
                   type="number"
@@ -236,9 +237,9 @@ const ProductModal = ({ onUpdateProductList }) => {
                   name="cost"
                   onChange={handleDataChange}
                 />
-              </Col>
+              </Grid>
 
-              <Col md={3}>
+              <Grid item xs={12} md={3}>
                 <Form.Label>P. unitario</Form.Label>
                 <Form.Control
                   type="number"
@@ -247,9 +248,9 @@ const ProductModal = ({ onUpdateProductList }) => {
                   name="unit_price"
                   onChange={handleDataChange}
                 />
-              </Col>
+              </Grid>
 
-              <Col md={3}>
+              <Grid item xs={12} md={3}>
                 <Form.Label>P. mayoreo</Form.Label>
                 <Form.Control
                   type="number"
@@ -258,9 +259,9 @@ const ProductModal = ({ onUpdateProductList }) => {
                   name="wholesale_price"
                   onChange={handleDataChange}
                 />
-              </Col>
+              </Grid>
 
-              <Col md={3}>
+              <Grid item xs={12} md={3}>
                 <Form.Label>Min. mayoreo</Form.Label>
                 <Form.Control
                   type="number"
@@ -269,9 +270,9 @@ const ProductModal = ({ onUpdateProductList }) => {
                   name="min_wholesale_quantity"
                   onChange={handleDataChange}
                 />
-              </Col>
+              </Grid>
 
-              <Col md={12}>
+              <Grid item xs={12} md={12}>
                 <Form.Check // prettier-ignore
                   type="checkbox"
                   id={`default-checkbox`}
@@ -280,9 +281,9 @@ const ProductModal = ({ onUpdateProductList }) => {
                   onChange={handleDataChange}
                   name="wholesale_price_on_client_discount"
                 />
-              </Col>
+              </Grid>
 
-              <Col md={12}>
+              <Grid item xs={12} md={12}>
                 <CustomButton
                   fullWidth={true}
                   onClick={(e) => handleProductSubmit(e)}
@@ -291,12 +292,12 @@ const ProductModal = ({ onUpdateProductList }) => {
                 >
                   {formData.id ? "Actualizar" : "Crear"} producto
                 </CustomButton>
-              </Col>
-            </Row>
-          </Col>
-        </Row>
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
 
-        <Row hidden={!showStoreProducts}>
+        <Grid container hidden={!showStoreProducts}>
           <CustomTable
             data={storeProduct}
             columns={[
@@ -310,7 +311,7 @@ const ProductModal = ({ onUpdateProductList }) => {
               },
             ]}
           />
-        </Row>
+        </Grid>
       </div>
     </CustomModal>
   );

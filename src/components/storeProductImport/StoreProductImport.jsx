@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
 import { importStoreProducts, importStoreProductsValidation } from "../apis/products";
-import { Form, Row, Col } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import Swal from "sweetalert2";
 import { ErrorIcon, SuccessIcon } from "../commons/icons/Icons";
 import { useRef } from "react";
+import { Grid } from "@mui/material";
 
 const URL_TEMPLATE =
   process.env.REACT_APP_API_URL +
@@ -117,8 +118,8 @@ const StoreProductImport = () => {
     <div>
       <div className="custom-section">
         <h1>Importación de inventario</h1>
-        <Row>
-          <Col md={6} className="d-flex flex-column justify-content-end">
+        <Grid container>
+          <Grid item xs={12} md={6} className="d-flex flex-column justify-content-end">
             <Form.Label>Archivo</Form.Label>
 
             <Form.Group controlId="formFile" className="">
@@ -130,9 +131,9 @@ const StoreProductImport = () => {
                 name="file"
               />
             </Form.Group>
-          </Col>
+          </Grid>
 
-          <Col md={6}>
+          <Grid item xs={12} md={6}>
             <Form.Label>¿Desea adicionar o sustituir la cantidad?</Form.Label>
             <Form.Select
               value={formData.action}
@@ -147,9 +148,9 @@ const StoreProductImport = () => {
                 </option>
               ))}
             </Form.Select>
-          </Col>
+          </Grid>
 
-          <Col md={3}>
+          <Grid item xs={12} md={3}>
             <CustomButton
               onClick={handleValidation}
               disabled={
@@ -160,9 +161,9 @@ const StoreProductImport = () => {
             >
               Validar
             </CustomButton>
-          </Col>
+          </Grid>
 
-          <Col md={3}>
+          <Grid item xs={12} md={3}>
             <CustomButton
               onClick={handleImport}
               disabled={
@@ -173,23 +174,23 @@ const StoreProductImport = () => {
             >
               Importar
             </CustomButton>
-          </Col>
+          </Grid>
 
-          <Col md={3}>
+          <Grid item xs={12} md={3}>
             <CustomButton href={URL_TEMPLATE} fullWidth>
               Descargar plantilla
             </CustomButton>
-          </Col>
+          </Grid>
 
-          <Col md={3}>
+          <Grid item xs={12} md={3}>
             <CustomButton
               onClick={() => setShowExample(!showExample)}
               fullWidth
             >
               Ver Ejemplo
             </CustomButton>
-          </Col>
-        </Row>
+          </Grid>
+        </Grid>
       </div>
 
       <div className="custom-section" hidden={showExample}>

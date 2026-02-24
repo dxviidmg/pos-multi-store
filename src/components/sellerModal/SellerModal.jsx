@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CustomModal from "../commons/customModal/customModal";
-import { Col, Form, Row } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
 import Swal from "sweetalert2";
@@ -9,6 +9,7 @@ import { updateProduct } from "../apis/products";
 import { getStores } from "../apis/stores";
 import { getUserData } from "../apis/utils";
 import { createSeller } from "../apis/sellers";
+import { Grid } from "@mui/material";
 
 const SellerModal = ({ onUpdateSellerList }) => {
   const user = getUserData();
@@ -69,6 +70,7 @@ const SellerModal = ({ onUpdateSellerList }) => {
         if (store) {
           const storeName = store.name.toLowerCase();
           const workersCount = store.workers_count + 1;
+          console.log(workersCount)
           const username = `${short_name}.tienda.${storeName}.vendedor${workersCount}`;
           updatedData.worker.username = username;
         }
@@ -129,8 +131,8 @@ const SellerModal = ({ onUpdateSellerList }) => {
       title={formData.id ? "Actualizar vendedor" : "Crear vendedor"}
     >
       <div className="custom-section">
-        <Row>
-          <Col md={6}>
+        <Grid container>
+          <Grid item xs={12} md={6}>
             <Form.Label>Tienda</Form.Label>
             <Form.Select
               value={formData.store_id}
@@ -144,8 +146,8 @@ const SellerModal = ({ onUpdateSellerList }) => {
                 </option>
               ))}
             </Form.Select>
-          </Col>
-          <Col md={6}>
+          </Grid>
+          <Grid item xs={12} md={6}>
             <Form.Label>Usuario y contraseña</Form.Label>
             <Form.Control
             disabled
@@ -155,8 +157,8 @@ const SellerModal = ({ onUpdateSellerList }) => {
               name="username"
               onChange={handleDataChange}
             />
-          </Col>
-          <Col md={6}>
+          </Grid>
+          <Grid item xs={12} md={6}>
             <Form.Label>Nombre</Form.Label>
             <Form.Control
               type="text"
@@ -165,8 +167,8 @@ const SellerModal = ({ onUpdateSellerList }) => {
               name="first_name"
               onChange={handleDataChange}
             />
-          </Col>
-          <Col md={6}>
+          </Grid>
+          <Grid item xs={12} md={6}>
             <Form.Label>Apellidos</Form.Label>
             <Form.Control
               type="text"
@@ -175,11 +177,11 @@ const SellerModal = ({ onUpdateSellerList }) => {
               name="last_name"
               onChange={handleDataChange}
             />
-          </Col>
+          </Grid>
 
 
 
-          <Col md={12}>
+          <Grid item xs={12} md={12}>
             <CustomButton
               fullWidth={true}
               onClick={(e) => handleProductSubmit(e)}
@@ -188,8 +190,8 @@ const SellerModal = ({ onUpdateSellerList }) => {
             >
               {formData.id ? "Actualizar" : "Crear"} vendedor
             </CustomButton>
-          </Col>
-        </Row>
+          </Grid>
+        </Grid>
       </div>
     </CustomModal>
   );

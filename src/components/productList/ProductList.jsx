@@ -5,7 +5,7 @@ import {
   getProducts,
   upperCodeProducts,
 } from "../apis/products";
-import { Col, Form, FormCheck, Row } from "react-bootstrap";
+import { Form, FormCheck } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import { useDispatch } from "react-redux";
 import {
@@ -22,6 +22,7 @@ import Swal from "sweetalert2";
 import { CheckIcon, EditIcon, SearchIcon } from "../commons/icons/Icons";
 import { getDepartments } from "../apis/departments";
 import CustomTooltip from "../commons/Tooltip";
+import { Grid } from "@mui/material";
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
@@ -211,14 +212,14 @@ const ProductList = () => {
       <ProductModal onUpdateProductList={handleUpdateProductList} />
       <h1>Productos</h1>
 
-      <Row className="d-flex align-items-center gap-3">
-        <Col>
+      <Grid container className="d-flex align-items-center gap-3">
+        <Grid item xs={12}>
           {" "}
           <CustomButton onClick={() => handleOpenModal()} fullWidth={true}>
             Crear producto
           </CustomButton>
-        </Col>
-        <Col>
+        </Grid>
+        <Grid item xs={12}>
           <CustomButton
             onClick={handleDownload}
             disabled={products.length === 0}
@@ -226,16 +227,16 @@ const ProductList = () => {
           >
             Descargar productos
           </CustomButton>
-        </Col>
-        <Col>
+        </Grid>
+        <Grid item xs={12}>
           <CustomTooltip text={"Formatea a mayusculas y reemplaza la comilla simple (') por guión medio (-)"}>
           <CustomButton onClick={handleUpperCodeProducts} fullWidth={true}>
             Formatear códigos
           </CustomButton>
           </CustomTooltip>
 
-        </Col>
-        <Col>
+        </Grid>
+        <Grid item xs={12}>
           {" "}
           <CustomButton
             onClick={handleDeleteProducts}
@@ -248,19 +249,19 @@ const ProductList = () => {
           >
             Borrar productos
           </CustomButton>
-        </Col>
-        <Col>
+        </Grid>
+        <Grid item xs={12}>
           {" "}
           <FormCheck
             label="Confirmar borrado"
             checked={confirmDeletion}
             onChange={handleCheck}
           />
-        </Col>
-      </Row>
+        </Grid>
+      </Grid>
 
-      <Row className="mt-3">
-        <Col>
+      <Grid container className="mt-3">
+        <Grid item xs={12}>
           {" "}
           <Form.Label>Marca</Form.Label>
           <Form.Select
@@ -276,9 +277,9 @@ const ProductList = () => {
               </option>
             ))}
           </Form.Select>
-        </Col>
+        </Grid>
 
-        <Col hidden={departments.length === 0}>
+        <Grid item xs={12} hidden={departments.length === 0}>
           {" "}
           <Form.Label>Departamento</Form.Label>
           <Form.Select
@@ -295,9 +296,9 @@ const ProductList = () => {
               </option>
             ))}
           </Form.Select>
-        </Col>
+        </Grid>
 
-        <Col>
+        <Grid item xs={12}>
           <Form.Label>Stock maximo</Form.Label>
           <Form.Control
             type="number"
@@ -305,9 +306,9 @@ const ProductList = () => {
             onChange={handleDataChange}
             name="max_stock"
           />
-        </Col>
+        </Grid>
 
-        <Col className="d-flex flex-column justify-content-end">
+        <Grid item xs={12} className="d-flex flex-column justify-content-end">
           {products.length > 0 && (
             <>{outOfStockPercentage.toFixed(0)}% de los productos esta vacio</>
           )}
@@ -315,8 +316,8 @@ const ProductList = () => {
           <CustomButton fullWidth onClick={fetchProducts}>
             <SearchIcon /> Buscar
           </CustomButton>
-        </Col>
-      </Row>
+        </Grid>
+      </Grid>
       <CustomTable
         setSelectedRows={setSelectedRows}
         searcher={true}

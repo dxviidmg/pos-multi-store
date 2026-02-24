@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { Container, Row, Col, Alert, Image, Form } from "react-bootstrap";
+import { Container, Alert, Image, Form } from "react-bootstrap";
 import { loginUser } from "../apis/login";
 import { useNavigate } from "react-router-dom";
 import CustomButton from "../commons/customButton/CustomButton";
 import Logo from "../../assets/images/logo.jpg";
 import './login.css'
+import { Grid } from "@mui/material";
 
 function Login({ onLogin }) {
   const navigate = useNavigate();
@@ -82,11 +83,9 @@ function Login({ onLogin }) {
   return (
     <div id="login">
       <Container style={{ height: "99.7vh" }}>
-        <Row className="h-100 d-flex align-items-center justify-content-center">
-          <Col
+        <Grid container className="h-100 d-flex align-items-center justify-content-center">
+          <Grid item xs={12} md={6} lg={4}
             sx={10}
-            md={6}
-            lg={4}
             id="login-col"
             className="align-items-center rounded"
             style={{
@@ -134,8 +133,8 @@ function Login({ onLogin }) {
                 Iniciar sesión
               </CustomButton>
             </Form>
-          </Col>
-        </Row>
+          </Grid>
+        </Grid>
       </Container>
     </div>
   );

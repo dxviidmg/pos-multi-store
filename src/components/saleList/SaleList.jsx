@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { Col, Form, Row } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import { getSales } from "../apis/sales";
 import CustomButton from "../commons/customButton/CustomButton";
 import {
@@ -30,6 +30,7 @@ import {
   showPaymentReservationModal,
 } from "../redux/paymentReservationModal/PaymentReservationModalActions";
 import CustomTooltip from "../commons/Tooltip";
+import { Grid } from "@mui/material";
 
 const TYPE_OPTIONS = [
   {
@@ -135,8 +136,8 @@ const SaleList = () => {
         )}
 
         <h1>Ventas</h1>
-        <Row>
-          <Col>
+        <Grid container>
+          <Grid item xs={12}>
             <Form.Label>Tipo</Form.Label>
             <Form.Select
               value={params.reservation_in_progress}
@@ -150,9 +151,9 @@ const SaleList = () => {
                 </option>
               ))}
             </Form.Select>
-          </Col>
+          </Grid>
 
-          <Col>
+          <Grid item xs={12}>
             <Form.Label>Busqueda por</Form.Label>
             <Form.Select
               value={searchBy}
@@ -166,10 +167,10 @@ const SaleList = () => {
                 </option>
               ))}
             </Form.Select>
-          </Col>
+          </Grid>
 
           {searchBy === "date" ? (
-            <Col>
+            <Grid item xs={12}>
               <Form>
                 <Form.Label>Fecha</Form.Label>
                 <Form.Control
@@ -180,9 +181,9 @@ const SaleList = () => {
                   name="date"
                 />
               </Form>
-            </Col>
+            </Grid>
           ) : searchBy === "sale_id" ? (
-            <Col>
+            <Grid item xs={12}>
               <Form>
                 <Form.Label>#</Form.Label>
                 <Form.Control
@@ -192,10 +193,10 @@ const SaleList = () => {
                   name="sale_id"
                 />
               </Form>
-            </Col>
+            </Grid>
           ) : searchBy === "client" ? (
             <>
-              <Col>
+              <Grid item xs={12}>
                 <Form>
                   <Form.Label>Nombre</Form.Label>
                   <Form.Control
@@ -206,8 +207,8 @@ const SaleList = () => {
                     placeholder="Nombre"
                   />
                 </Form>
-              </Col>
-              <Col>
+              </Grid>
+              <Grid item xs={12}>
                 <Form>
                   <Form.Label>Apellidos</Form.Label>
                   <Form.Control
@@ -218,16 +219,16 @@ const SaleList = () => {
                     placeholder="Apellidos"
                   />
                 </Form>
-              </Col>
+              </Grid>
             </>
           ) : null}
 
-          <Col className="d-flex flex-column justify-content-end">
+          <Grid item xs={12} className="d-flex flex-column justify-content-end">
             <CustomButton onClick={() => setShowAllFields((prev) => !prev)}>
               Ver todos los campos
             </CustomButton>
-          </Col>
-        </Row>
+          </Grid>
+        </Grid>
         <CustomTable
           data={sales}
           pagination={false}

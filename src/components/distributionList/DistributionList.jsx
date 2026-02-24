@@ -11,9 +11,10 @@ import {
   getDistributions,
   updateTranfer,
 } from "../apis/transfers";
-import { Col, Form, Row } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import Swal from "sweetalert2";
 import { getUserData } from "../apis/utils";
+import { Grid } from "@mui/material";
 
 
 
@@ -139,18 +140,18 @@ const DistributionList = () => {
 
       {Object.keys(distributionSelected).length !== 0 && (
         <div className="custom-section">
-          <Row>
-            <Col>
+          <Grid container>
+            <Grid item xs={12}>
               {" "}
               <h1>Distribución #{distributionSelected.id}</h1>
-            </Col>
-            <Col>
+            </Grid>
+            <Grid item xs={12}>
               {" "}
               <CustomButton fullWidth onClick={() => handleSubmit()}>
                 Confirmar distribución
               </CustomButton>
-            </Col>
-          </Row>
+            </Grid>
+          </Grid>
           <CustomTable
             data={distributionSelected.transfers || []}
             pagination={false}

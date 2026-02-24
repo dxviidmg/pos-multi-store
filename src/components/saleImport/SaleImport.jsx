@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { Col, Form, Row } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import CustomTable from "../commons/customTable/customTable";
 import CustomButton from "../commons/customButton/CustomButton";
 import { importSales, importSalesValidation } from "../apis/sales";
 import Swal from "sweetalert2";
 import { SuccessIcon, ErrorIcon } from "../commons/icons/Icons";
 import { useRef } from "react";
+import { Grid } from "@mui/material";
 
 const DATA_SAMPLE = [
   { code: 1, quantity: 1, description: "Descripción del producto 1" },
@@ -99,8 +100,8 @@ const SaleImport = () => {
     <div>
       <div className="custom-section">
         <h1>Importar ventas</h1>
-        <Row>
-          <Col md={4}>
+        <Grid container>
+          <Grid item xs={12} md={4}>
             <Form.Group controlId="formFile" className="">
               <Form.Control
                 type="file"
@@ -110,9 +111,9 @@ const SaleImport = () => {
                 name="file"
               />
             </Form.Group>
-          </Col>
+          </Grid>
 
-          <Col md={2}>
+          <Grid item xs={12} md={2}>
             <CustomButton
               onClick={handleValidation}
               disabled={formData.file === ""}
@@ -120,9 +121,9 @@ const SaleImport = () => {
             >
               Validar
             </CustomButton>
-          </Col>
+          </Grid>
 
-          <Col md={2}>
+          <Grid item xs={12} md={2}>
             <CustomButton
               onClick={handleImport}
               disabled={
@@ -133,23 +134,23 @@ const SaleImport = () => {
             >
               Importar
             </CustomButton>
-          </Col>
+          </Grid>
 
-          <Col md={2}>
+          <Grid item xs={12} md={2}>
             <CustomButton href={URL_TEMPLATE} fullWidth>
               Descargar plantilla
             </CustomButton>
-          </Col>
+          </Grid>
 
-          <Col md={2}>
+          <Grid item xs={12} md={2}>
             <CustomButton
               onClick={() => setShowExample(!showExample)}
               fullWidth
             >
               Ver Ejemplo
             </CustomButton>
-          </Col>
-        </Row>
+          </Grid>
+        </Grid>
       </div>
 
       <div className="custom-section" hidden={showExample}>

@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import CustomModal from "../commons/customModal/customModal";
-import { Col, Form, Row } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
 import Swal from "sweetalert2";
 import { hideCashFlowModal } from "../redux/cashFlowModal/CashFlowModalActions";
 import { createCashFlow, getCashFlowChoices } from "../apis/cashflow";
+import { Grid } from "@mui/material";
 
 
 const CashFlowModal = ({ onUpdateCashFlowList }) => {
@@ -90,8 +91,8 @@ const CashFlowModal = ({ onUpdateCashFlowList }) => {
     >
       <div className="custom-section">
 
-      <Row>
-        <Col md={3}>
+      <Grid container>
+        <Grid item xs={12} md={3}>
         <Form.Label>Tipo de movimiento</Form.Label>
         <Form.Select
               value={formData.transaction_type}
@@ -107,8 +108,8 @@ const CashFlowModal = ({ onUpdateCashFlowList }) => {
                 </option>
               ))}
             </Form.Select>
-        </Col>
-        <Col md={3}>
+        </Grid>
+        <Grid item xs={12} md={3}>
           <Form.Label>Concepto</Form.Label>
           <Form.Control
             type="text"
@@ -117,8 +118,8 @@ const CashFlowModal = ({ onUpdateCashFlowList }) => {
             name="concept"
             onChange={handleDataChange}
           />
-        </Col>
-        <Col md={3}>
+        </Grid>
+        <Grid item xs={12} md={3}>
           <Form.Label>Cantidad</Form.Label>
           <Form.Control
             type="number"
@@ -127,8 +128,8 @@ const CashFlowModal = ({ onUpdateCashFlowList }) => {
             name="amount"
             onChange={handleDataChange}
           />
-        </Col>
-        <Col md={3} className="d-flex flex-column justify-content-end">
+        </Grid>
+        <Grid item xs={12} md={3} className="d-flex flex-column justify-content-end">
           <CustomButton
             fullWidth={true}
             onClick={handleBrandSubmit}
@@ -137,8 +138,8 @@ const CashFlowModal = ({ onUpdateCashFlowList }) => {
           >
             {formData.id ? "Actualizar" : "Crear"}
           </CustomButton>
-        </Col>
-      </Row>
+        </Grid>
+      </Grid>
       </div>
     </CustomModal>
   );

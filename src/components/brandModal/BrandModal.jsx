@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import CustomModal from "../commons/customModal/customModal";
-import { Col, Form, Row } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
 import { hideBrandModal } from "../redux/brandModal/BrandModalActions";
 import { useCreateBrand, useUpdateBrand } from "../../hooks/useBrandMutations";
+import { Grid } from "@mui/material";
 
 const BrandModal = ({ onUpdateBrandList }) => {
   const { showBrandModal, brand } = useSelector(
@@ -55,8 +56,8 @@ const BrandModal = ({ onUpdateBrandList }) => {
     >
       <div className="custom-section">
 
-      <Row>
-        <Col md={6}>
+      <Grid container>
+        <Grid item xs={12} md={6}>
           <Form.Label>Nombre</Form.Label>
           <Form.Control
             type="text"
@@ -65,9 +66,9 @@ const BrandModal = ({ onUpdateBrandList }) => {
             name="name"
             onChange={handleDataChange}
           />
-        </Col>
+        </Grid>
 
-        <Col md={6} className="d-flex flex-column justify-content-end">
+        <Grid item xs={12} md={6} className="d-flex flex-column justify-content-end">
           <CustomButton
             fullWidth={true}
             onClick={handleBrandSubmit}
@@ -76,8 +77,8 @@ const BrandModal = ({ onUpdateBrandList }) => {
           >
             {formData.id ? "Actualizar" : "Crear"}
           </CustomButton>
-        </Col>
-      </Row>
+        </Grid>
+      </Grid>
       </div>
     </CustomModal>
   );
