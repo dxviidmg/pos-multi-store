@@ -159,7 +159,7 @@ const ProductModal = ({ onUpdateProductList }) => {
       onClose={() => dispatch(hideProductModal())}
       title={showStoreProducts? "Ver stock": formData.id ? "Actualizar producto" : "Crear producto"}
     >
-      <div className="custom-section">
+      <Grid className="custom-section">
         <Grid container hidden={showStoreProducts}>
           <Grid item xs={12} md={4} className="">
             <Image src={previewImage} fluid rounded />
@@ -312,7 +312,7 @@ const ProductModal = ({ onUpdateProductList }) => {
             ]}
           />
         </Grid>
-      </div>
+      </Grid>
     </CustomModal>
   );
 };

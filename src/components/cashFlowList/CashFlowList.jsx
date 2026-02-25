@@ -60,7 +60,7 @@ const CashFlowList = () => {
     <>
       <CustomSpinner isLoading={loading}></CustomSpinner>
       <CashFlowModal onUpdateCashFlowList={handleUpdateCashFlowList} />
-      <div className="custom-section">
+      <Grid className="custom-section">
         <h1>Movimientos en caja</h1>
 
         <Grid container>
@@ -125,7 +125,7 @@ const CashFlowList = () => {
             },
           ]}
         />
-      </div>
+      </Grid>
     </>
   );
 };

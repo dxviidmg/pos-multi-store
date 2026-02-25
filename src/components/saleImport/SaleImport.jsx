@@ -97,8 +97,8 @@ const SaleImport = () => {
   };
 
   return (
-    <div>
-      <div className="custom-section">
+    <Grid container spacing={2}>
+      <Grid item xs={12} className="custom-section">
         <h1>Importar ventas</h1>
         <Grid container>
           <Grid item xs={12} md={4}>
@@ -151,9 +151,9 @@ const SaleImport = () => {
             </CustomButton>
           </Grid>
         </Grid>
-      </div>
+      </Grid>
 
-      <div className="custom-section" hidden={showExample}>
+      <Grid item xs={12} className="custom-section" hidden={showExample}>
 
             <h1>Ejemplo de plantilla</h1>
 
@@ -183,9 +183,9 @@ const SaleImport = () => {
               diferentes renglones haciendo referencia a que el mismo producto
               fue comprado varias veces.
             </p>
-      </div>
+      </Grid>
 
-      <div className="custom-section">
+      <Grid item xs={12} className="custom-section">
         <h1>Archivo actual</h1>
         <CustomTable
           data={sales}
@@ -215,8 +215,8 @@ const SaleImport = () => {
             },
           ]}
         ></CustomTable>
-      </div>
-    </div>
+      </Grid>
+    </Grid>
   );
 };
 

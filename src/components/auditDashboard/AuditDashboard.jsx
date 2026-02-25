@@ -58,7 +58,7 @@ const AuditDashboard = () => {
   return (
     <div>
       <CustomSpinner isLoading={isLoading}></CustomSpinner>
-      <div className="custom-section">
+      <Grid className="custom-section">
         <h1>Tablero de auditoria</h1>
         <Grid container>
           {" "}
@@ -136,7 +136,7 @@ const AuditDashboard = () => {
             ></AuditDashboardData>
           </Grid>
         </Grid>
-      </div>
+      </Grid>
     </div>
   );
 };

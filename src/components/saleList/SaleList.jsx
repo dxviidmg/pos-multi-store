@@ -125,7 +125,7 @@ const SaleList = () => {
       <CustomSpinner isLoading={loading}></CustomSpinner>
       <PaymentModal2 onUpdateSaleList={handleUpdateSaleList} />
       <SaleModal onUpdateSaleList={handleUpdateSaleList}></SaleModal>
-      <div className="custom-section">
+      <Grid className="custom-section">
         {salesDuplicated.length > 0 && (
           <Alert key={"primary"} variant={"primary"}>
             Ids de ventas duplicadas:{" "}
@@ -365,7 +365,7 @@ const SaleList = () => {
             },
           ]}
         />
-      </div>
+      </Grid>
     </>
   );
 };

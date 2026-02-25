@@ -115,8 +115,8 @@ const StoreProductImport = () => {
   };
 
   return (
-    <div>
-      <div className="custom-section">
+    <Grid container spacing={2}>
+      <Grid item xs={12} className="custom-section">
         <h1>Importación de inventario</h1>
         <Grid container>
           <Grid item xs={12} md={6} className="d-flex flex-column justify-content-end">
@@ -191,9 +191,9 @@ const StoreProductImport = () => {
             </CustomButton>
           </Grid>
         </Grid>
-      </div>
+      </Grid>
 
-      <div className="custom-section" hidden={showExample}>
+      <Grid item xs={12} className="custom-section" hidden={showExample}>
         <h1>Ejemplo de plantilla</h1>
 
         <CustomTable
@@ -213,9 +213,9 @@ const StoreProductImport = () => {
             }
           ]}
         ></CustomTable>
-      </div>
+      </Grid>
 
-      <div className="custom-section">
+      <Grid item xs={12} className="custom-section">
         <h1>Archivo actual</h1>
         <CustomTable
           data={products}
@@ -247,8 +247,8 @@ const StoreProductImport = () => {
             },
           ]}
         ></CustomTable>
-      </div>
-    </div>
+      </Grid>
+    </Grid>
   );
 };
 

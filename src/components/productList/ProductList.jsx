@@ -207,7 +207,7 @@ const ProductList = () => {
   };
 
   return (
-    <div className="custom-section">
+    <Grid className="custom-section">
       <CustomSpinner isLoading={loading}></CustomSpinner>
       <ProductModal onUpdateProductList={handleUpdateProductList} />
       <h1>Productos</h1>
@@ -413,7 +413,7 @@ const ProductList = () => {
           },
         ]}
       />
-    </div>
+    </Grid>
   );
 };
 

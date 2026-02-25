@@ -55,7 +55,7 @@ const DepartmentModal = ({ onUpdateDepartmentList }) => {
       title={formData.id ? "Actualizar departamento" : "Crear departamento"}
     >
 
-      <div className="custom-section">
+      <Grid className="custom-section">
 
       <Grid container>
         <Grid item xs={12} md={6}>
@@ -80,7 +80,7 @@ const DepartmentModal = ({ onUpdateDepartmentList }) => {
           </CustomButton>
         </Grid>
       </Grid>
-      </div>
+      </Grid>
     </CustomModal>
   );
 };

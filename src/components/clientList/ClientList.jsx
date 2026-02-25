@@ -126,7 +126,7 @@ const ClientList = () => {
         <h1>Clientes</h1>
         <CustomButton onClick={() => handleOpenModal()}>Crear</CustomButton>
         <Grid container>
-          <Grid item xs={12}>
+          <Grid item xs={4}>
             {" "}
             <Form>
               <Form.Label>Fecha de inicio</Form.Label>
@@ -139,7 +139,7 @@ const ClientList = () => {
               />
             </Form>
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={4}>
             {" "}
             <Form>
               <Form.Label>Fecha de fin</Form.Label>
@@ -153,7 +153,7 @@ const ClientList = () => {
             </Form>
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid item xs={4}>
             <Form>
               <Form.Label>Rango</Form.Label>
               <Form.Control name="range" type="input" value={range} disabled />

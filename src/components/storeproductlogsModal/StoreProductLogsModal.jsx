@@ -80,7 +80,7 @@ const StoreProductLogsModal = ({ onUpdateStoreProductList }) => {
       onClose={() => dispatch(hideLogsModal())}
       title={adjustStock ? "Ajuste de stock" : "Movimientos de stock"}
     >
-     <div className="custom-section">
+     <Grid className="custom-section">
      <Grid container>
         <Grid item xs={12} md={6}>
           <Form.Label>Código</Form.Label>
@@ -181,7 +181,7 @@ const StoreProductLogsModal = ({ onUpdateStoreProductList }) => {
         </Grid>
       </Grid>
 
-      </div> 
+      </Grid> 
      </CustomModal>
   );
 };

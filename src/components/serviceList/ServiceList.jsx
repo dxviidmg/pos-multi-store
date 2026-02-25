@@ -1,5 +1,6 @@
 import React from "react";
 import CustomTable from "../commons/customTable/customTable";
+import { Grid } from "@mui/material";
 
 const SERVICES = [
   {
@@ -33,7 +34,7 @@ const SERVICES = [
 
 const ServiceList = () => {
   return (
-      <div className="custom-section">
+      <Grid className="custom-section">
         <h1>Estimado cliente.</h1>
 
         <p>
@@ -61,7 +62,7 @@ const ServiceList = () => {
             },
           ]}
         />
-      </div>
+      </Grid>
   );
 };
 

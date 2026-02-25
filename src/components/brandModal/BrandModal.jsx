@@ -54,7 +54,7 @@ const BrandModal = ({ onUpdateBrandList }) => {
       onClose={() => dispatch(hideBrandModal())}
       title={formData.id ? "Actualizar marca" : "Crear marca"}
     >
-      <div className="custom-section">
+      <Grid className="custom-section">
 
       <Grid container>
         <Grid item xs={12} md={6}>
@@ -79,7 +79,7 @@ const BrandModal = ({ onUpdateBrandList }) => {
           </CustomButton>
         </Grid>
       </Grid>
-      </div>
+      </Grid>
     </CustomModal>
   );
 };

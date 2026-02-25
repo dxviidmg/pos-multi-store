@@ -18,7 +18,7 @@ const Dashboard = () => {
 
   return (
     <div>
-      <div className="custom-section">
+      <Grid className="custom-section">
         <h1>Tablero</h1>
 
         <Grid container>
@@ -109,7 +109,7 @@ const Dashboard = () => {
             />
           </Grid>
         </Grid>
-      </div>
+      </Grid>
     </div>
   );
 };

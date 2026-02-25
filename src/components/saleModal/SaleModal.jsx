@@ -89,7 +89,7 @@ const SaleModal = ({ onUpdateSaleList }) => {
       onClose={() => dispatch(hideSaleModal())}
       title={totalCancel ? "Cancelación de compra" : "Devolución de productos"}
     >
-      <div className="custom-section">
+      <Grid className="custom-section">
         <Grid container>
           {/* Información general de la venta */}
           <Grid item xs={12} md={2}>
@@ -189,7 +189,7 @@ const SaleModal = ({ onUpdateSaleList }) => {
             </CustomButton>
           </Grid>
         </Grid>
-      </div>
+      </Grid>
     </CustomModal>
   );
 };

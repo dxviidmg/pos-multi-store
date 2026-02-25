@@ -299,8 +299,8 @@ const PaymentModal = () => {
         onClose={() => dispatch(hidePaymentModal())}
         title="Finalizar venta"
       >
-        <div className="custom-section-buttons">
-          <Grid container>
+        <div >
+          <Grid container className="custom-section">
             <Grid item xs={12} md={6}>
               {" "}
               <CustomButton
@@ -322,12 +322,12 @@ const PaymentModal = () => {
             </Grid>
           </Grid>
         </div>
-        <div className="custom-section" hidden={hideClient}>
+        <Grid className="custom-section" hidden={hideClient}>
           <SearchClient />
           <ClientSelected />
-        </div>
+        </Grid>
 
-        <div className="custom-section" hidden={hideExchange}>
+        <Grid className="custom-section" hidden={hideExchange}>
           <h2>Cambio de mercancia</h2>
           <Grid container>
             <Grid item xs={12} md={3}>
@@ -368,9 +368,9 @@ const PaymentModal = () => {
               />
             </Grid>
           </Grid>
-        </div>
+        </Grid>
 
-        <div className="custom-section">
+        <Grid className="custom-section">
           <h2>Totales</h2>
           <Grid container>
             <Grid item xs={12} md={3}>
@@ -414,9 +414,9 @@ const PaymentModal = () => {
               )}
             </Grid>
           </Grid>
-        </div>
+        </Grid>
 
-        <div className="custom-section">
+        <Grid className="custom-section">
           <Grid container>
             <Grid item xs={12} md={3}>
               <Form.Label className="me-1">Tipo de pago:</Form.Label>
@@ -502,7 +502,7 @@ const PaymentModal = () => {
               </CustomButton>
             </Grid>
           </Grid>
-        </div>
+        </Grid>
       </CustomModal>
     </>
   );

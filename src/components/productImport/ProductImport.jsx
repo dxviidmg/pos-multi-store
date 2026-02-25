@@ -197,9 +197,11 @@ const ProductImport = () => {
   };
 
   return (
-    <div>
-      <CustomSpinner isLoading={loading}></CustomSpinner>
-      <div className="custom-section">
+    <Grid container spacing={2}>
+      <Grid item xs={12}>
+        <CustomSpinner isLoading={loading}></CustomSpinner>
+      </Grid>
+      <Grid item xs={12} className="custom-section">
         <h1>Importación de productos</h1>
         <Grid container>
           <Grid item xs={12} md={3} className="d-flex flex-column justify-content-end">
@@ -344,9 +346,9 @@ const ProductImport = () => {
         </Grid>
 
         <Grid container hidden={canIncludeQuantity}></Grid>
-      </div>
+      </Grid>
 
-      <div className="custom-section" hidden={showExample}>
+      <Grid item xs={12} className="custom-section" hidden={showExample}>
         <h1>Ejemplo de plantilla</h1>
 
         <CustomTable
@@ -397,9 +399,9 @@ const ProductImport = () => {
             },
           ]}
         ></CustomTable>
-      </div>
+      </Grid>
 
-      <div className="custom-section">
+      <Grid item xs={12} className="custom-section">
         <h1>Archivo actual</h1>
         <CustomTable
           data={products}
@@ -470,8 +472,8 @@ const ProductImport = () => {
             },
           ]}
         ></CustomTable>
-      </div>
-    </div>
+      </Grid>
+    </Grid>
   );
 };
 

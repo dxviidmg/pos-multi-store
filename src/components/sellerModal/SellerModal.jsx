@@ -130,7 +130,7 @@ const SellerModal = ({ onUpdateSellerList }) => {
       onClose={() => dispatch(hideProductModal())}
       title={formData.id ? "Actualizar vendedor" : "Crear vendedor"}
     >
-      <div className="custom-section">
+      <Grid className="custom-section">
         <Grid container>
           <Grid item xs={12} md={6}>
             <Form.Label>Tienda</Form.Label>
@@ -192,7 +192,7 @@ const SellerModal = ({ onUpdateSellerList }) => {
             </CustomButton>
           </Grid>
         </Grid>
-      </div>
+      </Grid>
     </CustomModal>
   );
 };

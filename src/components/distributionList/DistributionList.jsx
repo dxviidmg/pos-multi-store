@@ -101,9 +101,10 @@ const DistributionList = () => {
   };
 
   return (
-    <>
+
+    <Grid container spacing={2}>
       <CustomSpinner isLoading={loading}></CustomSpinner>
-      <div className="custom-section">
+      <Grid xs={12} className="custom-section">
         <h1>Distribuciones</h1>
         <CustomTable
           data={distributions}
@@ -136,10 +137,10 @@ const DistributionList = () => {
             },
           ]}
         />
-      </div>
+      </Grid>
 
       {Object.keys(distributionSelected).length !== 0 && (
-        <div className="custom-section">
+        <Grid className="custom-section">
           <Grid container>
             <Grid item xs={12}>
               {" "}
@@ -209,9 +210,9 @@ const DistributionList = () => {
               }
             ]}
           />
-        </div>
+        </Grid>
       )}
-    </>
+    </Grid>
   );
 };
 

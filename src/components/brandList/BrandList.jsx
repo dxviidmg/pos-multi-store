@@ -14,6 +14,7 @@ import { getUserData } from "../apis/utils";
 import { EditIcon } from "../commons/icons/Icons";
 import CustomTooltip from "../commons/Tooltip";
 import { useBrands } from "../../hooks/useBrands";
+import { Grid } from "@mui/material";
 
 const BrandList = () => {
   const [selectedRows, setSelectedRows] = useState([]);
@@ -75,7 +76,7 @@ const BrandList = () => {
   };
 
   return (
-    <div className="custom-section">
+    <Grid className="custom-section">
       <BrandModal onUpdateBrandList={handleUpdateBrandList}></BrandModal>{" "}
       <h1>Marcas</h1>
       <CustomButton onClick={() => handleOpenModal()}>Crear</CustomButton>
@@ -121,7 +122,7 @@ const BrandList = () => {
           },
         ]}
       />
-    </div>
+    </Grid>
   );
 };
 

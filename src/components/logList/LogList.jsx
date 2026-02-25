@@ -84,7 +84,7 @@ const LogList = () => {
   return (
     <>
       <CustomSpinner isLoading={loading}></CustomSpinner>
-      <div className="custom-section">
+      <Grid className="custom-section">
         <h1>Logs</h1>
 
         <CustomButton onClick={handleDownload} disabled={logs.length === 0}>
@@ -208,7 +208,7 @@ const LogList = () => {
             }
           ]}
         />
-      </div>
+      </Grid>
     </>
   );
 };

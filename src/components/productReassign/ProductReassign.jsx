@@ -84,7 +84,7 @@ const ProductReassign = () => {
   };
 
   return (
-    <div className="custom-section">
+    <Grid className="custom-section">
       <CustomSpinner isLoading={loading}></CustomSpinner>
       <h1>Reasignación de productos</h1>
       <Grid container className="mt-3">
@@ -173,7 +173,7 @@ const ProductReassign = () => {
           </CustomButton>
         </Grid>
       </Grid>
-    </div>
+    </Grid>
   );
 };
 

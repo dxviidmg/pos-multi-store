@@ -89,7 +89,7 @@ const CashFlowModal = ({ onUpdateCashFlowList }) => {
       onClose={() => dispatch(hideCashFlowModal())}
       title={formData.id ? "Actualizar movimiento" : "Crear movimiento"}
     >
-      <div className="custom-section">
+      <Grid className="custom-section">
 
       <Grid container>
         <Grid item xs={12} md={3}>
@@ -140,7 +140,7 @@ const CashFlowModal = ({ onUpdateCashFlowList }) => {
           </CustomButton>
         </Grid>
       </Grid>
-      </div>
+      </Grid>
     </CustomModal>
   );
 };

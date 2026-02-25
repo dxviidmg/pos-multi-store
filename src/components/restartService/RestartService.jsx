@@ -3,6 +3,7 @@ import CustomButton from "../commons/customButton/CustomButton";
 import { getRedeployRender } from "../apis/restart";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 import { formatTimeFromDate } from "../utils/utils";
+import { Grid } from "@mui/material";
 
 function RestartService() {
   const [isLoading, setIsLoading] = useState(false);
@@ -62,7 +63,7 @@ function RestartService() {
   };
 
   return (
-    <div className="custom-section">
+    <Grid className="custom-section">
       <CustomSpinner isLoading={isLoading} />
 
       <CustomButton
@@ -87,7 +88,7 @@ function RestartService() {
       )}
 
       {data?.error && <p>{data.error}</p>}
-    </div>
+    </Grid>
   );
 }
 

@@ -111,7 +111,7 @@ const PaymentModal2 = ({ onUpdateSaleList }) => {
       onClose={() => dispatch(hidePaymentReservationModal())}
       title="Cobrar apartado"
     >
-      <div className="custom-section">
+      <Grid className="custom-section">
         <Grid container>
           <h2>Información</h2>
           <Grid item xs={12} md={3}>
@@ -165,9 +165,9 @@ const PaymentModal2 = ({ onUpdateSaleList }) => {
             ))}
           </Grid>
         </Grid>
-      </div>
+      </Grid>
 
-      <div className="custom-section">
+      <Grid className="custom-section">
         <h2>Totales</h2>
         <Grid container>
           <Grid item xs={12} md={3}>
@@ -208,9 +208,9 @@ const PaymentModal2 = ({ onUpdateSaleList }) => {
             )}
           </Grid>
         </Grid>
-      </div>
+      </Grid>
 
-      <div className="custom-section">
+      <Grid className="custom-section">
         <Grid container>
           <Grid item xs={12} md={6}>
             <CustomButton
@@ -231,7 +231,7 @@ const PaymentModal2 = ({ onUpdateSaleList }) => {
             </CustomButton>
           </Grid>
         </Grid>
-      </div>
+      </Grid>
     </CustomModal>
   );
 };
