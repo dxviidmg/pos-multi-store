@@ -1,5 +1,5 @@
 import React, { memo, useState, useMemo } from "react";
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid } from "@mui/x-data-grid";
 import { Form } from "react-bootstrap";
 import { Box } from "@mui/material";
 
@@ -11,76 +11,72 @@ const CustomTable = ({
   showNoDataComponent = true,
   searcher = false,
   pagination = true,
-  setSelectedRows
+  setSelectedRows,
 }) => {
-
   const [searchTerm, setSearchTerm] = useState("");
   const [paginationModel, setPaginationModel] = useState({
     pageSize: 10,
     page: 0,
   });
 
-  const searchInObject = (obj, searchTerm) => {
-    if (typeof obj === 'string') {
-      return obj.toLowerCase().includes(searchTerm.toLowerCase());
+  // 🔎 Buscador
+  const searchInObject = (obj, search) => {
+    if (typeof obj === "string") {
+      return obj.toLowerCase().includes(search.toLowerCase());
     }
-  
-    if (typeof obj === 'object' && obj !== null) {
-      return Object.values(obj).some((value) => searchInObject(value, searchTerm));
+
+    if (typeof obj === "object" && obj !== null) {
+      return Object.values(obj).some((value) =>
+        searchInObject(value, search)
+      );
     }
-  
+
     return false;
   };
-  
-  const filteredData = useMemo(() => 
-    data.filter((item) => searchInObject(item, searchTerm)),
+
+  const filteredData = useMemo(
+    () => data.filter((item) => searchInObject(item, searchTerm)),
     [data, searchTerm]
   );
 
-  // Convertir columnas de react-data-table a DataGrid
-  const muiColumns = useMemo(() => 
-    columns.map((col, index) => {
-      const column = {
-        field: col.field || `field_${index}`,
-        headerName: col.name,
-        flex: col.grow || 1,
-        minWidth: col.width || 100,
-        sortable: col.sortable !== false,
-      };
-
-      // Si tiene cell, usarlo directamente
-      if (col.cell) {
-        column.renderCell = (params) => col.cell(params.row);
-      } 
-      // Si tiene selector, usarlo
-      else if (col.selector) {
-        column.renderCell = (params) => {
-          const value = col.selector(params.row);
-          // Si el selector retorna JSX, renderizarlo
-          if (React.isValidElement(value)) {
-            return value;
-          }
-          // Si es primitivo, mostrarlo como texto
-          return value;
+  // 🔄 Adaptador de columnas
+  const muiColumns = useMemo(
+    () =>
+      columns.map((col, index) => {
+        const column = {
+          field: col.field || `field_${index}`,
+          headerName: col.name,
+          flex: col.grow || 1,
+          minWidth: col.width || 120,
+          sortable: col.sortable !== false,
         };
-      }
 
-      return column;
-    }),
+        if (col.cell) {
+          column.renderCell = (params) => col.cell(params.row);
+        } else if (col.selector) {
+          column.renderCell = (params) => {
+            const value = col.selector(params.row);
+            return React.isValidElement(value) ? value : value;
+          };
+        }
+
+        return column;
+      }),
     [columns]
   );
 
-  // Agregar IDs a las filas si no existen
-  const rowsWithIds = useMemo(() => 
-    filteredData.map((row, index) => ({
-      ...row,
-      _id: row.id || row._id || index,
-    })),
+  // 🆔 Asegurar IDs
+  const rowsWithIds = useMemo(
+    () =>
+      filteredData.map((row, index) => ({
+        ...row,
+        _id: row.id ?? row._id ?? index,
+      })),
     [filteredData]
   );
 
   return (
-    <Box sx={{ width: '100%', mt: 1, overflowX: 'auto' }}>
+    <Box sx={{ width: "100%", mt: 1 }}>
       {searcher && (
         <Box sx={{ mb: 2 }}>
           <Form.Label>Buscar</Form.Label>
@@ -93,48 +89,48 @@ const CustomTable = ({
         </Box>
       )}
 
-      <DataGrid
-        rows={rowsWithIds}
-        columns={muiColumns}
-        getRowId={(row) => row._id}
-        loading={progressPending}
-        pagination={pagination}
-        paginationModel={paginationModel}
-        onPaginationModelChange={setPaginationModel}
-        pageSizeOptions={[10, 25, 50, 100]}
-        checkboxSelection={!!setSelectedRows}
-        onRowSelectionModelChange={(ids) => {
-          if (setSelectedRows) {
-            const selectedRows = rowsWithIds.filter((row) => ids.includes(row._id));
-            setSelectedRows(selectedRows);
-          }
-        }}
-        disableRowSelectionOnClick
-        autoHeight
-        getRowHeight={() => 'auto'}
-        localeText={{
-          noRowsLabel: showNoDataComponent ? noDataComponent : '',
-        }}
-        hideFooter={data.length <= 10}
+      {/* 🔥 CONTENEDOR CONTROLADO */}
+      <Box
         sx={{
-          width: '100%',
-          minWidth: '800px',
-          '& .MuiDataGrid-cell': {
-            py: 1.5,
-          },
-          '& .MuiDataGrid-columnHeaders': {
-            backgroundColor: '#04356b',
-            color: '#ffffff',
-          },
-          '& .MuiDataGrid-cell': {
-            backgroundColor: '#CFD7E1',
-            borderBottom: '1px solid gray',
-          },
-          '& .MuiDataGrid-row': {
-            backgroundColor: '#f0f8ff',
-          },
+          width: "90%",
+          height: 100, // 🔥 Altura fija estable
         }}
-      />
+      >
+        <DataGrid
+          rows={rowsWithIds}
+          columns={muiColumns}
+          getRowId={(row) => row._id}
+          loading={progressPending}
+          pagination={pagination}
+          paginationModel={paginationModel}
+          onPaginationModelChange={setPaginationModel}
+          pageSizeOptions={[10, 25, 50, 100]}
+          checkboxSelection={!!setSelectedRows}
+          onRowSelectionModelChange={(ids) => {
+            if (setSelectedRows) {
+              const selected = rowsWithIds.filter((row) =>
+                ids.includes(row._id)
+              );
+              setSelectedRows(selected);
+            }
+          }}
+          disableRowSelectionOnClick
+          localeText={{
+            noRowsLabel: showNoDataComponent ? noDataComponent : "",
+          }}
+          hideFooter={data.length <= 10}
+          sx={{
+            width: "100%",
+            "& .MuiDataGrid-columnHeaders": {
+              backgroundColor: "#04356b",
+              color: "#ffffff",
+            },
+            "& .MuiDataGrid-cell": {
+              py: 1.5,
+            },
+          }}
+        />
+      </Box>
     </Box>
   );
 };

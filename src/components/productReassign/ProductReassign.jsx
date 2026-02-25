@@ -84,11 +84,12 @@ const ProductReassign = () => {
   };
 
   return (
-    <Grid className="custom-section">
+    <Grid container spacing={2}>
+    <Grid xs={12} className="custom-section">
       <CustomSpinner isLoading={loading}></CustomSpinner>
       <h1>Reasignación de productos</h1>
       <Grid container className="mt-3">
-        <Grid item xs={12}>
+        <Grid item xs={3}>
           {" "}
           <Form.Label>Tipo de reasignación</Form.Label>
           <Form.Select
@@ -106,7 +107,7 @@ const ProductReassign = () => {
           </Form.Select>
         </Grid>
 
-        <Grid item xs={12}>
+        <Grid item xs={3}>
           {" "}
           <Form.Label>Origen</Form.Label>
           <Form.Select
@@ -124,7 +125,7 @@ const ProductReassign = () => {
           </Form.Select>
         </Grid>
 
-        <Grid item xs={12}>
+        <Grid item xs={3}>
           {" "}
           <Form.Label>Destino</Form.Label>
           <Form.Select
@@ -142,7 +143,7 @@ const ProductReassign = () => {
           </Form.Select>
         </Grid>
 
-        <Grid item xs={12}>
+        <Grid item xs={3}>
           {" "}
           <Form.Label>Borrar origen</Form.Label>
           <Form.Select
@@ -173,6 +174,7 @@ const ProductReassign = () => {
           </CustomButton>
         </Grid>
       </Grid>
+    </Grid>
     </Grid>
   );
 };

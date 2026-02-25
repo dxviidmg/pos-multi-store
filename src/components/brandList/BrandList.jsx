@@ -76,7 +76,8 @@ const BrandList = () => {
   };
 
   return (
-    <Grid className="custom-section">
+    <Grid container spacing={2}>
+      <Grid xs={12}  className="custom-section">
       <BrandModal onUpdateBrandList={handleUpdateBrandList}></BrandModal>{" "}
       <h1>Marcas</h1>
       <CustomButton onClick={() => handleOpenModal()}>Crear</CustomButton>
@@ -122,6 +123,8 @@ const BrandList = () => {
           },
         ]}
       />
+      </Grid>
+
     </Grid>
   );
 };

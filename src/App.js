@@ -68,7 +68,8 @@ function App() {
             <Route path="/vendedores/" element={<SellerList />} />
             <Route path="/servicios/" element={<ServiceList />} />
             <Route path="/tablero/" element={<Dashboard />} />
-  
+            <Route path="/reasignacion/" element={<ProductReassign />} />
+            <Route path="/importar-productos/" element={<ProductImport />} />
             {user?.store_id ? (
               <Route path="*" element={<SaleCreate />} />
             ) : (

@@ -198,13 +198,11 @@ const ProductImport = () => {
 
   return (
     <Grid container spacing={2}>
-      <Grid item xs={12}>
+      <Grid className="custom-section">
         <CustomSpinner isLoading={loading}></CustomSpinner>
-      </Grid>
-      <Grid item xs={12} className="custom-section">
         <h1>Importación de productos</h1>
         <Grid container>
-          <Grid item xs={12} md={3} className="d-flex flex-column justify-content-end">
+          <Grid item xs={12} md={3}>
             <Form.Label>Archivo</Form.Label>
 
             <Form.Group controlId="formFile" className="">
@@ -344,9 +342,10 @@ const ProductImport = () => {
             </CustomButton>
           </Grid>
         </Grid>
-
-        <Grid container hidden={canIncludeQuantity}></Grid>
       </Grid>
+
+
+
 
       <Grid item xs={12} className="custom-section" hidden={showExample}>
         <h1>Ejemplo de plantilla</h1>
@@ -400,6 +399,7 @@ const ProductImport = () => {
           ]}
         ></CustomTable>
       </Grid>
+
 
       <Grid item xs={12} className="custom-section">
         <h1>Archivo actual</h1>

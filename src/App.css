@@ -7,7 +7,7 @@
   padding: 1rem;
   color: #666;
   margin: 10px;
-
+  overflow-x: auto;
 }
 
 .custom-section-buttons {

@@ -207,19 +207,20 @@ const ProductList = () => {
   };
 
   return (
-    <Grid className="custom-section">
+    <Grid container spacing={2}>    
+    <Grid xs={12} className="custom-section">
       <CustomSpinner isLoading={loading}></CustomSpinner>
       <ProductModal onUpdateProductList={handleUpdateProductList} />
       <h1>Productos</h1>
 
       <Grid container className="d-flex align-items-center gap-3">
-        <Grid item xs={12}>
+        <Grid item xs={2}>
           {" "}
           <CustomButton onClick={() => handleOpenModal()} fullWidth={true}>
             Crear producto
           </CustomButton>
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={2}>
           <CustomButton
             onClick={handleDownload}
             disabled={products.length === 0}
@@ -228,7 +229,7 @@ const ProductList = () => {
             Descargar productos
           </CustomButton>
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={2}>
           <CustomTooltip text={"Formatea a mayusculas y reemplaza la comilla simple (') por guión medio (-)"}>
           <CustomButton onClick={handleUpperCodeProducts} fullWidth={true}>
             Formatear códigos
@@ -236,7 +237,7 @@ const ProductList = () => {
           </CustomTooltip>
 
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={2}>
           {" "}
           <CustomButton
             onClick={handleDeleteProducts}
@@ -250,7 +251,7 @@ const ProductList = () => {
             Borrar productos
           </CustomButton>
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={2}>
           {" "}
           <FormCheck
             label="Confirmar borrado"
@@ -261,7 +262,7 @@ const ProductList = () => {
       </Grid>
 
       <Grid container className="mt-3">
-        <Grid item xs={12}>
+        <Grid item xs={3}>
           {" "}
           <Form.Label>Marca</Form.Label>
           <Form.Select
@@ -279,7 +280,7 @@ const ProductList = () => {
           </Form.Select>
         </Grid>
 
-        <Grid item xs={12} hidden={departments.length === 0}>
+        <Grid item xs={3} hidden={departments.length === 0}>
           {" "}
           <Form.Label>Departamento</Form.Label>
           <Form.Select
@@ -298,7 +299,7 @@ const ProductList = () => {
           </Form.Select>
         </Grid>
 
-        <Grid item xs={12}>
+        <Grid item xs={3}>
           <Form.Label>Stock maximo</Form.Label>
           <Form.Control
             type="number"
@@ -308,7 +309,7 @@ const ProductList = () => {
           />
         </Grid>
 
-        <Grid item xs={12} className="d-flex flex-column justify-content-end">
+        <Grid item xs={3} className="d-flex flex-column justify-content-end">
           {products.length > 0 && (
             <>{outOfStockPercentage.toFixed(0)}% de los productos esta vacio</>
           )}
@@ -413,6 +414,7 @@ const ProductList = () => {
           },
         ]}
       />
+    </Grid>
     </Grid>
   );
 };

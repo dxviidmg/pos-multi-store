@@ -77,7 +77,8 @@ const DepartmentList = () => {
   };
 
   return (
-    <Grid container spacing={2} className="custom-section">
+    <Grid container spacing={2}>
+      <Grid xs={12}  className="custom-section">
       <DepartmentModal
         onUpdateDepartmentList={handleUpdateDepartmentList}
       ></DepartmentModal>{" "}
@@ -127,6 +128,7 @@ const DepartmentList = () => {
         ]}
       />
       </Grid>
+    </Grid>
     </Grid>
   );
 };
