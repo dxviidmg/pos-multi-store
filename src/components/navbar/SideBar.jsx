@@ -196,7 +196,7 @@ export default function MainLayout() {
   const menuItems = linksByType[type];
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ display: "flex", overflow: "hidden" }}>
       <CssBaseline />
 
       {/* APP BAR */}
@@ -312,7 +312,7 @@ export default function MainLayout() {
       </Drawer>
 
       {/* CONTENIDO */}
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+      <Box component="main" sx={{ flexGrow: 1, p: 3, overflow: "auto", maxWidth: "100%" }}>
         <DrawerHeader />
         <Outlet />
       </Box>
