@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import CustomButton from "../commons/customButton/CustomButton";
 import { removeClientfromCart } from "../redux/cart/cartActions";
-import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
+import { Grid, TextField, Box } from "@mui/material";
 
 
 const ClientSelected = () => {

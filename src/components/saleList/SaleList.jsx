@@ -30,7 +30,7 @@ import {
   showPaymentReservationModal,
 } from "../redux/paymentReservationModal/PaymentReservationModalActions";
 import CustomTooltip from "../commons/Tooltip";
-import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
+import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, Box } from "@mui/material";
 
 const TYPE_OPTIONS = [
   {

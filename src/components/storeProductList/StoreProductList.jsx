@@ -15,7 +15,7 @@ import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 import { getBrands } from "../apis/brands";
 import { SearchIcon } from "../commons/icons/Icons";
 import { getDepartments } from "../apis/departments";
-import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
+import { Grid, TextField, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 
 const StoreProductList = () => {
   const dispatch = useDispatch();

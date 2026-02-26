@@ -14,7 +14,7 @@ import Swal from "sweetalert2";
 import { getPrinterUrl, getUserData } from "../apis/utils";
 import { PrinterIcon } from "../commons/icons/Icons";
 import { handlePrintTicket } from "../utils/utils";
-import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
+import { Grid, TextField, FormLabel, RadioGroup, FormControlLabel, Radio } from "@mui/material";
 
 const SearchProduct = () => {
   const inputRef = useRef(null);

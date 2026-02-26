@@ -15,7 +15,7 @@ import { getBrands } from "../apis/brands";
 import CustomButton from "../commons/customButton/CustomButton";
 import { chooseIcon } from "../commons/icons/Icons";
 import { getStores } from "../apis/stores";
-import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
+import { Grid, TextField, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 
 const LogList = () => {
   const today = getFormattedDate();

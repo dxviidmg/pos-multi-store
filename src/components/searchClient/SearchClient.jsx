@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Badge } from "react-bootstrap";
 import { addClientToCart } from "../redux/cart/cartActions";
 import Swal from "sweetalert2";
-import { TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
+import { TextField } from "@mui/material";
 
 const SearchClient = () => {
   const client = useSelector((state) => state.cartReducer.client);

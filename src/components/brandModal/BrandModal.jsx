@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
 import { hideBrandModal } from "../redux/brandModal/BrandModalActions";
 import { useCreateBrand, useUpdateBrand } from "../../hooks/useBrandMutations";
-import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
+import { Grid, TextField } from "@mui/material";
 
 const BrandModal = ({ onUpdateBrandList }) => {
   const { showBrandModal, brand } = useSelector(

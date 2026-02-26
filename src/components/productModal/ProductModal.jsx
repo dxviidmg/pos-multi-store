@@ -14,7 +14,7 @@ import {
 import noPhoto from "../../assets/images/noPhoto.jpg";
 import { getDepartments } from "../apis/departments";
 import CustomTable from "../commons/customTable/customTable";
-import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup, Button, styled } from "@mui/material";
+import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, Box, Checkbox, FormControlLabel, Button, styled } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
 const VisuallyHiddenInput = styled('input')({

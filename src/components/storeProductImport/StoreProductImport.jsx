@@ -6,7 +6,7 @@ import CustomButton from "../commons/customButton/CustomButton";
 import Swal from "sweetalert2";
 import { ErrorIcon, SuccessIcon } from "../commons/icons/Icons";
 import { useRef } from "react";
-import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup, Button, styled } from "@mui/material";
+import { Grid, Select, MenuItem, FormControl, InputLabel, Button, styled } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
 const VisuallyHiddenInput = styled('input')({

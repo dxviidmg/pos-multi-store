@@ -6,7 +6,7 @@ import CustomButton from "../commons/customButton/CustomButton";
 import CustomTable from "../commons/customTable/customTable";
 import { hideSaleModal } from "../redux/saleModal/SaleModalActions";
 import { useCancelSale } from "../../hooks/useSaleMutations";
-import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
+import { Grid, TextField, Checkbox, FormLabel } from "@mui/material";
 
 const INITIAL_FORM_DATA = {
   products_sale: [],

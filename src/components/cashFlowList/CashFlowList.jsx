@@ -12,7 +12,7 @@ import {
   showCashFlowModal,
 } from "../redux/cashFlowModal/CashFlowModalActions";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
-import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
+import { Grid, TextField, Box } from "@mui/material";
 
 const today = getFormattedDate();
 

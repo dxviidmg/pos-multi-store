@@ -15,7 +15,8 @@ import {
 import Swal from "sweetalert2";
 import { getUserData } from "../apis/utils";
 import Grid from "@mui/material/Grid";
-import { TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
+import { TextField } from "@mui/material";
+
 
 const DistributionList = () => {
   const [distributions, setDistributions] = useState([]);

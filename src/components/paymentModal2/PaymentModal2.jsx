@@ -8,7 +8,7 @@ import { hidePaymentReservationModal } from "../redux/paymentReservationModal/Pa
 import Swal from "sweetalert2";
 import { handlePrintTicket } from "../utils/utils";
 import { getUserData } from "../apis/utils";
-import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
+import { Grid, TextField, Checkbox, FormLabel } from "@mui/material";
 
 const INITIAL_PAYMENT_STATE = { paidWith: 0, change: 0 };
 

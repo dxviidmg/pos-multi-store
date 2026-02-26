@@ -6,7 +6,7 @@ import CustomButton from "../commons/customButton/CustomButton";
 import Swal from "sweetalert2";
 import { hideCashFlowModal } from "../redux/cashFlowModal/CashFlowModalActions";
 import { createCashFlow, getCashFlowChoices } from "../apis/cashflow";
-import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
+import { Grid, TextField, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 
 
 const CashFlowModal = ({ onUpdateCashFlowList }) => {

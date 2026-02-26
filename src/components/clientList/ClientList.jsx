@@ -6,7 +6,6 @@ import { createDiscount } from "../apis/discounts";
 import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";
 import {
-  hideClientModal,
   showClientModal,
 } from "../redux/clientModal/ClientModalActions";
 import ClientModal from "../clientModal/ClientModal";
@@ -16,7 +15,7 @@ import { getDateDifference, getFormattedDate } from "../utils/utils";
 import CustomTooltip from "../commons/Tooltip";
 import { useClients } from "../../hooks/useClients";
 import Grid from "@mui/material/Grid";
-import { TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
+import { TextField, Box } from "@mui/material";
 
 const ClientList = () => {
   const today = getFormattedDate();

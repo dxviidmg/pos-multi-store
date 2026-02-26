@@ -9,7 +9,7 @@ import Swal from "sweetalert2";
 import CustomButton from "../commons/customButton/CustomButton";
 import { hideLogsModal } from "../redux/logsModal/LogsModalActions";
 import { chooseIcon } from "../commons/icons/Icons";
-import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
+import { Grid, TextField } from "@mui/material";
 
 const INITIAL_FORM_DATA = {};
 

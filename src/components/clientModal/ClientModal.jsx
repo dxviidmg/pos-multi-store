@@ -6,7 +6,7 @@ import CustomButton from "../commons/customButton/CustomButton";
 import { hideClientModal } from "../redux/clientModal/ClientModalActions";
 import { useDiscounts } from "../../hooks/useDiscounts";
 import { useCreateClient, useUpdateClient } from "../../hooks/useClientMutations";
-import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
+import { Grid, TextField, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 
 const INITIAL_FORM_DATA = {
   first_name: "",

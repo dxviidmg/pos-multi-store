@@ -11,7 +11,7 @@ import {
 import SellerModal from "../sellerModal/SellerModal";
 import { getDateDifference, getFormattedDate } from "../utils/utils";
 import { chooseIcon } from "../commons/icons/Icons";
-import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
+import { Grid, TextField, Box } from "@mui/material";
 
 const SellerList = () => {
   const today = getFormattedDate();

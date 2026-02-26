@@ -1,7 +1,7 @@
 import React, { memo, useState, useMemo } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 
-import { Box, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
+import { Box, TextField } from "@mui/material";
 
 const CustomTable = ({
   columns,

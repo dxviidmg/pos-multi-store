@@ -1,21 +1,17 @@
 import React, { useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-
 import CustomButton from "../commons/customButton/CustomButton";
 import { deleteBrands } from "../apis/brands";
 import BrandModal from "../brandModal/BrandModal";
 import { useDispatch } from "react-redux";
-import {
-  hideBrandModal,
-  showBrandModal,
-} from "../redux/brandModal/BrandModalActions";
+import { showBrandModal } from "../redux/brandModal/BrandModalActions";
 import Swal from "sweetalert2";
 import { getUserData } from "../apis/utils";
 import { EditIcon } from "../commons/icons/Icons";
 import CustomTooltip from "../commons/Tooltip";
 import { useBrands } from "../../hooks/useBrands";
 import Grid from "@mui/material/Grid";
-import { TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
+import { Checkbox, FormControlLabel } from "@mui/material";
 
 const BrandList = () => {
   const [selectedRows, setSelectedRows] = useState([]);

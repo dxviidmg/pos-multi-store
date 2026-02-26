@@ -1,21 +1,17 @@
 import React, { useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-
 import CustomButton from "../commons/customButton/CustomButton";
 import { deleteDepartments } from "../apis/departments";
 import { useDispatch } from "react-redux";
 import Swal from "sweetalert2";
-import {
-  hideDepartmentModal,
-  showDepartmentModal,
-} from "../redux/departmentModal/DepartmentModalActions";
+import { showDepartmentModal } from "../redux/departmentModal/DepartmentModalActions";
 import DepartmentModal from "../departmentModal/DepartmentModal";
 import { getUserData } from "../apis/utils";
 import { EditIcon } from "../commons/icons/Icons";
 import CustomTooltip from "../commons/Tooltip";
 import Grid from "@mui/material/Grid";
 import { useDepartments } from "../../hooks/useDepartments";
-import { TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
+import { Checkbox, FormControlLabel } from "@mui/material";
 
 const DepartmentList = () => {
   const [selectedRows, setSelectedRows] = useState([]);

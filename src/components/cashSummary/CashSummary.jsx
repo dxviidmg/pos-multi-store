@@ -12,7 +12,7 @@ import {
 import { getCashFlow } from "../apis/cashflow";
 import CashFlowModal from "../cashFlowModal/CashFlowModal";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
-import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
+import { Grid, TextField, Box, FormLabel } from "@mui/material";
 
 const CashSummary = () => {
   const [cashSummary, setCashSummary] = useState([]);

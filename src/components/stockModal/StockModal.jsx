@@ -8,7 +8,7 @@ import { hideStockModal } from "../redux/stockModal/StockModalActions";
 import { createTransfer } from "../apis/transfers";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 import { getStockOtherStores } from "../apis/products";
-import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
+import { Grid, TextField } from "@mui/material";
 
 
 const StockModal = () => {

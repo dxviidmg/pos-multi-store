@@ -24,7 +24,7 @@ import { getUserData } from "../apis/utils";
 import { RemoveInCartIcon } from "../commons/icons/Icons";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 import { hideStockModal, showStockModal } from "../redux/stockModal/StockModalActions";
-import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
+import { Grid, TextField, Checkbox, Select, MenuItem } from "@mui/material";
 
 const Cart = () => {
   const store_type = getUserData().store_type;

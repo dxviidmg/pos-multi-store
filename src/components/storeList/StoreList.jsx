@@ -19,7 +19,7 @@ import { useStores } from "../../hooks/useStores";
 import { useTenantInfo } from "../../hooks/useTenantInfo";
 import { useDepartments } from "../../hooks/useDepartments";
 import { useInvestment } from "../../hooks/useInvestment";
-import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
+import { Grid, FormLabel, FormControlLabel, Checkbox, Box, TextField, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 
 const StoreList = () => {
   const navigate = useNavigate();
