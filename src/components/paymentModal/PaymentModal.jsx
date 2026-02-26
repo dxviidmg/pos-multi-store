@@ -1,6 +1,5 @@
 import React, { useMemo, useState, useEffect, useRef } from "react";
 import CustomModal from "../commons/customModal/customModal";
-import { Form } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
 import { cleanCart, removeClientfromCart } from "../redux/cart/cartActions";
@@ -13,7 +12,7 @@ import SearchClient from "../searchClient/SearchClient";
 import ClientSelected from "../clientSelected/ClientSelected";
 import { SearchIcon } from "../commons/icons/Icons";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
-import { Grid } from "@mui/material";
+import { Grid, TextField, Radio, RadioGroup, FormControlLabel, Checkbox, FormLabel } from "@mui/material";
 
 function roundUpCustom(value) {
   const intPart = Math.floor(value); // Parte entera
@@ -327,10 +326,12 @@ const PaymentModal = () => {
 
         <Grid className="custom-section" hidden={hideExchange}>
           <h2>Cambio de mercancia</h2>
-          <Grid container>
+          <Grid container spacing={2}>
             <Grid item xs={12} md={3}>
-              <Form.Label># Venta</Form.Label>
-              <Form.Control
+              <TextField
+                fullWidth
+                size="small"
+                label="# Venta"
                 type="number"
                 value={saleExchange.id}
                 onChange={(e) =>
@@ -349,8 +350,10 @@ const PaymentModal = () => {
             </Grid>
 
             <Grid item xs={12} md={3}>
-              <Form.Label>$ de devolución</Form.Label>
-              <Form.Control
+              <TextField
+                fullWidth
+                size="small"
+                label="$ de devolución"
                 type="number"
                 value={saleExchange.refunded}
                 disabled
@@ -358,8 +361,10 @@ const PaymentModal = () => {
             </Grid>
 
             <Grid item xs={12} md={3}>
-              <Form.Label>Cobrar</Form.Label>
-              <Form.Control
+              <TextField
+                fullWidth
+                size="small"
+                label="Cobrar"
                 type="number"
                 value={saleExchange.payment}
                 disabled
@@ -370,81 +375,109 @@ const PaymentModal = () => {
 
         <Grid className="custom-section">
           <h2>Totales</h2>
-          <Grid container>
+          <Grid container spacing={2}>
             <Grid item xs={12} md={3}>
-              <Form.Label>Total</Form.Label>
-              <Form.Control type="number" value={total.toFixed(2)} disabled />
+              <TextField
+                fullWidth
+                size="small"
+                label="Total"
+                type="number"
+                value={total.toFixed(2)}
+                disabled
+              />
             </Grid>
 
             <Grid item xs={12} md={3}>
-              <Form.Label>Total con descuento</Form.Label>
-              <Form.Control
+              <TextField
+                fullWidth
+                size="small"
+                label="Total con descuento"
                 type="number"
                 value={totalDiscount.toFixed(2)}
                 disabled
               />
             </Grid>
             <Grid item xs={12} md={3}>
-              <Form.Label>Pago con</Form.Label>
-              <Form.Control
+              <TextField
+                fullWidth
+                size="small"
+                label="Pago con"
                 type="text"
                 value={payment.paidWith}
                 onChange={handlePaidWithChange}
-                ref={inputPaymentRef}
+                inputRef={inputPaymentRef}
               />
             </Grid>
             <Grid item xs={12} md={3}>
               {paymentMethods.methods.TA > 0 ||
               paymentMethods.methods.TR > 0 ? (
-                <>
-                  <Form.Label>Referencia</Form.Label>
-                  <Form.Control
-                    type="text"
-                    value={referencePayment}
-                    onChange={(e) => setReferencePayment(e.target.value)}
-                  />
-                </>
+                <TextField
+                  fullWidth
+                  size="small"
+                  label="Referencia"
+                  type="text"
+                  value={referencePayment}
+                  onChange={(e) => setReferencePayment(e.target.value)}
+                  InputLabelProps={{ shrink: true }}
+                />
               ) : (
-                <>
-                  <Form.Label>Cambio</Form.Label>
-                  <Form.Control type="number" value={payment.change} disabled />
-                </>
+                <TextField
+                  fullWidth
+                  size="small"
+                  label="Cambio"
+                  type="number"
+                  value={payment.change}
+                  disabled
+                />
               )}
             </Grid>
           </Grid>
         </Grid>
 
         <Grid className="custom-section">
-          <Grid container>
+          <Grid container spacing={2}>
             <Grid item xs={12} md={3}>
-              <Form.Label className="me-1">Tipo de pago:</Form.Label>
-              <Form.Check
-                id="single"
-                label="Único"
-                type="radio"
+              <FormLabel className="me-1">Tipo de pago:</FormLabel>
+              <RadioGroup
+                value={paymentMethods.type}
                 onChange={handleChangePayments}
-                value="radio"
                 name="paymentType"
-                checked={paymentMethods.type === "radio"}
-              />
-              <Form.Check
-                id="mixed"
-                label="Mixto"
-                type="radio"
-                onChange={handleChangePayments}
-                value="checkbox"
-                name="paymentType"
-                checked={paymentMethods.type === "checkbox"}
-              />
+                sx={{ gap: 0 }}
+              >
+                <FormControlLabel value="radio" control={<Radio size="small" />} label="Único" sx={{ mb: -1 }} />
+                <FormControlLabel value="checkbox" control={<Radio size="small" />} label="Mixto" sx={{ mb: -1 }} />
+              </RadioGroup>
             </Grid>
 
             <Grid item xs={12} md={6}>
-              <Form.Label className="me-3">Medios de pago:</Form.Label>
+              <FormLabel className="me-3">Medios de pago:</FormLabel>
               {["EF", "TA", "TR"].map((method) => (
-                <div key={method} className="d-flex align-items-center mb-1">
+                <div key={method} className="d-flex align-items-center" style={{ marginBottom: '4px' }}>
                   <div className="me-3" style={{ flex: "1" }}>
-                    <Form.Check
-                      id={method}
+                    <FormControlLabel
+                      sx={{ mb: 0 }}
+                      control={
+                        paymentMethods.type === "radio" ? (
+                          <Radio
+                            size="small"
+                            checked={paymentMethods.methods[method] === totalDiscount}
+                            onChange={handleChangePayments}
+                            value={method}
+                            name="paymentMethod"
+                          />
+                        ) : (
+                          <Checkbox
+                            size="small"
+                            checked={
+                              (movementType === "apartado" && method === "EF") ||
+                              paymentMethods.methods[method] > 0
+                            }
+                            onChange={handleChangePayments}
+                            value={method}
+                            name="paymentMethod"
+                          />
+                        )
+                      }
                       label={
                         method === "EF"
                           ? "Efectivo"
@@ -452,25 +485,15 @@ const PaymentModal = () => {
                           ? "Tarjeta"
                           : "Transferencia"
                       }
-                      type={paymentMethods.type}
-                      onChange={handleChangePayments}
-                      value={method}
-                      name="paymentMethod"
-                      checked={
-                        (movementType === "apartado" && method === "EF") ||
-                        (paymentMethods.type === "radio"
-                          ? paymentMethods.methods[method] === totalDiscount
-                          : paymentMethods.methods[method] > 0)
-                      }
                     />
                   </div>
                   {paymentMethods.type === "checkbox" &&
                     paymentMethods.methods[method] > 0 && (
-                      <Form.Control
+                      <TextField
+                        size="small"
                         type="number"
                         placeholder="$"
-                        style={{ width: "120px", height: "calc(1.5rem + 2px)" }}
-                        className="align-self-center"
+                        style={{ width: "120px" }}
                         onChange={(e) =>
                           handlePaymentValueChange(method, e.target.value)
                         }
