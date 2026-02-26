@@ -109,10 +109,10 @@ const StoreProductList = () => {
   };
 
   return (
-    <Grid container spacing={2}>
-      <Grid className="custom-section">
-      <Grid xs={12}>
-        <CustomSpinner isLoading={loading}></CustomSpinner>
+    <>
+      <Grid container>
+      <Grid item xs={12} className="custom-section">
+        <CustomSpinner isLoading={loading} />
         <StoreProductLogsModal
           onUpdateStoreProductList={handleUpdateStoreProductList}
         />
@@ -121,10 +121,9 @@ const StoreProductList = () => {
         <CustomButton onClick={handleDownload}>
           Descargar inventario
         </CustomButton>
-        </Grid>
+
         <Grid container>
           <Grid item xs={3}>
-            {" "}
             <Form.Label>Marca</Form.Label>
             <Form.Select
               value={params.brand_id}
@@ -141,7 +140,6 @@ const StoreProductList = () => {
             </Form.Select>
           </Grid>
           <Grid item xs={3}>
-            {" "}
             <Form.Label>Departamento</Form.Label>
             <Form.Select
               value={params.department_id}
@@ -236,6 +234,7 @@ const StoreProductList = () => {
         />
       </Grid>
     </Grid>
+  </>
   );
 };
 

@@ -13,7 +13,7 @@ import DepartmentModal from "../departmentModal/DepartmentModal";
 import { getUserData } from "../apis/utils";
 import { EditIcon } from "../commons/icons/Icons";
 import CustomTooltip from "../commons/Tooltip";
-import Grid from '@mui/material/Grid';
+import Grid from "@mui/material/Grid";
 import { useDepartments } from "../../hooks/useDepartments";
 
 const DepartmentList = () => {
@@ -51,12 +51,6 @@ const DepartmentList = () => {
     const response = await deleteDepartments(selectedIds);
 
     if (response.status === 200) {
-      const updatedDepartments = departments.filter(
-        (department) => !selectedIds.includes(department.id)
-      );
-
-//      setDepartments(updatedDepartments);
-
       Swal.fire({
         icon: "success",
         title: "Departamentos eliminados",
@@ -77,59 +71,55 @@ const DepartmentList = () => {
   };
 
   return (
-    <Grid container spacing={2}>
-      <Grid xs={12}  className="custom-section">
-      <DepartmentModal
-        onUpdateDepartmentList={handleUpdateDepartmentList}
-      ></DepartmentModal>{" "}
-      <Grid xs={12}>
-      <h1>Departamentos</h1>
-      <CustomButton onClick={() => handleOpenModal()}>Crear</CustomButton>
-      <CustomButton
-        onClick={handleDeleteDepartments}
-        disabled={
-          selectedRows.length === 0 ||
-          !confirmDeletion ||
-          getUserData().role !== "owner"
-        }
-      >
-        Borrar departamentos
-      </CustomButton>
-      <FormCheck
-        label={"Confirmar borrado"}
-        checked={confirmDeletion}
-        onChange={handleCheck}
-      ></FormCheck>
-      <CustomTable
-        progressPending={loading}
-        data={departments}
-        setSelectedRows={setSelectedRows}
-        columns={[
-          {
-            name: "Nombre",
-            selector: (row) => row.name,
-            grow: 2,
-            wrap: true,
-          },
-          {
-            name: "Número de productos",
-            selector: (row) => row.product_count,
-          },
-          {
-            name: "Acciones",
-            cell: (row) => (
-              <CustomTooltip text={"Editar Departamento"}>
-                <CustomButton onClick={() => handleOpenModal(row)}>
-                  <EditIcon></EditIcon>
-                </CustomButton>
-              </CustomTooltip>
-            ),
-          },
-        ]}
-      />
+    <>
+      <Grid item xs={12} className="custom-section">
+        <DepartmentModal onUpdateDepartmentList={handleUpdateDepartmentList} />
+        <h1>Departamentos</h1>
+        <CustomButton onClick={() => handleOpenModal()}>Crear</CustomButton>
+        <CustomButton
+          onClick={handleDeleteDepartments}
+          disabled={
+            selectedRows.length === 0 ||
+            !confirmDeletion ||
+            getUserData().role !== "owner"
+          }
+        >
+          Borrar departamentos
+        </CustomButton>
+        <FormCheck
+          label={"Confirmar borrado"}
+          checked={confirmDeletion}
+          onChange={handleCheck}
+        />
+        <CustomTable
+          progressPending={loading}
+          data={departments}
+          setSelectedRows={setSelectedRows}
+          columns={[
+            {
+              name: "Nombre",
+              selector: (row) => row.name,
+              grow: 2,
+              wrap: true,
+            },
+            {
+              name: "Número de productos",
+              selector: (row) => row.product_count,
+            },
+            {
+              name: "Acciones",
+              cell: (row) => (
+                <CustomTooltip text={"Editar Departamento"}>
+                  <CustomButton onClick={() => handleOpenModal(row)}>
+                    <EditIcon />
+                  </CustomButton>
+                </CustomTooltip>
+              ),
+            },
+          ]}
+        />
       </Grid>
-    </Grid>
-    </Grid>
+    </>
   );
 };
 

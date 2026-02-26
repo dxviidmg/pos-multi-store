@@ -181,12 +181,32 @@ export default function MainLayout() {
       { label: "Distribuciones", href: "/distribuciones/" },
     ],
     G: [
+      {
+        label: "Dashboard",
+        dropdown: [
+          { label: "General", href: "/tablero/" },
+          { label: "Auditoria", href: "/auditoria/" },
+        ],
+      },
       { label: "Tiendas", href: "/tiendas/" },
       { label: "Clientes", href: "/clientes/" },
-      ...(user.sellers > 0
-        ? [{ label: "Vendedores", href: "/vendedores/" }]
-        : []),
+
+      {
+        label: "Productos",
+        dropdown: [
+          { label: "Marcas", href: "/marcas/" },
+          { label: "Departamentos", href: "/departamentos/" },
+          { label: "Reasignación", href: "/reasignacion/" },
+          { divider: true },
+          { label: "Productos", href: "/productos/" },
+          { label: "Importar Productos", href: "/importar-productos/" },
+        ],
+      },
+
+      { label: "Vendedores", href: "/vendedores/" },
       { label: "Mensualidades", href: "/pagos/" },
+      { label: "Servicios", href: "/servicios/" },
+      { label: "Sincronizar", href: "/sincronizar/" },
     ],
   };
 

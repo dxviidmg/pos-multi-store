@@ -15,10 +15,7 @@ import { getUserData } from "../apis/utils";
 import { getDateDifference, getFormattedDate } from "../utils/utils";
 import CustomTooltip from "../commons/Tooltip";
 import { useClients } from "../../hooks/useClients";
-import { Grid } from "@mui/material";
-
-
-
+import Grid from "@mui/material/Grid";
 
 const ClientList = () => {
   const today = getFormattedDate();
@@ -95,14 +92,13 @@ const ClientList = () => {
   };
 
   return (
-
-    <Grid container spacing={2}>
-      <ClientModal onUpdateClientList={handleUpdateClientList}></ClientModal>
+    <>
+      <ClientModal onUpdateClientList={handleUpdateClientList} />
       {getUserData().role === "owner" && (
-        <Grid xs={12} className="custom-section">
+        <Grid item xs={12} className="custom-section">
           <Form>
             <h1>Crear descuento</h1>
-            <br></br>
+            <br />
             <Form.Label>Descuento</Form.Label>
             <Form.Control
               type="number"
@@ -122,12 +118,11 @@ const ClientList = () => {
           </Form>
         </Grid>
       )}
-      <Grid xs={12} className="custom-section">
+      <Grid item xs={12} className="custom-section">
         <h1>Clientes</h1>
         <CustomButton onClick={() => handleOpenModal()}>Crear</CustomButton>
-        <Grid container>
-          <Grid item xs={4}>
-            {" "}
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={4}>
             <Form>
               <Form.Label>Fecha de inicio</Form.Label>
               <Form.Control
@@ -139,8 +134,7 @@ const ClientList = () => {
               />
             </Form>
           </Grid>
-          <Grid item xs={4}>
-            {" "}
+          <Grid item xs={12} md={4}>
             <Form>
               <Form.Label>Fecha de fin</Form.Label>
               <Form.Control
@@ -152,8 +146,7 @@ const ClientList = () => {
               />
             </Form>
           </Grid>
-
-          <Grid item xs={4}>
+          <Grid item xs={12} md={4}>
             <Form>
               <Form.Label>Rango</Form.Label>
               <Form.Control name="range" type="input" value={range} disabled />
@@ -185,7 +178,7 @@ const ClientList = () => {
               cell: (row) => (
                 <CustomTooltip text={"Editar usuario"}>
                   <CustomButton onClick={() => handleOpenModal(row)}>
-                    <EditIcon></EditIcon>
+                    <EditIcon />
                   </CustomButton>
                 </CustomTooltip>
               ),
@@ -194,7 +187,7 @@ const ClientList = () => {
           highlightOnHover
         />
       </Grid>
-    </Grid>
+    </>
   );
 };
 

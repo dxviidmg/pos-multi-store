@@ -14,7 +14,7 @@ import { getUserData } from "../apis/utils";
 import { EditIcon } from "../commons/icons/Icons";
 import CustomTooltip from "../commons/Tooltip";
 import { useBrands } from "../../hooks/useBrands";
-import { Grid } from "@mui/material";
+import Grid from "@mui/material/Grid";
 
 const BrandList = () => {
   const [selectedRows, setSelectedRows] = useState([]);
@@ -50,12 +50,6 @@ const BrandList = () => {
     const response = await deleteBrands(selectedIds);
 
     if (response.status === 200) {
-      const updatedBrands = brands.filter(
-        (brand) => !selectedIds.includes(brand.id)
-      );
-
-//      setBrands(updatedBrands);
-
       Swal.fire({
         icon: "success",
         title: "Marcas eliminadas",
@@ -76,56 +70,53 @@ const BrandList = () => {
   };
 
   return (
-    <Grid container spacing={2}>
-      <Grid xs={12}  className="custom-section">
-      <BrandModal onUpdateBrandList={handleUpdateBrandList}></BrandModal>{" "}
-      <h1>Marcas</h1>
-      <CustomButton onClick={() => handleOpenModal()}>Crear</CustomButton>
-      <CustomButton
-        onClick={handleDeleteBrands}
-        disabled={
-          selectedRows.length === 0 ||
-          !confirmDeletion ||
-          getUserData().role !== "owner"
-        }
-      >
-        Borrar marcas
-      </CustomButton>
-      <FormCheck
-        label={"Confirmar borrado"}
-        checked={confirmDeletion}
-        onChange={handleCheck}
-      ></FormCheck>
-      <CustomTable
-        progressPending={loading}
-        data={brands}
-        setSelectedRows={setSelectedRows}
-        columns={[
-          {
-            name: "Nombre",
-            selector: (row) => row.name,
-            grow: 2,
-            wrap: true,
-          },
-          {
-            name: "Número de productos",
-            selector: (row) => row.product_count,
-          },
-          {
-            name: "Acciones",
-            cell: (row) => (
-              <CustomTooltip text={"Editar marca"}>
-                <CustomButton onClick={() => handleOpenModal(row)}>
-                  <EditIcon></EditIcon>
-                </CustomButton>
-              </CustomTooltip>
-            ),
-          },
-        ]}
-      />
+      <Grid item xs={12} className="custom-section">
+        <BrandModal onUpdateBrandList={handleUpdateBrandList} />
+        <h1>Marcas</h1>
+        <CustomButton onClick={() => handleOpenModal()}>Crear</CustomButton>
+        <CustomButton
+          onClick={handleDeleteBrands}
+          disabled={
+            selectedRows.length === 0 ||
+            !confirmDeletion ||
+            getUserData().role !== "owner"
+          }
+        >
+          Borrar marcas
+        </CustomButton>
+        <FormCheck
+          label={"Confirmar borrado"}
+          checked={confirmDeletion}
+          onChange={handleCheck}
+        />
+        <CustomTable
+          progressPending={loading}
+          data={brands}
+          setSelectedRows={setSelectedRows}
+          columns={[
+            {
+              name: "Nombre",
+              selector: (row) => row.name,
+              grow: 2,
+              wrap: true,
+            },
+            {
+              name: "Número de productos",
+              selector: (row) => row.product_count,
+            },
+            {
+              name: "Acciones",
+              cell: (row) => (
+                <CustomTooltip text={"Editar marca"}>
+                  <CustomButton onClick={() => handleOpenModal(row)}>
+                    <EditIcon />
+                  </CustomButton>
+                </CustomTooltip>
+              ),
+            },
+          ]}
+        />
       </Grid>
-
-    </Grid>
   );
 };
 

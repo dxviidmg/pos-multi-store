@@ -97,10 +97,11 @@ const CashSummary = () => {
   };
 
   return (
-    <Grid container spacing={2}>
+    <>
       <CustomSpinner isLoading={loading}></CustomSpinner>
       <CashFlowModal onUpdateCashFlowList={handleUpdateCashFlowList} />
-      <Grid className="custom-section">
+      <Grid container>
+      <Grid item xs={12} className="custom-section">
         <h1>Corte de caja</h1>
         <Grid container>
           <Grid item xs={12} md={6}>
@@ -189,6 +190,7 @@ const CashSummary = () => {
         </Grid>
       </Grid>
     </Grid>
+  </>
   );
 };
 

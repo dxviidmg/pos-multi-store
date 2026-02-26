@@ -97,8 +97,9 @@ const SaleImport = () => {
   };
 
   return (
-    <Grid container spacing={2}>
-      <Grid xs={12} className="custom-section">
+    <>
+      <Grid container>
+      <Grid item xs={12} className="custom-section">
         <h1>Importar ventas</h1>
         <Grid container>
           <Grid item xs={12} md={4}>
@@ -153,39 +154,38 @@ const SaleImport = () => {
         </Grid>
       </Grid>
 
-      <Grid xs={12} className="custom-section" hidden={showExample}>
+      <Grid item xs={12} className="custom-section" hidden={showExample}>
+        <h1>Ejemplo de plantilla</h1>
 
-            <h1>Ejemplo de plantilla</h1>
+        <CustomTable
+          data={DATA_SAMPLE}
+          columns={[
+            {
+              name: "Código",
+              selector: (row) => row.code,
+            },
+            {
+              name: "Cantidad",
+              selector: (row) => row.quantity,
+            },
+            {
+              name: "Descripción",
+              selector: (row) => row.description,
+            },
+          ]}
+        />
 
-            <CustomTable
-              data={DATA_SAMPLE}
-              columns={[
-                {
-                  name: "Código",
-                  selector: (row) => row.code,
-                },
-                {
-                  name: "Cantidad",
-                  selector: (row) => row.quantity,
-                },
-                {
-                  name: "Descripción",
-                  selector: (row) => row.description,
-                },
-              ]}
-            ></CustomTable>
-
-            <h1>Notas</h1>
-            <p>
-              1-.Las descripciones pueden ser NO Exactas la información de la
-              base de datos, pero si una referencia en caso de que haya escrito
-              mal el codigó. <br /> 2-. Podemos añadir el mismo producto en
-              diferentes renglones haciendo referencia a que el mismo producto
-              fue comprado varias veces.
-            </p>
+        <h1>Notas</h1>
+        <p>
+          1-.Las descripciones pueden ser NO Exactas la información de la
+          base de datos, pero si una referencia en caso de que haya escrito
+          mal el codigó. <br /> 2-. Podemos añadir el mismo producto en
+          diferentes renglones haciendo referencia a que el mismo producto
+          fue comprado varias veces.
+        </p>
       </Grid>
 
-      <Grid xs={12} className="custom-section">
+      <Grid item xs={12} className="custom-section">
         <h1>Archivo actual</h1>
         <CustomTable
           data={sales}
@@ -217,6 +217,7 @@ const SaleImport = () => {
         ></CustomTable>
       </Grid>
     </Grid>
+  </>
   );
 };
 

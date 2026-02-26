@@ -403,9 +403,10 @@ const StoreList = () => {
   ];
 
   return (
-    <Grid container spacing={2}>
-      <Grid xs={12} className="custom-section">
-        <CustomSpinner isLoading={loading}></CustomSpinner>
+    <>
+      <Grid container>
+      <Grid item xs={12} className="custom-section">
+        <CustomSpinner isLoading={loading} />
 
         {tenantInfo.notices && tenantInfo.notices.length > 0 && (
           <Grid container spacing={1}>
@@ -558,6 +559,7 @@ const StoreList = () => {
         )}
       </Grid>
     </Grid>
+  </>
   );
 };
 

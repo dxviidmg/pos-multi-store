@@ -84,14 +84,14 @@ const ProductReassign = () => {
   };
 
   return (
-    <Grid container spacing={2}>
-    <Grid xs={12} className="custom-section">
-      <CustomSpinner isLoading={loading}></CustomSpinner>
-      <h1>Reasignación de productos</h1>
-      <Grid container className="mt-3">
-        <Grid item xs={3}>
-          {" "}
-          <Form.Label>Tipo de reasignación</Form.Label>
+    <>
+      <Grid container>
+      <Grid item xs={12} className="custom-section">
+        <CustomSpinner isLoading={loading} />
+        <h1>Reasignación de productos</h1>
+        <Grid container className="mt-3">
+          <Grid item xs={3}>
+            <Form.Label>Tipo de reasignación</Form.Label>
           <Form.Select
             value={params.reassign_type}
             onChange={handleDataChange}
@@ -176,6 +176,7 @@ const ProductReassign = () => {
       </Grid>
     </Grid>
     </Grid>
+  </>
   );
 };
 

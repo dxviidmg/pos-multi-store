@@ -16,8 +16,9 @@ const TenantPaymentList = () => {
   }, []);
 
   return (
-    <Grid container spacing={2}>
-      <Grid xs={12} className="custom-section">
+    <>
+      <Grid container>
+      <Grid item xs={12} className="custom-section">
       <h1>Pagos del servicio</h1>
       <CustomTable
         data={payments}
@@ -36,6 +37,7 @@ const TenantPaymentList = () => {
       />
     </Grid>
     </Grid>
+  </>
   );
 };
 

@@ -115,7 +115,8 @@ const StoreProductImport = () => {
   };
 
   return (
-    <Grid container spacing={2}>
+    <>
+      <Grid container>
       <Grid item xs={12} className="custom-section">
         <h1>Importación de inventario</h1>
         <Grid container>
@@ -249,6 +250,7 @@ const StoreProductImport = () => {
         ></CustomTable>
       </Grid>
     </Grid>
+  </>
   );
 };
 

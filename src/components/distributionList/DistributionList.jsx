@@ -14,10 +14,7 @@ import {
 import { Form } from "react-bootstrap";
 import Swal from "sweetalert2";
 import { getUserData } from "../apis/utils";
-import { Grid } from "@mui/material";
-
-
-
+import Grid from "@mui/material/Grid";
 
 const DistributionList = () => {
   const [distributions, setDistributions] = useState([]);
@@ -101,10 +98,9 @@ const DistributionList = () => {
   };
 
   return (
-
-    <Grid container spacing={2}>
-      <CustomSpinner isLoading={loading}></CustomSpinner>
-      <Grid xs={12} className="custom-section">
+    <>
+      <CustomSpinner isLoading={loading} />
+      <Grid item xs={12} className="custom-section">
         <h1>Distribuciones</h1>
         <CustomTable
           data={distributions}
@@ -124,13 +120,12 @@ const DistributionList = () => {
               grow: 2,
               selector: (row) => row.description,
             },
-
             {
               name: "Acciones",
               cell: (row) => (
                 <CustomTooltip text={"Ver productos"}>
                   <CustomButton onClick={() => handleOpenModal(row)}>
-                    <CheckIcon></CheckIcon>
+                    <CheckIcon />
                   </CustomButton>
                 </CustomTooltip>
               ),
@@ -140,19 +135,11 @@ const DistributionList = () => {
       </Grid>
 
       {Object.keys(distributionSelected).length !== 0 && (
-        <Grid className="custom-section">
-          <Grid container>
-            <Grid item xs={12}>
-              {" "}
-              <h1>Distribución #{distributionSelected.id}</h1>
-            </Grid>
-            <Grid item xs={12}>
-              {" "}
-              <CustomButton fullWidth onClick={() => handleSubmit()}>
-                Confirmar distribución
-              </CustomButton>
-            </Grid>
-          </Grid>
+        <Grid item xs={12} className="custom-section">
+          <h1>Distribución #{distributionSelected.id}</h1>
+          <CustomButton fullWidth onClick={() => handleSubmit()}>
+            Confirmar distribución
+          </CustomButton>
           <CustomTable
             data={distributionSelected.transfers || []}
             pagination={false}
@@ -212,7 +199,7 @@ const DistributionList = () => {
           />
         </Grid>
       )}
-    </Grid>
+    </>
   );
 };
 

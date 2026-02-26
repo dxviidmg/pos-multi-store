@@ -57,9 +57,10 @@ const SellerList = () => {
   };
 
   return (
-    <Grid container spacing={2}>
-      <Grid xs={12} className="custom-section">
-        <SellerModal onUpdateSellerList={handleUpdateSellerList}></SellerModal>
+    <>
+      <Grid container>
+      <Grid item xs={12} className="custom-section">
+        <SellerModal onUpdateSellerList={handleUpdateSellerList} />
         <h1>Vendedores</h1>
         <CustomButton onClick={() => handleOpenModal()}>Crear</CustomButton>
         <Form className="pb-2">
@@ -130,6 +131,7 @@ const SellerList = () => {
         />
       </Grid>
     </Grid>
+  </>
   );
 };
 

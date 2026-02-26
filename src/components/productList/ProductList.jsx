@@ -207,20 +207,19 @@ const ProductList = () => {
   };
 
   return (
-    <Grid container spacing={2}>    
-    <Grid xs={12} className="custom-section">
-      <CustomSpinner isLoading={loading}></CustomSpinner>
-      <ProductModal onUpdateProductList={handleUpdateProductList} />
-      <h1>Productos</h1>
+    <>
+      <Grid item xs={12} className="custom-section">
+        <CustomSpinner isLoading={loading} />
+        <ProductModal onUpdateProductList={handleUpdateProductList} />
+        <h1>Productos</h1>
 
-      <Grid container className="d-flex align-items-center gap-3">
-        <Grid item xs={2}>
-          {" "}
-          <CustomButton onClick={() => handleOpenModal()} fullWidth={true}>
-            Crear producto
-          </CustomButton>
-        </Grid>
-        <Grid item xs={2}>
+        <Grid container className="d-flex align-items-center gap-3">
+          <Grid item xs={2}>
+            <CustomButton onClick={() => handleOpenModal()} fullWidth={true}>
+              Crear producto
+            </CustomButton>
+          </Grid>
+          <Grid item xs={2}>
           <CustomButton
             onClick={handleDownload}
             disabled={products.length === 0}
@@ -231,14 +230,12 @@ const ProductList = () => {
         </Grid>
         <Grid item xs={2}>
           <CustomTooltip text={"Formatea a mayusculas y reemplaza la comilla simple (') por guión medio (-)"}>
-          <CustomButton onClick={handleUpperCodeProducts} fullWidth={true}>
-            Formatear códigos
-          </CustomButton>
+            <CustomButton onClick={handleUpperCodeProducts} fullWidth={true}>
+              Formatear códigos
+            </CustomButton>
           </CustomTooltip>
-
         </Grid>
         <Grid item xs={2}>
-          {" "}
           <CustomButton
             onClick={handleDeleteProducts}
             disabled={
@@ -252,7 +249,6 @@ const ProductList = () => {
           </CustomButton>
         </Grid>
         <Grid item xs={2}>
-          {" "}
           <FormCheck
             label="Confirmar borrado"
             checked={confirmDeletion}
@@ -263,7 +259,6 @@ const ProductList = () => {
 
       <Grid container className="mt-3">
         <Grid item xs={3}>
-          {" "}
           <Form.Label>Marca</Form.Label>
           <Form.Select
             value={params.brand_id}
@@ -281,7 +276,6 @@ const ProductList = () => {
         </Grid>
 
         <Grid item xs={3} hidden={departments.length === 0}>
-          {" "}
           <Form.Label>Departamento</Form.Label>
           <Form.Select
             value={params.department_id}
@@ -415,7 +409,7 @@ const ProductList = () => {
         ]}
       />
     </Grid>
-    </Grid>
+    </>
   );
 };
 

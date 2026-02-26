@@ -82,9 +82,10 @@ const LogList = () => {
   };
 
   return (
-    <Grid container spacing={2}>
+    <>
       <CustomSpinner isLoading={loading}></CustomSpinner>
-      <Grid className="custom-section">
+      <Grid container>
+      <Grid item xs={12} className="custom-section">
         <h1>Logs</h1>
 
         <CustomButton onClick={handleDownload} disabled={logs.length === 0}>
@@ -210,6 +211,7 @@ const LogList = () => {
         />
       </Grid>
     </Grid>
+  </>
   );
 };
 

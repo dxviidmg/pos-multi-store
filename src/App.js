@@ -30,7 +30,7 @@ import ProductReassign from "./components/productReassign/ProductReassign";
 import AuditDashboard from "./components/auditDashboard/AuditDashboard";
 import Dashboard from "./components/dashboard/Dashboard";
 import DistributionList from "./components/distributionList/DistributionList";
-import RestartRervice from "./components/restartService/RestartService";
+import RestartService from "./components/restartService/RestartService";
 
 function App() {
   useKeepAlive();
@@ -71,6 +71,8 @@ function App() {
             <Route path="/reasignacion/" element={<ProductReassign />} />
             <Route path="/importar-productos/" element={<ProductImport />} />
             <Route path="/importar-inventario/" element={<StoreProductImport />} />
+            <Route path="/auditoria/" element={<AuditDashboard />} />
+            <Route path="/sincronizar/" element={<RestartService />} />
             {user?.store_id ? (
               <Route path="*" element={<SaleCreate />} />
             ) : (

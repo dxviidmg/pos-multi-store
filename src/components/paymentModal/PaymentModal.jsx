@@ -299,10 +299,9 @@ const PaymentModal = () => {
         onClose={() => dispatch(hidePaymentModal())}
         title="Finalizar venta"
       >
-        <div >
+        <div>
           <Grid container className="custom-section">
             <Grid item xs={12} md={6}>
-              {" "}
               <CustomButton
                 fullWidth
                 onClick={(e) => setHideClient((prevState) => !prevState)}
@@ -312,7 +311,6 @@ const PaymentModal = () => {
             </Grid>
 
             <Grid item xs={12} md={6}>
-              {" "}
               <CustomButton
                 fullWidth
                 onClick={(e) => setHideExchange((prevState) => !prevState)}
