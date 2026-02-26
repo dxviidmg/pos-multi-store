@@ -10,7 +10,7 @@ import {
   countStockOtherStores,
 } from "../redux/cart/cartActions";
 import CustomButton from "../commons/customButton/CustomButton";
-import { Form } from "react-bootstrap";
+
 import PaymentModal from "../paymentModal/PaymentModal";
 import {
   hidePaymentModal,
@@ -24,7 +24,7 @@ import { getUserData } from "../apis/utils";
 import { RemoveInCartIcon } from "../commons/icons/Icons";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 import { hideStockModal, showStockModal } from "../redux/stockModal/StockModalActions";
-import { Grid } from "@mui/material";
+import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
 
 const Cart = () => {
   const store_type = getUserData().store_type;
@@ -261,8 +261,7 @@ const Cart = () => {
     {
       name: "Cantidad",
       selector: (row) => (
-        <Form.Control
-          type="number"
+        <TextField size="small" fullWidth type="number"
           value={row.quantity}
           onChange={(e) => handleQuantityChangeToCart(e, row)} // Implementa esta función para manejar el cambio
           min="1" // Opcional, para establecer un valor mínimo
@@ -279,7 +278,7 @@ const Cart = () => {
     {
       name: "Precio mayorista",
       selector: (row) => (
-        <Form.Check
+        <Checkbox size="small"
           type="switch"
           id="custom-switch"
           checked={row.product_price === row.product.prices.wholesale_price}
@@ -303,8 +302,7 @@ const Cart = () => {
     {
       name: "Cantidad",
       selector: (row) => (
-        <Form.Control
-          type="number"
+        <TextField size="small" fullWidth type="number"
           value={row.quantity}
           onChange={(e) => handleQuantityChangeToCart(e, row)} // Implementa esta función para manejar el cambio
           min="1" // Opcional, para establecer un valor mínimo
@@ -321,7 +319,7 @@ const Cart = () => {
     {
       name: "Precio mayorista",
       selector: (row) => (
-        <Form.Check
+        <Checkbox size="small"
           type="switch"
           id="custom-switch"
           checked={row.product_price === row.product.prices.wholesale_price}
@@ -358,8 +356,7 @@ const Cart = () => {
     {
       name: "Cantidad",
       selector: (row) => (
-        <Form.Control
-          type="number"
+        <TextField size="small" fullWidth type="number"
           value={row.quantity}
           onChange={(e) => handleQuantityChangeToCart(e, row)} // Implementa esta función para manejar el cambio
           min="1" // Opcional, para establecer un valor mínimo
@@ -382,8 +379,7 @@ const Cart = () => {
     {
       name: "Cantidad",
       selector: (row) => (
-        <Form.Control
-          type="number"
+        <TextField size="small" fullWidth type="number"
           value={row.quantity}
           onChange={(e) => handleQuantityChangeToCart(e, row)} // Implementa esta función para manejar el cambio
           min="1" // Opcional, para establecer un valor mínimo
@@ -430,8 +426,7 @@ const Cart = () => {
     {
       name: "Cantidad",
       selector: (row) => (
-        <Form.Control
-          type="number"
+        <TextField size="small" fullWidth type="number"
           value={row.quantity}
           onChange={(e) => handleQuantityChangeToCart(e, row)} // Implementa esta función para manejar el cambio
           min="1" // Opcional, para establecer un valor mínimo
@@ -475,7 +470,7 @@ const Cart = () => {
       <PaymentModal />
       <div>
         {cart.length !== 0 && (
-          <Grid container>
+          <Grid container spacing={2}>
             {(movementType === "venta" || movementType === "apartado") && (
               <>
                 <Grid item xs={12} md={4}>
@@ -499,30 +494,28 @@ const Cart = () => {
               <>
                 <Grid item xs={12} md={3}><h1>Productos: {totalProducts}</h1></Grid>
                 <Grid item xs={12} md={3}>
-                  <Form.Select
-                    value={selectedStore}
+                  <Select fullWidth size="small" value={selectedStore}
                     onChange={handleSelectChange}
                   >
-                    <option value="">Selecciona un destino</option>
+                    <MenuItem value="">Selecciona un destino</MenuItem>
                     {stores.map((store) => (
-                      <option key={store.id} value={store.id}>
+                      <MenuItem key={store.id} value={store.id}>
                         <b>{store.name} ({store.store_type_display})</b>
-                      </option>
+                      </MenuItem>
                     ))}
-                  </Form.Select>
+                  </Select>
                 </Grid>
                 <Grid item xs={12} md={3}>
-                  <Form.Select
-                    value={confirmedStore}
+                  <Select fullWidth size="small" value={confirmedStore}
                     onChange={handleSelectChange2}
                   >
-                    <option value="">Confirma el destino</option>
+                    <MenuItem value="">Confirma el destino</MenuItem>
                     {stores.map((store) => (
-                      <option key={store.id} value={store.id}>
+                      <MenuItem key={store.id} value={store.id}>
                         {store.name} ({store.store_type_display})
-                      </option>
+                      </MenuItem>
                     ))}
-                  </Form.Select>
+                  </Select>
                 </Grid>
                 <Grid item xs={12} md={3}>
                   <CustomButton

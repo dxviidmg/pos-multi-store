@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import CustomModal from "../commons/customModal/customModal";
-import { Form } from "react-bootstrap";
+
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
 import { hideBrandModal } from "../redux/brandModal/BrandModalActions";
 import { useCreateBrand, useUpdateBrand } from "../../hooks/useBrandMutations";
-import { Grid } from "@mui/material";
+import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
 
 const BrandModal = ({ onUpdateBrandList }) => {
   const { showBrandModal, brand } = useSelector(
@@ -56,11 +56,9 @@ const BrandModal = ({ onUpdateBrandList }) => {
     >
       <Grid className="custom-section">
 
-      <Grid container>
+      <Grid container spacing={2}>
         <Grid item xs={12} md={6}>
-          <Form.Label>Nombre</Form.Label>
-          <Form.Control
-            type="text"
+          <TextField size="small" fullWidth label="Nombre" type="text"
             value={formData.name}
             placeholder="Nombre"
             name="name"

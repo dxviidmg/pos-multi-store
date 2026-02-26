@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CustomModal from "../commons/customModal/customModal";
-import { Form, Image } from "react-bootstrap";
+import { Image } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getBrands } from "../apis/brands";
@@ -14,7 +14,7 @@ import {
 import noPhoto from "../../assets/images/noPhoto.jpg";
 import { getDepartments } from "../apis/departments";
 import CustomTable from "../commons/customTable/customTable";
-import { Grid } from "@mui/material";
+import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
 
 const INITIAL_FORM_DATA = {
   brand: "",
@@ -160,57 +160,55 @@ const ProductModal = ({ onUpdateProductList }) => {
       title={showStoreProducts? "Ver stock": formData.id ? "Actualizar producto" : "Crear producto"}
     >
       <Grid className="custom-section">
-        <Grid container hidden={showStoreProducts}>
+        <Grid container spacing={2} hidden={showStoreProducts}>
           <Grid item xs={12} md={4} className="">
             <Image src={previewImage} fluid rounded />
-            <Form.Group controlId="formFile" className="mt-3">
-              <Form.Label>Selecciona una imagen</Form.Label>
-              <Form.Control
-                type="file"
+            <Box controlId="formFile" className="mt-3">
+              <TextField size="small" fullWidth label="Selecciona una imagen" type="file"
                 accept="image/*"
                 onChange={handleImageChange}
               />
-            </Form.Group>
+            </Box>
           </Grid>
 
           <Grid item xs={12} md={8}>
-            <Grid container>
+            <Grid container spacing={2}>
               <Grid item xs={12} md={6}>
-                <Form.Label>Marca</Form.Label>
-                <Form.Select
-                  value={formData.brand}
+                <FormControl fullWidth size="small">
+              <InputLabel>Marca</InputLabel>
+              <Select fullWidth size="small" value={formData.brand}
                   onChange={handleDataChange}
                   name="brand"
-                >
-                  <option value="0">Selecciona una marca</option>
+                 label="Marca">
+                  <MenuItem value="0">Selecciona una marca</MenuItem>
                   {brands.map((brand) => (
-                    <option key={brand.id} value={brand.id}>
+                    <MenuItem key={brand.id} value={brand.id}>
                       {brand.name}
-                    </option>
+                    </MenuItem>
                   ))}
-                </Form.Select>
+                </Select>
+            </FormControl>
               </Grid>
 
               <Grid item xs={12} md={6}>
-                <Form.Label>Departamento</Form.Label>
-                <Form.Select
-                  value={formData.department}
+                <FormControl fullWidth size="small">
+              <InputLabel>Departamento</InputLabel>
+              <Select fullWidth size="small" value={formData.department}
                   onChange={handleDataChange}
                   name="department"
-                >
-                  <option value="0">Selecciona un departamento</option>
+                 label="Departamento">
+                  <MenuItem value="0">Selecciona un departamento</MenuItem>
                   {departments.map((department) => (
-                    <option key={department.id} value={department.id}>
+                    <MenuItem key={department.id} value={department.id}>
                       {department.name}
-                    </option>
+                    </MenuItem>
                   ))}
-                </Form.Select>
+                </Select>
+            </FormControl>
               </Grid>
 
               <Grid item xs={12} md={6}>
-                <Form.Label>Código</Form.Label>
-                <Form.Control
-                  type="text"
+                <TextField size="small" fullWidth label="Código" type="text"
                   value={formData.code}
                   placeholder="Código"
                   name="code"
@@ -218,9 +216,7 @@ const ProductModal = ({ onUpdateProductList }) => {
                 />
               </Grid>
               <Grid item xs={12} md={6}>
-                <Form.Label>Nombre</Form.Label>
-                <Form.Control
-                  type="text"
+                <TextField size="small" fullWidth label="Nombre" type="text"
                   value={formData.name}
                   placeholder="Nombre"
                   name="name"
@@ -229,9 +225,7 @@ const ProductModal = ({ onUpdateProductList }) => {
               </Grid>
 
               <Grid item xs={12} md={3}>
-                <Form.Label>Costo</Form.Label>
-                <Form.Control
-                  type="number"
+                <TextField size="small" fullWidth label="Costo" type="number"
                   value={formData.cost}
                   placeholder="Costo"
                   name="cost"
@@ -240,9 +234,7 @@ const ProductModal = ({ onUpdateProductList }) => {
               </Grid>
 
               <Grid item xs={12} md={3}>
-                <Form.Label>P. unitario</Form.Label>
-                <Form.Control
-                  type="number"
+                <TextField size="small" fullWidth label="P. unitario" type="number"
                   value={formData.unit_price}
                   placeholder="Precio unitario"
                   name="unit_price"
@@ -251,9 +243,7 @@ const ProductModal = ({ onUpdateProductList }) => {
               </Grid>
 
               <Grid item xs={12} md={3}>
-                <Form.Label>P. mayoreo</Form.Label>
-                <Form.Control
-                  type="number"
+                <TextField size="small" fullWidth label="P. mayoreo" type="number"
                   value={formData.wholesale_price}
                   placeholder="Precio de mayoreo"
                   name="wholesale_price"
@@ -262,9 +252,7 @@ const ProductModal = ({ onUpdateProductList }) => {
               </Grid>
 
               <Grid item xs={12} md={3}>
-                <Form.Label>Min. mayoreo</Form.Label>
-                <Form.Control
-                  type="number"
+                <TextField size="small" fullWidth label="Min. mayoreo" type="number"
                   value={formData.min_wholesale_quantity}
                   placeholder="Cantidad minima mayoreo"
                   name="min_wholesale_quantity"
@@ -273,7 +261,7 @@ const ProductModal = ({ onUpdateProductList }) => {
               </Grid>
 
               <Grid item xs={12} md={12}>
-                <Form.Check // prettier-ignore
+                <Checkbox size="small" // prettier-ignore
                   type="checkbox"
                   id={`default-checkbox`}
                   label="Precio de mayoreo en descuento de cliente registrado"
@@ -297,7 +285,7 @@ const ProductModal = ({ onUpdateProductList }) => {
           </Grid>
         </Grid>
 
-        <Grid container hidden={!showStoreProducts}>
+        <Grid container spacing={2} hidden={!showStoreProducts}>
           <CustomTable
             data={storeProduct}
             columns={[

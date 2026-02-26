@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CustomModal from "../commons/customModal/customModal";
-import { Form } from "react-bootstrap";
+
 import { useDispatch, useSelector } from "react-redux";
 import CustomTable from "../commons/customTable/customTable";
 import { getStoreProductLogs, updateStoreProduct } from "../apis/products";
@@ -9,7 +9,7 @@ import Swal from "sweetalert2";
 import CustomButton from "../commons/customButton/CustomButton";
 import { hideLogsModal } from "../redux/logsModal/LogsModalActions";
 import { chooseIcon } from "../commons/icons/Icons";
-import { Grid } from "@mui/material";
+import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
 
 const INITIAL_FORM_DATA = {};
 
@@ -81,11 +81,9 @@ const StoreProductLogsModal = ({ onUpdateStoreProductList }) => {
       title={adjustStock ? "Ajuste de stock" : "Movimientos de stock"}
     >
      <Grid className="custom-section">
-     <Grid container>
+     <Grid container spacing={2}>
         <Grid item xs={12} md={6}>
-          <Form.Label>Código</Form.Label>
-          <Form.Control
-            type="text"
+          <TextField size="small" fullWidth label="Código" type="text"
             value={formData.product?.code}
             placeholder="Código"
             disabled
@@ -93,9 +91,7 @@ const StoreProductLogsModal = ({ onUpdateStoreProductList }) => {
         </Grid>
 
         <Grid item xs={12} md={6}>
-          <Form.Label>Marca</Form.Label>
-          <Form.Control
-            type="text"
+          <TextField size="small" fullWidth label="Marca" type="text"
             value={formData.product?.brand_name}
             placeholder="Marca"
             disabled
@@ -103,18 +99,14 @@ const StoreProductLogsModal = ({ onUpdateStoreProductList }) => {
         </Grid>
 
         <Grid item xs={12} md={6}>
-          <Form.Label>Nombre</Form.Label>
-          <Form.Control
-            type="text"
+          <TextField size="small" fullWidth label="Nombre" type="text"
             value={formData.product?.name}
             placeholder="Nombre"
             disabled
           />
         </Grid>
         <Grid item xs={12} md={adjustStock ? 3 : 6}>
-          <Form.Label>Cantidad</Form.Label>
-          <Form.Control
-            type="text"
+          <TextField size="small" fullWidth label="Cantidad" type="text"
             value={formData.stock}
             placeholder="Cantidad"
             disabled={!adjustStock}

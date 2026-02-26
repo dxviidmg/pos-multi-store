@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { Form } from "react-bootstrap";
+
 import CustomButton from "../commons/customButton/CustomButton";
 import { createDiscount } from "../apis/discounts";
 import Swal from "sweetalert2";
@@ -16,6 +16,7 @@ import { getDateDifference, getFormattedDate } from "../utils/utils";
 import CustomTooltip from "../commons/Tooltip";
 import { useClients } from "../../hooks/useClients";
 import Grid from "@mui/material/Grid";
+import { TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
 
 const ClientList = () => {
   const today = getFormattedDate();
@@ -96,12 +97,10 @@ const ClientList = () => {
       <ClientModal onUpdateClientList={handleUpdateClientList} />
       {getUserData().role === "owner" && (
         <Grid item xs={12} className="custom-section">
-          <Form>
+          <Box component="form">
             <h1>Crear descuento</h1>
             <br />
-            <Form.Label>Descuento</Form.Label>
-            <Form.Control
-              type="number"
+            <TextField size="small" fullWidth label="Descuento" type="number"
               value={discountFormData.discount_percentage}
               placeholder="Descuento"
               name="discount_percentage"
@@ -115,7 +114,7 @@ const ClientList = () => {
             >
               Crear descuento
             </CustomButton>
-          </Form>
+          </Box>
         </Grid>
       )}
       <Grid item xs={12} className="custom-section">
@@ -123,34 +122,29 @@ const ClientList = () => {
         <CustomButton onClick={() => handleOpenModal()}>Crear</CustomButton>
         <Grid container spacing={2}>
           <Grid item xs={12} md={4}>
-            <Form>
-              <Form.Label>Fecha de inicio</Form.Label>
-              <Form.Control
-                name="start_date"
+            <Box component="form">
+              <TextField size="small" fullWidth label="Fecha de inicio" name="start_date"
                 type="date"
                 value={params.start_date}
                 onChange={(e) => handleParams(e)}
                 max={today}
               />
-            </Form>
+            </Box>
           </Grid>
           <Grid item xs={12} md={4}>
-            <Form>
-              <Form.Label>Fecha de fin</Form.Label>
-              <Form.Control
-                name="end_date"
+            <Box component="form">
+              <TextField size="small" fullWidth label="Fecha de fin" name="end_date"
                 type="date"
                 value={params.end_date}
                 onChange={(e) => handleParams(e)}
                 max={today}
               />
-            </Form>
+            </Box>
           </Grid>
           <Grid item xs={12} md={4}>
-            <Form>
-              <Form.Label>Rango</Form.Label>
-              <Form.Control name="range" type="input" value={range} disabled />
-            </Form>
+            <Box component="form">
+              <TextField size="small" fullWidth label="Rango" name="range" type="input" value={range} disabled />
+            </Box>
           </Grid>
         </Grid>
         <CustomTable

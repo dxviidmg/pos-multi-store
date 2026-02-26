@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
 import { importStoreProducts, importStoreProductsValidation } from "../apis/products";
-import { Form } from "react-bootstrap";
+
 import CustomButton from "../commons/customButton/CustomButton";
 import Swal from "sweetalert2";
 import { ErrorIcon, SuccessIcon } from "../commons/icons/Icons";
 import { useRef } from "react";
-import { Grid } from "@mui/material";
+import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
 
 const URL_TEMPLATE =
   process.env.REACT_APP_API_URL +
@@ -116,39 +116,39 @@ const StoreProductImport = () => {
 
   return (
     <>
-      <Grid container>
+      <Grid container spacing={2}>
       <Grid item xs={12} className="custom-section">
         <h1>Importación de inventario</h1>
-        <Grid container>
+        <Grid container spacing={2}>
           <Grid item xs={12} md={6} className="d-flex flex-column justify-content-end">
-            <Form.Label>Archivo</Form.Label>
+            <FormLabel>Archivo</FormLabel>
 
-            <Form.Group controlId="formFile" className="">
-              <Form.Control
-                type="file"
+            <Box controlId="formFile" className="">
+              <TextField size="small" fullWidth type="file"
                 ref={fileInputRef}
                 defaultValue={formData.file}
                 onChange={handleDataChange}
                 name="file"
               />
-            </Form.Group>
+            </Box>
           </Grid>
 
           <Grid item xs={12} md={6}>
-            <Form.Label>¿Desea adicionar o sustituir la cantidad?</Form.Label>
-            <Form.Select
-              value={formData.action}
+            <FormControl fullWidth size="small">
+              <InputLabel>¿Desea adicionar o sustituir la cantidad?</InputLabel>
+              <Select fullWidth size="small" value={formData.action}
               onChange={handleDataChange}
               name="action"
               //              disabled={isLoading}
-            >
-              <option value="">Tipo de operación</option>
+             label="¿Desea adicionar o sustituir la cantidad?">
+              <MenuItem value="">Tipo de operación</MenuItem>
               {ACTION_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
+                <MenuItem key={option.value} value={option.value}>
                   {option.label}
-                </option>
+                </MenuItem>
               ))}
-            </Form.Select>
+            </Select>
+            </FormControl>
           </Grid>
 
           <Grid item xs={12} md={3}>

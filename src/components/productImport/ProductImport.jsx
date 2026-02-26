@@ -5,13 +5,13 @@ import {
   importProducts,
   importProductsValidation,
 } from "../apis/products";
-import { Form, Alert } from "react-bootstrap";
+import { Alert } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import Swal from "sweetalert2";
 import { chooseIcon } from "../commons/icons/Icons";
 import { useRef } from "react";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
-import { Grid } from "@mui/material";
+import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
 
 const URL_TEMPLATE =
   process.env.REACT_APP_API_URL +
@@ -198,76 +198,79 @@ const ProductImport = () => {
 
   return (
     <>
-      <Grid container>
+      <Grid container spacing={2}>
       <Grid item xs={12} className="custom-section">
         <CustomSpinner isLoading={loading}></CustomSpinner>
         <h1>Importación de productos</h1>
-        <Grid container>
+        <Grid container spacing={2}>
           <Grid item xs={12} md={3}>
-            <Form.Label>Archivo</Form.Label>
+            <FormLabel>Archivo</FormLabel>
 
-            <Form.Group controlId="formFile" className="">
-              <Form.Control
-                type="file"
+            <Box controlId="formFile" className="">
+              <TextField size="small" fullWidth type="file"
                 ref={fileInputRef}
                 defaultValue={formData.file}
                 onChange={handleDataChange}
                 name="file"
               />
-            </Form.Group>
+            </Box>
           </Grid>
 
           <Grid item xs={12} md={3}>
-            <Form.Label>¿Crear marcas en caso que no existan?</Form.Label>
-            <Form.Select
-              value={formData.create_brands}
+            <FormControl fullWidth size="small">
+              <InputLabel>¿Crear marcas en caso que no existan?</InputLabel>
+              <Select fullWidth size="small" value={formData.create_brands}
               onChange={handleDataChange}
               name="create_brands"
               //              disabled={isLoading}
-            >
-              <option value="">Crear marcas</option>
+             label="¿Crear marcas en caso que no existan?">
+              <MenuItem value="">Crear marcas</MenuItem>
               {CREATE_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
+                <MenuItem key={option.value} value={option.value}>
                   {option.label}
-                </option>
+                </MenuItem>
               ))}
-            </Form.Select>
+            </Select>
+            </FormControl>
           </Grid>
 
           <Grid item xs={12} md={3}>
-            <Form.Label>
+            <FormControl fullWidth size="small">
+              <InputLabel>
               ¿Crear departamentos en caso que no existan?
-            </Form.Label>
-            <Form.Select
-              value={formData.create_departments}
+            </InputLabel>
+              <Select fullWidth size="small" value={formData.create_departments}
               onChange={handleDataChange}
               name="create_departments"
               //              disabled={isLoading}
-            >
-              <option value="">Crear departamentos</option>
+             label="
+              ¿Crear departamentos en caso que no existan?
+            ">
+              <MenuItem value="">Crear departamentos</MenuItem>
               {CREATE_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
+                <MenuItem key={option.value} value={option.value}>
                   {option.label}
-                </option>
+                </MenuItem>
               ))}
-            </Form.Select>
+            </Select>
+            </FormControl>
           </Grid>
 
           <Grid item xs={12} md={3}>
-            <Form.Label>¿El campo "Departamentos" es obligatorio?</Form.Label>
-            <Form.Select
-              value={formData.departments_mandatory}
+            <FormControl fullWidth size="small">
+              <InputLabel>¿El campo &quot;Departamentos&quot; es obligatorio?</InputLabel>
+              <Select fullWidth size="small" value={formData.departments_mandatory}
               onChange={handleDataChange}
               name="departments_mandatory"
-              //              disabled={isLoading}
-            >
-              <option value="">Departamentos obligatorios en el archivo</option>
+             label='¿El campo "Departamentos" es obligatorio?'>
+              <MenuItem value="">Departamentos obligatorios en el archivo</MenuItem>
               {CREATE_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
+                <MenuItem key={option.value} value={option.value}>
                   {option.label}
-                </option>
+                </MenuItem>
               ))}
-            </Form.Select>
+            </Select>
+            </FormControl>
           </Grid>
 
           <Grid item xs={12} md={12} hidden={canIncludeQuantity} className="mt-3">
@@ -277,23 +280,27 @@ const ProductImport = () => {
               tu tienda/almacen.
             </Alert>
 
-            <Form.Label>
+            <FormControl fullWidth size="small">
+              <InputLabel>
               ¿Agregar inventario a la primera tienda? Ideal para la primera
               importación si solo tienes una tienda.
-            </Form.Label>
-            <Form.Select
-              value={formData.import_stock}
+            </InputLabel>
+              <Select fullWidth size="small" value={formData.import_stock}
               onChange={handleDataChange}
               name="import_stock"
               //              disabled={isLoading}
-            >
-              <option value="">Agregar inventario</option>
+             label="
+              ¿Agregar inventario a la primera tienda? Ideal para la primera
+              importación si solo tienes una tienda.
+            ">
+              <MenuItem value="">Agregar inventario</MenuItem>
               {CREATE_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
+                <MenuItem key={option.value} value={option.value}>
                   {option.label}
-                </option>
+                </MenuItem>
               ))}
-            </Form.Select>
+            </Select>
+            </FormControl>
           </Grid>
 
           <Grid item xs={12} md={3}>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import CustomModal from "../commons/customModal/customModal";
-import { Form } from "react-bootstrap";
+
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
 import { updateSale } from "../apis/sales";
@@ -8,7 +8,7 @@ import { hidePaymentReservationModal } from "../redux/paymentReservationModal/Pa
 import Swal from "sweetalert2";
 import { handlePrintTicket } from "../utils/utils";
 import { getUserData } from "../apis/utils";
-import { Grid } from "@mui/material";
+import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
 
 const INITIAL_PAYMENT_STATE = { paidWith: 0, change: 0 };
 
@@ -112,22 +112,20 @@ const PaymentModal2 = ({ onUpdateSaleList }) => {
       title="Cobrar apartado"
     >
       <Grid className="custom-section">
-        <Grid container>
+        <Grid container spacing={2}>
           <h2>Información</h2>
           <Grid item xs={12} md={3}>
-            <Form.Label>Folio</Form.Label>
-            <Form.Control type="number" value={reservation.id} disabled />
+            <TextField size="small" fullWidth label="Folio" type="number" value={reservation.id} disabled />
           </Grid>
 
           <Grid item xs={12} md={3}>
-            <Form.Label>Total de la compra</Form.Label>
-            <Form.Control type="number" value={reservation.total} disabled />
+            <TextField size="small" fullWidth label="Total de la compra" type="number" value={reservation.total} disabled />
           </Grid>
 
           <Grid item xs={12} md={3}>
-            <Form.Label className="me-1">Acción:</Form.Label>
+            <FormLabel className="me-1">Acción:</FormLabel>
             {["Liquidar", "Abonar"].map((option) => (
-              <Form.Check
+              <Checkbox size="small"
                 key={option}
                 id={option}
                 label={option}
@@ -141,11 +139,11 @@ const PaymentModal2 = ({ onUpdateSaleList }) => {
           </Grid>
 
           <Grid item xs={12} md={3}>
-            <Form.Label className="me-3">Medios de pago:</Form.Label>
+            <FormLabel className="me-3">Medios de pago:</FormLabel>
             {["EF", "TA", "TR"].map((method) => (
               <div key={method} className="d-flex align-items-center mb-1">
                 <div className="me-3" style={{ flex: 1 }}>
-                  <Form.Check
+                  <Checkbox size="small"
                     id={method}
                     label={
                       method === "EF"
@@ -169,21 +167,17 @@ const PaymentModal2 = ({ onUpdateSaleList }) => {
 
       <Grid className="custom-section">
         <h2>Totales</h2>
-        <Grid container>
+        <Grid container spacing={2}>
           <Grid item xs={12} md={3}>
-            <Form.Label>Pagado</Form.Label>
-            <Form.Control type="number" value={reservation.paid} disabled />
+            <TextField size="small" fullWidth label="Pagado" type="number" value={reservation.paid} disabled />
           </Grid>
 
           <Grid item xs={12} md={3}>
-            <Form.Label>Deuda</Form.Label>
-            <Form.Control type="number" value={remaining} disabled />
+            <TextField size="small" fullWidth label="Deuda" type="number" value={remaining} disabled />
           </Grid>
 
           <Grid item xs={12} md={3}>
-            <Form.Label>Pago con</Form.Label>
-            <Form.Control
-              type="text"
+            <TextField size="small" fullWidth label="Pago con" type="text"
               value={payment.paidWith}
               onChange={handlePaidWithChange}
               ref={inputPaymentRef}
@@ -193,17 +187,14 @@ const PaymentModal2 = ({ onUpdateSaleList }) => {
           <Grid item xs={12} md={3}>
             {paymentMethod !== "EF" ? (
               <>
-                <Form.Label>Referencia</Form.Label>
-                <Form.Control
-                  type="text"
+                <TextField size="small" fullWidth label="Referencia" type="text"
                   value={referencePayment}
                   onChange={(e) => setReferencePayment(e.target.value)}
                 />
               </>
             ) : (
               <>
-                <Form.Label>Cambio</Form.Label>
-                <Form.Control type="number" value={payment.change} disabled />
+                <TextField size="small" fullWidth label="Cambio" type="number" value={payment.change} disabled />
               </>
             )}
           </Grid>
@@ -211,7 +202,7 @@ const PaymentModal2 = ({ onUpdateSaleList }) => {
       </Grid>
 
       <Grid className="custom-section">
-        <Grid container>
+        <Grid container spacing={2}>
           <Grid item xs={12} md={6}>
             <CustomButton
               disabled={handleDisableButton()}

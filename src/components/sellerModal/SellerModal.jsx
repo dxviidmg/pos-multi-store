@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CustomModal from "../commons/customModal/customModal";
-import { Form } from "react-bootstrap";
+
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
 import Swal from "sweetalert2";
@@ -9,7 +9,7 @@ import { updateProduct } from "../apis/products";
 import { getStores } from "../apis/stores";
 import { getUserData } from "../apis/utils";
 import { createSeller } from "../apis/sellers";
-import { Grid } from "@mui/material";
+import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
 
 const SellerModal = ({ onUpdateSellerList }) => {
   const user = getUserData();
@@ -131,26 +131,25 @@ const SellerModal = ({ onUpdateSellerList }) => {
       title={formData.id ? "Actualizar vendedor" : "Crear vendedor"}
     >
       <Grid className="custom-section">
-        <Grid container>
+        <Grid container spacing={2}>
           <Grid item xs={12} md={6}>
-            <Form.Label>Tienda</Form.Label>
-            <Form.Select
-              value={formData.store_id}
+            <FormControl fullWidth size="small">
+              <InputLabel>Tienda</InputLabel>
+              <Select fullWidth size="small" value={formData.store_id}
               onChange={handleDataChange}
               name="store_id"
-            >
-              <option value="">Selecciona una tienda</option>
+             label="Tienda">
+              <MenuItem value="">Selecciona una tienda</MenuItem>
               {stores.map((store) => (
-                <option key={store.id} value={store.id}>
+                <MenuItem key={store.id} value={store.id}>
                   {store.name}
-                </option>
+                </MenuItem>
               ))}
-            </Form.Select>
+            </Select>
+            </FormControl>
           </Grid>
           <Grid item xs={12} md={6}>
-            <Form.Label>Usuario y contraseña</Form.Label>
-            <Form.Control
-            disabled
+            <TextField size="small" fullWidth label="Usuario y contraseña" disabled
               type="text"
               value={formData.worker?.username}
               placeholder="Usuario"
@@ -159,9 +158,7 @@ const SellerModal = ({ onUpdateSellerList }) => {
             />
           </Grid>
           <Grid item xs={12} md={6}>
-            <Form.Label>Nombre</Form.Label>
-            <Form.Control
-              type="text"
+            <TextField size="small" fullWidth label="Nombre" type="text"
               value={formData.worker?.first_name}
               placeholder="Nombre"
               name="first_name"
@@ -169,9 +166,7 @@ const SellerModal = ({ onUpdateSellerList }) => {
             />
           </Grid>
           <Grid item xs={12} md={6}>
-            <Form.Label>Apellidos</Form.Label>
-            <Form.Control
-              type="text"
+            <TextField size="small" fullWidth label="Apellidos" type="text"
               value={formData.worker?.last_name}
               placeholder="Apellidos"
               name="last_name"

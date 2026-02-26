@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { Form } from "react-bootstrap";
+
 import { getSales } from "../apis/sales";
 import CustomButton from "../commons/customButton/CustomButton";
 import {
@@ -30,7 +30,7 @@ import {
   showPaymentReservationModal,
 } from "../redux/paymentReservationModal/PaymentReservationModalActions";
 import CustomTooltip from "../commons/Tooltip";
-import { Grid } from "@mui/material";
+import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
 
 const TYPE_OPTIONS = [
   {
@@ -138,87 +138,80 @@ const SaleList = () => {
         <h1>Ventas</h1>
         <Grid container spacing={2}>
           <Grid item xs={3}>
-            <Form.Label>Tipo</Form.Label>
-            <Form.Select
-              value={params.reservation_in_progress}
+            <FormControl fullWidth size="small">
+              <InputLabel>Tipo</InputLabel>
+              <Select fullWidth size="small" value={params.reservation_in_progress}
               onChange={handleDataChange}
               name="reservation_in_progress"
               //              disabled={isLoading}
-            >
+             label="Tipo">
               {TYPE_OPTIONS.map((type_option) => (
-                <option key={type_option.value} value={type_option.value}>
+                <MenuItem key={type_option.value} value={type_option.value}>
                   {type_option.label}
-                </option>
+                </MenuItem>
               ))}
-            </Form.Select>
+            </Select>
+            </FormControl>
           </Grid>
 
           <Grid item xs={3}>
-            <Form.Label>Busqueda por</Form.Label>
-            <Form.Select
-              value={searchBy}
+            <FormControl fullWidth size="small">
+              <InputLabel>Busqueda por</InputLabel>
+              <Select fullWidth size="small" value={searchBy}
               onChange={(e) => setSearchBy(e.target.value)}
-
-              //              disabled={isLoading}
+              label="Busqueda por"
             >
               {SEARCH_BY_OPTIONS.map((search_option) => (
-                <option key={search_option.value} value={search_option.value}>
+                <MenuItem key={search_option.value} value={search_option.value}>
                   {search_option.label}
-                </option>
+                </MenuItem>
               ))}
-            </Form.Select>
+            </Select>
+            </FormControl>
           </Grid>
 
           {searchBy === "date" ? (
             <Grid item xs={3}>
-              <Form>
-                <Form.Label>Fecha</Form.Label>
-                <Form.Control
-                  type="date"
+              <Box component="form">
+                <TextField size="small" fullWidth label="Fecha" type="date"
                   value={params.date}
                   onChange={(e) => handleDataChange(e)}
                   max={today}
                   name="date"
                 />
-              </Form>
+              </Box>
             </Grid>
           ) : searchBy === "sale_id" ? (
             <Grid item xs={3}>
-              <Form>
-                <Form.Label>#</Form.Label>
-                <Form.Control
-                  type="number"
+              <Box component="form">
+                <TextField size="small" fullWidth label="#" type="number"
                   value={params.sale_id}
                   onChange={(e) => handleDataChange(e)}
                   name="sale_id"
                 />
-              </Form>
+              </Box>
             </Grid>
           ) : searchBy === "client" ? (
             <>
               <Grid item xs={3}>
-                <Form>
-                  <Form.Label>Nombre</Form.Label>
-                  <Form.Control
-                    type="text"
+                <Box component="form">
+                  <TextField size="small" fullWidth label="Nombre" type="text"
                     value={params.first_name}
                     onChange={(e) => handleDataChange(e)}
                     name="first_name"
                     placeholder="Nombre"
                   />
-                </Form>
+                </Box>
               </Grid>
               <Grid item xs={3}>
-                <Form>
-                  <Form.Label>Apellidos</Form.Label>
-                  <Form.Control
-                    type="text"
+                <Box component="form">
+                  <TextField size="small" fullWidth label="Apellidos" type="text"
                     value={params.last_name}
                     onChange={(e) => handleDataChange(e)}
                     name="last_name"
                     placeholder="Apellidos"
                   />
-                </Form>
+                </Box>
               </Grid>
             </>
           ) : null}

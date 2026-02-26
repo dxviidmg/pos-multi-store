@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Form } from "react-bootstrap";
+
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 import { getBrands } from "../apis/brands";
 import Swal from "sweetalert2";
 import { getDepartments } from "../apis/departments";
 import CustomButton from "../commons/customButton/CustomButton";
 import { reassignProducts } from "../apis/products";
-import { Grid } from "@mui/material";
+import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
 
 const REASSIGN_TYPE = [
   {
@@ -85,80 +85,84 @@ const ProductReassign = () => {
 
   return (
     <>
-      <Grid container>
+      <Grid container spacing={2}>
       <Grid item xs={12} className="custom-section">
         <CustomSpinner isLoading={loading} />
         <h1>Reasignación de productos</h1>
-        <Grid container className="mt-3">
+        <Grid container spacing={2} className="mt-3">
           <Grid item xs={3}>
-            <Form.Label>Tipo de reasignación</Form.Label>
-          <Form.Select
-            value={params.reassign_type}
+            <FormControl fullWidth size="small">
+              <InputLabel>Tipo de reasignación</InputLabel>
+              <Select fullWidth size="small" value={params.reassign_type}
             onChange={handleDataChange}
             name="reassign_type"
             //              disabled={isLoading}
-          >
-            <option value="">Selecciona</option>
+           label="Tipo de reasignación">
+            <MenuItem value="">Selecciona</MenuItem>
             {REASSIGN_TYPE.map((type) => (
-              <option key={type.value} value={type.value}>
+              <MenuItem key={type.value} value={type.value}>
                 {type.label}
-              </option>
+              </MenuItem>
             ))}
-          </Form.Select>
+          </Select>
+            </FormControl>
         </Grid>
 
         <Grid item xs={3}>
           {" "}
-          <Form.Label>Origen</Form.Label>
-          <Form.Select
-            value={options.origin_id}
+          <FormControl fullWidth size="small">
+              <InputLabel>Origen</InputLabel>
+              <Select fullWidth size="small" value={options.origin_id}
             onChange={handleDataChange}
             name="origin_id"
             //              disabled={isLoading}
-          >
-            <option value="">Origen</option>
+           label="Origen">
+            <MenuItem value="">Origen</MenuItem>
             {options.map((option) => (
-              <option key={option.id} value={option.id}>
+              <MenuItem key={option.id} value={option.id}>
                 {option.name} ({option.product_count})
-              </option>
+              </MenuItem>
             ))}
-          </Form.Select>
+          </Select>
+            </FormControl>
         </Grid>
 
         <Grid item xs={3}>
           {" "}
-          <Form.Label>Destino</Form.Label>
-          <Form.Select
-            value={options.destination_id}
+          <FormControl fullWidth size="small">
+              <InputLabel>Destino</InputLabel>
+              <Select fullWidth size="small" value={options.destination_id}
             onChange={handleDataChange}
             name="destination_id"
             //              disabled={isLoading}
-          >
-            <option value="">Destino</option>
+           label="Destino">
+            <MenuItem value="">Destino</MenuItem>
             {options.map((option) => (
-              <option key={option.id} value={option.id}>
+              <MenuItem key={option.id} value={option.id}>
                 {option.name} ({option.product_count})
-              </option>
+              </MenuItem>
             ))}
-          </Form.Select>
+          </Select>
+            </FormControl>
         </Grid>
 
         <Grid item xs={3}>
           {" "}
-          <Form.Label>Borrar origen</Form.Label>
-          <Form.Select
-            value={options.delete_origin}
+          <FormControl fullWidth size="small">
+              <InputLabel>Borrar origen</InputLabel>
+              <Select fullWidth size="small" value={options.delete_origin}
             onChange={handleDataChange}
             name="delete_origin"
             //              disabled={isLoading}
-          >
-            <option value="">Selecciona</option>
+           label="Borrar origen">
+            <MenuItem value="">Selecciona</MenuItem>
             {DELETE_ORIGIN.map((option) => (
-              <option key={option.value} value={option.value}>
+              <MenuItem key={option.value} value={option.value}>
                 {option.label}
-              </option>
+              </MenuItem>
             ))}
-          </Form.Select>
+          </Select>
+            </FormControl>
         </Grid>
 
         <Grid item xs={12} className="d-flex flex-column justify-content-end">

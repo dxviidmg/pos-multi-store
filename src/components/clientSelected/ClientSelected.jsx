@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Form } from "react-bootstrap";
+
 import CustomButton from "../commons/customButton/CustomButton";
 import { removeClientfromCart } from "../redux/cart/cartActions";
-import { Grid } from "@mui/material";
+import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
 
 
 const ClientSelected = () => {
@@ -28,50 +28,44 @@ const ClientSelected = () => {
   }, []);
 
   return (
-    <Grid container className="align-items-end">
+    <Grid container spacing={2} className="align-items-end">
       <Grid item xs={12} md={3}>
-        <Form.Group>
-          <Form.Label>Nombre</Form.Label>
-          <Form.Control
-            type="text"
+        <Box>
+          <TextField size="small" fullWidth label="Nombre" type="text"
             value={client.full_name ? client.full_name : ""}
             placeholder="Nombre"
             disabled
           />
-        </Form.Group>
+        </Box>
       </Grid>
 
       <Grid item xs={12} md={3}>
-        <Form.Group>
-          <Form.Label>Teléfono</Form.Label>
-          <Form.Control
-            type="text"
+        <Box>
+          <TextField size="small" fullWidth label="Teléfono" type="text"
             value={client.phone_number ? client.phone_number : ""}
             placeholder="Teléfono"
             disabled
           />
-        </Form.Group>
+        </Box>
       </Grid>
 
       <Grid item xs={12} md={3}>
-        <Form.Group>
-          <Form.Label>Descuento</Form.Label>
-          <Form.Control
-            type="text"
+        <Box>
+          <TextField size="small" fullWidth label="Descuento" type="text"
             value={client.discount_percentage ? `${client.discount_percentage}%` : ""}
             placeholder="Descuento"
             disabled
           />
-        </Form.Group>
+        </Box>
       </Grid>
 
       <Grid item xs={12} md={3}>
-        <Form.Group>
+        <Box>
           <CustomButton fullWidth={true} onClick={() => dispatch(removeClientfromCart())}>
           Borrar 
           (Ctrl + E)
           </CustomButton>
-        </Form.Group>
+        </Box>
       </Grid>
     </Grid>
   );

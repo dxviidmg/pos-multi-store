@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import CustomModal from "../commons/customModal/customModal";
-import { Form } from "react-bootstrap";
+
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
 import Swal from "sweetalert2";
 import { hideCashFlowModal } from "../redux/cashFlowModal/CashFlowModalActions";
 import { createCashFlow, getCashFlowChoices } from "../apis/cashflow";
-import { Grid } from "@mui/material";
+import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
 
 
 const CashFlowModal = ({ onUpdateCashFlowList }) => {
@@ -91,28 +91,27 @@ const CashFlowModal = ({ onUpdateCashFlowList }) => {
     >
       <Grid className="custom-section">
 
-      <Grid container>
+      <Grid container spacing={2}>
         <Grid item xs={12} md={3}>
-        <Form.Label>Tipo de movimiento</Form.Label>
-        <Form.Select
-              value={formData.transaction_type}
+        <FormControl fullWidth size="small">
+              <InputLabel>Tipo de movimiento</InputLabel>
+              <Select fullWidth size="small" value={formData.transaction_type}
               onChange={handleDataChange}
               name="transaction_type"
 //              disabled={isLoading}
-            >
+             label="Tipo de movimiento">
 
-              <option value="">Selecciona</option>
+              <MenuItem value="">Selecciona</MenuItem>
               {options.map((option) => (
-                <option key={option.value} value={option.value}>
+                <MenuItem key={option.value} value={option.value}>
                   {option.label}
-                </option>
+                </MenuItem>
               ))}
-            </Form.Select>
+            </Select>
+            </FormControl>
         </Grid>
         <Grid item xs={12} md={3}>
-          <Form.Label>Concepto</Form.Label>
-          <Form.Control
-            type="text"
+          <TextField size="small" fullWidth label="Concepto" type="text"
             value={formData.concept}
             placeholder="Concepto"
             name="concept"
@@ -120,9 +119,7 @@ const CashFlowModal = ({ onUpdateCashFlowList }) => {
           />
         </Grid>
         <Grid item xs={12} md={3}>
-          <Form.Label>Cantidad</Form.Label>
-          <Form.Control
-            type="number"
+          <TextField size="small" fullWidth label="Cantidad" type="number"
             value={formData.amount}
             placeholder="Cantidad"
             name="amount"

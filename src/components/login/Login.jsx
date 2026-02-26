@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { Container, Alert, Image, Form } from "react-bootstrap";
+import { Container, Alert, Image } from "react-bootstrap";
 import { loginUser } from "../apis/login";
 import { useNavigate } from "react-router-dom";
 import CustomButton from "../commons/customButton/CustomButton";
 import Logo from "../../assets/images/logo.jpg";
 import './login.css'
-import { Grid } from "@mui/material";
+import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
 
 function Login({ onLogin }) {
   const navigate = useNavigate();
@@ -83,7 +83,7 @@ function Login({ onLogin }) {
   return (
     <div id="login">
       <Container style={{ height: "99.7vh" }}>
-        <Grid container className="h-100 d-flex align-items-center justify-content-center">
+        <Grid container spacing={2} className="h-100 d-flex align-items-center justify-content-center">
           <Grid item xs={12} md={6} lg={4}
             sx={10}
             id="login-col"
@@ -103,11 +103,9 @@ function Login({ onLogin }) {
               </Alert>
             )}
 
-            <Form className='mt-4'>
-              <Form.Group className="mb-2" controlId="formBasicEmail">
-                <Form.Label>Usuario</Form.Label>
-                <Form.Control
-                  type="text"
+            <Box component="form" className='mt-4'>
+              <Box className="mb-2" controlId="formBasicEmail">
+                <TextField size="small" fullWidth label="Usuario" type="text"
                   className="form-control mt-1"
                   placeholder="Usuario"
                   name="username"
@@ -115,12 +113,11 @@ function Login({ onLogin }) {
                   onChange={handleChange}
                   required
                 />
-              </Form.Group>
+              </Box>
 
-              <Form.Group className="mb-2" controlId="formBasicPassword">
-                <Form.Label >Contraseña</Form.Label>
-                <Form.Control
-                  type="password"
+              <Box className="mb-2" controlId="formBasicPassword">
+                <FormLabel >Contraseña</FormLabel>
+                <TextField size="small" fullWidth type="password"
                   className="form-control mt-1"
                   placeholder="Contraseña"
                   name="password"
@@ -128,11 +125,11 @@ function Login({ onLogin }) {
                   onChange={handleChange}
                   required
                 />
-              </Form.Group>
+              </Box>
               <CustomButton onClick={handleSubmit} fullWidth>
                 Iniciar sesión
               </CustomButton>
-            </Form>
+            </Box>
           </Grid>
         </Grid>
       </Container>

@@ -3,9 +3,10 @@ import CustomTable from "../commons/customTable/customTable";
 import { getClients } from "../apis/clients";
 import CustomButton from "../commons/customButton/CustomButton";
 import { useDispatch, useSelector } from "react-redux";
-import { Badge, Form } from "react-bootstrap";
+import { Badge } from "react-bootstrap";
 import { addClientToCart } from "../redux/cart/cartActions";
 import Swal from "sweetalert2";
+import { TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
 
 const SearchClient = () => {
   const client = useSelector((state) => state.cartReducer.client);
@@ -88,8 +89,7 @@ const SearchClient = () => {
   )}
 </div>
 
-      <Form.Control
-        ref={inputRefClient}
+      <TextField size="small" fullWidth ref={inputRefClient}
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}

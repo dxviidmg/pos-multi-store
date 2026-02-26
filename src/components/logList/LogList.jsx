@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { Form } from "react-bootstrap";
+
 import {
   exportToExcel,
   formatTimeFromDate,
@@ -15,7 +15,7 @@ import { getBrands } from "../apis/brands";
 import CustomButton from "../commons/customButton/CustomButton";
 import { chooseIcon } from "../commons/icons/Icons";
 import { getStores } from "../apis/stores";
-import { Grid } from "@mui/material";
+import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
 
 const LogList = () => {
   const today = getFormattedDate();
@@ -84,7 +84,7 @@ const LogList = () => {
   return (
     <>
       <CustomSpinner isLoading={loading}></CustomSpinner>
-      <Grid container>
+      <Grid container spacing={2}>
       <Grid item xs={12} className="custom-section">
         <h1>Logs</h1>
 
@@ -92,14 +92,12 @@ const LogList = () => {
           Descargar logs
         </CustomButton>
 
-        <Grid container>
+        <Grid container spacing={2}>
 
 
 
           <Grid item xs={3}>
-            <Form.Label>Fecha</Form.Label>
-            <Form.Control
-              type="date"
+            <TextField size="small" fullWidth label="Fecha" type="date"
               value={params.date}
               onChange={handleDataChange}
               max={today}
@@ -108,53 +106,56 @@ const LogList = () => {
           </Grid>
 
           <Grid item xs={3}>
-            <Form.Label>Tiendas o almacenes</Form.Label>
-            <Form.Select
-              value={params.store_related}
+            <FormControl fullWidth size="small">
+              <InputLabel>Tiendas o almacenes</InputLabel>
+              <Select fullWidth size="small" value={params.store_related}
               onChange={handleDataChange}
               name="store_related"
               //              disabled={isLoading}
-            >
-              <option value="">Selecciona un movimiento</option>
+             label="Tiendas o almacenes">
+              <MenuItem value="">Selecciona un movimiento</MenuItem>
               {stores.map((store) => (
-                <option key={store.id} value={store.id}>
+                <MenuItem key={store.id} value={store.id}>
                   {store.full_name}
-                </option>
+                </MenuItem>
               ))}
-            </Form.Select>
+            </Select>
+            </FormControl>
           </Grid>
           <Grid item xs={3}>
-            <Form.Label>Marca</Form.Label>
-            <Form.Select
-              value={params.brand_id}
+            <FormControl fullWidth size="small">
+              <InputLabel>Marca</InputLabel>
+              <Select fullWidth size="small" value={params.brand_id}
               onChange={handleDataChange}
               name="brand_id"
               //              disabled={isLoading}
-            >
-              <option value="">Todas las marcas</option>
+             label="Marca">
+              <MenuItem value="">Todas las marcas</MenuItem>
               {brands.map((brand) => (
-                <option key={brand.id} value={brand.id}>
+                <MenuItem key={brand.id} value={brand.id}>
                   {brand.name}
-                </option>
+                </MenuItem>
               ))}
-            </Form.Select>
+            </Select>
+            </FormControl>
           </Grid>
 
           <Grid item xs={3}>
-            <Form.Label>Movimientos</Form.Label>
-            <Form.Select
-              value={params.action}
+            <FormControl fullWidth size="small">
+              <InputLabel>Movimientos</InputLabel>
+              <Select fullWidth size="small" value={params.action}
               onChange={handleDataChange}
               name="action"
               //              disabled={isLoading}
-            >
-              <option value="">Selecciona un movimiento</option>
+             label="Movimientos">
+              <MenuItem value="">Selecciona un movimiento</MenuItem>
               {actions.map((action) => (
-                <option key={action.value} value={action.value}>
+                <MenuItem key={action.value} value={action.value}>
                   {action.label}
-                </option>
+                </MenuItem>
               ))}
-            </Form.Select>
+            </Select>
+            </FormControl>
           </Grid>
         </Grid>
 

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { FormCheck } from "react-bootstrap";
+
 import CustomButton from "../commons/customButton/CustomButton";
 import { deleteBrands } from "../apis/brands";
 import BrandModal from "../brandModal/BrandModal";
@@ -15,6 +15,7 @@ import { EditIcon } from "../commons/icons/Icons";
 import CustomTooltip from "../commons/Tooltip";
 import { useBrands } from "../../hooks/useBrands";
 import Grid from "@mui/material/Grid";
+import { TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
 
 const BrandList = () => {
   const [selectedRows, setSelectedRows] = useState([]);
@@ -84,7 +85,7 @@ const BrandList = () => {
         >
           Borrar marcas
         </CustomButton>
-        <FormCheck
+        <Checkbox size="small"
           label={"Confirmar borrado"}
           checked={confirmDeletion}
           onChange={handleCheck}

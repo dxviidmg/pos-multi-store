@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { Form } from "react-bootstrap";
+
 import CustomButton from "../commons/customButton/CustomButton";
 import { getFormattedDate, formatTimeFromDate } from "../utils/utils";
 import { useDispatch } from "react-redux";
@@ -12,7 +12,7 @@ import {
   showCashFlowModal,
 } from "../redux/cashFlowModal/CashFlowModalActions";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
-import { Grid } from "@mui/material";
+import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
 
 const today = getFormattedDate();
 
@@ -60,40 +60,36 @@ const CashFlowList = () => {
     <>
       <CustomSpinner isLoading={loading}></CustomSpinner>
       <CashFlowModal onUpdateCashFlowList={handleUpdateCashFlowList} />
-      <Grid container>
+      <Grid container spacing={2}>
       <Grid item xs={12} className="custom-section">
         <h1>Movimientos en caja</h1>
 
-        <Grid container>
+        <Grid container spacing={2}>
           <Grid item xs={4} className="d-flex flex-column justify-content-end">
             <CustomButton fullWidth={true} onClick={() => handleOpenModal()}>
               Crear movimiento
             </CustomButton>
           </Grid>
           <Grid item xs={4}>
-            <Form>
-              <Form.Label>Fecha de inicio</Form.Label>
-              <Form.Control
-                type="date"
+            <Box component="form">
+              <TextField size="small" fullWidth label="Fecha de inicio" type="date"
                 value={params.start_date}
                 name="start_date"
                 onChange={handleDataChange}
                 max={today}
               />
-            </Form>
+            </Box>
           </Grid>
 
           <Grid item xs={4}>
-            <Form>
-              <Form.Label>Fecha de fin</Form.Label>
-              <Form.Control
-                type="date"
+            <Box component="form">
+              <TextField size="small" fullWidth label="Fecha de fin" type="date"
                 value={params.end_date}
                 name="end_date"
                 onChange={handleDataChange}
                 max={today}
               />
-            </Form>
+            </Box>
           </Grid>
 
         </Grid>

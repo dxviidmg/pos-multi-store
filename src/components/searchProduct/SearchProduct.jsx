@@ -4,7 +4,7 @@ import CustomTable from "../commons/customTable/customTable";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getStoreProducts } from "../apis/products";
 import { addToCart, updateMovementType } from "../redux/cart/cartActions";
-import { Badge, Form } from "react-bootstrap";
+import { Badge } from "react-bootstrap";
 import StockModal from "../stockModal/StockModal";
 import {
   hideStockModal,
@@ -14,7 +14,7 @@ import Swal from "sweetalert2";
 import { getPrinterUrl, getUserData } from "../apis/utils";
 import { PrinterIcon } from "../commons/icons/Icons";
 import { handlePrintTicket } from "../utils/utils";
-import { Grid } from "@mui/material";
+import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
 
 const SearchProduct = () => {
   const inputRef = useRef(null);
@@ -321,90 +321,62 @@ const SearchProduct = () => {
         </CustomButton>
       </h1>
 
-      <Form.Label className="me-3">Tipo de búsqueda:</Form.Label>
-      <Form.Check
-        inline
-        id="code"
-        label="Por código de barras (Ctrl + R)"
-        type="radio"
-        onChange={handleQueryTypeChange}
-        value="code"
-        checked={queryType === "code"}
-      />
-      <Form.Check
-        inline
-        id="description"
-        label="Por marca o nombre (Ctrl + Y)"
-        type="radio"
-        onChange={handleQueryTypeChange}
-        value="q"
-        checked={queryType === "q"}
-      />
+      <div>
+        <FormLabel className="me-3">Tipo de búsqueda:</FormLabel>
+        <RadioGroup row value={queryType} onChange={handleQueryTypeChange}>
+          <FormControlLabel 
+            value="code" 
+            control={<Radio size="small" />} 
+            label="Por código de barras (Ctrl + R)" 
+          />
+          <FormControlLabel 
+            value="q" 
+            control={<Radio size="small" />} 
+            label="Por marca o nombre (Ctrl + Y)" 
+          />
+        </RadioGroup>
+      </div>
 
-      <br />
-      <Form.Label className="me-3">Tipo de operación:</Form.Label>
-      <Form.Check
-        inline
-        id="venta"
-        label="Venta (Ctrl + U)"
-        type="radio"
-        onChange={handleMovementTypeChange}
-        value="venta"
-        checked={movementType === "venta"}
-        className={storeType === "A" ? "d-none" : ""}
-      />
-
-      <Form.Check
-        inline
-        id="traspaso"
-        label="Confirmar traspaso  (Ctrl + I)"
-        type="radio"
-        onChange={handleMovementTypeChange}
-        value="traspaso"
-        checked={movementType === "traspaso"}
-      />
-      <Form.Check
-        inline
-        id="distribucion"
-        label="Distribucion (Ctrl + O)"
-        type="radio"
-        onChange={handleMovementTypeChange}
-        value="distribucion"
-        checked={movementType === "distribucion"}
-        className={storeType === "T" ? "d-none" : ""}
-      />
-      <Form.Check
-        inline
-        id="agregar"
-        label="Agregar a inventario (Ctrl + P)"
-        type="radio"
-        onChange={handleMovementTypeChange}
-        value="agregar"
-        checked={movementType === "agregar"}
-      />
-      <Form.Check
-        inline
-        id="checar"
-        label="Checar precio (Ctrl + A)"
-        type="radio"
-        onChange={handleMovementTypeChange}
-        value="checar"
-        checked={movementType === "checar"}
-      />
-      {supports_reservations && (
-        <Form.Check
-          inline
-          id="apartado"
-          label="Apartado (Sin atajo)"
-          type="radio"
-          onChange={handleMovementTypeChange}
-          value="apartado"
-          checked={movementType === "apartado"}
-          className={storeType === "A" ? "d-none" : ""}
-        />
-      )}
-
-      <br />
+      <div>
+        <FormLabel className="me-3">Tipo de operación:</FormLabel>
+        <RadioGroup row value={movementType} onChange={handleMovementTypeChange}>
+          <FormControlLabel 
+            value="venta" 
+            control={<Radio size="small" />} 
+            label="Venta (Ctrl + U)" 
+            className={storeType === "A" ? "d-none" : ""}
+          />
+          <FormControlLabel 
+            value="traspaso" 
+            control={<Radio size="small" />} 
+            label="Confirmar traspaso (Ctrl + I)" 
+          />
+          <FormControlLabel 
+            value="distribucion" 
+            control={<Radio size="small" />} 
+            label="Distribucion (Ctrl + O)" 
+            className={storeType === "T" ? "d-none" : ""}
+          />
+          <FormControlLabel 
+            value="agregar" 
+            control={<Radio size="small" />} 
+            label="Agregar a inventario (Ctrl + P)" 
+          />
+          <FormControlLabel 
+            value="checar" 
+            control={<Radio size="small" />} 
+            label="Checar precio (Ctrl + A)" 
+          />
+          {supports_reservations && (
+            <FormControlLabel 
+              value="apartado" 
+              control={<Radio size="small" />} 
+              label="Apartado (Sin atajo)" 
+              className={storeType === "A" ? "d-none" : ""}
+            />
+          )}
+        </RadioGroup>
+      </div>
 
       <Badge bg="success" className="text-wrap" hidden={isInputFocused}>
         Aviso: Para añadir productos al carrito, el cursor debe estar en el
@@ -425,10 +397,9 @@ const SearchProduct = () => {
       </Badge>
 
       {!searching && isInputFocused && <br />}
-      <Grid container>
+      <Grid container spacing={2}>
         <Grid item xs={12} md={11}>
-          <Form.Control
-            className=""
+          <TextField size="small" fullWidth className=""
             ref={inputRef}
             type="text"
             value={queryType === "code" ? barcode : query}

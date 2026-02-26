@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { Alert, Form } from "react-bootstrap";
+import { Alert } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import { useNavigate } from "react-router-dom";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
@@ -19,7 +19,7 @@ import { useStores } from "../../hooks/useStores";
 import { useTenantInfo } from "../../hooks/useTenantInfo";
 import { useDepartments } from "../../hooks/useDepartments";
 import { useInvestment } from "../../hooks/useInvestment";
-import { Grid } from "@mui/material";
+import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
 
 const StoreList = () => {
   const navigate = useNavigate();
@@ -404,7 +404,7 @@ const StoreList = () => {
 
   return (
     <>
-      <Grid container>
+      <Grid container spacing={2}>
       <Grid item xs={12} className="custom-section">
         <CustomSpinner isLoading={loading} />
 
@@ -422,8 +422,8 @@ const StoreList = () => {
 
         <Grid container spacing={2} alignItems="center">
           <Grid item xs={12} md={4}>
-            <Form.Label className="me-3">Ver</Form.Label>
-            <Form.Check
+            <FormLabel className="me-3">Ver</FormLabel>
+            <Checkbox size="small"
               inline
               id="tiendas"
               label="Tiendas"
@@ -432,7 +432,7 @@ const StoreList = () => {
               value="T"
               checked={params.store_type === "T"}
             />
-            <Form.Check
+            <Checkbox size="small"
               inline
               id="almacenes"
               label="Almacenes"
@@ -455,71 +455,66 @@ const StoreList = () => {
         </Grid>
 
         {params.store_type === "T" && (
-          <Form className="pb-2">
+          <Box component="form" className="pb-2">
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6} md={3}>
-                <Form.Group controlId="start_date">
-                  <Form.Label>Fecha de inicio</Form.Label>
-                  <Form.Control
-                    name="start_date"
+                <Box controlId="start_date">
+                  <TextField size="small" fullWidth label="Fecha de inicio" name="start_date"
                     type="date"
                     value={params.start_date}
                     onChange={handleParams}
                     max={today}
                   />
-                </Form.Group>
+                </Box>
               </Grid>
 
               <Grid item xs={12} sm={6} md={3}>
-                <Form.Group controlId="end_date">
-                  <Form.Label>Fecha de fin</Form.Label>
-                  <Form.Control
-                    name="end_date"
+                <Box controlId="end_date">
+                  <TextField size="small" fullWidth label="Fecha de fin" name="end_date"
                     type="date"
                     value={params.end_date}
                     onChange={handleParams}
                     max={today}
                   />
-                </Form.Group>
+                </Box>
               </Grid>
 
               <Grid item xs={12} sm={6} md={3}>
-                <Form.Group controlId="range">
-                  <Form.Label>Rango</Form.Label>
-                  <Form.Control
-                    name="range"
+                <Box controlId="range">
+                  <TextField size="small" fullWidth label="Rango" name="range"
                     type="text"
                     value={range}
                     disabled
                   />
-                </Form.Group>
+                </Box>
               </Grid>
 
               {departments.length > 0 && (
                 <Grid item xs={12} sm={6} md={3}>
-                  <Form.Group controlId="department_id">
-                    <Form.Label>Departamento</Form.Label>
-                    <Form.Select
-                      value={params.department_id}
+                  <Box controlId="department_id">
+                    <FormControl fullWidth size="small">
+              <InputLabel>Departamento</InputLabel>
+              <Select fullWidth size="small" value={params.department_id}
                       onChange={handleParams}
                       name="department_id"
-                    >
-                      <option value="">Todos</option>
-                      <option value="0">Sin departamento</option>
+                     label="Departamento">
+                      <MenuItem value="">Todos</MenuItem>
+                      <MenuItem value="0">Sin departamento</MenuItem>
                       {departments.map((departament) => (
-                        <option key={departament.id} value={departament.id}>
+                        <MenuItem key={departament.id} value={departament.id}>
                           {departament.name}
-                        </option>
+                        </MenuItem>
                       ))}
-                    </Form.Select>
-                  </Form.Group>
+                    </Select>
+            </FormControl>
+                  </Box>
                 </Grid>
               )}
             </Grid>
-          </Form>
+          </Box>
         )}
 
-        <Grid container>
+        <Grid container spacing={2}>
           <Grid item xs={12}>
             <CustomTable
               progressPending={loading}

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { Form } from "react-bootstrap";
+
 import { getCashSummary } from "../apis/sales";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getUserData } from "../apis/utils";
@@ -12,7 +12,7 @@ import {
 import { getCashFlow } from "../apis/cashflow";
 import CashFlowModal from "../cashFlowModal/CashFlowModal";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
-import { Grid } from "@mui/material";
+import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
 
 const CashSummary = () => {
   const [cashSummary, setCashSummary] = useState([]);
@@ -100,22 +100,21 @@ const CashSummary = () => {
     <>
       <CustomSpinner isLoading={loading}></CustomSpinner>
       <CashFlowModal onUpdateCashFlowList={handleUpdateCashFlowList} />
-      <Grid container>
+      <Grid container spacing={2}>
       <Grid item xs={12} className="custom-section">
         <h1>Corte de caja</h1>
-        <Grid container>
+        <Grid container spacing={2}>
           <Grid item xs={12} md={6}>
-            <Form>
-              <Form.Group className="">
-                <Form.Label className="">Fecha</Form.Label>
-                <Form.Control
-                  type="date"
+            <Box component="form">
+              <Box className="">
+                <FormLabel className="">Fecha</FormLabel>
+                <TextField size="small" fullWidth type="date"
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
                   max={today}
                 />
-              </Form.Group>
-            </Form>
+              </Box>
+            </Box>
           </Grid>
           <Grid item xs={12} md={6} className="d-flex flex-column justify-content-end">
             <CustomButton onClick={handleExport} fullWidth>

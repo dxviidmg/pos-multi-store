@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Form, Image } from "react-bootstrap";
+import { Image } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import CustomModal from "../commons/customModal/customModal";
 import CustomTable from "../commons/customTable/customTable";
@@ -8,7 +8,7 @@ import { hideStockModal } from "../redux/stockModal/StockModalActions";
 import { createTransfer } from "../apis/transfers";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 import { getStockOtherStores } from "../apis/products";
-import { Grid } from "@mui/material";
+import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
 
 
 const StockModal = () => {
@@ -91,7 +91,7 @@ const StockModal = () => {
         {renderStockInfo()}
 
       {storeProduct.showImage ? (
-        <Grid container className="justify-content-center">
+        <Grid container spacing={2} className="justify-content-center">
           <Grid item xs={12} md={3}>
             <Image src={storeProduct.product?.image} fluid />
           </Grid>
@@ -106,8 +106,7 @@ const StockModal = () => {
               {
                 name: "Cantidad a solicitar",
                 selector: (row) => (
-                  <Form.Control
-                    type="number"
+                  <TextField size="small" fullWidth type="number"
                     name="quantity"
                     min={1}
                     max={row.available_stock}

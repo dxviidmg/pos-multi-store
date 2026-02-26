@@ -1,7 +1,7 @@
 import React, { memo, useState, useMemo } from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import { Form } from "react-bootstrap";
-import { Box } from "@mui/material";
+
+import { Box, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
 
 const CustomTable = ({
   columns,
@@ -79,9 +79,7 @@ const CustomTable = ({
     <Box sx={{ width: "100%", mt: 1 }}>
       {searcher && (
         <Box sx={{ mb: 2 }}>
-          <Form.Label>Buscar</Form.Label>
-          <Form.Control
-            placeholder="Buscar"
+          <TextField size="small" fullWidth label="Buscar" placeholder="Buscar"
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}

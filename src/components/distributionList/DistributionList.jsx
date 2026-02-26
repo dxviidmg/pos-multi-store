@@ -11,10 +11,11 @@ import {
   getDistributions,
   updateTranfer,
 } from "../apis/transfers";
-import { Form } from "react-bootstrap";
+
 import Swal from "sweetalert2";
 import { getUserData } from "../apis/utils";
 import Grid from "@mui/material/Grid";
+import { TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
 
 const DistributionList = () => {
   const [distributions, setDistributions] = useState([]);
@@ -156,8 +157,7 @@ const DistributionList = () => {
                 name: "Cantidad",
                 cell: (row) =>
                   editingRow === row.product_code ? (
-                    <Form.Control
-                      type="number"
+                    <TextField size="small" fullWidth type="number"
                       value={editedQuantity}
                       onChange={(e) => setEditedQuantity(e.target.value)}
                       style={{ width: "80px", textAlign: "center" }}

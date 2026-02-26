@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { Form } from "react-bootstrap";
+
 import CustomTable from "../commons/customTable/customTable";
 import CustomButton from "../commons/customButton/CustomButton";
 import { importSales, importSalesValidation } from "../apis/sales";
 import Swal from "sweetalert2";
 import { SuccessIcon, ErrorIcon } from "../commons/icons/Icons";
 import { useRef } from "react";
-import { Grid } from "@mui/material";
+import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
 
 const DATA_SAMPLE = [
   { code: 1, quantity: 1, description: "Descripción del producto 1" },
@@ -98,20 +98,19 @@ const SaleImport = () => {
 
   return (
     <>
-      <Grid container>
+      <Grid container spacing={2}>
       <Grid item xs={12} className="custom-section">
         <h1>Importar ventas</h1>
-        <Grid container>
+        <Grid container spacing={2}>
           <Grid item xs={12} md={4}>
-            <Form.Group controlId="formFile" className="">
-              <Form.Control
-                type="file"
+            <Box controlId="formFile" className="">
+              <TextField size="small" fullWidth type="file"
                 ref={fileInputRef}
                 defaultValue={formData.file}
                 onChange={handleDataChange}
                 name="file"
               />
-            </Form.Group>
+            </Box>
           </Grid>
 
           <Grid item xs={12} md={2}>
