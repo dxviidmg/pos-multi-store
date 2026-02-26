@@ -261,13 +261,15 @@ const ProductModal = ({ onUpdateProductList }) => {
               </Grid>
 
               <Grid item xs={12} md={12}>
-                <Checkbox size="small" // prettier-ignore
-                  type="checkbox"
-                  id={`default-checkbox`}
+                <FormControlLabel
+                  control={
+                    <Checkbox size="small"
+                      checked={formData.wholesale_price_on_client_discount === true}
+                      onChange={handleDataChange}
+                      name="wholesale_price_on_client_discount"
+                    />
+                  }
                   label="Precio de mayoreo en descuento de cliente registrado"
-                  checked={formData.wholesale_price_on_client_discount === true}
-                  onChange={handleDataChange}
-                  name="wholesale_price_on_client_discount"
                 />
               </Grid>
 

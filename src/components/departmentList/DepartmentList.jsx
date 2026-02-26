@@ -87,10 +87,14 @@ const DepartmentList = () => {
         >
           Borrar departamentos
         </CustomButton>
-        <Checkbox size="small"
-          label={"Confirmar borrado"}
-          checked={confirmDeletion}
-          onChange={handleCheck}
+        <FormControlLabel
+          control={
+            <Checkbox size="small"
+              checked={confirmDeletion}
+              onChange={handleCheck}
+            />
+          }
+          label="Confirmar borrado"
         />
         <CustomTable
           progressPending={loading}

@@ -423,23 +423,25 @@ const StoreList = () => {
         <Grid container spacing={2} alignItems="center">
           <Grid item xs={12} md={4}>
             <FormLabel className="me-3">Ver</FormLabel>
-            <Checkbox size="small"
-              inline
-              id="tiendas"
+            <FormControlLabel
+              control={
+                <Checkbox size="small"
+                  onChange={handleStoreType}
+                  value="T"
+                  checked={params.store_type === "T"}
+                />
+              }
               label="Tiendas"
-              type="radio"
-              onChange={handleStoreType}
-              value="T"
-              checked={params.store_type === "T"}
             />
-            <Checkbox size="small"
-              inline
-              id="almacenes"
+            <FormControlLabel
+              control={
+                <Checkbox size="small"
+                  onChange={handleStoreType}
+                  value="A"
+                  checked={params.store_type === "A"}
+                />
+              }
               label="Almacenes"
-              type="radio"
-              onChange={handleStoreType}
-              value="A"
-              checked={params.store_type === "A"}
             />
           </Grid>
 
