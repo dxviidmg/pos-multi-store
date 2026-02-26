@@ -101,7 +101,7 @@ export default function MainLayout() {
   const navigate = useNavigate();
   const user = getUserData();
 
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = React.useState(false);
   const [openMenus, setOpenMenus] = React.useState({});
 
   const handleDrawerToggle = () => {

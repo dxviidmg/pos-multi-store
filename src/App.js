@@ -70,6 +70,7 @@ function App() {
             <Route path="/tablero/" element={<Dashboard />} />
             <Route path="/reasignacion/" element={<ProductReassign />} />
             <Route path="/importar-productos/" element={<ProductImport />} />
+            <Route path="/importar-inventario/" element={<StoreProductImport />} />
             {user?.store_id ? (
               <Route path="*" element={<SaleCreate />} />
             ) : (
