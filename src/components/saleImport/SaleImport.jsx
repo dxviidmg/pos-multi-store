@@ -4,7 +4,7 @@ import CustomButton from "../commons/customButton/CustomButton";
 import { importSales, importSalesValidation } from "../apis/sales";
 import Swal from "sweetalert2";
 import { SuccessIcon, ErrorIcon } from "../commons/icons/Icons";
-import { Grid, Button, styled } from "@mui/material";
+import { Grid, styled } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
 const VisuallyHiddenInput = styled('input')({
@@ -114,11 +114,10 @@ const SaleImport = () => {
         <h1>Importar ventas</h1>
         <Grid container spacing={2}>
           <Grid item xs={12} md={4}>
-            <Button
+            <CustomButton
               component="label"
-              variant="contained"
-              startIcon={<CloudUploadIcon />}
               fullWidth
+              startIcon={<CloudUploadIcon />}
             >
               Subir archivo
               <VisuallyHiddenInput
@@ -127,7 +126,7 @@ const SaleImport = () => {
                 onChange={handleDataChange}
                 name="file"
               />
-            </Button>
+            </CustomButton>
           </Grid>
 
           <Grid item xs={12} md={2}>

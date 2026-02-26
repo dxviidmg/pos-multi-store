@@ -1,13 +1,10 @@
 import React, { useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-
 import CustomButton from "../commons/customButton/CustomButton";
 import { createDiscount } from "../apis/discounts";
 import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";
-import {
-  showClientModal,
-} from "../redux/clientModal/ClientModalActions";
+import { showClientModal } from "../redux/clientModal/ClientModalActions";
 import ClientModal from "../clientModal/ClientModal";
 import { EditIcon } from "../commons/icons/Icons";
 import { getUserData } from "../apis/utils";
@@ -15,7 +12,8 @@ import { getDateDifference, getFormattedDate } from "../utils/utils";
 import CustomTooltip from "../commons/Tooltip";
 import { useClients } from "../../hooks/useClients";
 import Grid from "@mui/material/Grid";
-import { TextField, Box } from "@mui/material";
+import { TextField, Box, Stack, Divider } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 
 const ClientList = () => {
   const today = getFormattedDate();
@@ -117,8 +115,16 @@ const ClientList = () => {
         </Grid>
       )}
       <Grid item xs={12} className="custom-section">
-        <h1>Clientes</h1>
-        <CustomButton onClick={() => handleOpenModal()}>Crear</CustomButton>
+        <Box>
+          <Stack direction="row" justifyContent="space-between">
+            <h1>Clientes</h1>
+            <CustomButton onClick={() => handleOpenModal()} startIcon={<AddIcon />}>
+              Nuevo Cliente
+            </CustomButton>
+          </Stack>
+          <Divider />
+        </Box>
+
         <Grid container spacing={2}>
           <Grid item xs={12} md={4}>
             <Box component="form">

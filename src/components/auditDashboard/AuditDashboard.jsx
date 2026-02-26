@@ -62,7 +62,7 @@ const AuditDashboard = () => {
         <h1>Tablero de auditoria</h1>
         <Grid container spacing={2}>
           {" "}
-          <Grid item xs={12} md={6} lg={2}>
+          <Grid item xs={12} md={6} lg={4}>
             {" "}
             <FormControl fullWidth size="small">
               <InputLabel>Tienda o Almacen</InputLabel>
@@ -80,7 +80,7 @@ const AuditDashboard = () => {
             </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={12} md={6} lg={2}>
+          <Grid item xs={12} md={6} lg={4}>
             {" "}
             <Box component="form">
               <TextField size="small" fullWidth label="Fecha de inicio" name="start_date"
@@ -91,7 +91,7 @@ const AuditDashboard = () => {
               />
             </Box>
           </Grid>
-          <Grid item xs={12} md={6} lg={2}>
+          <Grid item xs={12} md={6} lg={4}>
             {" "}
             <Box component="form">
               <TextField size="small" fullWidth label="Fecha de fin" name="end_date"
@@ -102,12 +102,12 @@ const AuditDashboard = () => {
               />
             </Box>
           </Grid>
-          <Grid item xs={12} md={3} lg={3} className="d-flex flex-column justify-content-end">
+          <Grid item xs={12} md={3} lg={6}>
             <CustomButton fullWidth onClick={() => handleSubmit()}>
               Analizar ventas y logs
             </CustomButton>
           </Grid>
-          <Grid item xs={12} md={3} lg={3} className="d-flex flex-column justify-content-end">
+          <Grid item xs={12} md={3} lg={6}>
             <CustomButton fullWidth onClick={() => handleSubmit2()}>
               Analizar stock
             </CustomButton>

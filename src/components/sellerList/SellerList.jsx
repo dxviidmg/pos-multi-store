@@ -1,17 +1,14 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-
 import { getSellers } from "../apis/sellers";
 import CustomButton from "../commons/customButton/CustomButton";
 import { useDispatch } from "react-redux";
-import {
-  hideSellerModal,
-  showSellerModal,
-} from "../redux/sellerModal/SellerModalActions";
+import { showSellerModal, hideSellerModal } from "../redux/sellerModal/SellerModalActions";
 import SellerModal from "../sellerModal/SellerModal";
 import { getDateDifference, getFormattedDate } from "../utils/utils";
 import { chooseIcon } from "../commons/icons/Icons";
-import { Grid, TextField, Box } from "@mui/material";
+import { Grid, TextField, Box, Stack, Divider } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 
 const SellerList = () => {
   const today = getFormattedDate();
@@ -61,8 +58,17 @@ const SellerList = () => {
       <Grid container spacing={2}>
       <Grid item xs={12} className="custom-section">
         <SellerModal onUpdateSellerList={handleUpdateSellerList} />
-        <h1>Vendedores</h1>
-        <CustomButton onClick={() => handleOpenModal()}>Crear</CustomButton>
+        
+        <Box>
+          <Stack direction="row" justifyContent="space-between">
+            <h1>Vendedores</h1>
+            <CustomButton onClick={() => handleOpenModal()} startIcon={<AddIcon />}>
+              Nuevo Vendedor
+            </CustomButton>
+          </Stack>
+          <Divider />
+        </Box>
+
         <Box component="form" className="pb-2">
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6} md={4}>

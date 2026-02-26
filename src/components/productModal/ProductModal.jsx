@@ -14,7 +14,7 @@ import {
 import noPhoto from "../../assets/images/noPhoto.jpg";
 import { getDepartments } from "../apis/departments";
 import CustomTable from "../commons/customTable/customTable";
-import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, Box, Checkbox, FormControlLabel, Button, styled } from "@mui/material";
+import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, Box, Checkbox, FormControlLabel, styled } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
 const VisuallyHiddenInput = styled('input')({
@@ -177,11 +177,10 @@ const ProductModal = ({ onUpdateProductList }) => {
           <Grid item xs={12} md={4} className="">
             <Image src={previewImage} fluid rounded />
             <Box className="mt-3">
-              <Button
+              <CustomButton
                 component="label"
-                variant="contained"
-                startIcon={<CloudUploadIcon />}
                 fullWidth
+                startIcon={<CloudUploadIcon />}
               >
                 Seleccionar imagen
                 <VisuallyHiddenInput
@@ -189,7 +188,7 @@ const ProductModal = ({ onUpdateProductList }) => {
                   accept="image/*"
                   onChange={handleImageChange}
                 />
-              </Button>
+              </CustomButton>
             </Box>
           </Grid>
 

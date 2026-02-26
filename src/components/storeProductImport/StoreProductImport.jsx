@@ -6,7 +6,7 @@ import CustomButton from "../commons/customButton/CustomButton";
 import Swal from "sweetalert2";
 import { ErrorIcon, SuccessIcon } from "../commons/icons/Icons";
 import { useRef } from "react";
-import { Grid, Select, MenuItem, FormControl, InputLabel, Button, styled } from "@mui/material";
+import { Grid, Select, MenuItem, FormControl, InputLabel, styled } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
 const VisuallyHiddenInput = styled('input')({
@@ -134,11 +134,10 @@ const StoreProductImport = () => {
         <h1>Importación de inventario</h1>
         <Grid container spacing={2}>
           <Grid item xs={12} md={6} className="d-flex flex-column justify-content-end">
-            <Button
+            <CustomButton
               component="label"
-              variant="contained"
-              startIcon={<CloudUploadIcon />}
               fullWidth
+              startIcon={<CloudUploadIcon />}
             >
               Subir archivo
               <VisuallyHiddenInput
@@ -147,7 +146,7 @@ const StoreProductImport = () => {
                 onChange={handleDataChange}
                 name="file"
               />
-            </Button>
+            </CustomButton>
           </Grid>
 
           <Grid item xs={12} md={6}>

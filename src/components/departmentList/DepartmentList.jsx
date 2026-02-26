@@ -11,7 +11,9 @@ import { EditIcon } from "../commons/icons/Icons";
 import CustomTooltip from "../commons/Tooltip";
 import Grid from "@mui/material/Grid";
 import { useDepartments } from "../../hooks/useDepartments";
-import { Checkbox, FormControlLabel } from "@mui/material";
+import { Checkbox, FormControlLabel, Box, Stack, Divider } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const DepartmentList = () => {
   const [selectedRows, setSelectedRows] = useState([]);
@@ -71,27 +73,41 @@ const DepartmentList = () => {
     <>
       <Grid item xs={12} className="custom-section">
         <DepartmentModal onUpdateDepartmentList={handleUpdateDepartmentList} />
-        <h1>Departamentos</h1>
-        <CustomButton onClick={() => handleOpenModal()}>Crear</CustomButton>
-        <CustomButton
-          onClick={handleDeleteDepartments}
-          disabled={
-            selectedRows.length === 0 ||
-            !confirmDeletion ||
-            getUserData().role !== "owner"
-          }
-        >
-          Borrar departamentos
-        </CustomButton>
-        <FormControlLabel
-          control={
-            <Checkbox size="small"
-              checked={confirmDeletion}
-              onChange={handleCheck}
-            />
-          }
-          label="Confirmar borrado"
-        />
+        
+        <Box>
+          <Stack direction="row" justifyContent="space-between">
+            <h1>Departamentos</h1>
+            <CustomButton onClick={() => handleOpenModal()} startIcon={<AddIcon />}>
+              Nuevo Departamento
+            </CustomButton>
+          </Stack>
+          <Divider />
+        </Box>
+
+        <Stack direction="row" spacing={2} alignItems="center">
+          <FormControlLabel
+            control={
+              <Checkbox size="small"
+                checked={confirmDeletion}
+                onChange={handleCheck}
+              />
+            }
+            label="Confirmar eliminación"
+          />
+          <CustomButton
+            onClick={handleDeleteDepartments}
+            disabled={
+              selectedRows.length === 0 ||
+              !confirmDeletion ||
+              getUserData().role !== "owner"
+            }
+            startIcon={<DeleteIcon />}
+            color="error"
+          >
+            Eliminar seleccionados
+          </CustomButton>
+        </Stack>
+
         <CustomTable
           progressPending={loading}
           data={departments}

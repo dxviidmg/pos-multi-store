@@ -11,7 +11,9 @@ import { EditIcon } from "../commons/icons/Icons";
 import CustomTooltip from "../commons/Tooltip";
 import { useBrands } from "../../hooks/useBrands";
 import Grid from "@mui/material/Grid";
-import { Checkbox, FormControlLabel } from "@mui/material";
+import { Checkbox, FormControlLabel, Box, Typography, Stack, Divider } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const BrandList = () => {
   const [selectedRows, setSelectedRows] = useState([]);
@@ -69,27 +71,43 @@ const BrandList = () => {
   return (
       <Grid item xs={12} className="custom-section">
         <BrandModal onUpdateBrandList={handleUpdateBrandList} />
-        <h1>Marcas</h1>
-        <CustomButton onClick={() => handleOpenModal()}>Crear</CustomButton>
-        <CustomButton
-          onClick={handleDeleteBrands}
-          disabled={
-            selectedRows.length === 0 ||
-            !confirmDeletion ||
-            getUserData().role !== "owner"
-          }
-        >
-          Borrar marcas
-        </CustomButton>
+        
+        <Box>
+          <Stack direction="row" justifyContent="space-between">
+            <h1>
+              Marcas
+            </h1>
+            <CustomButton onClick={() => handleOpenModal()} startIcon={<AddIcon />}>
+              Nueva Marca
+            </CustomButton>
+          </Stack>
+          <Divider />
+        </Box>
+
+        <Stack direction="row" spacing={2} alignItems="center">
         <FormControlLabel
-          control={
-            <Checkbox size="small"
-              checked={confirmDeletion}
-              onChange={handleCheck}
-            />
-          }
-          label="Confirmar borrado"
-        />
+            control={
+              <Checkbox size="small"
+                checked={confirmDeletion}
+                onChange={handleCheck}
+              />
+            }
+            label="Confirmar eliminación"
+          />
+          <CustomButton
+            onClick={handleDeleteBrands}
+            disabled={
+              selectedRows.length === 0 ||
+              !confirmDeletion ||
+              getUserData().role !== "owner"
+            }
+            startIcon={<DeleteIcon />}
+            color="error"
+          >
+            Eliminar seleccionadas
+          </CustomButton>
+        </Stack>
+
         <CustomTable
           progressPending={loading}
           data={brands}

@@ -11,7 +11,7 @@ import Swal from "sweetalert2";
 import { chooseIcon } from "../commons/icons/Icons";
 import { useRef } from "react";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
-import { Grid, Select, MenuItem, FormControl, InputLabel, Button, styled } from "@mui/material";
+import { Grid, Select, MenuItem, FormControl, InputLabel, styled } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
 const VisuallyHiddenInput = styled('input')({
@@ -216,11 +216,10 @@ const ProductImport = () => {
         <h1>Importación de productos</h1>
         <Grid container spacing={2}>
           <Grid item xs={12} md={3}>
-            <Button
+            <CustomButton
               component="label"
-              variant="contained"
-              startIcon={<CloudUploadIcon />}
               fullWidth
+              startIcon={<CloudUploadIcon />}
             >
               Subir archivo
               <VisuallyHiddenInput
@@ -229,7 +228,7 @@ const ProductImport = () => {
                 onChange={handleDataChange}
                 name="file"
               />
-            </Button>
+            </CustomButton>
           </Grid>
 
           <Grid item xs={12} md={3}>

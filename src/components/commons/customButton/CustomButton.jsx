@@ -1,10 +1,10 @@
 import React from "react";
-import { Button } from "react-bootstrap";
+import { Button } from "@mui/material";
 
 const CustomButton = ({
   children,
   onClick,
-  size = "sm",
+  size = "small",
   disabled = false,
   href,
   fullWidth = false,
@@ -16,10 +16,13 @@ const CustomButton = ({
       size={size}
       disabled={disabled}
       href={href}
-      className={`custom-button d-inline-flex align-items-center justify-content-center ${fullWidth ? "w-100" : ""} mb-1 mx-1`}
-      style={{
+      fullWidth={fullWidth}
+      variant="contained"
+      sx={{
         marginTop: '3px',
-        backgroundColor: "#04356b !important",
+        marginBottom: '8px',
+        marginLeft: '8px',
+        marginRight: '8px',
         whiteSpace: "nowrap",
       }}
       {...props}
