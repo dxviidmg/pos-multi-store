@@ -11,7 +11,20 @@ import Swal from "sweetalert2";
 import { chooseIcon } from "../commons/icons/Icons";
 import { useRef } from "react";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
-import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
+import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup, Button, styled } from "@mui/material";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+
+const VisuallyHiddenInput = styled('input')({
+  clip: 'rect(0 0 0 0)',
+  clipPath: 'inset(50%)',
+  height: 1,
+  overflow: 'hidden',
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  whiteSpace: 'nowrap',
+  width: 1,
+});
 
 const URL_TEMPLATE =
   process.env.REACT_APP_API_URL +
@@ -197,23 +210,26 @@ const ProductImport = () => {
   };
 
   return (
-    <>
       <Grid container spacing={2}>
       <Grid item xs={12} className="custom-section">
         <CustomSpinner isLoading={loading}></CustomSpinner>
         <h1>Importación de productos</h1>
         <Grid container spacing={2}>
           <Grid item xs={12} md={3}>
-            <FormLabel>Archivo</FormLabel>
-
-            <Box controlId="formFile" className="">
-              <TextField size="small" fullWidth type="file"
+            <Button
+              component="label"
+              variant="contained"
+              startIcon={<CloudUploadIcon />}
+              fullWidth
+            >
+              Subir archivo
+              <VisuallyHiddenInput
+                type="file"
                 ref={fileInputRef}
-                defaultValue={formData.file}
                 onChange={handleDataChange}
                 name="file"
               />
-            </Box>
+            </Button>
           </Grid>
 
           <Grid item xs={12} md={3}>
@@ -482,7 +498,6 @@ const ProductImport = () => {
         ></CustomTable>
       </Grid>
     </Grid>
-  </>
   );
 };
 

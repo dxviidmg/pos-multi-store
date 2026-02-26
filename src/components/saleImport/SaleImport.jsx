@@ -6,7 +6,20 @@ import { importSales, importSalesValidation } from "../apis/sales";
 import Swal from "sweetalert2";
 import { SuccessIcon, ErrorIcon } from "../commons/icons/Icons";
 import { useRef } from "react";
-import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
+import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup, Button, styled } from "@mui/material";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+
+const VisuallyHiddenInput = styled('input')({
+  clip: 'rect(0 0 0 0)',
+  clipPath: 'inset(50%)',
+  height: 1,
+  overflow: 'hidden',
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  whiteSpace: 'nowrap',
+  width: 1,
+});
 
 const DATA_SAMPLE = [
   { code: 1, quantity: 1, description: "Descripción del producto 1" },
@@ -103,14 +116,20 @@ const SaleImport = () => {
         <h1>Importar ventas</h1>
         <Grid container spacing={2}>
           <Grid item xs={12} md={4}>
-            <Box controlId="formFile" className="">
-              <TextField size="small" fullWidth type="file"
+            <Button
+              component="label"
+              variant="contained"
+              startIcon={<CloudUploadIcon />}
+              fullWidth
+            >
+              Subir archivo
+              <VisuallyHiddenInput
+                type="file"
                 ref={fileInputRef}
-                defaultValue={formData.file}
                 onChange={handleDataChange}
                 name="file"
               />
-            </Box>
+            </Button>
           </Grid>
 
           <Grid item xs={12} md={2}>

@@ -14,7 +14,20 @@ import {
 import noPhoto from "../../assets/images/noPhoto.jpg";
 import { getDepartments } from "../apis/departments";
 import CustomTable from "../commons/customTable/customTable";
-import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
+import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, FormLabel, Box, Checkbox, FormControlLabel, Radio, RadioGroup, Button, styled } from "@mui/material";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+
+const VisuallyHiddenInput = styled('input')({
+  clip: 'rect(0 0 0 0)',
+  clipPath: 'inset(50%)',
+  height: 1,
+  overflow: 'hidden',
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  whiteSpace: 'nowrap',
+  width: 1,
+});
 
 const INITIAL_FORM_DATA = {
   brand: "",
@@ -163,11 +176,20 @@ const ProductModal = ({ onUpdateProductList }) => {
         <Grid container spacing={2} hidden={showStoreProducts}>
           <Grid item xs={12} md={4} className="">
             <Image src={previewImage} fluid rounded />
-            <Box controlId="formFile" className="mt-3">
-              <TextField size="small" fullWidth label="Selecciona una imagen" type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-              />
+            <Box className="mt-3">
+              <Button
+                component="label"
+                variant="contained"
+                startIcon={<CloudUploadIcon />}
+                fullWidth
+              >
+                Seleccionar imagen
+                <VisuallyHiddenInput
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                />
+              </Button>
             </Box>
           </Grid>
 

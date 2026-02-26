@@ -60,7 +60,7 @@ const CashFlowList = () => {
     <>
       <CustomSpinner isLoading={loading}></CustomSpinner>
       <CashFlowModal onUpdateCashFlowList={handleUpdateCashFlowList} />
-      <Grid container spacing={2}>
+      <Grid container>
       <Grid item xs={12} className="custom-section">
         <h1>Movimientos en caja</h1>
 

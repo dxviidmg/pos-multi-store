@@ -263,12 +263,16 @@ const ProductList = () => {
               Borrar productos
             </CustomButton>
           </Grid>
-          <Grid item xs={2}>
-            <Checkbox
-              size="small"
+          <Grid item xs={3}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  size="small"
+                  checked={confirmDeletion}
+                  onChange={handleCheck}
+                />
+              }
               label="Confirmar borrado"
-              checked={confirmDeletion}
-              onChange={handleCheck}
             />
           </Grid>
         </Grid>
@@ -299,7 +303,6 @@ const ProductList = () => {
               <InputLabel>Departamento</InputLabel>
               <Select fullWidth
               size="small"
-              label="Stock maximo"
               value={params.department_id}
               onChange={handleDataChange}
               name="department_id"
@@ -317,9 +320,9 @@ const ProductList = () => {
           </Grid>
 
           <Grid item xs={3}>
-            <FormLabel>Stock maximo</FormLabel>
             <TextField
               size="small"
+              label="Stock Maximo"
               fullWidth
               type="number"
               value={params.max_stock}

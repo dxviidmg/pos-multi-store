@@ -84,8 +84,7 @@ const ProductReassign = () => {
   };
 
   return (
-    <>
-      <Grid container spacing={2}>
+      <Grid container>
       <Grid item xs={12} className="custom-section">
         <CustomSpinner isLoading={loading} />
         <h1>Reasignación de productos</h1>
@@ -180,7 +179,6 @@ const ProductReassign = () => {
       </Grid>
     </Grid>
     </Grid>
-  </>
   );
 };
 
