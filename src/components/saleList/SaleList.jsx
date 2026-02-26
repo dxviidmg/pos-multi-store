@@ -136,8 +136,8 @@ const SaleList = () => {
         )}
 
         <h1>Ventas</h1>
-        <Grid container>
-          <Grid item xs={12}>
+        <Grid container spacing={2}>
+          <Grid item xs={3}>
             <Form.Label>Tipo</Form.Label>
             <Form.Select
               value={params.reservation_in_progress}
@@ -153,7 +153,7 @@ const SaleList = () => {
             </Form.Select>
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid item xs={3}>
             <Form.Label>Busqueda por</Form.Label>
             <Form.Select
               value={searchBy}
@@ -170,7 +170,7 @@ const SaleList = () => {
           </Grid>
 
           {searchBy === "date" ? (
-            <Grid item xs={12}>
+            <Grid item xs={3}>
               <Form>
                 <Form.Label>Fecha</Form.Label>
                 <Form.Control
@@ -183,7 +183,7 @@ const SaleList = () => {
               </Form>
             </Grid>
           ) : searchBy === "sale_id" ? (
-            <Grid item xs={12}>
+            <Grid item xs={3}>
               <Form>
                 <Form.Label>#</Form.Label>
                 <Form.Control
@@ -196,7 +196,7 @@ const SaleList = () => {
             </Grid>
           ) : searchBy === "client" ? (
             <>
-              <Grid item xs={12}>
+              <Grid item xs={3}>
                 <Form>
                   <Form.Label>Nombre</Form.Label>
                   <Form.Control
@@ -208,7 +208,7 @@ const SaleList = () => {
                   />
                 </Form>
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={3}>
                 <Form>
                   <Form.Label>Apellidos</Form.Label>
                   <Form.Control
@@ -223,7 +223,7 @@ const SaleList = () => {
             </>
           ) : null}
 
-          <Grid item xs={12} className="d-flex flex-column justify-content-end">
+          <Grid item xs={3} className="d-flex flex-column justify-content-end">
             <CustomButton onClick={() => setShowAllFields((prev) => !prev)}>
               Ver todos los campos
             </CustomButton>

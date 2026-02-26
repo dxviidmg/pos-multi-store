@@ -91,10 +91,6 @@ const CustomTable = ({
 
       {/* 🔥 CONTENEDOR CONTROLADO */}
       <Box
-        sx={{
-          width: "90%",
-          height: 100, // 🔥 Altura fija estable
-        }}
       >
         <DataGrid
           rows={rowsWithIds}

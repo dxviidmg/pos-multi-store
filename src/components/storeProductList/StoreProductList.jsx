@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import {
-  getStoreProducts,
-} from "../apis/products";
+import { getStoreProducts } from "../apis/products";
 import { Form } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getUserData } from "../apis/utils";
@@ -111,127 +109,132 @@ const StoreProductList = () => {
   };
 
   return (
-    <Grid className="custom-section">
-      <CustomSpinner isLoading={loading}></CustomSpinner>
-      <StoreProductLogsModal
-        onUpdateStoreProductList={handleUpdateStoreProductList}
-      />
-      <h1>Inventario</h1>
+    <Grid container spacing={2}>
+      <Grid className="custom-section">
+      <Grid xs={12}>
+        <CustomSpinner isLoading={loading}></CustomSpinner>
+        <StoreProductLogsModal
+          onUpdateStoreProductList={handleUpdateStoreProductList}
+        />
+        <h1>Inventario</h1>
 
-      <br />
-      <CustomButton onClick={handleDownload}>Descargar inventario</CustomButton>
-
-      <br />
-      <Grid container>
-        <Grid item xs={12}>
-          {" "}
-          <Form.Label>Marca</Form.Label>
-          <Form.Select
-            value={params.brand_id}
-            onChange={handleDataChange}
-            name="brand_id"
-            //              disabled={isLoading}
-          >
-            <option value="">Todas las marcas</option>
-            {brands.map((brand) => (
-              <option key={brand.id} value={brand.id}>
-                {brand.name}
-              </option>
-            ))}
-          </Form.Select>
+        <CustomButton onClick={handleDownload}>
+          Descargar inventario
+        </CustomButton>
         </Grid>
-        <Grid item xs={12}>
-          {" "}
-          <Form.Label>Departamento</Form.Label>
-          <Form.Select
-            value={params.department_id}
-            onChange={handleDataChange}
-            name="department_id"
-            //              disabled={isLoading}
-          >
-            <option value="">Todos las departamentos</option>
-            {departments.map((department) => (
-              <option key={department.id} value={department.id}>
-                {department.name}
-              </option>
-            ))}
-          </Form.Select>
-        </Grid>
-        <Grid item xs={12}>
-          <Form.Label>Código</Form.Label>
-          <Form.Control
-            type="text"
-            value={params.code}
-            onChange={handleDataChange}
-            name="code"
-          />
-        </Grid>
+        <Grid container>
+          <Grid item xs={3}>
+            {" "}
+            <Form.Label>Marca</Form.Label>
+            <Form.Select
+              value={params.brand_id}
+              onChange={handleDataChange}
+              name="brand_id"
+              //              disabled={isLoading}
+            >
+              <option value="">Todas las marcas</option>
+              {brands.map((brand) => (
+                <option key={brand.id} value={brand.id}>
+                  {brand.name}
+                </option>
+              ))}
+            </Form.Select>
+          </Grid>
+          <Grid item xs={3}>
+            {" "}
+            <Form.Label>Departamento</Form.Label>
+            <Form.Select
+              value={params.department_id}
+              onChange={handleDataChange}
+              name="department_id"
+              //              disabled={isLoading}
+            >
+              <option value="">Todos las departamentos</option>
+              {departments.map((department) => (
+                <option key={department.id} value={department.id}>
+                  {department.name}
+                </option>
+              ))}
+            </Form.Select>
+          </Grid>
+          <Grid item xs={3}>
+            <Form.Label>Código</Form.Label>
+            <Form.Control
+              type="text"
+              value={params.code}
+              onChange={handleDataChange}
+              name="code"
+            />
+          </Grid>
 
-        <Grid item xs={12}>
-          <Form.Label>Stock maximo</Form.Label>
-          <Form.Control
-            type="number"
-            value={params.max_stock}
-            onChange={handleDataChange}
-            name="max_stock"
-          />
-        </Grid>
+          <Grid item xs={3}>
+            <Form.Label>Stock maximo</Form.Label>
+            <Form.Control
+              type="number"
+              value={params.max_stock}
+              onChange={handleDataChange}
+              name="max_stock"
+            />
+          </Grid>
 
-        <Grid item xs={12} className="d-flex flex-column justify-content-end">
-          {storeProducts.length > 0 && (
-            <>{outOfStockPercentage.toFixed(0)}% de los productos esta vacio</>
-          )}
-
-          <CustomButton fullWidth onClick={fetchStoreProducts}>
-            <SearchIcon /> Buscar
-          </CustomButton>
-        </Grid>
-      </Grid>
-
-      <CustomTable
-        searcher={true}
-        progressPending={loading}
-        data={storeProducts}
-        columns={[
-          {
-            name: "Código",
-            selector: (row) => row.product.code,
-            grow: 2,
-          },
-          {
-            name: "Marca",
-            selector: (row) => row.product.brand_name,
-          },
-          {
-            name: "Nombre",
-            selector: (row) => row.product.name,
-            grow: 3,
-            wrap: true,
-          },
-
-          {
-            name: "Stock",
-            selector: (row) => row.stock,
-            sort: true
-          },
-          {
-            name: "Acciones",
-            grow: 4,
-            cell: (row) => (
+          <Grid item xs={12} className="d-flex flex-column justify-content-end">
+            {storeProducts.length > 0 && (
               <>
-                {user.role === "owner" && (
-                  <CustomButton onClick={() => handleOpenModal(row, true)}>
-                    Ajustar cantidad
-                  </CustomButton>
-                )}
-                <CustomButton onClick={() => handleOpenModal(row, false)}>
-                  Movimientos de stock
-                </CustomButton>
+                {outOfStockPercentage.toFixed(0)}% de los productos esta vacio
               </>
-            ),
-          },
-        ]}
-      />
+            )}
+
+            <CustomButton fullWidth onClick={fetchStoreProducts}>
+              <SearchIcon /> Buscar
+            </CustomButton>
+          </Grid>
+        </Grid>
+
+        <CustomTable
+          searcher={true}
+          progressPending={loading}
+          data={storeProducts}
+          columns={[
+            {
+              name: "Código",
+              selector: (row) => row.product.code,
+              grow: 2,
+            },
+            {
+              name: "Marca",
+              selector: (row) => row.product.brand_name,
+            },
+            {
+              name: "Nombre",
+              selector: (row) => row.product.name,
+              grow: 3,
+              wrap: true,
+            },
+
+            {
+              name: "Stock",
+              selector: (row) => row.stock,
+              sort: true,
+            },
+            {
+              name: "Acciones",
+              grow: 4,
+              cell: (row) => (
+                <>
+                  {user.role === "owner" && (
+                    <CustomButton onClick={() => handleOpenModal(row, true)}>
+                      Ajustar cantidad
+                    </CustomButton>
+                  )}
+                  <CustomButton onClick={() => handleOpenModal(row, false)}>
+                    Movimientos de stock
+                  </CustomButton>
+                </>
+              ),
+            },
+          ]}
+        />
+      </Grid>
     </Grid>
   );
 };

@@ -57,19 +57,19 @@ const CashFlowList = () => {
   };
 
   return (
-    <>
+    <Grid container spacing={2}>
       <CustomSpinner isLoading={loading}></CustomSpinner>
       <CashFlowModal onUpdateCashFlowList={handleUpdateCashFlowList} />
       <Grid className="custom-section">
         <h1>Movimientos en caja</h1>
 
         <Grid container>
-          <Grid item xs={12} className="d-flex flex-column justify-content-end">
+          <Grid item xs={4} className="d-flex flex-column justify-content-end">
             <CustomButton fullWidth={true} onClick={() => handleOpenModal()}>
               Crear movimiento
             </CustomButton>
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={4}>
             <Form>
               <Form.Label>Fecha de inicio</Form.Label>
               <Form.Control
@@ -82,7 +82,7 @@ const CashFlowList = () => {
             </Form>
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid item xs={4}>
             <Form>
               <Form.Label>Fecha de fin</Form.Label>
               <Form.Control
@@ -126,7 +126,7 @@ const CashFlowList = () => {
           ]}
         />
       </Grid>
-    </>
+    </Grid>
   );
 };
 

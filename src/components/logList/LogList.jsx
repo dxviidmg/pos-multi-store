@@ -82,7 +82,7 @@ const LogList = () => {
   };
 
   return (
-    <>
+    <Grid container spacing={2}>
       <CustomSpinner isLoading={loading}></CustomSpinner>
       <Grid className="custom-section">
         <h1>Logs</h1>
@@ -95,7 +95,7 @@ const LogList = () => {
 
 
 
-          <Grid item xs={12}>
+          <Grid item xs={3}>
             <Form.Label>Fecha</Form.Label>
             <Form.Control
               type="date"
@@ -106,7 +106,7 @@ const LogList = () => {
             />
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid item xs={3}>
             <Form.Label>Tiendas o almacenes</Form.Label>
             <Form.Select
               value={params.store_related}
@@ -122,7 +122,7 @@ const LogList = () => {
               ))}
             </Form.Select>
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={3}>
             <Form.Label>Marca</Form.Label>
             <Form.Select
               value={params.brand_id}
@@ -139,7 +139,7 @@ const LogList = () => {
             </Form.Select>
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid item xs={3}>
             <Form.Label>Movimientos</Form.Label>
             <Form.Select
               value={params.action}
@@ -209,7 +209,7 @@ const LogList = () => {
           ]}
         />
       </Grid>
-    </>
+    </Grid>
   );
 };
 
