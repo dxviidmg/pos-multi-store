@@ -88,8 +88,7 @@ const CustomTable = ({
       )}
 
       {/* 🔥 CONTENEDOR CONTROLADO */}
-      <Box
-      >
+      <Box sx={{ height: 600, width: "100%" }}>
         <DataGrid
           rows={rowsWithIds}
           columns={muiColumns}
@@ -114,7 +113,6 @@ const CustomTable = ({
           }}
           hideFooter={data.length <= 10}
           sx={{
-            width: "100%",
             "& .MuiDataGrid-columnHeaders": {
               backgroundColor: "#04356b",
               color: "#ffffff",
