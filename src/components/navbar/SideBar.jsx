@@ -97,8 +97,9 @@ const AppBar = styled(MuiAppBar, {
 })(({ theme, open }) => ({
   zIndex: theme.zIndex.drawer + 1,
   transition: theme.transitions.create(["width", "margin"]),
-  background: '#04356b',
-  boxShadow: '0 4px 20px 0 rgba(0,0,0,0.14), 0 7px 10px -5px rgba(4,53,107,0.4)',
+  background: 'linear-gradient(90deg, #1e3a5f 0%, #2c5282 100%)',
+  boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+  backdropFilter: 'blur(8px)',
   ...(open && {
     marginLeft: drawerWidth,
     width: `calc(100% - ${drawerWidth}px)`,
@@ -116,22 +117,24 @@ const Drawer = styled(MuiDrawer, {
     ...openedMixin(theme),
     "& .MuiDrawer-paper": {
       ...openedMixin(theme),
-      background: '#04356b',
+      background: 'linear-gradient(180deg, #1e3a5f 0%, #0d1f3c 100%)',
       color: '#fff',
       borderRight: 'none',
-      position: 'relative',
-      paddingBottom: '140px', // Space for user section
+      boxShadow: '4px 0 24px rgba(0,0,0,0.12)',
+      display: 'flex',
+      flexDirection: 'column',
     },
   }),
   ...(!open && {
     ...closedMixin(theme),
     "& .MuiDrawer-paper": {
       ...closedMixin(theme),
-      background: '#04356b',
+      background: 'linear-gradient(180deg, #1e3a5f 0%, #0d1f3c 100%)',
       color: '#fff',
       borderRight: 'none',
-      position: 'relative',
-      paddingBottom: '80px', // Space for user section when closed
+      boxShadow: '4px 0 24px rgba(0,0,0,0.12)',
+      display: 'flex',
+      flexDirection: 'column',
     },
   }),
 }));
@@ -146,14 +149,18 @@ export default function MainLayout() {
 
   const handleDrawerToggle = () => {
     setOpen(!open);
+    if (open) {
+      setOpenMenus({});
+    }
   };
 
   const handleToggleMenu = (label) => {
     setOpen(true)
-    setOpenMenus((prev) => ({
-      ...prev,
-      [label]: !prev[label],
-    }));
+    setOpenMenus((prev) => {
+      const newState = {};
+      newState[label] = !prev[label];
+      return newState;
+    });
   };
 
   const handleLogout = () => {
@@ -300,6 +307,36 @@ export default function MainLayout() {
           >
             {user.store_name || user.tenant_name}
           </Typography>
+
+          <Avatar 
+            sx={{ 
+              width: 36, 
+              height: 36,
+              bgcolor: 'rgba(255,255,255,0.2)',
+              fontSize: '0.9rem',
+              fontWeight: 'bold',
+              mr: 1
+            }}
+          >
+            {(user.store_name || user.tenant_name || 'U').charAt(0).toUpperCase()}
+          </Avatar>
+
+          {user.role === "owner" && user.store_id && (
+            <IconButton
+              color="inherit"
+              onClick={handleBack}
+              sx={{ mr: 1 }}
+            >
+              <ArrowBackIcon />
+            </IconButton>
+          )}
+
+          <IconButton
+            color="inherit"
+            onClick={handleLogout}
+          >
+            <LogoutIcon />
+          </IconButton>
         </Toolbar>
       </AppBar>
 
@@ -310,54 +347,63 @@ export default function MainLayout() {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            background: 'rgba(0,0,0,0.2)',
+            background: 'rgba(0,0,0,0.15)',
             minHeight: '64px !important',
+            borderBottom: '1px solid rgba(255,255,255,0.08)',
           }}
         >
-          <Typography
-            variant="subtitle1"
-            sx={{
-              fontWeight: 600,
-              textAlign: "center",
-              color: 'white',
-              letterSpacing: '0.5px',
-            }}
-          >
-            MENÚ
-          </Typography>
+          {open && (
+            <Typography
+              variant="h6"
+              sx={{
+                fontWeight: 700,
+                textAlign: "center",
+                color: 'white',
+                letterSpacing: '1px',
+                fontSize: '1.1rem',
+              }}
+            >
+              SmartVenta
+            </Typography>
+          )}
         </DrawerHeader>
 
-        <Divider sx={{ backgroundColor: 'rgba(255,255,255,0.1)' }} />
+        <Divider sx={{ backgroundColor: 'rgba(255,255,255,0.08)' }} />
 
-        <List sx={{ pt: 2 }}>
+        <List sx={{ pt: 1, px: 1, flex: 1, overflowY: 'auto', overflowX: 'hidden', '&::-webkit-scrollbar': { width: '6px' }, '&::-webkit-scrollbar-thumb': { backgroundColor: 'rgba(255,255,255,0.3)', borderRadius: '4px' }, '&::-webkit-scrollbar-track': { backgroundColor: 'rgba(0,0,0,0.1)' } }}>
           {menuItems.map((item, idx) => {
             if (item.hidden) return null;
 
             if (item.dropdown) {
               return (
                 <React.Fragment key={idx}>
-                  <ListItem disablePadding sx={{ mb: 0.5 }}>
+                  <ListItem disablePadding sx={{ mb: 0.4 }}>
                     <ListItemButton
                       onClick={() => handleToggleMenu(item.label)}
                       sx={{
-                        borderRadius: '12px',
-                        mx: 1,
+                        borderRadius: '10px',
+                        py: 0.96,
+                        transition: 'all 0.2s',
+                        justifyContent: open ? 'initial' : 'center',
                         '&:hover': {
-                          backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                          backgroundColor: 'rgba(255, 255, 255, 0.12)',
+                          transform: 'translateX(4px)',
                         }
                       }}
                     >
-                      <ListItemIcon sx={{ color: '#8fb3ff', minWidth: 40 }}>
+                      <ListItemIcon sx={{ color: '#90caf9', minWidth: open ? 40 : 0, justifyContent: 'center' }}>
                         {iconMap[item.label] || <DashboardIcon />}
                       </ListItemIcon>
                       <ListItemText 
                         primary={item.label}
                         primaryTypographyProps={{
-                          fontWeight: 500,
-                          fontSize: '0.95rem'
+                          fontWeight: 600,
+                          fontSize: '0.72rem',
+                          letterSpacing: '0.24px'
                         }}
+                        sx={{ opacity: open ? 1 : 0 }}
                       />
-                      {openMenus[item.label] ? <ExpandLess /> : <ExpandMore />}
+                      {open && (openMenus[item.label] ? <ExpandLess /> : <ExpandMore />)}
                     </ListItemButton>
                   </ListItem>
 
@@ -366,20 +412,22 @@ export default function MainLayout() {
                     timeout="auto"
                     unmountOnExit
                   >
-                    <List component="div" disablePadding>
+                    <List component="div" disablePadding sx={{ maxHeight: '300px', overflow: 'auto', '&::-webkit-scrollbar': { width: '4px' }, '&::-webkit-scrollbar-thumb': { backgroundColor: 'rgba(255,255,255,0.3)', borderRadius: '4px' } }}>
                       {item.dropdown.map((sub, i) =>
                         sub.divider ? (
-                          <Divider key={i} sx={{ ml: 4, backgroundColor: 'rgba(255,255,255,0.1)' }} />
+                          <Divider key={i} sx={{ ml: 4, my: 0.5, backgroundColor: 'rgba(255,255,255,0.08)' }} />
                         ) : sub.hidden ? null : (
                           <ListItemButton
                             key={i}
                             sx={{ 
-                              pl: 6,
+                              pl: 7,
+                              py: 0.64,
                               borderRadius: '8px',
-                              mx: 2,
-                              my: 0.3,
+                              my: 0.24,
+                              transition: 'all 0.2s',
                               '&:hover': {
                                 backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                                transform: 'translateX(4px)',
                               }
                             }}
                             onClick={() => navigate(sub.href)}
@@ -387,8 +435,9 @@ export default function MainLayout() {
                             <ListItemText 
                               primary={sub.label}
                               primaryTypographyProps={{
-                                fontSize: '0.875rem',
-                                color: 'rgba(255,255,255,0.8)'
+                                fontSize: '0.68rem',
+                                color: 'rgba(255,255,255,0.85)',
+                                fontWeight: 500
                               }}
                             />
                           </ListItemButton>
@@ -401,129 +450,37 @@ export default function MainLayout() {
             }
 
             return (
-              <ListItem key={idx} disablePadding sx={{ mb: 0.5 }}>
+              <ListItem key={idx} disablePadding sx={{ mb: 0.4 }}>
                 <ListItemButton 
                   onClick={() => navigate(item.href)}
                   sx={{
-                    borderRadius: '12px',
-                    mx: 1,
+                    borderRadius: '10px',
+                    py: 0.96,
+                    transition: 'all 0.2s',
+                    justifyContent: open ? 'initial' : 'center',
                     '&:hover': {
-                      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                      backgroundColor: 'rgba(255, 255, 255, 0.12)',
+                      transform: 'translateX(4px)',
                     }
                   }}
                 >
-                  <ListItemIcon sx={{ color: '#8fb3ff', minWidth: 40 }}>
+                  <ListItemIcon sx={{ color: '#90caf9', minWidth: open ? 40 : 0, justifyContent: 'center' }}>
                     {iconMap[item.label] || <DashboardIcon />}
                   </ListItemIcon>
                   <ListItemText 
                     primary={item.label}
                     primaryTypographyProps={{
-                      fontWeight: 500,
-                      fontSize: '0.95rem'
+                      fontWeight: 600,
+                      fontSize: '0.72rem',
+                      letterSpacing: '0.24px'
                     }}
+                    sx={{ opacity: open ? 1 : 0 }}
                   />
                 </ListItemButton>
               </ListItem>
             );
           })}
         </List>
-
-        {/* USER SECTION AT BOTTOM */}
-        <Box sx={{ 
-          position: 'absolute', 
-          bottom: 0, 
-          left: 0, 
-          right: 0,
-          p: 2,
-          borderTop: '1px solid rgba(255,255,255,0.1)'
-        }}>
-          <Box sx={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: 1.5,
-            mb: 2,
-            p: 1,
-            borderRadius: '12px',
-            backgroundColor: 'rgba(255,255,255,0.05)',
-            '&:hover': {
-              backgroundColor: 'rgba(255,255,255,0.08)',
-            }
-          }}>
-            <Avatar 
-              sx={{ 
-                width: 40, 
-                height: 40,
-                bgcolor: '#8fb3ff',
-                fontSize: '1rem',
-                fontWeight: 'bold'
-              }}
-            >
-              {(user.store_name || user.tenant_name || 'U').charAt(0).toUpperCase()}
-            </Avatar>
-            {open && (
-              <Box sx={{ flex: 1, minWidth: 0 }}>
-                <Typography 
-                  variant="body2" 
-                  sx={{ 
-                    fontWeight: 600,
-                    color: 'white',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap'
-                  }}
-                >
-                  {user.store_name || user.tenant_name}
-                </Typography>
-                <Typography 
-                  variant="caption" 
-                  sx={{ 
-                    color: 'rgba(255,255,255,0.6)',
-                    display: 'block'
-                  }}
-                >
-                  {user.role === 'owner' ? 'Propietario' : user.role === 'seller' ? 'Vendedor' : 'Usuario'}
-                </Typography>
-              </Box>
-            )}
-          </Box>
-
-          {open && (
-            <Box sx={{ display: 'flex', gap: 1 }}>
-              {user.role === "owner" && user.store_id && (
-                <IconButton
-                  size="small"
-                  onClick={handleBack}
-                  sx={{
-                    flex: 1,
-                    color: 'white',
-                    backgroundColor: 'rgba(255,255,255,0.1)',
-                    borderRadius: '8px',
-                    '&:hover': {
-                      backgroundColor: 'rgba(255,255,255,0.15)',
-                    }
-                  }}
-                >
-                  <ArrowBackIcon fontSize="small" />
-                </IconButton>
-              )}
-              <IconButton
-                size="small"
-                onClick={handleLogout}
-                sx={{
-                  flex: 1,
-                  color: 'white',
-                  backgroundColor: 'rgba(255,255,255,0.1)',
-                  borderRadius: '8px',
-                  '&:hover': {
-                    backgroundColor: 'rgba(255,255,255,0.15)',
-                  }
-                }}
-              >
-                <LogoutIcon fontSize="small" />
-              </IconButton>
-            </Box>
-          )}
-        </Box>
       </Drawer>
 
       {/* CONTENIDO */}
