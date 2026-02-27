@@ -34,14 +34,25 @@ import { MOVEMENT_TYPES, STORE_TYPES } from "../../constants";
 
 const Cart = () => {
   const store_type = getUserData().store_type;
-  const cart = useSelector((state) => state.cartReducer.cart);
-  const movementType = useSelector((state) => state.cartReducer.movementType);
   const dispatch = useDispatch();
   const [stores, setStores] = useState([]);
   const [selectedStore, setSelectedStore] = useState("");
   const [confirmedStore, setConfirmedStore] = useState("");
   const [loading, setLoading] = useState(false);
   const user = getUserData();
+  
+  // Usar multiCartReducer en lugar de cartReducer
+  const cart = useSelector((state) => {
+    const { carts, activeCartId } = state.multiCartReducer;
+    const activeCart = carts?.find(c => c.id === activeCartId) || carts?.[0];
+    return activeCart?.cart || [];
+  });
+  
+  const movementType = useSelector((state) => {
+    const { carts, activeCartId } = state.multiCartReducer;
+    const activeCart = carts?.find(c => c.id === activeCartId) || carts?.[0];
+    return activeCart?.movementType || "venta";
+  });
 
   useEffect(() => {
     const handleShortcut = (event) => {
@@ -93,7 +104,7 @@ const Cart = () => {
     return { totalProducts };
   }, [cart]);
 
-  const handleRemoveFromCart = (product) => dispatch(removeFromCart(product));
+  const handleRemoveFromCart = (product) => dispatch(removeFromCart(product.id));
 
   const handleStockOtherStores = async (product) => {
     const response = await getStockOtherStores(product.product.code);
@@ -107,8 +118,8 @@ const Cart = () => {
   const handleQuantityChangeToCart = (e, product) => {
     const newQuantity = Number(e.target.value);
   
-    // Cantidades inválidas
-    if (!newQuantity || newQuantity <= 0) return;
+    // Permitir campo vacío mientras el usuario escribe
+    if (e.target.value === "" || newQuantity <= 0) return;
   
     // --- Control de límites según movimiento ---
     const stockLimit =

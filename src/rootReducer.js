@@ -1,5 +1,6 @@
 import { combineReducers } from "redux";
 import cartReducer from "./redux/cart/cartReducer";
+import multiCartReducer from "./redux/cart/multiCartReducer";
 import StockModalReducer from "./redux/stockModal/StockModalReducer";
 import PaymentModalReducer from "./redux/paymentModal/PaymentModalReducer";
 import BrandModalReducer from "./redux/brandModal/BrandModalReducer";
@@ -14,6 +15,7 @@ import PaymentModal2Reducer from "./redux/paymentReservationModal/PaymentReserva
 
 const rootReducer = combineReducers({
   cartReducer,
+  multiCartReducer,
   StockModalReducer,
   PaymentModalReducer,
   BrandModalReducer,

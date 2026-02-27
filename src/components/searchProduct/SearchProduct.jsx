@@ -26,8 +26,18 @@ const SearchProduct = () => {
   const inputRef = useRef(null);
 
   const dispatch = useDispatch();
-  const cart = useSelector((state) => state.cartReducer.cart);
-  const movementType = useSelector((state) => state.cartReducer.movementType);
+  
+  const cart = useSelector((state) => {
+    const { carts, activeCartId } = state.multiCartReducer;
+    const activeCart = carts?.find(c => c.id === activeCartId) || carts?.[0];
+    return activeCart?.cart || [];
+  });
+  
+  const movementType = useSelector((state) => {
+    const { carts, activeCartId } = state.multiCartReducer;
+    const activeCart = carts?.find(c => c.id === activeCartId) || carts?.[0];
+    return activeCart?.movementType || "venta";
+  });
 
   const storeType = getUserData().store_type;
   const urlPrinter = getPrinterUrl();
