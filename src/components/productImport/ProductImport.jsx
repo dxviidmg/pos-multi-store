@@ -7,7 +7,6 @@ import {
 } from "../../api/products";
 import { Alert } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
-import { showSuccess, showError } from "../../utils/alerts";
 import Swal from "sweetalert2";
 import { chooseIcon } from "../commons/icons/Icons";
 import { useRef } from "react";

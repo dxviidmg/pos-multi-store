@@ -4,7 +4,6 @@ import { Image } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getBrands } from "../../api/brands";
-import { showSuccess, showError } from "../../utils/alerts";
 import Swal from "sweetalert2";
 import { hideProductModal } from "../../redux/productModal/ProductModalActions";
 import {

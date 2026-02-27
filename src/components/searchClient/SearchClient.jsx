@@ -5,7 +5,6 @@ import CustomButton from "../commons/customButton/CustomButton";
 import { useDispatch, useSelector } from "react-redux";
 import { Badge } from "react-bootstrap";
 import { addClientToCart } from "../../redux/cart/cartActions";
-import { showSuccess, showError } from "../../utils/alerts";
 import Swal from "sweetalert2";
 import { TextField } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";

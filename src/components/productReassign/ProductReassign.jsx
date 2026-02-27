@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 import { getBrands } from "../../api/brands";
-import { showSuccess, showError } from "../../utils/alerts";
 import Swal from "sweetalert2";
 import { getDepartments } from "../../api/departments";
 import CustomButton from "../commons/customButton/CustomButton";

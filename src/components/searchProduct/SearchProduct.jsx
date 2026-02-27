@@ -1,3 +1,4 @@
+import { logger } from "../../utils/logger";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import CustomTable from "../commons/customTable/CustomTable";
@@ -10,7 +11,6 @@ import {
   hideStockModal,
   showStockModal,
 } from "../../redux/stockModal/StockModalActions";
-import { showSuccess, showError } from "../../utils/alerts";
 import Swal from "sweetalert2";
 import { getPrinterUrl, getUserData } from "../../api/utils";
 import PrintIcon from "@mui/icons-material/Print";
@@ -70,7 +70,7 @@ const SearchProduct = () => {
         clearTimeout(timeoutId);
   
         if (err.name === "CanceledError") {
-          console.warn(`Intento ${attempts + 1}: la petición se canceló por timeout`);
+          logger.warn(`Intento ${attempts + 1}: la petición se canceló por timeout`);
           await delay(1000);
           attempts++;
   
@@ -79,7 +79,7 @@ const SearchProduct = () => {
             local['Error'] = local['Error'] || [];
             local['Error'].push(query);  // someValue es lo que quieras añadir
             localStorage.setItem("attempts", JSON.stringify(local));
-            console.error("❌ Se alcanzó el máximo de reintentos. Abortando.");
+            logger.error("❌ Se alcanzó el máximo de reintentos. Abortando.");
             return null;
           }
           // sigue el ciclo → reintenta
@@ -111,7 +111,7 @@ const SearchProduct = () => {
         setSearching(false);
 
         if (!fetchedData) {
-          console.log("No se pudo completar la búsqueda después de 2 intentos.");
+          logger.log("No se pudo completar la búsqueda después de 2 intentos.");
 
           Swal.fire({
             icon: "error",
@@ -135,7 +135,7 @@ const SearchProduct = () => {
         }
       } catch (err) {
         if (err.name === "AbortError") return; // petición cancelada, no hacer nada
-        console.error(err);
+        logger.error(err);
         setSearching(false);
       }
     },

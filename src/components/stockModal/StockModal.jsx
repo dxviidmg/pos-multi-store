@@ -1,3 +1,4 @@
+import { logger } from "../../utils/logger";
 import React, { useEffect, useState } from "react";
 import { Image } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,7 +15,7 @@ import { Grid, TextField } from "@mui/material";
 const StockModal = () => {
   const { showStockModal, storeProduct } = useSelector((state) => state.StockModalReducer);
 
-  console.log('showStockModal', showStockModal)
+  logger.log('showStockModal', showStockModal)
   const [requestedQuantities, setRequestedQuantities] = useState({});
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false)
@@ -60,7 +61,7 @@ const StockModal = () => {
       }
     } catch (error) {
       setIsLoading(false)
-      console.error("Error creating transfer:", error);
+      logger.error("Error creating transfer:", error);
     }
   };
 

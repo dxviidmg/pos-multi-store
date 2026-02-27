@@ -1,3 +1,4 @@
+import { logger } from "../../utils/logger";
 import React, { useMemo, useState, useEffect, useRef } from "react";
 import CustomModal from "../commons/customModal/CustomModal";
 import { useDispatch, useSelector } from "react-redux";
@@ -177,7 +178,7 @@ const PaymentModal = () => {
     setIsLoading(true);
 
     try {
-      console.log(payment)
+      logger.log(payment)
       if (
         movementType === "venta" &&
         (payment.paidWith === 0 || payment.change < 0)

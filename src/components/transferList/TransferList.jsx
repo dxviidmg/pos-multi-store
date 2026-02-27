@@ -3,7 +3,6 @@ import CustomTable from "../commons/customTable/CustomTable";
 import { calculateTimeAgo } from "../../utils/utils";
 import CustomButton from "../commons/customButton/CustomButton";
 import { showSuccess, showError } from "../../utils/alerts";
-import Swal from "sweetalert2";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 import { useTransfers, useDeleteTransfer } from "../../hooks/useQueries";

@@ -1,9 +1,9 @@
+import { logger } from "../../utils/logger";
 import React, { useEffect, useState } from "react";
 import CustomModal from "../commons/customModal/CustomModal";
 
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
-import { showSuccess, showError } from "../../utils/alerts";
 import Swal from "sweetalert2";
 import { hideProductModal } from "../../redux/productModal/ProductModalActions";
 import { updateProduct } from "../../api/products";
@@ -45,7 +45,7 @@ const SellerModal = ({ onUpdateSellerList }) => {
         const response = await getStores({ store_type: "T" });
         setStores(response.data);
       } catch (error) {
-        console.error("Error fetching brands:", error);
+        logger.error("Error fetching brands:", error);
       }
     };
 
@@ -72,7 +72,7 @@ const SellerModal = ({ onUpdateSellerList }) => {
         if (store) {
           const storeName = store.name.toLowerCase();
           const workersCount = store.workers_count + 1;
-          console.log(workersCount)
+          logger.log(workersCount)
           const username = `${short_name}.tienda.${storeName}.vendedor${workersCount}`;
           updatedData.worker.username = username;
         }

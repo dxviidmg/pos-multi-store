@@ -5,13 +5,11 @@ import { useDispatch, useSelector } from "react-redux";
 import CustomTable from "../commons/customTable/CustomTable";
 import { getStoreProductLogs, updateStoreProduct } from "../../api/products";
 import { getFormattedDateTime } from "../../utils/utils";
-import { showSuccess, showError } from "../../utils/alerts";
 import Swal from "sweetalert2";
 import CustomButton from "../commons/customButton/CustomButton";
 import { hideLogsModal } from "../../redux/logsModal/LogsModalActions";
 import { chooseIcon } from "../commons/icons/Icons";
 import { Grid, TextField } from "@mui/material";
-import HistoryIcon from "@mui/icons-material/History";
 import SaveIcon from "@mui/icons-material/Save";
 
 const INITIAL_FORM_DATA = {};

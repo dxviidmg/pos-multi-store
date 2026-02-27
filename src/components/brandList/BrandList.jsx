@@ -11,7 +11,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import CustomTooltip from "../commons/Tooltip";
 import { useBrands } from "../../hooks/useBrands";
 import Grid from "@mui/material/Grid";
-import { Checkbox, FormControlLabel, Box, Typography, Stack, Divider } from "@mui/material";
+import { Checkbox, FormControlLabel, Box, Stack, Divider } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 

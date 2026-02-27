@@ -1,3 +1,4 @@
+import { logger } from "../../utils/logger";
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import CustomTable from "../commons/customTable/CustomTable";
@@ -18,7 +19,7 @@ import {
 } from "../../redux/paymentModal/PaymentModalActions";
 import { getStores } from "../../api/stores";
 import { confirmTransfers, createDistribution } from "../../api/transfers";
-import { showSuccess, showAlert, showError } from "../../utils/alerts";
+import { showAlert } from "../../utils/alerts";
 import { addProducts, getStockOtherStores } from "../../api/products";
 import { getUserData } from "../../api/utils";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -29,6 +30,7 @@ import PaymentIcon from "@mui/icons-material/Payment";
 import SendIcon from "@mui/icons-material/Send";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import CalculateIcon from "@mui/icons-material/Calculate";
+import { MOVEMENT_TYPES, STORE_TYPES } from "../../constants";
 
 const Cart = () => {
   const store_type = getUserData().store_type;
@@ -67,14 +69,14 @@ const Cart = () => {
         const response = await getStores();
         setStores(response.data);
       } catch (error) {
-        console.error("Error fetching stores:", error);
+        logger.error("Error fetching stores:", error);
       }
     };
     fetchData();
 
     // Si el tipo de tienda es "A", se establece el movimiento como "distribucion"
-    if (store_type === "A" && movementType === "venta") {
-      dispatch(updateMovementType("distribucion"));
+    if (store_type === STORE_TYPES.WAREHOUSE && movementType === MOVEMENT_TYPES.SALE) {
+      dispatch(updateMovementType(MOVEMENT_TYPES.DISTRIBUTION));
     }
   }, [store_type, dispatch, movementType]);
 
@@ -455,18 +457,17 @@ const Cart = () => {
 
   const getColumns = () => {
     switch (movementType) {
-      case "venta":
-      case "apartado":
-        // Si es multi-store, usamos saleColumns2
+      case MOVEMENT_TYPES.SALE:
+      case MOVEMENT_TYPES.RESERVATION:
         return user.is_multi_store === true ? saleColumns2 : saleColumns;
 
-      case "traspaso":
+      case MOVEMENT_TYPES.TRANSFER:
         return transferColumns;
 
-      case "distribucion":
+      case MOVEMENT_TYPES.DISTRIBUTION:
         return distributionColumns;
 
-      case "agregar":
+      case MOVEMENT_TYPES.ADD_STOCK:
         return addToStockColumns;
 
       default:

@@ -17,7 +17,6 @@ import { exportToExcel } from "../../utils/utils";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 import { getBrands } from "../../api/brands";
 import { getUserData } from "../../api/utils";
-import { showSuccess, showError } from "../../utils/alerts";
 import Swal from "sweetalert2";
 import SearchIcon from "@mui/icons-material/Search";
 import EditIcon from "@mui/icons-material/Edit";
@@ -35,7 +34,6 @@ import {
   FormControlLabel,
   Box,
   Stack,
-  Divider
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DownloadIcon from "@mui/icons-material/Download";
