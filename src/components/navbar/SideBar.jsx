@@ -30,18 +30,36 @@ import ReceiptIcon from "@mui/icons-material/Receipt";
 import StoreIcon from "@mui/icons-material/Store";
 import EngineeringIcon from "@mui/icons-material/Engineering";
 import PaymentsIcon from "@mui/icons-material/Payments";
+import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
+import SyncIcon from "@mui/icons-material/Sync";
+import MiscellaneousServicesIcon from "@mui/icons-material/MiscellaneousServices";
 
 const iconMap = {
+  // Ventas y clientes
   Vender: <ShoppingCartIcon />,
-  Clientes: <PersonSearchIcon />,
-  Dashboard: <DashboardIcon />,
-  Distribuciones: <LocalShippingIcon />,
-  Traspasos: <LocalShippingIcon />,
-  Productos: <InventoryIcon />,
   Ventas: <ReceiptIcon />,
+  Clientes: <PersonSearchIcon />,
+  
+  // Dashboard y reportes
+  Dashboard: <DashboardIcon />,
+  
+  // Tienda y logística
+  Tienda: <LocalShippingIcon />,
+  Distribuciones: <LocalShippingIcon />,
+  Traspasos: <SwapHorizIcon />,
+  Movimientos: <SwapHorizIcon />,
+  
+  // Productos e inventario
+  Productos: <InventoryIcon />,
+  
+  // Administración
   Tiendas: <StoreIcon />,
   Vendedores: <EngineeringIcon />,
   Mensualidades: <PaymentsIcon />,
+  
+  // Servicios y sincronización
+  Servicios: <MiscellaneousServicesIcon />,
+  Sincronizar: <SyncIcon />,
 };
 
 const drawerWidth = 240;
@@ -140,8 +158,13 @@ export default function MainLayout() {
     T: [
       { label: "Vender", href: "/vender/" },
       { label: "Clientes", href: "/clientes/", hidden: user.role === "seller" },
-      { label: "Distribuciones", href: "/distribuciones/" },
-      { label: "Traspasos", href: "/traspasos/" },
+      {
+        label: "Movimientos",
+        dropdown: [
+          { label: "Distribuciones", href: "/distribuciones/" },
+          { label: "Traspasos", href: "/traspasos/" },
+        ],
+      },
       {
         label: "Productos",
         dropdown: [
@@ -179,8 +202,13 @@ export default function MainLayout() {
     ],
     A: [
       { label: "Distribuir", href: "/distribuir/" },
-      { label: "Distribuciones", href: "/distribuciones/" },
-      { label: "Traspasos", href: "/traspasos/" },
+      {
+        label: "Tienda",
+        dropdown: [
+          { label: "Distribuciones", href: "/distribuciones/" },
+          { label: "Traspasos", href: "/traspasos/" },
+        ],
+      },
     ],
     G: [
       {
