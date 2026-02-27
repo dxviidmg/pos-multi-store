@@ -27,6 +27,8 @@ const SearchProduct = () => {
 
   const dispatch = useDispatch();
   
+  const { carts, activeCartId } = useSelector((state) => state.multiCartReducer);
+  
   const cart = useSelector((state) => {
     const { carts, activeCartId } = state.multiCartReducer;
     const activeCart = carts?.find(c => c.id === activeCartId) || carts?.[0];
@@ -38,6 +40,16 @@ const SearchProduct = () => {
     const activeCart = carts?.find(c => c.id === activeCartId) || carts?.[0];
     return activeCart?.movementType || "venta";
   });
+  
+  // Calcular stock disponible considerando todos los carritos
+  const getAvailableStock = (productId, productStock) => {
+    const reservedInOtherCarts = carts.reduce((total, cart) => {
+      if (cart.id === activeCartId) return total;
+      const item = cart.cart.find(item => item.id === productId);
+      return total + (item ? item.quantity : 0);
+    }, 0);
+    return productStock - reservedInOtherCarts;
+  };
 
   const storeType = getUserData().store_type;
   const urlPrinter = getPrinterUrl();
@@ -189,7 +201,7 @@ const SearchProduct = () => {
     const existingProductIndex = cart.findIndex(
       (item) => item.id === storeProduct.id
     );
-    const quantity = storeProduct.quantity || 0;
+    const currentQuantityInCart = existingProductIndex !== -1 ? cart[existingProductIndex].quantity : 0;
 
     if (existingProductIndex === -1) {
       if (movementType === "agregar") {
@@ -199,34 +211,44 @@ const SearchProduct = () => {
           movementType === "traspaso"
             ? storeProduct.reserved_stock
             : storeProduct.available_stock;
-        if (quantity < stock) {
+        const availableStock = getAvailableStock(storeProduct.id, stock);
+        
+        if (availableStock >= 1) {
           dispatch(addToCart({ ...storeProduct, quantity: 1 }));
           setData([]);
           setQuery("");
         } else {
-          displayStockLimitAlert();
+          Swal.fire({
+            icon: "warning",
+            title: "Stock insuficiente",
+            text: `Este producto ya está reservado en otros carritos. Stock disponible: ${availableStock}`,
+          });
         }
       }
     } else {
-      const existingProduct = cart[existingProductIndex];
       const stock =
         movementType === "traspaso"
           ? storeProduct.reserved_stock
           : storeProduct.available_stock;
+      const availableStock = getAvailableStock(storeProduct.id, stock);
 
       if (movementType === "agregar") {
         dispatch(addToCart({ ...storeProduct, quantity: 1 }));
-      } else if (existingProduct.quantity < stock) {
+      } else if (currentQuantityInCart < availableStock) {
         dispatch(addToCart({ ...storeProduct, quantity: 1 }));
         setData([]);
         setQuery("");
       } else if (
         movementType === "venta" &&
-        existingProduct.quantity >= stock
+        currentQuantityInCart >= availableStock
       ) {
-        handleOpenModal(existingProduct);
+        handleOpenModal(cart[existingProductIndex]);
       } else {
-        displayStockLimitAlert();
+        Swal.fire({
+          icon: "warning",
+          title: "Stock insuficiente",
+          text: `Este producto ya está reservado en otros carritos. Stock disponible: ${availableStock}`,
+        });
       }
     }
   };

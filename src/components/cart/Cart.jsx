@@ -41,6 +41,8 @@ const Cart = () => {
   const [loading, setLoading] = useState(false);
   const user = getUserData();
   
+  const { carts, activeCartId } = useSelector((state) => state.multiCartReducer);
+  
   // Usar multiCartReducer en lugar de cartReducer
   const cart = useSelector((state) => {
     const { carts, activeCartId } = state.multiCartReducer;
@@ -53,6 +55,16 @@ const Cart = () => {
     const activeCart = carts?.find(c => c.id === activeCartId) || carts?.[0];
     return activeCart?.movementType || "venta";
   });
+  
+  // Calcular stock disponible considerando todos los carritos
+  const getAvailableStock = (productId, productStock) => {
+    const reservedInOtherCarts = carts.reduce((total, cart) => {
+      if (cart.id === activeCartId) return total;
+      const item = cart.cart.find(item => item.id === productId);
+      return total + (item ? item.quantity : 0);
+    }, 0);
+    return productStock - reservedInOtherCarts;
+  };
 
   useEffect(() => {
     const handleShortcut = (event) => {
@@ -129,7 +141,16 @@ const Cart = () => {
         ? product.available_stock
         : Infinity;
   
-    const quantity = Math.min(newQuantity, stockLimit);
+    // Verificar stock disponible considerando otros carritos
+    const availableStock = movementType === "agregar" ? Infinity : getAvailableStock(product.id, stockLimit);
+    
+    if (newQuantity > availableStock) {
+      dispatch(hideStockModal());
+      setTimeout(() => dispatch(showStockModal(product)), 1);
+      return;
+    }
+    
+    const quantity = Math.min(newQuantity, availableStock);
   
     // --- Mostrar modal si se excede el stock (excepto agregar) ---
     if (movementType !== "agregar" && newQuantity > product.available_stock) {

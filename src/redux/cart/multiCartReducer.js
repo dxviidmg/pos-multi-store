@@ -59,6 +59,15 @@ const updateCartWithPrice = (cart, clientSelected) => {
   }));
 };
 
+// Función para calcular stock reservado de un producto en todos los carritos
+const getReservedStock = (carts, productId, excludeCartId = null) => {
+  return carts.reduce((total, cart) => {
+    if (cart.id === excludeCartId) return total;
+    const item = cart.cart.find(item => item.id === productId);
+    return total + (item ? item.quantity : 0);
+  }, 0);
+};
+
 const multiCartReducer = (state = initialState, action) => {
   const activeCart = state.carts.find(c => c.id === state.activeCartId);
   
@@ -122,14 +131,33 @@ const multiCartReducer = (state = initialState, action) => {
         (item) => item.id === action.payload.id
       );
 
+      // Calcular stock ya reservado en otros carritos
+      const reservedInOtherCarts = getReservedStock(state.carts, action.payload.id, state.activeCartId);
+      const availableStock = action.payload.available_stock - reservedInOtherCarts;
+
       let updatedCart;
       if (existingProductIndex !== -1) {
+        const currentQuantity = activeCart.cart[existingProductIndex].quantity;
+        const newQuantity = currentQuantity + action.payload.quantity;
+        
+        // Verificar que no exceda el stock disponible
+        if (newQuantity > availableStock) {
+          console.warn(`Stock insuficiente. Disponible: ${availableStock}, Intentando agregar: ${newQuantity}`);
+          return state; // No agregar si excede el stock
+        }
+        
         updatedCart = activeCart.cart.map((item, index) =>
           index === existingProductIndex
-            ? { ...item, quantity: item.quantity + action.payload.quantity }
+            ? { ...item, quantity: newQuantity }
             : item
         );
       } else {
+        // Verificar stock disponible para nuevo producto
+        if (action.payload.quantity > availableStock) {
+          console.warn(`Stock insuficiente. Disponible: ${availableStock}, Intentando agregar: ${action.payload.quantity}`);
+          return state;
+        }
+        
         const clientSelected = aClientIsSelected(activeCart.client);
         const product_price = calculateProductPrice(
           action.payload.quantity,
@@ -184,6 +212,18 @@ const multiCartReducer = (state = initialState, action) => {
     }
 
     case UPDATE_QUANTITY_IN_CART: {
+      // Calcular stock reservado en otros carritos
+      const reservedInOtherCarts = getReservedStock(state.carts, action.payload.product.id, state.activeCartId);
+      const availableStock = action.payload.product.available_stock - reservedInOtherCarts;
+      
+      // Limitar la cantidad al stock disponible
+      const requestedQuantity = action.payload.newQuantity;
+      if (requestedQuantity > availableStock) {
+        console.warn(`Stock insuficiente. Disponible: ${availableStock}, Solicitado: ${requestedQuantity}`);
+        // Permitir actualizar hasta el máximo disponible
+        action.payload.newQuantity = Math.max(1, availableStock);
+      }
+      
       const updatedCart = activeCart.cart.map((item) => {
         if (item.id === action.payload.product.id) {
           const clientSelected = aClientIsSelected(activeCart.client);
