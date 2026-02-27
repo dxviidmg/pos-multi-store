@@ -230,28 +230,32 @@ const Cart = () => {
   };
 
   const commonColumns = [
-    { name: "Código", selector: (row) => row.product.code },
+    { name: "Código", field: "code", selector: (row) => row.product.code },
     {
       name: "Marca",
+      field: "brand",
       selector: (row) => row.product.brand_name,
     },
     {
       name: "Nombre",
+      field: "name",
       selector: (row) => row.product.name,
       grow: 3,
       wrap: true,
     },
-    { name: "Stock", selector: (row) => row.available_stock },
+    { name: "Stock", field: "stock", selector: (row) => row.available_stock },
   ];
 
   const commonColumns2 = [
-    { name: "Código", selector: (row) => row.product.code },
+    { name: "Código", field: "code", selector: (row) => row.product.code },
     {
       name: "Marca",
+      field: "brand",
       selector: (row) => row.product.brand_name,
     },
     {
       name: "Nombre",
+      field: "name",
       selector: (row) => row.product.name,
       grow: 3,
       wrap: true,
@@ -262,23 +266,26 @@ const Cart = () => {
     ...commonColumns2,
     {
       name: "Cantidad",
+      field: "quantity",
       selector: (row) => (
         <TextField size="small" fullWidth type="number"
           value={row.quantity}
-          onChange={(e) => handleQuantityChangeToCart(e, row)} // Implementa esta función para manejar el cambio
-          min="1" // Opcional, para establecer un valor mínimo
+          onChange={(e) => handleQuantityChangeToCart(e, row)}
+          min="1"
           max={row.stock}
         />
       ),
     },
-    { name: "Stock", selector: (row) => row.available_stock },
-    { name: "Precio", selector: (row) => `$${row.product_price.toFixed(2)}` },
+    { name: "Stock", field: "available_stock", selector: (row) => row.available_stock },
+    { name: "Precio", field: "price", selector: (row) => `$${row.product_price.toFixed(2)}` },
     {
       name: "Total x prod",
+      field: "total",
       selector: (row) => `$${(row.product_price * row.quantity).toFixed(2)}`,
     },
     {
       name: "Precio mayorista",
+      field: "wholesale",
       selector: (row) => (
         <Checkbox size="small"
           type="switch"
@@ -291,6 +298,7 @@ const Cart = () => {
     },
     {
       name: "Borrar",
+      field: "delete",
       selector: (row) => (
         <CustomButton onClick={() => handleRemoveFromCart(row)}>
           <DeleteIcon />
