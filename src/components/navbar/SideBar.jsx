@@ -91,6 +91,8 @@ const AppBar = styled(MuiAppBar, {
 })(({ theme, open }) => ({
   zIndex: theme.zIndex.drawer + 1,
   transition: theme.transitions.create(["width", "margin"]),
+  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+  boxShadow: '0 4px 20px 0 rgba(0,0,0,0.14), 0 7px 10px -5px rgba(102,126,234,0.4)',
   ...(open && {
     marginLeft: drawerWidth,
     width: `calc(100% - ${drawerWidth}px)`,
@@ -106,11 +108,21 @@ const Drawer = styled(MuiDrawer, {
   boxSizing: "border-box",
   ...(open && {
     ...openedMixin(theme),
-    "& .MuiDrawer-paper": openedMixin(theme),
+    "& .MuiDrawer-paper": {
+      ...openedMixin(theme),
+      background: 'linear-gradient(180deg, #2c3e50 0%, #34495e 100%)',
+      color: '#fff',
+      borderRight: 'none',
+    },
   }),
   ...(!open && {
     ...closedMixin(theme),
-    "& .MuiDrawer-paper": closedMixin(theme),
+    "& .MuiDrawer-paper": {
+      ...closedMixin(theme),
+      background: 'linear-gradient(180deg, #2c3e50 0%, #34495e 100%)',
+      color: '#fff',
+      borderRight: 'none',
+    },
   }),
 }));
 
@@ -251,73 +263,128 @@ export default function MainLayout() {
 
       {/* APP BAR */}
       <AppBar position="fixed" open={open}>
-        <Toolbar>
+        <Toolbar sx={{ minHeight: '70px !important' }}>
           <IconButton
             color="inherit"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{ mr: 2 }}
+            sx={{ 
+              mr: 2,
+              backgroundColor: 'rgba(255,255,255,0.1)',
+              '&:hover': {
+                backgroundColor: 'rgba(255,255,255,0.2)',
+              }
+            }}
           >
             <MenuIcon />
           </IconButton>
 
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            SmartVenta
+          <Typography 
+            variant="h5" 
+            sx={{ 
+              flexGrow: 1, 
+              fontWeight: 700,
+              letterSpacing: '0.5px',
+              textShadow: '2px 2px 4px rgba(0,0,0,0.2)'
+            }}
+          >
+            💼 SmartVenta
           </Typography>
 
-          <Typography sx={{ mr: 2 }}>
-            {user.store_name || user.tenant_name}
-          </Typography>
-
-          {user.role === "owner" && user.store_id && (
-            <Typography sx={{ mr: 2, cursor: "pointer" }} onClick={handleBack}>
-              Regresar
+          <Box sx={{ 
+            display: 'flex', 
+            gap: 2, 
+            alignItems: 'center',
+            backgroundColor: 'rgba(255,255,255,0.1)',
+            padding: '8px 16px',
+            borderRadius: '20px',
+          }}>
+            <Typography sx={{ fontWeight: 500 }}>
+              {user.store_name || user.tenant_name}
             </Typography>
-          )}
 
-          <Typography sx={{ cursor: "pointer" }} onClick={handleLogout}>
-            Salir
-          </Typography>
+            {user.role === "owner" && user.store_id && (
+              <IconButton 
+                size="small" 
+                onClick={handleBack}
+                sx={{ 
+                  color: 'white',
+                  '&:hover': { backgroundColor: 'rgba(255,255,255,0.2)' }
+                }}
+              >
+                ↩️
+              </IconButton>
+            )}
+
+            <Divider orientation="vertical" flexItem sx={{ backgroundColor: 'rgba(255,255,255,0.3)', mx: 1 }} />
+
+            <IconButton 
+              onClick={handleLogout}
+              sx={{ 
+                color: 'white',
+                '&:hover': { backgroundColor: 'rgba(255,255,255,0.2)' }
+              }}
+            >
+              🚪
+            </IconButton>
+          </Box>
         </Toolbar>
       </AppBar>
 
       {/* DRAWER */}
       <Drawer variant="permanent" open={open}>
-      <DrawerHeader
-  sx={{
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  }}
->
-  <Typography
-    variant="h6"
-    sx={{
-      fontWeight: 600,
-      textAlign: "center",
-    }}
-  >
-    Menú
-  </Typography>
-</DrawerHeader>
+        <DrawerHeader
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            minHeight: '70px !important',
+          }}
+        >
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: 700,
+              textAlign: "center",
+              color: 'white',
+              letterSpacing: '1px',
+            }}
+          >
+            📋 MENÚ
+          </Typography>
+        </DrawerHeader>
 
-        <Divider />
+        <Divider sx={{ backgroundColor: 'rgba(255,255,255,0.1)' }} />
 
-        <List>
+        <List sx={{ pt: 2 }}>
           {menuItems.map((item, idx) => {
             if (item.hidden) return null;
 
             if (item.dropdown) {
               return (
                 <React.Fragment key={idx}>
-                  <ListItem disablePadding>
+                  <ListItem disablePadding sx={{ mb: 0.5 }}>
                     <ListItemButton
                       onClick={() => handleToggleMenu(item.label)}
+                      sx={{
+                        borderRadius: '12px',
+                        mx: 1,
+                        '&:hover': {
+                          backgroundColor: 'rgba(102, 126, 234, 0.2)',
+                        }
+                      }}
                     >
-                      <ListItemIcon>
+                      <ListItemIcon sx={{ color: '#a8b3ff', minWidth: 40 }}>
                         {iconMap[item.label] || <DashboardIcon />}
                       </ListItemIcon>
-                      <ListItemText primary={item.label} />
+                      <ListItemText 
+                        primary={item.label}
+                        primaryTypographyProps={{
+                          fontWeight: 500,
+                          fontSize: '0.95rem'
+                        }}
+                      />
                       {openMenus[item.label] ? <ExpandLess /> : <ExpandMore />}
                     </ListItemButton>
                   </ListItem>
@@ -330,14 +397,28 @@ export default function MainLayout() {
                     <List component="div" disablePadding>
                       {item.dropdown.map((sub, i) =>
                         sub.divider ? (
-                          <Divider key={i} sx={{ ml: 4 }} />
+                          <Divider key={i} sx={{ ml: 4, backgroundColor: 'rgba(255,255,255,0.1)' }} />
                         ) : sub.hidden ? null : (
                           <ListItemButton
                             key={i}
-                            sx={{ pl: 6 }}
+                            sx={{ 
+                              pl: 6,
+                              borderRadius: '8px',
+                              mx: 2,
+                              my: 0.3,
+                              '&:hover': {
+                                backgroundColor: 'rgba(102, 126, 234, 0.15)',
+                              }
+                            }}
                             onClick={() => navigate(sub.href)}
                           >
-                            <ListItemText primary={sub.label} />
+                            <ListItemText 
+                              primary={sub.label}
+                              primaryTypographyProps={{
+                                fontSize: '0.875rem',
+                                color: 'rgba(255,255,255,0.8)'
+                              }}
+                            />
                           </ListItemButton>
                         )
                       )}
@@ -348,12 +429,27 @@ export default function MainLayout() {
             }
 
             return (
-              <ListItem key={idx} disablePadding>
-                <ListItemButton onClick={() => navigate(item.href)}>
-                  <ListItemIcon>
+              <ListItem key={idx} disablePadding sx={{ mb: 0.5 }}>
+                <ListItemButton 
+                  onClick={() => navigate(item.href)}
+                  sx={{
+                    borderRadius: '12px',
+                    mx: 1,
+                    '&:hover': {
+                      backgroundColor: 'rgba(102, 126, 234, 0.2)',
+                    }
+                  }}
+                >
+                  <ListItemIcon sx={{ color: '#a8b3ff', minWidth: 40 }}>
                     {iconMap[item.label] || <DashboardIcon />}
                   </ListItemIcon>
-                  <ListItemText primary={item.label} />
+                  <ListItemText 
+                    primary={item.label}
+                    primaryTypographyProps={{
+                      fontWeight: 500,
+                      fontSize: '0.95rem'
+                    }}
+                  />
                 </ListItemButton>
               </ListItem>
             );
