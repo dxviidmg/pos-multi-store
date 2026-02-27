@@ -13,9 +13,10 @@ import { useDispatch } from "react-redux";
 import StoreProductLogsModal from "../storeproductlogsModal/StoreProductLogsModal";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 import { getBrands } from "../apis/brands";
-import { SearchIcon } from "../commons/icons/Icons";
+import SearchIcon from "@mui/icons-material/Search";
 import { getDepartments } from "../apis/departments";
 import { Grid, TextField, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
+import DownloadIcon from "@mui/icons-material/Download";
 
 const StoreProductList = () => {
   const dispatch = useDispatch();
@@ -109,8 +110,8 @@ const StoreProductList = () => {
   };
 
   return (
-    <>
-      <Grid container spacing={2}>
+    
+      <Grid container>
       <Grid item xs={12} className="custom-section">
         <CustomSpinner isLoading={loading} />
         <StoreProductLogsModal
@@ -118,7 +119,7 @@ const StoreProductList = () => {
         />
         <h1>Inventario</h1>
 
-        <CustomButton onClick={handleDownload}>
+        <CustomButton onClick={handleDownload} startIcon={<DownloadIcon />}>
           Descargar inventario
         </CustomButton>
 
@@ -180,8 +181,8 @@ const StoreProductList = () => {
               </>
             )}
 
-            <CustomButton fullWidth onClick={fetchStoreProducts}>
-              <SearchIcon /> Buscar
+            <CustomButton fullWidth onClick={fetchStoreProducts} startIcon={<SearchIcon />}>
+              Buscar
             </CustomButton>
           </Grid>
         </Grid>
@@ -232,7 +233,7 @@ const StoreProductList = () => {
         />
       </Grid>
     </Grid>
-  </>
+  
   );
 };
 

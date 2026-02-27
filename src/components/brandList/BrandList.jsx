@@ -7,7 +7,7 @@ import { useDispatch } from "react-redux";
 import { showBrandModal } from "../redux/brandModal/BrandModalActions";
 import Swal from "sweetalert2";
 import { getUserData } from "../apis/utils";
-import { EditIcon } from "../commons/icons/Icons";
+import EditIcon from "@mui/icons-material/Edit";
 import CustomTooltip from "../commons/Tooltip";
 import { useBrands } from "../../hooks/useBrands";
 import Grid from "@mui/material/Grid";

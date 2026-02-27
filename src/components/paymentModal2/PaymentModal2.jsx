@@ -9,6 +9,7 @@ import Swal from "sweetalert2";
 import { handlePrintTicket } from "../utils/utils";
 import { getUserData } from "../apis/utils";
 import { Grid, TextField, Checkbox, FormLabel } from "@mui/material";
+import PaymentIcon from "@mui/icons-material/Payment";
 
 const INITIAL_PAYMENT_STATE = { paidWith: 0, change: 0 };
 
@@ -208,6 +209,7 @@ const PaymentModal2 = ({ onUpdateSaleList }) => {
               disabled={handleDisableButton()}
               fullWidth
               onClick={() => handleCreatePayment(true)}
+              startIcon={<PaymentIcon />}
             >
               Cobrar con ticket (Ctrl + G)
             </CustomButton>
@@ -217,6 +219,7 @@ const PaymentModal2 = ({ onUpdateSaleList }) => {
               disabled={handleDisableButton()}
               fullWidth
               onClick={() => handleCreatePayment()}
+              startIcon={<PaymentIcon />}
             >
               Cobrar sin ticket (Ctrl + F)
             </CustomButton>

@@ -3,7 +3,9 @@ import CustomTable from "../commons/customTable/customTable";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getFormattedDateTime } from "../utils/utils";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
-import { CheckIcon, EditIcon, RemoveInCartIcon } from "../commons/icons/Icons";
+import ChecklistIcon from "@mui/icons-material/Checklist";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import CustomTooltip from "../commons/Tooltip";
 import {
   confirmDistribution,
@@ -16,6 +18,8 @@ import Swal from "sweetalert2";
 import { getUserData } from "../apis/utils";
 import Grid from "@mui/material/Grid";
 import { TextField } from "@mui/material";
+import SaveIcon from "@mui/icons-material/Save";
+import SendIcon from "@mui/icons-material/Send";
 
 
 const DistributionList = () => {
@@ -127,7 +131,7 @@ const DistributionList = () => {
               cell: (row) => (
                 <CustomTooltip text={"Ver productos"}>
                   <CustomButton onClick={() => handleOpenModal(row)}>
-                    <CheckIcon />
+                    <ChecklistIcon />
                   </CustomButton>
                 </CustomTooltip>
               ),
@@ -139,7 +143,7 @@ const DistributionList = () => {
       {Object.keys(distributionSelected).length !== 0 && (
         <Grid item xs={12} className="custom-section">
           <h1>Distribución #{distributionSelected.id}</h1>
-          <CustomButton fullWidth onClick={() => handleSubmit()}>
+          <CustomButton fullWidth onClick={() => handleSubmit()} startIcon={<SendIcon />}>
             Confirmar distribución
           </CustomButton>
           <CustomTable
@@ -174,7 +178,7 @@ const DistributionList = () => {
                 cell: (row) =>
                   getUserData().role === "owner" ? (
                     editingRow === row.product_code ? (
-                      <CustomButton onClick={() => handleSaveClick(row)}>
+                      <CustomButton onClick={() => handleSaveClick(row)} startIcon={<SaveIcon />}>
                         Guardar
                       </CustomButton>
                     ) : (
@@ -187,7 +191,7 @@ const DistributionList = () => {
               
                         <CustomTooltip text="Borrar producto">
                           <CustomButton onClick={() => handleDeleteTransfer(row)}>
-                            <RemoveInCartIcon />
+                            <DeleteIcon />
                           </CustomButton>
                         </CustomTooltip>
                       </>

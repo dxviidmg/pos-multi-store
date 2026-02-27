@@ -21,10 +21,14 @@ import { confirmTransfers, createDistribution } from "../apis/transfers";
 import Swal from "sweetalert2";
 import { addProducts, getStockOtherStores } from "../apis/products";
 import { getUserData } from "../apis/utils";
-import { RemoveInCartIcon } from "../commons/icons/Icons";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 import { hideStockModal, showStockModal } from "../redux/stockModal/StockModalActions";
 import { Grid, TextField, Checkbox, Select, MenuItem } from "@mui/material";
+import PaymentIcon from "@mui/icons-material/Payment";
+import SendIcon from "@mui/icons-material/Send";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
+import CalculateIcon from "@mui/icons-material/Calculate";
 
 const Cart = () => {
   const store_type = getUserData().store_type;
@@ -291,7 +295,7 @@ const Cart = () => {
       name: "Borrar",
       selector: (row) => (
         <CustomButton onClick={() => handleRemoveFromCart(row)}>
-          <RemoveInCartIcon />
+          <DeleteIcon />
         </CustomButton>
       ),
     },
@@ -332,7 +336,7 @@ const Cart = () => {
       name: "Borrar",
       selector: (row) => (
         <CustomButton onClick={() => handleRemoveFromCart(row)}>
-          <RemoveInCartIcon />
+          <DeleteIcon />
         </CustomButton>
       ),
     },
@@ -368,7 +372,7 @@ const Cart = () => {
       name: "Borrar",
       selector: (row) => (
         <CustomButton onClick={() => handleRemoveFromCart(row)}>
-          <RemoveInCartIcon />
+          <DeleteIcon />
         </CustomButton>
       ),
     },
@@ -403,7 +407,7 @@ const Cart = () => {
               ))}
             </ul>
           ) : (
-            <CustomButton onClick={() => handleStockOtherStores(row)}>
+            <CustomButton onClick={() => handleStockOtherStores(row)} startIcon={<CalculateIcon />}>
               Contar
             </CustomButton>
           )}
@@ -415,7 +419,7 @@ const Cart = () => {
       name: "Borrar",
       selector: (row) => (
         <CustomButton onClick={() => handleRemoveFromCart(row)}>
-          <RemoveInCartIcon />
+          <DeleteIcon />
         </CustomButton>
       ),
     },
@@ -437,7 +441,7 @@ const Cart = () => {
       name: "Borrar",
       selector: (row) => (
         <CustomButton onClick={() => handleRemoveFromCart(row)}>
-          <RemoveInCartIcon />
+          <DeleteIcon />
         </CustomButton>
       ),
     },
@@ -482,7 +486,7 @@ const Cart = () => {
                   <h1>Total: ${total.toFixed(2)}</h1>
                 </Grid>
                 <Grid item xs={12} md={4}>
-                  <CustomButton fullWidth onClick={handleOpenModal}>
+                  <CustomButton fullWidth onClick={handleOpenModal} startIcon={<PaymentIcon />}>
                     Cobrar (Ctrl + D)
                   </CustomButton>
                 </Grid>
@@ -526,6 +530,7 @@ const Cart = () => {
                     }
                     disabled={!selectedStore || selectedStore !== confirmedStore}
                     fullWidth
+                    startIcon={<SendIcon />}
                   >
                     {movementType === "traspaso" ? "Transferir" : "Distribuir"}
                   </CustomButton>
@@ -540,6 +545,7 @@ const Cart = () => {
                   <CustomButton
                     fullWidth
                     onClick={() => handleAddToStock(cart)}
+                    startIcon={<AddCircleIcon />}
                   >
                     Añadir
                   </CustomButton>

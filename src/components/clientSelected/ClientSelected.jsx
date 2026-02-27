@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
 import { removeClientfromCart } from "../redux/cart/cartActions";
 import { Grid, TextField, Box } from "@mui/material";
+import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
 
 
 const ClientSelected = () => {
@@ -61,7 +62,7 @@ const ClientSelected = () => {
 
       <Grid item xs={12} md={3}>
         <Box>
-          <CustomButton fullWidth={true} onClick={() => dispatch(removeClientfromCart())}>
+          <CustomButton fullWidth={true} onClick={() => dispatch(removeClientfromCart())} startIcon={<PersonRemoveIcon />}>
           Borrar 
           (Ctrl + E)
           </CustomButton>

@@ -16,6 +16,7 @@ import CustomButton from "../commons/customButton/CustomButton";
 import { chooseIcon } from "../commons/icons/Icons";
 import { getStores } from "../apis/stores";
 import { Grid, TextField, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
+import DownloadIcon from "@mui/icons-material/Download";
 
 const LogList = () => {
   const today = getFormattedDate();
@@ -84,11 +85,11 @@ const LogList = () => {
   return (
     <>
       <CustomSpinner isLoading={loading}></CustomSpinner>
-      <Grid container spacing={2}>
+      <Grid container>
       <Grid item xs={12} className="custom-section">
         <h1>Logs</h1>
 
-        <CustomButton onClick={handleDownload} disabled={logs.length === 0}>
+        <CustomButton onClick={handleDownload} disabled={logs.length === 0} startIcon={<DownloadIcon />}>
           Descargar logs
         </CustomButton>
 

@@ -3,9 +3,13 @@ import CustomTable from "../commons/customTable/customTable";
 import CustomButton from "../commons/customButton/CustomButton";
 import { importSales, importSalesValidation } from "../apis/sales";
 import Swal from "sweetalert2";
-import { SuccessIcon, ErrorIcon } from "../commons/icons/Icons";
+import CancelIcon from "@mui/icons-material/Cancel";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { Grid, styled } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import PublishIcon from "@mui/icons-material/Publish";
+import DownloadIcon from "@mui/icons-material/Download";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -109,11 +113,11 @@ const SaleImport = () => {
 
   return (
     <>
-      <Grid container spacing={2}>
+      <Grid>
       <Grid item xs={12} className="custom-section">
         <h1>Importar ventas</h1>
         <Grid container spacing={2}>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={3}>
             <CustomButton
               component="label"
               fullWidth
@@ -129,17 +133,18 @@ const SaleImport = () => {
             </CustomButton>
           </Grid>
 
-          <Grid item xs={12} md={2}>
+          <Grid item xs={12} md={3}>
             <CustomButton
               onClick={handleValidation}
               disabled={formData.file === ""}
               fullWidth
+              startIcon={<CheckCircleIcon />}
             >
               Validar
             </CustomButton>
           </Grid>
 
-          <Grid item xs={12} md={2}>
+          <Grid item xs={12} md={3}>
             <CustomButton
               onClick={handleImport}
               disabled={
@@ -147,21 +152,23 @@ const SaleImport = () => {
                 sales.some((item) => item.status !== "Exitoso")
               }
               fullWidth
+              startIcon={<PublishIcon />}
             >
               Importar
             </CustomButton>
           </Grid>
 
-          <Grid item xs={12} md={2}>
-            <CustomButton href={URL_TEMPLATE} fullWidth>
+          <Grid item xs={12} md={3}>
+            <CustomButton href={URL_TEMPLATE} fullWidth startIcon={<DownloadIcon />}>
               Descargar plantilla
             </CustomButton>
           </Grid>
 
-          <Grid item xs={12} md={2}>
+          <Grid item xs={12} md={3}>
             <CustomButton
               onClick={() => setShowExample(!showExample)}
               fullWidth
+              startIcon={<VisibilityIcon />}
             >
               Ver Ejemplo
             </CustomButton>
@@ -221,10 +228,10 @@ const SaleImport = () => {
               name: "Status",
               selector: (row) =>
                 row.status === "Exitoso" ? (
-                  <SuccessIcon />
+                  <CheckCircleIcon color="success" />
                 ) : (
                   <>
-                    <ErrorIcon /> {row.status}
+                    <CancelIcon color="error" /> {row.status}
                   </>
                 ),
             },

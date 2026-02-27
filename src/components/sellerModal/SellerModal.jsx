@@ -10,6 +10,7 @@ import { getStores } from "../apis/stores";
 import { getUserData } from "../apis/utils";
 import { createSeller } from "../apis/sellers";
 import { Grid, TextField, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
+import SaveIcon from "@mui/icons-material/Save";
 
 const SellerModal = ({ onUpdateSellerList }) => {
   const user = getUserData();
@@ -182,6 +183,7 @@ const SellerModal = ({ onUpdateSellerList }) => {
               onClick={(e) => handleProductSubmit(e)}
               disabled={isFormIncomplete()}
               marginTop="10px"
+              startIcon={<SaveIcon />}
             >
               {formData.id ? "Actualizar" : "Crear"} vendedor
             </CustomButton>

@@ -7,6 +7,7 @@ import { hideClientModal } from "../redux/clientModal/ClientModalActions";
 import { useDiscounts } from "../../hooks/useDiscounts";
 import { useCreateClient, useUpdateClient } from "../../hooks/useClientMutations";
 import { Grid, TextField, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import SaveIcon from "@mui/icons-material/Save";
 
 const INITIAL_FORM_DATA = {
   first_name: "",
@@ -110,6 +111,7 @@ const ClientModal = ({ onUpdateClientList }) => {
             onClick={handleSaveClient}
             disabled={isFormIncomplete}
             marginTop="10px"
+            startIcon={<SaveIcon />}
           >
             {formData.id ? "Actualizar" : "Crear"} cliente
           </CustomButton>

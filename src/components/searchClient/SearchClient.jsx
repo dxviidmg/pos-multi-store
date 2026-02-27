@@ -7,6 +7,7 @@ import { Badge } from "react-bootstrap";
 import { addClientToCart } from "../redux/cart/cartActions";
 import Swal from "sweetalert2";
 import { TextField } from "@mui/material";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 const SearchClient = () => {
   const client = useSelector((state) => state.cartReducer.client);
@@ -121,7 +122,7 @@ const SearchClient = () => {
             name: "Acciones",
             selector: (row) => (
               <div>
-                <CustomButton onClick={() => handleSelectClient(row)}>
+                <CustomButton onClick={() => handleSelectClient(row)} startIcon={<CheckCircleIcon />}>
                   Seleccionar
                 </CustomButton>
               </div>

@@ -6,7 +6,7 @@ import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";
 import { showClientModal } from "../redux/clientModal/ClientModalActions";
 import ClientModal from "../clientModal/ClientModal";
-import { EditIcon } from "../commons/icons/Icons";
+import EditIcon from "@mui/icons-material/Edit";
 import { getUserData } from "../apis/utils";
 import { getDateDifference, getFormattedDate } from "../utils/utils";
 import CustomTooltip from "../commons/Tooltip";
@@ -14,6 +14,7 @@ import { useClients } from "../../hooks/useClients";
 import Grid from "@mui/material/Grid";
 import { TextField, Box, Stack, Divider } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import DiscountIcon from "@mui/icons-material/Discount";
 
 const ClientList = () => {
   const today = getFormattedDate();
@@ -108,6 +109,7 @@ const ClientList = () => {
               onClick={handleSaveDiscount}
               disabled={!discountFormData.discount_percentage}
               marginTop="10px"
+              startIcon={<DiscountIcon />}
             >
               Crear descuento
             </CustomButton>

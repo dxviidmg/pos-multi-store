@@ -3,6 +3,7 @@ import { ProgressBar } from "react-bootstrap";
 import { getTaskResult } from "../apis/products";
 import CustomButton from "../commons/customButton/CustomButton";
 import { exportToExcel } from "../utils/utils";
+import DownloadIcon from "@mui/icons-material/Download";
 
 const AuditDashboardData = ({ title, taskId, pollInterval = 7500 }) => {
   const [data, setData] = useState([]);
@@ -76,6 +77,7 @@ const AuditDashboardData = ({ title, taskId, pollInterval = 7500 }) => {
         fullWidth
         disabled={!data || data.length === 0}
         onClick={handleDownload}
+        startIcon={<DownloadIcon />}
       >
         Descargar
       </CustomButton>

@@ -13,6 +13,7 @@ import { getCashFlow } from "../apis/cashflow";
 import CashFlowModal from "../cashFlowModal/CashFlowModal";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 import { Grid, TextField, Box, FormLabel } from "@mui/material";
+import DownloadIcon from "@mui/icons-material/Download";
 
 const CashSummary = () => {
   const [cashSummary, setCashSummary] = useState([]);
@@ -100,7 +101,7 @@ const CashSummary = () => {
     <>
       <CustomSpinner isLoading={loading}></CustomSpinner>
       <CashFlowModal onUpdateCashFlowList={handleUpdateCashFlowList} />
-      <Grid container spacing={2}>
+      <Grid container>
       <Grid item xs={12} className="custom-section">
         <h1>Corte de caja</h1>
         <Grid container spacing={2}>
@@ -117,7 +118,7 @@ const CashSummary = () => {
             </Box>
           </Grid>
           <Grid item xs={12} md={6} className="d-flex flex-column justify-content-end">
-            <CustomButton onClick={handleExport} fullWidth>
+            <CustomButton onClick={handleExport} fullWidth startIcon={<DownloadIcon />}>
               Descargar corte del dia
             </CustomButton>
           </Grid>

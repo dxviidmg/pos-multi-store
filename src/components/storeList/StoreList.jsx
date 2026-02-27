@@ -5,14 +5,12 @@ import CustomButton from "../commons/customButton/CustomButton";
 import { useNavigate } from "react-router-dom";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 import { getDateDifference, getFormattedDate } from "../utils/utils";
-import {
-  BankIcon,
-  CardIcon,
-  CashIcon,
-  chooseIcon,
-  HomeIcon,
-  PrinterIcon,
-} from "../commons/icons/Icons";
+import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
+import CreditCardIcon from "@mui/icons-material/CreditCard";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import { chooseIcon } from "../commons/icons/Icons";
+import HomeIcon from "@mui/icons-material/Home";
+import PrintIcon from "@mui/icons-material/Print";
 import { getStorage, setStorage } from "../utils/storage";
 import CustomTooltip from "../commons/Tooltip";
 import { useStores } from "../../hooks/useStores";
@@ -20,6 +18,7 @@ import { useTenantInfo } from "../../hooks/useTenantInfo";
 import { useDepartments } from "../../hooks/useDepartments";
 import { useInvestment } from "../../hooks/useInvestment";
 import { Grid, FormLabel, FormControlLabel, Checkbox, Box, TextField, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+
 
 const StoreList = () => {
   const navigate = useNavigate();
@@ -135,7 +134,7 @@ const StoreList = () => {
                 width: "100%",
               }}
             >
-              <CashIcon />
+              <AttachMoneyIcon />
               <span>{getCashValue(cash_summary, 0)}</span>
             </div>
 
@@ -147,7 +146,7 @@ const StoreList = () => {
                 width: "100%",
               }}
             >
-              <CardIcon />
+              <CreditCardIcon />
               <span>{getCashValue(cash_summary, 1)}</span>
             </div>
 
@@ -159,7 +158,7 @@ const StoreList = () => {
                 width: "100%",
               }}
             >
-              <BankIcon />
+              <AccountBalanceIcon />
               <span>{getCashValue(cash_summary, 2)}</span>
             </div>
           </div>
@@ -259,7 +258,7 @@ const StoreList = () => {
       cell: (row) => (
         <>
           {chooseIcon(row.products_count === tenantInfo.product_count)}
-          {row.printer && <PrinterIcon />}
+          {row.printer && <PrintIcon />}
         </>
       ),
     },
@@ -404,7 +403,7 @@ const StoreList = () => {
 
   return (
     <>
-      <Grid container spacing={2}>
+      <Grid container>
       <Grid item xs={12} className="custom-section">
         <CustomSpinner isLoading={loading} />
 
@@ -450,7 +449,7 @@ const StoreList = () => {
           </Grid>
 
           <Grid item xs={12} md={4}>
-            <CustomButton fullWidth onClick={handleShowInvestment}>
+            <CustomButton fullWidth onClick={handleShowInvestment} startIcon={<AttachMoneyIcon />}>
               Ver inversión
             </CustomButton>
           </Grid>

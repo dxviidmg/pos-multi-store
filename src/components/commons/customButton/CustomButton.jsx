@@ -21,8 +21,6 @@ const CustomButton = ({
       sx={{
         marginTop: '3px',
         marginBottom: '8px',
-        marginLeft: '8px',
-        marginRight: '8px',
         whiteSpace: "nowrap",
       }}
       {...props}

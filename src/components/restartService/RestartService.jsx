@@ -4,6 +4,7 @@ import { getRedeployRender } from "../apis/restart";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 import { formatTimeFromDate } from "../utils/utils";
 import { Grid } from "@mui/material";
+import RestartAltIcon from "@mui/icons-material/RestartAlt";
 
 function RestartService() {
   const [isLoading, setIsLoading] = useState(false);
@@ -69,6 +70,7 @@ function RestartService() {
       <CustomButton
         onClick={handleRedeploy}
         disabled={isDisabled || isLoading}
+        startIcon={<RestartAltIcon />}
       >
         Sincronizar servicio
       </CustomButton>

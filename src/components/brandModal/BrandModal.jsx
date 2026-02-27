@@ -6,6 +6,7 @@ import CustomButton from "../commons/customButton/CustomButton";
 import { hideBrandModal } from "../redux/brandModal/BrandModalActions";
 import { useCreateBrand, useUpdateBrand } from "../../hooks/useBrandMutations";
 import { Grid, TextField } from "@mui/material";
+import SaveIcon from "@mui/icons-material/Save";
 
 const BrandModal = ({ onUpdateBrandList }) => {
   const { showBrandModal, brand } = useSelector(
@@ -72,6 +73,7 @@ const BrandModal = ({ onUpdateBrandList }) => {
             onClick={handleBrandSubmit}
             disabled={formData.name === ""}
             marginTop="3px"
+            startIcon={<SaveIcon />}
           >
             {formData.id ? "Actualizar" : "Crear"}
           </CustomButton>

@@ -12,9 +12,13 @@ import {
 } from "../redux/stockModal/StockModalActions";
 import Swal from "sweetalert2";
 import { getPrinterUrl, getUserData } from "../apis/utils";
-import { PrinterIcon } from "../commons/icons/Icons";
+import PrintIcon from "@mui/icons-material/Print";
 import { handlePrintTicket } from "../utils/utils";
 import { Grid, TextField, FormLabel, RadioGroup, FormControlLabel, Radio } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
+import AddIcon from "@mui/icons-material/Add";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import ImageIcon from "@mui/icons-material/Image";
 
 const SearchProduct = () => {
   const inputRef = useRef(null);
@@ -317,7 +321,7 @@ const SearchProduct = () => {
           disabled={!urlPrinter}
           onClick={(e) => handlePrintTicket("test", {})}
         >
-          <PrinterIcon color="white" />
+          <PrintIcon />
         </CustomButton>
       </h1>
 
@@ -459,6 +463,7 @@ const SearchProduct = () => {
                         movementType === "venta" && row.available_stock === 0
                       }
                       variant="primary"
+                      startIcon={<AddIcon />}
                     >
                       Agregar
                     </CustomButton>
@@ -468,6 +473,7 @@ const SearchProduct = () => {
                         handleOpenModal({ ...row, onlyRead: true })
                       }
                       variant="danger"
+                      startIcon={<VisibilityIcon />}
                     >
                       Ver stock
                     </CustomButton>
@@ -478,6 +484,7 @@ const SearchProduct = () => {
                       }
                       variant="danger"
                       disabled={!row.product.image}
+                      startIcon={<ImageIcon />}
                     >
                       Ver imagen
                     </CustomButton>
@@ -492,7 +499,7 @@ const SearchProduct = () => {
         </Grid>
         {queryType === "q" && (
           <Grid item xs={12}>
-            <CustomButton onClick={handleSearchProduct}>Buscar</CustomButton>
+            <CustomButton onClick={handleSearchProduct} startIcon={<SearchIcon />}>Buscar</CustomButton>
           </Grid>
         )}
       </Grid>

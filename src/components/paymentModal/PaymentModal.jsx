@@ -10,9 +10,13 @@ import { getUserData } from "../apis/utils";
 import { handlePrintTicket } from "../utils/utils";
 import SearchClient from "../searchClient/SearchClient";
 import ClientSelected from "../clientSelected/ClientSelected";
-import { SearchIcon } from "../commons/icons/Icons";
+import SearchIcon from "@mui/icons-material/Search";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 import { Grid, TextField, Radio, RadioGroup, FormControlLabel, Checkbox, FormLabel } from "@mui/material";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
+import MoneyOffIcon from "@mui/icons-material/MoneyOff";
+import ReceiptIcon from "@mui/icons-material/Receipt";
 
 function roundUpCustom(value) {
   const intPart = Math.floor(value); // Parte entera
@@ -304,6 +308,7 @@ const PaymentModal = () => {
               <CustomButton
                 fullWidth
                 onClick={(e) => setHideClient((prevState) => !prevState)}
+                startIcon={<PersonAddIcon />}
               >
                 Añadir cliente
               </CustomButton>
@@ -313,6 +318,7 @@ const PaymentModal = () => {
               <CustomButton
                 fullWidth
                 onClick={(e) => setHideExchange((prevState) => !prevState)}
+                startIcon={<SwapHorizIcon />}
               >
                 Intercambio de mercancia
               </CustomButton>
@@ -507,6 +513,7 @@ const PaymentModal = () => {
                 disabled={handleDisableButton()}
                 fullWidth={true}
                 onClick={(e) => handleCreateSale()}
+                startIcon={<MoneyOffIcon />}
               >
                 Cobrar sin ticket
                 <br />
@@ -517,6 +524,7 @@ const PaymentModal = () => {
                 disabled={handleDisableButton()}
                 fullWidth={true}
                 onClick={(e) => handleCreateSale(true)}
+                startIcon={<ReceiptIcon />}
               >
                 Cobrar con ticket
                 <br /> (Ctrl + H)

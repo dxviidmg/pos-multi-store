@@ -6,6 +6,7 @@ import CustomButton from "../commons/customButton/CustomButton";
 import { hideDepartmentModal } from "../redux/departmentModal/DepartmentModalActions";
 import { useCreateDepartment, useUpdateDepartment } from "../../hooks/useDepartmentMutations";
 import { Grid, TextField } from "@mui/material";
+import SaveIcon from "@mui/icons-material/Save";
 
 const DepartmentModal = ({ onUpdateDepartmentList }) => {
   const { showDepartmentModal, department } = useSelector(
@@ -73,6 +74,7 @@ const DepartmentModal = ({ onUpdateDepartmentList }) => {
             onClick={handleDepartmentSubmit}
             disabled={formData.name === ""}
             marginTop="3px"
+            startIcon={<SaveIcon />}
           >
             {formData.id ? "Actualizar" : "Crear"}
           </CustomButton>

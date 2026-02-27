@@ -15,13 +15,11 @@ import {
 } from "../redux/saleModal/SaleModalActions";
 import SaleModal from "../saleModal/SaleModal";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
-import {
-  CashIcon,
-  ErrorIcon,
-  PrinterIcon,
-  ReturnIcon,
-  WarningIcon,
-} from "../commons/icons/Icons";
+import CancelIcon from "@mui/icons-material/Cancel";
+import PrintIcon from "@mui/icons-material/Print";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import WarningIcon from "@mui/icons-material/Warning";
+import UndoIcon from "@mui/icons-material/Undo";
 import Alert from "react-bootstrap/Alert";
 import { getUserData } from "../apis/utils";
 import PaymentModal2 from "../paymentModal2/PaymentModal2";
@@ -31,6 +29,7 @@ import {
 } from "../redux/paymentReservationModal/PaymentReservationModalActions";
 import CustomTooltip from "../commons/Tooltip";
 import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, Box } from "@mui/material";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 
 const TYPE_OPTIONS = [
   {
@@ -217,7 +216,7 @@ const SaleList = () => {
           ) : null}
 
           <Grid item xs={3} className="d-flex flex-column justify-content-end">
-            <CustomButton onClick={() => setShowAllFields((prev) => !prev)}>
+            <CustomButton onClick={() => setShowAllFields((prev) => !prev)} startIcon={<VisibilityIcon />}>
               Ver todos los campos
             </CustomButton>
           </Grid>
@@ -321,7 +320,7 @@ const SaleList = () => {
                 <>
                   {row.is_canceled ? (
                     <>
-                      <ErrorIcon /> Razón cancelacion:{" "}
+                      <CancelIcon color="error" /> Razón cancelacion:{" "}
                       {row.reason_cancel ? row.reason_cancel : "Desconocida"}
                     </>
                   ) : (
@@ -330,7 +329,7 @@ const SaleList = () => {
                         <CustomButton
                           onClick={() => handlePrintTicket("ticket", row)}
                         >
-                          <PrinterIcon color="white" size="16" />
+                          <PrintIcon />
                         </CustomButton>
                       )}
 
@@ -339,18 +338,18 @@ const SaleList = () => {
                           fullWidth
                           onClick={() => handleOpenModal2(row)}
                         >
-                          <CashIcon />
+                          <AttachMoneyIcon />
                         </CustomButton>
                       )}
 
                       {(row.is_cancelable || row.is_repeated) && (
                         <CustomTooltip text={"Generar devolución"}>
                           <CustomButton onClick={() => handleOpenModal(row)}>
-                            <ReturnIcon></ReturnIcon>
+                            <UndoIcon />
                           </CustomButton>
                         </CustomTooltip>
                       )}
-                      {row.is_repeated && <WarningIcon></WarningIcon>}
+                      {row.is_repeated && <WarningIcon color="warning" />}
                     </>
                   )}
                 </>

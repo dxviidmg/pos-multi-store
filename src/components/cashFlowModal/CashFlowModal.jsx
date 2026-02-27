@@ -7,6 +7,7 @@ import Swal from "sweetalert2";
 import { hideCashFlowModal } from "../redux/cashFlowModal/CashFlowModalActions";
 import { createCashFlow, getCashFlowChoices } from "../apis/cashflow";
 import { Grid, TextField, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
+import SaveIcon from "@mui/icons-material/Save";
 
 
 const CashFlowModal = ({ onUpdateCashFlowList }) => {
@@ -132,6 +133,7 @@ const CashFlowModal = ({ onUpdateCashFlowList }) => {
             onClick={handleBrandSubmit}
 //            disabled={formData.name === ""}
             marginTop="3px"
+            startIcon={<SaveIcon />}
           >
             {formData.id ? "Actualizar" : "Crear"}
           </CustomButton>

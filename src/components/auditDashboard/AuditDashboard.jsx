@@ -7,6 +7,7 @@ import { getAudit, getAudit2 } from "../apis/audit";
 import { getStores } from "../apis/stores";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, Box } from "@mui/material";
+import AssessmentIcon from "@mui/icons-material/Assessment";
 
 const AuditDashboard = () => {
   const today = getFormattedDate();
@@ -103,12 +104,12 @@ const AuditDashboard = () => {
             </Box>
           </Grid>
           <Grid item xs={12} md={3} lg={6}>
-            <CustomButton fullWidth onClick={() => handleSubmit()}>
+            <CustomButton fullWidth onClick={() => handleSubmit()} startIcon={<AssessmentIcon />}>
               Analizar ventas y logs
             </CustomButton>
           </Grid>
           <Grid item xs={12} md={3} lg={6}>
-            <CustomButton fullWidth onClick={() => handleSubmit2()}>
+            <CustomButton fullWidth onClick={() => handleSubmit2()} startIcon={<AssessmentIcon />}>
               Analizar stock
             </CustomButton>
           </Grid>

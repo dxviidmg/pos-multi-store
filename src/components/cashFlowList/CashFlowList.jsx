@@ -13,6 +13,7 @@ import {
 } from "../redux/cashFlowModal/CashFlowModalActions";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 import { Grid, TextField, Box } from "@mui/material";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
 
 const today = getFormattedDate();
 
@@ -66,7 +67,7 @@ const CashFlowList = () => {
 
         <Grid container spacing={2}>
           <Grid item xs={4} className="d-flex flex-column justify-content-end">
-            <CustomButton fullWidth={true} onClick={() => handleOpenModal()}>
+            <CustomButton fullWidth={true} onClick={() => handleOpenModal()} startIcon={<AddCircleIcon />}>
               Crear movimiento
             </CustomButton>
           </Grid>

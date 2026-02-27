@@ -1,11 +1,13 @@
 import React, { useState } from "react";
-import { Container, Alert, Image } from "react-bootstrap";
+import { Container, Alert, Image, FormLabel } from "react-bootstrap";
 import { loginUser } from "../apis/login";
 import { useNavigate } from "react-router-dom";
 import CustomButton from "../commons/customButton/CustomButton";
 import Logo from "../../assets/images/logo.jpg";
 import './login.css'
-import { Grid, TextField, Box, FormLabel } from "@mui/material";
+import { Grid, TextField, Box } from "@mui/material";
+import LoginIcon from "@mui/icons-material/Login";
+
 
 function Login({ onLogin }) {
   const navigate = useNavigate();
@@ -126,7 +128,7 @@ function Login({ onLogin }) {
                   required
                 />
               </Box>
-              <CustomButton onClick={handleSubmit} fullWidth>
+              <CustomButton onClick={handleSubmit} fullWidth startIcon={<LoginIcon />}>
                 Iniciar sesión
               </CustomButton>
             </Box>

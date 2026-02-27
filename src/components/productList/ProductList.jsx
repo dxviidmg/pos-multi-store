@@ -18,7 +18,9 @@ import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 import { getBrands } from "../apis/brands";
 import { getUserData } from "../apis/utils";
 import Swal from "sweetalert2";
-import { CheckIcon, EditIcon, SearchIcon } from "../commons/icons/Icons";
+import SearchIcon from "@mui/icons-material/Search";
+import EditIcon from "@mui/icons-material/Edit";
+import ChecklistIcon from "@mui/icons-material/Checklist";
 import { getDepartments } from "../apis/departments";
 import CustomTooltip from "../commons/Tooltip";
 import {
@@ -37,6 +39,7 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import DownloadIcon from "@mui/icons-material/Download";
 import DeleteIcon from "@mui/icons-material/Delete";
+import TextFormatIcon from "@mui/icons-material/TextFormat";
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
@@ -231,17 +234,8 @@ const ProductList = () => {
               <CustomButton onClick={() => handleOpenModal()} startIcon={<AddIcon />}>
                 Nuevo Producto
               </CustomButton>
-              <CustomButton
-                onClick={handleDownload}
-                disabled={products.length === 0}
-                startIcon={<DownloadIcon />}
-              >
-                Descargar
-              </CustomButton>
             </Stack>
           </Stack>
-          <Divider sx={{ mb: 3 }} />
-
           {/* Sección de acciones */}
           <Grid container spacing={2} sx={{ mb: 3 }}>
             <Grid item xs={12} md={3}>
@@ -277,10 +271,21 @@ const ProductList = () => {
                   "Formatea a mayusculas y reemplaza la comilla simple (') por guión medio (-)"
                 }
               >
-                <CustomButton onClick={handleUpperCodeProducts} fullWidth>
+                <CustomButton onClick={handleUpperCodeProducts} fullWidth startIcon={<TextFormatIcon />}>
                   Formatear códigos
                 </CustomButton>
               </CustomTooltip>
+            </Grid>
+            <Grid  item xs={12} md={3}>
+
+            <CustomButton
+                onClick={handleDownload}
+                disabled={products.length === 0}
+                startIcon={<DownloadIcon />}
+                fullWidth
+              >
+                Descargar
+              </CustomButton>
             </Grid>
           </Grid>
 
@@ -419,7 +424,7 @@ const ProductList = () => {
                   <>
                     <CustomTooltip text={"Editar producto"} position={"top"}>
                       <CustomButton onClick={() => handleOpenModal(row)}>
-                        <EditIcon></EditIcon>
+                        <EditIcon />
                       </CustomButton>
                     </CustomTooltip>
                     <CustomTooltip
@@ -430,7 +435,7 @@ const ProductList = () => {
                         onClick={() => handleOpenModal2(row)}
                         hidden={getUserData().role !== "owner"}
                       >
-                        <CheckIcon />
+                        <ChecklistIcon />
                       </CustomButton>
                     </CustomTooltip>
                     <CustomTooltip

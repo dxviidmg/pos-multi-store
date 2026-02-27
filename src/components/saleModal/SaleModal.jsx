@@ -7,6 +7,7 @@ import CustomTable from "../commons/customTable/customTable";
 import { hideSaleModal } from "../redux/saleModal/SaleModalActions";
 import { useCancelSale } from "../../hooks/useSaleMutations";
 import { Grid, TextField, Checkbox, FormLabel } from "@mui/material";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
 const INITIAL_FORM_DATA = {
   products_sale: [],
@@ -174,6 +175,7 @@ const SaleModal = ({ onUpdateSaleList }) => {
               onClick={handleSaveClient}
               marginTop="10px"
               disabled={disabledButton()}
+              startIcon={<ShoppingCartIcon />}
             >
               {totalCancel ? "Cancelar" : "Devolver"}
             </CustomButton>

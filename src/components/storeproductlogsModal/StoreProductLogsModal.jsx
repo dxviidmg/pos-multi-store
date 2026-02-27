@@ -10,6 +10,8 @@ import CustomButton from "../commons/customButton/CustomButton";
 import { hideLogsModal } from "../redux/logsModal/LogsModalActions";
 import { chooseIcon } from "../commons/icons/Icons";
 import { Grid, TextField } from "@mui/material";
+import HistoryIcon from "@mui/icons-material/History";
+import SaveIcon from "@mui/icons-material/Save";
 
 const INITIAL_FORM_DATA = {};
 
@@ -124,6 +126,7 @@ const StoreProductLogsModal = ({ onUpdateStoreProductList }) => {
             onClick={() => handleCreateAdjustStock()}
             fullWidth
             disabled={!adjustStock}
+            startIcon={<SaveIcon />}
           >
             Ajustar
           </CustomButton>

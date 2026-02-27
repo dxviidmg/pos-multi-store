@@ -13,6 +13,10 @@ import { useRef } from "react";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 import { Grid, Select, MenuItem, FormControl, InputLabel, styled } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import PublishIcon from "@mui/icons-material/Publish";
+import DownloadIcon from "@mui/icons-material/Download";
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -210,7 +214,7 @@ const ProductImport = () => {
   };
 
   return (
-      <Grid container spacing={2}>
+      <Grid container>
       <Grid item xs={12} className="custom-section">
         <CustomSpinner isLoading={loading}></CustomSpinner>
         <h1>Importación de productos</h1>
@@ -329,6 +333,7 @@ const ProductImport = () => {
                 formData.import_stock === ""
               }
               fullWidth
+              startIcon={<CheckCircleIcon />}
             >
               Validar
             </CustomButton>
@@ -336,7 +341,7 @@ const ProductImport = () => {
 
           <Grid item xs={12} md={3}>
             {productsError.length > 0 ? (
-              <CustomButton onClick={handleShowData} fullWidth>
+              <CustomButton onClick={handleShowData} fullWidth startIcon={<VisibilityIcon />}>
                 Ver registros con error
               </CustomButton>
             ) : (
@@ -344,14 +349,15 @@ const ProductImport = () => {
               disabled={
                 products.length === 0 ||
                 products.some((item) => item.status !== "Exitoso")
-              }>
+              }
+              startIcon={<PublishIcon />}>
                 Importar
               </CustomButton>
             )}
           </Grid>
 
           <Grid item xs={12} md={3}>
-            <CustomButton href={URL_TEMPLATE} fullWidth>
+            <CustomButton href={URL_TEMPLATE} fullWidth startIcon={<DownloadIcon />}>
               Descargar plantilla
             </CustomButton>
           </Grid>
@@ -360,6 +366,7 @@ const ProductImport = () => {
             <CustomButton
               onClick={() => setShowExample(!showExample)}
               fullWidth
+              startIcon={<VisibilityIcon />}
             >
               Ver Ejemplo
             </CustomButton>

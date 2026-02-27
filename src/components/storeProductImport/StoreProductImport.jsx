@@ -4,10 +4,14 @@ import { importStoreProducts, importStoreProductsValidation } from "../apis/prod
 
 import CustomButton from "../commons/customButton/CustomButton";
 import Swal from "sweetalert2";
-import { ErrorIcon, SuccessIcon } from "../commons/icons/Icons";
+import CancelIcon from "@mui/icons-material/Cancel";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { useRef } from "react";
 import { Grid, Select, MenuItem, FormControl, InputLabel, styled } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import PublishIcon from "@mui/icons-material/Publish";
+import DownloadIcon from "@mui/icons-material/Download";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -128,8 +132,7 @@ const StoreProductImport = () => {
   };
 
   return (
-    <>
-      <Grid container spacing={2}>
+      <Grid container>
       <Grid item xs={12} className="custom-section">
         <h1>Importación de inventario</h1>
         <Grid container spacing={2}>
@@ -175,6 +178,7 @@ const StoreProductImport = () => {
                 formData.action === ""
               }
               fullWidth
+              startIcon={<CheckCircleIcon />}
             >
               Validar
             </CustomButton>
@@ -188,13 +192,14 @@ const StoreProductImport = () => {
                 products.some((item) => item.status !== "Exitoso")
               }
               fullWidth
+              startIcon={<PublishIcon />}
             >
               Importar
             </CustomButton>
           </Grid>
 
           <Grid item xs={12} md={3}>
-            <CustomButton href={URL_TEMPLATE} fullWidth>
+            <CustomButton href={URL_TEMPLATE} fullWidth startIcon={<DownloadIcon />}>
               Descargar plantilla
             </CustomButton>
           </Grid>
@@ -203,6 +208,7 @@ const StoreProductImport = () => {
             <CustomButton
               onClick={() => setShowExample(!showExample)}
               fullWidth
+              startIcon={<VisibilityIcon />}
             >
               Ver Ejemplo
             </CustomButton>
@@ -255,10 +261,10 @@ const StoreProductImport = () => {
               wrap: true,
               selector: (row) =>
                 row.status === "Exitoso" ? (
-                  <SuccessIcon />
+                  <CheckCircleIcon color="success" />
                 ) : (
                   <>
-                    <ErrorIcon /> {row.status}
+                    <CancelIcon color="error" /> {row.status}
                   </>
                 ),
             },
@@ -266,7 +272,6 @@ const StoreProductImport = () => {
         ></CustomTable>
       </Grid>
     </Grid>
-  </>
   );
 };
 

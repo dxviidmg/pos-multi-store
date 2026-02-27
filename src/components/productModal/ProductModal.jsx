@@ -16,6 +16,7 @@ import { getDepartments } from "../apis/departments";
 import CustomTable from "../commons/customTable/customTable";
 import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, Box, Checkbox, FormControlLabel, styled } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import SaveIcon from "@mui/icons-material/Save";
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -300,6 +301,7 @@ const ProductModal = ({ onUpdateProductList }) => {
                   onClick={(e) => handleProductSubmit(e)}
                   disabled={isFormIncomplete()}
                   marginTop="10px"
+                  startIcon={<SaveIcon />}
                 >
                   {formData.id ? "Actualizar" : "Crear"} producto
                 </CustomButton>

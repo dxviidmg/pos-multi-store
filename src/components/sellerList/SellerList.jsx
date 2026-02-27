@@ -55,7 +55,7 @@ const SellerList = () => {
 
   return (
     <>
-      <Grid container spacing={2}>
+      <Grid container>
       <Grid item xs={12} className="custom-section">
         <SellerModal onUpdateSellerList={handleUpdateSellerList} />
         

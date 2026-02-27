@@ -7,7 +7,7 @@ import Swal from "sweetalert2";
 import { showDepartmentModal } from "../redux/departmentModal/DepartmentModalActions";
 import DepartmentModal from "../departmentModal/DepartmentModal";
 import { getUserData } from "../apis/utils";
-import { EditIcon } from "../commons/icons/Icons";
+import EditIcon from "@mui/icons-material/Edit";
 import CustomTooltip from "../commons/Tooltip";
 import Grid from "@mui/material/Grid";
 import { useDepartments } from "../../hooks/useDepartments";

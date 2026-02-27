@@ -7,6 +7,7 @@ import { getDepartments } from "../apis/departments";
 import CustomButton from "../commons/customButton/CustomButton";
 import { reassignProducts } from "../apis/products";
 import { Grid, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
+import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 
 const REASSIGN_TYPE = [
   {
@@ -172,6 +173,7 @@ const ProductReassign = () => {
               params.origin_id === params.destination_id
             }
             onClick={handleReassignProducts}
+            startIcon={<SwapHorizIcon />}
           >
             Reasignar
           </CustomButton>

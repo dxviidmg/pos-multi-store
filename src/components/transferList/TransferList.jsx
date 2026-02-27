@@ -4,7 +4,7 @@ import { deleteTransfer, getTransfers } from "../apis/transfers";
 import { calculateTimeAgo } from "../utils/utils";
 import CustomButton from "../commons/customButton/CustomButton";
 import Swal from "sweetalert2";
-import { RemoveInCartIcon } from "../commons/icons/Icons";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 
 const TransferList = () => {
@@ -93,7 +93,7 @@ const TransferList = () => {
               name: "Acciones",
               selector: (row) => (
                 <CustomButton onClick={() => handleOpenModal(row)} disabled={row.description.includes('prov')}>
-                  <RemoveInCartIcon></RemoveInCartIcon>
+                  <DeleteIcon />
                 </CustomButton>
               ),
               grow: 2,
