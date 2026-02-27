@@ -1,11 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
-import CustomTable from "../commons/customTable/customTable";
-import { getClients } from "../apis/clients";
+import CustomTable from "../commons/customTable/CustomTable";
+import { getClients } from "../../api/clients";
 import CustomButton from "../commons/customButton/CustomButton";
 import { useDispatch, useSelector } from "react-redux";
-import { Badge, Form } from "react-bootstrap";
-import { addClientToCart } from "../redux/cart/cartActions";
+import { Badge } from "react-bootstrap";
+import { addClientToCart } from "../../redux/cart/cartActions";
 import Swal from "sweetalert2";
+import { TextField } from "@mui/material";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 const SearchClient = () => {
   const client = useSelector((state) => state.cartReducer.client);
@@ -88,8 +90,7 @@ const SearchClient = () => {
   )}
 </div>
 
-      <Form.Control
-        ref={inputRefClient}
+      <TextField size="small" fullWidth ref={inputRefClient}
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
@@ -121,7 +122,7 @@ const SearchClient = () => {
             name: "Acciones",
             selector: (row) => (
               <div>
-                <CustomButton onClick={() => handleSelectClient(row)}>
+                <CustomButton onClick={() => handleSelectClient(row)} startIcon={<CheckCircleIcon />}>
                   Seleccionar
                 </CustomButton>
               </div>

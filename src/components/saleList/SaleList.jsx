@@ -1,35 +1,35 @@
 import React, { useEffect, useState } from "react";
-import CustomTable from "../commons/customTable/customTable";
-import { Col, Form, Row } from "react-bootstrap";
-import { getSales } from "../apis/sales";
+import CustomTable from "../commons/customTable/CustomTable";
+
+import { getSales } from "../../api/sales";
 import CustomButton from "../commons/customButton/CustomButton";
 import {
   getFormattedDate,
   handlePrintTicket,
   getFormattedDateTime,
-} from "../utils/utils";
+} from "../../utils/utils";
 import { useDispatch } from "react-redux";
 import {
   hideSaleModal,
   showSaleModal,
-} from "../redux/saleModal/SaleModalActions";
+} from "../../redux/saleModal/SaleModalActions";
 import SaleModal from "../saleModal/SaleModal";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
-import {
-  CashIcon,
-  ErrorIcon,
-  PrinterIcon,
-  ReturnIcon,
-  WarningIcon,
-} from "../commons/icons/Icons";
+import CancelIcon from "@mui/icons-material/Cancel";
+import PrintIcon from "@mui/icons-material/Print";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import WarningIcon from "@mui/icons-material/Warning";
+import UndoIcon from "@mui/icons-material/Undo";
 import Alert from "react-bootstrap/Alert";
-import { getUserData } from "../apis/utils";
+import { getUserData } from "../../api/utils";
 import PaymentModal2 from "../paymentModal2/PaymentModal2";
 import {
   hidePaymentReservationModal,
   showPaymentReservationModal,
-} from "../redux/paymentReservationModal/PaymentReservationModalActions";
+} from "../../redux/paymentReservationModal/PaymentReservationModalActions";
 import CustomTooltip from "../commons/Tooltip";
+import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, Box } from "@mui/material";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 
 const TYPE_OPTIONS = [
   {
@@ -121,10 +121,16 @@ const SaleList = () => {
 
   return (
     <>
-      <CustomSpinner isLoading={loading}></CustomSpinner>
+      {/* 1. SPINNERS */}
+      <CustomSpinner isLoading={loading} />
+      
+      {/* 2. MODALS */}
       <PaymentModal2 onUpdateSaleList={handleUpdateSaleList} />
-      <SaleModal onUpdateSaleList={handleUpdateSaleList}></SaleModal>
-      <div className="custom-section">
+      <SaleModal onUpdateSaleList={handleUpdateSaleList} />
+      
+      {/* 3. CONTENIDO PRINCIPAL */}
+      <Grid className="custom-section">
+        {/* 3.1 Alerts */}
         {salesDuplicated.length > 0 && (
           <Alert key={"primary"} variant={"primary"}>
             Ids de ventas duplicadas:{" "}
@@ -134,103 +140,111 @@ const SaleList = () => {
           </Alert>
         )}
 
+        {/* 3.2 Header */}
         <h1>Ventas</h1>
-        <Row>
-          <Col>
-            <Form.Label>Tipo</Form.Label>
-            <Form.Select
-              value={params.reservation_in_progress}
-              onChange={handleDataChange}
-              name="reservation_in_progress"
-              //              disabled={isLoading}
-            >
-              {TYPE_OPTIONS.map((type_option) => (
-                <option key={type_option.value} value={type_option.value}>
-                  {type_option.label}
-                </option>
-              ))}
-            </Form.Select>
-          </Col>
 
-          <Col>
-            <Form.Label>Busqueda por</Form.Label>
-            <Form.Select
-              value={searchBy}
-              onChange={(e) => setSearchBy(e.target.value)}
+        {/* 3.3 Filtros */}
+        <Grid container spacing={2} sx={{ mb: 2 }}>
+          <Grid item xs={3}>
+            <FormControl fullWidth size="small">
+              <InputLabel>Tipo</InputLabel>
+              <Select
+                value={params.reservation_in_progress}
+                onChange={handleDataChange}
+                name="reservation_in_progress"
+                label="Tipo"
+              >
+                {TYPE_OPTIONS.map((type_option) => (
+                  <MenuItem key={type_option.value} value={type_option.value}>
+                    {type_option.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
 
-              //              disabled={isLoading}
-            >
-              {SEARCH_BY_OPTIONS.map((search_option) => (
-                <option key={search_option.value} value={search_option.value}>
-                  {search_option.label}
-                </option>
-              ))}
-            </Form.Select>
-          </Col>
+          <Grid item xs={3}>
+            <FormControl fullWidth size="small">
+              <InputLabel>Busqueda por</InputLabel>
+              <Select
+                value={searchBy}
+                onChange={(e) => setSearchBy(e.target.value)}
+                label="Busqueda por"
+              >
+                {SEARCH_BY_OPTIONS.map((search_option) => (
+                  <MenuItem key={search_option.value} value={search_option.value}>
+                    {search_option.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
 
           {searchBy === "date" ? (
-            <Col>
-              <Form>
-                <Form.Label>Fecha</Form.Label>
-                <Form.Control
-                  type="date"
-                  value={params.date}
-                  onChange={(e) => handleDataChange(e)}
-                  max={today}
-                  name="date"
-                />
-              </Form>
-            </Col>
+            <Grid item xs={3}>
+              <TextField
+                size="small"
+                fullWidth
+                label="Fecha"
+                type="date"
+                value={params.date}
+                onChange={handleDataChange}
+                max={today}
+                name="date"
+              />
+            </Grid>
           ) : searchBy === "sale_id" ? (
-            <Col>
-              <Form>
-                <Form.Label>#</Form.Label>
-                <Form.Control
-                  type="number"
-                  value={params.sale_id}
-                  onChange={(e) => handleDataChange(e)}
-                  name="sale_id"
-                />
-              </Form>
-            </Col>
+            <Grid item xs={3}>
+              <TextField
+                size="small"
+                fullWidth
+                label="#"
+                type="number"
+                value={params.sale_id}
+                onChange={handleDataChange}
+                name="sale_id"
+              />
+            </Grid>
           ) : searchBy === "client" ? (
             <>
-              <Col>
-                <Form>
-                  <Form.Label>Nombre</Form.Label>
-                  <Form.Control
-                    type="text"
-                    value={params.first_name}
-                    onChange={(e) => handleDataChange(e)}
-                    name="first_name"
-                    placeholder="Nombre"
-                  />
-                </Form>
-              </Col>
-              <Col>
-                <Form>
-                  <Form.Label>Apellidos</Form.Label>
-                  <Form.Control
-                    type="text"
-                    value={params.last_name}
-                    onChange={(e) => handleDataChange(e)}
-                    name="last_name"
-                    placeholder="Apellidos"
-                  />
-                </Form>
-              </Col>
+              <Grid item xs={3}>
+                <TextField
+                  size="small"
+                  fullWidth
+                  label="Nombre"
+                  type="text"
+                  value={params.first_name}
+                  onChange={handleDataChange}
+                  name="first_name"
+                  placeholder="Nombre"
+                />
+              </Grid>
+              <Grid item xs={3}>
+                <TextField
+                  size="small"
+                  fullWidth
+                  label="Apellidos"
+                  type="text"
+                  value={params.last_name}
+                  onChange={handleDataChange}
+                  name="last_name"
+                  placeholder="Apellidos"
+                />
+              </Grid>
             </>
           ) : null}
 
-          <Col className="d-flex flex-column justify-content-end">
-            <CustomButton onClick={() => setShowAllFields((prev) => !prev)}>
+          <Grid item xs={3}>
+            <CustomButton onClick={() => setShowAllFields((prev) => !prev)} startIcon={<VisibilityIcon />}>
               Ver todos los campos
             </CustomButton>
-          </Col>
-        </Row>
+          </Grid>
+        </Grid>
+
+        {/* 3.4 Tabla */}
         <CustomTable
           data={sales}
-          pagination={false}
+          pagination={true}
           columns={[
             {
               name: "#",
@@ -327,7 +341,7 @@ const SaleList = () => {
                 <>
                   {row.is_canceled ? (
                     <>
-                      <ErrorIcon /> Razón cancelacion:{" "}
+                      <CancelIcon color="error" /> Razón cancelacion:{" "}
                       {row.reason_cancel ? row.reason_cancel : "Desconocida"}
                     </>
                   ) : (
@@ -336,7 +350,7 @@ const SaleList = () => {
                         <CustomButton
                           onClick={() => handlePrintTicket("ticket", row)}
                         >
-                          <PrinterIcon color="white" size="16" />
+                          <PrintIcon />
                         </CustomButton>
                       )}
 
@@ -345,18 +359,18 @@ const SaleList = () => {
                           fullWidth
                           onClick={() => handleOpenModal2(row)}
                         >
-                          <CashIcon />
+                          <AttachMoneyIcon />
                         </CustomButton>
                       )}
 
                       {(row.is_cancelable || row.is_repeated) && (
                         <CustomTooltip text={"Generar devolución"}>
                           <CustomButton onClick={() => handleOpenModal(row)}>
-                            <ReturnIcon></ReturnIcon>
+                            <UndoIcon />
                           </CustomButton>
                         </CustomTooltip>
                       )}
-                      {row.is_repeated && <WarningIcon></WarningIcon>}
+                      {row.is_repeated && <WarningIcon color="warning" />}
                     </>
                   )}
                 </>
@@ -364,7 +378,7 @@ const SaleList = () => {
             },
           ]}
         />
-      </div>
+      </Grid>
     </>
   );
 };

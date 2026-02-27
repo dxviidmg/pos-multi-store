@@ -1,27 +1,44 @@
 import React, { useEffect, useState } from "react";
-import CustomTable from "../commons/customTable/customTable";
+import CustomTable from "../commons/customTable/CustomTable";
 import {
   deleteProducts,
   getProducts,
   upperCodeProducts,
-} from "../apis/products";
-import { Col, Form, FormCheck, Row } from "react-bootstrap";
+} from "../../api/products";
 import CustomButton from "../commons/customButton/CustomButton";
 import { useDispatch } from "react-redux";
 import {
-  hideProductModal,
   showProductModal,
   showProductModal2,
-} from "../redux/productModal/ProductModalActions";
+  hideProductModal,
+} from "../../redux/productModal/ProductModalActions";
 import ProductModal from "../productModal/ProductModal";
-import { exportToExcel } from "../utils/utils";
+import { exportToExcel } from "../../utils/utils";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
-import { getBrands } from "../apis/brands";
-import { getUserData } from "../apis/utils";
+import { getBrands } from "../../api/brands";
+import { getUserData } from "../../api/utils";
 import Swal from "sweetalert2";
-import { CheckIcon, EditIcon, SearchIcon } from "../commons/icons/Icons";
-import { getDepartments } from "../apis/departments";
+import SearchIcon from "@mui/icons-material/Search";
+import EditIcon from "@mui/icons-material/Edit";
+import ChecklistIcon from "@mui/icons-material/Checklist";
+import { getDepartments } from "../../api/departments";
 import CustomTooltip from "../commons/Tooltip";
+import {
+  Grid,
+  TextField,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Checkbox,
+  FormControlLabel,
+  Box,
+  Stack,
+} from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import DownloadIcon from "@mui/icons-material/Download";
+import DeleteIcon from "@mui/icons-material/Delete";
+import TextFormatIcon from "@mui/icons-material/TextFormat";
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
@@ -172,9 +189,7 @@ const ProductList = () => {
 
   const handleGenerate = (code) => {
     if (code.trim() === "") return;
-    const url = `https://barcodeapi.org/api/code39/${encodeURIComponent(
-      code
-    )}`;
+    const url = `https://barcodeapi.org/api/code39/${encodeURIComponent(code)}`;
     fetch(url)
       .then((res) => res.blob())
       .then((blob) => {
@@ -206,213 +221,230 @@ const ProductList = () => {
   };
 
   return (
-    <div className="custom-section">
-      <CustomSpinner isLoading={loading}></CustomSpinner>
+    <>
+      {/* 1. SPINNERS */}
+      <CustomSpinner isLoading={loading} />
+      
+      {/* 2. MODALS */}
       <ProductModal onUpdateProductList={handleUpdateProductList} />
-      <h1>Productos</h1>
+      
+      {/* 3. CONTENIDO PRINCIPAL */}
+      <Grid container>
+        <Grid item xs={12} className="custom-section">
+          {/* 3.1 Header */}
+          <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+            <h1>Productos</h1>
+            <CustomButton onClick={() => handleOpenModal()} startIcon={<AddIcon />}>
+              Nuevo Producto
+            </CustomButton>
+          </Stack>
 
-      <Row className="d-flex align-items-center gap-3">
-        <Col>
-          {" "}
-          <CustomButton onClick={() => handleOpenModal()} fullWidth={true}>
-            Crear producto
-          </CustomButton>
-        </Col>
-        <Col>
-          <CustomButton
-            onClick={handleDownload}
-            disabled={products.length === 0}
-            fullWidth={true}
-          >
-            Descargar productos
-          </CustomButton>
-        </Col>
-        <Col>
-          <CustomTooltip text={"Formatea a mayusculas y reemplaza la comilla simple (') por guión medio (-)"}>
-          <CustomButton onClick={handleUpperCodeProducts} fullWidth={true}>
-            Formatear códigos
-          </CustomButton>
-          </CustomTooltip>
-
-        </Col>
-        <Col>
-          {" "}
-          <CustomButton
-            onClick={handleDeleteProducts}
-            disabled={
-              selectedRows.length === 0 ||
-              !confirmDeletion ||
-              getUserData().role !== "owner"
-            }
-            fullWidth={true}
-          >
-            Borrar productos
-          </CustomButton>
-        </Col>
-        <Col>
-          {" "}
-          <FormCheck
-            label="Confirmar borrado"
-            checked={confirmDeletion}
-            onChange={handleCheck}
-          />
-        </Col>
-      </Row>
-
-      <Row className="mt-3">
-        <Col>
-          {" "}
-          <Form.Label>Marca</Form.Label>
-          <Form.Select
-            value={params.brand_id}
-            onChange={handleDataChange}
-            name="brand_id"
-            //              disabled={isLoading}
-          >
-            <option value="">Todas las marcas</option>
-            {brands.map((brand) => (
-              <option key={brand.id} value={brand.id}>
-                {brand.name} ({brand.product_count})
-              </option>
-            ))}
-          </Form.Select>
-        </Col>
-
-        <Col hidden={departments.length === 0}>
-          {" "}
-          <Form.Label>Departamento</Form.Label>
-          <Form.Select
-            value={params.department_id}
-            onChange={handleDataChange}
-            name="department_id"
-            //              disabled={isLoading}
-          >
-            <option value="">Todos los departamentos</option>
-            <option value="0">Sin departamento</option>
-            {departments.map((departments) => (
-              <option key={departments.id} value={departments.id}>
-                {departments.name} ({departments.product_count})
-              </option>
-            ))}
-          </Form.Select>
-        </Col>
-
-        <Col>
-          <Form.Label>Stock maximo</Form.Label>
-          <Form.Control
-            type="number"
-            value={params.max_stock}
-            onChange={handleDataChange}
-            name="max_stock"
-          />
-        </Col>
-
-        <Col className="d-flex flex-column justify-content-end">
-          {products.length > 0 && (
-            <>{outOfStockPercentage.toFixed(0)}% de los productos esta vacio</>
-          )}
-
-          <CustomButton fullWidth onClick={fetchProducts}>
-            <SearchIcon /> Buscar
-          </CustomButton>
-        </Col>
-      </Row>
-      <CustomTable
-        setSelectedRows={setSelectedRows}
-        searcher={true}
-        progressPending={loading}
-        data={products}
-        columns={[
-          {
-            name: "Código",
-            selector: (row) => row.code,
-            grow: 2,
-          },
-          {
-            name: "Marca",
-            selector: (row) => row.brand_name,
-            wrap: true,
-          },
-
-          {
-            name: "Departamento",
-            selector: (row) => row.department_name,
-          },
-          {
-            name: "Nombre",
-            selector: (row) => row.name,
-            grow: 2,
-            wrap: true,
-          },
-          {
-            name: "Stock",
-            selector: (row) => row.stock,
-            omit: getUserData().role !== "owner",
-          },
-
-          {
-            name: "Costo",
-            selector: (row) => "$" + row.cost,
-            wrap: true,
-          },
-          
-          {
-            grow: 2.5,
-            name: "Precios",
-            cell: (row) => (
-              <>
-                Unitario: ${row.unit_price}
-                <br />
-                Mayoreo:{" "}
-                {row.apply_wholesale
-                  ? "$" +
-                    row.wholesale_price +
-                    " (" +
-                    row.min_wholesale_quantity +
-                    "+)"
-                  : "NA"}
-              </>
-            ),
-          },
-
-          {
-            name: "Acciones",
-            grow: getUserData().role === "owner" ? 2.5 : 1,
-            cell: (row) => (
-              <>
-                <CustomTooltip text={"Editar producto"} position={"top"}>
-                  <CustomButton onClick={() => handleOpenModal(row)}>
-                    <EditIcon></EditIcon>
-                  </CustomButton>
-                </CustomTooltip>
-                <CustomTooltip
-                  text={"Mostrar stock en todas las tiendas y almacenes"}
-                  position={"top"}
+          {/* 3.2 Filtros */}
+          <Grid container spacing={2} sx={{ mb: 2 }}>
+            <Grid item xs={12} md={3}>
+              <FormControl fullWidth size="small">
+                <InputLabel>Marca</InputLabel>
+                <Select
+                  value={params.brand_id || ""}
+                  onChange={handleDataChange}
+                  name="brand_id"
+                  label="Marca"
                 >
-                  <CustomButton
-                    onClick={() => handleOpenModal2(row)}
-                    hidden={getUserData().role !== "owner"}
+                  <MenuItem value="">Todas las marcas</MenuItem>
+                  {brands.map((brand) => (
+                    <MenuItem key={brand.id} value={brand.id}>
+                      {brand.name} ({brand.product_count})
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+
+            {departments.length > 0 && (
+              <Grid item xs={12} md={3}>
+                <FormControl fullWidth size="small">
+                  <InputLabel>Departamento</InputLabel>
+                  <Select
+                    value={params.department_id || ""}
+                    onChange={handleDataChange}
+                    name="department_id"
+                    label="Departamento"
                   >
-                    <CheckIcon />
-                  </CustomButton>
-                </CustomTooltip>
-                <CustomTooltip
-                  text={"Generar código de barras"}
-                  position={"top"}
-                >
-                  <CustomButton
-                    onClick={() => handleGenerate(row.code)}
-                    fullWidth
-                  >
-                    <span style={{ fontSize: "11px" }}>BC39</span>
-                  </CustomButton>
-                </CustomTooltip>
-              </>
-            ),
-          },
-        ]}
-      />
-    </div>
+                    <MenuItem value="">Todos los departamentos</MenuItem>
+                    <MenuItem value="0">Sin departamento</MenuItem>
+                    {departments.map((department) => (
+                      <MenuItem key={department.id} value={department.id}>
+                        {department.name} ({department.product_count})
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+            )}
+
+            <Grid item xs={12} md={3}>
+              <TextField
+                size="small"
+                label="Stock Máximo"
+                fullWidth
+                type="number"
+                value={params.max_stock || ""}
+                onChange={handleDataChange}
+                name="max_stock"
+              />
+            </Grid>
+
+            <Grid item xs={12} md={3}>
+              <CustomButton fullWidth onClick={fetchProducts} startIcon={<SearchIcon />}>
+                Buscar
+              </CustomButton>
+            </Grid>
+          </Grid>
+
+          {/* 3.3 Acciones secundarias */}
+          <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  size="small"
+                  checked={confirmDeletion}
+                  onChange={handleCheck}
+                />
+              }
+              label="Confirmar borrado"
+            />
+            <CustomButton
+              onClick={handleDeleteProducts}
+              disabled={
+                selectedRows.length === 0 ||
+                !confirmDeletion ||
+                getUserData().role !== "owner"
+              }
+              startIcon={<DeleteIcon />}
+              color="error"
+            >
+              Eliminar
+            </CustomButton>
+            <CustomTooltip
+              text="Formatea a mayusculas y reemplaza la comilla simple (') por guión medio (-)"
+            >
+              <CustomButton onClick={handleUpperCodeProducts} startIcon={<TextFormatIcon />}>
+                Formatear códigos
+              </CustomButton>
+            </CustomTooltip>
+            <CustomButton
+              onClick={handleDownload}
+              disabled={products.length === 0}
+              startIcon={<DownloadIcon />}
+            >
+              Descargar
+            </CustomButton>
+            {products.length > 0 && (
+              <Box sx={{ fontSize: '0.875rem', ml: 'auto' }}>
+                {outOfStockPercentage.toFixed(0)}% de los productos está vacío
+              </Box>
+            )}
+          </Stack>
+
+          {/* 3.4 Tabla */}
+          <CustomTable
+            setSelectedRows={setSelectedRows}
+            searcher={true}
+            progressPending={loading}
+            data={products}
+            columns={[
+              {
+                name: "Código",
+                selector: (row) => row.code,
+                grow: 2,
+              },
+              {
+                name: "Marca",
+                selector: (row) => row.brand_name,
+                wrap: true,
+              },
+
+              {
+                name: "Departamento",
+                selector: (row) => row.department_name,
+              },
+              {
+                name: "Nombre",
+                selector: (row) => row.name,
+                grow: 2,
+                wrap: true,
+              },
+              {
+                name: "Stock",
+                selector: (row) => row.stock,
+                omit: getUserData().role !== "owner",
+              },
+
+              {
+                name: "Costo",
+                selector: (row) => "$" + row.cost,
+                wrap: true,
+              },
+
+              {
+                grow: 2.5,
+                name: "Precios",
+                cell: (row) => (
+                  <>
+                    Unitario: ${row.unit_price}
+                    <br />
+                    Mayoreo:{" "}
+                    {row.apply_wholesale
+                      ? "$" +
+                        row.wholesale_price +
+                        " (" +
+                        row.min_wholesale_quantity +
+                        "+)"
+                      : "NA"}
+                  </>
+                ),
+              },
+
+              {
+                name: "Acciones",
+                grow: getUserData().role === "owner" ? 2.5 : 1,
+                cell: (row) => (
+                  <>
+                    <CustomTooltip text={"Editar producto"} position={"top"}>
+                      <CustomButton onClick={() => handleOpenModal(row)}>
+                        <EditIcon />
+                      </CustomButton>
+                    </CustomTooltip>
+                    <CustomTooltip
+                      text={"Mostrar stock en todas las tiendas y almacenes"}
+                      position={"top"}
+                    >
+                      <CustomButton
+                        onClick={() => handleOpenModal2(row)}
+                        hidden={getUserData().role !== "owner"}
+                      >
+                        <ChecklistIcon />
+                      </CustomButton>
+                    </CustomTooltip>
+                    <CustomTooltip
+                      text={"Generar código de barras"}
+                      position={"top"}
+                    >
+                      <CustomButton
+                        onClick={() => handleGenerate(row.code)}
+                        fullWidth
+                      >
+                        <span style={{ fontSize: "11px" }}>BC39</span>
+                      </CustomButton>
+                    </CustomTooltip>
+                  </>
+                ),
+              },
+            ]}
+          />
+        </Grid>
+      </Grid>
+    </>
   );
 };
 

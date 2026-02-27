@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
-import CustomModal from "../commons/customModal/customModal";
-import { Col, Form, Row } from "react-bootstrap";
+import CustomModal from "../commons/customModal/CustomModal";
+
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
-import { updateSale } from "../apis/sales";
-import { hidePaymentReservationModal } from "../redux/paymentReservationModal/PaymentReservationModalActions";
-import Swal from "sweetalert2";
-import { handlePrintTicket } from "../utils/utils";
-import { getUserData } from "../apis/utils";
+import { updateSale } from "../../api/sales";
+import { hidePaymentReservationModal } from "../../redux/paymentReservationModal/PaymentReservationModalActions";
+import { showSuccess, showError } from "../../utils/alerts";
+import { handlePrintTicket } from "../../utils/utils";
+import { getUserData } from "../../api/utils";
+import { Grid, TextField, Checkbox, FormLabel } from "@mui/material";
+import PaymentIcon from "@mui/icons-material/Payment";
 
 const INITIAL_PAYMENT_STATE = { paidWith: 0, change: 0 };
 
@@ -55,22 +57,14 @@ const PaymentModal2 = ({ onUpdateSaleList }) => {
             if (reservation_in_progress) {
               onUpdateSaleList(response.data);
 
-              Swal.fire({
-                icon: "success",
-                title: "Abono exitoso exitoso",
-                timer: 5000,
-              });
+              showSuccess("Abono exitoso");
 
             } 
 
             
             else {
 
-              Swal.fire({
-                icon: "success",
-                title: "Liquidación exitosa",
-                timer: 5000,
-              });
+              showSuccess("Liquidación exitosa");
               onUpdateSaleList({ ...response.data, delete: true });
             }
 
@@ -79,12 +73,7 @@ const PaymentModal2 = ({ onUpdateSaleList }) => {
             }
 
     } else {
-      Swal.fire({
-        icon: "error",
-        title: "Error al añadir un pago de apartado",
-        text: "Por favor llame a soporte técnico",
-        timer: 5000,
-      });
+      showError("Error al añadir un pago de apartado", "Por favor llame a soporte técnico");
     }
     // Aquí va el dispatch o lógica para enviar el pago
   };
@@ -110,23 +99,21 @@ const PaymentModal2 = ({ onUpdateSaleList }) => {
       onClose={() => dispatch(hidePaymentReservationModal())}
       title="Cobrar apartado"
     >
-      <div className="custom-section">
-        <Row>
+      <Grid className="custom-section">
+        <Grid container spacing={2}>
           <h2>Información</h2>
-          <Col md={3}>
-            <Form.Label>Folio</Form.Label>
-            <Form.Control type="number" value={reservation.id} disabled />
-          </Col>
+          <Grid item xs={12} md={3}>
+            <TextField size="small" fullWidth label="Folio" type="number" value={reservation.id} disabled />
+          </Grid>
 
-          <Col md={3}>
-            <Form.Label>Total de la compra</Form.Label>
-            <Form.Control type="number" value={reservation.total} disabled />
-          </Col>
+          <Grid item xs={12} md={3}>
+            <TextField size="small" fullWidth label="Total de la compra" type="number" value={reservation.total} disabled />
+          </Grid>
 
-          <Col md={3}>
-            <Form.Label className="me-1">Acción:</Form.Label>
+          <Grid item xs={12} md={3}>
+            <FormLabel className="me-1">Acción:</FormLabel>
             {["Liquidar", "Abonar"].map((option) => (
-              <Form.Check
+              <Checkbox size="small"
                 key={option}
                 id={option}
                 label={option}
@@ -137,14 +124,14 @@ const PaymentModal2 = ({ onUpdateSaleList }) => {
                 checked={action === option}
               />
             ))}
-          </Col>
+          </Grid>
 
-          <Col md={3}>
-            <Form.Label className="me-3">Medios de pago:</Form.Label>
+          <Grid item xs={12} md={3}>
+            <FormLabel className="me-3">Medios de pago:</FormLabel>
             {["EF", "TA", "TR"].map((method) => (
               <div key={method} className="d-flex align-items-center mb-1">
                 <div className="me-3" style={{ flex: 1 }}>
-                  <Form.Check
+                  <Checkbox size="small"
                     id={method}
                     label={
                       method === "EF"
@@ -162,75 +149,70 @@ const PaymentModal2 = ({ onUpdateSaleList }) => {
                 </div>
               </div>
             ))}
-          </Col>
-        </Row>
-      </div>
+          </Grid>
+        </Grid>
+      </Grid>
 
-      <div className="custom-section">
+      <Grid className="custom-section">
         <h2>Totales</h2>
-        <Row>
-          <Col md={3}>
-            <Form.Label>Pagado</Form.Label>
-            <Form.Control type="number" value={reservation.paid} disabled />
-          </Col>
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={3}>
+            <TextField size="small" fullWidth label="Pagado" type="number" value={reservation.paid} disabled />
+          </Grid>
 
-          <Col md={3}>
-            <Form.Label>Deuda</Form.Label>
-            <Form.Control type="number" value={remaining} disabled />
-          </Col>
+          <Grid item xs={12} md={3}>
+            <TextField size="small" fullWidth label="Deuda" type="number" value={remaining} disabled />
+          </Grid>
 
-          <Col md={3}>
-            <Form.Label>Pago con</Form.Label>
-            <Form.Control
-              type="text"
+          <Grid item xs={12} md={3}>
+            <TextField size="small" fullWidth label="Pago con" type="text"
               value={payment.paidWith}
               onChange={handlePaidWithChange}
               ref={inputPaymentRef}
             />
-          </Col>
+          </Grid>
 
-          <Col md={3}>
+          <Grid item xs={12} md={3}>
             {paymentMethod !== "EF" ? (
               <>
-                <Form.Label>Referencia</Form.Label>
-                <Form.Control
-                  type="text"
+                <TextField size="small" fullWidth label="Referencia" type="text"
                   value={referencePayment}
                   onChange={(e) => setReferencePayment(e.target.value)}
                 />
               </>
             ) : (
               <>
-                <Form.Label>Cambio</Form.Label>
-                <Form.Control type="number" value={payment.change} disabled />
+                <TextField size="small" fullWidth label="Cambio" type="number" value={payment.change} disabled />
               </>
             )}
-          </Col>
-        </Row>
-      </div>
+          </Grid>
+        </Grid>
+      </Grid>
 
-      <div className="custom-section">
-        <Row>
-          <Col md={6}>
+      <Grid className="custom-section">
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={6}>
             <CustomButton
               disabled={handleDisableButton()}
               fullWidth
               onClick={() => handleCreatePayment(true)}
+              startIcon={<PaymentIcon />}
             >
               Cobrar con ticket (Ctrl + G)
             </CustomButton>
-          </Col>
-          <Col md={6}>
+          </Grid>
+          <Grid item xs={12} md={6}>
             <CustomButton
               disabled={handleDisableButton()}
               fullWidth
               onClick={() => handleCreatePayment()}
+              startIcon={<PaymentIcon />}
             >
               Cobrar sin ticket (Ctrl + F)
             </CustomButton>
-          </Col>
-        </Row>
-      </div>
+          </Grid>
+        </Grid>
+      </Grid>
     </CustomModal>
   );
 };

@@ -1,20 +1,19 @@
 import React, { useState } from "react";
-import CustomTable from "../commons/customTable/customTable";
-import { FormCheck } from "react-bootstrap";
+import CustomTable from "../commons/customTable/CustomTable";
 import CustomButton from "../commons/customButton/CustomButton";
-import { deleteDepartments } from "../apis/departments";
+import { deleteDepartments } from "../../api/departments";
 import { useDispatch } from "react-redux";
-import Swal from "sweetalert2";
-import {
-  hideDepartmentModal,
-  showDepartmentModal,
-} from "../redux/departmentModal/DepartmentModalActions";
+import { showSuccess, showError } from "../../utils/alerts";
+import { showDepartmentModal } from "../../redux/departmentModal/DepartmentModalActions";
 import DepartmentModal from "../departmentModal/DepartmentModal";
-import { getUserData } from "../apis/utils";
-import { EditIcon } from "../commons/icons/Icons";
+import { getUserData } from "../../api/utils";
+import EditIcon from "@mui/icons-material/Edit";
 import CustomTooltip from "../commons/Tooltip";
-import Grid from '@mui/material/Grid';
+import Grid from "@mui/material/Grid";
 import { useDepartments } from "../../hooks/useDepartments";
+import { Checkbox, FormControlLabel, Box, Stack, Divider } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const DepartmentList = () => {
   const [selectedRows, setSelectedRows] = useState([]);
@@ -38,12 +37,7 @@ const DepartmentList = () => {
     );
 
     if (productsCount > 0) {
-      Swal.fire({
-        icon: "error",
-        title: "Error al borrar departamentos",
-        text: "Los departamentos no deben tener productos relacionados",
-        timer: 5000,
-      });
+      showError("Error al borrar departamentos", "Los departamentos no deben tener productos relacionados");
       return;
     }
 
@@ -51,24 +45,10 @@ const DepartmentList = () => {
     const response = await deleteDepartments(selectedIds);
 
     if (response.status === 200) {
-      const updatedDepartments = departments.filter(
-        (department) => !selectedIds.includes(department.id)
-      );
-
-//      setDepartments(updatedDepartments);
-
-      Swal.fire({
-        icon: "success",
-        title: "Departamentos eliminados",
-        timer: 5000,
-      });
+      showSuccess("Departamentos eliminados");
       refetch();
     } else {
-      Swal.fire({
-        icon: "error",
-        title: "Error al borrar Departamentos",
-        timer: 5000,
-      });
+      showError("Error al borrar Departamentos");
     }
   };
 
@@ -77,57 +57,76 @@ const DepartmentList = () => {
   };
 
   return (
-    <Grid container spacing={2} className="custom-section">
-      <DepartmentModal
-        onUpdateDepartmentList={handleUpdateDepartmentList}
-      ></DepartmentModal>{" "}
-      <Grid xs={12}>
-      <h1>Departamentos</h1>
-      <CustomButton onClick={() => handleOpenModal()}>Crear</CustomButton>
-      <CustomButton
-        onClick={handleDeleteDepartments}
-        disabled={
-          selectedRows.length === 0 ||
-          !confirmDeletion ||
-          getUserData().role !== "owner"
-        }
-      >
-        Borrar departamentos
-      </CustomButton>
-      <FormCheck
-        label={"Confirmar borrado"}
-        checked={confirmDeletion}
-        onChange={handleCheck}
-      ></FormCheck>
-      <CustomTable
-        progressPending={loading}
-        data={departments}
-        setSelectedRows={setSelectedRows}
-        columns={[
-          {
-            name: "Nombre",
-            selector: (row) => row.name,
-            grow: 2,
-            wrap: true,
-          },
-          {
-            name: "Número de productos",
-            selector: (row) => row.product_count,
-          },
-          {
-            name: "Acciones",
-            cell: (row) => (
-              <CustomTooltip text={"Editar Departamento"}>
-                <CustomButton onClick={() => handleOpenModal(row)}>
-                  <EditIcon></EditIcon>
-                </CustomButton>
-              </CustomTooltip>
-            ),
-          },
-        ]}
-      />
+    <>
+      {/* 1. MODALS */}
+      <DepartmentModal onUpdateDepartmentList={handleUpdateDepartmentList} />
+      
+      {/* 2. CONTENIDO PRINCIPAL */}
+      <Grid item xs={12} className="custom-section">
+        {/* 2.1 Header */}
+        <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+          <h1>Departamentos</h1>
+          <CustomButton onClick={() => handleOpenModal()} startIcon={<AddIcon />}>
+            Nuevo Departamento
+          </CustomButton>
+        </Stack>
+
+        {/* 2.2 Acciones secundarias */}
+        <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
+          <FormControlLabel
+            control={
+              <Checkbox
+                size="small"
+                checked={confirmDeletion}
+                onChange={handleCheck}
+              />
+            }
+            label="Confirmar eliminación"
+          />
+          <CustomButton
+            onClick={handleDeleteDepartments}
+            disabled={
+              selectedRows.length === 0 ||
+              !confirmDeletion ||
+              getUserData().role !== "owner"
+            }
+            startIcon={<DeleteIcon />}
+            color="error"
+          >
+            Eliminar seleccionados
+          </CustomButton>
+        </Stack>
+
+        {/* 2.3 Tabla */}
+        <CustomTable
+          progressPending={loading}
+          data={departments}
+          setSelectedRows={setSelectedRows}
+          columns={[
+            {
+              name: "Nombre",
+              selector: (row) => row.name,
+              grow: 2,
+              wrap: true,
+            },
+            {
+              name: "Número de productos",
+              selector: (row) => row.product_count,
+            },
+            {
+              name: "Acciones",
+              cell: (row) => (
+                <CustomTooltip text={"Editar Departamento"}>
+                  <CustomButton onClick={() => handleOpenModal(row)}>
+                    <EditIcon />
+                  </CustomButton>
+                </CustomTooltip>
+              ),
+            },
+          ]}
+        />
       </Grid>
-    </Grid>
+    </>
   );
 };
 

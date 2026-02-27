@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
-import CustomModal from "../commons/customModal/customModal";
-import { Col, Form, Row } from "react-bootstrap";
+import CustomModal from "../commons/customModal/CustomModal";
+
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
-import { hideDepartmentModal } from "../redux/departmentModal/DepartmentModalActions";
+import { hideDepartmentModal } from "../../redux/departmentModal/DepartmentModalActions";
 import { useCreateDepartment, useUpdateDepartment } from "../../hooks/useDepartmentMutations";
+import { Grid, TextField } from "@mui/material";
+import SaveIcon from "@mui/icons-material/Save";
 
 const DepartmentModal = ({ onUpdateDepartmentList }) => {
   const { showDepartmentModal, department } = useSelector(
@@ -54,32 +56,31 @@ const DepartmentModal = ({ onUpdateDepartmentList }) => {
       title={formData.id ? "Actualizar departamento" : "Crear departamento"}
     >
 
-      <div className="custom-section">
+      <Grid className="custom-section">
 
-      <Row>
-        <Col md={6}>
-          <Form.Label>Nombre</Form.Label>
-          <Form.Control
-            type="text"
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={6}>
+          <TextField size="small" fullWidth label="Nombre" type="text"
             value={formData.name}
             placeholder="Nombre"
             name="name"
             onChange={handleDataChange}
           />
-        </Col>
+        </Grid>
 
-        <Col md={6} className="d-flex flex-column justify-content-end">
+        <Grid item xs={12} md={6} className="d-flex flex-column justify-content-end">
           <CustomButton
             fullWidth={true}
             onClick={handleDepartmentSubmit}
             disabled={formData.name === ""}
             marginTop="3px"
+            startIcon={<SaveIcon />}
           >
             {formData.id ? "Actualizar" : "Crear"}
           </CustomButton>
-        </Col>
-      </Row>
-      </div>
+        </Grid>
+      </Grid>
+      </Grid>
     </CustomModal>
   );
 };

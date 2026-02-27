@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from "react";
-import CustomTable from "../commons/customTable/customTable";
-import { Col, Form, Row } from "react-bootstrap";
-import { getSellers } from "../apis/sellers";
+import CustomTable from "../commons/customTable/CustomTable";
+import { getSellers } from "../../api/sellers";
 import CustomButton from "../commons/customButton/CustomButton";
 import { useDispatch } from "react-redux";
-import {
-  hideSellerModal,
-  showSellerModal,
-} from "../redux/sellerModal/SellerModalActions";
+import { showSellerModal, hideSellerModal } from "../../redux/sellerModal/SellerModalActions";
 import SellerModal from "../sellerModal/SellerModal";
-import { getDateDifference, getFormattedDate } from "../utils/utils";
+import { getDateDifference, getFormattedDate } from "../../utils/utils";
 import { chooseIcon } from "../commons/icons/Icons";
+import { Grid, TextField, Box, Stack, Divider } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 
 const SellerList = () => {
   const today = getFormattedDate();
@@ -57,77 +55,91 @@ const SellerList = () => {
 
   return (
     <>
-      <div className="custom-section">
-        <SellerModal onUpdateSellerList={handleUpdateSellerList}></SellerModal>
-        <h1>Vendedores</h1>
-        <CustomButton onClick={() => handleOpenModal()}>Crear</CustomButton>
-        <Row>
-          <Col>
-            {" "}
-            <Form>
-              <Form.Label>Fecha de inicio</Form.Label>
-              <Form.Control
+      {/* 1. MODALS */}
+      <SellerModal onUpdateSellerList={handleUpdateSellerList} />
+      
+      {/* 2. CONTENIDO PRINCIPAL */}
+      <Grid container>
+        <Grid item xs={12} className="custom-section">
+          {/* 2.1 Header */}
+          <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+            <h1>Vendedores</h1>
+            <CustomButton onClick={() => handleOpenModal()} startIcon={<AddIcon />}>
+              Nuevo Vendedor
+            </CustomButton>
+          </Stack>
+
+          {/* 2.2 Filtros */}
+          <Grid container spacing={2} sx={{ mb: 2 }}>
+            <Grid item xs={12} sm={6} md={4}>
+              <TextField
+                size="small"
+                fullWidth
+                label="Fecha de inicio"
                 name="start_date"
                 type="date"
                 value={params.start_date}
-                onChange={(e) => handleParams(e)}
+                onChange={handleParams}
                 max={today}
               />
-            </Form>
-          </Col>
-          <Col>
-            {" "}
-            <Form>
-              <Form.Label>Fecha de fin</Form.Label>
-              <Form.Control
+            </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <TextField
+                size="small"
+                fullWidth
+                label="Fecha de fin"
                 name="end_date"
                 type="date"
                 value={params.end_date}
-                onChange={(e) => handleParams(e)}
+                onChange={handleParams}
                 max={today}
               />
-            </Form>
-          </Col>
+            </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <TextField
+                size="small"
+                fullWidth
+                label="Rango"
+                name="range"
+                type="input"
+                value={range}
+                disabled
+              />
+            </Grid>
+          </Grid>
 
-          <Col>
-            <Form>
-              <Form.Label>Rango</Form.Label>
-              <Form.Control name="range" type="input" value={range} disabled />
-            </Form>
-          </Col>
-        </Row>
-        <CustomTable
-          progressPending={loading}
-          data={sellers}
-          pagination={false}
-          columns={[
-            {
-              name: "Tienda",
-              selector: (row) => row.store_detail?.name,
-            },
-
-            {
-              name: "Username",
-              selector: (row) => row.worker.username,
-              grow: 2,
-            },
-            {
-              name: "Nombre",
-
-              selector: (row) =>
-                `${row.worker.first_name} ${row.worker.last_name}`,
-            },
-            {
-              name: "Esta activo",
-              selector: (row) => chooseIcon(row.worker.is_active),
-            },
-            {
-              name: "Vendido",
-              selector: (row) => `$${row.total_sales}`,
-            },
-          ]}
-        />
-      </div>
+          {/* 2.3 Tabla */}
+          <CustomTable
+            progressPending={loading}
+            data={sellers}
+            pagination={true}
+            columns={[
+              {
+                name: "Tienda",
+                selector: (row) => row.store_detail?.name,
+              },
+              {
+                name: "Username",
+                selector: (row) => row.worker.username,
+                grow: 2,
+              },
+              {
+                name: "Nombre",
+                selector: (row) =>
+                  `${row.worker.first_name} ${row.worker.last_name}`,
+              },
+              {
+                name: "Esta activo",
+                selector: (row) => chooseIcon(row.worker.is_active),
+              },
+              {
+                name: "Vendido",
+                selector: (row) => `$${row.total_sales}`,
+              },
+            ]}
+          />
+        </Grid>
+      </Grid>
     </>
   );
 };

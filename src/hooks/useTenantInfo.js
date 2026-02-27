@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getTenantInfo } from '../components/apis/tenants';
+import { getTenantInfo } from '../api/tenants';
 
 export const useTenantInfo = () => {
   return useQuery({

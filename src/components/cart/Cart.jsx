@@ -1,6 +1,7 @@
+import { logger } from "../../utils/logger";
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import CustomTable from "../commons/customTable/customTable";
+import CustomTable from "../commons/customTable/CustomTable";
 import {
   cleanCart,
   removeFromCart,
@@ -8,22 +9,28 @@ import {
   updateQuantityInCart,
   changePrice,
   countStockOtherStores,
-} from "../redux/cart/cartActions";
+} from "../../redux/cart/cartActions";
 import CustomButton from "../commons/customButton/CustomButton";
-import { Col, Form, Row } from "react-bootstrap";
+
 import PaymentModal from "../paymentModal/PaymentModal";
 import {
   hidePaymentModal,
   showPaymentModal,
-} from "../redux/paymentModal/PaymentModalActions";
-import { getStores } from "../apis/stores";
-import { confirmTransfers, createDistribution } from "../apis/transfers";
-import Swal from "sweetalert2";
-import { addProducts, getStockOtherStores } from "../apis/products";
-import { getUserData } from "../apis/utils";
-import { RemoveInCartIcon } from "../commons/icons/Icons";
+} from "../../redux/paymentModal/PaymentModalActions";
+import { getStores } from "../../api/stores";
+import { confirmTransfers, createDistribution } from "../../api/transfers";
+import { showAlert } from "../../utils/alerts";
+import { addProducts, getStockOtherStores } from "../../api/products";
+import { getUserData } from "../../api/utils";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
-import { hideStockModal, showStockModal } from "../redux/stockModal/StockModalActions";
+import { hideStockModal, showStockModal } from "../../redux/stockModal/StockModalActions";
+import { Grid, TextField, Checkbox, Select, MenuItem } from "@mui/material";
+import PaymentIcon from "@mui/icons-material/Payment";
+import SendIcon from "@mui/icons-material/Send";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
+import CalculateIcon from "@mui/icons-material/Calculate";
+import { MOVEMENT_TYPES, STORE_TYPES } from "../../constants";
 
 const Cart = () => {
   const store_type = getUserData().store_type;
@@ -62,14 +69,14 @@ const Cart = () => {
         const response = await getStores();
         setStores(response.data);
       } catch (error) {
-        console.error("Error fetching stores:", error);
+        logger.error("Error fetching stores:", error);
       }
     };
     fetchData();
 
     // Si el tipo de tienda es "A", se establece el movimiento como "distribucion"
-    if (store_type === "A" && movementType === "venta") {
-      dispatch(updateMovementType("distribucion"));
+    if (store_type === STORE_TYPES.WAREHOUSE && movementType === MOVEMENT_TYPES.SALE) {
+      dispatch(updateMovementType(MOVEMENT_TYPES.DISTRIBUTION));
     }
   }, [store_type, dispatch, movementType]);
 
@@ -123,9 +130,7 @@ const Cart = () => {
   };
   
 
-  const showAlert = (icon, title, text = "", timer = 5000) => {
-    Swal.fire({ icon, title, text, timer });
-  };
+
 
   const handleTranserFromCart = async (cart) => {
     if (loading) return; // Previene reenvío
@@ -227,28 +232,32 @@ const Cart = () => {
   };
 
   const commonColumns = [
-    { name: "Código", selector: (row) => row.product.code },
+    { name: "Código", field: "code", selector: (row) => row.product.code },
     {
       name: "Marca",
+      field: "brand",
       selector: (row) => row.product.brand_name,
     },
     {
       name: "Nombre",
+      field: "name",
       selector: (row) => row.product.name,
       grow: 3,
       wrap: true,
     },
-    { name: "Stock", selector: (row) => row.available_stock },
+    { name: "Stock", field: "stock", selector: (row) => row.available_stock },
   ];
 
   const commonColumns2 = [
-    { name: "Código", selector: (row) => row.product.code },
+    { name: "Código", field: "code", selector: (row) => row.product.code },
     {
       name: "Marca",
+      field: "brand",
       selector: (row) => row.product.brand_name,
     },
     {
       name: "Nombre",
+      field: "name",
       selector: (row) => row.product.name,
       grow: 3,
       wrap: true,
@@ -259,26 +268,28 @@ const Cart = () => {
     ...commonColumns2,
     {
       name: "Cantidad",
+      field: "quantity",
       selector: (row) => (
-        <Form.Control
-          type="number"
+        <TextField size="small" fullWidth type="number"
           value={row.quantity}
-          onChange={(e) => handleQuantityChangeToCart(e, row)} // Implementa esta función para manejar el cambio
-          min="1" // Opcional, para establecer un valor mínimo
+          onChange={(e) => handleQuantityChangeToCart(e, row)}
+          min="1"
           max={row.stock}
         />
       ),
     },
-    { name: "Stock", selector: (row) => row.available_stock },
-    { name: "Precio", selector: (row) => `$${row.product_price.toFixed(2)}` },
+    { name: "Stock", field: "available_stock", selector: (row) => row.available_stock },
+    { name: "Precio", field: "price", selector: (row) => `$${row.product_price.toFixed(2)}` },
     {
       name: "Total x prod",
+      field: "total",
       selector: (row) => `$${(row.product_price * row.quantity).toFixed(2)}`,
     },
     {
       name: "Precio mayorista",
+      field: "wholesale",
       selector: (row) => (
-        <Form.Check
+        <Checkbox size="small"
           type="switch"
           id="custom-switch"
           checked={row.product_price === row.product.prices.wholesale_price}
@@ -289,9 +300,10 @@ const Cart = () => {
     },
     {
       name: "Borrar",
+      field: "delete",
       selector: (row) => (
         <CustomButton onClick={() => handleRemoveFromCart(row)}>
-          <RemoveInCartIcon />
+          <DeleteIcon />
         </CustomButton>
       ),
     },
@@ -302,8 +314,7 @@ const Cart = () => {
     {
       name: "Cantidad",
       selector: (row) => (
-        <Form.Control
-          type="number"
+        <TextField size="small" fullWidth type="number"
           value={row.quantity}
           onChange={(e) => handleQuantityChangeToCart(e, row)} // Implementa esta función para manejar el cambio
           min="1" // Opcional, para establecer un valor mínimo
@@ -320,7 +331,7 @@ const Cart = () => {
     {
       name: "Precio mayorista",
       selector: (row) => (
-        <Form.Check
+        <Checkbox size="small"
           type="switch"
           id="custom-switch"
           checked={row.product_price === row.product.prices.wholesale_price}
@@ -333,7 +344,7 @@ const Cart = () => {
       name: "Borrar",
       selector: (row) => (
         <CustomButton onClick={() => handleRemoveFromCart(row)}>
-          <RemoveInCartIcon />
+          <DeleteIcon />
         </CustomButton>
       ),
     },
@@ -357,8 +368,7 @@ const Cart = () => {
     {
       name: "Cantidad",
       selector: (row) => (
-        <Form.Control
-          type="number"
+        <TextField size="small" fullWidth type="number"
           value={row.quantity}
           onChange={(e) => handleQuantityChangeToCart(e, row)} // Implementa esta función para manejar el cambio
           min="1" // Opcional, para establecer un valor mínimo
@@ -370,7 +380,7 @@ const Cart = () => {
       name: "Borrar",
       selector: (row) => (
         <CustomButton onClick={() => handleRemoveFromCart(row)}>
-          <RemoveInCartIcon />
+          <DeleteIcon />
         </CustomButton>
       ),
     },
@@ -381,8 +391,7 @@ const Cart = () => {
     {
       name: "Cantidad",
       selector: (row) => (
-        <Form.Control
-          type="number"
+        <TextField size="small" fullWidth type="number"
           value={row.quantity}
           onChange={(e) => handleQuantityChangeToCart(e, row)} // Implementa esta función para manejar el cambio
           min="1" // Opcional, para establecer un valor mínimo
@@ -406,7 +415,7 @@ const Cart = () => {
               ))}
             </ul>
           ) : (
-            <CustomButton onClick={() => handleStockOtherStores(row)}>
+            <CustomButton onClick={() => handleStockOtherStores(row)} startIcon={<CalculateIcon />}>
               Contar
             </CustomButton>
           )}
@@ -418,7 +427,7 @@ const Cart = () => {
       name: "Borrar",
       selector: (row) => (
         <CustomButton onClick={() => handleRemoveFromCart(row)}>
-          <RemoveInCartIcon />
+          <DeleteIcon />
         </CustomButton>
       ),
     },
@@ -429,8 +438,7 @@ const Cart = () => {
     {
       name: "Cantidad",
       selector: (row) => (
-        <Form.Control
-          type="number"
+        <TextField size="small" fullWidth type="number"
           value={row.quantity}
           onChange={(e) => handleQuantityChangeToCart(e, row)} // Implementa esta función para manejar el cambio
           min="1" // Opcional, para establecer un valor mínimo
@@ -441,7 +449,7 @@ const Cart = () => {
       name: "Borrar",
       selector: (row) => (
         <CustomButton onClick={() => handleRemoveFromCart(row)}>
-          <RemoveInCartIcon />
+          <DeleteIcon />
         </CustomButton>
       ),
     },
@@ -449,18 +457,17 @@ const Cart = () => {
 
   const getColumns = () => {
     switch (movementType) {
-      case "venta":
-      case "apartado":
-        // Si es multi-store, usamos saleColumns2
+      case MOVEMENT_TYPES.SALE:
+      case MOVEMENT_TYPES.RESERVATION:
         return user.is_multi_store === true ? saleColumns2 : saleColumns;
 
-      case "traspaso":
+      case MOVEMENT_TYPES.TRANSFER:
         return transferColumns;
 
-      case "distribucion":
+      case MOVEMENT_TYPES.DISTRIBUTION:
         return distributionColumns;
 
-      case "agregar":
+      case MOVEMENT_TYPES.ADD_STOCK:
         return addToStockColumns;
 
       default:
@@ -474,56 +481,54 @@ const Cart = () => {
       <PaymentModal />
       <div>
         {cart.length !== 0 && (
-          <Row>
+          <Grid container spacing={2}>
             {(movementType === "venta" || movementType === "apartado") && (
               <>
-                <Col md={4}>
+                <Grid item xs={12} md={4}>
                   {" "}
                   <h1>Productos: {totalProducts}</h1>
-                </Col>
+                </Grid>
 
-                <Col md={4} className="text-center">
+                <Grid item xs={12} md={4} className="text-center">
                   <h1>Total: ${total.toFixed(2)}</h1>
-                </Col>
-                <Col md={4}>
-                  <CustomButton fullWidth onClick={handleOpenModal}>
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  <CustomButton fullWidth onClick={handleOpenModal} startIcon={<PaymentIcon />}>
                     Cobrar (Ctrl + D)
                   </CustomButton>
-                </Col>
+                </Grid>
               </>
             )}
 
             {(movementType === "traspaso" ||
               movementType === "distribucion") && (
               <>
-                <Col md={3}><h1>Productos: {totalProducts}</h1></Col>
-                <Col md={3}>
-                  <Form.Select
-                    value={selectedStore}
+                <Grid item xs={12} md={3}><h1>Productos: {totalProducts}</h1></Grid>
+                <Grid item xs={12} md={3}>
+                  <Select fullWidth size="small" value={selectedStore}
                     onChange={handleSelectChange}
                   >
-                    <option value="">Selecciona un destino</option>
+                    <MenuItem value="">Selecciona un destino</MenuItem>
                     {stores.map((store) => (
-                      <option key={store.id} value={store.id}>
+                      <MenuItem key={store.id} value={store.id}>
                         <b>{store.name} ({store.store_type_display})</b>
-                      </option>
+                      </MenuItem>
                     ))}
-                  </Form.Select>
-                </Col>
-                <Col md={3}>
-                  <Form.Select
-                    value={confirmedStore}
+                  </Select>
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <Select fullWidth size="small" value={confirmedStore}
                     onChange={handleSelectChange2}
                   >
-                    <option value="">Confirma el destino</option>
+                    <MenuItem value="">Confirma el destino</MenuItem>
                     {stores.map((store) => (
-                      <option key={store.id} value={store.id}>
+                      <MenuItem key={store.id} value={store.id}>
                         {store.name} ({store.store_type_display})
-                      </option>
+                      </MenuItem>
                     ))}
-                  </Form.Select>
-                </Col>
-                <Col md={3}>
+                  </Select>
+                </Grid>
+                <Grid item xs={12} md={3}>
                   <CustomButton
                     onClick={() =>
                       movementType === "traspaso"
@@ -532,33 +537,35 @@ const Cart = () => {
                     }
                     disabled={!selectedStore || selectedStore !== confirmedStore}
                     fullWidth
+                    startIcon={<SendIcon />}
                   >
                     {movementType === "traspaso" ? "Transferir" : "Distribuir"}
                   </CustomButton>
-                </Col>
+                </Grid>
               </>
             )}
 
             {movementType === "agregar" && (
               <>
-                <Col md={9}></Col>
-                <Col md={3}>
+                <Grid item xs={12} md={9}></Grid>
+                <Grid item xs={12} md={3}>
                   <CustomButton
                     fullWidth
                     onClick={() => handleAddToStock(cart)}
+                    startIcon={<AddCircleIcon />}
                   >
                     Añadir
                   </CustomButton>
-                </Col>
+                </Grid>
               </>
             )}
-          </Row>
+          </Grid>
         )}
         <CustomTable
           noDataComponent="Sin productos"
           data={cart}
           columns={getColumns()}
-          pagination={false}
+          pagination={true}
         />
       </div>
     </div>

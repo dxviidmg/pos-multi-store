@@ -1,6 +1,7 @@
+import { memo } from "react";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
-export const CustomTooltip = ({ children, text, position }) => {
+export const CustomTooltip = memo(({ children, text, position }) => {
   const renderTooltip = (props) => (
     <Tooltip id="tooltip-hover" {...props} className="custom-tooltip-primary">
       {text}
@@ -14,6 +15,6 @@ export const CustomTooltip = ({ children, text, position }) => {
       </OverlayTrigger>
     </div>
   );
-};
+});
 
 export default CustomTooltip;

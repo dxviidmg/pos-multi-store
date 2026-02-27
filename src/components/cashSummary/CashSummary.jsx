@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from "react";
-import CustomTable from "../commons/customTable/customTable";
-import { Col, Form, Row } from "react-bootstrap";
-import { getCashSummary } from "../apis/sales";
+import CustomTable from "../commons/customTable/CustomTable";
+
+import { getCashSummary } from "../../api/sales";
 import CustomButton from "../commons/customButton/CustomButton";
-import { getUserData } from "../apis/utils";
+import { getUserData } from "../../api/utils";
 import {
   exportToExcel,
   getFormattedDate,
   formatTimeFromDate,
-} from "../utils/utils";
-import { getCashFlow } from "../apis/cashflow";
+} from "../../utils/utils";
+import { getCashFlow } from "../../api/cashflow";
 import CashFlowModal from "../cashFlowModal/CashFlowModal";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
+import { Grid, TextField, Box, FormLabel } from "@mui/material";
+import DownloadIcon from "@mui/icons-material/Download";
 
 const CashSummary = () => {
   const [cashSummary, setCashSummary] = useState([]);
@@ -99,29 +101,29 @@ const CashSummary = () => {
     <>
       <CustomSpinner isLoading={loading}></CustomSpinner>
       <CashFlowModal onUpdateCashFlowList={handleUpdateCashFlowList} />
-      <div className="custom-section">
+      <Grid container>
+      <Grid item xs={12} className="custom-section">
         <h1>Corte de caja</h1>
-        <Row>
-          <Col md={6}>
-            <Form>
-              <Form.Group className="">
-                <Form.Label className="">Fecha</Form.Label>
-                <Form.Control
-                  type="date"
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={6}>
+            <Box component="form">
+              <Box className="">
+                <FormLabel className="">Fecha</FormLabel>
+                <TextField size="small" fullWidth type="date"
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
                   max={today}
                 />
-              </Form.Group>
-            </Form>
-          </Col>
-          <Col md={6} className="d-flex flex-column justify-content-end">
-            <CustomButton onClick={handleExport} fullWidth>
+              </Box>
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={6} className="d-flex flex-column justify-content-end">
+            <CustomButton onClick={handleExport} fullWidth startIcon={<DownloadIcon />}>
               Descargar corte del dia
             </CustomButton>
-          </Col>
+          </Grid>
 
-          <Col md={4}>
+          <Grid item xs={12} md={4}>
             <h2>Métodos de pago</h2>
             <CustomTable
               data={paymentMethodsSummary}
@@ -140,11 +142,11 @@ const CashSummary = () => {
                 },
               ]}
             />
-          </Col>
+          </Grid>
 
 
 
-          <Col md={4}>
+          <Grid item xs={12} md={4}>
             <h2>Flujo de caja</h2>
             <CustomTable
               data={cashFlowSummary}
@@ -163,9 +165,9 @@ const CashSummary = () => {
                 },
               ]}
             />
-          </Col>
+          </Grid>
 
-          <Col md={4}>
+          <Grid item xs={12} md={4}>
             <h2> Total en caja</h2>
             <CustomTable
               data={totalSummary}
@@ -184,10 +186,11 @@ const CashSummary = () => {
                 },
               ]}
             />
-          </Col>
-        </Row>
-      </div>
-    </>
+          </Grid>
+        </Grid>
+      </Grid>
+    </Grid>
+  </>
   );
 };
 

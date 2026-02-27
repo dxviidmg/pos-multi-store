@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
-import CustomModal from "../commons/customModal/customModal";
-import { Col, Form, Row } from "react-bootstrap";
+import CustomModal from "../commons/customModal/CustomModal";
+
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
-import Swal from "sweetalert2";
-import { hideCashFlowModal } from "../redux/cashFlowModal/CashFlowModalActions";
-import { createCashFlow, getCashFlowChoices } from "../apis/cashflow";
+import { showSuccess, showError } from "../../utils/alerts";
+import { hideCashFlowModal } from "../../redux/cashFlowModal/CashFlowModalActions";
+import { createCashFlow, getCashFlowChoices } from "../../api/cashflow";
+import { Grid, TextField, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
+import SaveIcon from "@mui/icons-material/Save";
 
 
 const CashFlowModal = ({ onUpdateCashFlowList }) => {
@@ -58,27 +60,14 @@ const CashFlowModal = ({ onUpdateCashFlowList }) => {
       dispatch(hideCashFlowModal());
       setFormData({});
       setLoading(false)
-      Swal.fire({
-        icon: "success",
-        title: "Mov actualizada",
-        timer: 5000,
-      });
+      showSuccess("Movimiento actualizado");
     } else if (response.status === 201) {
       dispatch(hideCashFlowModal());
       setLoading(false)
       setFormData({});
-      Swal.fire({
-        icon: "success",
-        title: "Movimiento creado",
-        timer: 5000,
-      });
+      showSuccess("Movimiento creado");
     } else {
-      Swal.fire({
-        icon: "error",
-        title: "Error al crear la marca",
-        timer: 5000,
-        text: "Error desconocido, por favor comuniquese con soporte",
-      });
+      showError("Error al crear la marca", "Error desconocido, por favor comuníquese con soporte");
     }
   };
 
@@ -88,58 +77,56 @@ const CashFlowModal = ({ onUpdateCashFlowList }) => {
       onClose={() => dispatch(hideCashFlowModal())}
       title={formData.id ? "Actualizar movimiento" : "Crear movimiento"}
     >
-      <div className="custom-section">
+      <Grid className="custom-section">
 
-      <Row>
-        <Col md={3}>
-        <Form.Label>Tipo de movimiento</Form.Label>
-        <Form.Select
-              value={formData.transaction_type}
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={3}>
+        <FormControl fullWidth size="small">
+              <InputLabel>Tipo de movimiento</InputLabel>
+              <Select fullWidth size="small" value={formData.transaction_type}
               onChange={handleDataChange}
               name="transaction_type"
 //              disabled={isLoading}
-            >
+             label="Tipo de movimiento">
 
-              <option value="">Selecciona</option>
+              <MenuItem value="">Selecciona</MenuItem>
               {options.map((option) => (
-                <option key={option.value} value={option.value}>
+                <MenuItem key={option.value} value={option.value}>
                   {option.label}
-                </option>
+                </MenuItem>
               ))}
-            </Form.Select>
-        </Col>
-        <Col md={3}>
-          <Form.Label>Concepto</Form.Label>
-          <Form.Control
-            type="text"
+            </Select>
+            </FormControl>
+        </Grid>
+        <Grid item xs={12} md={3}>
+          <TextField size="small" fullWidth label="Concepto" type="text"
             value={formData.concept}
             placeholder="Concepto"
             name="concept"
             onChange={handleDataChange}
           />
-        </Col>
-        <Col md={3}>
-          <Form.Label>Cantidad</Form.Label>
-          <Form.Control
-            type="number"
+        </Grid>
+        <Grid item xs={12} md={3}>
+          <TextField size="small" fullWidth label="Cantidad" type="number"
             value={formData.amount}
             placeholder="Cantidad"
             name="amount"
             onChange={handleDataChange}
           />
-        </Col>
-        <Col md={3} className="d-flex flex-column justify-content-end">
+        </Grid>
+        <Grid item xs={12} md={3} className="d-flex flex-column justify-content-end">
           <CustomButton
             fullWidth={true}
             onClick={handleBrandSubmit}
 //            disabled={formData.name === ""}
             marginTop="3px"
+            startIcon={<SaveIcon />}
           >
             {formData.id ? "Actualizar" : "Crear"}
           </CustomButton>
-        </Col>
-      </Row>
-      </div>
+        </Grid>
+      </Grid>
+      </Grid>
     </CustomModal>
   );
 };

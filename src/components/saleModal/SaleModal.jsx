@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
-import CustomModal from "../commons/customModal/customModal";
-import { Col, Form, FormCheck, Row } from "react-bootstrap";
+import CustomModal from "../commons/customModal/CustomModal";
+
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
-import CustomTable from "../commons/customTable/customTable";
-import { hideSaleModal } from "../redux/saleModal/SaleModalActions";
+import CustomTable from "../commons/customTable/CustomTable";
+import { hideSaleModal } from "../../redux/saleModal/SaleModalActions";
 import { useCancelSale } from "../../hooks/useSaleMutations";
+import { Grid, TextField, Checkbox, FormLabel } from "@mui/material";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
 const INITIAL_FORM_DATA = {
   products_sale: [],
@@ -88,59 +90,50 @@ const SaleModal = ({ onUpdateSaleList }) => {
       onClose={() => dispatch(hideSaleModal())}
       title={totalCancel ? "Cancelación de compra" : "Devolución de productos"}
     >
-      <div className="custom-section">
-        <Row>
+      <Grid className="custom-section">
+        <Grid container spacing={2}>
           {/* Información general de la venta */}
-          <Col md={2}>
-            <Form.Label>Folio</Form.Label>
-            <Form.Control type="text" value={formData.id} disabled />
-          </Col>
-          <Col md={4}>
-            <Form.Label>Cliente</Form.Label>
-            <Form.Control
-              type="text"
+          <Grid item xs={12} md={2}>
+            <TextField size="small" fullWidth label="Folio" type="text" value={formData.id} disabled />
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <TextField size="small" fullWidth label="Cliente" type="text"
               value={formData.client?.full_name}
               disabled
             />
-          </Col>
-          <Col md={2}>
-            <Form.Label>Total</Form.Label>
-            <Form.Control type="text" value={formData.total} disabled />
-          </Col>
-          <Col md={4}>
-            <Form.Label>Creación</Form.Label>
-            <Form.Control type="text" value={formData.created_at} disabled />
-          </Col>
-          <Col md={3}>
-            <Form.Label>Vendedor</Form.Label>
-            <Form.Control
-              type="text"
+          </Grid>
+          <Grid item xs={12} md={2}>
+            <TextField size="small" fullWidth label="Total" type="text" value={formData.total} disabled />
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <TextField size="small" fullWidth label="Creación" type="text" value={formData.created_at} disabled />
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField size="small" fullWidth label="Vendedor" type="text"
               value={formData.seller_username}
               disabled
             />
-          </Col>
-          <Col md={4}>
-            <Form.Label></Form.Label>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <FormLabel></FormLabel>
             <div className="d-flex flex-column justify-content-end">
-              <FormCheck
+              <Checkbox size="small"
                 label="Cancelación total"
                 className="m-3"
                 checked={totalCancel}
                 onChange={handleCheck}
               />
             </div>
-          </Col>
-          <Col md={5}>
-            <Form.Label>Razon cancelacion</Form.Label>
-            <Form.Control
-              type="text"
+          </Grid>
+          <Grid item xs={12} md={5}>
+            <TextField size="small" fullWidth label="Razon cancelacion" type="text"
               value={reasonCancel}
               disabled={!totalCancel}
               onChange={(e) => setReasonCancel(e.target.value)}
             />
-          </Col>
+          </Grid>
           {/* Tabla de productos */}
-          <Col md={12}>
+          <Grid item xs={12} md={12}>
             <h5>Productos comprados</h5>
             <CustomTable
               data={formData.products_sale}
@@ -151,8 +144,7 @@ const SaleModal = ({ onUpdateSaleList }) => {
                 {
                   name: "Devolver",
                   selector: (row) => (
-                    <Form.Control
-                      type="number"
+                    <TextField size="small" fullWidth type="number"
                       min={1}
                       max={row.quantity}
                       value={quantitiesToCancel[row.id] || 0}
@@ -174,21 +166,22 @@ const SaleModal = ({ onUpdateSaleList }) => {
                 },
               ]}
             />
-          </Col>
+          </Grid>
 
           {/* Botón de acción */}
-          <Col md={12}>
+          <Grid item xs={12} md={12}>
             <CustomButton
               fullWidth
               onClick={handleSaveClient}
               marginTop="10px"
               disabled={disabledButton()}
+              startIcon={<ShoppingCartIcon />}
             >
               {totalCancel ? "Cancelar" : "Devolver"}
             </CustomButton>
-          </Col>
-        </Row>
-      </div>
+          </Grid>
+        </Grid>
+      </Grid>
     </CustomModal>
   );
 };

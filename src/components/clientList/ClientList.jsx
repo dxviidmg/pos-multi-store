@@ -1,21 +1,20 @@
 import React, { useState } from "react";
-import CustomTable from "../commons/customTable/customTable";
-import { Col, Form, Row } from "react-bootstrap";
+import CustomTable from "../commons/customTable/CustomTable";
 import CustomButton from "../commons/customButton/CustomButton";
-import { createDiscount } from "../apis/discounts";
-import Swal from "sweetalert2";
+import { createDiscount } from "../../api/discounts";
+import { showSuccess, showError } from "../../utils/alerts";
 import { useDispatch } from "react-redux";
-import {
-  hideClientModal,
-  showClientModal,
-} from "../redux/clientModal/ClientModalActions";
+import { showClientModal } from "../../redux/clientModal/ClientModalActions";
 import ClientModal from "../clientModal/ClientModal";
-import { EditIcon } from "../commons/icons/Icons";
-import { getUserData } from "../apis/utils";
-import { getDateDifference, getFormattedDate } from "../utils/utils";
+import EditIcon from "@mui/icons-material/Edit";
+import { getUserData } from "../../api/utils";
+import { getDateDifference, getFormattedDate } from "../../utils/utils";
 import CustomTooltip from "../commons/Tooltip";
-import Grid from "@mui/material/Grid";
 import { useClients } from "../../hooks/useClients";
+import Grid from "@mui/material/Grid";
+import { TextField, Box, Stack, Divider } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import DiscountIcon from "@mui/icons-material/Discount";
 
 const ClientList = () => {
   const today = getFormattedDate();
@@ -44,11 +43,7 @@ const ClientList = () => {
     if (response.status === 201) {
       setDiscountFormData({ discount_percentage: "" });
 
-      Swal.fire({
-        icon: "success",
-        title: "Descuento creado",
-        timer: 5000,
-      });
+      showSuccess("Descuento creado");
     } else {
       handleDiscountError(response);
     }
@@ -70,12 +65,7 @@ const ClientList = () => {
       }
     }
 
-    Swal.fire({
-      icon: "error",
-      title: "Error al crear descuento",
-      text: message,
-      timer: 5000,
-    });
+    showError("Error al crear descuento", message);
   };
 
   const handleOpenModal = (client) => {
@@ -92,70 +82,91 @@ const ClientList = () => {
   };
 
   return (
-    <Grid container spacing={2}>
-      <ClientModal onUpdateClientList={handleUpdateClientList}></ClientModal>
+    <>
+      {/* 1. MODALS */}
+      <ClientModal onUpdateClientList={handleUpdateClientList} />
+      
+      {/* 2. SECCIÓN DE DESCUENTOS (solo owner) */}
       {getUserData().role === "owner" && (
-        <Grid xs={12} className="custom-section">
-          <Form>
-            <h1>Crear descuento</h1>
-            <br></br>
-            <Form.Label>Descuento</Form.Label>
-            <Form.Control
-              type="number"
-              value={discountFormData.discount_percentage}
-              placeholder="Descuento"
-              name="discount_percentage"
-              onChange={handleDiscountInputChange}
-            />
-            <CustomButton
-              fullWidth
-              onClick={handleSaveDiscount}
-              disabled={!discountFormData.discount_percentage}
-              marginTop="10px"
-            >
-              Crear descuento
-            </CustomButton>
-          </Form>
+        <Grid item xs={12} className="custom-section">
+          <h1>Crear descuento</h1>
+          <Grid container spacing={2} sx={{ mt: 1 }}>
+            <Grid item xs={12} md={6}>
+              <TextField
+                size="small"
+                fullWidth
+                label="Descuento"
+                type="number"
+                value={discountFormData.discount_percentage}
+                placeholder="Descuento"
+                name="discount_percentage"
+                onChange={handleDiscountInputChange}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <CustomButton
+                fullWidth
+                onClick={handleSaveDiscount}
+                disabled={!discountFormData.discount_percentage}
+                startIcon={<DiscountIcon />}
+              >
+                Crear descuento
+              </CustomButton>
+            </Grid>
+          </Grid>
         </Grid>
       )}
-      <Grid xs={12} className="custom-section">
-        <h1>Clientes</h1>
-        <CustomButton onClick={() => handleOpenModal()}>Crear</CustomButton>
-        <Row>
-          <Col>
-            {" "}
-            <Form>
-              <Form.Label>Fecha de inicio</Form.Label>
-              <Form.Control
-                name="start_date"
-                type="date"
-                value={params.start_date}
-                onChange={(e) => handleParams(e)}
-                max={today}
-              />
-            </Form>
-          </Col>
-          <Col>
-            {" "}
-            <Form>
-              <Form.Label>Fecha de fin</Form.Label>
-              <Form.Control
-                name="end_date"
-                type="date"
-                value={params.end_date}
-                onChange={(e) => handleParams(e)}
-                max={today}
-              />
-            </Form>
-          </Col>
 
-          <Col>
-            <Form>
-              <Form.Label>Rango</Form.Label>
-              <Form.Control name="range" type="input" value={range} disabled />
-            </Form>
-          </Col>
-        </Row>
+      {/* 3. CONTENIDO PRINCIPAL */}
+      <Grid item xs={12} className="custom-section">
+        {/* 3.1 Header */}
+        <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+          <h1>Clientes</h1>
+          <CustomButton onClick={() => handleOpenModal()} startIcon={<AddIcon />}>
+            Nuevo Cliente
+          </CustomButton>
+        </Stack>
+
+        {/* 3.2 Filtros */}
+        <Grid container spacing={2} sx={{ mb: 2 }}>
+          <Grid item xs={12} md={4}>
+            <TextField
+              size="small"
+              fullWidth
+              label="Fecha de inicio"
+              name="start_date"
+              type="date"
+              value={params.start_date}
+              onChange={handleParams}
+              max={today}
+            />
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <TextField
+              size="small"
+              fullWidth
+              label="Fecha de fin"
+              name="end_date"
+              type="date"
+              value={params.end_date}
+              onChange={handleParams}
+              max={today}
+            />
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <TextField
+              size="small"
+              fullWidth
+              label="Rango"
+              name="range"
+              type="input"
+              value={range}
+              disabled
+            />
+          </Grid>
+        </Grid>
+
+        {/* 3.3 Tabla */}
         <CustomTable
           searcher={true}
           data={clients}
@@ -181,7 +192,7 @@ const ClientList = () => {
               cell: (row) => (
                 <CustomTooltip text={"Editar usuario"}>
                   <CustomButton onClick={() => handleOpenModal(row)}>
-                    <EditIcon></EditIcon>
+                    <EditIcon />
                   </CustomButton>
                 </CustomTooltip>
               ),
@@ -190,7 +201,7 @@ const ClientList = () => {
           highlightOnHover
         />
       </Grid>
-    </Grid>
+    </>
   );
 };
 

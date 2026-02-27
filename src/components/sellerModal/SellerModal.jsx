@@ -1,14 +1,17 @@
+import { logger } from "../../utils/logger";
 import React, { useEffect, useState } from "react";
-import CustomModal from "../commons/customModal/customModal";
-import { Col, Form, Row } from "react-bootstrap";
+import CustomModal from "../commons/customModal/CustomModal";
+
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
 import Swal from "sweetalert2";
-import { hideProductModal } from "../redux/productModal/ProductModalActions";
-import { updateProduct } from "../apis/products";
-import { getStores } from "../apis/stores";
-import { getUserData } from "../apis/utils";
-import { createSeller } from "../apis/sellers";
+import { hideProductModal } from "../../redux/productModal/ProductModalActions";
+import { updateProduct } from "../../api/products";
+import { getStores } from "../../api/stores";
+import { getUserData } from "../../api/utils";
+import { createSeller } from "../../api/sellers";
+import { Grid, TextField, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
+import SaveIcon from "@mui/icons-material/Save";
 
 const SellerModal = ({ onUpdateSellerList }) => {
   const user = getUserData();
@@ -42,7 +45,7 @@ const SellerModal = ({ onUpdateSellerList }) => {
         const response = await getStores({ store_type: "T" });
         setStores(response.data);
       } catch (error) {
-        console.error("Error fetching brands:", error);
+        logger.error("Error fetching brands:", error);
       }
     };
 
@@ -69,6 +72,7 @@ const SellerModal = ({ onUpdateSellerList }) => {
         if (store) {
           const storeName = store.name.toLowerCase();
           const workersCount = store.workers_count + 1;
+          logger.log(workersCount)
           const username = `${short_name}.tienda.${storeName}.vendedor${workersCount}`;
           updatedData.worker.username = username;
         }
@@ -128,69 +132,65 @@ const SellerModal = ({ onUpdateSellerList }) => {
       onClose={() => dispatch(hideProductModal())}
       title={formData.id ? "Actualizar vendedor" : "Crear vendedor"}
     >
-      <div className="custom-section">
-        <Row>
-          <Col md={6}>
-            <Form.Label>Tienda</Form.Label>
-            <Form.Select
-              value={formData.store_id}
+      <Grid className="custom-section">
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={6}>
+            <FormControl fullWidth size="small">
+              <InputLabel>Tienda</InputLabel>
+              <Select fullWidth size="small" value={formData.store_id}
               onChange={handleDataChange}
               name="store_id"
-            >
-              <option value="">Selecciona una tienda</option>
+             label="Tienda">
+              <MenuItem value="">Selecciona una tienda</MenuItem>
               {stores.map((store) => (
-                <option key={store.id} value={store.id}>
+                <MenuItem key={store.id} value={store.id}>
                   {store.name}
-                </option>
+                </MenuItem>
               ))}
-            </Form.Select>
-          </Col>
-          <Col md={6}>
-            <Form.Label>Usuario y contraseña</Form.Label>
-            <Form.Control
-            disabled
+            </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <TextField size="small" fullWidth label="Usuario y contraseña" disabled
               type="text"
               value={formData.worker?.username}
               placeholder="Usuario"
               name="username"
               onChange={handleDataChange}
             />
-          </Col>
-          <Col md={6}>
-            <Form.Label>Nombre</Form.Label>
-            <Form.Control
-              type="text"
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <TextField size="small" fullWidth label="Nombre" type="text"
               value={formData.worker?.first_name}
               placeholder="Nombre"
               name="first_name"
               onChange={handleDataChange}
             />
-          </Col>
-          <Col md={6}>
-            <Form.Label>Apellidos</Form.Label>
-            <Form.Control
-              type="text"
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <TextField size="small" fullWidth label="Apellidos" type="text"
               value={formData.worker?.last_name}
               placeholder="Apellidos"
               name="last_name"
               onChange={handleDataChange}
             />
-          </Col>
+          </Grid>
 
 
 
-          <Col md={12}>
+          <Grid item xs={12} md={12}>
             <CustomButton
               fullWidth={true}
               onClick={(e) => handleProductSubmit(e)}
               disabled={isFormIncomplete()}
               marginTop="10px"
+              startIcon={<SaveIcon />}
             >
               {formData.id ? "Actualizar" : "Crear"} vendedor
             </CustomButton>
-          </Col>
-        </Row>
-      </div>
+          </Grid>
+        </Grid>
+      </Grid>
     </CustomModal>
   );
 };

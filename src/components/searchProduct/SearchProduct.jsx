@@ -1,19 +1,25 @@
+import { logger } from "../../utils/logger";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import CustomTable from "../commons/customTable/customTable";
+import CustomTable from "../commons/customTable/CustomTable";
 import CustomButton from "../commons/customButton/CustomButton";
-import { getStoreProducts } from "../apis/products";
-import { addToCart, updateMovementType } from "../redux/cart/cartActions";
-import { Badge, Col, Form, Row } from "react-bootstrap";
+import { getStoreProducts } from "../../api/products";
+import { addToCart, updateMovementType } from "../../redux/cart/cartActions";
+import { Badge } from "react-bootstrap";
 import StockModal from "../stockModal/StockModal";
 import {
   hideStockModal,
   showStockModal,
-} from "../redux/stockModal/StockModalActions";
+} from "../../redux/stockModal/StockModalActions";
 import Swal from "sweetalert2";
-import { getPrinterUrl, getUserData } from "../apis/utils";
-import { PrinterIcon } from "../commons/icons/Icons";
-import { handlePrintTicket } from "../utils/utils";
+import { getPrinterUrl, getUserData } from "../../api/utils";
+import PrintIcon from "@mui/icons-material/Print";
+import { handlePrintTicket } from "../../utils/utils";
+import { Grid, TextField, FormLabel, RadioGroup, FormControlLabel, Radio } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
+import AddIcon from "@mui/icons-material/Add";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import ImageIcon from "@mui/icons-material/Image";
 
 const SearchProduct = () => {
   const inputRef = useRef(null);
@@ -64,7 +70,7 @@ const SearchProduct = () => {
         clearTimeout(timeoutId);
   
         if (err.name === "CanceledError") {
-          console.warn(`Intento ${attempts + 1}: la petición se canceló por timeout`);
+          logger.warn(`Intento ${attempts + 1}: la petición se canceló por timeout`);
           await delay(1000);
           attempts++;
   
@@ -73,7 +79,7 @@ const SearchProduct = () => {
             local['Error'] = local['Error'] || [];
             local['Error'].push(query);  // someValue es lo que quieras añadir
             localStorage.setItem("attempts", JSON.stringify(local));
-            console.error("❌ Se alcanzó el máximo de reintentos. Abortando.");
+            logger.error("❌ Se alcanzó el máximo de reintentos. Abortando.");
             return null;
           }
           // sigue el ciclo → reintenta
@@ -105,7 +111,7 @@ const SearchProduct = () => {
         setSearching(false);
 
         if (!fetchedData) {
-          console.log("No se pudo completar la búsqueda después de 2 intentos.");
+          logger.log("No se pudo completar la búsqueda después de 2 intentos.");
 
           Swal.fire({
             icon: "error",
@@ -129,7 +135,7 @@ const SearchProduct = () => {
         }
       } catch (err) {
         if (err.name === "AbortError") return; // petición cancelada, no hacer nada
-        console.error(err);
+        logger.error(err);
         setSearching(false);
       }
     },
@@ -310,100 +316,110 @@ const SearchProduct = () => {
     <>
       <StockModal />
 
-      <h1>
-        Buscador de productos{" "}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+        <h1 style={{ margin: 0 }}>Buscador de productos</h1>
         <CustomButton
           disabled={!urlPrinter}
           onClick={(e) => handlePrintTicket("test", {})}
+          startIcon={<PrintIcon fontSize="small" />}
         >
-          <PrinterIcon color="white" />
+          Probar impresora
         </CustomButton>
-      </h1>
+      </div>
 
-      <Form.Label className="me-3">Tipo de búsqueda:</Form.Label>
-      <Form.Check
-        inline
-        id="code"
-        label="Por código de barras (Ctrl + R)"
-        type="radio"
-        onChange={handleQueryTypeChange}
-        value="code"
-        checked={queryType === "code"}
-      />
-      <Form.Check
-        inline
-        id="description"
-        label="Por marca o nombre (Ctrl + Y)"
-        type="radio"
-        onChange={handleQueryTypeChange}
-        value="q"
-        checked={queryType === "q"}
-      />
+      <div>
+        <span className="me-3">
+          Tipo de búsqueda: 
+          <label className="ms-2">
+            <input
+              type="radio"
+              value="code"
+              checked={queryType === "code"}
+              onChange={handleQueryTypeChange}
+              className="me-1"
+            />
+            Por código de barras (Ctrl+R)
+          </label>
+          <label className="ms-3">
+            <input
+              type="radio"
+              value="q"
+              checked={queryType === "q"}
+              onChange={handleQueryTypeChange}
+              className="me-1"
+            />
+            Por marca o nombre (Ctrl+Y)
+          </label>
+        </span>
+      </div>
 
-      <br />
-      <Form.Label className="me-3">Tipo de operación:</Form.Label>
-      <Form.Check
-        inline
-        id="venta"
-        label="Venta (Ctrl + U)"
-        type="radio"
-        onChange={handleMovementTypeChange}
-        value="venta"
-        checked={movementType === "venta"}
-        className={storeType === "A" ? "d-none" : ""}
-      />
-
-      <Form.Check
-        inline
-        id="traspaso"
-        label="Confirmar traspaso  (Ctrl + I)"
-        type="radio"
-        onChange={handleMovementTypeChange}
-        value="traspaso"
-        checked={movementType === "traspaso"}
-      />
-      <Form.Check
-        inline
-        id="distribucion"
-        label="Distribucion (Ctrl + O)"
-        type="radio"
-        onChange={handleMovementTypeChange}
-        value="distribucion"
-        checked={movementType === "distribucion"}
-        className={storeType === "T" ? "d-none" : ""}
-      />
-      <Form.Check
-        inline
-        id="agregar"
-        label="Agregar a inventario (Ctrl + P)"
-        type="radio"
-        onChange={handleMovementTypeChange}
-        value="agregar"
-        checked={movementType === "agregar"}
-      />
-      <Form.Check
-        inline
-        id="checar"
-        label="Checar precio (Ctrl + A)"
-        type="radio"
-        onChange={handleMovementTypeChange}
-        value="checar"
-        checked={movementType === "checar"}
-      />
-      {supports_reservations && (
-        <Form.Check
-          inline
-          id="apartado"
-          label="Apartado (Sin atajo)"
-          type="radio"
-          onChange={handleMovementTypeChange}
-          value="apartado"
-          checked={movementType === "apartado"}
-          className={storeType === "A" ? "d-none" : ""}
-        />
-      )}
-
-      <br />
+      <div>
+        <span className="me-3">
+          Tipo de operación: 
+          <label className={`ms-2 ${storeType === "A" ? "d-none" : ""}`}>
+            <input
+              type="radio"
+              value="venta"
+              checked={movementType === "venta"}
+              onChange={handleMovementTypeChange}
+              className="me-1"
+            />
+            Venta (Ctrl+U)
+          </label>
+          <label className="ms-3">
+            <input
+              type="radio"
+              value="traspaso"
+              checked={movementType === "traspaso"}
+              onChange={handleMovementTypeChange}
+              className="me-1"
+            />
+            Confirmar traspaso (Ctrl+I)
+          </label>
+          <label className={`ms-3 ${storeType === "T" ? "d-none" : ""}`}>
+            <input
+              type="radio"
+              value="distribucion"
+              checked={movementType === "distribucion"}
+              onChange={handleMovementTypeChange}
+              className="me-1"
+            />
+            Distribucion (Ctrl+O)
+          </label>
+          <label className="ms-3">
+            <input
+              type="radio"
+              value="agregar"
+              checked={movementType === "agregar"}
+              onChange={handleMovementTypeChange}
+              className="me-1"
+            />
+            Agregar a inventario (Ctrl+P)
+          </label>
+          <label className="ms-3">
+            <input
+              type="radio"
+              value="checar"
+              checked={movementType === "checar"}
+              onChange={handleMovementTypeChange}
+              className="me-1"
+            />
+            Checar precio (Ctrl+A)
+          </label>
+          {supports_reservations && (
+            <label className={`ms-3 ${storeType === "A" ? "d-none" : ""}`}>
+              <input
+                type="radio"
+                value="apartado"
+                checked={movementType === "apartado"}
+                onChange={handleMovementTypeChange}
+                className="me-1"
+              />
+              Apartado (Sin atajo)
+            </label>
+          )}
+        </span>
+      </div>
 
       <Badge bg="success" className="text-wrap" hidden={isInputFocused}>
         Aviso: Para añadir productos al carrito, el cursor debe estar en el
@@ -424,10 +440,9 @@ const SearchProduct = () => {
       </Badge>
 
       {!searching && isInputFocused && <br />}
-      <Row>
-        <Col md={11}>
-          <Form.Control
-            className=""
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={queryType === "code" ? 12 : 10}>
+          <TextField size="small" fullWidth className=""
             ref={inputRef}
             type="text"
             value={queryType === "code" ? barcode : query}
@@ -445,7 +460,7 @@ const SearchProduct = () => {
             <CustomTable
             showNoDataComponent={false}
             data={data}
-            pagination={false}
+            pagination={true}
             columns={[
               { name: "Código", selector: (row) => row.product.code, grow: 2 },
               {
@@ -487,6 +502,7 @@ const SearchProduct = () => {
                         movementType === "venta" && row.available_stock === 0
                       }
                       variant="primary"
+                      startIcon={<AddIcon />}
                     >
                       Agregar
                     </CustomButton>
@@ -496,6 +512,7 @@ const SearchProduct = () => {
                         handleOpenModal({ ...row, onlyRead: true })
                       }
                       variant="danger"
+                      startIcon={<VisibilityIcon />}
                     >
                       Ver stock
                     </CustomButton>
@@ -506,6 +523,7 @@ const SearchProduct = () => {
                       }
                       variant="danger"
                       disabled={!row.product.image}
+                      startIcon={<ImageIcon />}
                     >
                       Ver imagen
                     </CustomButton>
@@ -517,13 +535,20 @@ const SearchProduct = () => {
           )}
 
 
-        </Col>
+        </Grid>
         {queryType === "q" && (
-          <Col>
-            <CustomButton onClick={handleSearchProduct}>Buscar</CustomButton>
-          </Col>
+          <Grid item xs={12} md={2}>
+            <CustomButton 
+              fullWidth 
+              onClick={handleSearchProduct} 
+              startIcon={<SearchIcon />}
+              disabled={searching}
+            >
+              {searching ? "Buscando..." : "Buscar"}
+            </CustomButton>
+          </Grid>
         )}
-      </Row>
+      </Grid>
     </>
   );
 };

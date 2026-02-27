@@ -1,19 +1,21 @@
+import { logger } from "../../utils/logger";
 import React, { useEffect, useState } from "react";
-import { Col, Form, Image, Row } from "react-bootstrap";
+import { Image } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import CustomModal from "../commons/customModal/customModal";
-import CustomTable from "../commons/customTable/customTable";
+import CustomModal from "../commons/customModal/CustomModal";
+import CustomTable from "../commons/customTable/CustomTable";
 import CustomButton from "../commons/customButton/CustomButton";
-import { hideStockModal } from "../redux/stockModal/StockModalActions";
-import { createTransfer } from "../apis/transfers";
+import { hideStockModal } from "../../redux/stockModal/StockModalActions";
+import { createTransfer } from "../../api/transfers";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
-import { getStockOtherStores } from "../apis/products";
+import { getStockOtherStores } from "../../api/products";
+import { Grid, TextField } from "@mui/material";
 
 
 const StockModal = () => {
   const { showStockModal, storeProduct } = useSelector((state) => state.StockModalReducer);
 
-  console.log('showStockModal', showStockModal)
+  logger.log('showStockModal', showStockModal)
   const [requestedQuantities, setRequestedQuantities] = useState({});
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false)
@@ -59,7 +61,7 @@ const StockModal = () => {
       }
     } catch (error) {
       setIsLoading(false)
-      console.error("Error creating transfer:", error);
+      logger.error("Error creating transfer:", error);
     }
   };
 
@@ -90,11 +92,11 @@ const StockModal = () => {
         {renderStockInfo()}
 
       {storeProduct.showImage ? (
-        <Row className="justify-content-center">
-          <Col md={3}>
+        <Grid container spacing={2} className="justify-content-center">
+          <Grid item xs={12} md={3}>
             <Image src={storeProduct.product?.image} fluid />
-          </Col>
-        </Row>
+          </Grid>
+        </Grid>
       ) : (
         stockOtherStores.length > 0 && (
           <CustomTable
@@ -105,8 +107,7 @@ const StockModal = () => {
               {
                 name: "Cantidad a solicitar",
                 selector: (row) => (
-                  <Form.Control
-                    type="number"
+                  <TextField size="small" fullWidth type="number"
                     name="quantity"
                     min={1}
                     max={row.available_stock}
