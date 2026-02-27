@@ -1,5 +1,5 @@
 import { memo } from "react";
-import "./customSpinner.css";
+import "./CustomSpinner.css";
 import Spinner from 'react-bootstrap/Spinner';
 
 export const CustomSpinner = memo(({isLoading}) => {

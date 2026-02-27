@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import CustomTable from "../commons/customTable/customTable";
+import CustomTable from "../commons/customTable/CustomTable";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getStoreProducts } from "../../api/products";
 import { addToCart, updateMovementType } from "../../redux/cart/cartActions";

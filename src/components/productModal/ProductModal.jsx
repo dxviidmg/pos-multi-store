@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import CustomModal from "../commons/customModal/customModal";
+import CustomModal from "../commons/customModal/CustomModal";
 import { Image } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
@@ -14,7 +14,7 @@ import {
 } from "../../api/products";
 import noPhoto from "../../assets/images/noPhoto.jpg";
 import { getDepartments } from "../../api/departments";
-import CustomTable from "../commons/customTable/customTable";
+import CustomTable from "../commons/customTable/CustomTable";
 import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, Box, Checkbox, FormControlLabel, styled } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import SaveIcon from "@mui/icons-material/Save";

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import CustomTable from "../commons/customTable/customTable";
+import CustomTable from "../commons/customTable/CustomTable";
 import { getClients } from "../../api/clients";
 import CustomButton from "../commons/customButton/CustomButton";
 import { useDispatch, useSelector } from "react-redux";

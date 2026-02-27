@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import CustomTable from "../commons/customTable/customTable";
+import CustomTable from "../commons/customTable/CustomTable";
 import CustomButton from "../commons/customButton/CustomButton";
 import { getFormattedDateTime } from "../../utils/utils";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";

@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import CustomTable from "../commons/customTable/customTable";
+import CustomTable from "../commons/customTable/CustomTable";
 import { Alert } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import { useNavigate } from "react-router-dom";

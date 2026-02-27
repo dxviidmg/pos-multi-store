@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import CustomTable from "../commons/customTable/customTable";
+import CustomTable from "../commons/customTable/CustomTable";
 import { getStoreProducts } from "../../api/products";
 
 import CustomButton from "../commons/customButton/CustomButton";
@@ -10,7 +10,7 @@ import {
   showLogsModal,
 } from "../../redux/logsModal/LogsModalActions";
 import { useDispatch } from "react-redux";
-import StoreProductLogsModal from "../storeproductlogsModal/StoreProductLogsModal";
+import StoreProductLogsModal from "../storeProductLogsModal/StoreProductLogsModal";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 import { getBrands } from "../../api/brands";
 import SearchIcon from "@mui/icons-material/Search";

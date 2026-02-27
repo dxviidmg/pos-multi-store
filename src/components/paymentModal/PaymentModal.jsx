@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect, useRef } from "react";
-import CustomModal from "../commons/customModal/customModal";
+import CustomModal from "../commons/customModal/CustomModal";
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
 import { cleanCart, removeClientfromCart } from "../../redux/cart/cartActions";

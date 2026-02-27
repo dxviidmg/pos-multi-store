@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import CustomTable from "../commons/customTable/customTable";
+import CustomTable from "../commons/customTable/CustomTable";
 import { deleteTransfer, getTransfers } from "../../api/transfers";
 import { calculateTimeAgo } from "../../utils/utils";
 import CustomButton from "../commons/customButton/CustomButton";

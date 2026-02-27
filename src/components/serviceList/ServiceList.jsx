@@ -1,5 +1,5 @@
 import React from "react";
-import CustomTable from "../commons/customTable/customTable";
+import CustomTable from "../commons/customTable/CustomTable";
 import { Grid } from "@mui/material";
 
 const SERVICES = [

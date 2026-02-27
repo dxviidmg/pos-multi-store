@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import CustomTable from "../commons/customTable/customTable";
+import CustomTable from "../commons/customTable/CustomTable";
 
 import { getCashSummary } from "../../api/sales";
 import CustomButton from "../commons/customButton/CustomButton";

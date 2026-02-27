@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import CustomModal from "../commons/customModal/customModal";
+import CustomModal from "../commons/customModal/CustomModal";
 
 import { useDispatch, useSelector } from "react-redux";
-import CustomTable from "../commons/customTable/customTable";
+import CustomTable from "../commons/customTable/CustomTable";
 import { getStoreProductLogs, updateStoreProduct } from "../../api/products";
 import { getFormattedDateTime } from "../../utils/utils";
 import { showSuccess, showError } from "../../utils/alerts";

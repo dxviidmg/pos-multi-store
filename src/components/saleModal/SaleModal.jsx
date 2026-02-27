@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import CustomModal from "../commons/customModal/customModal";
+import CustomModal from "../commons/customModal/CustomModal";
 
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
-import CustomTable from "../commons/customTable/customTable";
+import CustomTable from "../commons/customTable/CustomTable";
 import { hideSaleModal } from "../../redux/saleModal/SaleModalActions";
 import { useCancelSale } from "../../hooks/useSaleMutations";
 import { Grid, TextField, Checkbox, FormLabel } from "@mui/material";

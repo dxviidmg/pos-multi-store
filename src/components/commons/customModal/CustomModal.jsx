@@ -2,7 +2,7 @@ import { memo } from 'react';
 import Modal from '@mui/material/Modal';
 import { Box, IconButton, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import './customModal.css'
+import './CustomModal.css'
 
 const style = {
   position: 'absolute',

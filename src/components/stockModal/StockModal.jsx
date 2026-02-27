@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Image } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import CustomModal from "../commons/customModal/customModal";
-import CustomTable from "../commons/customTable/customTable";
+import CustomModal from "../commons/customModal/CustomModal";
+import CustomTable from "../commons/customTable/CustomTable";
 import CustomButton from "../commons/customButton/CustomButton";
 import { hideStockModal } from "../../redux/stockModal/StockModalActions";
 import { createTransfer } from "../../api/transfers";
