@@ -1,52 +1,23 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import CustomTable from "../commons/customTable/CustomTable";
-import { deleteTransfer, getTransfers } from "../../api/transfers";
 import { calculateTimeAgo } from "../../utils/utils";
 import CustomButton from "../commons/customButton/CustomButton";
 import { showSuccess, showError } from "../../utils/alerts";
 import Swal from "sweetalert2";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
+import { useTransfers, useDeleteTransfer } from "../../hooks/useQueries";
 
 const TransferList = () => {
-  const [transfers, setTransfers] = useState([]);
-  const [isLoading, setIsLoading] = useState(false)
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true)
-      const response = await getTransfers();
-      setTransfers(response.data);
-      setIsLoading(false)
-    };
-
-    fetchData();
-  }, []);
+  const { data: transfers = [], isLoading } = useTransfers();
+  const deleteTransferMutation = useDeleteTransfer();
 
   const handleOpenModal = async (transfer) => {
-    const response = await deleteTransfer(transfer.id)
-
-
-    if (response.status === 204){
-
-      setTransfers((prevTransfers) => {
-        const updatedList = prevTransfers.filter(
-          (item) => item.id !== transfer.id
-        );
-        return updatedList;
-      });
-
-      Swal.fire({
-        icon: "success",
-        title: "Tranferencia eliminada",
-        timer: 5000,
-      });
-    }
-    else{
-      Swal.fire({
-        icon: "error",
-        title: "Error al eliminar transferencia",
-        timer: 5000,
-      });
+    try {
+      await deleteTransferMutation.mutateAsync(transfer.id);
+      showSuccess("Transferencia eliminada");
+    } catch (error) {
+      showError("Error al eliminar transferencia");
     }
   };
 

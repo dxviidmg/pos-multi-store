@@ -87,8 +87,7 @@ const CustomTable = ({
         </Box>
       )}
 
-      {/* 🔥 CONTENEDOR CONTROLADO */}
-      <Box sx={{ height: 600, width: "100%" }}>
+      <Box sx={{width: "100%" }}>
         <DataGrid
           rows={rowsWithIds}
           columns={muiColumns}
