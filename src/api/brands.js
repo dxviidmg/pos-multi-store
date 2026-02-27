@@ -1,56 +1,49 @@
-import axios from "axios";
+import httpClient from "./httpClient";
 import { getApiUrl, getHeaders } from "./utils";
 
-
+/**
+ * Get all brands
+ * @returns {Promise<Object>} Brands list response
+ */
 export const getBrands = async () => {
-    const apiUrl = new URL(getApiUrl("brand"));
- 
-    try {
-      const response = await axios.get(apiUrl, {
-        headers: getHeaders(),
-      });
-      return response;
-    } catch (error) {
-      return error;
-    }
-  };
+  const response = await httpClient.get(getApiUrl("brand"), {
+    headers: getHeaders(),
+  });
+  return response;
+};
 
+/**
+ * Create new brand
+ * @param {Object} data - Brand data
+ * @returns {Promise<Object>} Created brand response
+ */
+export const createBrand = async (data) => {
+  const response = await httpClient.post(getApiUrl("brand"), data, {
+    headers: getHeaders(),
+  });
+  return response;
+};
 
-  export const createBrand = async (data) => {
-    const apiUrl = new URL(getApiUrl("brand"));
-  
-    try {
-      const response = await axios.post(apiUrl, data, {
-        headers: getHeaders(),
-      });
-      return response;
-    } catch (error) {
-      return error;
-    }
-  };
-  
-  export const updateBrand = async (data) => {
-    const apiUrl = new URL(getApiUrl("brand/" + data.id));
-  
-    try {
-      const response = await axios.patch(apiUrl, data, {
-        headers: getHeaders(),
-      });
-      return response;
-    } catch (error) {
-      return error;
-    }
-  };
+/**
+ * Update brand
+ * @param {Object} data - Brand data with ID
+ * @returns {Promise<Object>} Updated brand response
+ */
+export const updateBrand = async (data) => {
+  const response = await httpClient.patch(getApiUrl(`brand/${data.id}`), data, {
+    headers: getHeaders(),
+  });
+  return response;
+};
 
-  export const deleteBrands = async (data) => {
-    const apiUrl = new URL(getApiUrl("brands/delete"));
-  
-    try {
-      const response = await axios.post(apiUrl, data, {
-        headers: getHeaders(),
-      });
-      return response;
-    } catch (error) {
-      return error;
-    }
-  };
+/**
+ * Delete multiple brands
+ * @param {Object} data - Object with brand IDs to delete
+ * @returns {Promise<Object>} Deletion response
+ */
+export const deleteBrands = async (data) => {
+  const response = await httpClient.post(getApiUrl("brands/delete"), data, {
+    headers: getHeaders(),
+  });
+  return response;
+};

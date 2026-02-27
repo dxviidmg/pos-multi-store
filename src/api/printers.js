@@ -1,21 +1,25 @@
-import axios from "axios";
+import httpClient from "./httpClient";
 import { getPrinterUrl, getUserData, getApiUrl } from "./utils";
 
+/**
+ * Send print job to printer service
+ * @param {string} endpoint - Printer endpoint
+ * @param {Object} data - Print data
+ * @returns {Promise<Object>} Print response
+ */
 export const getPrint = async (endpoint, data) => {
-  const printerUrl = new URL(getPrinterUrl(endpoint));
-  const user = getUserData()
-  data.token = user.token
-  data.api_url = getApiUrl('store-printer')
-  data.store_printer = user.store_printer
+  const printerUrl = getPrinterUrl(endpoint);
+  const user = getUserData();
+  
+  const printData = {
+    ...data,
+    token: user.token,
+    api_url: getApiUrl('store-printer'),
+    store_printer: user.store_printer,
+  };
 
-  
-  
-  try {
-    const response = await axios.post(printerUrl, data, {});
-    return response;
-  } catch (error) {
-    return error;
-  }
+  const response = await httpClient.post(printerUrl, printData);
+  return response;
 };
 
 

@@ -1,30 +1,25 @@
-import axios from "axios";
+import httpClient from "./httpClient";
 import { getApiUrl, getHeaders } from "./utils";
 
-
+/**
+ * Get all discounts
+ * @returns {Promise<Object>} Discounts list response
+ */
 export const getDiscounts = async () => {
-    const apiUrl = new URL(getApiUrl("discount"));
- 
-    try {
-      const response = await axios.get(apiUrl, {
-        headers: getHeaders(),
-      });
-      return response;
-    } catch (error) {
-      return error;
-    }
-  };
+  const response = await httpClient.get(getApiUrl("discount"), {
+    headers: getHeaders(),
+  });
+  return response;
+};
 
-  export const createDiscount = async (data) => {
-    const apiUrl = new URL(getApiUrl("discount"));
-
-  
-    try {
-      const response = await axios.post(apiUrl, data, {
-        headers: getHeaders(),
-      });
-      return response;
-    } catch (error) {
-      return error;
-    }
-  };
+/**
+ * Create new discount
+ * @param {Object} data - Discount data
+ * @returns {Promise<Object>} Created discount response
+ */
+export const createDiscount = async (data) => {
+  const response = await httpClient.post(getApiUrl("discount"), data, {
+    headers: getHeaders(),
+  });
+  return response;
+};

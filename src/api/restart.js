@@ -1,16 +1,13 @@
-import axios from "axios";
+import httpClient from "./httpClient";
 import { getApiUrl, getHeaders } from "./utils";
 
-
+/**
+ * Trigger Render service redeployment
+ * @returns {Promise<Object>} Redeploy response
+ */
 export const getRedeployRender = async () => {
-  const apiUrl = new URL(getApiUrl("redeploy-render"));
-
-  try {
-    const response = await axios.get(apiUrl, {
-      headers: getHeaders(),
-    });
-    return response;
-  } catch (error) {
-    return error;
-  }
+  const response = await httpClient.get(getApiUrl("redeploy-render"), {
+    headers: getHeaders(),
+  });
+  return response;
 };

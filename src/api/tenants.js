@@ -1,39 +1,24 @@
-import axios from "axios";
+import httpClient from "./httpClient";
 import { getApiUrl, getHeaders } from "./utils";
 
+/**
+ * Get available payment methods
+ * @returns {Promise<Object>} Payment methods list
+ */
 export const getPayments = async () => {
-    const apiUrl = new URL(getApiUrl("payment"));
-    try {
-      const response = await axios.get(apiUrl, {
-        headers: getHeaders(),
-      });
-      return response;
-    } catch (error) {
-      return error;
-    }
-  };
+  const response = await httpClient.get(getApiUrl("payment"), {
+    headers: getHeaders(),
+  });
+  return response;
+};
 
-
-
-
-  export const getTenantInfo = async () => {
-    const apiUrl = getApiUrl("tenant-info")
-  
-    try {
-      const response = await axios.get(apiUrl, {
-        headers: getHeaders(),
-      });
-      return response;
-    } catch (error) {
-
-      if (error.response?.status === 401) {
-        console.error("Unauthorized: Token expired or invalid.");
-        localStorage.removeItem("user");
-        window.location.href = "/";
-        // Opcional: Puedes redirigir al login si es necesario
-        // window.location.href = "/login";
-      }
-      
-      return error;
-    }
-  };
+/**
+ * Get tenant information
+ * @returns {Promise<Object>} Tenant configuration and details
+ */
+export const getTenantInfo = async () => {
+  const response = await httpClient.get(getApiUrl("tenant-info"), {
+    headers: getHeaders(),
+  });
+  return response;
+};

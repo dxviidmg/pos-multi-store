@@ -1,16 +1,18 @@
-import axios from 'axios';
+import httpClient from './httpClient';
 import { getApiUrl } from "./utils";
-export const loginUser = async (credentials) => {
 
-  const apiUrl = new URL(getApiUrl("api-token-auth"));
-  try {
-    const response = await axios.post(apiUrl, credentials, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    return response;
-  } catch (error) {
-    return error;
-  }
+/**
+ * Authenticate user with credentials
+ * @param {Object} credentials - User credentials
+ * @param {string} credentials.username - Username
+ * @param {string} credentials.password - Password
+ * @returns {Promise<Object>} Response with token and user data
+ */
+export const loginUser = async (credentials) => {
+  const response = await httpClient.post(getApiUrl("api-token-auth"), credentials, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  return response;
 };

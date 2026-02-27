@@ -1,21 +1,24 @@
-// src/hooks/useKeepAlive.js
 import { useEffect } from "react";
-import axios from "axios";
+import httpClient from "./httpClient";
 import { getApiUrl } from "./utils";
 import { logger } from "../utils/logger";
 
+/**
+ * Hook to keep server connection alive with periodic pings
+ * Pings server every 3 minutes to prevent connection timeout
+ */
 export default function useKeepAlive() {
   useEffect(() => {
     const pingServer = () => {
-      axios
+      httpClient
         .get(getApiUrl("ping"))
         .then(res => logger.log("Ping:", res.data.status))
         .catch(err => logger.error("Ping error:", err));
     };
 
-    pingServer(); // primer ping inmediato
-    const interval = setInterval(pingServer, 3 * 60 * 1000); // cada 3 minutos
+    pingServer();
+    const interval = setInterval(pingServer, 3 * 60 * 1000);
 
-    return () => clearInterval(interval); // cleanup al desmontar
+    return () => clearInterval(interval);
   }, []);
 }

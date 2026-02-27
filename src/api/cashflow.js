@@ -1,52 +1,38 @@
+import httpClient from "./httpClient";
+import { getApiUrl, getHeaders, buildUrlWithParams } from "./utils";
 
-import axios from "axios";
-import { getApiUrl, getHeaders } from "./utils";
-
+/**
+ * Get cash flow records with optional filters
+ * @param {Object} params - Query parameters
+ * @returns {Promise<Object>} Cash flow list response
+ */
 export const getCashFlow = async (params) => {
-    const apiUrl = new URL(getApiUrl("cash-flow"));
-    if (params) {
-      Object.entries(params).forEach(([key, value]) => {
-        apiUrl.searchParams.append(key, value);
-      });
-    }
-  
-    try {
-    const response = await axios.get(apiUrl, {
-      headers: getHeaders(),
-    });
-    return response;
-  } catch (error) {
-    console.error("Error al obtener clientes:", error);
-    throw error;
-  }
-  };
+  const url = buildUrlWithParams(getApiUrl("cash-flow"), params);
+  const response = await httpClient.get(url, {
+    headers: getHeaders(),
+  });
+  return response;
+};
 
+/**
+ * Get cash flow type choices
+ * @returns {Promise<Object>} Available cash flow types
+ */
+export const getCashFlowChoices = async () => {
+  const response = await httpClient.get(getApiUrl("cash-flow/choices"), {
+    headers: getHeaders(),
+  });
+  return response;
+};
 
-
-  export const getCashFlowChoices = async () => {
-    const apiUrl = new URL(getApiUrl("cash-flow/choices"));
-  
-    try {
-    const response = await axios.get(apiUrl, {
-      headers: getHeaders(),
-    });
-    return response;
-  } catch (error) {
-    console.error("Error al obtener clientes:", error);
-    throw error;
-  }
-  };
-
-
-  export const createCashFlow = async (data) => {
-    const apiUrl = new URL(getApiUrl("cash-flow"));
-  
-    try {
-      const response = await axios.post(apiUrl, data, {
-        headers: getHeaders(),
-      });
-      return response;
-    } catch (error) {
-      return error;
-    }
-  };
+/**
+ * Create new cash flow record
+ * @param {Object} data - Cash flow data
+ * @returns {Promise<Object>} Created cash flow response
+ */
+export const createCashFlow = async (data) => {
+  const response = await httpClient.post(getApiUrl("cash-flow"), data, {
+    headers: getHeaders(),
+  });
+  return response;
+};

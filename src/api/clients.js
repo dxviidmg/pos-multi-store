@@ -1,47 +1,39 @@
-import axios from "axios";
-import { getApiUrl, getHeaders } from "./utils";
+import httpClient from "./httpClient";
+import { getApiUrl, getHeaders, buildUrlWithParams } from "./utils";
 
+/**
+ * Get clients list with optional filters
+ * @param {Object} params - Query parameters
+ * @returns {Promise<Object>} Clients list response
+ */
 export const getClients = async (params) => {
-  const apiUrl = new URL(getApiUrl("client"));
-
-  if (params) {
-    Object.entries(params).forEach(([key, value]) => {
-      apiUrl.searchParams.append(key, value);
-    });
-  }
-
-  try {
-    const response = await axios.get(apiUrl, {
-      headers: getHeaders(),
-    });
-    return response;
-  } catch (error) {
-    return error;
-  }
+  const url = buildUrlWithParams(getApiUrl("client"), params);
+  const response = await httpClient.get(url, {
+    headers: getHeaders(),
+  });
+  return response;
 };
 
+/**
+ * Create new client
+ * @param {Object} data - Client data
+ * @returns {Promise<Object>} Created client response
+ */
 export const createClient = async (data) => {
-  const apiUrl = new URL(getApiUrl("client"));
-
-  try {
-    const response = await axios.post(apiUrl, data, {
-      headers: getHeaders(),
-    });
-    return response;
-  } catch (error) {
-    return error;
-  }
+  const response = await httpClient.post(getApiUrl("client"), data, {
+    headers: getHeaders(),
+  });
+  return response;
 };
 
+/**
+ * Update client information
+ * @param {Object} data - Client data with ID
+ * @returns {Promise<Object>} Updated client response
+ */
 export const updateClient = async (data) => {
-  const apiUrl = new URL(getApiUrl("client/" + data.id));
-
-  try {
-    const response = await axios.patch(apiUrl, data, {
-      headers: getHeaders(),
-    });
-    return response;
-  } catch (error) {
-    return error;
-  }
+  const response = await httpClient.patch(getApiUrl(`client/${data.id}`), data, {
+    headers: getHeaders(),
+  });
+  return response;
 };

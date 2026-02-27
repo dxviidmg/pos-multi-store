@@ -1,54 +1,38 @@
-import axios from "axios";
-import { getApiUrl, getHeaders } from "./utils";
+import httpClient from "./httpClient";
+import { getApiUrl, getHeaders, buildUrlWithParams } from "./utils";
 
+/**
+ * Get stores list with optional filters
+ * @param {Object} params - Query parameters
+ * @returns {Promise<Object>} Stores list response
+ */
 export const getStores = async (params) => {
-  const apiUrl = new URL(getApiUrl("store"));
-
-  if (params && Object.keys(params).length > 0) {
-    Object.keys(params).forEach((key) =>
-      apiUrl.searchParams.append(key, params[key])
-    );
-  }
-
-  try {
-    const response = await axios.get(apiUrl, {
-      headers: getHeaders(),
-    });
-    return response;
-  } catch (error) {
-    if (error.response?.status === 401) {
-      console.error("Unauthorized: Token expired or invalid.");
-      localStorage.removeItem("user");
-      window.location.href = "/";
-      // Opcional: Puedes redirigir al login si es necesario
-      // window.location.href = "/login";
-    }
-    return error;
-  }
+  const url = buildUrlWithParams(getApiUrl("store"), params);
+  const response = await httpClient.get(url, {
+    headers: getHeaders(),
+  });
+  return response;
 };
 
+/**
+ * Get investment data for specific store
+ * @param {Object} store - Store object with ID
+ * @returns {Promise<Object>} Store investment data
+ */
 export const getStoreInvestment = async (store) => {
-  const apiUrl = new URL(getApiUrl("store/investments/" + store.id));
-
-  try {
-    const response = await axios.get(apiUrl, {
-      headers: getHeaders(),
-    });
-    return response;
-  } catch (error) {
-    return error;
-  }
+  const response = await httpClient.get(getApiUrl(`store/investments/${store.id}`), {
+    headers: getHeaders(),
+  });
+  return response;
 };
 
+/**
+ * Get total investments across all stores
+ * @returns {Promise<Object>} Total investments data
+ */
 export const getInvestment = async () => {
-  const apiUrl = new URL(getApiUrl("investments"));
-
-  try {
-    const response = await axios.get(apiUrl, {
-      headers: getHeaders(),
-    });
-    return response;
-  } catch (error) {
-    return error;
-  }
+  const response = await httpClient.get(getApiUrl("investments"), {
+    headers: getHeaders(),
+  });
+  return response;
 };
