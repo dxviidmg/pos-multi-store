@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { getPayments } from "../apis/tenants";
+import { getPayments } from "../../api/tenants";
 import { Grid } from "@mui/material";
 
 const TenantPaymentList = () => {

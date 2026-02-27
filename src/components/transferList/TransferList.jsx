@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { deleteTransfer, getTransfers } from "../apis/transfers";
-import { calculateTimeAgo } from "../utils/utils";
+import { deleteTransfer, getTransfers } from "../../api/transfers";
+import { calculateTimeAgo } from "../../utils/utils";
 import CustomButton from "../commons/customButton/CustomButton";
-import { showSuccess, showError } from "../utils/alerts";
+import { showSuccess, showError } from "../../utils/alerts";
 import Swal from "sweetalert2";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";

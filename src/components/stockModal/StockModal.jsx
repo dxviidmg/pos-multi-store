@@ -4,10 +4,10 @@ import { useDispatch, useSelector } from "react-redux";
 import CustomModal from "../commons/customModal/customModal";
 import CustomTable from "../commons/customTable/customTable";
 import CustomButton from "../commons/customButton/CustomButton";
-import { hideStockModal } from "../redux/stockModal/StockModalActions";
-import { createTransfer } from "../apis/transfers";
+import { hideStockModal } from "../../redux/stockModal/StockModalActions";
+import { createTransfer } from "../../api/transfers";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
-import { getStockOtherStores } from "../apis/products";
+import { getStockOtherStores } from "../../api/products";
 import { Grid, TextField } from "@mui/material";
 
 

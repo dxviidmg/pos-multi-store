@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
 import CustomButton from "../commons/customButton/CustomButton";
-import { deleteBrands } from "../apis/brands";
+import { deleteBrands } from "../../api/brands";
 import BrandModal from "../brandModal/BrandModal";
 import { useDispatch } from "react-redux";
-import { showBrandModal } from "../redux/brandModal/BrandModalActions";
-import { showSuccess, showError } from "../utils/alerts";
-import { getUserData } from "../apis/utils";
+import { showBrandModal } from "../../redux/brandModal/BrandModalActions";
+import { showSuccess, showError } from "../../utils/alerts";
+import { getUserData } from "../../api/utils";
 import EditIcon from "@mui/icons-material/Edit";
 import CustomTooltip from "../commons/Tooltip";
 import { useBrands } from "../../hooks/useBrands";

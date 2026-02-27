@@ -4,7 +4,7 @@ import CustomModal from "../commons/customModal/customModal";
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
 import CustomTable from "../commons/customTable/customTable";
-import { hideSaleModal } from "../redux/saleModal/SaleModalActions";
+import { hideSaleModal } from "../../redux/saleModal/SaleModalActions";
 import { useCancelSale } from "../../hooks/useSaleMutations";
 import { Grid, TextField, Checkbox, FormLabel } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";

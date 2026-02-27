@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getTaskResult } from "../apis/products";
+import { getTaskResult } from "../../api/products";
 
 import {
   Chart as ChartJS,

@@ -4,25 +4,25 @@ import {
   deleteProducts,
   getProducts,
   upperCodeProducts,
-} from "../apis/products";
+} from "../../api/products";
 import CustomButton from "../commons/customButton/CustomButton";
 import { useDispatch } from "react-redux";
 import {
   showProductModal,
   showProductModal2,
   hideProductModal,
-} from "../redux/productModal/ProductModalActions";
+} from "../../redux/productModal/ProductModalActions";
 import ProductModal from "../productModal/ProductModal";
-import { exportToExcel } from "../utils/utils";
+import { exportToExcel } from "../../utils/utils";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
-import { getBrands } from "../apis/brands";
-import { getUserData } from "../apis/utils";
-import { showSuccess, showError } from "../utils/alerts";
+import { getBrands } from "../../api/brands";
+import { getUserData } from "../../api/utils";
+import { showSuccess, showError } from "../../utils/alerts";
 import Swal from "sweetalert2";
 import SearchIcon from "@mui/icons-material/Search";
 import EditIcon from "@mui/icons-material/Edit";
 import ChecklistIcon from "@mui/icons-material/Checklist";
-import { getDepartments } from "../apis/departments";
+import { getDepartments } from "../../api/departments";
 import CustomTooltip from "../commons/Tooltip";
 import {
   Grid,

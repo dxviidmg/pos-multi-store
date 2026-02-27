@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { ProgressBar } from "react-bootstrap";
-import { getTaskResult } from "../apis/products";
+import { getTaskResult } from "../../api/products";
 import CustomButton from "../commons/customButton/CustomButton";
-import { exportToExcel } from "../utils/utils";
+import { exportToExcel } from "../../utils/utils";
 import DownloadIcon from "@mui/icons-material/Download";
 
 const AuditDashboardData = ({ title, taskId, pollInterval = 7500 }) => {

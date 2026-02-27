@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { cancelSale } from '../components/apis/sales';
-import { showSuccess, showError } from '../components/utils/alerts';
+import { cancelSale } from '../api/sales';
+import { showSuccess, showError } from '../utils/alerts';
 
 export const useCancelSale = () => {
   const queryClient = useQueryClient();

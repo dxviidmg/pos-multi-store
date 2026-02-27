@@ -3,7 +3,7 @@ import CustomModal from "../commons/customModal/customModal";
 
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
-import { hideBrandModal } from "../redux/brandModal/BrandModalActions";
+import { hideBrandModal } from "../../redux/brandModal/BrandModalActions";
 import { useCreateBrand, useUpdateBrand } from "../../hooks/useBrandMutations";
 import { Grid, TextField } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";

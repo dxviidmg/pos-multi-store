@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
 
-import { getCashSummary } from "../apis/sales";
+import { getCashSummary } from "../../api/sales";
 import CustomButton from "../commons/customButton/CustomButton";
-import { getUserData } from "../apis/utils";
+import { getUserData } from "../../api/utils";
 import {
   exportToExcel,
   getFormattedDate,
   formatTimeFromDate,
-} from "../utils/utils";
-import { getCashFlow } from "../apis/cashflow";
+} from "../../utils/utils";
+import { getCashFlow } from "../../api/cashflow";
 import CashFlowModal from "../cashFlowModal/CashFlowModal";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 import { Grid, TextField, Box, FormLabel } from "@mui/material";

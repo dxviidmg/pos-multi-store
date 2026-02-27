@@ -2,19 +2,19 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import CustomTable from "../commons/customTable/customTable";
 import CustomButton from "../commons/customButton/CustomButton";
-import { getStoreProducts } from "../apis/products";
-import { addToCart, updateMovementType } from "../redux/cart/cartActions";
+import { getStoreProducts } from "../../api/products";
+import { addToCart, updateMovementType } from "../../redux/cart/cartActions";
 import { Badge } from "react-bootstrap";
 import StockModal from "../stockModal/StockModal";
 import {
   hideStockModal,
   showStockModal,
-} from "../redux/stockModal/StockModalActions";
-import { showSuccess, showError } from "../utils/alerts";
+} from "../../redux/stockModal/StockModalActions";
+import { showSuccess, showError } from "../../utils/alerts";
 import Swal from "sweetalert2";
-import { getPrinterUrl, getUserData } from "../apis/utils";
+import { getPrinterUrl, getUserData } from "../../api/utils";
 import PrintIcon from "@mui/icons-material/Print";
-import { handlePrintTicket } from "../utils/utils";
+import { handlePrintTicket } from "../../utils/utils";
 import { Grid, TextField, FormLabel, RadioGroup, FormControlLabel, Radio } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import AddIcon from "@mui/icons-material/Add";

@@ -3,9 +3,9 @@ import CustomModal from "../commons/customModal/customModal";
 
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
-import { showSuccess, showError } from "../utils/alerts";
-import { hideCashFlowModal } from "../redux/cashFlowModal/CashFlowModalActions";
-import { createCashFlow, getCashFlowChoices } from "../apis/cashflow";
+import { showSuccess, showError } from "../../utils/alerts";
+import { hideCashFlowModal } from "../../redux/cashFlowModal/CashFlowModalActions";
+import { createCashFlow, getCashFlowChoices } from "../../api/cashflow";
 import { Grid, TextField, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 

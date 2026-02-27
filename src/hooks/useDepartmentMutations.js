@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createDepartment, updateDepartment } from '../components/apis/departments';
-import { showSuccess, showError } from '../components/utils/alerts';
+import { createDepartment, updateDepartment } from '../api/departments';
+import { showSuccess, showError } from '../utils/alerts';
 
 export const useCreateDepartment = () => {
   const queryClient = useQueryClient();

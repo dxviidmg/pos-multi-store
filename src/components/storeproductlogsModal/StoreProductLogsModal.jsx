@@ -3,12 +3,12 @@ import CustomModal from "../commons/customModal/customModal";
 
 import { useDispatch, useSelector } from "react-redux";
 import CustomTable from "../commons/customTable/customTable";
-import { getStoreProductLogs, updateStoreProduct } from "../apis/products";
-import { getFormattedDateTime } from "../utils/utils";
-import { showSuccess, showError } from "../utils/alerts";
+import { getStoreProductLogs, updateStoreProduct } from "../../api/products";
+import { getFormattedDateTime } from "../../utils/utils";
+import { showSuccess, showError } from "../../utils/alerts";
 import Swal from "sweetalert2";
 import CustomButton from "../commons/customButton/CustomButton";
-import { hideLogsModal } from "../redux/logsModal/LogsModalActions";
+import { hideLogsModal } from "../../redux/logsModal/LogsModalActions";
 import { chooseIcon } from "../commons/icons/Icons";
 import { Grid, TextField } from "@mui/material";
 import HistoryIcon from "@mui/icons-material/History";

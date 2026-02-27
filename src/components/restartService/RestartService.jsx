@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import CustomButton from "../commons/customButton/CustomButton";
-import { getRedeployRender } from "../apis/restart";
+import { getRedeployRender } from "../../api/restart";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
-import { formatTimeFromDate } from "../utils/utils";
+import { formatTimeFromDate } from "../../utils/utils";
 import { Grid } from "@mui/material";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 

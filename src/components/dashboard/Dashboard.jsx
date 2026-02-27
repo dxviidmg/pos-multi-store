@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getSalesDashboard } from "../apis/sales";
+import { getSalesDashboard } from "../../api/sales";
 import LineChart from "./LineChart";
 import DoughnutChart from "./DoughnutChart";
 import { Grid } from "@mui/material";

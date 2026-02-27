@@ -3,7 +3,7 @@ import CustomModal from "../commons/customModal/customModal";
 
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
-import { hideDepartmentModal } from "../redux/departmentModal/DepartmentModalActions";
+import { hideDepartmentModal } from "../../redux/departmentModal/DepartmentModalActions";
 import { useCreateDepartment, useUpdateDepartment } from "../../hooks/useDepartmentMutations";
 import { Grid, TextField } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";

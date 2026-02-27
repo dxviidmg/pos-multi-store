@@ -1,6 +1,6 @@
 import * as XLSX from "xlsx";
 import Swal from "sweetalert2";
-import { getPrint } from "../apis/printers";
+import { getPrint } from "../api/printers";
 
 export const getFormattedDate = (date = new Date()) => {
   const year = date.getFullYear();

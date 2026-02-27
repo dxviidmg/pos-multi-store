@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
 
-import { getSales } from "../apis/sales";
+import { getSales } from "../../api/sales";
 import CustomButton from "../commons/customButton/CustomButton";
 import {
   getFormattedDate,
   handlePrintTicket,
   getFormattedDateTime,
-} from "../utils/utils";
+} from "../../utils/utils";
 import { useDispatch } from "react-redux";
 import {
   hideSaleModal,
   showSaleModal,
-} from "../redux/saleModal/SaleModalActions";
+} from "../../redux/saleModal/SaleModalActions";
 import SaleModal from "../saleModal/SaleModal";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 import CancelIcon from "@mui/icons-material/Cancel";
@@ -21,12 +21,12 @@ import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import WarningIcon from "@mui/icons-material/Warning";
 import UndoIcon from "@mui/icons-material/Undo";
 import Alert from "react-bootstrap/Alert";
-import { getUserData } from "../apis/utils";
+import { getUserData } from "../../api/utils";
 import PaymentModal2 from "../paymentModal2/PaymentModal2";
 import {
   hidePaymentReservationModal,
   showPaymentReservationModal,
-} from "../redux/paymentReservationModal/PaymentReservationModalActions";
+} from "../../redux/paymentReservationModal/PaymentReservationModalActions";
 import CustomTooltip from "../commons/Tooltip";
 import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, Box } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";

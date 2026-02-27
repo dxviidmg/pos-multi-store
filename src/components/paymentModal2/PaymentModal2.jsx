@@ -3,11 +3,11 @@ import CustomModal from "../commons/customModal/customModal";
 
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
-import { updateSale } from "../apis/sales";
-import { hidePaymentReservationModal } from "../redux/paymentReservationModal/PaymentReservationModalActions";
-import { showSuccess, showError } from "../utils/alerts";
-import { handlePrintTicket } from "../utils/utils";
-import { getUserData } from "../apis/utils";
+import { updateSale } from "../../api/sales";
+import { hidePaymentReservationModal } from "../../redux/paymentReservationModal/PaymentReservationModalActions";
+import { showSuccess, showError } from "../../utils/alerts";
+import { handlePrintTicket } from "../../utils/utils";
+import { getUserData } from "../../api/utils";
 import { Grid, TextField, Checkbox, FormLabel } from "@mui/material";
 import PaymentIcon from "@mui/icons-material/Payment";
 

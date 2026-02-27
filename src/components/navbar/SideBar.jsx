@@ -21,7 +21,7 @@ import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import { Outlet, useNavigate } from "react-router-dom";
-import { getUserData } from "../apis/utils";
+import { getUserData } from "../../api/utils";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";

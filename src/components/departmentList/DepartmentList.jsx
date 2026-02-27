@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
 import CustomButton from "../commons/customButton/CustomButton";
-import { deleteDepartments } from "../apis/departments";
+import { deleteDepartments } from "../../api/departments";
 import { useDispatch } from "react-redux";
-import { showSuccess, showError } from "../utils/alerts";
-import { showDepartmentModal } from "../redux/departmentModal/DepartmentModalActions";
+import { showSuccess, showError } from "../../utils/alerts";
+import { showDepartmentModal } from "../../redux/departmentModal/DepartmentModalActions";
 import DepartmentModal from "../departmentModal/DepartmentModal";
-import { getUserData } from "../apis/utils";
+import { getUserData } from "../../api/utils";
 import EditIcon from "@mui/icons-material/Edit";
 import CustomTooltip from "../commons/Tooltip";
 import Grid from "@mui/material/Grid";

@@ -1,8 +1,8 @@
 import React, { useState, useRef } from "react";
 import CustomTable from "../commons/customTable/customTable";
 import CustomButton from "../commons/customButton/CustomButton";
-import { importSales, importSalesValidation } from "../apis/sales";
-import { showSuccess, showError } from "../utils/alerts";
+import { importSales, importSalesValidation } from "../../api/sales";
+import { showSuccess, showError } from "../../utils/alerts";
 import Swal from "sweetalert2";
 import CancelIcon from "@mui/icons-material/Cancel";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";

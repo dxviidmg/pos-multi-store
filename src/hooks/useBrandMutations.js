@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createBrand, updateBrand } from '../components/apis/brands';
-import { showSuccess, showError } from '../components/utils/alerts';
+import { createBrand, updateBrand } from '../api/brands';
+import { showSuccess, showError } from '../utils/alerts';
 
 export const useCreateBrand = () => {
   const queryClient = useQueryClient();

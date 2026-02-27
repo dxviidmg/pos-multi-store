@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { getSellers } from "../apis/sellers";
+import { getSellers } from "../../api/sellers";
 import CustomButton from "../commons/customButton/CustomButton";
 import { useDispatch } from "react-redux";
-import { showSellerModal, hideSellerModal } from "../redux/sellerModal/SellerModalActions";
+import { showSellerModal, hideSellerModal } from "../../redux/sellerModal/SellerModalActions";
 import SellerModal from "../sellerModal/SellerModal";
-import { getDateDifference, getFormattedDate } from "../utils/utils";
+import { getDateDifference, getFormattedDate } from "../../utils/utils";
 import { chooseIcon } from "../commons/icons/Icons";
 import { Grid, TextField, Box, Stack, Divider } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";

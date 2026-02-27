@@ -4,8 +4,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { useState, useEffect } from "react";
 import MiniDrawer from "./components/navbar/SideBar";
-import { getUserData } from "./components/apis/utils";
-import useKeepAlive from "./components/apis/keepAlive";
+import { getUserData } from "./api/utils";
+import useKeepAlive from "./api/keepAlive";
 
 // IMPORTA TUS VISTAS
 import SaleCreate from "./components/saleCreate/SaleCreate";

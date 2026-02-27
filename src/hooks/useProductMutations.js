@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createProduct, updateProduct } from '../components/apis/products';
-import { showSuccess, showError } from '../components/utils/alerts';
+import { createProduct, updateProduct } from '../api/products';
+import { showSuccess, showError } from '../utils/alerts';
 
 export const useCreateProduct = () => {
   const queryClient = useQueryClient();

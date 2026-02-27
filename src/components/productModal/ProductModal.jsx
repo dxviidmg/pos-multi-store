@@ -3,17 +3,17 @@ import CustomModal from "../commons/customModal/customModal";
 import { Image } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
-import { getBrands } from "../apis/brands";
-import { showSuccess, showError } from "../utils/alerts";
+import { getBrands } from "../../api/brands";
+import { showSuccess, showError } from "../../utils/alerts";
 import Swal from "sweetalert2";
-import { hideProductModal } from "../redux/productModal/ProductModalActions";
+import { hideProductModal } from "../../redux/productModal/ProductModalActions";
 import {
   createProduct,
   getStoreProducts,
   updateProduct,
-} from "../apis/products";
+} from "../../api/products";
 import noPhoto from "../../assets/images/noPhoto.jpg";
-import { getDepartments } from "../apis/departments";
+import { getDepartments } from "../../api/departments";
 import CustomTable from "../commons/customTable/customTable";
 import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, Box, Checkbox, FormControlLabel, styled } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";

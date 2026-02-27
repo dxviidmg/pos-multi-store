@@ -2,15 +2,15 @@ import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
 
 import CustomButton from "../commons/customButton/CustomButton";
-import { getFormattedDate, formatTimeFromDate } from "../utils/utils";
+import { getFormattedDate, formatTimeFromDate } from "../../utils/utils";
 import { useDispatch } from "react-redux";
 
-import { getCashFlow } from "../apis/cashflow";
+import { getCashFlow } from "../../api/cashflow";
 import CashFlowModal from "../cashFlowModal/CashFlowModal";
 import {
   hideCashFlowModal,
   showCashFlowModal,
-} from "../redux/cashFlowModal/CashFlowModalActions";
+} from "../../redux/cashFlowModal/CashFlowModalActions";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 import { Grid, TextField, Box } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";

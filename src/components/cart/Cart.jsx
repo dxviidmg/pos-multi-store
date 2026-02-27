@@ -8,22 +8,22 @@ import {
   updateQuantityInCart,
   changePrice,
   countStockOtherStores,
-} from "../redux/cart/cartActions";
+} from "../../redux/cart/cartActions";
 import CustomButton from "../commons/customButton/CustomButton";
 
 import PaymentModal from "../paymentModal/PaymentModal";
 import {
   hidePaymentModal,
   showPaymentModal,
-} from "../redux/paymentModal/PaymentModalActions";
-import { getStores } from "../apis/stores";
-import { confirmTransfers, createDistribution } from "../apis/transfers";
-import { showSuccess, showAlert, showError } from "../utils/alerts";
-import { addProducts, getStockOtherStores } from "../apis/products";
-import { getUserData } from "../apis/utils";
+} from "../../redux/paymentModal/PaymentModalActions";
+import { getStores } from "../../api/stores";
+import { confirmTransfers, createDistribution } from "../../api/transfers";
+import { showSuccess, showAlert, showError } from "../../utils/alerts";
+import { addProducts, getStockOtherStores } from "../../api/products";
+import { getUserData } from "../../api/utils";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
-import { hideStockModal, showStockModal } from "../redux/stockModal/StockModalActions";
+import { hideStockModal, showStockModal } from "../../redux/stockModal/StockModalActions";
 import { Grid, TextField, Checkbox, Select, MenuItem } from "@mui/material";
 import PaymentIcon from "@mui/icons-material/Payment";
 import SendIcon from "@mui/icons-material/Send";

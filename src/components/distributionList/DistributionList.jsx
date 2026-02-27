@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
 import CustomButton from "../commons/customButton/CustomButton";
-import { getFormattedDateTime } from "../utils/utils";
+import { getFormattedDateTime } from "../../utils/utils";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 import ChecklistIcon from "@mui/icons-material/Checklist";
 import EditIcon from "@mui/icons-material/Edit";
@@ -12,10 +12,10 @@ import {
   deleteTranfer,
   getDistributions,
   updateTranfer,
-} from "../apis/transfers";
+} from "../../api/transfers";
 
-import { showSuccess, showError } from "../utils/alerts";
-import { getUserData } from "../apis/utils";
+import { showSuccess, showError } from "../../utils/alerts";
+import { getUserData } from "../../api/utils";
 import Grid from "@mui/material/Grid";
 import { TextField } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";

@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import CustomButton from "../commons/customButton/CustomButton";
-import { removeClientfromCart } from "../redux/cart/cartActions";
+import { removeClientfromCart } from "../../redux/cart/cartActions";
 import { Grid, TextField, Box } from "@mui/material";
 import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
 

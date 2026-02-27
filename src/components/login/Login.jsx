@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Container, Alert, Image, FormLabel } from "react-bootstrap";
-import { loginUser } from "../apis/login";
+import { loginUser } from "../../api/login";
 import { useNavigate } from "react-router-dom";
 import CustomButton from "../commons/customButton/CustomButton";
 import Logo from "../../assets/images/logo.jpg";

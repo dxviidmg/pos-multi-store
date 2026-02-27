@@ -5,16 +5,16 @@ import {
   exportToExcel,
   formatTimeFromDate,
   getFormattedDate,
-} from "../utils/utils";
+} from "../../utils/utils";
 import {
   getStoreProductLogs,
   getStoreProductLogsChoices,
-} from "../apis/products";
+} from "../../api/products";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
-import { getBrands } from "../apis/brands";
+import { getBrands } from "../../api/brands";
 import CustomButton from "../commons/customButton/CustomButton";
 import { chooseIcon } from "../commons/icons/Icons";
-import { getStores } from "../apis/stores";
+import { getStores } from "../../api/stores";
 import { Grid, TextField, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
 

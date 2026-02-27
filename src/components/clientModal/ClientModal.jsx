@@ -3,7 +3,7 @@ import CustomModal from "../commons/customModal/customModal";
 
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
-import { hideClientModal } from "../redux/clientModal/ClientModalActions";
+import { hideClientModal } from "../../redux/clientModal/ClientModalActions";
 import { useDiscounts } from "../../hooks/useDiscounts";
 import { useCreateClient, useUpdateClient } from "../../hooks/useClientMutations";
 import { Grid, TextField, FormControl, InputLabel, Select, MenuItem } from "@mui/material";

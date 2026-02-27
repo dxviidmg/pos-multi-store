@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
-import { getStoreProducts } from "../apis/products";
+import { getStoreProducts } from "../../api/products";
 
 import CustomButton from "../commons/customButton/CustomButton";
-import { getUserData } from "../apis/utils";
-import { exportToExcel } from "../utils/utils";
+import { getUserData } from "../../api/utils";
+import { exportToExcel } from "../../utils/utils";
 import {
   hideLogsModal,
   showLogsModal,
-} from "../redux/logsModal/LogsModalActions";
+} from "../../redux/logsModal/LogsModalActions";
 import { useDispatch } from "react-redux";
 import StoreProductLogsModal from "../storeproductlogsModal/StoreProductLogsModal";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
-import { getBrands } from "../apis/brands";
+import { getBrands } from "../../api/brands";
 import SearchIcon from "@mui/icons-material/Search";
-import { getDepartments } from "../apis/departments";
+import { getDepartments } from "../../api/departments";
 import { Grid, TextField, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
 

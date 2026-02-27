@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 
-import { getFormattedDate } from "../utils/utils";
+import { getFormattedDate } from "../../utils/utils";
 import AuditDashboardData from "./AuditDashboardData";
 import CustomButton from "../commons/customButton/CustomButton";
-import { getAudit, getAudit2 } from "../apis/audit";
-import { getStores } from "../apis/stores";
+import { getAudit, getAudit2 } from "../../api/audit";
+import { getStores } from "../../api/stores";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
 import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, Box } from "@mui/material";
 import AssessmentIcon from "@mui/icons-material/Assessment";

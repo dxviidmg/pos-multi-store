@@ -3,13 +3,13 @@ import CustomModal from "../commons/customModal/customModal";
 
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
-import { showSuccess, showError } from "../utils/alerts";
+import { showSuccess, showError } from "../../utils/alerts";
 import Swal from "sweetalert2";
-import { hideProductModal } from "../redux/productModal/ProductModalActions";
-import { updateProduct } from "../apis/products";
-import { getStores } from "../apis/stores";
-import { getUserData } from "../apis/utils";
-import { createSeller } from "../apis/sellers";
+import { hideProductModal } from "../../redux/productModal/ProductModalActions";
+import { updateProduct } from "../../api/products";
+import { getStores } from "../../api/stores";
+import { getUserData } from "../../api/utils";
+import { createSeller } from "../../api/sellers";
 import { Grid, TextField, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 
