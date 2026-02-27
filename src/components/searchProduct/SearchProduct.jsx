@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import CustomTable from "../commons/customTable/CustomTable";
 import CustomButton from "../commons/customButton/CustomButton";
+import CustomTooltip from "../commons/Tooltip";
 import { getStoreProducts } from "../../api/products";
 import { addToCart, updateMovementType } from "../../redux/cart/cartActions";
 import { Badge } from "react-bootstrap";
@@ -18,8 +19,8 @@ import { handlePrintTicket } from "../../utils/utils";
 import { Grid, TextField, FormLabel, RadioGroup, FormControlLabel, Radio } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import AddIcon from "@mui/icons-material/Add";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import ImageIcon from "@mui/icons-material/Image";
+import InventoryIcon from "@mui/icons-material/Inventory";
+import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 
 const SearchProduct = () => {
   const inputRef = useRef(null);
@@ -441,7 +442,7 @@ const SearchProduct = () => {
 
       {!searching && isInputFocused && <br />}
       <Grid container spacing={2}>
-        <Grid item xs={12} md={queryType === "code" ? 12 : 10}>
+        <Grid item xs={queryType === "code" ? 12 : 10}>
           <TextField size="small" fullWidth className=""
             ref={inputRef}
             type="text"
@@ -456,7 +457,22 @@ const SearchProduct = () => {
             onFocus={() => setIsInputFocused(true)}
             onBlur={() => setIsInputFocused(false)}
           />
-          {data.length > 0 && (
+        </Grid>
+        {queryType === "q" && (
+          <Grid item xs={2}>
+            <CustomButton 
+              fullWidth 
+              onClick={handleSearchProduct} 
+              startIcon={<SearchIcon />}
+              disabled={searching}
+            >
+              {searching ? "Buscando..." : "Buscar"}
+            </CustomButton>
+          </Grid>
+        )}
+        
+        {data.length > 0 && (
+          <Grid item xs={12}>
             <CustomTable
             showNoDataComponent={false}
             data={data}
@@ -471,7 +487,7 @@ const SearchProduct = () => {
                 name: "Nombre",
                 selector: (row) => row.product.name,
                 grow: 3,
-                wrap: true,
+                wrapText: true,
               },
               { name: "Stock", selector: (row) => row.available_stock },
               {
@@ -481,7 +497,7 @@ const SearchProduct = () => {
               },
               {
                 name: "Precio mayoreo",
-                wrap: true,
+                wrapText: true,
                 selector: (row) =>
                   row.product.prices.apply_wholesale
                     ? `${
@@ -493,59 +509,48 @@ const SearchProduct = () => {
               },
               {
                 name: "Acciones",
-                grow: 5,
+                grow: 2,
                 cell: (row) => (
                   <>
-                    <CustomButton
-                      onClick={() => handleAddToCartIfAvailable(row)}
-                      disabled={
-                        movementType === "venta" && row.available_stock === 0
-                      }
-                      variant="primary"
-                      startIcon={<AddIcon />}
-                    >
-                      Agregar
-                    </CustomButton>
+                    <CustomTooltip text="Agregar al carrito">
+                      <CustomButton
+                        onClick={() => handleAddToCartIfAvailable(row)}
+                        disabled={
+                          movementType === "venta" && row.available_stock === 0
+                        }
+                        variant="primary"
+                      >
+                        <AddIcon />
+                      </CustomButton>
+                    </CustomTooltip>
 
-                    <CustomButton
-                      onClick={() =>
-                        handleOpenModal({ ...row, onlyRead: true })
-                      }
-                      variant="danger"
-                      startIcon={<VisibilityIcon />}
-                    >
-                      Ver stock
-                    </CustomButton>
+                    <CustomTooltip text="Ver stock en todas las tiendas">
+                      <CustomButton
+                        onClick={() =>
+                          handleOpenModal({ ...row, onlyRead: true })
+                        }
+                        variant="danger"
+                      >
+                        <InventoryIcon />
+                      </CustomButton>
+                    </CustomTooltip>
 
-                    <CustomButton
-                      onClick={() =>
-                        handleOpenModal({ ...row, showImage: true })
-                      }
-                      variant="danger"
-                      disabled={!row.product.image}
-                      startIcon={<ImageIcon />}
-                    >
-                      Ver imagen
-                    </CustomButton>
+                    <CustomTooltip text="Ver imagen del producto">
+                      <CustomButton
+                        onClick={() =>
+                          handleOpenModal({ ...row, showImage: true })
+                        }
+                        variant="danger"
+                        disabled={!row.product.image}
+                      >
+                        <RemoveRedEyeIcon />
+                      </CustomButton>
+                    </CustomTooltip>
                   </>
                 ),
               },
             ]}
           />
-          )}
-
-
-        </Grid>
-        {queryType === "q" && (
-          <Grid item xs={12} md={2}>
-            <CustomButton 
-              fullWidth 
-              onClick={handleSearchProduct} 
-              startIcon={<SearchIcon />}
-              disabled={searching}
-            >
-              {searching ? "Buscando..." : "Buscar"}
-            </CustomButton>
           </Grid>
         )}
       </Grid>
