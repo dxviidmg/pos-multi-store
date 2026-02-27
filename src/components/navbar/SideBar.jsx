@@ -36,6 +36,7 @@ const iconMap = {
   Clientes: <PersonSearchIcon />,
   Dashboard: <DashboardIcon />,
   Distribuciones: <LocalShippingIcon />,
+  Traspasos: <LocalShippingIcon />,
   Productos: <InventoryIcon />,
   Ventas: <ReceiptIcon />,
   Tiendas: <StoreIcon />,
@@ -140,6 +141,7 @@ export default function MainLayout() {
       { label: "Vender", href: "/vender/" },
       { label: "Clientes", href: "/clientes/", hidden: user.role === "seller" },
       { label: "Distribuciones", href: "/distribuciones/" },
+      { label: "Traspasos", href: "/traspasos/" },
       {
         label: "Productos",
         dropdown: [
@@ -178,6 +180,7 @@ export default function MainLayout() {
     A: [
       { label: "Distribuir", href: "/distribuir/" },
       { label: "Distribuciones", href: "/distribuciones/" },
+      { label: "Traspasos", href: "/traspasos/" },
     ],
     G: [
       {

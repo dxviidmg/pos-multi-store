@@ -12,6 +12,8 @@ const CustomTable = ({
   searcher = false,
   pagination = true,
   setSelectedRows,
+  height,
+  autoHeight = false,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [paginationModel, setPaginationModel] = useState({
@@ -87,7 +89,7 @@ const CustomTable = ({
         </Box>
       )}
 
-      <Box sx={{width: "100%" }}>
+      <Box sx={{width: "100%", height: height || 'auto' }}>
         <DataGrid
           rows={rowsWithIds}
           columns={muiColumns}
@@ -107,6 +109,7 @@ const CustomTable = ({
             }
           }}
           disableRowSelectionOnClick
+          autoHeight={autoHeight}
           localeText={{
             noRowsLabel: showNoDataComponent ? noDataComponent : "",
           }}

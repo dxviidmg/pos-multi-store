@@ -1,6 +1,6 @@
 import React from "react";
 import SearchProduct from "../searchProduct/SearchProduct";
-import TabCart from "../cart/TabCart";
+import Cart from "../cart/Cart";
 import { Grid } from "@mui/material";
 
 const SaleCreate = () => {
@@ -11,7 +11,7 @@ const SaleCreate = () => {
         <SearchProduct />
       </Grid>
       <Grid item xs={12} className="custom-section">
-        <TabCart />
+        <Cart />
       </Grid>
       </Grid>
     </>
