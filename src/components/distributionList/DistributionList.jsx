@@ -14,7 +14,7 @@ import {
   updateTranfer,
 } from "../apis/transfers";
 
-import Swal from "sweetalert2";
+import { showSuccess, showError } from "../utils/alerts";
 import { getUserData } from "../apis/utils";
 import Grid from "@mui/material/Grid";
 import { TextField } from "@mui/material";
@@ -60,18 +60,10 @@ const DistributionList = () => {
       setTimeout(() => {
         setLoading(false);
       }, 200);
-      Swal.fire({
-        icon: "success",
-        title: "Distribición realizada",
-        timer: 5000,
-      });
+      showSuccess("Distribición realizada");
     } else {
       setLoading(false);
-      Swal.fire({
-        icon: "error",
-        title: "Error al distribuir",
-        timer: 5000,
-      });
+      showError("Error al distribuir");
     }
   };
 

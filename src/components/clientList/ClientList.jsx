@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import CustomTable from "../commons/customTable/customTable";
 import CustomButton from "../commons/customButton/CustomButton";
 import { createDiscount } from "../apis/discounts";
-import Swal from "sweetalert2";
+import { showSuccess, showError } from "../utils/alerts";
 import { useDispatch } from "react-redux";
 import { showClientModal } from "../redux/clientModal/ClientModalActions";
 import ClientModal from "../clientModal/ClientModal";
@@ -43,11 +43,7 @@ const ClientList = () => {
     if (response.status === 201) {
       setDiscountFormData({ discount_percentage: "" });
 
-      Swal.fire({
-        icon: "success",
-        title: "Descuento creado",
-        timer: 5000,
-      });
+      showSuccess("Descuento creado");
     } else {
       handleDiscountError(response);
     }
@@ -69,12 +65,7 @@ const ClientList = () => {
       }
     }
 
-    Swal.fire({
-      icon: "error",
-      title: "Error al crear descuento",
-      text: message,
-      timer: 5000,
-    });
+    showError("Error al crear descuento", message);
   };
 
   const handleOpenModal = (client) => {

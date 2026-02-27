@@ -5,7 +5,7 @@ import CustomButton from "../commons/customButton/CustomButton";
 import { cleanCart, removeClientfromCart } from "../redux/cart/cartActions";
 import { createSale, getSale } from "../apis/sales";
 import { hidePaymentModal } from "../redux/paymentModal/PaymentModalActions";
-import Swal from "sweetalert2";
+import { showSuccess, showError } from "../utils/alerts";
 import { getUserData } from "../apis/utils";
 import { handlePrintTicket } from "../utils/utils";
 import SearchClient from "../searchClient/SearchClient";
@@ -182,12 +182,7 @@ const PaymentModal = () => {
         movementType === "venta" &&
         (payment.paidWith === 0 || payment.change < 0)
       ) {
-        Swal.fire({
-          icon: "error",
-          title: "Error al finalizar la venta",
-          text: "Pago debe igual o mayor a la cantidad a cobrar",
-          timer: 5000,
-        });
+        showError("Error al finalizar la venta", "Pago debe igual o mayor a la cantidad a cobrar");
         return;
       }
 
@@ -229,20 +224,12 @@ const PaymentModal = () => {
         setHideClient(true);
         setSaleExchange(INITIAL_SALE_EXCHANGE_STATE);
 
-        Swal.fire({
-          icon: "success",
-          title: "Venta exitosa. Folio " + response.data.id,
-          timer: 3000,
-        });
+        showSuccess("Venta exitosa. Folio " + response.data.id, "", 3000);
       } else {
         throw new Error("Sale error");
       }
     } catch (error) {
-      Swal.fire({
-        icon: "error",
-        title: "Error al finalizar la venta",
-        text: "Por favor llame a soporte técnico",
-      });
+      showError("Error al finalizar la venta", "Por favor llame a soporte técnico");
     } finally {
       isSubmittingRef.current = false; // 🔓 libera lock
       setIsLoading(false);

@@ -3,7 +3,7 @@ import CustomModal from "../commons/customModal/customModal";
 
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
-import Swal from "sweetalert2";
+import { showSuccess, showError } from "../utils/alerts";
 import { hideCashFlowModal } from "../redux/cashFlowModal/CashFlowModalActions";
 import { createCashFlow, getCashFlowChoices } from "../apis/cashflow";
 import { Grid, TextField, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
@@ -60,27 +60,14 @@ const CashFlowModal = ({ onUpdateCashFlowList }) => {
       dispatch(hideCashFlowModal());
       setFormData({});
       setLoading(false)
-      Swal.fire({
-        icon: "success",
-        title: "Mov actualizada",
-        timer: 5000,
-      });
+      showSuccess("Mov actualizada");
     } else if (response.status === 201) {
       dispatch(hideCashFlowModal());
       setLoading(false)
       setFormData({});
-      Swal.fire({
-        icon: "success",
-        title: "Movimiento creado",
-        timer: 5000,
-      });
+      showSuccess("Movimiento creado");
     } else {
-      Swal.fire({
-        icon: "error",
-        title: "Error al crear la marca",
-        timer: 5000,
-        text: "Error desconocido, por favor comuniquese con soporte",
-      });
+      showError("Error al crear la marca", "Error desconocido, por favor comuniquese con soporte");
     }
   };
 

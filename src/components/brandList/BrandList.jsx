@@ -5,7 +5,7 @@ import { deleteBrands } from "../apis/brands";
 import BrandModal from "../brandModal/BrandModal";
 import { useDispatch } from "react-redux";
 import { showBrandModal } from "../redux/brandModal/BrandModalActions";
-import Swal from "sweetalert2";
+import { showSuccess, showError } from "../utils/alerts";
 import { getUserData } from "../apis/utils";
 import EditIcon from "@mui/icons-material/Edit";
 import CustomTooltip from "../commons/Tooltip";
@@ -37,30 +37,17 @@ const BrandList = () => {
     );
 
     if (productsCount > 0) {
-      Swal.fire({
-        icon: "error",
-        title: "Error al borrar marcas",
-        text: "Las marcas no deben tener productos relacionados",
-        timer: 5000,
-      });
+      showError("Error al borrar marcas", "Las marcas no deben tener productos relacionados");
       return;
     }
     const selectedIds = selectedRows.map((element) => element.id);
     const response = await deleteBrands(selectedIds);
 
     if (response.status === 200) {
-      Swal.fire({
-        icon: "success",
-        title: "Marcas eliminadas",
-        timer: 5000,
-      });
+      showSuccess("Marcas eliminadas");
       refetch();
     } else {
-      Swal.fire({
-        icon: "error",
-        title: "Error al borrar marcas",
-        timer: 5000,
-      });
+      showError("Error al borrar marcas");
     }
   };
 

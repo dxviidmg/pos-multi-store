@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../commons/customButton/CustomButton";
 import { updateSale } from "../apis/sales";
 import { hidePaymentReservationModal } from "../redux/paymentReservationModal/PaymentReservationModalActions";
-import Swal from "sweetalert2";
+import { showSuccess, showError } from "../utils/alerts";
 import { handlePrintTicket } from "../utils/utils";
 import { getUserData } from "../apis/utils";
 import { Grid, TextField, Checkbox, FormLabel } from "@mui/material";
@@ -57,22 +57,14 @@ const PaymentModal2 = ({ onUpdateSaleList }) => {
             if (reservation_in_progress) {
               onUpdateSaleList(response.data);
 
-              Swal.fire({
-                icon: "success",
-                title: "Abono exitoso exitoso",
-                timer: 5000,
-              });
+              showSuccess("Abono exitoso exitoso");
 
             } 
 
             
             else {
 
-              Swal.fire({
-                icon: "success",
-                title: "Liquidación exitosa",
-                timer: 5000,
-              });
+              showSuccess("Liquidación exitosa");
               onUpdateSaleList({ ...response.data, delete: true });
             }
 
@@ -81,12 +73,7 @@ const PaymentModal2 = ({ onUpdateSaleList }) => {
             }
 
     } else {
-      Swal.fire({
-        icon: "error",
-        title: "Error al añadir un pago de apartado",
-        text: "Por favor llame a soporte técnico",
-        timer: 5000,
-      });
+      showError("Error al añadir un pago de apartado", "Por favor llame a soporte técnico");
     }
     // Aquí va el dispatch o lógica para enviar el pago
   };

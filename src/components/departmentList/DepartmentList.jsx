@@ -3,7 +3,7 @@ import CustomTable from "../commons/customTable/customTable";
 import CustomButton from "../commons/customButton/CustomButton";
 import { deleteDepartments } from "../apis/departments";
 import { useDispatch } from "react-redux";
-import Swal from "sweetalert2";
+import { showSuccess, showError } from "../utils/alerts";
 import { showDepartmentModal } from "../redux/departmentModal/DepartmentModalActions";
 import DepartmentModal from "../departmentModal/DepartmentModal";
 import { getUserData } from "../apis/utils";
@@ -37,12 +37,7 @@ const DepartmentList = () => {
     );
 
     if (productsCount > 0) {
-      Swal.fire({
-        icon: "error",
-        title: "Error al borrar departamentos",
-        text: "Los departamentos no deben tener productos relacionados",
-        timer: 5000,
-      });
+      showError("Error al borrar departamentos", "Los departamentos no deben tener productos relacionados");
       return;
     }
 
@@ -50,18 +45,10 @@ const DepartmentList = () => {
     const response = await deleteDepartments(selectedIds);
 
     if (response.status === 200) {
-      Swal.fire({
-        icon: "success",
-        title: "Departamentos eliminados",
-        timer: 5000,
-      });
+      showSuccess("Departamentos eliminados");
       refetch();
     } else {
-      Swal.fire({
-        icon: "error",
-        title: "Error al borrar Departamentos",
-        timer: 5000,
-      });
+      showError("Error al borrar Departamentos");
     }
   };
 

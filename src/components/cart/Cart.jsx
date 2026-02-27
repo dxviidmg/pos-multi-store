@@ -18,7 +18,7 @@ import {
 } from "../redux/paymentModal/PaymentModalActions";
 import { getStores } from "../apis/stores";
 import { confirmTransfers, createDistribution } from "../apis/transfers";
-import Swal from "sweetalert2";
+import { showSuccess, showAlert, showError } from "../utils/alerts";
 import { addProducts, getStockOtherStores } from "../apis/products";
 import { getUserData } from "../apis/utils";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -128,9 +128,7 @@ const Cart = () => {
   };
   
 
-  const showAlert = (icon, title, text = "", timer = 5000) => {
-    Swal.fire({ icon, title, text, timer });
-  };
+
 
   const handleTranserFromCart = async (cart) => {
     if (loading) return; // Previene reenvío
