@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import Modal from '@mui/material/Modal';
 import { Box, IconButton, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
@@ -37,4 +38,4 @@ function CustomModal({ showOut, onClose, title, children}) {
   );
 }
 
-export default CustomModal;
+export default memo(CustomModal);

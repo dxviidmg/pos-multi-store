@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, memo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import CustomButton from "../commons/customButton/CustomButton";
@@ -72,4 +72,4 @@ const ClientSelected = () => {
   );
 };
 
-export default ClientSelected;
+export default memo(ClientSelected);
