@@ -13,6 +13,10 @@ import {
   ListItemIcon,
   ListItemText,
   Collapse,
+  Avatar,
+  Badge,
+  LinearProgress,
+  Chip,
 } from "@mui/material";
 import MuiDrawer from "@mui/material/Drawer";
 import MuiAppBar from "@mui/material/AppBar";
@@ -33,6 +37,8 @@ import PaymentsIcon from "@mui/icons-material/Payments";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import SyncIcon from "@mui/icons-material/Sync";
 import MiscellaneousServicesIcon from "@mui/icons-material/MiscellaneousServices";
+import LogoutIcon from "@mui/icons-material/Logout";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const iconMap = {
   // Ventas y clientes
@@ -91,8 +97,8 @@ const AppBar = styled(MuiAppBar, {
 })(({ theme, open }) => ({
   zIndex: theme.zIndex.drawer + 1,
   transition: theme.transitions.create(["width", "margin"]),
-  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-  boxShadow: '0 4px 20px 0 rgba(0,0,0,0.14), 0 7px 10px -5px rgba(102,126,234,0.4)',
+  background: '#04356b',
+  boxShadow: '0 4px 20px 0 rgba(0,0,0,0.14), 0 7px 10px -5px rgba(4,53,107,0.4)',
   ...(open && {
     marginLeft: drawerWidth,
     width: `calc(100% - ${drawerWidth}px)`,
@@ -110,18 +116,22 @@ const Drawer = styled(MuiDrawer, {
     ...openedMixin(theme),
     "& .MuiDrawer-paper": {
       ...openedMixin(theme),
-      background: 'linear-gradient(180deg, #2c3e50 0%, #34495e 100%)',
+      background: '#04356b',
       color: '#fff',
       borderRight: 'none',
+      position: 'relative',
+      paddingBottom: '140px', // Space for user section
     },
   }),
   ...(!open && {
     ...closedMixin(theme),
     "& .MuiDrawer-paper": {
       ...closedMixin(theme),
-      background: 'linear-gradient(180deg, #2c3e50 0%, #34495e 100%)',
+      background: '#04356b',
       color: '#fff',
       borderRight: 'none',
+      position: 'relative',
+      paddingBottom: '80px', // Space for user section when closed
     },
   }),
 }));
@@ -189,8 +199,6 @@ export default function MainLayout() {
           { divider: true },
           { label: "Inventario", href: "/inventario/" },
           { label: "Importar inventario", href: "/importar-inventario/" },
-          { divider: true },
-          { label: "Logs", href: "/logs/" },
         ],
       },
       {
@@ -263,71 +271,35 @@ export default function MainLayout() {
 
       {/* APP BAR */}
       <AppBar position="fixed" open={open}>
-        <Toolbar sx={{ minHeight: '70px !important' }}>
+        <Toolbar sx={{ minHeight: '64px !important' }}>
           <IconButton
             color="inherit"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{ 
-              mr: 2,
-              backgroundColor: 'rgba(255,255,255,0.1)',
-              '&:hover': {
-                backgroundColor: 'rgba(255,255,255,0.2)',
-              }
-            }}
+            sx={{ mr: 2 }}
           >
             <MenuIcon />
           </IconButton>
 
           <Typography 
-            variant="h5" 
+            variant="h6" 
             sx={{ 
               flexGrow: 1, 
-              fontWeight: 700,
-              letterSpacing: '0.5px',
-              textShadow: '2px 2px 4px rgba(0,0,0,0.2)'
+              fontWeight: 600,
             }}
           >
-            💼 SmartVenta
+            SmartVenta
           </Typography>
 
-          <Box sx={{ 
-            display: 'flex', 
-            gap: 2, 
-            alignItems: 'center',
-            backgroundColor: 'rgba(255,255,255,0.1)',
-            padding: '8px 16px',
-            borderRadius: '20px',
-          }}>
-            <Typography sx={{ fontWeight: 500 }}>
-              {user.store_name || user.tenant_name}
-            </Typography>
-
-            {user.role === "owner" && user.store_id && (
-              <IconButton 
-                size="small" 
-                onClick={handleBack}
-                sx={{ 
-                  color: 'white',
-                  '&:hover': { backgroundColor: 'rgba(255,255,255,0.2)' }
-                }}
-              >
-                ↩️
-              </IconButton>
-            )}
-
-            <Divider orientation="vertical" flexItem sx={{ backgroundColor: 'rgba(255,255,255,0.3)', mx: 1 }} />
-
-            <IconButton 
-              onClick={handleLogout}
-              sx={{ 
-                color: 'white',
-                '&:hover': { backgroundColor: 'rgba(255,255,255,0.2)' }
-              }}
-            >
-              🚪
-            </IconButton>
-          </Box>
+          <Typography 
+            variant="body2" 
+            sx={{ 
+              mr: 2,
+              color: 'rgba(255,255,255,0.9)'
+            }}
+          >
+            {user.store_name || user.tenant_name}
+          </Typography>
         </Toolbar>
       </AppBar>
 
@@ -338,20 +310,20 @@ export default function MainLayout() {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            minHeight: '70px !important',
+            background: 'rgba(0,0,0,0.2)',
+            minHeight: '64px !important',
           }}
         >
           <Typography
-            variant="h6"
+            variant="subtitle1"
             sx={{
-              fontWeight: 700,
+              fontWeight: 600,
               textAlign: "center",
               color: 'white',
-              letterSpacing: '1px',
+              letterSpacing: '0.5px',
             }}
           >
-            📋 MENÚ
+            MENÚ
           </Typography>
         </DrawerHeader>
 
@@ -371,11 +343,11 @@ export default function MainLayout() {
                         borderRadius: '12px',
                         mx: 1,
                         '&:hover': {
-                          backgroundColor: 'rgba(102, 126, 234, 0.2)',
+                          backgroundColor: 'rgba(255, 255, 255, 0.1)',
                         }
                       }}
                     >
-                      <ListItemIcon sx={{ color: '#a8b3ff', minWidth: 40 }}>
+                      <ListItemIcon sx={{ color: '#8fb3ff', minWidth: 40 }}>
                         {iconMap[item.label] || <DashboardIcon />}
                       </ListItemIcon>
                       <ListItemText 
@@ -407,7 +379,7 @@ export default function MainLayout() {
                               mx: 2,
                               my: 0.3,
                               '&:hover': {
-                                backgroundColor: 'rgba(102, 126, 234, 0.15)',
+                                backgroundColor: 'rgba(255, 255, 255, 0.08)',
                               }
                             }}
                             onClick={() => navigate(sub.href)}
@@ -436,11 +408,11 @@ export default function MainLayout() {
                     borderRadius: '12px',
                     mx: 1,
                     '&:hover': {
-                      backgroundColor: 'rgba(102, 126, 234, 0.2)',
+                      backgroundColor: 'rgba(255, 255, 255, 0.1)',
                     }
                   }}
                 >
-                  <ListItemIcon sx={{ color: '#a8b3ff', minWidth: 40 }}>
+                  <ListItemIcon sx={{ color: '#8fb3ff', minWidth: 40 }}>
                     {iconMap[item.label] || <DashboardIcon />}
                   </ListItemIcon>
                   <ListItemText 
@@ -455,6 +427,103 @@ export default function MainLayout() {
             );
           })}
         </List>
+
+        {/* USER SECTION AT BOTTOM */}
+        <Box sx={{ 
+          position: 'absolute', 
+          bottom: 0, 
+          left: 0, 
+          right: 0,
+          p: 2,
+          borderTop: '1px solid rgba(255,255,255,0.1)'
+        }}>
+          <Box sx={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: 1.5,
+            mb: 2,
+            p: 1,
+            borderRadius: '12px',
+            backgroundColor: 'rgba(255,255,255,0.05)',
+            '&:hover': {
+              backgroundColor: 'rgba(255,255,255,0.08)',
+            }
+          }}>
+            <Avatar 
+              sx={{ 
+                width: 40, 
+                height: 40,
+                bgcolor: '#8fb3ff',
+                fontSize: '1rem',
+                fontWeight: 'bold'
+              }}
+            >
+              {(user.store_name || user.tenant_name || 'U').charAt(0).toUpperCase()}
+            </Avatar>
+            {open && (
+              <Box sx={{ flex: 1, minWidth: 0 }}>
+                <Typography 
+                  variant="body2" 
+                  sx={{ 
+                    fontWeight: 600,
+                    color: 'white',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap'
+                  }}
+                >
+                  {user.store_name || user.tenant_name}
+                </Typography>
+                <Typography 
+                  variant="caption" 
+                  sx={{ 
+                    color: 'rgba(255,255,255,0.6)',
+                    display: 'block'
+                  }}
+                >
+                  {user.role === 'owner' ? 'Propietario' : user.role === 'seller' ? 'Vendedor' : 'Usuario'}
+                </Typography>
+              </Box>
+            )}
+          </Box>
+
+          {open && (
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              {user.role === "owner" && user.store_id && (
+                <IconButton
+                  size="small"
+                  onClick={handleBack}
+                  sx={{
+                    flex: 1,
+                    color: 'white',
+                    backgroundColor: 'rgba(255,255,255,0.1)',
+                    borderRadius: '8px',
+                    '&:hover': {
+                      backgroundColor: 'rgba(255,255,255,0.15)',
+                    }
+                  }}
+                >
+                  <ArrowBackIcon fontSize="small" />
+                </IconButton>
+              )}
+              <IconButton
+                size="small"
+                onClick={handleLogout}
+                sx={{
+                  flex: 1,
+                  color: 'white',
+                  backgroundColor: 'rgba(255,255,255,0.1)',
+                  borderRadius: '8px',
+                  '&:hover': {
+                    backgroundColor: 'rgba(255,255,255,0.15)',
+                  }
+                }}
+              >
+                <LogoutIcon fontSize="small" />
+              </IconButton>
+            </Box>
+          )}
+        </Box>
       </Drawer>
 
       {/* CONTENIDO */}
