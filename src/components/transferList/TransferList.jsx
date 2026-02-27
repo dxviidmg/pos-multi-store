@@ -23,8 +23,14 @@ const TransferList = () => {
 
   return (
     <>
-      <CustomSpinner isLoading={isLoading}></CustomSpinner>
-      <div className="">
+      {/* 1. SPINNERS */}
+      <CustomSpinner isLoading={isLoading} />
+      
+      {/* 2. CONTENIDO PRINCIPAL */}
+      <div className="custom-section">
+        <h1>Traspasos Pendientes</h1>
+        
+        {/* 2.1 Tabla */}
         <CustomTable
           noDataComponent="Sin traspasos pendientes"
           data={transfers}
@@ -48,7 +54,6 @@ const TransferList = () => {
               name: "Cantidad",
               selector: (row) => row.quantity,
             },
-
             {
               name: "Descripción",
               selector: (row) => row.description,
@@ -58,12 +63,15 @@ const TransferList = () => {
             {
               name: "Creado hace",
               selector: (row) => calculateTimeAgo(row.created_at),
-              grow: 2
+              grow: 2,
             },
             {
               name: "Acciones",
               selector: (row) => (
-                <CustomButton onClick={() => handleOpenModal(row)} disabled={row.description.includes('prov')}>
+                <CustomButton
+                  onClick={() => handleOpenModal(row)}
+                  disabled={row.description.includes("prov")}
+                >
                   <DeleteIcon />
                 </CustomButton>
               ),

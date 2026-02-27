@@ -110,130 +110,149 @@ const StoreProductList = () => {
   };
 
   return (
-    
+    <>
+      {/* 1. SPINNERS */}
+      <CustomSpinner isLoading={loading} />
+      
+      {/* 2. MODALS */}
+      <StoreProductLogsModal
+        onUpdateStoreProductList={handleUpdateStoreProductList}
+      />
+      
+      {/* 3. CONTENIDO PRINCIPAL */}
       <Grid container>
-      <Grid item xs={12} className="custom-section">
-        <CustomSpinner isLoading={loading} />
-        <StoreProductLogsModal
-          onUpdateStoreProductList={handleUpdateStoreProductList}
-        />
-        <h1>Inventario</h1>
+        <Grid item xs={12} className="custom-section">
+          {/* 3.1 Header */}
+          <h1>Inventario</h1>
 
-        <CustomButton onClick={handleDownload} startIcon={<DownloadIcon />}>
-          Descargar inventario
-        </CustomButton>
+          {/* 3.2 Filtros */}
+          <Grid container spacing={2} sx={{ mb: 2 }}>
+            <Grid item xs={3}>
+              <FormControl fullWidth size="small">
+                <InputLabel>Marca</InputLabel>
+                <Select
+                  value={params.brand_id || ""}
+                  onChange={handleDataChange}
+                  name="brand_id"
+                  label="Marca"
+                >
+                  <MenuItem value="">Todas las marcas</MenuItem>
+                  {brands.map((brand) => (
+                    <MenuItem key={brand.id} value={brand.id}>
+                      {brand.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={3}>
+              <FormControl fullWidth size="small">
+                <InputLabel>Departamento</InputLabel>
+                <Select
+                  value={params.department_id || ""}
+                  onChange={handleDataChange}
+                  name="department_id"
+                  label="Departamento"
+                >
+                  <MenuItem value="">Todos las departamentos</MenuItem>
+                  {departments.map((department) => (
+                    <MenuItem key={department.id} value={department.id}>
+                      {department.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={3}>
+              <TextField
+                size="small"
+                fullWidth
+                label="Código"
+                type="text"
+                value={params.code || ""}
+                onChange={handleDataChange}
+                name="code"
+              />
+            </Grid>
+            <Grid item xs={3}>
+              <TextField
+                size="small"
+                fullWidth
+                label="Stock maximo"
+                type="number"
+                value={params.max_stock || ""}
+                onChange={handleDataChange}
+                name="max_stock"
+              />
+            </Grid>
+          </Grid>
 
-        <Grid container spacing={2}>
-          <Grid item xs={3}>
-            <FormControl fullWidth size="small">
-              <InputLabel>Marca</InputLabel>
-              <Select fullWidth size="small" value={params.brand_id}
-              onChange={handleDataChange}
-              name="brand_id"
-              //              disabled={isLoading}
-             label="Marca">
-              <MenuItem value="">Todas las marcas</MenuItem>
-              {brands.map((brand) => (
-                <MenuItem key={brand.id} value={brand.id}>
-                  {brand.name}
-                </MenuItem>
-              ))}
-            </Select>
-            </FormControl>
-          </Grid>
-          <Grid item xs={3}>
-            <FormControl fullWidth size="small">
-              <InputLabel>Departamento</InputLabel>
-              <Select fullWidth size="small" value={params.department_id}
-              onChange={handleDataChange}
-              name="department_id"
-              //              disabled={isLoading}
-             label="Departamento">
-              <MenuItem value="">Todos las departamentos</MenuItem>
-              {departments.map((department) => (
-                <MenuItem key={department.id} value={department.id}>
-                  {department.name}
-                </MenuItem>
-              ))}
-            </Select>
-            </FormControl>
-          </Grid>
-          <Grid item xs={3}>
-            <TextField size="small" fullWidth label="Código" type="text"
-              value={params.code}
-              onChange={handleDataChange}
-              name="code"
-            />
-          </Grid>
-
-          <Grid item xs={3}>
-            <TextField size="small" fullWidth label="Stock maximo" type="number"
-              value={params.max_stock}
-              onChange={handleDataChange}
-              name="max_stock"
-            />
-          </Grid>
-
-          <Grid item xs={12} className="d-flex flex-column justify-content-end">
+          {/* 3.3 Acciones */}
+          <Grid container spacing={2} sx={{ mb: 2 }}>
+            <Grid item xs={12} md={6}>
+              <CustomButton fullWidth onClick={fetchStoreProducts} startIcon={<SearchIcon />}>
+                Buscar
+              </CustomButton>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <CustomButton fullWidth onClick={handleDownload} startIcon={<DownloadIcon />}>
+                Descargar inventario
+              </CustomButton>
+            </Grid>
             {storeProducts.length > 0 && (
-              <>
+              <Grid item xs={12}>
                 {outOfStockPercentage.toFixed(0)}% de los productos esta vacio
-              </>
+              </Grid>
             )}
-
-            <CustomButton fullWidth onClick={fetchStoreProducts} startIcon={<SearchIcon />}>
-              Buscar
-            </CustomButton>
           </Grid>
-        </Grid>
 
-        <CustomTable
-          searcher={true}
-          progressPending={loading}
-          data={storeProducts}
-          columns={[
-            {
-              name: "Código",
-              selector: (row) => row.product.code,
-              grow: 2,
-            },
-            {
-              name: "Marca",
-              selector: (row) => row.product.brand_name,
-            },
-            {
-              name: "Nombre",
-              selector: (row) => row.product.name,
-              grow: 3,
-              wrap: true,
-            },
-
-            {
-              name: "Stock",
-              selector: (row) => row.stock,
-              sort: true,
-            },
-            {
-              name: "Acciones",
-              grow: 4,
-              cell: (row) => (
-                <>
-                  {user.role === "owner" && (
-                    <CustomButton onClick={() => handleOpenModal(row, true)}>
-                      Ajustar cantidad
+          {/* 3.4 Tabla */}
+          <CustomTable
+            searcher={true}
+            progressPending={loading}
+            data={storeProducts}
+            columns={[
+              {
+                name: "Código",
+                selector: (row) => row.product.code,
+                grow: 2,
+              },
+              {
+                name: "Marca",
+                selector: (row) => row.product.brand_name,
+              },
+              {
+                name: "Nombre",
+                selector: (row) => row.product.name,
+                grow: 3,
+                wrap: true,
+              },
+              {
+                name: "Stock",
+                selector: (row) => row.stock,
+                sort: true,
+              },
+              {
+                name: "Acciones",
+                grow: 4,
+                cell: (row) => (
+                  <>
+                    {user.role === "owner" && (
+                      <CustomButton onClick={() => handleOpenModal(row, true)}>
+                        Ajustar cantidad
+                      </CustomButton>
+                    )}
+                    <CustomButton onClick={() => handleOpenModal(row, false)}>
+                      Movimientos de stock
                     </CustomButton>
-                  )}
-                  <CustomButton onClick={() => handleOpenModal(row, false)}>
-                    Movimientos de stock
-                  </CustomButton>
-                </>
-              ),
-            },
-          ]}
-        />
+                  </>
+                ),
+              },
+            ]}
+          />
+        </Grid>
       </Grid>
-    </Grid>
-  
+    </>
   );
 };
 

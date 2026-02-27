@@ -222,73 +222,24 @@ const ProductList = () => {
 
   return (
     <>
+      {/* 1. SPINNERS */}
+      <CustomSpinner isLoading={loading} />
+      
+      {/* 2. MODALS */}
+      <ProductModal onUpdateProductList={handleUpdateProductList} />
+      
+      {/* 3. CONTENIDO PRINCIPAL */}
       <Grid container>
         <Grid item xs={12} className="custom-section">
-          <CustomSpinner isLoading={loading} />
-          <ProductModal onUpdateProductList={handleUpdateProductList} />
-          
+          {/* 3.1 Header */}
           <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
             <h1>Productos</h1>
-            <Stack direction="row" spacing={1}>
-              <CustomButton onClick={() => handleOpenModal()} startIcon={<AddIcon />}>
-                Nuevo Producto
-              </CustomButton>
-            </Stack>
+            <CustomButton onClick={() => handleOpenModal()} startIcon={<AddIcon />}>
+              Nuevo Producto
+            </CustomButton>
           </Stack>
-          {/* Sección de acciones */}
-          <Grid container spacing={2} sx={{ mb: 3 }}>
-            <Grid item xs={12} md={3}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    size="small"
-                    checked={confirmDeletion}
-                    onChange={handleCheck}
-                  />
-                }
-                label="Confirmar borrado"
-              />
-            </Grid>
-            <Grid item xs={12} md={3}>
-              <CustomButton
-                onClick={handleDeleteProducts}
-                disabled={
-                  selectedRows.length === 0 ||
-                  !confirmDeletion ||
-                  getUserData().role !== "owner"
-                }
-                startIcon={<DeleteIcon />}
-                color="error"
-                fullWidth
-              >
-                Eliminar
-              </CustomButton>
-            </Grid>
-            <Grid item xs={12} md={3}>
-              <CustomTooltip
-                text={
-                  "Formatea a mayusculas y reemplaza la comilla simple (') por guión medio (-)"
-                }
-              >
-                <CustomButton onClick={handleUpperCodeProducts} fullWidth startIcon={<TextFormatIcon />}>
-                  Formatear códigos
-                </CustomButton>
-              </CustomTooltip>
-            </Grid>
-            <Grid  item xs={12} md={3}>
 
-            <CustomButton
-                onClick={handleDownload}
-                disabled={products.length === 0}
-                startIcon={<DownloadIcon />}
-                fullWidth
-              >
-                Descargar
-              </CustomButton>
-            </Grid>
-          </Grid>
-
-          {/* Sección de filtros */}
+          {/* 3.2 Filtros */}
           <Grid container spacing={2} sx={{ mb: 2 }}>
             <Grid item xs={12} md={3}>
               <FormControl fullWidth size="small">
@@ -344,20 +295,58 @@ const ProductList = () => {
             </Grid>
 
             <Grid item xs={12} md={3}>
-              
               <CustomButton fullWidth onClick={fetchProducts} startIcon={<SearchIcon />}>
                 Buscar
               </CustomButton>
             </Grid>
-            <Grid item xs={12} md={3}>
-              {products.length > 0 && (
-                <Box sx={{ fontSize: '0.875rem', mb: 0.5 }}>
-                  {outOfStockPercentage.toFixed(0)}% de los productos está vacío
-                </Box>
-              )}
-            </Grid>
           </Grid>
 
+          {/* 3.3 Acciones secundarias */}
+          <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  size="small"
+                  checked={confirmDeletion}
+                  onChange={handleCheck}
+                />
+              }
+              label="Confirmar borrado"
+            />
+            <CustomButton
+              onClick={handleDeleteProducts}
+              disabled={
+                selectedRows.length === 0 ||
+                !confirmDeletion ||
+                getUserData().role !== "owner"
+              }
+              startIcon={<DeleteIcon />}
+              color="error"
+            >
+              Eliminar
+            </CustomButton>
+            <CustomTooltip
+              text="Formatea a mayusculas y reemplaza la comilla simple (') por guión medio (-)"
+            >
+              <CustomButton onClick={handleUpperCodeProducts} startIcon={<TextFormatIcon />}>
+                Formatear códigos
+              </CustomButton>
+            </CustomTooltip>
+            <CustomButton
+              onClick={handleDownload}
+              disabled={products.length === 0}
+              startIcon={<DownloadIcon />}
+            >
+              Descargar
+            </CustomButton>
+            {products.length > 0 && (
+              <Box sx={{ fontSize: '0.875rem', ml: 'auto' }}>
+                {outOfStockPercentage.toFixed(0)}% de los productos está vacío
+              </Box>
+            )}
+          </Stack>
+
+          {/* 3.4 Tabla */}
           <CustomTable
             setSelectedRows={setSelectedRows}
             searcher={true}

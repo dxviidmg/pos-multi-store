@@ -83,68 +83,90 @@ const ClientList = () => {
 
   return (
     <>
+      {/* 1. MODALS */}
       <ClientModal onUpdateClientList={handleUpdateClientList} />
+      
+      {/* 2. SECCIÓN DE DESCUENTOS (solo owner) */}
       {getUserData().role === "owner" && (
         <Grid item xs={12} className="custom-section">
-          <Box component="form">
-            <h1>Crear descuento</h1>
-            <br />
-            <TextField size="small" fullWidth label="Descuento" type="number"
-              value={discountFormData.discount_percentage}
-              placeholder="Descuento"
-              name="discount_percentage"
-              onChange={handleDiscountInputChange}
-            />
-            <CustomButton
-              fullWidth
-              onClick={handleSaveDiscount}
-              disabled={!discountFormData.discount_percentage}
-              marginTop="10px"
-              startIcon={<DiscountIcon />}
-            >
-              Crear descuento
-            </CustomButton>
-          </Box>
+          <h1>Crear descuento</h1>
+          <Grid container spacing={2} sx={{ mt: 1 }}>
+            <Grid item xs={12} md={6}>
+              <TextField
+                size="small"
+                fullWidth
+                label="Descuento"
+                type="number"
+                value={discountFormData.discount_percentage}
+                placeholder="Descuento"
+                name="discount_percentage"
+                onChange={handleDiscountInputChange}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <CustomButton
+                fullWidth
+                onClick={handleSaveDiscount}
+                disabled={!discountFormData.discount_percentage}
+                startIcon={<DiscountIcon />}
+              >
+                Crear descuento
+              </CustomButton>
+            </Grid>
+          </Grid>
         </Grid>
       )}
-      <Grid item xs={12} className="custom-section">
-        <Box>
-          <Stack direction="row" justifyContent="space-between">
-            <h1>Clientes</h1>
-            <CustomButton onClick={() => handleOpenModal()} startIcon={<AddIcon />}>
-              Nuevo Cliente
-            </CustomButton>
-          </Stack>
-          <Divider />
-        </Box>
 
-        <Grid container spacing={2}>
+      {/* 3. CONTENIDO PRINCIPAL */}
+      <Grid item xs={12} className="custom-section">
+        {/* 3.1 Header */}
+        <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+          <h1>Clientes</h1>
+          <CustomButton onClick={() => handleOpenModal()} startIcon={<AddIcon />}>
+            Nuevo Cliente
+          </CustomButton>
+        </Stack>
+
+        {/* 3.2 Filtros */}
+        <Grid container spacing={2} sx={{ mb: 2 }}>
           <Grid item xs={12} md={4}>
-            <Box component="form">
-              <TextField size="small" fullWidth label="Fecha de inicio" name="start_date"
-                type="date"
-                value={params.start_date}
-                onChange={(e) => handleParams(e)}
-                max={today}
-              />
-            </Box>
+            <TextField
+              size="small"
+              fullWidth
+              label="Fecha de inicio"
+              name="start_date"
+              type="date"
+              value={params.start_date}
+              onChange={handleParams}
+              max={today}
+            />
           </Grid>
           <Grid item xs={12} md={4}>
-            <Box component="form">
-              <TextField size="small" fullWidth label="Fecha de fin" name="end_date"
-                type="date"
-                value={params.end_date}
-                onChange={(e) => handleParams(e)}
-                max={today}
-              />
-            </Box>
+            <TextField
+              size="small"
+              fullWidth
+              label="Fecha de fin"
+              name="end_date"
+              type="date"
+              value={params.end_date}
+              onChange={handleParams}
+              max={today}
+            />
           </Grid>
           <Grid item xs={12} md={4}>
-            <Box component="form">
-              <TextField size="small" fullWidth label="Rango" name="range" type="input" value={range} disabled />
-            </Box>
+            <TextField
+              size="small"
+              fullWidth
+              label="Rango"
+              name="range"
+              type="input"
+              value={range}
+              disabled
+            />
           </Grid>
         </Grid>
+
+        {/* 3.3 Tabla */}
         <CustomTable
           searcher={true}
           data={clients}

@@ -97,9 +97,13 @@ const DistributionList = () => {
 
   return (
     <>
+      {/* 1. SPINNERS */}
       <CustomSpinner isLoading={loading} />
+      
+      {/* 2. CONTENIDO PRINCIPAL - Lista de distribuciones */}
       <Grid item xs={12} className="custom-section">
         <h1>Distribuciones</h1>
+        
         <CustomTable
           data={distributions}
           pagination={true}
@@ -132,12 +136,20 @@ const DistributionList = () => {
         />
       </Grid>
 
+      {/* 3. DETALLE DE DISTRIBUCIÓN SELECCIONADA */}
       {Object.keys(distributionSelected).length !== 0 && (
         <Grid item xs={12} className="custom-section">
           <h1>Distribución #{distributionSelected.id}</h1>
-          <CustomButton fullWidth onClick={() => handleSubmit()} startIcon={<SendIcon />}>
+          
+          <CustomButton
+            fullWidth
+            onClick={handleSubmit}
+            startIcon={<SendIcon />}
+            sx={{ mb: 2 }}
+          >
             Confirmar distribución
           </CustomButton>
+          
           <CustomTable
             data={distributionSelected.transfers || []}
             pagination={true}
@@ -154,7 +166,10 @@ const DistributionList = () => {
                 name: "Cantidad",
                 cell: (row) =>
                   editingRow === row.product_code ? (
-                    <TextField size="small" fullWidth type="number"
+                    <TextField
+                      size="small"
+                      fullWidth
+                      type="number"
                       value={editedQuantity}
                       onChange={(e) => setEditedQuantity(e.target.value)}
                       style={{ width: "80px", textAlign: "center" }}
@@ -170,7 +185,10 @@ const DistributionList = () => {
                 cell: (row) =>
                   getUserData().role === "owner" ? (
                     editingRow === row.product_code ? (
-                      <CustomButton onClick={() => handleSaveClick(row)} startIcon={<SaveIcon />}>
+                      <CustomButton
+                        onClick={() => handleSaveClick(row)}
+                        startIcon={<SaveIcon />}
+                      >
                         Guardar
                       </CustomButton>
                     ) : (
@@ -180,7 +198,6 @@ const DistributionList = () => {
                             <EditIcon />
                           </CustomButton>
                         </CustomTooltip>
-              
                         <CustomTooltip text="Borrar producto">
                           <CustomButton onClick={() => handleDeleteTransfer(row)}>
                             <DeleteIcon />
@@ -190,8 +207,8 @@ const DistributionList = () => {
                     )
                   ) : (
                     "Solo el propietario puede editar o eliminar"
-                  )
-              }
+                  ),
+              },
             ]}
           />
         </Grid>

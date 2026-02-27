@@ -58,23 +58,25 @@ const DepartmentList = () => {
 
   return (
     <>
+      {/* 1. MODALS */}
+      <DepartmentModal onUpdateDepartmentList={handleUpdateDepartmentList} />
+      
+      {/* 2. CONTENIDO PRINCIPAL */}
       <Grid item xs={12} className="custom-section">
-        <DepartmentModal onUpdateDepartmentList={handleUpdateDepartmentList} />
-        
-        <Box>
-          <Stack direction="row" justifyContent="space-between">
-            <h1>Departamentos</h1>
-            <CustomButton onClick={() => handleOpenModal()} startIcon={<AddIcon />}>
-              Nuevo Departamento
-            </CustomButton>
-          </Stack>
-          <Divider />
-        </Box>
+        {/* 2.1 Header */}
+        <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+          <h1>Departamentos</h1>
+          <CustomButton onClick={() => handleOpenModal()} startIcon={<AddIcon />}>
+            Nuevo Departamento
+          </CustomButton>
+        </Stack>
 
-        <Stack direction="row" spacing={2} alignItems="center">
+        {/* 2.2 Acciones secundarias */}
+        <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
           <FormControlLabel
             control={
-              <Checkbox size="small"
+              <Checkbox
+                size="small"
                 checked={confirmDeletion}
                 onChange={handleCheck}
               />
@@ -95,6 +97,7 @@ const DepartmentList = () => {
           </CustomButton>
         </Stack>
 
+        {/* 2.3 Tabla */}
         <CustomTable
           progressPending={loading}
           data={departments}

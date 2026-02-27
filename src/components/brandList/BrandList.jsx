@@ -56,25 +56,26 @@ const BrandList = () => {
   };
 
   return (
+    <>
+      {/* 1. MODALS */}
+      <BrandModal onUpdateBrandList={handleUpdateBrandList} />
+      
+      {/* 2. CONTENIDO PRINCIPAL */}
       <Grid item xs={12} className="custom-section">
-        <BrandModal onUpdateBrandList={handleUpdateBrandList} />
-        
-        <Box>
-          <Stack direction="row" justifyContent="space-between">
-            <h1>
-              Marcas
-            </h1>
-            <CustomButton onClick={() => handleOpenModal()} startIcon={<AddIcon />}>
-              Nueva Marca
-            </CustomButton>
-          </Stack>
-          <Divider />
-        </Box>
+        {/* 2.1 Header */}
+        <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+          <h1>Marcas</h1>
+          <CustomButton onClick={() => handleOpenModal()} startIcon={<AddIcon />}>
+            Nueva Marca
+          </CustomButton>
+        </Stack>
 
-        <Stack direction="row" spacing={2} alignItems="center">
-        <FormControlLabel
+        {/* 2.2 Acciones secundarias */}
+        <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
+          <FormControlLabel
             control={
-              <Checkbox size="small"
+              <Checkbox
+                size="small"
                 checked={confirmDeletion}
                 onChange={handleCheck}
               />
@@ -95,6 +96,7 @@ const BrandList = () => {
           </CustomButton>
         </Stack>
 
+        {/* 2.3 Tabla */}
         <CustomTable
           progressPending={loading}
           data={brands}
@@ -123,6 +125,7 @@ const BrandList = () => {
           ]}
         />
       </Grid>
+    </>
   );
 };
 

@@ -121,10 +121,16 @@ const SaleList = () => {
 
   return (
     <>
-      <CustomSpinner isLoading={loading}></CustomSpinner>
+      {/* 1. SPINNERS */}
+      <CustomSpinner isLoading={loading} />
+      
+      {/* 2. MODALS */}
       <PaymentModal2 onUpdateSaleList={handleUpdateSaleList} />
-      <SaleModal onUpdateSaleList={handleUpdateSaleList}></SaleModal>
+      <SaleModal onUpdateSaleList={handleUpdateSaleList} />
+      
+      {/* 3. CONTENIDO PRINCIPAL */}
       <Grid className="custom-section">
+        {/* 3.1 Alerts */}
         {salesDuplicated.length > 0 && (
           <Alert key={"primary"} variant={"primary"}>
             Ids de ventas duplicadas:{" "}
@@ -134,93 +140,108 @@ const SaleList = () => {
           </Alert>
         )}
 
+        {/* 3.2 Header */}
         <h1>Ventas</h1>
-        <Grid container spacing={2}>
+
+        {/* 3.3 Filtros */}
+        <Grid container spacing={2} sx={{ mb: 2 }}>
           <Grid item xs={3}>
             <FormControl fullWidth size="small">
               <InputLabel>Tipo</InputLabel>
-              <Select fullWidth size="small" value={params.reservation_in_progress}
-              onChange={handleDataChange}
-              name="reservation_in_progress"
-              //              disabled={isLoading}
-             label="Tipo">
-              {TYPE_OPTIONS.map((type_option) => (
-                <MenuItem key={type_option.value} value={type_option.value}>
-                  {type_option.label}
-                </MenuItem>
-              ))}
-            </Select>
+              <Select
+                value={params.reservation_in_progress}
+                onChange={handleDataChange}
+                name="reservation_in_progress"
+                label="Tipo"
+              >
+                {TYPE_OPTIONS.map((type_option) => (
+                  <MenuItem key={type_option.value} value={type_option.value}>
+                    {type_option.label}
+                  </MenuItem>
+                ))}
+              </Select>
             </FormControl>
           </Grid>
 
           <Grid item xs={3}>
             <FormControl fullWidth size="small">
               <InputLabel>Busqueda por</InputLabel>
-              <Select fullWidth size="small" value={searchBy}
-              onChange={(e) => setSearchBy(e.target.value)}
-              label="Busqueda por"
-            >
-              {SEARCH_BY_OPTIONS.map((search_option) => (
-                <MenuItem key={search_option.value} value={search_option.value}>
-                  {search_option.label}
-                </MenuItem>
-              ))}
-            </Select>
+              <Select
+                value={searchBy}
+                onChange={(e) => setSearchBy(e.target.value)}
+                label="Busqueda por"
+              >
+                {SEARCH_BY_OPTIONS.map((search_option) => (
+                  <MenuItem key={search_option.value} value={search_option.value}>
+                    {search_option.label}
+                  </MenuItem>
+                ))}
+              </Select>
             </FormControl>
           </Grid>
 
           {searchBy === "date" ? (
             <Grid item xs={3}>
-              <Box component="form">
-                <TextField size="small" fullWidth label="Fecha" type="date"
-                  value={params.date}
-                  onChange={(e) => handleDataChange(e)}
-                  max={today}
-                  name="date"
-                />
-              </Box>
+              <TextField
+                size="small"
+                fullWidth
+                label="Fecha"
+                type="date"
+                value={params.date}
+                onChange={handleDataChange}
+                max={today}
+                name="date"
+              />
             </Grid>
           ) : searchBy === "sale_id" ? (
             <Grid item xs={3}>
-              <Box component="form">
-                <TextField size="small" fullWidth label="#" type="number"
-                  value={params.sale_id}
-                  onChange={(e) => handleDataChange(e)}
-                  name="sale_id"
-                />
-              </Box>
+              <TextField
+                size="small"
+                fullWidth
+                label="#"
+                type="number"
+                value={params.sale_id}
+                onChange={handleDataChange}
+                name="sale_id"
+              />
             </Grid>
           ) : searchBy === "client" ? (
             <>
               <Grid item xs={3}>
-                <Box component="form">
-                  <TextField size="small" fullWidth label="Nombre" type="text"
-                    value={params.first_name}
-                    onChange={(e) => handleDataChange(e)}
-                    name="first_name"
-                    placeholder="Nombre"
-                  />
-                </Box>
+                <TextField
+                  size="small"
+                  fullWidth
+                  label="Nombre"
+                  type="text"
+                  value={params.first_name}
+                  onChange={handleDataChange}
+                  name="first_name"
+                  placeholder="Nombre"
+                />
               </Grid>
               <Grid item xs={3}>
-                <Box component="form">
-                  <TextField size="small" fullWidth label="Apellidos" type="text"
-                    value={params.last_name}
-                    onChange={(e) => handleDataChange(e)}
-                    name="last_name"
-                    placeholder="Apellidos"
-                  />
-                </Box>
+                <TextField
+                  size="small"
+                  fullWidth
+                  label="Apellidos"
+                  type="text"
+                  value={params.last_name}
+                  onChange={handleDataChange}
+                  name="last_name"
+                  placeholder="Apellidos"
+                />
               </Grid>
             </>
           ) : null}
 
-          <Grid item xs={3} className="d-flex flex-column justify-content-end">
+          <Grid item xs={3}>
             <CustomButton onClick={() => setShowAllFields((prev) => !prev)} startIcon={<VisibilityIcon />}>
               Ver todos los campos
             </CustomButton>
           </Grid>
         </Grid>
+
+        {/* 3.4 Tabla */}
         <CustomTable
           data={sales}
           pagination={true}
