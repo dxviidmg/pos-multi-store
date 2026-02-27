@@ -102,7 +102,7 @@ const SellerList = () => {
         <CustomTable
           progressPending={loading}
           data={sellers}
-          pagination={false}
+          pagination={true}
           columns={[
             {
               name: "Tienda",

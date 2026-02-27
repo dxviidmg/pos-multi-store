@@ -556,7 +556,7 @@ const Cart = () => {
           noDataComponent="Sin productos"
           data={cart}
           columns={getColumns()}
-          pagination={false}
+          pagination={true}
         />
       </div>
     </div>

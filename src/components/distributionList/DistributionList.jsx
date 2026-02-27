@@ -102,7 +102,7 @@ const DistributionList = () => {
         <h1>Distribuciones</h1>
         <CustomTable
           data={distributions}
-          pagination={false}
+          pagination={true}
           columns={[
             {
               name: "#",
@@ -140,7 +140,7 @@ const DistributionList = () => {
           </CustomButton>
           <CustomTable
             data={distributionSelected.transfers || []}
-            pagination={false}
+            pagination={true}
             columns={[
               {
                 name: "Código",

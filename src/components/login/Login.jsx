@@ -87,7 +87,6 @@ function Login({ onLogin }) {
       <Container style={{ height: "99.7vh" }}>
         <Grid container spacing={2} className="h-100 d-flex align-items-center justify-content-center">
           <Grid item xs={12} md={6} lg={4}
-            sx={10}
             id="login-col"
             className="align-items-center rounded"
             style={{
@@ -106,7 +105,7 @@ function Login({ onLogin }) {
             )}
 
             <Box component="form" className='mt-4'>
-              <Box className="mb-2" controlId="formBasicEmail">
+              <Box className="mb-2">
                 <TextField size="small" fullWidth label="Usuario" type="text"
                   className="form-control mt-1"
                   placeholder="Usuario"
@@ -117,7 +116,7 @@ function Login({ onLogin }) {
                 />
               </Box>
 
-              <Box className="mb-2" controlId="formBasicPassword">
+              <Box className="mb-2">
                 <FormLabel >Contraseña</FormLabel>
                 <TextField size="small" fullWidth type="password"
                   className="form-control mt-1"

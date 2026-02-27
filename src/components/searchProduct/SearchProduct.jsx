@@ -422,7 +422,7 @@ const SearchProduct = () => {
             <CustomTable
             showNoDataComponent={false}
             data={data}
-            pagination={false}
+            pagination={true}
             columns={[
               { name: "Código", selector: (row) => row.product.code, grow: 2 },
               {

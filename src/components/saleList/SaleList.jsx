@@ -223,7 +223,7 @@ const SaleList = () => {
         </Grid>
         <CustomTable
           data={sales}
-          pagination={false}
+          pagination={true}
           columns={[
             {
               name: "#",
