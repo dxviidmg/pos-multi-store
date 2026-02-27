@@ -316,71 +316,109 @@ const SearchProduct = () => {
     <>
       <StockModal />
 
-      <h1>
-        Buscador de productos{" "}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+        <h1 style={{ margin: 0 }}>Buscador de productos</h1>
         <CustomButton
           disabled={!urlPrinter}
           onClick={(e) => handlePrintTicket("test", {})}
+          startIcon={<PrintIcon fontSize="small" />}
         >
-          <PrintIcon />
+          Probar impresora
         </CustomButton>
-      </h1>
-
-      <div>
-        <FormLabel className="me-3">Tipo de búsqueda:</FormLabel>
-        <RadioGroup row value={queryType} onChange={handleQueryTypeChange}>
-          <FormControlLabel 
-            value="code" 
-            control={<Radio size="small" />} 
-            label="Por código de barras (Ctrl + R)" 
-          />
-          <FormControlLabel 
-            value="q" 
-            control={<Radio size="small" />} 
-            label="Por marca o nombre (Ctrl + Y)" 
-          />
-        </RadioGroup>
       </div>
 
       <div>
-        <FormLabel className="me-3">Tipo de operación:</FormLabel>
-        <RadioGroup row value={movementType} onChange={handleMovementTypeChange}>
-          <FormControlLabel 
-            value="venta" 
-            control={<Radio size="small" />} 
-            label="Venta (Ctrl + U)" 
-            className={storeType === "A" ? "d-none" : ""}
-          />
-          <FormControlLabel 
-            value="traspaso" 
-            control={<Radio size="small" />} 
-            label="Confirmar traspaso (Ctrl + I)" 
-          />
-          <FormControlLabel 
-            value="distribucion" 
-            control={<Radio size="small" />} 
-            label="Distribucion (Ctrl + O)" 
-            className={storeType === "T" ? "d-none" : ""}
-          />
-          <FormControlLabel 
-            value="agregar" 
-            control={<Radio size="small" />} 
-            label="Agregar a inventario (Ctrl + P)" 
-          />
-          <FormControlLabel 
-            value="checar" 
-            control={<Radio size="small" />} 
-            label="Checar precio (Ctrl + A)" 
-          />
-          {supports_reservations && (
-            <FormControlLabel 
-              value="apartado" 
-              control={<Radio size="small" />} 
-              label="Apartado (Sin atajo)" 
-              className={storeType === "A" ? "d-none" : ""}
+        <span className="me-3">
+          Tipo de búsqueda: 
+          <label className="ms-2">
+            <input
+              type="radio"
+              value="code"
+              checked={queryType === "code"}
+              onChange={handleQueryTypeChange}
+              className="me-1"
             />
+            Por código de barras (Ctrl+R)
+          </label>
+          <label className="ms-3">
+            <input
+              type="radio"
+              value="q"
+              checked={queryType === "q"}
+              onChange={handleQueryTypeChange}
+              className="me-1"
+            />
+            Por marca o nombre (Ctrl+Y)
+          </label>
+        </span>
+      </div>
+
+      <div>
+        <span className="me-3">
+          Tipo de operación: 
+          <label className={`ms-2 ${storeType === "A" ? "d-none" : ""}`}>
+            <input
+              type="radio"
+              value="venta"
+              checked={movementType === "venta"}
+              onChange={handleMovementTypeChange}
+              className="me-1"
+            />
+            Venta (Ctrl+U)
+          </label>
+          <label className="ms-3">
+            <input
+              type="radio"
+              value="traspaso"
+              checked={movementType === "traspaso"}
+              onChange={handleMovementTypeChange}
+              className="me-1"
+            />
+            Confirmar traspaso (Ctrl+I)
+          </label>
+          <label className={`ms-3 ${storeType === "T" ? "d-none" : ""}`}>
+            <input
+              type="radio"
+              value="distribucion"
+              checked={movementType === "distribucion"}
+              onChange={handleMovementTypeChange}
+              className="me-1"
+            />
+            Distribucion (Ctrl+O)
+          </label>
+          <label className="ms-3">
+            <input
+              type="radio"
+              value="agregar"
+              checked={movementType === "agregar"}
+              onChange={handleMovementTypeChange}
+              className="me-1"
+            />
+            Agregar a inventario (Ctrl+P)
+          </label>
+          <label className="ms-3">
+            <input
+              type="radio"
+              value="checar"
+              checked={movementType === "checar"}
+              onChange={handleMovementTypeChange}
+              className="me-1"
+            />
+            Checar precio (Ctrl+A)
+          </label>
+          {supports_reservations && (
+            <label className={`ms-3 ${storeType === "A" ? "d-none" : ""}`}>
+              <input
+                type="radio"
+                value="apartado"
+                checked={movementType === "apartado"}
+                onChange={handleMovementTypeChange}
+                className="me-1"
+              />
+              Apartado (Sin atajo)
+            </label>
           )}
-        </RadioGroup>
+        </span>
       </div>
 
       <Badge bg="success" className="text-wrap" hidden={isInputFocused}>
@@ -403,7 +441,7 @@ const SearchProduct = () => {
 
       {!searching && isInputFocused && <br />}
       <Grid container spacing={2}>
-        <Grid item xs={12} md={11}>
+        <Grid item xs={12} md={queryType === "code" ? 12 : 10}>
           <TextField size="small" fullWidth className=""
             ref={inputRef}
             type="text"
@@ -499,8 +537,15 @@ const SearchProduct = () => {
 
         </Grid>
         {queryType === "q" && (
-          <Grid item xs={12}>
-            <CustomButton onClick={handleSearchProduct} startIcon={<SearchIcon />}>Buscar</CustomButton>
+          <Grid item xs={12} md={2}>
+            <CustomButton 
+              fullWidth 
+              onClick={handleSearchProduct} 
+              startIcon={<SearchIcon />}
+              disabled={searching}
+            >
+              {searching ? "Buscando..." : "Buscar"}
+            </CustomButton>
           </Grid>
         )}
       </Grid>
