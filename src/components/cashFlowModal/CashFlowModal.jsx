@@ -60,14 +60,14 @@ const CashFlowModal = ({ onUpdateCashFlowList }) => {
       dispatch(hideCashFlowModal());
       setFormData({});
       setLoading(false)
-      showSuccess("Mov actualizada");
+      showSuccess("Movimiento actualizado");
     } else if (response.status === 201) {
       dispatch(hideCashFlowModal());
       setLoading(false)
       setFormData({});
       showSuccess("Movimiento creado");
     } else {
-      showError("Error al crear la marca", "Error desconocido, por favor comuniquese con soporte");
+      showError("Error al crear la marca", "Error desconocido, por favor comuníquese con soporte");
     }
   };
 

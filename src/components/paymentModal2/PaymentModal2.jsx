@@ -57,7 +57,7 @@ const PaymentModal2 = ({ onUpdateSaleList }) => {
             if (reservation_in_progress) {
               onUpdateSaleList(response.data);
 
-              showSuccess("Abono exitoso exitoso");
+              showSuccess("Abono exitoso");
 
             } 
 

@@ -60,7 +60,7 @@ const DistributionList = () => {
       setTimeout(() => {
         setLoading(false);
       }, 200);
-      showSuccess("Distribición realizada");
+      showSuccess("Distribución realizada");
     } else {
       setLoading(false);
       showError("Error al distribuir");
