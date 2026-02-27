@@ -1,42 +1,7 @@
-import { configureStore } from '@reduxjs/toolkit';
-import cartReducer from './redux/cartSlice';
-import modalsReducer from './redux/modalsSlice';
+import { createStore } from 'redux';
+import rootReducer from './rootReducer';
 
-// Importar reducers legacy
-import StockModalReducer from './redux/stockModal/StockModalReducer';
-import PaymentModalReducer from './redux/paymentModal/PaymentModalReducer';
-import BrandModalReducer from './redux/brandModal/BrandModalReducer';
-import ProductModalReducer from './redux/productModal/ProductModalReducer';
-import ClientModalReducer from './redux/clientModal/ClientModalReducer';
-import SaleModalReducer from './redux/saleModal/SaleModalReducer';
-import LogsModalReducer from './redux/logsModal/LogsModalReducer';
-import CashFlowModalReducer from './redux/cashFlowModal/CashFlowModalReducer';
-import SellerModalReducer from './redux/sellerModal/SellerModalReducer';
-import DepartmentModalReducer from './redux/departmentModal/DepartmentModalReducer';
-import PaymentModal2Reducer from './redux/paymentReservationModal/PaymentReservationModalReducer';
 
-const store = configureStore({
-  reducer: {
-    cart: cartReducer,
-    modals: modalsReducer,
-    // Legacy reducers (mantener compatibilidad)
-    cartReducer: cartReducer,
-    StockModalReducer,
-    PaymentModalReducer,
-    BrandModalReducer,
-    ProductModalReducer,
-    ClientModalReducer,
-    SaleModalReducer,
-    LogsModalReducer,
-    CashFlowModalReducer,
-    SellerModalReducer,
-    DepartmentModalReducer,
-    PaymentModal2Reducer,
-  },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      serializableCheck: false,
-    }),
-});
+const store = createStore(rootReducer);
 
-export default store;
+export default store
