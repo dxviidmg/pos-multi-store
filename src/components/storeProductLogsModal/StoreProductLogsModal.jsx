@@ -140,13 +140,13 @@ const StoreProductLogsModal = ({ onUpdateStoreProductList }) => {
                 name: "Fecha",
                 selector: (row) => getFormattedDateTime(row.created_at),
                 grow: 2,
-                wrap: true,
+                wrapText: true,
               },
               {
                 name: "Descripcion",
                 selector: (row) => row.description,
                 grow: 2,
-                wrap: true,
+                wrapText: true,
               },
               {
                 name: "S. anterior",
@@ -164,7 +164,7 @@ const StoreProductLogsModal = ({ onUpdateStoreProductList }) => {
                 name: "Hecho por",
                 selector: (row) => row.user_username,
                 grow: 3,
-                wrap: true,
+                wrapText: true,
               },
               {
                 name: "OK",

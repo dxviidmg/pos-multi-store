@@ -258,7 +258,7 @@ const StoreProductImport = () => {
 
             {
               name: "Status",
-              wrap: true,
+              wrapText: true,
               selector: (row) =>
                 row.status === "Exitoso" ? (
                   <CheckCircleIcon color="success" />

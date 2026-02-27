@@ -243,7 +243,7 @@ const Cart = () => {
       field: "name",
       selector: (row) => row.product.name,
       grow: 3,
-      wrap: true,
+      wrapText: true,
     },
     { name: "Stock", field: "stock", selector: (row) => row.available_stock },
   ];
@@ -260,7 +260,7 @@ const Cart = () => {
       field: "name",
       selector: (row) => row.product.name,
       grow: 3,
-      wrap: true,
+      wrapText: true,
     },
   ];
 
@@ -360,7 +360,7 @@ const Cart = () => {
       name: "Nombre",
       selector: (row) => row.product.name,
       grow: 3,
-      wrap: true,
+      wrapText: true,
     },
     { name: "Stock disponible", selector: (row) => row.available_stock },
     { name: "Stock apartado", selector: (row) => row.reserved_stock },
@@ -402,7 +402,7 @@ const Cart = () => {
 
     {
       name: "Stock General",
-      wrap: true,
+      wrapText: true,
       grow: 1.5,
       cell: (row) => (
         <div>

@@ -48,7 +48,7 @@ const TransferList = () => {
               name: "Producto",
               selector: (row) => row.product_description,
               grow: 4,
-              wrap: true,
+              wrapText: true,
             },
             {
               name: "Cantidad",
@@ -57,7 +57,7 @@ const TransferList = () => {
             {
               name: "Descripción",
               selector: (row) => row.description,
-              wrap: true,
+              wrapText: true,
               grow: 4,
             },
             {

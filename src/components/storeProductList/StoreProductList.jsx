@@ -225,7 +225,7 @@ const StoreProductList = () => {
                 name: "Nombre",
                 selector: (row) => row.product.name,
                 grow: 3,
-                wrap: true,
+                wrapText: true,
               },
               {
                 name: "Stock",

@@ -256,7 +256,7 @@ const SaleList = () => {
                   {
                     name: "Cliente",
                     selector: (row) => row.client?.full_name,
-                    wrap: true,
+                    wrapText: true,
                   },
                 ]
               : []),
@@ -264,7 +264,7 @@ const SaleList = () => {
             {
               name: "Hora",
               selector: (row) => getFormattedDateTime(row.created_at),
-              wrap: true,
+              wrapText: true,
             },
 
             {
@@ -288,7 +288,7 @@ const SaleList = () => {
                   </>
                 );
               },
-              wrap: true,
+              wrapText: true,
               grow: 3,
             },
 
@@ -313,7 +313,7 @@ const SaleList = () => {
             {
               name: "Metodos de pago",
               selector: (row) => row.payments_methods.join(", "),
-              wrap: true,
+              wrapText: true,
               grow: 1.5,
             },
 
@@ -322,12 +322,12 @@ const SaleList = () => {
                   {
                     name: "Referencia",
                     selector: (row) => row.reference,
-                    wrap: true,
+                    wrapText: true,
                     grow: 2,
                   },
                   {
                     name: "Vendedor",
-                    wrap: true,
+                    wrapText: true,
                     grow: 1.5,
                     selector: (row) => row.seller_username,
                   },

@@ -361,7 +361,7 @@ const ProductList = () => {
               {
                 name: "Marca",
                 selector: (row) => row.brand_name,
-                wrap: true,
+                wrapText: true,
               },
 
               {
@@ -372,7 +372,7 @@ const ProductList = () => {
                 name: "Nombre",
                 selector: (row) => row.name,
                 grow: 2,
-                wrap: true,
+                wrapText: true,
               },
               {
                 name: "Stock",
@@ -383,7 +383,7 @@ const ProductList = () => {
               {
                 name: "Costo",
                 selector: (row) => "$" + row.cost,
-                wrap: true,
+                wrapText: true,
               },
 
               {

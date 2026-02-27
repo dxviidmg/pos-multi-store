@@ -108,7 +108,7 @@ const StoreList = () => {
   const columnsStore = [
     {
       name: "Nombre",
-      wrap: true,
+      wrapText: true,
       selector: ({ name }) => <>{name}</>,
     },
     // Mostrar detalles de pagos y ventas

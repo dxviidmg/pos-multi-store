@@ -115,7 +115,7 @@ const DistributionList = () => {
             {
               name: "Creacion",
               selector: (row) => getFormattedDateTime(row.created_at),
-              wrap: true,
+              wrapText: true,
             },
             {
               name: "Descripción",

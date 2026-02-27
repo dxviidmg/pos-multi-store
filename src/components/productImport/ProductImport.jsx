@@ -402,7 +402,7 @@ const ProductImport = () => {
             {
               name: "Nombre",
               selector: (row) => row.name,
-              wrap: true,
+              wrapText: true,
             },
 
             {
@@ -458,7 +458,7 @@ const ProductImport = () => {
             {
               name: "Nombre",
               selector: (row) => row.name,
-              wrap: true,
+              wrapText: true,
             },
 
             {
@@ -492,7 +492,7 @@ const ProductImport = () => {
               : []),
             {
               name: "Status",
-              wrap: true,
+              wrapText: true,
               selector: (row) => (
                 <>
                   {chooseIcon(row.status === "Exitoso")}

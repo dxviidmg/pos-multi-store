@@ -107,7 +107,7 @@ const DepartmentList = () => {
               name: "Nombre",
               selector: (row) => row.name,
               grow: 2,
-              wrap: true,
+              wrapText: true,
             },
             {
               name: "Número de productos",

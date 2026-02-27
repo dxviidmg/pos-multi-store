@@ -191,7 +191,7 @@ const LogList = () => {
             {
               name: "Nombre",
               selector: (row) => row.product.name,
-              wrap: true,
+              wrapText: true,
               grow: 2,
             },
 
@@ -199,7 +199,7 @@ const LogList = () => {
               name: "Descripción",
               selector: (row) => row.description,
               grow: 2,
-              wrap: true
+              wrapText: true
             },
 
             {
