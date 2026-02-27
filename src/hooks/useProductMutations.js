@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createProduct, updateProduct } from '../components/apis/products';
-import Swal from 'sweetalert2';
+import { showSuccess, showError } from '../components/utils/alerts';
 
 export const useCreateProduct = () => {
   const queryClient = useQueryClient();
@@ -9,11 +9,7 @@ export const useCreateProduct = () => {
     mutationFn: createProduct,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
-      Swal.fire({
-        icon: 'success',
-        title: 'Producto creado',
-        timer: 5000,
-      });
+      showSuccess('Producto creado');
     },
     onError: (error) => {
       let message = 'Error desconocido. Por favor, contacte soporte.';
@@ -23,12 +19,7 @@ export const useCreateProduct = () => {
           message = 'El código ya existe.';
         }
       }
-      Swal.fire({
-        icon: 'error',
-        title: 'Error al crear producto',
-        text: message,
-        timer: 5000,
-      });
+      showError('Error al crear producto', message);
     },
   });
 };
@@ -40,18 +31,10 @@ export const useUpdateProduct = () => {
     mutationFn: updateProduct,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
-      Swal.fire({
-        icon: 'success',
-        title: 'Producto actualizado',
-        timer: 5000,
-      });
+      showSuccess('Producto actualizado');
     },
     onError: () => {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error al actualizar producto',
-        timer: 5000,
-      });
+      showError('Error al actualizar producto');
     },
   });
 };

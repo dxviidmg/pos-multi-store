@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createClient, updateClient } from '../components/apis/clients';
-import Swal from 'sweetalert2';
+import { showSuccess, showError } from '../components/utils/alerts';
 
 export const useCreateClient = () => {
   const queryClient = useQueryClient();
@@ -9,11 +9,7 @@ export const useCreateClient = () => {
     mutationFn: createClient,
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ['clients'] });
-      Swal.fire({
-        icon: 'success',
-        title: 'Cliente creado',
-        timer: 5000,
-      });
+      showSuccess('Cliente creado');
     },
     onError: (error) => {
       let message = 'Error desconocido. Por favor, contacte soporte.';
@@ -27,12 +23,7 @@ export const useCreateClient = () => {
         }
       }
 
-      Swal.fire({
-        icon: 'error',
-        title: 'Error al guardar cliente',
-        text: message,
-        timer: 5000,
-      });
+      showError('Error al guardar cliente', message);
     },
   });
 };
@@ -44,18 +35,10 @@ export const useUpdateClient = () => {
     mutationFn: updateClient,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['clients'] });
-      Swal.fire({
-        icon: 'success',
-        title: 'Cliente actualizado',
-        timer: 5000,
-      });
+      showSuccess('Cliente actualizado');
     },
     onError: () => {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error al actualizar cliente',
-        timer: 5000,
-      });
+      showError('Error al actualizar cliente');
     },
   });
 };
