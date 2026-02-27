@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getClients } from '../components/apis/clients';
+import { getClients } from '../api/clients';
 
 export const useClients = (params = {}) => {
   return useQuery({

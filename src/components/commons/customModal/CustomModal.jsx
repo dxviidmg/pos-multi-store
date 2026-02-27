@@ -1,15 +1,18 @@
+import { memo } from 'react';
 import Modal from '@mui/material/Modal';
 import { Box, IconButton, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import './customModal.css'
+import './CustomModal.css'
 
 const style = {
   position: 'absolute',
-  top: '30%',
+  top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: '90%',
   maxWidth: 800,
+  maxHeight: '90vh',
+  overflow: 'auto',
   bgcolor: 'background.paper',
   boxShadow: 24,
   borderRadius: 1,
@@ -35,4 +38,4 @@ function CustomModal({ showOut, onClose, title, children}) {
   );
 }
 
-export default CustomModal;
+export default memo(CustomModal);

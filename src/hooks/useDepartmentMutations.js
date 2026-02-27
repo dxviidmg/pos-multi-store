@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createDepartment, updateDepartment } from '../components/apis/departments';
-import Swal from 'sweetalert2';
+import { createDepartment, updateDepartment } from '../api/departments';
+import { showSuccess, showError } from '../utils/alerts';
 
 export const useCreateDepartment = () => {
   const queryClient = useQueryClient();
@@ -9,18 +9,10 @@ export const useCreateDepartment = () => {
     mutationFn: createDepartment,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['departments'] });
-      Swal.fire({
-        icon: 'success',
-        title: 'Departamento creado',
-        timer: 5000,
-      });
+      showSuccess('Departamento creado');
     },
     onError: () => {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error al crear el departamento',
-        timer: 5000,
-      });
+      showError('Error al crear el departamento');
     },
   });
 };
@@ -32,18 +24,10 @@ export const useUpdateDepartment = () => {
     mutationFn: updateDepartment,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['departments'] });
-      Swal.fire({
-        icon: 'success',
-        title: 'Departamento actualizado',
-        timer: 5000,
-      });
+      showSuccess('Departamento actualizado');
     },
     onError: () => {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error al actualizar el departamento',
-        timer: 5000,
-      });
+      showError('Error al actualizar el departamento');
     },
   });
 };

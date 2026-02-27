@@ -1,11 +1,29 @@
 import React, { useState } from "react";
-import CustomTable from "../commons/customTable/customTable";
-import { importStoreProducts, importStoreProductsValidation } from "../apis/products";
-import { Form, Row, Col } from "react-bootstrap";
+import CustomTable from "../commons/customTable/CustomTable";
+import { importStoreProducts, importStoreProductsValidation } from "../../api/products";
+
 import CustomButton from "../commons/customButton/CustomButton";
 import Swal from "sweetalert2";
-import { ErrorIcon, SuccessIcon } from "../commons/icons/Icons";
+import CancelIcon from "@mui/icons-material/Cancel";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { useRef } from "react";
+import { Grid, Select, MenuItem, FormControl, InputLabel, styled } from "@mui/material";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import PublishIcon from "@mui/icons-material/Publish";
+import DownloadIcon from "@mui/icons-material/Download";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+
+const VisuallyHiddenInput = styled('input')({
+  clip: 'rect(0 0 0 0)',
+  clipPath: 'inset(50%)',
+  height: 1,
+  overflow: 'hidden',
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  whiteSpace: 'nowrap',
+  width: 1,
+});
 
 const URL_TEMPLATE =
   process.env.REACT_APP_API_URL +
@@ -114,42 +132,45 @@ const StoreProductImport = () => {
   };
 
   return (
-    <div>
-      <div className="custom-section">
+      <Grid container>
+      <Grid item xs={12} className="custom-section">
         <h1>Importación de inventario</h1>
-        <Row>
-          <Col md={6} className="d-flex flex-column justify-content-end">
-            <Form.Label>Archivo</Form.Label>
-
-            <Form.Group controlId="formFile" className="">
-              <Form.Control
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={6} className="d-flex flex-column justify-content-end">
+            <CustomButton
+              component="label"
+              fullWidth
+              startIcon={<CloudUploadIcon />}
+            >
+              Subir archivo
+              <VisuallyHiddenInput
                 type="file"
                 ref={fileInputRef}
-                defaultValue={formData.file}
                 onChange={handleDataChange}
                 name="file"
               />
-            </Form.Group>
-          </Col>
+            </CustomButton>
+          </Grid>
 
-          <Col md={6}>
-            <Form.Label>¿Desea adicionar o sustituir la cantidad?</Form.Label>
-            <Form.Select
-              value={formData.action}
+          <Grid item xs={12} md={6}>
+            <FormControl fullWidth size="small">
+              <InputLabel>¿Desea adicionar o sustituir la cantidad?</InputLabel>
+              <Select fullWidth size="small" value={formData.action}
               onChange={handleDataChange}
               name="action"
               //              disabled={isLoading}
-            >
-              <option value="">Tipo de operación</option>
+             label="¿Desea adicionar o sustituir la cantidad?">
+              <MenuItem value="">Tipo de operación</MenuItem>
               {ACTION_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
+                <MenuItem key={option.value} value={option.value}>
                   {option.label}
-                </option>
+                </MenuItem>
               ))}
-            </Form.Select>
-          </Col>
+            </Select>
+            </FormControl>
+          </Grid>
 
-          <Col md={3}>
+          <Grid item xs={12} md={3}>
             <CustomButton
               onClick={handleValidation}
               disabled={
@@ -157,12 +178,13 @@ const StoreProductImport = () => {
                 formData.action === ""
               }
               fullWidth
+              startIcon={<CheckCircleIcon />}
             >
               Validar
             </CustomButton>
-          </Col>
+          </Grid>
 
-          <Col md={3}>
+          <Grid item xs={12} md={3}>
             <CustomButton
               onClick={handleImport}
               disabled={
@@ -170,29 +192,31 @@ const StoreProductImport = () => {
                 products.some((item) => item.status !== "Exitoso")
               }
               fullWidth
+              startIcon={<PublishIcon />}
             >
               Importar
             </CustomButton>
-          </Col>
+          </Grid>
 
-          <Col md={3}>
-            <CustomButton href={URL_TEMPLATE} fullWidth>
+          <Grid item xs={12} md={3}>
+            <CustomButton href={URL_TEMPLATE} fullWidth startIcon={<DownloadIcon />}>
               Descargar plantilla
             </CustomButton>
-          </Col>
+          </Grid>
 
-          <Col md={3}>
+          <Grid item xs={12} md={3}>
             <CustomButton
               onClick={() => setShowExample(!showExample)}
               fullWidth
+              startIcon={<VisibilityIcon />}
             >
               Ver Ejemplo
             </CustomButton>
-          </Col>
-        </Row>
-      </div>
+          </Grid>
+        </Grid>
+      </Grid>
 
-      <div className="custom-section" hidden={showExample}>
+      <Grid item xs={12} className="custom-section" hidden={showExample}>
         <h1>Ejemplo de plantilla</h1>
 
         <CustomTable
@@ -212,9 +236,9 @@ const StoreProductImport = () => {
             }
           ]}
         ></CustomTable>
-      </div>
+      </Grid>
 
-      <div className="custom-section">
+      <Grid item xs={12} className="custom-section">
         <h1>Archivo actual</h1>
         <CustomTable
           data={products}
@@ -237,17 +261,17 @@ const StoreProductImport = () => {
               wrap: true,
               selector: (row) =>
                 row.status === "Exitoso" ? (
-                  <SuccessIcon />
+                  <CheckCircleIcon color="success" />
                 ) : (
                   <>
-                    <ErrorIcon /> {row.status}
+                    <CancelIcon color="error" /> {row.status}
                   </>
                 ),
             },
           ]}
         ></CustomTable>
-      </div>
-    </div>
+      </Grid>
+    </Grid>
   );
 };
 

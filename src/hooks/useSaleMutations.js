@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { cancelSale } from '../components/apis/sales';
-import Swal from 'sweetalert2';
+import { cancelSale } from '../api/sales';
+import { showSuccess, showError } from '../utils/alerts';
 
 export const useCancelSale = () => {
   const queryClient = useQueryClient();
@@ -10,19 +10,10 @@ export const useCancelSale = () => {
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ['sales'] });
       const { cash_back } = response.data;
-      Swal.fire({
-        icon: 'success',
-        title: `Devolución exitosa. Devolver $${cash_back}`,
-        timer: 5000,
-      });
+      showSuccess(`Devolución exitosa. Devolver $${cash_back}`);
     },
     onError: () => {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error al cancelar venta',
-        text: 'Error desconocido. Por favor, contacte soporte.',
-        timer: 5000,
-      });
+      showError('Error al cancelar venta', 'Error desconocido. Por favor, contacte soporte.');
     },
   });
 };

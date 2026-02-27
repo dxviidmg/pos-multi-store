@@ -17,12 +17,11 @@ import {
 import MuiDrawer from "@mui/material/Drawer";
 import MuiAppBar from "@mui/material/AppBar";
 import MenuIcon from "@mui/icons-material/Menu";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import { Outlet, useNavigate } from "react-router-dom";
-import { getUserData } from "../apis/utils";
+import { getUserData } from "../../api/utils";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
@@ -101,7 +100,7 @@ export default function MainLayout() {
   const navigate = useNavigate();
   const user = getUserData();
 
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = React.useState(false);
   const [openMenus, setOpenMenus] = React.useState({});
 
   const handleDrawerToggle = () => {
@@ -181,12 +180,32 @@ export default function MainLayout() {
       { label: "Distribuciones", href: "/distribuciones/" },
     ],
     G: [
+      {
+        label: "Dashboard",
+        dropdown: [
+          { label: "General", href: "/tablero/" },
+          { label: "Auditoria", href: "/auditoria/" },
+        ],
+      },
       { label: "Tiendas", href: "/tiendas/" },
       { label: "Clientes", href: "/clientes/" },
-      ...(user.sellers > 0
-        ? [{ label: "Vendedores", href: "/vendedores/" }]
-        : []),
+
+      {
+        label: "Productos",
+        dropdown: [
+          { label: "Marcas", href: "/marcas/" },
+          { label: "Departamentos", href: "/departamentos/" },
+          { label: "Reasignación", href: "/reasignacion/" },
+          { divider: true },
+          { label: "Productos", href: "/productos/" },
+          { label: "Importar Productos", href: "/importar-productos/" },
+        ],
+      },
+
+      { label: "Vendedores", href: "/vendedores/" },
       { label: "Mensualidades", href: "/pagos/" },
+      { label: "Servicios", href: "/servicios/" },
+      { label: "Sincronizar", href: "/sincronizar/" },
     ],
   };
 
@@ -196,7 +215,7 @@ export default function MainLayout() {
   const menuItems = linksByType[type];
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ display: "flex", overflow: "hidden" }}>
       <CssBaseline />
 
       {/* APP BAR */}
@@ -312,7 +331,7 @@ export default function MainLayout() {
       </Drawer>
 
       {/* CONTENIDO */}
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+      <Box component="main" sx={{ flexGrow: 1, p: 3, overflow: "auto", maxWidth: "100%" }}>
         <DrawerHeader />
         <Outlet />
       </Box>

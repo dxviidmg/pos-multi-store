@@ -1,20 +1,22 @@
 import React, { useEffect, useState } from "react";
-import CustomTable from "../commons/customTable/customTable";
-import { Col, Form, Row } from "react-bootstrap";
+import CustomTable from "../commons/customTable/CustomTable";
+
 import {
   exportToExcel,
   formatTimeFromDate,
   getFormattedDate,
-} from "../utils/utils";
+} from "../../utils/utils";
 import {
   getStoreProductLogs,
   getStoreProductLogsChoices,
-} from "../apis/products";
+} from "../../api/products";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
-import { getBrands } from "../apis/brands";
+import { getBrands } from "../../api/brands";
 import CustomButton from "../commons/customButton/CustomButton";
 import { chooseIcon } from "../commons/icons/Icons";
-import { getStores } from "../apis/stores";
+import { getStores } from "../../api/stores";
+import { Grid, TextField, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
+import DownloadIcon from "@mui/icons-material/Download";
 
 const LogList = () => {
   const today = getFormattedDate();
@@ -82,79 +84,95 @@ const LogList = () => {
 
   return (
     <>
-      <CustomSpinner isLoading={loading}></CustomSpinner>
-      <div className="custom-section">
-        <h1>Logs</h1>
+      {/* 1. SPINNERS */}
+      <CustomSpinner isLoading={loading} />
+      
+      {/* 2. CONTENIDO PRINCIPAL */}
+      <Grid container>
+        <Grid item xs={12} className="custom-section">
+          {/* 2.1 Header */}
+          <h1>Logs</h1>
 
-        <CustomButton onClick={handleDownload} disabled={logs.length === 0}>
-          Descargar logs
-        </CustomButton>
+          {/* 2.2 Filtros */}
+          <Grid container spacing={2} sx={{ mb: 2 }}>
+            <Grid item xs={3}>
+              <TextField
+                size="small"
+                fullWidth
+                label="Fecha"
+                type="date"
+                value={params.date}
+                onChange={handleDataChange}
+                max={today}
+                name="date"
+              />
+            </Grid>
+            <Grid item xs={3}>
+              <FormControl fullWidth size="small">
+                <InputLabel>Tiendas o almacenes</InputLabel>
+                <Select
+                  value={params.store_related || ""}
+                  onChange={handleDataChange}
+                  name="store_related"
+                  label="Tiendas o almacenes"
+                >
+                  <MenuItem value="">Selecciona un movimiento</MenuItem>
+                  {stores.map((store) => (
+                    <MenuItem key={store.id} value={store.id}>
+                      {store.full_name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={3}>
+              <FormControl fullWidth size="small">
+                <InputLabel>Marca</InputLabel>
+                <Select
+                  value={params.brand_id || ""}
+                  onChange={handleDataChange}
+                  name="brand_id"
+                  label="Marca"
+                >
+                  <MenuItem value="">Todas las marcas</MenuItem>
+                  {brands.map((brand) => (
+                    <MenuItem key={brand.id} value={brand.id}>
+                      {brand.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={3}>
+              <FormControl fullWidth size="small">
+                <InputLabel>Movimientos</InputLabel>
+                <Select
+                  value={params.action || ""}
+                  onChange={handleDataChange}
+                  name="action"
+                  label="Movimientos"
+                >
+                  <MenuItem value="">Selecciona un movimiento</MenuItem>
+                  {actions.map((action) => (
+                    <MenuItem key={action.value} value={action.value}>
+                      {action.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <CustomButton
+                onClick={handleDownload}
+                disabled={logs.length === 0}
+                startIcon={<DownloadIcon />}
+              >
+                Descargar logs
+              </CustomButton>
+            </Grid>
+          </Grid>
 
-        <Row>
-
-
-
-          <Col>
-            <Form.Label>Fecha</Form.Label>
-            <Form.Control
-              type="date"
-              value={params.date}
-              onChange={handleDataChange}
-              max={today}
-              name="date"
-            />
-          </Col>
-
-          <Col>
-            <Form.Label>Tiendas o almacenes</Form.Label>
-            <Form.Select
-              value={params.store_related}
-              onChange={handleDataChange}
-              name="store_related"
-              //              disabled={isLoading}
-            >
-              <option value="">Selecciona un movimiento</option>
-              {stores.map((store) => (
-                <option key={store.id} value={store.id}>
-                  {store.full_name}
-                </option>
-              ))}
-            </Form.Select>
-          </Col>
-          <Col>
-            <Form.Label>Marca</Form.Label>
-            <Form.Select
-              value={params.brand_id}
-              onChange={handleDataChange}
-              name="brand_id"
-              //              disabled={isLoading}
-            >
-              <option value="">Todas las marcas</option>
-              {brands.map((brand) => (
-                <option key={brand.id} value={brand.id}>
-                  {brand.name}
-                </option>
-              ))}
-            </Form.Select>
-          </Col>
-
-          <Col>
-            <Form.Label>Movimientos</Form.Label>
-            <Form.Select
-              value={params.action}
-              onChange={handleDataChange}
-              name="action"
-              //              disabled={isLoading}
-            >
-              <option value="">Selecciona un movimiento</option>
-              {actions.map((action) => (
-                <option key={action.value} value={action.value}>
-                  {action.label}
-                </option>
-              ))}
-            </Form.Select>
-          </Col>
-        </Row>
+          {/* 2.3 Tabla */}
 
         <CustomTable
           data={logs}
@@ -188,7 +206,6 @@ const LogList = () => {
               name: "Hora",
               selector: (row) => formatTimeFromDate(row.created_at),
             },
-
             {
               name: "S. anterior",
               selector: (row) => row.previous_stock,
@@ -204,11 +221,12 @@ const LogList = () => {
             {
               name: "OK",
               selector: (row) => chooseIcon(row.is_consistent),
-            }
+            },
           ]}
         />
-      </div>
-    </>
+      </Grid>
+    </Grid>
+  </>
   );
 };
 

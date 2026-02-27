@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from "react";
-import CustomModal from "../commons/customModal/customModal";
-import { Col, Form, Row } from "react-bootstrap";
+import CustomModal from "../commons/customModal/CustomModal";
+
 import { useDispatch, useSelector } from "react-redux";
-import CustomTable from "../commons/customTable/customTable";
-import { getStoreProductLogs, updateStoreProduct } from "../apis/products";
-import { getFormattedDateTime } from "../utils/utils";
+import CustomTable from "../commons/customTable/CustomTable";
+import { getStoreProductLogs, updateStoreProduct } from "../../api/products";
+import { getFormattedDateTime } from "../../utils/utils";
 import Swal from "sweetalert2";
 import CustomButton from "../commons/customButton/CustomButton";
-import { hideLogsModal } from "../redux/logsModal/LogsModalActions";
+import { hideLogsModal } from "../../redux/logsModal/LogsModalActions";
 import { chooseIcon } from "../commons/icons/Icons";
+import { Grid, TextField } from "@mui/material";
+import SaveIcon from "@mui/icons-material/Save";
 
 const INITIAL_FORM_DATA = {};
 
@@ -79,51 +81,42 @@ const StoreProductLogsModal = ({ onUpdateStoreProductList }) => {
       onClose={() => dispatch(hideLogsModal())}
       title={adjustStock ? "Ajuste de stock" : "Movimientos de stock"}
     >
-     <div className="custom-section">
-     <Row>
-        <Col md={6}>
-          <Form.Label>Código</Form.Label>
-          <Form.Control
-            type="text"
+     <Grid className="custom-section">
+     <Grid container spacing={2}>
+        <Grid item xs={12} md={6}>
+          <TextField size="small" fullWidth label="Código" type="text"
             value={formData.product?.code}
             placeholder="Código"
             disabled
           />
-        </Col>
+        </Grid>
 
-        <Col md={6}>
-          <Form.Label>Marca</Form.Label>
-          <Form.Control
-            type="text"
+        <Grid item xs={12} md={6}>
+          <TextField size="small" fullWidth label="Marca" type="text"
             value={formData.product?.brand_name}
             placeholder="Marca"
             disabled
           />
-        </Col>
+        </Grid>
 
-        <Col md={6}>
-          <Form.Label>Nombre</Form.Label>
-          <Form.Control
-            type="text"
+        <Grid item xs={12} md={6}>
+          <TextField size="small" fullWidth label="Nombre" type="text"
             value={formData.product?.name}
             placeholder="Nombre"
             disabled
           />
-        </Col>
-        <Col md={adjustStock ? 3 : 6}>
-          <Form.Label>Cantidad</Form.Label>
-          <Form.Control
-            type="text"
+        </Grid>
+        <Grid item xs={12} md={adjustStock ? 3 : 6}>
+          <TextField size="small" fullWidth label="Cantidad" type="text"
             value={formData.stock}
             placeholder="Cantidad"
             disabled={!adjustStock}
             name={"stock"}
             onChange={handleInputChange}
           />
-        </Col>
+        </Grid>
 
-        <Col
-          md={3}
+        <Grid item xs={12} md={3}
           className={`d-flex flex-column justify-content-end ${
             !adjustStock ? "d-none" : ""
           }`}
@@ -132,12 +125,13 @@ const StoreProductLogsModal = ({ onUpdateStoreProductList }) => {
             onClick={() => handleCreateAdjustStock()}
             fullWidth
             disabled={!adjustStock}
+            startIcon={<SaveIcon />}
           >
             Ajustar
           </CustomButton>
-        </Col>
+        </Grid>
 
-        <Col md={12} className={adjustStock ? "d-none" : ""}>
+        <Grid item xs={12} md={12} className={adjustStock ? "d-none" : ""}>
         <h1>Utimos movimientos</h1>
           <CustomTable
             data={logs}
@@ -178,10 +172,10 @@ const StoreProductLogsModal = ({ onUpdateStoreProductList }) => {
               },
             ]}
           />
-        </Col>
-      </Row>
+        </Grid>
+      </Grid>
 
-      </div> 
+      </Grid> 
      </CustomModal>
   );
 };

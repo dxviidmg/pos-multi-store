@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createBrand, updateBrand } from '../components/apis/brands';
-import Swal from 'sweetalert2';
+import { createBrand, updateBrand } from '../api/brands';
+import { showSuccess, showError } from '../utils/alerts';
 
 export const useCreateBrand = () => {
   const queryClient = useQueryClient();
@@ -9,19 +9,10 @@ export const useCreateBrand = () => {
     mutationFn: createBrand,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['brands'] });
-      Swal.fire({
-        icon: 'success',
-        title: 'Marca creada',
-        timer: 5000,
-      });
+      showSuccess('Marca creada');
     },
     onError: () => {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error al crear la marca',
-        text: 'Error desconocido, por favor comuníquese con soporte',
-        timer: 5000,
-      });
+      showError('Error al crear la marca', 'Error desconocido, por favor comuníquese con soporte');
     },
   });
 };
@@ -33,18 +24,10 @@ export const useUpdateBrand = () => {
     mutationFn: updateBrand,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['brands'] });
-      Swal.fire({
-        icon: 'success',
-        title: 'Marca actualizada',
-        timer: 5000,
-      });
+      showSuccess('Marca actualizada');
     },
     onError: () => {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error al actualizar la marca',
-        timer: 5000,
-      });
+      showError('Error al actualizar la marca');
     },
   });
 };

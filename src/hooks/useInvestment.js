@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getInvestment } from '../components/apis/stores';
+import { getInvestment } from '../api/stores';
 
 export const useInvestment = (enabled = false) => {
   return useQuery({

@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from "react";
-import CustomTable from "../commons/customTable/customTable";
-import { Col, Form, Row } from "react-bootstrap";
+import CustomTable from "../commons/customTable/CustomTable";
+
 import CustomButton from "../commons/customButton/CustomButton";
-import { getFormattedDate, formatTimeFromDate } from "../utils/utils";
+import { getFormattedDate, formatTimeFromDate } from "../../utils/utils";
 import { useDispatch } from "react-redux";
 
-import { getCashFlow } from "../apis/cashflow";
+import { getCashFlow } from "../../api/cashflow";
 import CashFlowModal from "../cashFlowModal/CashFlowModal";
 import {
   hideCashFlowModal,
   showCashFlowModal,
-} from "../redux/cashFlowModal/CashFlowModalActions";
+} from "../../redux/cashFlowModal/CashFlowModalActions";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
+import { Grid, TextField, Box } from "@mui/material";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
 
 const today = getFormattedDate();
 
@@ -57,74 +59,85 @@ const CashFlowList = () => {
 
   return (
     <>
-      <CustomSpinner isLoading={loading}></CustomSpinner>
+      {/* 1. SPINNERS */}
+      <CustomSpinner isLoading={loading} />
+      
+      {/* 2. MODALS */}
       <CashFlowModal onUpdateCashFlowList={handleUpdateCashFlowList} />
-      <div className="custom-section">
-        <h1>Movimientos en caja</h1>
+      
+      {/* 3. CONTENIDO PRINCIPAL */}
+      <Grid container>
+        <Grid item xs={12} className="custom-section">
+          {/* 3.1 Header */}
+          <h1>Movimientos en caja</h1>
 
-        <Row>
-          <Col className="d-flex flex-column justify-content-end">
-            <CustomButton fullWidth={true} onClick={() => handleOpenModal()}>
-              Crear movimiento
-            </CustomButton>
-          </Col>
-          <Col>
-            <Form>
-              <Form.Label>Fecha de inicio</Form.Label>
-              <Form.Control
+          {/* 3.2 Filtros */}
+          <Grid container spacing={2} sx={{ mb: 2 }}>
+            <Grid item xs={4}>
+              <CustomButton
+                fullWidth
+                onClick={() => handleOpenModal()}
+                startIcon={<AddCircleIcon />}
+              >
+                Crear movimiento
+              </CustomButton>
+            </Grid>
+            <Grid item xs={4}>
+              <TextField
+                size="small"
+                fullWidth
+                label="Fecha de inicio"
                 type="date"
                 value={params.start_date}
                 name="start_date"
                 onChange={handleDataChange}
                 max={today}
               />
-            </Form>
-          </Col>
-
-          <Col>
-            <Form>
-              <Form.Label>Fecha de fin</Form.Label>
-              <Form.Control
+            </Grid>
+            <Grid item xs={4}>
+              <TextField
+                size="small"
+                fullWidth
+                label="Fecha de fin"
                 type="date"
                 value={params.end_date}
                 name="end_date"
                 onChange={handleDataChange}
                 max={today}
               />
-            </Form>
-          </Col>
+            </Grid>
+          </Grid>
 
-        </Row>
-        <CustomTable
-          data={cashFlow}
-          searcher={true}
-          columns={[
-            {
-              name: "Creación",
-              selector: (row) => formatTimeFromDate(row.created_at),
-            },
-            {
-              name: "Concepto",
-              selector: (row) => row.concept,
-              wrap: true
-            },
-
-            {
-              name: "Tipo",
-              selector: (row) => row.transaction_type_display,
-            },
-
-            {
-              name: "Cantidad",
-              selector: (row) => "$" + row.amount,
-            },
-            {
-              name: "usuario",
-              selector: (row) => row.user_username,
-            },
-          ]}
-        />
-      </div>
+          {/* 3.3 Tabla */}
+          <CustomTable
+            data={cashFlow}
+            searcher={true}
+            columns={[
+              {
+                name: "Creación",
+                selector: (row) => formatTimeFromDate(row.created_at),
+              },
+              {
+                name: "Concepto",
+                selector: (row) => row.concept,
+                wrap: true,
+              },
+              {
+                name: "Tipo",
+                selector: (row) => row.transaction_type_display,
+              },
+              {
+                name: "Cantidad",
+                selector: (row) => "$" + row.amount,
+              },
+              {
+                name: "usuario",
+                selector: (row) => row.user_username,
+              },
+            ]}
+          />
+        </Grid>
+      </Grid>
     </>
   );
 };

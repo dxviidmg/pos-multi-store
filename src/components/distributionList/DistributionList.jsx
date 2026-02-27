@@ -1,21 +1,25 @@
 import React, { useEffect, useState } from "react";
-import CustomTable from "../commons/customTable/customTable";
+import CustomTable from "../commons/customTable/CustomTable";
 import CustomButton from "../commons/customButton/CustomButton";
-import { getFormattedDateTime } from "../utils/utils";
+import { getFormattedDateTime } from "../../utils/utils";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
-import { CheckIcon, EditIcon, RemoveInCartIcon } from "../commons/icons/Icons";
+import ChecklistIcon from "@mui/icons-material/Checklist";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import CustomTooltip from "../commons/Tooltip";
 import {
   confirmDistribution,
   deleteTranfer,
   getDistributions,
   updateTranfer,
-} from "../apis/transfers";
-import { Col, Form, Row } from "react-bootstrap";
-import Swal from "sweetalert2";
-import { getUserData } from "../apis/utils";
+} from "../../api/transfers";
 
-
+import { showSuccess, showError } from "../../utils/alerts";
+import { getUserData } from "../../api/utils";
+import Grid from "@mui/material/Grid";
+import { TextField } from "@mui/material";
+import SaveIcon from "@mui/icons-material/Save";
+import SendIcon from "@mui/icons-material/Send";
 
 
 const DistributionList = () => {
@@ -56,18 +60,10 @@ const DistributionList = () => {
       setTimeout(() => {
         setLoading(false);
       }, 200);
-      Swal.fire({
-        icon: "success",
-        title: "Distribición realizada",
-        timer: 5000,
-      });
+      showSuccess("Distribución realizada");
     } else {
       setLoading(false);
-      Swal.fire({
-        icon: "error",
-        title: "Error al distribuir",
-        timer: 5000,
-      });
+      showError("Error al distribuir");
     }
   };
 
@@ -101,12 +97,16 @@ const DistributionList = () => {
 
   return (
     <>
-      <CustomSpinner isLoading={loading}></CustomSpinner>
-      <div className="custom-section">
+      {/* 1. SPINNERS */}
+      <CustomSpinner isLoading={loading} />
+      
+      {/* 2. CONTENIDO PRINCIPAL - Lista de distribuciones */}
+      <Grid item xs={12} className="custom-section">
         <h1>Distribuciones</h1>
+        
         <CustomTable
           data={distributions}
-          pagination={false}
+          pagination={true}
           columns={[
             {
               name: "#",
@@ -122,38 +122,37 @@ const DistributionList = () => {
               grow: 2,
               selector: (row) => row.description,
             },
-
             {
               name: "Acciones",
               cell: (row) => (
                 <CustomTooltip text={"Ver productos"}>
                   <CustomButton onClick={() => handleOpenModal(row)}>
-                    <CheckIcon></CheckIcon>
+                    <ChecklistIcon />
                   </CustomButton>
                 </CustomTooltip>
               ),
             },
           ]}
         />
-      </div>
+      </Grid>
 
+      {/* 3. DETALLE DE DISTRIBUCIÓN SELECCIONADA */}
       {Object.keys(distributionSelected).length !== 0 && (
-        <div className="custom-section">
-          <Row>
-            <Col>
-              {" "}
-              <h1>Distribución #{distributionSelected.id}</h1>
-            </Col>
-            <Col>
-              {" "}
-              <CustomButton fullWidth onClick={() => handleSubmit()}>
-                Confirmar distribución
-              </CustomButton>
-            </Col>
-          </Row>
+        <Grid item xs={12} className="custom-section">
+          <h1>Distribución #{distributionSelected.id}</h1>
+          
+          <CustomButton
+            fullWidth
+            onClick={handleSubmit}
+            startIcon={<SendIcon />}
+            sx={{ mb: 2 }}
+          >
+            Confirmar distribución
+          </CustomButton>
+          
           <CustomTable
             data={distributionSelected.transfers || []}
-            pagination={false}
+            pagination={true}
             columns={[
               {
                 name: "Código",
@@ -167,7 +166,9 @@ const DistributionList = () => {
                 name: "Cantidad",
                 cell: (row) =>
                   editingRow === row.product_code ? (
-                    <Form.Control
+                    <TextField
+                      size="small"
+                      fullWidth
                       type="number"
                       value={editedQuantity}
                       onChange={(e) => setEditedQuantity(e.target.value)}
@@ -184,7 +185,10 @@ const DistributionList = () => {
                 cell: (row) =>
                   getUserData().role === "owner" ? (
                     editingRow === row.product_code ? (
-                      <CustomButton onClick={() => handleSaveClick(row)}>
+                      <CustomButton
+                        onClick={() => handleSaveClick(row)}
+                        startIcon={<SaveIcon />}
+                      >
                         Guardar
                       </CustomButton>
                     ) : (
@@ -194,21 +198,20 @@ const DistributionList = () => {
                             <EditIcon />
                           </CustomButton>
                         </CustomTooltip>
-              
                         <CustomTooltip text="Borrar producto">
                           <CustomButton onClick={() => handleDeleteTransfer(row)}>
-                            <RemoveInCartIcon />
+                            <DeleteIcon />
                           </CustomButton>
                         </CustomTooltip>
                       </>
                     )
                   ) : (
                     "Solo el propietario puede editar o eliminar"
-                  )
-              }
+                  ),
+              },
             ]}
           />
-        </div>
+        </Grid>
       )}
     </>
   );

@@ -1,8 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, memo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Col, Form, Row } from "react-bootstrap";
+
 import CustomButton from "../commons/customButton/CustomButton";
-import { removeClientfromCart } from "../redux/cart/cartActions";
+import { removeClientfromCart } from "../../redux/cart/cartActions";
+import { Grid, TextField, Box } from "@mui/material";
+import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
 
 
 const ClientSelected = () => {
@@ -27,53 +29,47 @@ const ClientSelected = () => {
   }, []);
 
   return (
-    <Row className="align-items-end">
-      <Col md={3}>
-        <Form.Group>
-          <Form.Label>Nombre</Form.Label>
-          <Form.Control
-            type="text"
+    <Grid container spacing={2} className="align-items-end">
+      <Grid item xs={12} md={3}>
+        <Box>
+          <TextField size="small" fullWidth label="Nombre" type="text"
             value={client.full_name ? client.full_name : ""}
             placeholder="Nombre"
             disabled
           />
-        </Form.Group>
-      </Col>
+        </Box>
+      </Grid>
 
-      <Col md={3}>
-        <Form.Group>
-          <Form.Label>Teléfono</Form.Label>
-          <Form.Control
-            type="text"
+      <Grid item xs={12} md={3}>
+        <Box>
+          <TextField size="small" fullWidth label="Teléfono" type="text"
             value={client.phone_number ? client.phone_number : ""}
             placeholder="Teléfono"
             disabled
           />
-        </Form.Group>
-      </Col>
+        </Box>
+      </Grid>
 
-      <Col md={3}>
-        <Form.Group>
-          <Form.Label>Descuento</Form.Label>
-          <Form.Control
-            type="text"
+      <Grid item xs={12} md={3}>
+        <Box>
+          <TextField size="small" fullWidth label="Descuento" type="text"
             value={client.discount_percentage ? `${client.discount_percentage}%` : ""}
             placeholder="Descuento"
             disabled
           />
-        </Form.Group>
-      </Col>
+        </Box>
+      </Grid>
 
-      <Col md={3}>
-        <Form.Group>
-          <CustomButton fullWidth={true} onClick={() => dispatch(removeClientfromCart())}>
+      <Grid item xs={12} md={3}>
+        <Box>
+          <CustomButton fullWidth={true} onClick={() => dispatch(removeClientfromCart())} startIcon={<PersonRemoveIcon />}>
           Borrar 
           (Ctrl + E)
           </CustomButton>
-        </Form.Group>
-      </Col>
-    </Row>
+        </Box>
+      </Grid>
+    </Grid>
   );
 };
 
-export default ClientSelected;
+export default memo(ClientSelected);

@@ -1,9 +1,10 @@
-import "./customSpinner.css";
+import { memo } from "react";
+import "./CustomSpinner.css";
 import Spinner from 'react-bootstrap/Spinner';
 
-export const CustomSpinner = ({isLoading}) => {
+export const CustomSpinner = memo(({isLoading}) => {
   if (!isLoading) {
-    return null; // No renderiza nada si isLoading es false
+    return null;
   }
   
 	return (
@@ -15,4 +16,4 @@ export const CustomSpinner = ({isLoading}) => {
     </div>
   </div>
 	);
-};
+});

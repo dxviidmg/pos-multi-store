@@ -1,16 +1,34 @@
 import React, { useEffect, useState } from "react";
-import CustomTable from "../commons/customTable/customTable";
+import CustomTable from "../commons/customTable/CustomTable";
 import {
   getImportCanIncludeQuantity,
   importProducts,
   importProductsValidation,
-} from "../apis/products";
-import { Form, Row, Col, Alert } from "react-bootstrap";
+} from "../../api/products";
+import { Alert } from "react-bootstrap";
 import CustomButton from "../commons/customButton/CustomButton";
 import Swal from "sweetalert2";
 import { chooseIcon } from "../commons/icons/Icons";
 import { useRef } from "react";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
+import { Grid, Select, MenuItem, FormControl, InputLabel, styled } from "@mui/material";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import PublishIcon from "@mui/icons-material/Publish";
+import DownloadIcon from "@mui/icons-material/Download";
+
+const VisuallyHiddenInput = styled('input')({
+  clip: 'rect(0 0 0 0)',
+  clipPath: 'inset(50%)',
+  height: 1,
+  overflow: 'hidden',
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  whiteSpace: 'nowrap',
+  width: 1,
+});
 
 const URL_TEMPLATE =
   process.env.REACT_APP_API_URL +
@@ -196,105 +214,115 @@ const ProductImport = () => {
   };
 
   return (
-    <div>
-      <CustomSpinner isLoading={loading}></CustomSpinner>
-      <div className="custom-section">
+      <Grid container>
+      <Grid item xs={12} className="custom-section">
+        <CustomSpinner isLoading={loading}></CustomSpinner>
         <h1>Importación de productos</h1>
-        <Row>
-          <Col md={3} className="d-flex flex-column justify-content-end">
-            <Form.Label>Archivo</Form.Label>
-
-            <Form.Group controlId="formFile" className="">
-              <Form.Control
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={3}>
+            <CustomButton
+              component="label"
+              fullWidth
+              startIcon={<CloudUploadIcon />}
+            >
+              Subir archivo
+              <VisuallyHiddenInput
                 type="file"
                 ref={fileInputRef}
-                defaultValue={formData.file}
                 onChange={handleDataChange}
                 name="file"
               />
-            </Form.Group>
-          </Col>
+            </CustomButton>
+          </Grid>
 
-          <Col md={3}>
-            <Form.Label>¿Crear marcas en caso que no existan?</Form.Label>
-            <Form.Select
-              value={formData.create_brands}
+          <Grid item xs={12} md={3}>
+            <FormControl fullWidth size="small">
+              <InputLabel>¿Crear marcas en caso que no existan?</InputLabel>
+              <Select fullWidth size="small" value={formData.create_brands}
               onChange={handleDataChange}
               name="create_brands"
               //              disabled={isLoading}
-            >
-              <option value="">Crear marcas</option>
+             label="¿Crear marcas en caso que no existan?">
+              <MenuItem value="">Crear marcas</MenuItem>
               {CREATE_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
+                <MenuItem key={option.value} value={option.value}>
                   {option.label}
-                </option>
+                </MenuItem>
               ))}
-            </Form.Select>
-          </Col>
+            </Select>
+            </FormControl>
+          </Grid>
 
-          <Col md={3}>
-            <Form.Label>
+          <Grid item xs={12} md={3}>
+            <FormControl fullWidth size="small">
+              <InputLabel>
               ¿Crear departamentos en caso que no existan?
-            </Form.Label>
-            <Form.Select
-              value={formData.create_departments}
+            </InputLabel>
+              <Select fullWidth size="small" value={formData.create_departments}
               onChange={handleDataChange}
               name="create_departments"
               //              disabled={isLoading}
-            >
-              <option value="">Crear departamentos</option>
+             label="
+              ¿Crear departamentos en caso que no existan?
+            ">
+              <MenuItem value="">Crear departamentos</MenuItem>
               {CREATE_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
+                <MenuItem key={option.value} value={option.value}>
                   {option.label}
-                </option>
+                </MenuItem>
               ))}
-            </Form.Select>
-          </Col>
+            </Select>
+            </FormControl>
+          </Grid>
 
-          <Col md={3}>
-            <Form.Label>¿El campo "Departamentos" es obligatorio?</Form.Label>
-            <Form.Select
-              value={formData.departments_mandatory}
+          <Grid item xs={12} md={3}>
+            <FormControl fullWidth size="small">
+              <InputLabel>¿El campo &quot;Departamentos&quot; es obligatorio?</InputLabel>
+              <Select fullWidth size="small" value={formData.departments_mandatory}
               onChange={handleDataChange}
               name="departments_mandatory"
-              //              disabled={isLoading}
-            >
-              <option value="">Departamentos obligatorios en el archivo</option>
+             label='¿El campo "Departamentos" es obligatorio?'>
+              <MenuItem value="">Departamentos obligatorios en el archivo</MenuItem>
               {CREATE_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
+                <MenuItem key={option.value} value={option.value}>
                   {option.label}
-                </option>
+                </MenuItem>
               ))}
-            </Form.Select>
-          </Col>
+            </Select>
+            </FormControl>
+          </Grid>
 
-          <Col md={12} hidden={canIncludeQuantity} className="mt-3">
+          <Grid item xs={12} md={12} hidden={canIncludeQuantity} className="mt-3">
             <Alert key={"primary"} variant={"primary"}>
               Posiblemente sea tu primera vez aqui y tienes solo una tienda, por
               lo que aparte de importar tus productos puedes ponerle tu stick en
               tu tienda/almacen.
             </Alert>
 
-            <Form.Label>
+            <FormControl fullWidth size="small">
+              <InputLabel>
               ¿Agregar inventario a la primera tienda? Ideal para la primera
               importación si solo tienes una tienda.
-            </Form.Label>
-            <Form.Select
-              value={formData.import_stock}
+            </InputLabel>
+              <Select fullWidth size="small" value={formData.import_stock}
               onChange={handleDataChange}
               name="import_stock"
               //              disabled={isLoading}
-            >
-              <option value="">Agregar inventario</option>
+             label="
+              ¿Agregar inventario a la primera tienda? Ideal para la primera
+              importación si solo tienes una tienda.
+            ">
+              <MenuItem value="">Agregar inventario</MenuItem>
               {CREATE_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
+                <MenuItem key={option.value} value={option.value}>
                   {option.label}
-                </option>
+                </MenuItem>
               ))}
-            </Form.Select>
-          </Col>
+            </Select>
+            </FormControl>
+          </Grid>
 
-          <Col md={3}>
+          <Grid item xs={12} md={3}>
             <CustomButton
               onClick={handleValidation}
               disabled={
@@ -305,14 +333,15 @@ const ProductImport = () => {
                 formData.import_stock === ""
               }
               fullWidth
+              startIcon={<CheckCircleIcon />}
             >
               Validar
             </CustomButton>
-          </Col>
+          </Grid>
 
-          <Col md={3}>
+          <Grid item xs={12} md={3}>
             {productsError.length > 0 ? (
-              <CustomButton onClick={handleShowData} fullWidth>
+              <CustomButton onClick={handleShowData} fullWidth startIcon={<VisibilityIcon />}>
                 Ver registros con error
               </CustomButton>
             ) : (
@@ -320,32 +349,35 @@ const ProductImport = () => {
               disabled={
                 products.length === 0 ||
                 products.some((item) => item.status !== "Exitoso")
-              }>
+              }
+              startIcon={<PublishIcon />}>
                 Importar
               </CustomButton>
             )}
-          </Col>
+          </Grid>
 
-          <Col md={3}>
-            <CustomButton href={URL_TEMPLATE} fullWidth>
+          <Grid item xs={12} md={3}>
+            <CustomButton href={URL_TEMPLATE} fullWidth startIcon={<DownloadIcon />}>
               Descargar plantilla
             </CustomButton>
-          </Col>
+          </Grid>
 
-          <Col md={3}>
+          <Grid item xs={12} md={3}>
             <CustomButton
               onClick={() => setShowExample(!showExample)}
               fullWidth
+              startIcon={<VisibilityIcon />}
             >
               Ver Ejemplo
             </CustomButton>
-          </Col>
-        </Row>
+          </Grid>
+        </Grid>
+      </Grid>
 
-        <Row hidden={canIncludeQuantity}></Row>
-      </div>
 
-      <div className="custom-section" hidden={showExample}>
+
+
+      <Grid item xs={12} className="custom-section" hidden={showExample}>
         <h1>Ejemplo de plantilla</h1>
 
         <CustomTable
@@ -396,9 +428,10 @@ const ProductImport = () => {
             },
           ]}
         ></CustomTable>
-      </div>
+      </Grid>
 
-      <div className="custom-section">
+
+      <Grid item xs={12} className="custom-section">
         <h1>Archivo actual</h1>
         <CustomTable
           data={products}
@@ -469,8 +502,8 @@ const ProductImport = () => {
             },
           ]}
         ></CustomTable>
-      </div>
-    </div>
+      </Grid>
+    </Grid>
   );
 };
 

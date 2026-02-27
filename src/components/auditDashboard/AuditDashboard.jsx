@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Row, Col, Form } from "react-bootstrap";
-import { getFormattedDate } from "../utils/utils";
+
+import { getFormattedDate } from "../../utils/utils";
 import AuditDashboardData from "./AuditDashboardData";
 import CustomButton from "../commons/customButton/CustomButton";
-import { getAudit, getAudit2 } from "../apis/audit";
-import { getStores } from "../apis/stores";
+import { getAudit, getAudit2 } from "../../api/audit";
+import { getStores } from "../../api/stores";
 import { CustomSpinner } from "../commons/customSpinner/CustomSpinner";
+import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, Box } from "@mui/material";
+import AssessmentIcon from "@mui/icons-material/Assessment";
 
 const AuditDashboard = () => {
   const today = getFormattedDate();
@@ -57,85 +59,82 @@ const AuditDashboard = () => {
   return (
     <div>
       <CustomSpinner isLoading={isLoading}></CustomSpinner>
-      <div className="custom-section">
+      <Grid className="custom-section">
         <h1>Tablero de auditoria</h1>
-        <Row>
+        <Grid container spacing={2}>
           {" "}
-          <Col md={6} lg={2}>
+          <Grid item xs={12} md={6} lg={4}>
             {" "}
-            <Form.Label>Tienda o Almacen</Form.Label>
-            <Form.Select
-              value={params.store_id}
+            <FormControl fullWidth size="small">
+              <InputLabel>Tienda o Almacen</InputLabel>
+              <Select fullWidth size="small" value={params.store_id}
               onChange={(e) => handleParams(e)}
               name="store_id"
-              //              disabled={isLoading}
+              label="Tienda o Almacen"
             >
-              <option value="">Seleccionar</option>
+              <MenuItem value="">Seleccionar</MenuItem>
               {stores.map((store) => (
-                <option key={store.id} value={store.id}>
+                <MenuItem key={store.id} value={store.id}>
                   {store.full_name}
-                </option>
+                </MenuItem>
               ))}
-            </Form.Select>
-          </Col>
-          <Col md={6} lg={2}>
+            </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} md={6} lg={4}>
             {" "}
-            <Form>
-              <Form.Label>Fecha de inicio</Form.Label>
-              <Form.Control
-                name="start_date"
+            <Box component="form">
+              <TextField size="small" fullWidth label="Fecha de inicio" name="start_date"
                 type="date"
                 value={params.start_date}
                 onChange={(e) => handleParams(e)}
                 max={today}
               />
-            </Form>
-          </Col>
-          <Col md={6} lg={2}>
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={6} lg={4}>
             {" "}
-            <Form>
-              <Form.Label>Fecha de fin</Form.Label>
-              <Form.Control
-                name="end_date"
+            <Box component="form">
+              <TextField size="small" fullWidth label="Fecha de fin" name="end_date"
                 type="date"
                 value={params.end_date}
                 onChange={(e) => handleParams(e)}
                 max={today}
               />
-            </Form>
-          </Col>
-          <Col lg={3} md={3} className="d-flex flex-column justify-content-end">
-            <CustomButton fullWidth onClick={() => handleSubmit()}>
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={3} lg={6}>
+            <CustomButton fullWidth onClick={() => handleSubmit()} startIcon={<AssessmentIcon />}>
               Analizar ventas y logs
             </CustomButton>
-          </Col>
-          <Col lg={3} md={3} className="d-flex flex-column justify-content-end">
-            <CustomButton fullWidth onClick={() => handleSubmit2()}>
+          </Grid>
+          <Grid item xs={12} md={3} lg={6}>
+            <CustomButton fullWidth onClick={() => handleSubmit2()} startIcon={<AssessmentIcon />}>
               Analizar stock
             </CustomButton>
-          </Col>
-          <Col lg={4}>
+          </Grid>
+          <Grid item xs={12} lg={4}>
             <AuditDashboardData
               title={"Ventas repetidas"}
               taskId={tasks?.task1}
             ></AuditDashboardData>
-          </Col>
-          <Col lg={4}>
+          </Grid>
+          <Grid item xs={12} lg={4}>
             {" "}
             <AuditDashboardData
               title={"Logs repetidos o inconsistentes"}
               taskId={tasks?.task2}
             ></AuditDashboardData>
-          </Col>
-          <Col lg={4}>
+          </Grid>
+          <Grid item xs={12} lg={4}>
             {" "}
             <AuditDashboardData
               title={"Stock y ultimo log"}
               taskId={tasks?.task3}
             ></AuditDashboardData>
-          </Col>
-        </Row>
-      </div>
+          </Grid>
+        </Grid>
+      </Grid>
     </div>
   );
 };
