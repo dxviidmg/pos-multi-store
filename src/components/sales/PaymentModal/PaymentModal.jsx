@@ -298,233 +298,236 @@ const PaymentModal = ({ isOpen, onClose }) => {
         onClose={onClose}
         title="Finalizar venta"
       >
-        <div>
-          <Grid container className="custom-section">
-            <Grid item xs={12} md={6}>
-              <CustomButton
-                fullWidth
-                onClick={(e) => setHideClient((prevState) => !prevState)}
-                startIcon={<PersonAddIcon />}
-              >
-                Añadir cliente
-              </CustomButton>
-            </Grid>
+        <Grid container sx={{ padding: '1rem', backgroundColor: 'rgba(4, 53, 107, 0.2)' }}>
+          <Grid item xs={12} className="custom-section">
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={6}>
+                <CustomButton
+                  fullWidth
+                  onClick={(e) => setHideClient((prevState) => !prevState)}
+                  startIcon={<PersonAddIcon />}
+                >
+                  Añadir cliente
+                </CustomButton>
+              </Grid>
 
-            <Grid item xs={12} md={6}>
-              <CustomButton
-                fullWidth
-                onClick={(e) => setHideExchange((prevState) => !prevState)}
-                startIcon={<SwapHorizIcon />}
-              >
-                Intercambio de mercancia
-              </CustomButton>
+              <Grid item xs={12} md={6}>
+                <CustomButton
+                  fullWidth
+                  onClick={(e) => setHideExchange((prevState) => !prevState)}
+                  startIcon={<SwapHorizIcon />}
+                >
+                  Intercambio de mercancia
+                </CustomButton>
+              </Grid>
             </Grid>
           </Grid>
-        </div>
-        <Grid className="custom-section" hidden={hideClient}>
-          <SearchClient />
-          <ClientSelected />
-        </Grid>
 
-        <Grid className="custom-section" hidden={hideExchange}>
-          <h2>Cambio de mercancia</h2>
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={3}>
-              <TextField
-                fullWidth
-                size="small"
-                label="# Venta"
-                type="number"
-                value={saleExchange.id}
-                onChange={(e) =>
-                  setSaleExchange({
-                    ...saleExchange,
-                    id: Number(e.target.value),
-                  })
-                }
-              />
-            </Grid>
-
-            <Grid item xs={12} md={3} className="d-flex flex-column justify-content-end">
-              <CustomButton fullWidth onClick={handleSearchSaleForChange}>
-                <SearchIcon /> Buscar
-              </CustomButton>
-            </Grid>
-
-            <Grid item xs={12} md={3}>
-              <TextField
-                fullWidth
-                size="small"
-                label="$ de devolución"
-                type="number"
-                value={saleExchange.refunded}
-                disabled
-              />
-            </Grid>
-
-            <Grid item xs={12} md={3}>
-              <TextField
-                fullWidth
-                size="small"
-                label="Cobrar"
-                type="number"
-                value={saleExchange.payment}
-                disabled
-              />
-            </Grid>
+          <Grid item xs={12} className="custom-section" hidden={hideClient}>
+            <SearchClient />
+            <ClientSelected />
           </Grid>
-        </Grid>
 
-        <Grid className="custom-section">
-          <h2>Totales</h2>
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={3}>
-              <TextField
-                fullWidth
-                size="small"
-                label="Total"
-                type="number"
-                value={total.toFixed(2)}
-                disabled
-              />
-            </Grid>
-
-            <Grid item xs={12} md={3}>
-              <TextField
-                fullWidth
-                size="small"
-                label="Total con descuento"
-                type="number"
-                value={totalDiscount.toFixed(2)}
-                disabled
-              />
-            </Grid>
-            <Grid item xs={12} md={3}>
-              <TextField
-                fullWidth
-                size="small"
-                label="Pago con"
-                type="text"
-                value={payment.paidWith}
-                onChange={handlePaidWithChange}
-                inputRef={inputPaymentRef}
-              />
-            </Grid>
-            <Grid item xs={12} md={3}>
-              {paymentMethods.methods.TA > 0 ||
-              paymentMethods.methods.TR > 0 ? (
+          <Grid item xs={12} className="custom-section" hidden={hideExchange}>
+            <h2>Cambio de mercancia</h2>
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={3}>
                 <TextField
                   fullWidth
                   size="small"
-                  label="Referencia"
-                  type="text"
-                  value={referencePayment}
-                  onChange={(e) => setReferencePayment(e.target.value)}
-                  InputLabelProps={{ shrink: true }}
-                />
-              ) : (
-                <TextField
-                  fullWidth
-                  size="small"
-                  label="Cambio"
+                  label="# Venta"
                   type="number"
-                  value={payment.change}
+                  value={saleExchange.id}
+                  onChange={(e) =>
+                    setSaleExchange({
+                      ...saleExchange,
+                      id: Number(e.target.value),
+                    })
+                  }
+                />
+              </Grid>
+
+              <Grid item xs={12} md={3} className="d-flex flex-column justify-content-end">
+                <CustomButton fullWidth onClick={handleSearchSaleForChange}>
+                  <SearchIcon /> Buscar
+                </CustomButton>
+              </Grid>
+
+              <Grid item xs={12} md={3}>
+                <TextField
+                  fullWidth
+                  size="small"
+                  label="$ de devolución"
+                  type="number"
+                  value={saleExchange.refunded}
                   disabled
                 />
-              )}
+              </Grid>
+
+              <Grid item xs={12} md={3}>
+                <TextField
+                  fullWidth
+                  size="small"
+                  label="Cobrar"
+                  type="number"
+                  value={saleExchange.payment}
+                  disabled
+                />
+              </Grid>
             </Grid>
           </Grid>
-        </Grid>
 
-        <Grid className="custom-section">
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={3}>
-              <FormLabel className="me-1">Tipo de pago:</FormLabel>
-              <RadioGroup
-                value={paymentMethods.type}
-                onChange={handleChangePayments}
-                name="paymentType"
-                sx={{ gap: 0 }}
-              >
-                <FormControlLabel value="radio" control={<Radio size="small" />} label="Único" sx={{ mb: -1 }} />
-                <FormControlLabel value="checkbox" control={<Radio size="small" />} label="Mixto" sx={{ mb: -1 }} />
-              </RadioGroup>
+          <Grid item xs={12} className="custom-section">
+            <h2>Totales</h2>
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={3}>
+                <TextField
+                  fullWidth
+                  size="small"
+                  label="Total"
+                  type="number"
+                  value={total.toFixed(2)}
+                  disabled
+                />
+              </Grid>
+
+              <Grid item xs={12} md={3}>
+                <TextField
+                  fullWidth
+                  size="small"
+                  label="Total con descuento"
+                  type="number"
+                  value={totalDiscount.toFixed(2)}
+                  disabled
+                />
+              </Grid>
+              <Grid item xs={12} md={3}>
+                <TextField
+                  fullWidth
+                  size="small"
+                  label="Pago con"
+                  type="text"
+                  value={payment.paidWith}
+                  onChange={handlePaidWithChange}
+                  inputRef={inputPaymentRef}
+                />
+              </Grid>
+              <Grid item xs={12} md={3}>
+                {paymentMethods.methods.TA > 0 ||
+                paymentMethods.methods.TR > 0 ? (
+                  <TextField
+                    fullWidth
+                    size="small"
+                    label="Referencia"
+                    type="text"
+                    value={referencePayment}
+                    onChange={(e) => setReferencePayment(e.target.value)}
+                    InputLabelProps={{ shrink: true }}
+                  />
+                ) : (
+                  <TextField
+                    fullWidth
+                    size="small"
+                    label="Cambio"
+                    type="number"
+                    value={payment.change}
+                    disabled
+                  />
+                )}
+              </Grid>
             </Grid>
+          </Grid>
 
-            <Grid item xs={12} md={6}>
-              <FormLabel className="me-3">Medios de pago:</FormLabel>
-              {["EF", "TA", "TR"].map((method) => (
-                <div key={method} className="d-flex align-items-center" style={{ marginBottom: '4px' }}>
-                  <div className="me-3" style={{ flex: "1" }}>
-                    <FormControlLabel
-                      sx={{ mb: 0 }}
-                      control={
-                        paymentMethods.type === "radio" ? (
-                          <Radio
-                            size="small"
-                            checked={paymentMethods.methods[method] === totalDiscount}
-                            onChange={handleChangePayments}
-                            value={method}
-                            name="paymentMethod"
-                          />
-                        ) : (
-                          <Checkbox
-                            size="small"
-                            checked={
-                              (movementType === "apartado" && method === "EF") ||
-                              paymentMethods.methods[method] > 0
-                            }
-                            onChange={handleChangePayments}
-                            value={method}
-                            name="paymentMethod"
-                          />
-                        )
-                      }
-                      label={
-                        method === "EF"
-                          ? "Efectivo"
-                          : method === "TA"
-                          ? "Tarjeta"
-                          : "Transferencia"
-                      }
-                    />
-                  </div>
-                  {paymentMethods.type === "checkbox" &&
-                    paymentMethods.methods[method] > 0 && (
-                      <TextField
-                        size="small"
-                        type="number"
-                        placeholder="$"
-                        style={{ width: "120px" }}
-                        onChange={(e) =>
-                          handlePaymentValueChange(method, e.target.value)
+          <Grid item xs={12} className="custom-section">
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={3}>
+                <FormLabel className="me-1">Tipo de pago:</FormLabel>
+                <RadioGroup
+                  value={paymentMethods.type}
+                  onChange={handleChangePayments}
+                  name="paymentType"
+                  sx={{ gap: 0 }}
+                >
+                  <FormControlLabel value="radio" control={<Radio size="small" />} label="Único" sx={{ mb: -1 }} />
+                  <FormControlLabel value="checkbox" control={<Radio size="small" />} label="Mixto" sx={{ mb: -1 }} />
+                </RadioGroup>
+              </Grid>
+
+              <Grid item xs={12} md={6}>
+                <FormLabel className="me-3">Medios de pago:</FormLabel>
+                {["EF", "TA", "TR"].map((method) => (
+                  <div key={method} className="d-flex align-items-center" style={{ marginBottom: '4px' }}>
+                    <div className="me-3" style={{ flex: "1" }}>
+                      <FormControlLabel
+                        sx={{ mb: 0 }}
+                        control={
+                          paymentMethods.type === "radio" ? (
+                            <Radio
+                              size="small"
+                              checked={paymentMethods.methods[method] === totalDiscount}
+                              onChange={handleChangePayments}
+                              value={method}
+                              name="paymentMethod"
+                            />
+                          ) : (
+                            <Checkbox
+                              size="small"
+                              checked={
+                                (movementType === "apartado" && method === "EF") ||
+                                paymentMethods.methods[method] > 0
+                              }
+                              onChange={handleChangePayments}
+                              value={method}
+                              name="paymentMethod"
+                            />
+                          )
+                        }
+                        label={
+                          method === "EF"
+                            ? "Efectivo"
+                            : method === "TA"
+                            ? "Tarjeta"
+                            : "Transferencia"
                         }
                       />
-                    )}
-                </div>
-              ))}
-            </Grid>
-            <Grid item xs={12} md={3}>
-              <CustomButton
-                disabled={handleDisableButton()}
-                fullWidth={true}
-                onClick={(e) => handleCreateSale()}
-                startIcon={<MoneyOffIcon />}
-              >
-                Cobrar sin ticket
-                <br />
-                (Ctrl + G)
-              </CustomButton>
+                    </div>
+                    {paymentMethods.type === "checkbox" &&
+                      paymentMethods.methods[method] > 0 && (
+                        <TextField
+                          size="small"
+                          type="number"
+                          placeholder="$"
+                          style={{ width: "120px" }}
+                          onChange={(e) =>
+                            handlePaymentValueChange(method, e.target.value)
+                          }
+                        />
+                      )}
+                  </div>
+                ))}
+              </Grid>
+              <Grid item xs={12} md={3}>
+                <CustomButton
+                  disabled={handleDisableButton()}
+                  fullWidth={true}
+                  onClick={(e) => handleCreateSale()}
+                  startIcon={<MoneyOffIcon />}
+                >
+                  Cobrar sin ticket
+                  <br />
+                  (Ctrl + G)
+                </CustomButton>
 
-              <CustomButton
-                disabled={handleDisableButton()}
-                fullWidth={true}
-                onClick={(e) => handleCreateSale(true)}
-                startIcon={<ReceiptIcon />}
-              >
-                Cobrar con ticket
-                <br /> (Ctrl + H)
-              </CustomButton>
+                <CustomButton
+                  disabled={handleDisableButton()}
+                  fullWidth={true}
+                  onClick={(e) => handleCreateSale(true)}
+                  startIcon={<ReceiptIcon />}
+                >
+                  Cobrar con ticket
+                  <br /> (Ctrl + H)
+                </CustomButton>
+              </Grid>
             </Grid>
           </Grid>
         </Grid>
