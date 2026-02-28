@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
+import { useForm } from "../../../hooks/useForm";
 import CustomModal from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
 import { useDiscounts } from "../../../hooks/useDiscounts";
@@ -14,7 +15,7 @@ const INITIAL_FORM_DATA = {
 };
 
 const ClientModal = ({ isOpen, client, onClose, onUpdate }) => {
-  const [formData, setFormData] = useState(INITIAL_FORM_DATA);
+  const { values, handleChange, reset, setValues } = useForm(INITIAL_FORM_DATA);
 
   const { data: discounts = [] } = useDiscounts();
   const createMutation = useCreateClient();
@@ -22,27 +23,22 @@ const ClientModal = ({ isOpen, client, onClose, onUpdate }) => {
 
   useEffect(() => {
     if (client) {
-      setFormData(client);
+      setValues(client);
     } else {
-      setFormData(INITIAL_FORM_DATA);
+      reset();
     }
-  }, [client]);
+  }, [client, setValues, reset]);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
-  };
-
-  const isFormIncomplete = Object.values(formData).some((value) => value === "");
+  const isFormIncomplete = Object.values(values).some((value) => value === "");
 
   const handleSaveClient = () => {
-    const mutation = formData.id ? updateMutation : createMutation;
+    const mutation = values.id ? updateMutation : createMutation;
     
-    mutation.mutate(formData, {
+    mutation.mutate(values, {
       onSuccess: () => {
         onClose();
         onUpdate();
-        setFormData(INITIAL_FORM_DATA);
+        reset();
       },
     });
   };
@@ -51,41 +47,41 @@ const ClientModal = ({ isOpen, client, onClose, onUpdate }) => {
     <CustomModal
       showOut={isOpen}
       onClose={onClose}
-      title={formData.id ? "Actualizar cliente" : "Crear cliente"}
+      title={values.id ? "Actualizar cliente" : "Crear cliente"}
     >
       <div className={`custom-section`}>
 
       <Grid container spacing={2} >
         <Grid item xs={12}>
           <TextField size="small" fullWidth label="Nombre" type="text"
-            value={formData.first_name}
+            value={values.first_name}
             placeholder="Nombre"
             name="first_name"
-            onChange={handleInputChange}
+            onChange={handleChange}
           />
         </Grid>
         <Grid item xs={12} md={3}>
           <TextField size="small" fullWidth label="Apellidos" type="text"
-            value={formData.last_name}
+            value={values.last_name}
             placeholder="Apellidos"
             name="last_name"
-            onChange={handleInputChange}
+            onChange={handleChange}
           />
         </Grid>
         <Grid item xs={12} md={3}>
           <TextField size="small" fullWidth label="Teléfono" type="text"
-            value={formData.phone_number}
+            value={values.phone_number}
             placeholder="Teléfono"
             name="phone_number"
-            onChange={handleInputChange}
+            onChange={handleChange}
           />
         </Grid>
         <Grid item xs={12} md={3}>
           <FormControl fullWidth size="small">
               <InputLabel>Descuento</InputLabel>
               <Select fullWidth size="small" aria-label="Select discount"
-            value={formData.discount}
-            onChange={handleInputChange}
+            value={values.discount}
+            onChange={handleChange}
             name="discount"
           >
             <MenuItem value="">Descuento</MenuItem>
@@ -105,7 +101,7 @@ const ClientModal = ({ isOpen, client, onClose, onUpdate }) => {
             marginTop="10px"
             startIcon={<SaveIcon />}
           >
-            {formData.id ? "Actualizar" : "Crear"} cliente
+            {values.id ? "Actualizar" : "Crear"} cliente
           </CustomButton>
         </Grid>
       </Grid>

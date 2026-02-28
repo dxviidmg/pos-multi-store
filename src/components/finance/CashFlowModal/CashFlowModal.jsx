@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import CustomModal from "../../ui/Modal/Modal";
-
 import CustomButton from "../../ui/Button/Button";
 import { showSuccess, showError } from "../../../utils/alerts";
 import { createCashFlow, getCashFlowChoices } from "../../../api/cashflow";
@@ -9,12 +8,10 @@ import SaveIcon from "@mui/icons-material/Save";
 
 
 const CashFlowModal = ({ isOpen, cashFlow, onClose, onUpdate }) => {
-
-  const [formData, setFormData] = useState({id: ""
-  });
-
-  const [options, setOptions] = useState([])
-  const [loading, setLoading] = useState(false)
+  const [formData, setFormData] = useState({ id: "" });
+  const [options, setOptions] = useState([]);
+  const [loading, setLoading] = useState(false);
+  
   useEffect(() => {
     const fetchData = async () => {
       const response = await getCashFlowChoices();
@@ -33,10 +30,8 @@ const CashFlowModal = ({ isOpen, cashFlow, onClose, onUpdate }) => {
     }
   }, [cashFlow]);
 
-
-  const handleDataChange = async (e) => {
-    let { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
+  const handleInputChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleBrandSubmit = async () => {
@@ -52,13 +47,13 @@ const CashFlowModal = ({ isOpen, cashFlow, onClose, onUpdate }) => {
     if (response.status === 200) {
       onClose();
       onUpdate(response.data);
-      setFormData({});
+      setFormData({ id: "" });
       setLoading(false)
       showSuccess("Movimiento actualizado");
     } else if (response.status === 201) {
       onClose();
       setLoading(false)
-      setFormData({});
+      setFormData({ id: "" });
       showSuccess("Movimiento creado");
     } else {
       showError("Error al crear la marca", "Error desconocido, por favor comuníquese con soporte");
@@ -78,7 +73,7 @@ const CashFlowModal = ({ isOpen, cashFlow, onClose, onUpdate }) => {
         <FormControl fullWidth size="small">
               <InputLabel>Tipo de movimiento</InputLabel>
               <Select fullWidth size="small" value={formData.transaction_type}
-              onChange={handleDataChange}
+              onChange={handleInputChange}
               name="transaction_type"
 //              disabled={isLoading}
              label="Tipo de movimiento">
@@ -97,7 +92,7 @@ const CashFlowModal = ({ isOpen, cashFlow, onClose, onUpdate }) => {
             value={formData.concept}
             placeholder="Concepto"
             name="concept"
-            onChange={handleDataChange}
+            onChange={handleInputChange}
           />
         </Grid>
         <Grid item xs={12} md={3}>
@@ -105,7 +100,7 @@ const CashFlowModal = ({ isOpen, cashFlow, onClose, onUpdate }) => {
             value={formData.amount}
             placeholder="Cantidad"
             name="amount"
-            onChange={handleDataChange}
+            onChange={handleInputChange}
           />
         </Grid>
         <Grid item xs={12} md={3} className="d-flex flex-column justify-content-end">

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import CustomModal from "../../ui/Modal/Modal";
-
 import CustomButton from "../../ui/Button/Button";
 import CustomTable from "../../ui/Table/Table";
 import { useCancelSale } from "../../../hooks/useSaleMutations";
@@ -12,7 +11,6 @@ const INITIAL_FORM_DATA = {
 };
 
 const SaleModal = ({ isOpen, sale, onClose, onUpdate }) => {
-
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
   const [selectedRows, setSelectedRows] = useState([]);
   const [quantitiesToCancel, setQuantitiesToCancel] = useState({});

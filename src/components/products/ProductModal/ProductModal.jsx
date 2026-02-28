@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useForm } from "../../../hooks/useForm";
 import CustomModal from "../../ui/Modal/Modal";
 import { Image } from "react-bootstrap";
 import CustomButton from "../../ui/Button/Button";
@@ -112,7 +113,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
 
     if ([200, 201].includes(response.status)) {
       onClose();
-      onUpdateProductList(response.data);
+      onUpdate(response.data);
       setFormData(INITIAL_FORM_DATA);
       setSelectedImage(null);
       setPreviewImage(null);

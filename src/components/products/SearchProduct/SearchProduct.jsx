@@ -9,6 +9,7 @@ import { addToCart, updateMovementType } from "../../../redux/cart/cartActions";
 import { Badge } from "react-bootstrap";
 import StockModal from "../../inventory/StockModal/StockModal";
 import { useModal } from "../../../hooks/useModal";
+import { useFetchWithRetry } from "../../../hooks/useFetchWithRetry";
 import Swal from "sweetalert2";
 import { getPrinterUrl, getUserData } from "../../../api/utils";
 import PrintIcon from "@mui/icons-material/Print";
@@ -24,6 +25,7 @@ const SearchProduct = () => {
 
   const dispatch = useDispatch();
   const stockModal = useModal();
+  const { fetchWithRetry } = useFetchWithRetry(2, 3000);
   
   const { carts, activeCartId } = useSelector((state) => state.multiCartReducer);
   
@@ -63,57 +65,6 @@ const SearchProduct = () => {
     inputRef.current?.focus();
   }, []);
 
-
-  async function fetchWithTimeout(query, queryType, maxRetries = 2) {
-    let attempts = 0;
-
-    const localString = localStorage.getItem("attempts");
-    let local = localString ? JSON.parse(localString) : {};
-    const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
-
-    while (attempts <= maxRetries) {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 3000); // ⏱️ 2 segundos
-
-      try {
-        
-        const response = await getStoreProducts(
-          { [queryType]: query },
-          { signal: controller.signal }
-        );
-        
-        local[attempts+1] = (local[attempts+1] || 0) + 1;
-        localStorage.setItem("attempts", JSON.stringify(local));
-        clearTimeout(timeoutId); // cancelar timeout si respondió a tiempo
-        return response.data;
-  
-      } catch (err) {
-        clearTimeout(timeoutId);
-  
-        if (err.name === "CanceledError") {
-          logger.warn(`Intento ${attempts + 1}: la petición se canceló por timeout`);
-          await delay(1000);
-          attempts++;
-  
-          if (attempts > maxRetries) {
-
-            local['Error'] = local['Error'] || [];
-            local['Error'].push(query);  // someValue es lo que quieras añadir
-            localStorage.setItem("attempts", JSON.stringify(local));
-            logger.error("❌ Se alcanzó el máximo de reintentos. Abortando.");
-            return null;
-          }
-          // sigue el ciclo → reintenta
-        } else {
-          // otro error → no reintentar
-          throw err;
-        }
-      }
-    }
-    return null;
-  }
-
-  
   const fetchData = useCallback(
     async () => {
       if (!query || queryType === "q") {
@@ -123,12 +74,9 @@ const SearchProduct = () => {
 
       setSearching(true);
 
-      // cancelar petición anterior
-
       try {
-        const fetchedData = await fetchWithTimeout(query, queryType);
+        const fetchedData = await fetchWithRetry(getStoreProducts, { [queryType]: query });
 
-        // ⚠️ Solo actualizar si esta es la última búsqueda
         setSearching(false);
 
         if (!fetchedData) {
@@ -136,10 +84,10 @@ const SearchProduct = () => {
 
           Swal.fire({
             icon: "error",
-            title: "Busqueda tardada",
-            text: "La busqueda tardo mas de 6 segundos. Reintentar o buscar de manera manual",
+            title: "Búsqueda tardada",
+            text: "La búsqueda tardó más de 6 segundos. Reintentar o buscar de manera manual",
             timer: 5000,
-          })
+          });
 
           return;
         }
@@ -155,7 +103,7 @@ const SearchProduct = () => {
           handleSingleProductFetch(fetchedData[0]);
         }
       } catch (err) {
-        if (err.name === "AbortError") return; // petición cancelada, no hacer nada
+        if (err.name === "AbortError") return;
         logger.error(err);
         setSearching(false);
       }

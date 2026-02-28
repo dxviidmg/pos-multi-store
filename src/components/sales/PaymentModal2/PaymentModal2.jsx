@@ -26,7 +26,7 @@ const PaymentModal2 = ({ isOpen, sale, onClose, onUpdate }) => {
     if (isOpen) {
       setTimeout(() => inputPaymentRef.current?.focus(), 100);
     }
-  }, [showPaymentReservationModal]);
+  }, [isOpen]);
 
   const handleCreatePayment = async (printTicket = false) => {
     const reservation_in_progress = action === "Abonar";
@@ -49,7 +49,7 @@ const PaymentModal2 = ({ isOpen, sale, onClose, onUpdate }) => {
       setPayment(INITIAL_PAYMENT_STATE);
 
             if (reservation_in_progress) {
-              onUpdateSaleList(response.data);
+              onUpdate(response.data);
 
               showSuccess("Abono exitoso");
 
@@ -59,7 +59,7 @@ const PaymentModal2 = ({ isOpen, sale, onClose, onUpdate }) => {
             else {
 
               showSuccess("Liquidación exitosa");
-              onUpdateSaleList({ ...response.data, delete: true });
+              onUpdate({ ...response.data, delete: true });
             }
 
             if (printer && printTicket) {
@@ -90,7 +90,7 @@ const PaymentModal2 = ({ isOpen, sale, onClose, onUpdate }) => {
   return (
     <CustomModal 
       showOut={isOpen} 
-      onClose={() => dispatch(hidePaymentReservationModal())}
+      onClose={onClose}
       title="Cobrar apartado"
     >
       <Grid className="custom-section">
