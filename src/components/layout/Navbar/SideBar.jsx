@@ -40,6 +40,7 @@ import MiscellaneousServicesIcon from "@mui/icons-material/MiscellaneousServices
 import LogoutIcon from "@mui/icons-material/Logout";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import logo from "../../../assets/images/logo.jpg";
+import { colors } from "../../../theme/colors";
 
 const iconMap = {
   // Ventas y clientes
@@ -98,8 +99,8 @@ const AppBar = styled(MuiAppBar, {
 })(({ theme, open }) => ({
   zIndex: theme.zIndex.drawer + 1,
   transition: theme.transitions.create(["width", "margin"]),
-  background: '#04346b',
-  boxShadow: '0 1px 3px rgba(0,0,0,0.12)',
+  background: colors.primary,
+  boxShadow: colors.shadow.light,
   ...(open && {
     marginLeft: drawerWidth,
     width: `calc(100% - ${drawerWidth}px)`,
@@ -117,10 +118,10 @@ const Drawer = styled(MuiDrawer, {
     ...openedMixin(theme),
     "& .MuiDrawer-paper": {
       ...openedMixin(theme),
-      background: '#04346b',
+      background: colors.primary,
       color: '#fff',
       borderRight: 'none',
-      boxShadow: '2px 0 8px rgba(0,0,0,0.1)',
+      boxShadow: colors.shadow.medium,
       display: 'flex',
       flexDirection: 'column',
     },
@@ -129,10 +130,10 @@ const Drawer = styled(MuiDrawer, {
     ...closedMixin(theme),
     "& .MuiDrawer-paper": {
       ...closedMixin(theme),
-      background: '#04346b',
+      background: colors.primary,
       color: '#fff',
       borderRight: 'none',
-      boxShadow: '2px 0 8px rgba(0,0,0,0.1)',
+      boxShadow: colors.shadow.medium,
       display: 'flex',
       flexDirection: 'column',
     },

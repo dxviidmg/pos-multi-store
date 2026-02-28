@@ -1,7 +1,7 @@
 import React, { memo, useState, useMemo } from "react";
 import { DataGrid } from "@mui/x-data-grid";
-
 import { Box, TextField } from "@mui/material";
+import { colors } from "../../../theme/colors";
 
 const CustomTable = ({
   columns,
@@ -116,8 +116,8 @@ const CustomTable = ({
           hideFooter={data.length <= 10}
           sx={{
             "& .MuiDataGrid-columnHeaders": {
-              backgroundColor: "#04356b",
-              color: "#ffffff",
+              backgroundColor: colors.primary,
+              color: colors.text.white,
             },
             "& .MuiDataGrid-cell": {
               py: 1.5,

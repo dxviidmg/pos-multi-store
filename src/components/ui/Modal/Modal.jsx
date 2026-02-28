@@ -2,7 +2,8 @@ import { memo } from 'react';
 import Modal from '@mui/material/Modal';
 import { Box, IconButton, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import './Modal.css'
+import './Modal.css';
+import { colors } from '../../../theme/colors';
 
 const style = {
   position: 'absolute',
@@ -30,7 +31,7 @@ function CustomModal({ showOut, onClose, title, children}) {
             <CloseIcon />
           </IconButton>
         </Box>
-        <Box className="custom-modal-body" sx={{ p: 2, backgroundColor: '#f1f5f9' }}>
+        <Box className="custom-modal-body" sx={{ p: 2, backgroundColor: colors.background.main }}>
           {children}
         </Box>
       </Box>
