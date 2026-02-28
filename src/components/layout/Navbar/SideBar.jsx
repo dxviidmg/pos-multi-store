@@ -39,6 +39,8 @@ import SyncIcon from "@mui/icons-material/Sync";
 import MiscellaneousServicesIcon from "@mui/icons-material/MiscellaneousServices";
 import LogoutIcon from "@mui/icons-material/Logout";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import logo from "../../../assets/images/logo.jpg";
+import { colors } from "../../../theme/colors";
 
 const iconMap = {
   // Ventas y clientes
@@ -97,9 +99,8 @@ const AppBar = styled(MuiAppBar, {
 })(({ theme, open }) => ({
   zIndex: theme.zIndex.drawer + 1,
   transition: theme.transitions.create(["width", "margin"]),
-  background: 'linear-gradient(90deg, #1e3a5f 0%, #2c5282 100%)',
-  boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
-  backdropFilter: 'blur(8px)',
+  background: colors.primary,
+  boxShadow: colors.shadow.light,
   ...(open && {
     marginLeft: drawerWidth,
     width: `calc(100% - ${drawerWidth}px)`,
@@ -117,10 +118,10 @@ const Drawer = styled(MuiDrawer, {
     ...openedMixin(theme),
     "& .MuiDrawer-paper": {
       ...openedMixin(theme),
-      background: 'linear-gradient(180deg, #1e3a5f 0%, #0d1f3c 100%)',
+      background: colors.primary,
       color: '#fff',
       borderRight: 'none',
-      boxShadow: '4px 0 24px rgba(0,0,0,0.12)',
+      boxShadow: colors.shadow.medium,
       display: 'flex',
       flexDirection: 'column',
     },
@@ -129,10 +130,10 @@ const Drawer = styled(MuiDrawer, {
     ...closedMixin(theme),
     "& .MuiDrawer-paper": {
       ...closedMixin(theme),
-      background: 'linear-gradient(180deg, #1e3a5f 0%, #0d1f3c 100%)',
+      background: colors.primary,
       color: '#fff',
       borderRight: 'none',
-      boxShadow: '4px 0 24px rgba(0,0,0,0.12)',
+      boxShadow: colors.shadow.medium,
       display: 'flex',
       flexDirection: 'column',
     },
@@ -295,16 +296,6 @@ export default function MainLayout() {
               fontWeight: 600,
             }}
           >
-            SmartVenta
-          </Typography>
-
-          <Typography 
-            variant="body2" 
-            sx={{ 
-              mr: 2,
-              color: 'rgba(255,255,255,0.9)'
-            }}
-          >
             {user.store_name || user.tenant_name}
           </Typography>
 
@@ -347,24 +338,22 @@ export default function MainLayout() {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            background: 'rgba(0,0,0,0.15)',
+            background: 'transparent',
             minHeight: '64px !important',
             borderBottom: '1px solid rgba(255,255,255,0.08)',
           }}
         >
           {open && (
-            <Typography
-              variant="h6"
+            <Box
+              component="img"
+              src={logo}
+              alt="SmartVenta"
               sx={{
-                fontWeight: 700,
-                textAlign: "center",
-                color: 'white',
-                letterSpacing: '1px',
-                fontSize: '1.1rem',
+                height: '40px',
+                width: 'auto',
+                objectFit: 'contain',
               }}
-            >
-              SmartVenta
-            </Typography>
+            />
           )}
         </DrawerHeader>
 
@@ -387,11 +376,11 @@ export default function MainLayout() {
                         justifyContent: open ? 'initial' : 'center',
                         '&:hover': {
                           backgroundColor: 'rgba(255, 255, 255, 0.12)',
-                          transform: 'translateX(4px)',
+                          transform: 'translateX(2px)',
                         }
                       }}
                     >
-                      <ListItemIcon sx={{ color: '#90caf9', minWidth: open ? 40 : 0, justifyContent: 'center' }}>
+                      <ListItemIcon sx={{ color: 'rgba(255,255,255,0.8)', minWidth: open ? 40 : 0, justifyContent: 'center' }}>
                         {iconMap[item.label] || <DashboardIcon />}
                       </ListItemIcon>
                       <ListItemText 
@@ -414,9 +403,7 @@ export default function MainLayout() {
                   >
                     <List component="div" disablePadding sx={{ maxHeight: '300px', overflow: 'auto', '&::-webkit-scrollbar': { width: '4px' }, '&::-webkit-scrollbar-thumb': { backgroundColor: 'rgba(255,255,255,0.3)', borderRadius: '4px' } }}>
                       {item.dropdown.map((sub, i) =>
-                        sub.divider ? (
-                          <Divider key={i} sx={{ ml: 4, my: 0.5, backgroundColor: 'rgba(255,255,255,0.08)' }} />
-                        ) : sub.hidden ? null : (
+                        sub.divider ? null : sub.hidden ? null : (
                           <ListItemButton
                             key={i}
                             sx={{ 
@@ -427,7 +414,6 @@ export default function MainLayout() {
                               transition: 'all 0.2s',
                               '&:hover': {
                                 backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                                transform: 'translateX(4px)',
                               }
                             }}
                             onClick={() => navigate(sub.href)}
@@ -460,11 +446,11 @@ export default function MainLayout() {
                     justifyContent: open ? 'initial' : 'center',
                     '&:hover': {
                       backgroundColor: 'rgba(255, 255, 255, 0.12)',
-                      transform: 'translateX(4px)',
+                      transform: 'translateX(2px)',
                     }
                   }}
                 >
-                  <ListItemIcon sx={{ color: '#90caf9', minWidth: open ? 40 : 0, justifyContent: 'center' }}>
+                  <ListItemIcon sx={{ color: 'rgba(255,255,255,0.8)', minWidth: open ? 40 : 0, justifyContent: 'center' }}>
                     {iconMap[item.label] || <DashboardIcon />}
                   </ListItemIcon>
                   <ListItemText 
