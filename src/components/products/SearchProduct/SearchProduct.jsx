@@ -6,7 +6,7 @@ import CustomButton from "../../ui/Button/Button";
 import CustomTooltip from "../../ui/Tooltip";
 import { getStoreProducts } from "../../../api/products";
 import { addToCart, updateMovementType } from "../../../redux/cart/cartActions";
-import { Badge } from "react-bootstrap";
+import { Chip } from "@mui/material";
 import StockModal from "../../inventory/StockModal/StockModal";
 import { useModal } from "../../../hooks/useModal";
 import { useFetchWithRetry } from "../../../hooks/useFetchWithRetry";
@@ -399,23 +399,26 @@ const SearchProduct = () => {
         </span>
       </div>
 
-      <Badge bg="success" className="text-wrap" hidden={isInputFocused}>
-        Aviso: Para añadir productos al carrito, el cursor debe estar en el
-        campo de búsqueda de productos.
-      </Badge>
+      <Chip 
+        label="Aviso: Para añadir productos al carrito, el cursor debe estar en el campo de búsqueda de productos."
+        color="success" 
+        size="small"
+        sx={{ display: isInputFocused ? 'none' : 'inline-flex', mb: 1, maxWidth: '100%' }}
+      />
 
-      <Badge bg="success" className="text-wrap" hidden={!searching}>
-        Buscando...
-      </Badge>
+      <Chip 
+        label="Buscando..."
+        color="success" 
+        size="small"
+        sx={{ display: !searching ? 'none' : 'inline-flex', mb: 1 }}
+      />
 
-      <Badge
-        bg="success"
-        className="text-wrap"
-        hidden={searching || data.length === 0}
-      >
-        {data.length} resultados{" "}
-        {data.length === 200 && "(puede haber mas coincidencias)"}
-      </Badge>
+      <Chip
+        label={`${data.length} resultados ${data.length === 200 ? "(puede haber mas coincidencias)" : ""}`}
+        color="success"
+        size="small"
+        sx={{ display: (searching || data.length === 0) ? 'none' : 'inline-flex', mb: 1 }}
+      />
 
       {!searching && isInputFocused && <br />}
       <Grid container spacing={2}>

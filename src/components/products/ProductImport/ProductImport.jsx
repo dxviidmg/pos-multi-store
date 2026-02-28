@@ -5,7 +5,7 @@ import {
   importProducts,
   importProductsValidation,
 } from "../../../api/products";
-import { Alert } from "react-bootstrap";
+import { Alert } from "@mui/material";
 import CustomButton from "../../ui/Button/Button";
 import Swal from "sweetalert2";
 import { chooseIcon } from "../../ui/icons/Icons";
@@ -292,8 +292,8 @@ const ProductImport = () => {
             </FormControl>
           </Grid>
 
-          <Grid item xs={12} md={12} hidden={canIncludeQuantity} className="mt-3">
-            <Alert key={"primary"} variant={"primary"}>
+          <Grid item xs={12} md={12} hidden={canIncludeQuantity} sx={{ mt: 2 }}>
+            <Alert severity="info">
               Posiblemente sea tu primera vez aqui y tienes solo una tienda, por
               lo que aparte de importar tus productos puedes ponerle tu stick en
               tu tienda/almacen.

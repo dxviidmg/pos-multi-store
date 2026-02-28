@@ -1,11 +1,10 @@
 import React, { useState } from "react";
-import { Container, Alert, Image, FormLabel } from "react-bootstrap";
 import { loginUser } from "../../../api/login";
 import { useNavigate } from "react-router-dom";
 import CustomButton from "../../ui/Button/Button";
 import Logo from "../../../assets/images/logo.jpg";
-import './login.css'
-import { Grid, TextField, Box } from "@mui/material";
+import './login.css';
+import { Grid, TextField, Box, Alert, Container } from "@mui/material";
 import LoginIcon from "@mui/icons-material/Login";
 
 
@@ -83,58 +82,68 @@ function Login({ onLogin }) {
   const { formData, alertData } = state;
 
   return (
-    <div id="login">
-      <Container style={{ height: "99.7vh" }}>
-        <Grid container spacing={2} className="h-100 d-flex align-items-center justify-content-center">
-          <Grid item xs={12} md={6} lg={4}
-            id="login-col"
-            className="align-items-center rounded"
-            style={{
-              backgroundColor: "#04356b",
-              padding: "30px",
-              border: "1px solid",
-              color: 'white'
+    <Box id="login" sx={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <Container maxWidth="sm">
+        <Box
+          sx={{
+            backgroundColor: "#04356b",
+            padding: 4,
+            borderRadius: 2,
+            border: '1px solid rgba(255,255,255,0.1)',
+            color: 'white'
+          }}
+        >
+          <Box
+            component="img"
+            src={Logo}
+            alt="Logo"
+            sx={{
+              width: '100%',
+              borderRadius: 2,
+              mb: 2
             }}
-          >
-            <Image width="100%" src={Logo} rounded></Image>
+          />
 
-            {alertData.shown && (
-              <Alert variant="danger" className="mt-3">
-                {alertData.message}
-              </Alert>
-            )}
+          {alertData.shown && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {alertData.message}
+            </Alert>
+          )}
 
-            <Box component="form" className='mt-4'>
-              <Box className="mb-2">
-                <TextField size="small" fullWidth label="Usuario" type="text"
-                  className="form-control mt-1"
-                  placeholder="Usuario"
-                  name="username"
-                  value={formData.username}
-                  onChange={handleChange}
-                  required
-                />
-              </Box>
+          <Box component="form">
+            <TextField
+              size="small"
+              fullWidth
+              label="Usuario"
+              type="text"
+              placeholder="Usuario"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              required
+              sx={{ mb: 2, backgroundColor: 'white', borderRadius: 1 }}
+            />
 
-              <Box className="mb-2">
-                <FormLabel >Contraseña</FormLabel>
-                <TextField size="small" fullWidth type="password"
-                  className="form-control mt-1"
-                  placeholder="Contraseña"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  required
-                />
-              </Box>
-              <CustomButton onClick={handleSubmit} fullWidth startIcon={<LoginIcon />}>
-                Iniciar sesión
-              </CustomButton>
-            </Box>
-          </Grid>
-        </Grid>
+            <TextField
+              size="small"
+              fullWidth
+              label="Contraseña"
+              type="password"
+              placeholder="Contraseña"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              sx={{ mb: 2, backgroundColor: 'white', borderRadius: 1 }}
+            />
+
+            <CustomButton onClick={handleSubmit} fullWidth startIcon={<LoginIcon />}>
+              Iniciar sesión
+            </CustomButton>
+          </Box>
+        </Box>
       </Container>
-    </div>
+    </Box>
   );
 }
 

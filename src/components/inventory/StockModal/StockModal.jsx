@@ -1,14 +1,13 @@
 import { logger } from "../../../utils/logger";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Image } from "react-bootstrap";
 import CustomModal from "../../ui/Modal/Modal";
 import CustomTable from "../../ui/Table/Table";
 import CustomButton from "../../ui/Button/Button";
 import { createTransfer } from "../../../api/transfers";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { getStockOtherStores } from "../../../api/products";
-import { Grid, TextField } from "@mui/material";
+import { Grid, TextField, Box } from "@mui/material";
 
 
 const StockModal = ({ isOpen, product, onClose }) => {
@@ -113,9 +112,18 @@ const StockModal = ({ isOpen, product, onClose }) => {
         {renderStockInfo()}
 
       {storeProduct.showImage ? (
-        <Grid container spacing={2} className="justify-content-center">
+        <Grid container spacing={2} justifyContent="center">
           <Grid item xs={12} md={3}>
-            <Image src={storeProduct.product?.image} fluid />
+            <Box
+              component="img"
+              src={storeProduct.product?.image}
+              alt="Producto"
+              sx={{
+                width: '100%',
+                height: 'auto',
+                borderRadius: 1
+              }}
+            />
           </Grid>
         </Grid>
       ) : (

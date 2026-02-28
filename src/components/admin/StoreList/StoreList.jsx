@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import CustomTable from "../../ui/Table/Table";
-import { Alert } from "react-bootstrap";
+import { Alert } from "@mui/material";
 import CustomButton from "../../ui/Button/Button";
 import { useNavigate } from "react-router-dom";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
@@ -411,7 +411,7 @@ const StoreList = () => {
           <Grid container spacing={1}>
             {tenantInfo.notices.map((variant, index) => (
               <Grid item xs={12} key={index}>
-                <Alert variant={"success"}>{variant}</Alert>
+                <Alert severity="success">{variant}</Alert>
               </Grid>
             ))}
           </Grid>
