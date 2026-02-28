@@ -6,12 +6,7 @@ import {
   upperCodeProducts,
 } from "../../../api/products";
 import CustomButton from "../../ui/Button/Button";
-import { useDispatch } from "react-redux";
-import {
-  showProductModal,
-  showProductModal2,
-  hideProductModal,
-} from "../../../redux/productModal/ProductModalActions";
+import { useModal } from "../../../hooks/useModal";
 import ProductModal from "../ProductModal/ProductModal";
 import { exportToExcel } from "../../../utils/utils";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
@@ -50,7 +45,7 @@ const ProductList = () => {
   const [confirmDeletion, setConfirmDeletion] = useState(false);
   const [outOfStockPercentage, setoutOfStockPercentage] = useState(0);
 
-  const dispatch = useDispatch();
+  const productModal = useModal();
 
   useEffect(() => {
     const fetchOptions = async () => {
@@ -83,14 +78,12 @@ const ProductList = () => {
     }, 500);
   };
 
-  const handleOpenModal = (brand) => {
-    dispatch(hideProductModal());
-    setTimeout(() => dispatch(showProductModal(brand)));
+  const handleOpenModal = (product) => {
+    productModal.open({ product, showStoreProducts: false });
   };
 
-  const handleOpenModal2 = (brand) => {
-    dispatch(hideProductModal());
-    setTimeout(() => dispatch(showProductModal2(brand)));
+  const handleOpenModal2 = (product) => {
+    productModal.open({ product, showStoreProducts: true });
   };
 
   const handleUpdateProductList = (updatedProduct) => {
@@ -226,7 +219,7 @@ const ProductList = () => {
       <CustomSpinner isLoading={loading} />
       
       {/* 2. MODALS */}
-      <ProductModal onUpdateProductList={handleUpdateProductList} />
+      <ProductModal isOpen={productModal.isOpen} product={productModal.data} onClose={productModal.close} onUpdate={handleUpdateProductList} />
       
       {/* 3. CONTENIDO PRINCIPAL */}
       <Grid container>

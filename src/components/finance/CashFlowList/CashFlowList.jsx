@@ -1,14 +1,10 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../../ui/Table/Table";
-
 import CustomButton from "../../ui/Button/Button";
 import { getFormattedDate, formatTimeFromDate } from "../../../utils/utils";
-
-
 import { getCashFlow } from "../../../api/cashflow";
 import CashFlowModal from "../CashFlowModal/CashFlowModal";
 import { useModal } from "../../../hooks/useModal";
-import {
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { Grid, TextField, Box } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
@@ -34,8 +30,7 @@ const CashFlowList = () => {
   }, [params]);
 
   const handleOpenModal = (cashFlow) => {
-    dispatch(hideCashFlowModal());
-    setTimeout(() => dispatch(showCashFlowModal(cashFlow)));
+    cashFlowModal.open(cashFlow);
   };
 
   const handleUpdateCashFlowList = (updateCashFlow) => {

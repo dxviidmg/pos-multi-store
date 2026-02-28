@@ -1,24 +1,19 @@
 import React, { useEffect, useState } from "react";
 import CustomModal from "../../ui/Modal/Modal";
-
-import { useDispatch, useSelector } from "react-redux";
 import CustomTable from "../../ui/Table/Table";
 import { getStoreProductLogs, updateStoreProduct } from "../../../api/products";
 import { getFormattedDateTime } from "../../../utils/utils";
 import Swal from "sweetalert2";
 import CustomButton from "../../ui/Button/Button";
-import { hideLogsModal } from "../../../redux/logsModal/LogsModalActions";
 import { chooseIcon } from "../../ui/icons/Icons";
 import { Grid, TextField } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 
 const INITIAL_FORM_DATA = {};
 
-const StoreProductLogsModal = ({ onUpdateStoreProductList }) => {
-  const dispatch = useDispatch();
-  const { showLogsModal, storeProduct, adjustStock } = useSelector(
-    (state) => state.LogsModalReducer
-  );
+const StoreProductLogsModal = ({ isOpen, logs: logsData, onClose, onUpdate }) => {
+  const storeProduct = logsData?.storeProduct || {};
+  const adjustStock = logsData?.adjustStock || false;
 
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
   const [logs, setLogs] = useState([]);
@@ -29,14 +24,12 @@ const StoreProductLogsModal = ({ onUpdateStoreProductList }) => {
         setFormData(storeProduct);
 
         try {
-          // Esperamos la respuesta de getStoreProductLogs
           const response = await getStoreProductLogs({
             "store-product-id": storeProduct.id
         } );
           setLogs(response.data);
         } catch (error) {
           console.error("Error fetching store product logs:", error);
-          // Manejo del error, puedes mostrar un mensaje o realizar alguna otra acción
         }
       } else {
         setFormData(INITIAL_FORM_DATA);
@@ -44,7 +37,6 @@ const StoreProductLogsModal = ({ onUpdateStoreProductList }) => {
       }
     };
 
-    // Llamamos a la función asincrónica
     fetchStoreProductLogs();
   }, [storeProduct]);
 
@@ -58,8 +50,8 @@ const StoreProductLogsModal = ({ onUpdateStoreProductList }) => {
 
     if (response.status === 200) {
       setFormData(INITIAL_FORM_DATA);
-      dispatch(hideLogsModal());
-      onUpdateStoreProductList(response.data);
+      onClose();
+      onUpdate(response.data);
       Swal.fire({
         icon: "success",
         title: "Ajuste exitoso",
@@ -77,8 +69,8 @@ const StoreProductLogsModal = ({ onUpdateStoreProductList }) => {
 
   return (
     <CustomModal
-      showOut={showLogsModal}
-      onClose={() => dispatch(hideLogsModal())}
+      showOut={isOpen}
+      onClose={onClose}
       title={adjustStock ? "Ajuste de stock" : "Movimientos de stock"}
     >
      <Grid className="custom-section">

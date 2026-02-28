@@ -1,11 +1,10 @@
 import { logger } from "../../../utils/logger";
 import React, { useMemo, useState, useEffect, useRef } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import CustomModal from "../../ui/Modal/Modal";
-import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../../ui/Button/Button";
 import { cleanCart, removeClientfromCart } from "../../../redux/cart/cartActions";
 import { createSale, getSale } from "../../../api/sales";
-import { hidePaymentModal } from "../../../redux/paymentModal/PaymentModalActions";
 import { showSuccess, showError } from "../../../utils/alerts";
 import { getUserData } from "../../../api/utils";
 import { handlePrintTicket } from "../../../utils/utils";
@@ -31,11 +30,9 @@ function roundUpCustom(value) {
 const INITIAL_PAYMENT_STATE = { paidWith: 0, change: 0 };
 const INITIAL_SALE_EXCHANGE_STATE = { refunded: 0, payment: 0 };
 
-const PaymentModal = () => {
+const PaymentModal = ({ isOpen, onClose }) => {
+  const dispatch = useDispatch();
   const inputPaymentRef = useRef(null);
-  const { showPaymentModal } = useSelector(
-    (state) => state.PaymentModalReducer
-  );
   const cart = useSelector((state) => {
     const { carts, activeCartId } = state.multiCartReducer;
     const activeCart = carts?.find(c => c.id === activeCartId) || carts?.[0];
@@ -64,18 +61,17 @@ const PaymentModal = () => {
     methods: { EF: 0, TA: 0, TR: 0 }, // Valores iniciales de los métodos de pago.
   });
   const printer = getUserData().store_printer;
-  const dispatch = useDispatch();
 
   const [isLoading, setIsLoading] = useState(false);
   const isSubmittingRef = useRef(false);
 
   useEffect(() => {
-    if (showPaymentModal) {
+    if (isOpen) {
       setTimeout(() => {
         inputPaymentRef.current?.focus();
-      }, 100); // Pequeño retraso para permitir el renderizado
+      }, 100);
     }
-  }, [showPaymentModal]);
+  }, [isOpen]);
 
   const { total, totalDiscount } = useMemo(() => {
     const total = roundUpCustom(
@@ -232,7 +228,7 @@ const PaymentModal = () => {
 
         dispatch(removeClientfromCart());
         dispatch(cleanCart());
-        dispatch(hidePaymentModal());
+        onClose();
         setPayment(INITIAL_PAYMENT_STATE);
         setHideClient(true);
         setSaleExchange(INITIAL_SALE_EXCHANGE_STATE);
@@ -298,8 +294,8 @@ const PaymentModal = () => {
     <>
       <CustomSpinner isLoading={isLoading}></CustomSpinner>
       <CustomModal 
-        showOut={showPaymentModal} 
-        onClose={() => dispatch(hidePaymentModal())}
+        showOut={isOpen} 
+        onClose={onClose}
         title="Finalizar venta"
       >
         <div>

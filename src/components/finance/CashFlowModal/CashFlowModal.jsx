@@ -49,9 +49,9 @@ const CashFlowModal = ({ isOpen, cashFlow, onClose, onUpdate }) => {
       response = await createCashFlow(formData);
     }
 
-    onUpdateCashFlowList(response.data);
     if (response.status === 200) {
       onClose();
+      onUpdate(response.data);
       setFormData({});
       setLoading(false)
       showSuccess("Movimiento actualizado");

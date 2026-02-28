@@ -1,24 +1,21 @@
 import { logger } from "../../../utils/logger";
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { Image } from "react-bootstrap";
-import { useDispatch, useSelector } from "react-redux";
 import CustomModal from "../../ui/Modal/Modal";
 import CustomTable from "../../ui/Table/Table";
 import CustomButton from "../../ui/Button/Button";
-import { hideStockModal } from "../../../redux/stockModal/StockModalActions";
 import { createTransfer } from "../../../api/transfers";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { getStockOtherStores } from "../../../api/products";
 import { Grid, TextField } from "@mui/material";
 
 
-const StockModal = () => {
-  const { showStockModal, storeProduct } = useSelector((state) => state.StockModalReducer);
+const StockModal = ({ isOpen, product, onClose }) => {
+  const storeProduct = product || {};
   const { carts, activeCartId } = useSelector((state) => state.multiCartReducer);
 
-  logger.log('showStockModal', showStockModal)
   const [requestedQuantities, setRequestedQuantities] = useState({});
-  const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false)
   const [stockOtherStores, setStockOtherStores] = useState([])
 
@@ -70,7 +67,7 @@ const StockModal = () => {
       const response = await createTransfer(data);
       if ([201, 202].includes(response.status)) {
         setRequestedQuantities({});
-        dispatch(hideStockModal());
+        onClose();
         setIsLoading(false)
       }
     } catch (error) {
@@ -104,8 +101,8 @@ const StockModal = () => {
    <>
         <CustomSpinner isLoading={isLoading}></CustomSpinner>
        <CustomModal 
-         showOut={showStockModal} 
-         onClose={() => dispatch(hideStockModal())}
+         showOut={isOpen} 
+         onClose={onClose}
          title="Revisión de Stock"
        >
       <div className="text-center custom-section">

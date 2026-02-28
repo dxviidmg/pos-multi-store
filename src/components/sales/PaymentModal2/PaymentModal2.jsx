@@ -1,10 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import CustomModal from "../../ui/Modal/Modal";
-
-import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../../ui/Button/Button";
 import { updateSale } from "../../../api/sales";
-import { hidePaymentReservationModal } from "../../../redux/paymentReservationModal/PaymentReservationModalActions";
 import { showSuccess, showError } from "../../../utils/alerts";
 import { handlePrintTicket } from "../../../utils/utils";
 import { getUserData } from "../../../api/utils";
@@ -13,23 +10,20 @@ import PaymentIcon from "@mui/icons-material/Payment";
 
 const INITIAL_PAYMENT_STATE = { paidWith: 0, change: 0 };
 
-const PaymentModal2 = ({ onUpdateSaleList }) => {
+const PaymentModal2 = ({ isOpen, sale, onClose, onUpdate }) => {
   const inputPaymentRef = useRef(null);
-  const { showPaymentReservationModal, reservation } = useSelector(
-    (state) => state.PaymentModal2Reducer
-  );
+  const reservation = sale || {};
 
   const [action, setAction] = useState("Liquidar");
   const [payment, setPayment] = useState(INITIAL_PAYMENT_STATE);
   const [referencePayment, setReferencePayment] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("EF");
   const remaining = reservation.total - reservation.paid;
-  const dispatch = useDispatch();
 
   const printer = getUserData().store_printer;
 
   useEffect(() => {
-    if (showPaymentReservationModal) {
+    if (isOpen) {
       setTimeout(() => inputPaymentRef.current?.focus(), 100);
     }
   }, [showPaymentReservationModal]);
@@ -51,7 +45,7 @@ const PaymentModal2 = ({ onUpdateSaleList }) => {
     if (response.status === 200) {
       setPaymentMethod("EF");
       setReferencePayment("");
-      dispatch(hidePaymentReservationModal());
+      onClose();
       setPayment(INITIAL_PAYMENT_STATE);
 
             if (reservation_in_progress) {
@@ -95,7 +89,7 @@ const PaymentModal2 = ({ onUpdateSaleList }) => {
 
   return (
     <CustomModal 
-      showOut={showPaymentReservationModal} 
+      showOut={isOpen} 
       onClose={() => dispatch(hidePaymentReservationModal())}
       title="Cobrar apartado"
     >

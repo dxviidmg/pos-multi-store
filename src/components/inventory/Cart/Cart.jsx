@@ -1,6 +1,6 @@
 import { logger } from "../../../utils/logger";
 import React, { useEffect, useMemo, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import CustomTable from "../../ui/Table/Table";
 import {
   cleanCart,
@@ -11,12 +11,7 @@ import {
   countStockOtherStores,
 } from "../../../redux/cart/cartActions";
 import CustomButton from "../../ui/Button/Button";
-
 import PaymentModal from "../../sales/PaymentModal/PaymentModal";
-import {
-  hidePaymentModal,
-  showPaymentModal,
-} from "../../../redux/paymentModal/PaymentModalActions";
 import { getStores } from "../../../api/stores";
 import { confirmTransfers, createDistribution } from "../../../api/transfers";
 import { showAlert } from "../../../utils/alerts";
@@ -24,7 +19,7 @@ import { addProducts, getStockOtherStores } from "../../../api/products";
 import { getUserData } from "../../../api/utils";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
-import { hideStockModal, showStockModal } from "../../../redux/stockModal/StockModalActions";
+import { useModal } from "../../../hooks/useModal";
 import { Grid, TextField, Checkbox, Select, MenuItem } from "@mui/material";
 import PaymentIcon from "@mui/icons-material/Payment";
 import SendIcon from "@mui/icons-material/Send";
@@ -35,6 +30,8 @@ import { MOVEMENT_TYPES, STORE_TYPES } from "../../../constants";
 const Cart = () => {
   const store_type = getUserData().store_type;
   const dispatch = useDispatch();
+  const stockModal = useModal();
+  const paymentModal = useModal();
   const [stores, setStores] = useState([]);
   const [selectedStore, setSelectedStore] = useState("");
   const [confirmedStore, setConfirmedStore] = useState("");
@@ -70,8 +67,8 @@ const Cart = () => {
     const handleShortcut = (event) => {
       if (event.ctrlKey && event.key === "d") {
         event.preventDefault();
-        dispatch(hidePaymentModal());
-        setTimeout(() => dispatch(showPaymentModal()), 1);
+        paymentModal.close();
+        setTimeout(() => paymentModal.open(), 1);
       }
     };
     window.addEventListener("keydown", handleShortcut);
@@ -145,8 +142,7 @@ const Cart = () => {
     const availableStock = movementType === "agregar" ? Infinity : getAvailableStock(product.id, stockLimit);
     
     if (newQuantity > availableStock) {
-      dispatch(hideStockModal());
-      setTimeout(() => dispatch(showStockModal(product)), 1);
+      stockModal.open(product);
       return;
     }
     
@@ -154,8 +150,7 @@ const Cart = () => {
   
     // --- Mostrar modal si se excede el stock (excepto agregar) ---
     if (movementType !== "agregar" && newQuantity > product.available_stock) {
-      dispatch(hideStockModal());
-      setTimeout(() => dispatch(showStockModal(product)), 1);
+      stockModal.open(product);
     }
   
     dispatch(updateQuantityInCart(product, quantity));
@@ -259,8 +254,8 @@ const Cart = () => {
   };
 
   const handleOpenModal = () => {
-    dispatch(hidePaymentModal());
-    setTimeout(() => dispatch(showPaymentModal()), 1);
+    paymentModal.close();
+    setTimeout(() => paymentModal.open(), 1);
   };
 
   const commonColumns = [
@@ -510,7 +505,7 @@ const Cart = () => {
   return (
     <div>
       <CustomSpinner isLoading={loading} />
-      <PaymentModal />
+      <PaymentModal isOpen={paymentModal.isOpen} onClose={paymentModal.close} />
       <div>
         {cart.length !== 0 && (
           <Grid container spacing={2}>

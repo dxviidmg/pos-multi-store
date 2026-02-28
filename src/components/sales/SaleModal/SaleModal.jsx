@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
 import CustomModal from "../../ui/Modal/Modal";
 
-import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../../ui/Button/Button";
 import CustomTable from "../../ui/Table/Table";
-import { hideSaleModal } from "../../../redux/saleModal/SaleModalActions";
 import { useCancelSale } from "../../../hooks/useSaleMutations";
 import { Grid, TextField, Checkbox, FormLabel } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
@@ -13,17 +11,13 @@ const INITIAL_FORM_DATA = {
   products_sale: [],
 };
 
-const SaleModal = ({ onUpdateSaleList }) => {
-  const { showSaleModal, sale } = useSelector(
-    (state) => state.SaleModalReducer
-  );
+const SaleModal = ({ isOpen, sale, onClose, onUpdate }) => {
 
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
   const [selectedRows, setSelectedRows] = useState([]);
   const [quantitiesToCancel, setQuantitiesToCancel] = useState({});
   const [totalCancel, setTotalCancel] = useState(false);
   const [reasonCancel, setReasonCancel] = useState("");
-  const dispatch = useDispatch();
   const cancelMutation = useCancelSale();
 
   useEffect(() => {
@@ -78,16 +72,16 @@ const SaleModal = ({ onUpdateSaleList }) => {
 
     cancelMutation.mutate(payload, {
       onSuccess: () => {
-        onUpdateSaleList();
-        dispatch(hideSaleModal());
+        onUpdate();
+        onClose();
       },
     });
   };
 
   return (
     <CustomModal
-      showOut={showSaleModal}
-      onClose={() => dispatch(hideSaleModal())}
+      showOut={isOpen}
+      onClose={onClose}
       title={totalCancel ? "Cancelación de compra" : "Devolución de productos"}
     >
       <Grid className="custom-section">

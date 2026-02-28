@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
 import CustomModal from "../../ui/Modal/Modal";
 import { Image } from "react-bootstrap";
-import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../../ui/Button/Button";
 import { getBrands } from "../../../api/brands";
 import Swal from "sweetalert2";
-import { hideProductModal } from "../../../redux/productModal/ProductModalActions";
 import {
   createProduct,
   getStoreProducts,
@@ -43,10 +41,9 @@ const INITIAL_FORM_DATA = {
   image: null,
 };
 
-const ProductModal = ({ onUpdateProductList }) => {
-  const { showProductModal, product, showStoreProducts } = useSelector(
-    (state) => state.ProductModalReducer
-  );
+const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
+  const productData = product?.product || product || {};
+  const showStoreProducts = product?.showStoreProducts || false;
 
   const [brands, setBrands] = useState([]);
   const [departments, setDepartments] = useState([]);
@@ -57,13 +54,13 @@ const ProductModal = ({ onUpdateProductList }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (product) {
-        setFormData(product);
-        setPreviewImage(product.image || noPhoto);
+      if (productData.id) {
+        setFormData(productData);
+        setPreviewImage(productData.image || noPhoto);
 
         if (showStoreProducts) {
           const r = await getStoreProducts({
-            code: product.code,
+            code: productData.code,
             all_stores: "Y",
           });
           setStoreProduct(r.data);
@@ -84,7 +81,6 @@ const ProductModal = ({ onUpdateProductList }) => {
     fetchData();
   }, [product, showStoreProducts]);
 
-  const dispatch = useDispatch();
 
   const handleDataChange = (e) => {
     const { name, value, checked, type } = e.target;
@@ -115,7 +111,7 @@ const ProductModal = ({ onUpdateProductList }) => {
     const response = await apiCall(formData);
 
     if ([200, 201].includes(response.status)) {
-      dispatch(hideProductModal());
+      onClose();
       onUpdateProductList(response.data);
       setFormData(INITIAL_FORM_DATA);
       setSelectedImage(null);
@@ -169,8 +165,8 @@ const ProductModal = ({ onUpdateProductList }) => {
 
   return (
     <CustomModal
-      showOut={showProductModal}
-      onClose={() => dispatch(hideProductModal())}
+      showOut={isOpen}
+      onClose={onClose}
       title={showStoreProducts? "Ver stock": formData.id ? "Actualizar producto" : "Crear producto"}
     >
       <Grid className="custom-section">

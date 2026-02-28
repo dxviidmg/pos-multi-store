@@ -1,6 +1,6 @@
 import { logger } from "../../../utils/logger";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import CustomTable from "../../ui/Table/Table";
 import CustomButton from "../../ui/Button/Button";
 import CustomTooltip from "../../ui/Tooltip";
@@ -8,10 +8,7 @@ import { getStoreProducts } from "../../../api/products";
 import { addToCart, updateMovementType } from "../../../redux/cart/cartActions";
 import { Badge } from "react-bootstrap";
 import StockModal from "../../inventory/StockModal/StockModal";
-import {
-  hideStockModal,
-  showStockModal,
-} from "../../../redux/stockModal/StockModalActions";
+import { useModal } from "../../../hooks/useModal";
 import Swal from "sweetalert2";
 import { getPrinterUrl, getUserData } from "../../../api/utils";
 import PrintIcon from "@mui/icons-material/Print";
@@ -26,6 +23,7 @@ const SearchProduct = () => {
   const inputRef = useRef(null);
 
   const dispatch = useDispatch();
+  const stockModal = useModal();
   
   const { carts, activeCartId } = useSelector((state) => state.multiCartReducer);
   
@@ -296,8 +294,7 @@ const SearchProduct = () => {
   };
 
   const handleOpenModal = (storeProduct) => {
-    dispatch(hideStockModal());
-    setTimeout(() => dispatch(showStockModal(storeProduct)), 1);
+    stockModal.open(storeProduct);
   };
 
   const handleShortcut = (event) => {
@@ -347,7 +344,7 @@ const SearchProduct = () => {
 
   return (
     <>
-      <StockModal />
+      <StockModal isOpen={stockModal.isOpen} product={stockModal.data} onClose={stockModal.close} />
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
         <h1 style={{ margin: 0 }}>Buscador de productos</h1>

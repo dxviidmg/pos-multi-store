@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../../ui/Table/Table";
-
 import { getSales } from "../../../api/sales";
 import CustomButton from "../../ui/Button/Button";
 import {
@@ -8,11 +7,7 @@ import {
   handlePrintTicket,
   getFormattedDateTime,
 } from "../../../utils/utils";
-import { useDispatch } from "react-redux";
-import {
-  hideSaleModal,
-  showSaleModal,
-} from "../../../redux/saleModal/SaleModalActions";
+import { useModal } from "../../../hooks/useModal";
 import SaleModal from "../SaleModal/SaleModal";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import CancelIcon from "@mui/icons-material/Cancel";
@@ -23,10 +18,6 @@ import UndoIcon from "@mui/icons-material/Undo";
 import Alert from "react-bootstrap/Alert";
 import { getUserData } from "../../../api/utils";
 import PaymentModal2 from "../PaymentModal2/PaymentModal2";
-import {
-  hidePaymentReservationModal,
-  showPaymentReservationModal,
-} from "../../../redux/paymentReservationModal/PaymentReservationModalActions";
 import CustomTooltip from "../../ui/Tooltip";
 import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, Box } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -70,7 +61,8 @@ const SaleList = () => {
   const [salesDuplicated, setSalesDuplicated] = useState([]);
   const [showAllFields, setShowAllFields] = useState(false);
   const [searchBy, setSearchBy] = useState("date");
-  const dispatch = useDispatch();
+  const saleModal = useModal();
+  const paymentModal2 = useModal();
 
   useEffect(() => {
     const fetchSalesData = async () => {
@@ -101,8 +93,7 @@ const SaleList = () => {
   };
 
   const handleOpenModal = (sale) => {
-    dispatch(hideSaleModal());
-    setTimeout(() => dispatch(showSaleModal(sale)));
+    saleModal.open(sale);
   };
 
   const handleUpdateSaleList = (updatedSale) => {
@@ -115,8 +106,7 @@ const SaleList = () => {
   };
 
   const handleOpenModal2 = (row) => {
-    dispatch(hidePaymentReservationModal());
-    setTimeout(() => dispatch(showPaymentReservationModal(row)), 1);
+    paymentModal2.open(row);
   };
 
   return (
@@ -125,8 +115,8 @@ const SaleList = () => {
       <CustomSpinner isLoading={loading} />
       
       {/* 2. MODALS */}
-      <PaymentModal2 onUpdateSaleList={handleUpdateSaleList} />
-      <SaleModal onUpdateSaleList={handleUpdateSaleList} />
+      <PaymentModal2 isOpen={paymentModal2.isOpen} sale={paymentModal2.data} onClose={paymentModal2.close} onUpdate={handleUpdateSaleList} />
+      <SaleModal isOpen={saleModal.isOpen} sale={saleModal.data} onClose={saleModal.close} onUpdate={handleUpdateSaleList} />
       
       {/* 3. CONTENIDO PRINCIPAL */}
       <Grid className="custom-section">

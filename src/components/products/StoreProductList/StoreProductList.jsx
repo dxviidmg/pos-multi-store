@@ -1,15 +1,10 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../../ui/Table/Table";
 import { getStoreProducts } from "../../../api/products";
-
 import CustomButton from "../../ui/Button/Button";
 import { getUserData } from "../../../api/utils";
 import { exportToExcel } from "../../../utils/utils";
-import {
-  hideLogsModal,
-  showLogsModal,
-} from "../../../redux/logsModal/LogsModalActions";
-import { useDispatch } from "react-redux";
+import { useModal } from "../../../hooks/useModal";
 import StoreProductLogsModal from "../StoreProductLogsModal/StoreProductLogsModal";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { getBrands } from "../../../api/brands";
@@ -19,7 +14,7 @@ import { Grid, TextField, Select, MenuItem, FormControl, InputLabel } from "@mui
 import DownloadIcon from "@mui/icons-material/Download";
 
 const StoreProductList = () => {
-  const dispatch = useDispatch();
+  const logsModal = useModal();
   const [storeProducts, setStoreProducts] = useState([]);
   const [brands, setBrands] = useState([]);
   const [departments, setDepartments] = useState([]);
@@ -87,8 +82,7 @@ const StoreProductList = () => {
   };
 
   const handleOpenModal = (storeProduct, adjustStock) => {
-    dispatch(hideLogsModal());
-    setTimeout(() => dispatch(showLogsModal(storeProduct, adjustStock)), 1);
+    logsModal.open({ storeProduct, adjustStock });
   };
 
   const handleUpdateStoreProductList = (updatedStoreProduct) => {
