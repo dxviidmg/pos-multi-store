@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 
 /**
  * Hook para manejar formularios de forma simple
@@ -15,21 +15,21 @@ import { useState } from 'react';
 export const useForm = (initialValues = {}) => {
   const [values, setValues] = useState(initialValues);
 
-  const handleChange = (e) => {
+  const handleChange = useCallback((e) => {
     const { name, value, type, checked } = e.target;
     setValues(prev => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
-  };
+  }, []);
 
-  const setValue = (name, value) => {
+  const setValue = useCallback((name, value) => {
     setValues(prev => ({ ...prev, [name]: value }));
-  };
+  }, []);
 
-  const reset = () => {
+  const reset = useCallback(() => {
     setValues(initialValues);
-  };
+  }, [initialValues]);
 
   return {
     values,

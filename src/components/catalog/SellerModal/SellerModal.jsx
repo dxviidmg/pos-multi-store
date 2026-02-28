@@ -121,7 +121,8 @@ const SellerModal = ({ isOpen, seller, onClose, onUpdate }) => {
       onClose={onClose}
       title={formData.id ? "Actualizar vendedor" : "Crear vendedor"}
     >
-      <Grid className="custom-section">
+      <Grid container sx={{ padding: '1rem', backgroundColor: 'rgba(4, 53, 107, 0.2)' }}>
+        <Grid item xs={12} className="custom-section">
         <Grid container spacing={2}>
           <Grid item xs={12} md={6}>
             <FormControl fullWidth size="small">
@@ -176,6 +177,7 @@ const SellerModal = ({ isOpen, seller, onClose, onUpdate }) => {
               {formData.id ? "Actualizar" : "Crear"} vendedor
             </CustomButton>
           </Grid>
+        </Grid>
         </Grid>
       </Grid>
     </CustomModal>
