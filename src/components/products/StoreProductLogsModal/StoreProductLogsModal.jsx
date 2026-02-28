@@ -74,7 +74,8 @@ const StoreProductLogsModal = ({ isOpen, logs: logsData, onClose, onUpdate }) =>
       onClose={onClose}
       title={adjustStock ? "Ajuste de stock" : "Movimientos de stock"}
     >
-     <Grid className="custom-section">
+     <Grid container sx={{ padding: '1rem', backgroundColor: 'rgba(4, 53, 107, 0.2)' }}>
+       <Grid item xs={12} className="custom-section">
      <Grid container spacing={2}>
         <Grid item xs={12} md={6}>
           <TextField size="small" fullWidth label="Código" type="text"
@@ -167,8 +168,8 @@ const StoreProductLogsModal = ({ isOpen, logs: logsData, onClose, onUpdate }) =>
           />
         </Grid>
       </Grid>
-
-      </Grid> 
+       </Grid>
+      </Grid>
      </CustomModal>
   );
 };

@@ -41,7 +41,8 @@ const BrandModal = ({ isOpen, brand, onClose, onUpdate }) => {
       onClose={onClose}
       title={values.id ? "Actualizar marca" : "Crear marca"}
     >
-      <Grid className="custom-section">
+      <Grid container sx={{ padding: '1rem', backgroundColor: 'rgba(4, 53, 107, 0.2)' }}>
+        <Grid item xs={12} className="custom-section">
         <Grid container spacing={2}>
           <Grid item xs={12} md={6}>
             <TextField 
@@ -67,6 +68,7 @@ const BrandModal = ({ isOpen, brand, onClose, onUpdate }) => {
               {values.id ? "Actualizar" : "Crear"}
             </CustomButton>
           </Grid>
+        </Grid>
         </Grid>
       </Grid>
     </CustomModal>

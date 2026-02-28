@@ -170,7 +170,8 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
       onClose={onClose}
       title={showStoreProducts? "Ver stock": formData.id ? "Actualizar producto" : "Crear producto"}
     >
-      <Grid className="custom-section">
+      <Grid container sx={{ padding: '1rem', backgroundColor: 'rgba(4, 53, 107, 0.2)' }}>
+        <Grid item xs={12} className="custom-section">
         <Grid container spacing={2} hidden={showStoreProducts}>
           <Grid item xs={12} md={4} className="">
             <Image src={previewImage} fluid rounded />
@@ -321,6 +322,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
               },
             ]}
           />
+        </Grid>
         </Grid>
       </Grid>
     </CustomModal>
