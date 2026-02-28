@@ -30,7 +30,7 @@ function CustomModal({ showOut, onClose, title, children}) {
             <CloseIcon />
           </IconButton>
         </Box>
-        <Box className="custom-modal-body" sx={{ p: 2 }}>
+        <Box className="custom-modal-body" sx={{ p: 2, backgroundColor: '#f1f5f9' }}>
           {children}
         </Box>
       </Box>
