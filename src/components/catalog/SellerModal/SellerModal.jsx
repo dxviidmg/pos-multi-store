@@ -1,11 +1,8 @@
 import { logger } from "../../../utils/logger";
 import React, { useEffect, useState } from "react";
 import CustomModal from "../../ui/Modal/Modal";
-
-import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../../ui/Button/Button";
 import Swal from "sweetalert2";
-import { hideProductModal } from "../../../redux/productModal/ProductModalActions";
 import { updateProduct } from "../../../api/products";
 import { getStores } from "../../../api/stores";
 import { getUserData } from "../../../api/utils";
@@ -13,7 +10,7 @@ import { createSeller } from "../../../api/sellers";
 import { Grid, TextField, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 
-const SellerModal = ({ onUpdateSellerList }) => {
+const SellerModal = ({ isOpen, seller, onClose, onUpdate }) => {
   const user = getUserData();
   const short_name = user.tenant_short_name
   const INITIAL_FORM_DATA = {
@@ -25,10 +22,6 @@ const SellerModal = ({ onUpdateSellerList }) => {
       last_name: "generico",
     }
   };
-
-  const { showSellerModal, seller } = useSelector(
-    (state) => state.SellerModalReducer
-  );
 
   const [stores, setStores] = useState([]);
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
@@ -52,14 +45,11 @@ const SellerModal = ({ onUpdateSellerList }) => {
     fetchBrands();
   }, [seller]);
 
-  const dispatch = useDispatch();
-
   const handleDataChange = (e) => {
     const { name, value } = e.target;  
     setFormData((prevData) => {
       const updatedData = { ...prevData };
   
-      // Asegurarse de que worker existe
       if (!updatedData.worker) {
         updatedData.worker = {};
       }
@@ -85,16 +75,14 @@ const SellerModal = ({ onUpdateSellerList }) => {
       return updatedData;
     });
   };
-  
-  
 
-  const handleProductSubmit = async (e) => {
+  const handleProductSubmit = async () => {
     const apiCall = formData.id ? updateProduct : createSeller;
     const response = await apiCall(formData);
 
     if ([200, 201].includes(response.status)) {
-      dispatch(hideProductModal());
-      onUpdateSellerList(response.data);
+      onClose();
+      onUpdate(response.data);
       setFormData(INITIAL_FORM_DATA);
       Swal.fire({
         icon: "success",
@@ -128,8 +116,8 @@ const SellerModal = ({ onUpdateSellerList }) => {
 
   return (
     <CustomModal
-      showOut={showSellerModal}
-      onClose={() => dispatch(hideProductModal())}
+      showOut={isOpen}
+      onClose={onClose}
       title={formData.id ? "Actualizar vendedor" : "Crear vendedor"}
     >
       <Grid className="custom-section">
@@ -176,12 +164,10 @@ const SellerModal = ({ onUpdateSellerList }) => {
             />
           </Grid>
 
-
-
           <Grid item xs={12} md={12}>
             <CustomButton
               fullWidth={true}
-              onClick={(e) => handleProductSubmit(e)}
+              onClick={handleProductSubmit}
               disabled={isFormIncomplete()}
               marginTop="10px"
               startIcon={<SaveIcon />}

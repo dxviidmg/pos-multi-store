@@ -3,13 +3,12 @@ import CustomTable from "../../ui/Table/Table";
 import CustomButton from "../../ui/Button/Button";
 import { deleteBrands } from "../../../api/brands";
 import BrandModal from "../BrandModal/BrandModal";
-import { useDispatch } from "react-redux";
-import { showBrandModal } from "../../../redux/brandModal/BrandModalActions";
 import { showSuccess, showError } from "../../../utils/alerts";
 import { getUserData } from "../../../api/utils";
 import EditIcon from "@mui/icons-material/Edit";
 import CustomTooltip from "../../ui/Tooltip";
 import { useBrands } from "../../../hooks/useBrands";
+import { useModal } from "../../../hooks/useModal";
 import Grid from "@mui/material/Grid";
 import { Checkbox, FormControlLabel, Box, Stack, Divider } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
@@ -18,17 +17,9 @@ import DeleteIcon from "@mui/icons-material/Delete";
 const BrandList = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [confirmDeletion, setConfirmDeletion] = useState(false);
-  const dispatch = useDispatch();
+  const brandModal = useModal();
 
   const { data: brands = [], isLoading: loading, refetch } = useBrands();
-
-  const handleOpenModal = (brand) => {
-    dispatch(showBrandModal(brand));
-  };
-
-  const handleUpdateBrandList = () => {
-    refetch();
-  };
 
   const handleDeleteBrands = async () => {
     const productsCount = selectedRows.reduce(
@@ -58,14 +49,19 @@ const BrandList = () => {
   return (
     <>
       {/* 1. MODALS */}
-      <BrandModal onUpdateBrandList={handleUpdateBrandList} />
+      <BrandModal 
+        isOpen={brandModal.isOpen}
+        brand={brandModal.data}
+        onClose={brandModal.close}
+        onUpdate={refetch}
+      />
       
       {/* 2. CONTENIDO PRINCIPAL */}
       <Grid item xs={12} className="custom-section">
         {/* 2.1 Header */}
         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
           <h1>Marcas</h1>
-          <CustomButton onClick={() => handleOpenModal()} startIcon={<AddIcon />}>
+          <CustomButton onClick={() => brandModal.open()} startIcon={<AddIcon />}>
             Nueva Marca
           </CustomButton>
         </Stack>
@@ -116,7 +112,7 @@ const BrandList = () => {
               name: "Acciones",
               cell: (row) => (
                 <CustomTooltip text={"Editar marca"}>
-                  <CustomButton onClick={() => handleOpenModal(row)}>
+                  <CustomButton onClick={() => brandModal.open(row)}>
                     <EditIcon />
                   </CustomButton>
                 </CustomTooltip>

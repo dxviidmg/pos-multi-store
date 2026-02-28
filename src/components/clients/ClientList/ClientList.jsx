@@ -3,14 +3,13 @@ import CustomTable from "../../ui/Table/Table";
 import CustomButton from "../../ui/Button/Button";
 import { createDiscount } from "../../../api/discounts";
 import { showSuccess, showError } from "../../../utils/alerts";
-import { useDispatch } from "react-redux";
-import { showClientModal } from "../../../redux/clientModal/ClientModalActions";
 import ClientModal from "../ClientModal/ClientModal";
 import EditIcon from "@mui/icons-material/Edit";
 import { getUserData } from "../../../api/utils";
 import { getDateDifference, getFormattedDate } from "../../../utils/utils";
 import CustomTooltip from "../../ui/Tooltip";
 import { useClients } from "../../../hooks/useClients";
+import { useModal } from "../../../hooks/useModal";
 import Grid from "@mui/material/Grid";
 import { TextField, Box, Stack, Divider } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
@@ -18,7 +17,7 @@ import DiscountIcon from "@mui/icons-material/Discount";
 
 const ClientList = () => {
   const today = getFormattedDate();
-  const dispatch = useDispatch();
+  const clientModal = useModal();
 
   const [discountFormData, setDiscountFormData] = useState({
     discount_percentage: "",
@@ -68,14 +67,6 @@ const ClientList = () => {
     showError("Error al crear descuento", message);
   };
 
-  const handleOpenModal = (client) => {
-    dispatch(showClientModal(client));
-  };
-
-  const handleUpdateClientList = () => {
-    refetch();
-  };
-
   const handleParams = async (e) => {
     let { name, value } = e.target;
     setParams((prevData) => ({ ...prevData, [name]: value }));
@@ -84,7 +75,12 @@ const ClientList = () => {
   return (
     <>
       {/* 1. MODALS */}
-      <ClientModal onUpdateClientList={handleUpdateClientList} />
+      <ClientModal 
+        isOpen={clientModal.isOpen}
+        client={clientModal.data}
+        onClose={clientModal.close}
+        onUpdate={refetch}
+      />
       
       {/* 2. SECCIÓN DE DESCUENTOS (solo owner) */}
       {getUserData().role === "owner" && (
@@ -122,7 +118,7 @@ const ClientList = () => {
         {/* 3.1 Header */}
         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
           <h1>Clientes</h1>
-          <CustomButton onClick={() => handleOpenModal()} startIcon={<AddIcon />}>
+          <CustomButton onClick={() => clientModal.open()} startIcon={<AddIcon />}>
             Nuevo Cliente
           </CustomButton>
         </Stack>
@@ -191,7 +187,7 @@ const ClientList = () => {
               name: "Acciones",
               cell: (row) => (
                 <CustomTooltip text={"Editar usuario"}>
-                  <CustomButton onClick={() => handleOpenModal(row)}>
+                  <CustomButton onClick={() => clientModal.open(row)}>
                     <EditIcon />
                   </CustomButton>
                 </CustomTooltip>

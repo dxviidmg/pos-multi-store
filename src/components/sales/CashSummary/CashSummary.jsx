@@ -11,11 +11,13 @@ import {
 } from "../../../utils/utils";
 import { getCashFlow } from "../../../api/cashflow";
 import CashFlowModal from "../../finance/CashFlowModal/CashFlowModal";
+import { useModal } from "../../../hooks/useModal";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { Grid, TextField, Box, FormLabel } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
 
 const CashSummary = () => {
+  const cashFlowModal = useModal();
   const [cashSummary, setCashSummary] = useState([]);
   const [paymentMethodsSummary, setPaymentMethodsSummary] = useState([]);
   const today = getFormattedDate();
@@ -100,7 +102,12 @@ const CashSummary = () => {
   return (
     <>
       <CustomSpinner isLoading={loading}></CustomSpinner>
-      <CashFlowModal onUpdateCashFlowList={handleUpdateCashFlowList} />
+      <CashFlowModal 
+        isOpen={cashFlowModal.isOpen}
+        cashFlow={cashFlowModal.data}
+        onClose={cashFlowModal.close}
+        onUpdate={handleUpdateCashFlowList}
+      />
       <Grid container>
       <Grid item xs={12} className="custom-section">
         <h1>Corte de caja</h1>

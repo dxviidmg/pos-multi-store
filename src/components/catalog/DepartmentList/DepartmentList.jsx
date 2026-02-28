@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import CustomTable from "../../ui/Table/Table";
 import CustomButton from "../../ui/Button/Button";
 import { deleteDepartments } from "../../../api/departments";
-import { useDispatch } from "react-redux";
+
 import { showSuccess, showError } from "../../../utils/alerts";
-import { showDepartmentModal } from "../../../redux/departmentModal/DepartmentModalActions";
+import { useModal } from "../../../hooks/useModal";
 import DepartmentModal from "../DepartmentModal/DepartmentModal";
 import { getUserData } from "../../../api/utils";
 import EditIcon from "@mui/icons-material/Edit";
@@ -18,12 +18,12 @@ import DeleteIcon from "@mui/icons-material/Delete";
 const DepartmentList = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [confirmDeletion, setConfirmDeletion] = useState(false);
-  const dispatch = useDispatch();
+  const departmentModal = useModal();
 
   const { data: departments = [], isLoading: loading, refetch } = useDepartments();
 
   const handleOpenModal = (department) => {
-    dispatch(showDepartmentModal(department));
+    departmentModal.open(department);
   };
 
   const handleUpdateDepartmentList = () => {
@@ -59,14 +59,14 @@ const DepartmentList = () => {
   return (
     <>
       {/* 1. MODALS */}
-      <DepartmentModal onUpdateDepartmentList={handleUpdateDepartmentList} />
+      <DepartmentModal isOpen={departmentModal.isOpen} department={departmentModal.data} onClose={departmentModal.close} onUpdate={refetch} />
       
       {/* 2. CONTENIDO PRINCIPAL */}
       <Grid item xs={12} className="custom-section">
         {/* 2.1 Header */}
         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
           <h1>Departamentos</h1>
-          <CustomButton onClick={() => handleOpenModal()} startIcon={<AddIcon />}>
+          <CustomButton onClick={() => departmentModal.open()} startIcon={<AddIcon />}>
             Nuevo Departamento
           </CustomButton>
         </Stack>
@@ -117,7 +117,7 @@ const DepartmentList = () => {
               name: "Acciones",
               cell: (row) => (
                 <CustomTooltip text={"Editar Departamento"}>
-                  <CustomButton onClick={() => handleOpenModal(row)}>
+                  <CustomButton onClick={() => departmentModal.open(row)}>
                     <EditIcon />
                   </CustomButton>
                 </CustomTooltip>

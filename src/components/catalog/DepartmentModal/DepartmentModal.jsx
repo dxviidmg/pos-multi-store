@@ -1,23 +1,17 @@
 import React, { useEffect, useState } from "react";
 import CustomModal from "../../ui/Modal/Modal";
 
-import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../../ui/Button/Button";
-import { hideDepartmentModal } from "../../../redux/departmentModal/DepartmentModalActions";
 import { useCreateDepartment, useUpdateDepartment } from "../../../hooks/useDepartmentMutations";
 import { Grid, TextField } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 
-const DepartmentModal = ({ onUpdateDepartmentList }) => {
-  const { showDepartmentModal, department } = useSelector(
-    (state) => state.DepartmentModalReducer
-  );
+const DepartmentModal = ({ isOpen, department, onClose, onUpdate }) => {
 
   const [formData, setFormData] = useState({
     name: "",
   });
 
-  const dispatch = useDispatch();
   const createMutation = useCreateDepartment();
   const updateMutation = useUpdateDepartment();
 
@@ -42,8 +36,8 @@ const DepartmentModal = ({ onUpdateDepartmentList }) => {
     
     mutation.mutate(formData, {
       onSuccess: () => {
-        dispatch(hideDepartmentModal());
-        onUpdateDepartmentList();
+        onClose();
+        onUpdate();
         setFormData({ name: "" });
       },
     });
@@ -51,8 +45,8 @@ const DepartmentModal = ({ onUpdateDepartmentList }) => {
 
   return (
     <CustomModal 
-      showOut={showDepartmentModal} 
-      onClose={() => dispatch(hideDepartmentModal())}
+      showOut={isOpen} 
+      onClose={onClose}
       title={formData.id ? "Actualizar departamento" : "Crear departamento"}
     >
 

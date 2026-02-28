@@ -3,14 +3,12 @@ import CustomTable from "../../ui/Table/Table";
 
 import CustomButton from "../../ui/Button/Button";
 import { getFormattedDate, formatTimeFromDate } from "../../../utils/utils";
-import { useDispatch } from "react-redux";
+
 
 import { getCashFlow } from "../../../api/cashflow";
 import CashFlowModal from "../CashFlowModal/CashFlowModal";
+import { useModal } from "../../../hooks/useModal";
 import {
-  hideCashFlowModal,
-  showCashFlowModal,
-} from "../../../redux/cashFlowModal/CashFlowModalActions";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { Grid, TextField, Box } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
@@ -22,7 +20,7 @@ const CashFlowList = () => {
   const [loading, setLoading] = useState(false);
   const [params, setParams] = useState({'start_date': today, 'end_date': today})
 
-  const dispatch = useDispatch();
+  const cashFlowModal = useModal();
 
   useEffect(() => {
     const fetchCashData = async () => {
@@ -63,7 +61,7 @@ const CashFlowList = () => {
       <CustomSpinner isLoading={loading} />
       
       {/* 2. MODALS */}
-      <CashFlowModal onUpdateCashFlowList={handleUpdateCashFlowList} />
+      <CashFlowModal isOpen={cashFlowModal.isOpen} cashFlow={cashFlowModal.data} onClose={cashFlowModal.close} onUpdate={handleUpdateCashFlowList} />
       
       {/* 3. CONTENIDO PRINCIPAL */}
       <Grid container>

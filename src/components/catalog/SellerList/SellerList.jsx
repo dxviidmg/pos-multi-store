@@ -2,17 +2,16 @@ import React, { useEffect, useState } from "react";
 import CustomTable from "../../ui/Table/Table";
 import { getSellers } from "../../../api/sellers";
 import CustomButton from "../../ui/Button/Button";
-import { useDispatch } from "react-redux";
-import { showSellerModal, hideSellerModal } from "../../../redux/sellerModal/SellerModalActions";
 import SellerModal from "../SellerModal/SellerModal";
 import { getDateDifference, getFormattedDate } from "../../../utils/utils";
 import { chooseIcon } from "../../ui/icons/Icons";
+import { useModal } from "../../../hooks/useModal";
 import { Grid, TextField, Box, Stack, Divider } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 
 const SellerList = () => {
   const today = getFormattedDate();
-  const dispatch = useDispatch();
+  const sellerModal = useModal();
   const [sellers, setSellers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [range, setRange] = useState("");
@@ -34,11 +33,6 @@ const SellerList = () => {
     fetchSellersData();
   }, [params]);
 
-  const handleOpenModal = (brand) => {
-    dispatch(hideSellerModal());
-    setTimeout(() => dispatch(showSellerModal(brand)));
-  };
-
   const handleUpdateSellerList = (updatedBrand) => {
     setSellers((prevBrands) => {
       const brandExists = prevBrands.some((b) => b.id === updatedBrand.id);
@@ -56,7 +50,12 @@ const SellerList = () => {
   return (
     <>
       {/* 1. MODALS */}
-      <SellerModal onUpdateSellerList={handleUpdateSellerList} />
+      <SellerModal 
+        isOpen={sellerModal.isOpen}
+        seller={sellerModal.data}
+        onClose={sellerModal.close}
+        onUpdate={handleUpdateSellerList}
+      />
       
       {/* 2. CONTENIDO PRINCIPAL */}
       <Grid container>
@@ -64,7 +63,7 @@ const SellerList = () => {
           {/* 2.1 Header */}
           <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
             <h1>Vendedores</h1>
-            <CustomButton onClick={() => handleOpenModal()} startIcon={<AddIcon />}>
+            <CustomButton onClick={() => sellerModal.open()} startIcon={<AddIcon />}>
               Nuevo Vendedor
             </CustomButton>
           </Stack>

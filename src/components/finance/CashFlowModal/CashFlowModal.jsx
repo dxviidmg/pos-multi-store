@@ -1,19 +1,14 @@
 import React, { useEffect, useState } from "react";
 import CustomModal from "../../ui/Modal/Modal";
 
-import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../../ui/Button/Button";
 import { showSuccess, showError } from "../../../utils/alerts";
-import { hideCashFlowModal } from "../../../redux/cashFlowModal/CashFlowModalActions";
 import { createCashFlow, getCashFlowChoices } from "../../../api/cashflow";
 import { Grid, TextField, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 
 
-const CashFlowModal = ({ onUpdateCashFlowList }) => {
-  const { showCashFlowModal, cashFlow } = useSelector(
-    (state) => state.CashFlowModalReducer
-  );
+const CashFlowModal = ({ isOpen, cashFlow, onClose, onUpdate }) => {
 
   const [formData, setFormData] = useState({id: ""
   });
@@ -38,7 +33,6 @@ const CashFlowModal = ({ onUpdateCashFlowList }) => {
     }
   }, [cashFlow]);
 
-  const dispatch = useDispatch();
 
   const handleDataChange = async (e) => {
     let { name, value } = e.target;
@@ -57,12 +51,12 @@ const CashFlowModal = ({ onUpdateCashFlowList }) => {
 
     onUpdateCashFlowList(response.data);
     if (response.status === 200) {
-      dispatch(hideCashFlowModal());
+      onClose();
       setFormData({});
       setLoading(false)
       showSuccess("Movimiento actualizado");
     } else if (response.status === 201) {
-      dispatch(hideCashFlowModal());
+      onClose();
       setLoading(false)
       setFormData({});
       showSuccess("Movimiento creado");
@@ -73,8 +67,8 @@ const CashFlowModal = ({ onUpdateCashFlowList }) => {
 
   return (
     <CustomModal 
-      showOut={showCashFlowModal} 
-      onClose={() => dispatch(hideCashFlowModal())}
+      showOut={isOpen} 
+      onClose={onClose}
       title={formData.id ? "Actualizar movimiento" : "Crear movimiento"}
     >
       <Grid className="custom-section">

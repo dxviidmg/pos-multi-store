@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CustomModal from "../../ui/Modal/Modal";
-
-import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../../ui/Button/Button";
-import { hideClientModal } from "../../../redux/clientModal/ClientModalActions";
 import { useDiscounts } from "../../../hooks/useDiscounts";
 import { useCreateClient, useUpdateClient } from "../../../hooks/useClientMutations";
 import { Grid, TextField, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
@@ -16,13 +13,8 @@ const INITIAL_FORM_DATA = {
   discount: "",
 };
 
-const ClientModal = ({ onUpdateClientList }) => {
-  const { showClientModal, client } = useSelector(
-    (state) => state.ClientModalReducer
-  );
-
+const ClientModal = ({ isOpen, client, onClose, onUpdate }) => {
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
-  const dispatch = useDispatch();
 
   const { data: discounts = [] } = useDiscounts();
   const createMutation = useCreateClient();
@@ -43,13 +35,13 @@ const ClientModal = ({ onUpdateClientList }) => {
 
   const isFormIncomplete = Object.values(formData).some((value) => value === "");
 
-  const handleSaveClient = async () => {
+  const handleSaveClient = () => {
     const mutation = formData.id ? updateMutation : createMutation;
     
     mutation.mutate(formData, {
       onSuccess: () => {
-        dispatch(hideClientModal());
-        onUpdateClientList();
+        onClose();
+        onUpdate();
         setFormData(INITIAL_FORM_DATA);
       },
     });
@@ -57,9 +49,9 @@ const ClientModal = ({ onUpdateClientList }) => {
   
   return (
     <CustomModal
-      showOut={showClientModal}
-      onClose={() => dispatch(hideClientModal())}
-      title={formData ? "Actualizar cliente" : "Crear cliente"}
+      showOut={isOpen}
+      onClose={onClose}
+      title={formData.id ? "Actualizar cliente" : "Crear cliente"}
     >
       <div className={`custom-section`}>
 
