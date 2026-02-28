@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "../../../hooks/useForm";
 import CustomModal from "../../ui/Modal/Modal";
-import { Image } from "react-bootstrap";
 import CustomButton from "../../ui/Button/Button";
 import { getBrands } from "../../../api/brands";
 import Swal from "sweetalert2";
@@ -173,9 +172,18 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
       <Grid container sx={{ padding: '1rem', backgroundColor: 'rgba(4, 53, 107, 0.2)' }}>
         <Grid item xs={12} className="custom-section">
         <Grid container spacing={2} hidden={showStoreProducts}>
-          <Grid item xs={12} md={4} className="">
-            <Image src={previewImage} fluid rounded />
-            <Box className="mt-3">
+          <Grid item xs={12} md={4}>
+            <Box
+              component="img"
+              src={previewImage}
+              alt="Producto"
+              sx={{
+                width: '100%',
+                height: 'auto',
+                borderRadius: 2
+              }}
+            />
+            <Box sx={{ mt: 2 }}>
               <CustomButton
                 component="label"
                 fullWidth

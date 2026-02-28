@@ -1,10 +1,18 @@
+/* Importar variables de colores */
+:root {
+  --color-primary: #04346b;
+  --color-background: #f1f5f9;
+  --color-paper: #ffffff;
+  --color-text: #666;
+}
+
 .custom-section {
   border-radius: 1rem;
   box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2), 
               0 4px 6px rgba(0, 0, 0, 0.05);
-  background-color: #fff;
+  background-color: var(--color-paper);
   padding: 1rem;
-  color: #666;
+  color: var(--color-text);
   overflow-x: auto;
   margin-bottom: 1rem !important;
 }
@@ -14,7 +22,7 @@
 }
 
 #root {
-  background-color: rgba(4, 53, 107, 0.2); /* 0.5 = 50% de opacidad */
+  background-color: var(--color-background);
   min-height: 100vh;
   padding-bottom: 2px;
 }

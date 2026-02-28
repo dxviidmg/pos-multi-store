@@ -1,90 +1,46 @@
 import React, { useEffect, useState } from "react";
 import { getTaskResult } from "../../../api/products";
-
-import {
-  Chart as ChartJS,
-  Tooltip,
-  Legend,
-  ArcElement,
-} from "chart.js";
-import { Doughnut } from "react-chartjs-2";
-
-ChartJS.register(ArcElement, Tooltip, Legend);
+import { PieChart } from '@mui/x-charts/PieChart';
+import { Box, Typography } from '@mui/material';
 
 const DoughnutChart = ({
   title,
   taskId,
   pollInterval = 5000,
 }) => {
-  const [labels, setLabels] = useState([]);
-  const [d, setD] = useState([]);
-
-  const data = {
-    labels: labels,
-    datasets: [
-      {
-        label: title,
-        data: d,
-        backgroundColor: [
-          "blue",
-          "red",
-          "green",
-          "yellow"
-        ],
-        hoverOffset: 4,
-      },
-    ],
-  };
-
-  const options = {
-    responsive: true,
-    interaction: {
-      mode: "index",
-      intersect: false,
-    },
-    plugins: {
-      legend: {
-        position: "top",
-      },
-      title: {
-        display: true,
-        text: title,
-      },
-    },
-  };
+  const [chartData, setChartData] = useState([]);
 
   useEffect(() => {
     if (!taskId) return;
 
     const fetchTask = async () => {
       try {
-        //      setData([]);
         const { data: taskData } = await getTaskResult(taskId);
         const { result, status } = taskData;
 
         if (status === "SUCCESS") {
-          const labels2 = Object.keys(result).map((code) => code);
-          const values = Object.values(result);
-          setLabels(labels2);
-          setD(values);
+          const data = Object.entries(result).map(([label, value], index) => ({
+            id: index,
+            value: value,
+            label: label,
+          }));
+          setChartData(data);
           clearInterval(intervalId);
-          return true; // tarea completada
+          return true;
         } else {
-          return false; // tarea no completada
+          return false;
         }
       } catch (error) {
         console.error("Error fetching task result:", error);
         clearInterval(intervalId);
-        return true; // parar en caso de error
+        return true;
       }
     };
 
     let intervalId;
 
-    // Llamada inmediata
     fetchTask().then((finished) => {
       if (!finished) {
-        // luego iniciar polling
         intervalId = setInterval(fetchTask, pollInterval);
       }
     });
@@ -93,9 +49,24 @@ const DoughnutChart = ({
   }, [taskId, pollInterval]);
 
   return (
-    <div>
-      <Doughnut data={data} options={options} />
-    </div>
+    <Box sx={{ width: '100%', height: 400 }}>
+      <Typography variant="h6" sx={{ mb: 2, textAlign: 'center' }}>
+        {title}
+      </Typography>
+      <PieChart
+        series={[
+          {
+            data: chartData,
+            innerRadius: 60,
+            outerRadius: 120,
+            paddingAngle: 2,
+            cornerRadius: 5,
+          },
+        ]}
+        height={350}
+        margin={{ top: 10, bottom: 10, left: 10, right: 10 }}
+      />
+    </Box>
   );
 };
 

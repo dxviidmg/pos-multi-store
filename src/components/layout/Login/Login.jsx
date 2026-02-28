@@ -1,12 +1,26 @@
 import React, { useState } from "react";
-import { Container, Alert, Image, FormLabel } from "react-bootstrap";
 import { loginUser } from "../../../api/login";
 import { useNavigate } from "react-router-dom";
 import CustomButton from "../../ui/Button/Button";
 import Logo from "../../../assets/images/logo.jpg";
-import './login.css'
-import { Grid, TextField, Box } from "@mui/material";
+import './login.css';
+import { 
+  TextField, 
+  Box, 
+  Alert, 
+  Paper, 
+  Stack, 
+  Typography, 
+  Checkbox, 
+  FormControlLabel,
+  Link,
+  IconButton,
+  InputAdornment,
+} from "@mui/material";
 import LoginIcon from "@mui/icons-material/Login";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { colors } from "../../../theme/colors";
 
 
 function Login({ onLogin }) {
@@ -21,6 +35,8 @@ function Login({ onLogin }) {
       shown: false,
       message: "",
     },
+    rememberMe: false,
+    showPassword: false,
   });
 
   const handleChange = (e) => {
@@ -80,61 +96,219 @@ function Login({ onLogin }) {
     }
   };
 
-  const { formData, alertData } = state;
+  const { formData, alertData, rememberMe, showPassword } = state;
 
   return (
-    <div id="login">
-      <Container style={{ height: "99.7vh" }}>
-        <Grid container spacing={2} className="h-100 d-flex align-items-center justify-content-center">
-          <Grid item xs={12} md={6} lg={4}
-            id="login-col"
-            className="align-items-center rounded"
-            style={{
-              backgroundColor: "#04356b",
-              padding: "30px",
-              border: "1px solid",
-              color: 'white'
+    <Box
+      sx={{
+        height: '99vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: colors.background.main,
+        padding: 2,
+        overflow: 'hidden',
+      }}
+    >
+      <Paper
+        elevation={0}
+        sx={{
+          width: '100%',
+          maxWidth: 380,
+          borderRadius: 5,
+          overflow: 'hidden',
+          background: `linear-gradient(145deg, ${colors.primary} 0%, #0d4d8c 50%, #0a5a9e 100%)`,
+          boxShadow: '0 24px 80px rgba(4, 52, 107, 0.4), 0 0 1px rgba(4, 52, 107, 0.1)',
+        }}
+      >
+        {/* Header */}
+        <Box
+          sx={{
+            textAlign: 'center',
+            pt: 6,
+            pb: 3,
+            px: 4,
+          }}
+        >
+          <Box
+            component="img"
+            src={Logo}
+            alt="SmartVenta"
+            sx={{
+              maxWidth: '190px',
+              height: 'auto',
+              mb: 3.5,
+              borderRadius: 3,
+              boxShadow: '0 12px 40px rgba(0,0,0,0.4)',
+              transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+              '&:hover': {
+                transform: 'scale(1.03) translateY(-4px)',
+                boxShadow: '0 16px 50px rgba(0,0,0,0.5)',
+              }
+            }}
+          />
+          
+          <Typography
+            variant="h4"
+            sx={{
+              fontWeight: 800,
+              color: 'white',
+              mb: 1.5,
+              letterSpacing: 0.3,
+              textShadow: '0 2px 10px rgba(0,0,0,0.2)',
             }}
           >
-            <Image width="100%" src={Logo} rounded></Image>
+            Bienvenido
+          </Typography>
+          
+          <Typography
+            variant="body2"
+            sx={{ 
+              color: 'rgba(255,255,255,0.9)',
+              fontSize: '0.938rem',
+              fontWeight: 400,
+            }}
+          >
+            Ingrese sus credenciales para continuar
+          </Typography>
+        </Box>
 
-            {alertData.shown && (
-              <Alert variant="danger" className="mt-3">
-                {alertData.message}
-              </Alert>
-            )}
+        {/* Form */}
+        <Box sx={{ px: 4, pb: 5 }}>
+          {alertData.shown && (
+            <Alert 
+              severity="error" 
+              sx={{ 
+                mb: 3,
+                borderRadius: 3,
+                backgroundColor: 'rgba(244, 67, 54, 0.2)',
+                backdropFilter: 'blur(10px)',
+                color: 'white',
+                border: '1px solid rgba(244, 67, 54, 0.3)',
+                fontWeight: 500,
+                '& .MuiAlert-icon': {
+                  color: '#ffcdd2',
+                }
+              }}
+            >
+              {alertData.message}
+            </Alert>
+          )}
 
-            <Box component="form" className='mt-4'>
-              <Box className="mb-2">
-                <TextField size="small" fullWidth label="Usuario" type="text"
-                  className="form-control mt-1"
-                  placeholder="Usuario"
-                  name="username"
-                  value={formData.username}
-                  onChange={handleChange}
-                  required
-                />
-              </Box>
-
-              <Box className="mb-2">
-                <FormLabel >Contraseña</FormLabel>
-                <TextField size="small" fullWidth type="password"
-                  className="form-control mt-1"
-                  placeholder="Contraseña"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  required
-                />
-              </Box>
-              <CustomButton onClick={handleSubmit} fullWidth startIcon={<LoginIcon />}>
-                Iniciar sesión
-              </CustomButton>
+          <Stack component="form" spacing={3}>
+            <Box>
+              <Typography 
+                variant="body2" 
+                sx={{ 
+                  color: 'white', 
+                  mb: 1.2, 
+                  fontWeight: 600,
+                  fontSize: '0.938rem',
+                  textShadow: '0 1px 2px rgba(0,0,0,0.1)',
+                }}
+              >
+                Usuario
+              </Typography>
+              <TextField
+                fullWidth
+                type="text"
+                name="username"
+                placeholder="Ingrese su usuario"
+                value={formData.username}
+                onChange={handleChange}
+                required
+                autoFocus
+                autoComplete="username"
+                variant="outlined"
+                size="small"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: 3,
+                    backgroundColor: 'white',
+                    fontSize: '0.938rem',
+                    '& fieldset': {
+                      borderColor: 'transparent',
+                    },
+                  }
+                }}
+              />
             </Box>
-          </Grid>
-        </Grid>
-      </Container>
-    </div>
+            
+            <Box>
+              <Typography 
+                variant="body2" 
+                sx={{ 
+                  color: 'white', 
+                  mb: 1.2, 
+                  fontWeight: 600,
+                  fontSize: '0.938rem',
+                  textShadow: '0 1px 2px rgba(0,0,0,0.1)',
+                }}
+              >
+                Contraseña
+              </Typography>
+              <TextField
+                fullWidth
+                type={showPassword ? "text" : "password"}
+                name="password"
+                placeholder="Ingrese su contraseña"
+                value={formData.password}
+                onChange={handleChange}
+                required
+                autoComplete="current-password"
+                variant="outlined"
+                size="small"
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setState(prev => ({ ...prev, showPassword: !prev.showPassword }))}
+                        edge="end"
+                        size="small"
+                        sx={{ 
+                          color: colors.primary,
+                          '&:hover': { backgroundColor: 'rgba(4, 52, 107, 0.08)' }
+                        }}
+                      >
+                        {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: 3,
+                    backgroundColor: 'white',
+                    fontSize: '0.938rem',
+                    '& fieldset': {
+                      borderColor: 'transparent',
+                    },
+                  }
+                }}
+              />
+            </Box>
+
+
+            <CustomButton
+              onClick={handleSubmit}
+              fullWidth
+
+
+            >
+              Iniciar Sesión
+            </CustomButton>
+          </Stack>
+        </Box>
+
+        {/* Footer decorativo */}
+        <Box
+          sx={{
+            height: '5px',
+            background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%)',
+          }}
+        />
+      </Paper>
+    </Box>
   );
 }
 

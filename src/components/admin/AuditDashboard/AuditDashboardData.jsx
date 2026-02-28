@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ProgressBar } from "react-bootstrap";
+import { LinearProgress, Box, Typography } from "@mui/material";
 import { getTaskResult } from "../../../api/products";
 import CustomButton from "../../ui/Button/Button";
 import { exportToExcel } from "../../../utils/utils";
@@ -67,12 +67,17 @@ const AuditDashboardData = ({ title, taskId, pollInterval = 7500 }) => {
       <span className="fs-1">{data.length}</span>
       <span> de {info.total}</span>
 
-      <ProgressBar
-        animated={!isComplete}
-        now={info.progress}
-        label={`${info.progress}%`}
-        variant={isComplete ? "success" : undefined}
-      />
+      <Box sx={{ width: '100%', my: 2 }}>
+        <LinearProgress 
+          variant="determinate" 
+          value={info.progress}
+          color={isComplete ? "success" : "primary"}
+        />
+        <Typography variant="body2" color="text.secondary" align="center" sx={{ mt: 0.5 }}>
+          {info.progress}%
+        </Typography>
+      </Box>
+
       <CustomButton
         fullWidth
         disabled={!data || data.length === 0}

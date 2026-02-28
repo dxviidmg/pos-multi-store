@@ -3,7 +3,7 @@ import CustomTable from "../../ui/Table/Table";
 import { getClients } from "../../../api/clients";
 import CustomButton from "../../ui/Button/Button";
 import { useDispatch, useSelector } from "react-redux";
-import { Badge } from "react-bootstrap";
+import { Chip } from "@mui/material";
 import { addClientToCart } from "../../../redux/cart/cartActions";
 import Swal from "sweetalert2";
 import { TextField } from "@mui/material";
@@ -86,7 +86,7 @@ const SearchClient = () => {
 <div className="d-flex align-items-center gap-3">
   <h2 className="mb-0">Buscador de clientes</h2>
   {Object.keys(client).length === 0 && (
-    <Badge bg="success">Aviso: No hay cliente seleccionado</Badge>
+    <Chip label="Aviso: No hay cliente seleccionado" color="success" size="small" />
   )}
 </div>
 
