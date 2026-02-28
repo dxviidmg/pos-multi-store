@@ -4,36 +4,36 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { useState, useEffect, lazy, Suspense } from "react";
 import { getUserData } from "./api/utils";
 import useKeepAlive from "./api/keepAlive";
-import LoadingFallback from "./components/commons/LoadingFallback";
+import LoadingFallback from "./components/ui/LoadingFallback";
 
 // Componentes críticos (carga inmediata)
-import Login from "./components/login/Login";
-import MiniDrawer from "./components/navbar/SideBar";
+import Login from "./components/layout/Login/Login";
+import MiniDrawer from "./components/layout/Navbar/SideBar";
 
 // Lazy loading para rutas
-const SaleCreate = lazy(() => import("./components/saleCreate/SaleCreate"));
-const SaleList = lazy(() => import("./components/saleList/SaleList"));
-const TransferList = lazy(() => import("./components/transferList/TransferList"));
-const ClientList = lazy(() => import("./components/clientList/ClientList"));
-const ProductList = lazy(() => import("./components/productList/ProductList"));
-const BrandList = lazy(() => import("./components/brandList/BrandList"));
-const SaleImport = lazy(() => import("./components/saleImport/SaleImport"));
-const StoreProductList = lazy(() => import("./components/storeProductList/StoreProductList"));
-const StoreList = lazy(() => import("./components/storeList/StoreList"));
-const ProductImport = lazy(() => import("./components/productImport/ProductImport"));
-const CashSummary = lazy(() => import("./components/cashSummary/CashSummary"));
-const LogList = lazy(() => import("./components/logList/LogList"));
-const TenantPaymentList = lazy(() => import("./components/tenantPaymentList/TenantPaymentList"));
-const CashFlowList = lazy(() => import("./components/cashFlowList/CashFlowList"));
-const SellerList = lazy(() => import("./components/sellerList/SellerList"));
-const DepartmentList = lazy(() => import("./components/departmentList/DepartmentList"));
-const StoreProductImport = lazy(() => import("./components/storeProductImport/StoreProductImport"));
-const ServiceList = lazy(() => import("./components/serviceList/ServiceList"));
-const ProductReassign = lazy(() => import("./components/productReassign/ProductReassign"));
-const AuditDashboard = lazy(() => import("./components/auditDashboard/AuditDashboard"));
-const Dashboard = lazy(() => import("./components/dashboard/Dashboard"));
-const DistributionList = lazy(() => import("./components/distributionList/DistributionList"));
-const RestartService = lazy(() => import("./components/restartService/RestartService"));
+const SaleCreate = lazy(() => import("./components/sales/SaleCreate/SaleCreate"));
+const SaleList = lazy(() => import("./components/sales/SaleList/SaleList"));
+const TransferList = lazy(() => import("./components/inventory/TransferList/TransferList"));
+const ClientList = lazy(() => import("./components/clients/ClientList/ClientList"));
+const ProductList = lazy(() => import("./components/products/ProductList/ProductList"));
+const BrandList = lazy(() => import("./components/catalog/BrandList/BrandList"));
+const SaleImport = lazy(() => import("./components/sales/SaleImport/SaleImport"));
+const StoreProductList = lazy(() => import("./components/products/StoreProductList/StoreProductList"));
+const StoreList = lazy(() => import("./components/admin/StoreList/StoreList"));
+const ProductImport = lazy(() => import("./components/products/ProductImport/ProductImport"));
+const CashSummary = lazy(() => import("./components/sales/CashSummary/CashSummary"));
+const LogList = lazy(() => import("./components/admin/LogList/LogList"));
+const TenantPaymentList = lazy(() => import("./components/finance/TenantPaymentList/TenantPaymentList"));
+const CashFlowList = lazy(() => import("./components/finance/CashFlowList/CashFlowList"));
+const SellerList = lazy(() => import("./components/catalog/SellerList/SellerList"));
+const DepartmentList = lazy(() => import("./components/catalog/DepartmentList/DepartmentList"));
+const StoreProductImport = lazy(() => import("./components/products/StoreProductImport/StoreProductImport"));
+const ServiceList = lazy(() => import("./components/admin/ServiceList/ServiceList"));
+const ProductReassign = lazy(() => import("./components/products/ProductReassign/ProductReassign"));
+const AuditDashboard = lazy(() => import("./components/admin/AuditDashboard/AuditDashboard"));
+const Dashboard = lazy(() => import("./components/admin/Dashboard/Dashboard"));
+const DistributionList = lazy(() => import("./components/inventory/DistributionList/DistributionList"));
+const RestartService = lazy(() => import("./components/admin/RestartService/RestartService"));
 
 function App() {
   useKeepAlive();
