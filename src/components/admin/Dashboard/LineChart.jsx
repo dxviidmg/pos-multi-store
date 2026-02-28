@@ -1,103 +1,66 @@
 import React, { useEffect, useState } from "react";
 import { getTaskResult } from "../../../api/products";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
-import { Line } from "react-chartjs-2";
-
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+import { LineChart as MuiLineChart } from '@mui/x-charts/LineChart';
+import { Box, Typography } from '@mui/material';
 
 const LineChart = ({ title, taskId, labels, xText, yText, pollInterval = 5000 }) => {
   const [datasets, setDatasets] = useState([]);
 
-  const data = {
-    labels: labels,
-    datasets: datasets,
-  };
-
-
-  const options = {
-    responsive: true,
-    interaction: {
-      mode: "index",
-      intersect: false,
-    },
-    plugins: {
-      legend: {
-        position: "top",
-      },
-      title: {
-        display: true,
-        text: title,
-      },
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-        title: {
-          display: true,
-          text: yText,
-        },
-      },
-      x: {
-        title: {
-          display: true,
-          text: xText,
-        },
-      },
-    },
-  };
-
-  
   useEffect(() => {
     if (!taskId) return;
 
     const fetchTask = async () => {
       try {
-  //      setData([]);
         const { data: taskData } = await getTaskResult(taskId);
         const { result, status } = taskData;
 
         if (status === "SUCCESS") {
           setDatasets(result || []);
           clearInterval(intervalId);
-          return true; // tarea completada
+          return true;
         } else {
-          return false; // tarea no completada
+          return false;
         }
       } catch (error) {
         console.error("Error fetching task result:", error);
         clearInterval(intervalId);
-        return true; // parar en caso de error
+        return true;
       }
     };
 
     let intervalId;
 
-    // Llamada inmediata
     fetchTask().then((finished) => {
       if (!finished) {
-        // luego iniciar polling
         intervalId = setInterval(fetchTask, pollInterval);
       }
     });
 
     return () => clearInterval(intervalId);
-  }, [taskId]);
+  }, [taskId, pollInterval]);
+
+  const series = datasets.map((dataset) => ({
+    data: dataset.data || [],
+    label: dataset.label || '',
+    color: dataset.borderColor || undefined,
+  }));
 
   return (
-    <div>
-
-<Line data={data} options={options} />
-
-    </div>
+    <Box sx={{ width: '100%', height: 400 }}>
+      <Typography variant="h6" sx={{ mb: 2, textAlign: 'center' }}>
+        {title}
+      </Typography>
+      <MuiLineChart
+        xAxis={[{ 
+          data: labels || [],
+          scaleType: 'point',
+          label: xText,
+        }]}
+        series={series}
+        height={350}
+        margin={{ top: 10, bottom: 50, left: 70, right: 10 }}
+      />
+    </Box>
   );
 };
 
