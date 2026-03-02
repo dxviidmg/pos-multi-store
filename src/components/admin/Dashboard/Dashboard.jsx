@@ -1,15 +1,36 @@
 import React, { useEffect, useState } from "react";
 import { getSalesDashboard } from "../../../api/sales";
+import { getTaskResult } from "../../../api/products";
 import LineChart from "./LineChart";
 import DoughnutChart from "./DoughnutChart";
 import { Grid } from "@mui/material";
 
 const Dashboard = () => {
-  const [tasks, setTasks] = useState();
+  const [dashboardData, setDashboardData] = useState(null);
+  
   const fetchData = async () => {
     const response = await getSalesDashboard();
+    const taskId = response.data.task;
+    
+    // Poll para obtener el resultado
+    const pollTask = async () => {
+      try {
+        const { data: taskData } = await getTaskResult(taskId);
+        const { result, status } = taskData;
 
-    setTasks(response.data);
+        if (status === "SUCCESS") {
+          setDashboardData(result);
+          clearInterval(intervalId);
+        }
+      } catch (error) {
+        console.error("Error fetching task result:", error);
+        clearInterval(intervalId);
+      }
+    };
+
+    let intervalId;
+    pollTask();
+    intervalId = setInterval(pollTask, 3000);
   };
 
   useEffect(() => {
@@ -25,7 +46,7 @@ const Dashboard = () => {
           <Grid item xs={12} md={6}>
             <LineChart
               title={"Ventas por mes"}
-              taskId={tasks?.task1}
+              data={dashboardData}
               labels={[
                 "Ene",
                 "Feb",
@@ -42,12 +63,13 @@ const Dashboard = () => {
               ]}
               yText={"Ventas"}
               xText={"Meses"}
+              dataType="monthly"
             />
           </Grid>
           <Grid item xs={12} md={6}>
             <LineChart
-              title={"Promedio ventas por dia (ultimo mes)"}
-              taskId={tasks?.task2}
+              title={"Ventas por dia"}
+              data={dashboardData}
               labels={[
                 "Domingo",
                 "Lunes",
@@ -59,13 +81,14 @@ const Dashboard = () => {
               ]}
               yText={"Ventas"}
               xText={"Dias"}
+              dataType="daily"
             />
           </Grid>
 
           <Grid item xs={12} md={6}>
             <LineChart
-              title={"Promedio de ventas por hora (ultimo mes)"}
-              taskId={tasks?.task3}
+              title={"Ventas por hora"}
+              data={dashboardData}
               labels={[
                 "0:00",
                 "1:00",
@@ -93,19 +116,18 @@ const Dashboard = () => {
                 "23:00",
               ]}
               yText={"Ventas"}
-              xText={"Dias"}
+              xText={"Horas"}
+              dataType="hourly"
             />
           </Grid>
           <Grid item xs={12} md={3}>
-            <DoughnutChart
-              title={"% de metodos de pago"}
-              taskId={tasks?.task4}
-            />
+
           </Grid>
           <Grid item xs={12} md={3}>
             <DoughnutChart
               title={"% Ventas por tienda"}
-              taskId={tasks?.task5}
+              data={dashboardData}
+              dataType="store"
             />
           </Grid>
         </Grid>

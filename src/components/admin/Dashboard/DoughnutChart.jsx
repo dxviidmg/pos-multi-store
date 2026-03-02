@@ -1,52 +1,52 @@
 import React, { useEffect, useState } from "react";
-import { getTaskResult } from "../../../api/products";
 import { PieChart } from '@mui/x-charts/PieChart';
 import { Box, Typography } from '@mui/material';
 
-const DoughnutChart = ({
-  title,
-  taskId,
-  pollInterval = 5000,
-}) => {
+const processData = (result, dataType) => {
+  if (!result || !result.sales || result.sales.length === 0) return [];
+
+  const { sales } = result;
+
+  switch (dataType) {
+    case 'payment': {
+      const grouped = {};
+      sales.forEach(item => {
+        const key = item.payment_method || 'Sin método';
+        grouped[key] = (grouped[key] || 0) + (item.count || 0);
+      });
+      return Object.entries(grouped).map(([label, value], index) => ({
+        id: index,
+        value: value,
+        label: label,
+      }));
+    }
+    
+    case 'store': {
+      const grouped = {};
+      sales.forEach(item => {
+        const key = item.store_name || 'Sin tienda';
+        grouped[key] = (grouped[key] || 0) + (item.count || 0);
+      });
+      return Object.entries(grouped).map(([label, value], index) => ({
+        id: index,
+        value: value,
+        label: label,
+      }));
+    }
+    
+    default:
+      return [];
+  }
+};
+
+const DoughnutChart = ({ title, data, dataType }) => {
   const [chartData, setChartData] = useState([]);
 
   useEffect(() => {
-    if (!taskId) return;
-
-    const fetchTask = async () => {
-      try {
-        const { data: taskData } = await getTaskResult(taskId);
-        const { result, status } = taskData;
-
-        if (status === "SUCCESS") {
-          const data = Object.entries(result).map(([label, value], index) => ({
-            id: index,
-            value: value,
-            label: label,
-          }));
-          setChartData(data);
-          clearInterval(intervalId);
-          return true;
-        } else {
-          return false;
-        }
-      } catch (error) {
-        console.error("Error fetching task result:", error);
-        clearInterval(intervalId);
-        return true;
-      }
-    };
-
-    let intervalId;
-
-    fetchTask().then((finished) => {
-      if (!finished) {
-        intervalId = setInterval(fetchTask, pollInterval);
-      }
-    });
-
-    return () => clearInterval(intervalId);
-  }, [taskId, pollInterval]);
+    if (!data) return;
+    const processedData = processData(data, dataType);
+    setChartData(processedData);
+  }, [data, dataType]);
 
   return (
     <Box sx={{ width: '100%', height: 400 }}>
