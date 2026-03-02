@@ -3,7 +3,6 @@ import CustomTable from "../../ui/Table/Table";
 import { Alert } from "@mui/material";
 import CustomButton from "../../ui/Button/Button";
 import { useNavigate } from "react-router-dom";
-import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { getDateDifference, getFormattedDate } from "../../../utils/utils";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
@@ -359,8 +358,6 @@ const StoreList = () => {
     <>
       <Grid container>
         <Grid item xs={12} className="custom-section">
-          <CustomSpinner isLoading={loading} />
-
           {tenantInfo.notices && tenantInfo.notices.length > 0 && (
             <Box sx={{ mb: 3 }}>
               <Grid container spacing={2}>
