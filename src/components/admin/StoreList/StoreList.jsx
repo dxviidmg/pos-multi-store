@@ -357,7 +357,7 @@ const StoreList = () => {
 
   return (
     <>
-      <Grid container spacing={3}>
+      <Grid container>
         <Grid item xs={12} className="custom-section">
           <CustomSpinner isLoading={loading} />
 
