@@ -2,78 +2,79 @@ import React, { useEffect, useState } from "react";
 import { LineChart as MuiLineChart } from '@mui/x-charts/LineChart';
 import { Box, Typography } from '@mui/material';
 
-const processData = (result, dataType, labels) => {
+const processData = (result, dataType, metricType, labels) => {
   if (!result || !result.sales || result.sales.length === 0) return [];
 
   const { stores, sales } = result;
+  const colors = ['#1976d2', '#dc004e', '#ff9800', '#4caf50', '#9c27b0'];
 
   switch (dataType) {
     case 'monthly': {
       const storeData = {};
       
-      // Inicializar todas las tiendas con 0
       stores.forEach(store => {
         storeData[store.name] = Array(12).fill(0);
       });
       
-      // Llenar con datos reales
       sales.forEach(item => {
+        const date = new Date(item.created_at);
+        const month = date.getMonth();
         const storeName = item.store_name;
-        const month = new Date(item.month).getMonth();
         if (storeData[storeName]) {
-          storeData[storeName][month] = item.count || 0;
+          storeData[storeName][month] += metricType === 'total' ? (item.total || 0) : 1;
         }
       });
       
-      return Object.entries(storeData).map(([storeName, monthlyData]) => ({
+      return Object.entries(storeData).map(([storeName, monthlyData], index) => ({
         data: monthlyData,
         label: storeName,
+        color: colors[index % colors.length],
       }));
     }
     
     case 'daily': {
       const storeData = {};
       
-      // Inicializar todas las tiendas con 0
       stores.forEach(store => {
         storeData[store.name] = Array(7).fill(0);
       });
       
-      // Llenar con datos reales
       sales.forEach(item => {
+        const date = new Date(item.created_at);
+        const day = date.getDay();
         const storeName = item.store_name;
-        const day = new Date(item.day).getDay();
         if (storeData[storeName]) {
-          storeData[storeName][day] = item.count || 0;
+          storeData[storeName][day] += metricType === 'total' ? (item.total || 0) : 1;
         }
       });
       
-      return Object.entries(storeData).map(([storeName, dailyData]) => ({
+      return Object.entries(storeData).map(([storeName, dailyData], index) => ({
         data: dailyData,
         label: storeName,
+        color: colors[index % colors.length],
       }));
     }
     
     case 'hourly': {
       const storeData = {};
       
-      // Inicializar todas las tiendas con 0
       stores.forEach(store => {
         storeData[store.name] = Array(24).fill(0);
       });
       
-      // Llenar con datos reales
       sales.forEach(item => {
+        const date = new Date(item.created_at);
+        const hour = date.getHours();
         const storeName = item.store_name;
-        const hour = item.hour;
         if (storeData[storeName]) {
-          storeData[storeName][hour] = item.count || 0;
+          storeData[storeName][hour] += metricType === 'total' ? (item.total || 0) : 1;
         }
       });
       
-      return Object.entries(storeData).map(([storeName, hourlyData]) => ({
+      return Object.entries(storeData).map(([storeName, hourlyData], index) => ({
         data: hourlyData,
         label: storeName,
+        color: colors[index % colors.length],
       }));
     }
     
@@ -82,14 +83,14 @@ const processData = (result, dataType, labels) => {
   }
 };
 
-const LineChart = ({ title, data, labels, xText, yText, dataType }) => {
+const LineChart = ({ title, data, labels, xText, yText, dataType, metricType = 'count' }) => {
   const [series, setSeries] = useState([]);
 
   useEffect(() => {
     if (!data) return;
-    const processedData = processData(data, dataType, labels);
+    const processedData = processData(data, dataType, metricType, labels);
     setSeries(processedData);
-  }, [data, dataType, labels]);
+  }, [data, dataType, metricType, labels]);
 
   return (
     <Box sx={{ width: '100%', height: 400 }}>
@@ -101,6 +102,9 @@ const LineChart = ({ title, data, labels, xText, yText, dataType }) => {
           data: labels || [],
           scaleType: 'point',
           label: xText,
+        }]}
+        yAxis={[{ 
+          min: 0,
         }]}
         series={series}
         height={350}
