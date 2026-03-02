@@ -441,9 +441,15 @@ const StoreList = () => {
           {tenantInfo.notices && tenantInfo.notices.length > 0 && (
             <Box sx={{ mb: 3 }}>
               <Grid container spacing={2}>
-                {tenantInfo.notices.map((variant, index) => (
+                {tenantInfo.notices.map((notice, index) => (
                   <Grid item xs={12} key={index}>
-                    <Alert severity="success">{variant}</Alert>
+                    <Alert 
+                      variant="filled" 
+                      severity={notice.includes('demo') ? 'success' : 'error'}
+                      sx={{ fontWeight: 600, fontSize: '1rem' }}
+                    >
+                      {notice}
+                    </Alert>
                   </Grid>
                 ))}
               </Grid>
