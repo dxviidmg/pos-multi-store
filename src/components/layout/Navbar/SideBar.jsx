@@ -187,31 +187,10 @@ export default function MainLayout() {
   const linksByType = {
     T: [
       { label: "Vender", href: "/vender/" },
-      { label: "Clientes", href: "/clientes/", hidden: user.role === "seller" },
-      {
-        label: "Movimientos",
-        dropdown: [
-          { label: "Distribuciones", href: "/distribuciones/" },
-          { label: "Traspasos", href: "/traspasos/" },
-        ],
-      },
-      {
-        label: "Productos",
-        dropdown: [
-          { label: "Marcas", href: "/marcas/" },
-          { label: "Departamentos", href: "/departamentos/" },
-          { label: "Reasignación", href: "/reasignacion/" },
-          { divider: true },
-          { label: "Productos", href: "/productos/" },
-          { label: "Importar Productos", href: "/importar-productos/" },
-          { divider: true },
-          { label: "Inventario", href: "/inventario/" },
-          { label: "Importar inventario", href: "/importar-inventario/" },
-        ],
-      },
       {
         label: "Ventas",
         dropdown: [
+          { label: "Ventas", href: "/ventas/" },
           {
             label: "Corte de caja",
             href: "/corte-caja/",
@@ -222,9 +201,30 @@ export default function MainLayout() {
             href: "/movimientos/",
             hidden: user.role === "seller",
           },
-          { label: "Ventas", href: "/ventas/" },
           { divider: true },
           { label: "Importar ventas", href: "/importar-ventas/" },
+        ],
+      },
+      { label: "Clientes", href: "/clientes/", hidden: user.role === "seller" },
+      {
+        label: "Productos",
+        dropdown: [
+          { label: "Productos", href: "/productos/" },
+          { label: "Inventario", href: "/inventario/" },
+          { divider: true },
+          { label: "Marcas", href: "/marcas/" },
+          { label: "Departamentos", href: "/departamentos/" },
+          { label: "Reasignación", href: "/reasignacion/" },
+          { divider: true },
+          { label: "Importar Productos", href: "/importar-productos/" },
+          { label: "Importar inventario", href: "/importar-inventario/" },
+        ],
+      },
+      {
+        label: "Movimientos",
+        dropdown: [
+          { label: "Distribuciones", href: "/distribuciones/" },
+          { label: "Traspasos", href: "/traspasos/" },
         ],
       },
     ],
@@ -248,20 +248,19 @@ export default function MainLayout() {
       },
       { label: "Tiendas", href: "/tiendas/" },
       { label: "Clientes", href: "/clientes/" },
-
+      { label: "Vendedores", href: "/vendedores/" },
       {
         label: "Productos",
         dropdown: [
+          { label: "Productos", href: "/productos/" },
+          { divider: true },
           { label: "Marcas", href: "/marcas/" },
           { label: "Departamentos", href: "/departamentos/" },
           { label: "Reasignación", href: "/reasignacion/" },
           { divider: true },
-          { label: "Productos", href: "/productos/" },
           { label: "Importar Productos", href: "/importar-productos/" },
         ],
       },
-
-      { label: "Vendedores", href: "/vendedores/" },
       { label: "Mensualidades", href: "/pagos/" },
       { label: "Servicios", href: "/servicios/" },
       { label: "Sincronizar", href: "/sincronizar/" },
