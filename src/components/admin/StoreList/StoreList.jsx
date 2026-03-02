@@ -52,9 +52,20 @@ const StoreList = () => {
   }, [storesData, investmentData, showInvestment]);
 
   const stores = storesWithInvestment;
+  
+  // Calcular totales de distribuciones y traspasos
+  const totalDistributions = stores.reduce((sum, store) => 
+    sum + (store.cash_summary?.[12]?.amount || 0), 0
+  );
+  const totalTransfers = stores.reduce((sum, store) => 
+    sum + (store.cash_summary?.[13]?.amount || 0), 0
+  );
+  
   const totals = {
     ...(storesData?.totals || {}),
     investment: investmentData?.total || 0,
+    distributions: totalDistributions,
+    transfers: totalTransfers,
   };
   const loading = loadingStores || loadingTenant || loadingInvestment;
   const range = getDateDifference(params.start_date, params.end_date);
@@ -111,122 +122,65 @@ const StoreList = () => {
       wrapText: true,
       selector: ({ name }) => <>{name}</>,
     },
-    // Mostrar detalles de pagos y ventas
-
     {
-      name: "Pagos",
+      name: "Efectivo",
       style: alignTdStyles,
-      cell: ({ cash_summary }) => {
-        return (
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "4px",
-              width: "100%",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                width: "100%",
-              }}
-            >
-              <AttachMoneyIcon />
-              <span>{getCashValue(cash_summary, 0)}</span>
-            </div>
-
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                width: "100%",
-              }}
-            >
-              <CreditCardIcon />
-              <span>{getCashValue(cash_summary, 1)}</span>
-            </div>
-
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                width: "100%",
-              }}
-            >
-              <AccountBalanceIcon />
-              <span>{getCashValue(cash_summary, 2)}</span>
-            </div>
-          </div>
-        );
-      },
+      selector: ({ cash_summary }) => getCashValue(cash_summary, 0),
     },
-
     {
-      name: "Ventas ($)",
+      name: "Tarjeta",
       style: alignTdStyles,
-      grow: 1.1,
-      cell: ({ cash_summary }) => {
+      selector: ({ cash_summary }) => getCashValue(cash_summary, 1),
+    },
+    {
+      name: "Transferencia",
+      style: alignTdStyles,
+      selector: ({ cash_summary }) => getCashValue(cash_summary, 2),
+    },
+    {
+      name: "Vendido",
+      style: alignTdStyles,
+      selector: ({ cash_summary }) => getCashValue(cash_summary, 3),
+    },
+    {
+      name: "Promedio",
+      style: alignTdStyles,
+      selector: ({ cash_summary }) => {
         const vendido = cash_summary?.[3]?.amount || 0;
         const realizadas = cash_summary?.[10]?.amount || 0;
         const promedio = realizadas === 0 ? 0 : vendido / realizadas;
-
-        return (
-          <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-            <div>Vendido: {getCashValue(cash_summary, 3)}</div>
-            <div>Promedio: {getCashValueTotal(promedio)}</div>
-          </div>
-        );
-      },
-    },
-
-    {
-      name: "Ventas (#)",
-      style: alignTdStyles,
-      cell: ({ cash_summary }) => {
-        const realizadas = cash_summary?.[10]?.amount?.toLocaleString() || "0";
-        const canceladas = cash_summary?.[11]?.amount?.toLocaleString() || "0";
-
-        return (
-          <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-            <div>Realizadas: {realizadas}</div>
-            <div>Canceladas: {canceladas}</div>
-          </div>
-        );
-      },
-    },
-
-    {
-      name: "Pendientes",
-      style: alignTdStyles,
-      cell: ({ cash_summary }) => {
-        const distributions =
-          cash_summary?.[12]?.amount?.toLocaleString() || "0";
-        const transfers = cash_summary?.[13]?.amount?.toLocaleString() || "0";
-
-        return (
-          <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-            <div>Distribuciones: {distributions}</div>
-            <div>Traspasos: {transfers}</div>
-          </div>
-        );
+        return getCashValueTotal(promedio);
       },
     },
     {
-      name: "Otros",
+      name: "Realizadas",
       style: alignTdStyles,
-      cell: ({ cash_summary }) => {
-        return (
-          <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-            <div>Ganancia: {getCashValue(cash_summary, 8)}</div>
-            <div>Caja: {getCashValue(cash_summary, 7)}</div>
-          </div>
-        );
-      },
+      selector: ({ cash_summary }) => cash_summary?.[10]?.amount?.toLocaleString() || "0",
+    },
+    {
+      name: "Canceladas",
+      style: alignTdStyles,
+      selector: ({ cash_summary }) => cash_summary?.[11]?.amount?.toLocaleString() || "0",
+    },
+    {
+      name: "Distribuciones",
+      style: alignTdStyles,
+      selector: ({ cash_summary }) => cash_summary?.[12]?.amount?.toLocaleString() || "0",
+    },
+    {
+      name: "Traspasos",
+      style: alignTdStyles,
+      selector: ({ cash_summary }) => cash_summary?.[13]?.amount?.toLocaleString() || "0",
+    },
+    {
+      name: "Ganancia",
+      style: alignTdStyles,
+      selector: ({ cash_summary }) => getCashValue(cash_summary, 8),
+    },
+    {
+      name: "Caja",
+      style: alignTdStyles,
+      selector: ({ cash_summary }) => getCashValue(cash_summary, 7),
     },
 
     // Mostrar inversión (si aplica)
@@ -319,75 +273,66 @@ const StoreList = () => {
   ];
 
   const columnsTotals = [
-    // Pagos y caja
-    ...(!params.department_id && !showInvestment
-      ? [
-          {
-            name: "Efectivo",
-            style: alignTdStyles,
-            selector: ({ paymentCash }) => getCashValueTotal(paymentCash),
-          },
-          {
-            name: "Tarjeta",
-            style: alignTdStyles,
-            selector: ({ paymentCard }) => getCashValueTotal(paymentCard),
-          },
-          {
-            name: "T. Bancaria",
-            style: alignTdStyles,
-            selector: ({ paymentTransfer }) =>
-              getCashValueTotal(paymentTransfer),
-          },
-          {
-            name: "Vendido",
-            style: alignTdStyles,
-            selector: ({ totalPayment }) => getCashValueTotal(totalPayment),
-          },
-          {
-            name: "Promedio",
-            style: alignTdStyles,
-            selector: ({ totalPayment, totalSales }) =>
-              getCashValueTotal(totalPayment / totalSales),
-          },
-          {
-            name: "Ventas",
-            style: alignTdStyles,
-            selector: ({ totalSales }) => totalSales,
-          },
-          {
-            name: "V. Canceladas",
-            style: alignTdStyles,
-            selector: ({ canceledSales }) => canceledSales,
-          },
-          {
-            name: "Ganancia",
-            style: alignTdStyles,
-            selector: ({ profit }) => getCashValueTotal(profit),
-          },
-
-          {
-            name: "Caja",
-            style: alignTdStyles,
-            selector: ({ cash }) => getCashValueTotal(cash),
-          },
-        ]
-      : [
-          {
-            name: "Vendido",
-            style: alignTdStyles,
-            selector: ({ totalPayment }) => getCashValueTotal(totalPayment),
-          },
-          {
-            name: "Ventas",
-            style: alignTdStyles,
-            selector: ({ totalSales }) => totalSales,
-          },
-          {
-            name: "V. Canceladas",
-            style: alignTdStyles,
-            selector: ({ canceledSales }) => canceledSales,
-          },
-        ]),
+    {
+      name: "Nombre",
+      selector: () => "TOTAL",
+    },
+    {
+      name: "Efectivo",
+      style: alignTdStyles,
+      selector: ({ paymentCash }) => getCashValueTotal(paymentCash),
+    },
+    {
+      name: "Tarjeta",
+      style: alignTdStyles,
+      selector: ({ paymentCard }) => getCashValueTotal(paymentCard),
+    },
+    {
+      name: "Transferencia",
+      style: alignTdStyles,
+      selector: ({ paymentTransfer }) => getCashValueTotal(paymentTransfer),
+    },
+    {
+      name: "Vendido",
+      style: alignTdStyles,
+      selector: ({ totalPayment }) => getCashValueTotal(totalPayment),
+    },
+    {
+      name: "Promedio",
+      style: alignTdStyles,
+      selector: ({ totalPayment, totalSales }) =>
+        getCashValueTotal(totalPayment / totalSales),
+    },
+    {
+      name: "Realizadas",
+      style: alignTdStyles,
+      selector: ({ totalSales }) => totalSales,
+    },
+    {
+      name: "Canceladas",
+      style: alignTdStyles,
+      selector: ({ canceledSales }) => canceledSales,
+    },
+    {
+      name: "Distribuciones",
+      style: alignTdStyles,
+      selector: ({ distributions }) => distributions?.toLocaleString() || "0",
+    },
+    {
+      name: "Traspasos",
+      style: alignTdStyles,
+      selector: ({ transfers }) => transfers?.toLocaleString() || "0",
+    },
+    {
+      name: "Ganancia",
+      style: alignTdStyles,
+      selector: ({ profit }) => getCashValueTotal(profit),
+    },
+    {
+      name: "Caja",
+      style: alignTdStyles,
+      selector: ({ cash }) => getCashValueTotal(cash),
+    },
 
     // Inversión (si aplica)
     ...(showInvestment
@@ -395,128 +340,154 @@ const StoreList = () => {
           {
             name: "Inversión",
             style: alignTdStyles,
-            selector: ({ investment }) => investment,
+            selector: ({ investment }) => getCashValueTotal(investment),
           },
         ]
       : []),
+    
+    {
+      name: "Entrar",
+      selector: () => "",
+    },
+    {
+      name: "Opciones",
+      selector: () => "",
+    },
   ];
 
   return (
     <>
-      <Grid container>
-      <Grid item xs={12} className="custom-section">
-        <CustomSpinner isLoading={loading} />
+      <Grid container spacing={3}>
+        <Grid item xs={12} className="custom-section">
+          <CustomSpinner isLoading={loading} />
 
-        {tenantInfo.notices && tenantInfo.notices.length > 0 && (
-          <Grid container spacing={1}>
-            {tenantInfo.notices.map((variant, index) => (
-              <Grid item xs={12} key={index}>
-                <Alert severity="success">{variant}</Alert>
+          {tenantInfo.notices && tenantInfo.notices.length > 0 && (
+            <Box sx={{ mb: 3 }}>
+              <Grid container spacing={2}>
+                {tenantInfo.notices.map((variant, index) => (
+                  <Grid item xs={12} key={index}>
+                    <Alert severity="success">{variant}</Alert>
+                  </Grid>
+                ))}
               </Grid>
-            ))}
-          </Grid>
-        )}
+            </Box>
+          )}
 
-        <h1>{params.store_type === "T" ? "Tiendas" : "Almacenes"}</h1>
+          <Box sx={{ mb: 3 }}>
+            <h1>{params.store_type === "T" ? "Tiendas" : "Almacenes"}</h1>
+          </Box>
 
-        <Grid container spacing={2} alignItems="center">
-          <Grid item xs={12} md={4}>
-            <FormLabel className="me-3">Ver</FormLabel>
-            <FormControlLabel
-              control={
-                <Checkbox size="small"
-                  onChange={handleStoreType}
-                  value="T"
-                  checked={params.store_type === "T"}
+          <Box sx={{ mb: 3 }}>
+            <Grid container spacing={2} alignItems="center">
+              <Grid item xs={12} md={4}>
+                <FormLabel className="me-3">Ver</FormLabel>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      size="small"
+                      onChange={handleStoreType}
+                      value="T"
+                      checked={params.store_type === "T"}
+                    />
+                  }
+                  label="Tiendas"
                 />
-              }
-              label="Tiendas"
-            />
-            <FormControlLabel
-              control={
-                <Checkbox size="small"
-                  onChange={handleStoreType}
-                  value="A"
-                  checked={params.store_type === "A"}
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      size="small"
+                      onChange={handleStoreType}
+                      value="A"
+                      checked={params.store_type === "A"}
+                    />
+                  }
+                  label="Almacenes"
                 />
-              }
-              label="Almacenes"
-            />
-          </Grid>
+              </Grid>
 
-          <Grid item xs={12} md={4} style={{ textAlign: "center" }}>
-            <b>{tenantInfo.product_count} productos registrados</b>
-          </Grid>
+              <Grid item xs={12} md={4} style={{ textAlign: "center" }}>
+                <b>{tenantInfo.product_count} productos registrados</b>
+              </Grid>
 
-          <Grid item xs={12} md={4}>
-            <CustomButton fullWidth onClick={handleShowInvestment} startIcon={<AttachMoneyIcon />}>
-              Ver inversión
-            </CustomButton>
-          </Grid>
-        </Grid>
+              <Grid item xs={12} md={4}>
+                <CustomButton
+                  fullWidth
+                  onClick={handleShowInvestment}
+                  startIcon={<AttachMoneyIcon />}
+                >
+                  Ver inversión
+                </CustomButton>
+              </Grid>
+            </Grid>
+          </Box>
 
-        {params.store_type === "T" && (
-          <Box component="form" className="pb-2">
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6} md={3}>
-                <Box controlId="start_date">
-                  <TextField size="small" fullWidth label="Fecha de inicio" name="start_date"
+          {params.store_type === "T" && (
+            <Box component="form" sx={{ mb: 3 }}>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={6} md={3}>
+                  <TextField
+                    size="small"
+                    fullWidth
+                    label="Fecha de inicio"
+                    name="start_date"
                     type="date"
                     value={params.start_date}
                     onChange={handleParams}
-                    max={today}
+                    inputProps={{ max: today }}
                   />
-                </Box>
-              </Grid>
+                </Grid>
 
-              <Grid item xs={12} sm={6} md={3}>
-                <Box controlId="end_date">
-                  <TextField size="small" fullWidth label="Fecha de fin" name="end_date"
+                <Grid item xs={12} sm={6} md={3}>
+                  <TextField
+                    size="small"
+                    fullWidth
+                    label="Fecha de fin"
+                    name="end_date"
                     type="date"
                     value={params.end_date}
                     onChange={handleParams}
-                    max={today}
+                    inputProps={{ max: today }}
                   />
-                </Box>
-              </Grid>
+                </Grid>
 
-              <Grid item xs={12} sm={6} md={3}>
-                <Box controlId="range">
-                  <TextField size="small" fullWidth label="Rango" name="range"
+                <Grid item xs={12} sm={6} md={3}>
+                  <TextField
+                    size="small"
+                    fullWidth
+                    label="Rango"
+                    name="range"
                     type="text"
                     value={range}
                     disabled
                   />
-                </Box>
-              </Grid>
-
-              {departments.length > 0 && (
-                <Grid item xs={12} sm={6} md={3}>
-                  <Box controlId="department_id">
-                    <FormControl fullWidth size="small">
-              <InputLabel>Departamento</InputLabel>
-              <Select fullWidth size="small" value={params.department_id}
-                      onChange={handleParams}
-                      name="department_id"
-                     label="Departamento">
-                      <MenuItem value="">Todos</MenuItem>
-                      <MenuItem value="0">Sin departamento</MenuItem>
-                      {departments.map((departament) => (
-                        <MenuItem key={departament.id} value={departament.id}>
-                          {departament.name}
-                        </MenuItem>
-                      ))}
-                    </Select>
-            </FormControl>
-                  </Box>
                 </Grid>
-              )}
-            </Grid>
-          </Box>
-        )}
 
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
+                {departments.length > 0 && (
+                  <Grid item xs={12} sm={6} md={3}>
+                    <FormControl fullWidth size="small">
+                      <InputLabel>Departamento</InputLabel>
+                      <Select
+                        value={params.department_id || ""}
+                        onChange={handleParams}
+                        name="department_id"
+                        label="Departamento"
+                      >
+                        <MenuItem value="">Todos</MenuItem>
+                        <MenuItem value="0">Sin departamento</MenuItem>
+                        {departments.map((departament) => (
+                          <MenuItem key={departament.id} value={departament.id}>
+                            {departament.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                )}
+              </Grid>
+            </Box>
+          )}
+
+          <Box sx={{ mb: 2 }}>
             <CustomTable
               progressPending={loading}
               data={memoStores}
@@ -524,15 +495,13 @@ const StoreList = () => {
                 params.store_type === "T" ? columnsStore : columnsStorages
               }
             />
-          </Grid>
-        </Grid>
+          </Box>
 
-        {params.store_type === "T" && stores.length > 1 && (
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <h2 className="pt-2">Totales</h2>
-            </Grid>
-            <Grid item xs={12}>
+          {params.store_type === "T" && stores.length > 1 && (
+            <Box sx={{ mt: 4 }}>
+              <Box sx={{ mb: 2 }}>
+                <h2>Totales</h2>
+              </Box>
               <CustomTable
                 progressPending={loading}
                 data={[
@@ -546,16 +515,17 @@ const StoreList = () => {
                     investment: totals.investment,
                     totalSales: `${totals.totalSales}`,
                     canceledSales: totals.canceledSales,
+                    distributions: totals.distributions,
+                    transfers: totals.transfers,
                   },
                 ]}
                 columns={columnsTotals}
               />
-            </Grid>
-          </Grid>
-        )}
+            </Box>
+          )}
+        </Grid>
       </Grid>
-    </Grid>
-  </>
+    </>
   );
 };
 
