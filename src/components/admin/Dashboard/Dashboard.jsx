@@ -3,13 +3,16 @@ import { getSalesDashboard } from "../../../api/sales";
 import { getTaskResult } from "../../../api/products";
 import LineChart from "./LineChart";
 import DoughnutChart from "./DoughnutChart";
-import { Grid } from "@mui/material";
+import { Grid, FormControl, InputLabel, Select, MenuItem, Box } from "@mui/material";
+import { showError } from "../../../utils/alerts";
 
 const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
+  const [metricType, setMetricType] = useState("count");
+  const [year, setYear] = useState(new Date().getFullYear());
   
   const fetchData = async () => {
-    const response = await getSalesDashboard();
+    const response = await getSalesDashboard({ year });
     const taskId = response.data.task;
     
     // Poll para obtener el resultado
@@ -21,9 +24,13 @@ const Dashboard = () => {
         if (status === "SUCCESS") {
           setDashboardData(result);
           clearInterval(intervalId);
+        } else if (status === "FAILURE") {
+          showError("Error al cargar los datos del dashboard", taskData.error.message || "Error desconocido");
+          clearInterval(intervalId);
         }
       } catch (error) {
         console.error("Error fetching task result:", error);
+        showError("Error al obtener los datos del dashboard", error.response?.data?.message || error.message || "Error de conexión");
         clearInterval(intervalId);
       }
     };
@@ -35,18 +42,46 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [year]);
 
   return (
     <div>
       <Grid className="custom-section">
         <h1>Tablero</h1>
 
+        <Box sx={{ mb: 3, display: 'flex', gap: 2 }}>
+          <FormControl sx={{ minWidth: 150 }}>
+            <InputLabel>Año</InputLabel>
+            <Select
+              value={year}
+              label="Año"
+              onChange={(e) => setYear(e.target.value)}
+            >
+              {Array.from({ length: new Date().getFullYear() - 2024 }, (_, i) => 2025 + i).map(y => (
+                <MenuItem key={y} value={y}>{y}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <FormControl sx={{ minWidth: 200 }}>
+            <InputLabel>Métrica</InputLabel>
+            <Select
+              value={metricType}
+              label="Métrica"
+              onChange={(e) => setMetricType(e.target.value)}
+            >
+              <MenuItem value="count">Cantidad de ventas</MenuItem>
+              <MenuItem value="total">Monto total</MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
+
         <Grid container>
           <Grid item xs={12} md={6}>
             <LineChart
               title={"Ventas por mes"}
               data={dashboardData}
+              metricType={metricType}
               labels={[
                 "Ene",
                 "Feb",
@@ -70,6 +105,7 @@ const Dashboard = () => {
             <LineChart
               title={"Ventas por dia"}
               data={dashboardData}
+              metricType={metricType}
               labels={[
                 "Domingo",
                 "Lunes",
@@ -89,6 +125,7 @@ const Dashboard = () => {
             <LineChart
               title={"Ventas por hora"}
               data={dashboardData}
+              metricType={metricType}
               labels={[
                 "0:00",
                 "1:00",
@@ -127,6 +164,7 @@ const Dashboard = () => {
             <DoughnutChart
               title={"% Ventas por tienda"}
               data={dashboardData}
+              metricType={metricType}
               dataType="store"
             />
           </Grid>
