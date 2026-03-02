@@ -3,7 +3,7 @@ import { getSalesDashboard } from "../../../api/sales";
 import { getTaskResult } from "../../../api/products";
 import LineChart from "./LineChart";
 import DoughnutChart from "./DoughnutChart";
-import { Grid, FormControl, InputLabel, Select, MenuItem, Box, Typography, CircularProgress } from "@mui/material";
+import { Grid, FormControl, InputLabel, Select, MenuItem, Box, Typography, CircularProgress, LinearProgress } from "@mui/material";
 import { showError } from "../../../utils/alerts";
 
 const Dashboard = () => {
@@ -11,9 +11,11 @@ const Dashboard = () => {
   const [metricType, setMetricType] = useState("count");
   const [year, setYear] = useState(new Date().getFullYear());
   const [loading, setLoading] = useState(true);
+  const [progress, setProgress] = useState(0);
   
   const fetchData = async () => {
     setLoading(true);
+    setProgress(0);
     const response = await getSalesDashboard({ year });
     const taskId = response.data.task;
     
@@ -21,21 +23,29 @@ const Dashboard = () => {
     const pollTask = async () => {
       try {
         const { data: taskData } = await getTaskResult(taskId);
-        const { result, status } = taskData;
+        const { result, status, meta } = taskData;
+
+        // Actualizar progreso si está disponible
+        if (meta?.current && meta?.total) {
+          setProgress((meta.current / meta.total) * 100);
+        }
 
         if (status === "SUCCESS") {
           setDashboardData(result);
           setLoading(false);
+          setProgress(100);
           clearInterval(intervalId);
         } else if (status === "FAILURE") {
           showError("Error al cargar los datos del dashboard", taskData.error.message || "Error desconocido");
           setLoading(false);
+          setProgress(0);
           clearInterval(intervalId);
         }
       } catch (error) {
         console.error("Error fetching task result:", error);
         showError("Error al obtener los datos del dashboard", error.response?.data?.message || error.message || "Error de conexión");
         setLoading(false);
+        setProgress(0);
         clearInterval(intervalId);
       }
     };
@@ -50,11 +60,20 @@ const Dashboard = () => {
   }, [year]);
 
   return (
-    <Box >
-      <Box className="custom-section" >
+    <Box>
+      <Box className="custom-section">
         <Typography variant="h4" sx={{ mb: 3, fontWeight: 600, color: 'var(--color-primary)' }}>
           Dashboard de Ventas
         </Typography>
+
+        {loading && (
+          <Box sx={{ width: '100%', mb: 3 }}>
+            <LinearProgress variant="determinate" value={progress} />
+            <Typography variant="caption" sx={{ mt: 0.5, display: 'block', textAlign: 'center' }}>
+              Cargando datos... {Math.round(progress)}%
+            </Typography>
+          </Box>
+        )}
 
         <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
           <FormControl size="small" sx={{ minWidth: 150 }}>
