@@ -52,8 +52,8 @@ const DoughnutChart = ({ title, data, dataType, metricType = 'count' }) => {
   }, [data, dataType, metricType]);
 
   return (
-    <Box sx={{ width: '100%', height: 400 }}>
-      <Typography variant="h6" sx={{ mb: 2, textAlign: 'center' }}>
+    <Box sx={{ width: '100%', height: '100%' }}>
+      <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, color: 'var(--color-primary)' }}>
         {title}
       </Typography>
       <PieChart
@@ -61,13 +61,22 @@ const DoughnutChart = ({ title, data, dataType, metricType = 'count' }) => {
           {
             data: chartData,
             innerRadius: 60,
-            outerRadius: 120,
+            outerRadius: 100,
             paddingAngle: 2,
             cornerRadius: 5,
+            arcLabel: 'value',
+            arcLabelMinAngle: 35,
           },
         ]}
-        height={350}
+        height={300}
         margin={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        slotProps={{
+          legend: {
+            direction: 'column',
+            position: { vertical: 'middle', horizontal: 'right' },
+            padding: 0,
+          },
+        }}
       />
     </Box>
   );

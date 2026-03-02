@@ -93,8 +93,8 @@ const LineChart = ({ title, data, labels, xText, yText, dataType, metricType = '
   }, [data, dataType, metricType, labels]);
 
   return (
-    <Box sx={{ width: '100%', height: 400 }}>
-      <Typography variant="h6" sx={{ mb: 2, textAlign: 'center' }}>
+    <Box sx={{ width: '100%', height: '100%' }}>
+      <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, color: 'var(--color-primary)' }}>
         {title}
       </Typography>
       <MuiLineChart
@@ -107,7 +107,7 @@ const LineChart = ({ title, data, labels, xText, yText, dataType, metricType = '
           min: 0,
         }]}
         series={series}
-        height={350}
+        height={300}
         margin={{ top: 10, bottom: 50, left: 70, right: 10 }}
       />
     </Box>
