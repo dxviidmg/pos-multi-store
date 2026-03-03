@@ -6,7 +6,7 @@ const processData = (result, dataType, metricType) => {
   if (!result || !result.sales || result.sales.length === 0) return [];
 
   const { sales } = result;
-  const colors = ['#1976d2', '#dc004e', '#ff9800', '#4caf50', '#9c27b0'];
+  const colors = ['#2563eb', '#7c3aed', '#059669', '#dc2626', '#ea580c'];
 
   switch (dataType) {
     case 'payment': {
@@ -53,19 +53,19 @@ const DoughnutChart = ({ title, data, dataType, metricType = 'count' }) => {
 
   return (
     <Box sx={{ width: '100%', height: '100%' }}>
-      <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, color: 'var(--color-primary)' }}>
+      <Typography variant="h6" sx={{ mb: 2, fontWeight: 500, color: '#1e293b' }}>
         {title}
       </Typography>
       <PieChart
         series={[
           {
             data: chartData,
-            innerRadius: 60,
-            outerRadius: 100,
-            paddingAngle: 2,
-            cornerRadius: 5,
-            arcLabel: 'value',
-            arcLabelMinAngle: 35,
+            innerRadius: 65,
+            outerRadius: 105,
+            paddingAngle: 1,
+            cornerRadius: 4,
+            highlightScope: { faded: 'global', highlighted: 'item' },
+            faded: { innerRadius: 60, additionalRadius: -5, color: 'gray' },
           },
         ]}
         height={300}
@@ -75,6 +75,20 @@ const DoughnutChart = ({ title, data, dataType, metricType = 'count' }) => {
             direction: 'column',
             position: { vertical: 'middle', horizontal: 'right' },
             padding: 0,
+            itemMarkWidth: 12,
+            itemMarkHeight: 12,
+            markGap: 8,
+            itemGap: 10,
+            labelStyle: {
+              fontSize: 13,
+              fill: '#475569',
+            },
+          },
+        }}
+        sx={{
+          '& .MuiPieArc-root': {
+            stroke: '#fff',
+            strokeWidth: 2,
           },
         }}
       />
