@@ -18,11 +18,7 @@ const CustomButton = ({
       href={href}
       fullWidth={fullWidth}
       variant="contained"
-      sx={{
-        marginTop: '3px',
-        marginBottom: '8px',
-        whiteSpace: "nowrap",
-      }}
+      
       {...props}
     >
       {children}
