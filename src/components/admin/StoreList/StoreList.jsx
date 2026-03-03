@@ -446,6 +446,15 @@ const StoreList = () => {
       filtered = allColumns.filter(col => ["Nombre", "Administrador", "Entrar"].includes(col.name));
     } else if (quickFilter === "printer") {
       filtered = allColumns.filter(col => ["Nombre", "Impresora", "Entrar"].includes(col.name));
+    } else if (quickFilter === "synced") {
+      filtered = [
+        allColumns.find(col => col.name === "Nombre"),
+        {
+          name: "Catálogo",
+          selector: () => "",
+        },
+        allColumns.find(col => col.name === "Entrar"),
+      ];
     } else {
       filtered = allColumns;
     }
