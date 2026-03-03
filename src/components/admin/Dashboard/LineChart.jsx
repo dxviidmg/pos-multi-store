@@ -6,7 +6,7 @@ const processData = (result, dataType, metricType, labels) => {
   if (!result || !result.sales || result.sales.length === 0) return [];
 
   const { stores, sales } = result;
-  const colors = ['#1976d2', '#dc004e', '#ff9800', '#4caf50', '#9c27b0'];
+  const colors = ['#2563eb', '#7c3aed', '#059669', '#dc2626', '#ea580c'];
 
   switch (dataType) {
     case 'monthly': {
@@ -94,7 +94,7 @@ const LineChart = ({ title, data, labels, xText, yText, dataType, metricType = '
 
   return (
     <Box sx={{ width: '100%', height: '100%' }}>
-      <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, color: 'var(--color-primary)' }}>
+      <Typography variant="h6" sx={{ mb: 2, fontWeight: 500, color: '#1e293b' }}>
         {title}
       </Typography>
       <MuiLineChart
@@ -102,13 +102,32 @@ const LineChart = ({ title, data, labels, xText, yText, dataType, metricType = '
           data: labels || [],
           scaleType: 'point',
           label: xText,
+          labelStyle: { fontSize: 12, fill: '#64748b' },
+          tickLabelStyle: { fontSize: 11, fill: '#64748b' },
         }]}
         yAxis={[{ 
           min: 0,
+          labelStyle: { fontSize: 12, fill: '#64748b' },
+          tickLabelStyle: { fontSize: 11, fill: '#64748b' },
         }]}
-        series={series}
+        series={series.map(s => ({
+          ...s,
+          curve: 'linear',
+          showMark: true,
+          area: false,
+        }))}
         height={300}
         margin={{ top: 10, bottom: 50, left: 70, right: 10 }}
+        grid={{ vertical: true, horizontal: true }}
+        sx={{
+          '& .MuiLineElement-root': {
+            strokeWidth: 2.5,
+          },
+          '& .MuiMarkElement-root': {
+            scale: '0.8',
+            strokeWidth: 2,
+          },
+        }}
       />
     </Box>
   );

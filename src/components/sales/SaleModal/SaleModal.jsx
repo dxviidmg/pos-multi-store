@@ -19,7 +19,7 @@ const SaleModal = ({ isOpen, sale, onClose, onUpdate }) => {
   const cancelMutation = useCancelSale();
 
   useEffect(() => {
-    setFormData(sale.id ? sale : INITIAL_FORM_DATA);
+    setFormData(sale?.id ? sale : INITIAL_FORM_DATA);
     setQuantitiesToCancel({});
     setSelectedRows([]);
   }, [sale]);

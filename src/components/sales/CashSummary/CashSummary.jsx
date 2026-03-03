@@ -13,8 +13,11 @@ import { getCashFlow } from "../../../api/cashflow";
 import CashFlowModal from "../../finance/CashFlowModal/CashFlowModal";
 import { useModal } from "../../../hooks/useModal";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
-import { Grid, TextField, Box, FormLabel } from "@mui/material";
+import { Grid, TextField, Box, Typography, Stack } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
+import PaymentIcon from "@mui/icons-material/Payment";
+import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
+import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
 
 const CashSummary = () => {
   const cashFlowModal = useModal();
@@ -101,103 +104,109 @@ const CashSummary = () => {
 
   return (
     <>
-      <CustomSpinner isLoading={loading}></CustomSpinner>
+      <CustomSpinner isLoading={loading} />
       <CashFlowModal 
         isOpen={cashFlowModal.isOpen}
         cashFlow={cashFlowModal.data}
         onClose={cashFlowModal.close}
         onUpdate={handleUpdateCashFlowList}
       />
-      <Grid container>
+      
       <Grid item xs={12} className="custom-section">
-        <h1>Corte de caja</h1>
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={6}>
-            <Box component="form">
-              <Box className="">
-                <FormLabel className="">Fecha</FormLabel>
-                <TextField size="small" fullWidth type="date"
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
-                  max={today}
-                />
-              </Box>
-            </Box>
-          </Grid>
-          <Grid item xs={12} md={6} className="d-flex flex-column justify-content-end">
-            <CustomButton onClick={handleExport} fullWidth startIcon={<DownloadIcon />}>
-              Descargar corte del dia
-            </CustomButton>
-          </Grid>
+        {/* Header */}
+        <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
+          <Typography variant="h4" component="h1">Corte de caja</Typography>
+          <CustomButton onClick={handleExport} startIcon={<DownloadIcon />}>
+            Descargar corte
+          </CustomButton>
+        </Stack>
 
+        {/* Selector de fecha */}
+        <Box sx={{ mb: 3, maxWidth: 300 }}>
+          <TextField 
+            size="small" 
+            fullWidth 
+            type="date"
+            label="Fecha"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            inputProps={{ max: today }}
+          />
+        </Box>
+
+        {/* Tarjetas de resumen */}
+        <Grid container spacing={3}>
+          {/* Métodos de pago */}
           <Grid item xs={12} md={4}>
-            <h2>Métodos de pago</h2>
+            <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
+              <PaymentIcon color="primary" />
+              <Typography variant="h6">Métodos de pago</Typography>
+            </Stack>
             <CustomTable
               data={paymentMethodsSummary}
               columns={[
                 {
                   name: "Tipo",
                   selector: (row) => row.name,
+                  grow: 1.5,
                 },
                 {
                   name: "Cantidad",
-                  style: {
-                    justifyContent: "flex-end", // para alinear dentro del td con flexbox
-                    textAlign: "right",
-                  },
                   selector: (row) => "$" + row.amount,
+                  grow: 1,
                 },
               ]}
             />
           </Grid>
 
-
-
+          {/* Flujo de caja */}
           <Grid item xs={12} md={4}>
-            <h2>Flujo de caja</h2>
+            <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
+              <AccountBalanceWalletIcon color="primary" />
+              <Typography variant="h6">Flujo de caja</Typography>
+            </Stack>
             <CustomTable
               data={cashFlowSummary}
               columns={[
                 {
                   name: "Tipo",
                   selector: (row) => row.name,
+                  grow: 1.5,
                 },
                 {
                   name: "Cantidad",
-                  style: {
-                    justifyContent: "flex-end", // para alinear dentro del td con flexbox
-                    textAlign: "right",
-                  },
                   selector: (row) => "$" + row.amount,
+                  grow: 1,
                 },
               ]}
             />
           </Grid>
 
+          {/* Total en caja */}
           <Grid item xs={12} md={4}>
-            <h2> Total en caja</h2>
+            <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
+              <PointOfSaleIcon color="primary" />
+              <Typography variant="h6">Total en caja</Typography>
+            </Stack>
             <CustomTable
               data={totalSummary}
               columns={[
                 {
                   name: "Tipo",
                   selector: (row) => row.name,
+                  grow: 1.5,
                 },
                 {
                   name: "Cantidad",
-                  style: {
-                    justifyContent: "flex-end", // para alinear dentro del td con flexbox
-                    textAlign: "right",
-                  },
                   selector: (row) => row.name === "Ventas canceladas" ? row.amount : "$" + row.amount,
+                  grow: 1,
                 },
               ]}
             />
           </Grid>
         </Grid>
       </Grid>
-    </Grid>
-  </>
+    </>
   );
 };
 

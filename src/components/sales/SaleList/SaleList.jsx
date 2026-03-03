@@ -225,7 +225,7 @@ const SaleList = () => {
           ) : null}
 
           <Grid item xs={3}>
-            <CustomButton onClick={() => setShowAllFields((prev) => !prev)} startIcon={<VisibilityIcon />}>
+            <CustomButton onClick={() => setShowAllFields((prev) => !prev)} startIcon={<VisibilityIcon />} fullWidth>
               Ver todos los campos
             </CustomButton>
           </Grid>
