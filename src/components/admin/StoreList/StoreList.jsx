@@ -15,6 +15,7 @@ import { useTenantInfo } from "../../../hooks/useTenantInfo";
 import { useDepartments } from "../../../hooks/useDepartments";
 import { useInvestment } from "../../../hooks/useInvestment";
 import { Grid, FormLabel, FormControlLabel, Checkbox, Box, TextField, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import { CustomSpinner } from "../../ui/Spinner/Spinner";
 
 
 const StoreList = () => {
@@ -436,6 +437,7 @@ const StoreList = () => {
 
   return (
     <>
+      <CustomSpinner isLoading={loading} />
       <Grid container>
         <Grid item xs={12} className="custom-section">
           {tenantInfo.notices && tenantInfo.notices.length > 0 && (
