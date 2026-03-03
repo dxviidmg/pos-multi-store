@@ -269,6 +269,24 @@ const StoreList = () => {
       filtered = allColumns.filter(col => ["Nombre", "Administrador", "Entrar"].includes(col.name));
     } else if (quickFilter === "printer") {
       filtered = allColumns.filter(col => ["Nombre", "Impresora", "Entrar"].includes(col.name));
+    } else if (quickFilter === "synced") {
+      filtered = [
+        allColumns.find(col => col.name === "Nombre"),
+        {
+          name: "Catálogo",
+          cell: ({ products_count }) => (
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+              <span style={{ fontSize: '13px', color: '#64748b' }}>
+                Debe ser: <strong>{tenantInfo.product_count}</strong>
+              </span>
+              <span style={{ fontSize: '13px', color: '#dc2626' }}>
+                Faltan: <strong>{tenantInfo.product_count - products_count}</strong>
+              </span>
+            </Box>
+          ),
+        },
+        allColumns.find(col => col.name === "Entrar"),
+      ];
     } else {
       filtered = allColumns;
     }
