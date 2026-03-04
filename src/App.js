@@ -1,92 +1,94 @@
 import "./App.css";
-import Login from "./components/login/Login";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import CustomNavbar from "./components/navbar/Navbar";
-import { useState, useEffect } from "react";
-import SaleCreate from "./components/saleCreate/SaleCreate";
-import SaleList from "./components/saleList/SaleList";
-import TransferList from "./components/transferList/TransferList";
-import ClientList from "./components/clientList/ClientList";
-import ProductList from "./components/productList/ProductList";
-import BrandList from "./components/brandList/BrandList";
-import SaleImport from "./components/saleImport/SaleImport";
-import StoreProductList from "./components/storeProductList/StoreProductList";
-import StoreList from "./components/storeList/StoreList";
-import ProductImport from "./components/productImport/ProductImport";
-import CashSummary from "./components/cashSummary/CashSummary";
-import LogList from "./components/logList/LogList";
-import TenantPaymentList from "./components/tenantPaymentList/TenantPaymentList";
-import CashFlowList from "./components/cashFlowList/CashFlowList";
-import SellerList from "./components/sellerList/SellerList";
-import { getUserData } from "./components/apis/utils";
-import DepartmentList from "./components/departmentList/DepartmentList";
-import StoreProductImport from "./components/storeProductImport/StoreProductImport";
-import ServiceList from "./components/serviceList/ServiceList";
-import ProductReassign from "./components/productReassign/ProductReassign";
-import useKeepAlive from "./components/apis/keepAlive";
-import AuditDashboard from "./components/auditDashboard/AuditDashboard";
-import Dashboard from "./components/dashboard/Dashboard";
-import DistributionList from "./components/distributionList/DistributionList";
-import RestartRervice from "./components/restartService/RestartService";
+import { useState, useEffect, lazy, Suspense } from "react";
+import { getUserData } from "./api/utils";
+import useKeepAlive from "./api/keepAlive";
+import LoadingFallback from "./components/ui/LoadingFallback";
+
+// Componentes críticos (carga inmediata)
+import Login from "./components/layout/Login/Login";
+import MiniDrawer from "./components/layout/Navbar/SideBar";
+
+// Lazy loading para rutas
+const SaleCreate = lazy(() => import("./components/sales/SaleCreate/SaleCreate"));
+const SaleList = lazy(() => import("./components/sales/SaleList/SaleList"));
+const TransferList = lazy(() => import("./components/inventory/TransferList/TransferList"));
+const ClientList = lazy(() => import("./components/clients/ClientList/ClientList"));
+const ProductList = lazy(() => import("./components/products/ProductList/ProductList"));
+const BrandList = lazy(() => import("./components/catalog/BrandList/BrandList"));
+const SaleImport = lazy(() => import("./components/sales/SaleImport/SaleImport"));
+const StoreProductList = lazy(() => import("./components/products/StoreProductList/StoreProductList"));
+const StoreList = lazy(() => import("./components/admin/StoreList/StoreList"));
+const ProductImport = lazy(() => import("./components/products/ProductImport/ProductImport"));
+const CashSummary = lazy(() => import("./components/sales/CashSummary/CashSummary"));
+const LogList = lazy(() => import("./components/admin/LogList/LogList"));
+const TenantPaymentList = lazy(() => import("./components/finance/TenantPaymentList/TenantPaymentList"));
+const CashFlowList = lazy(() => import("./components/finance/CashFlowList/CashFlowList"));
+const SellerList = lazy(() => import("./components/catalog/SellerList/SellerList"));
+const DepartmentList = lazy(() => import("./components/catalog/DepartmentList/DepartmentList"));
+const StoreProductImport = lazy(() => import("./components/products/StoreProductImport/StoreProductImport"));
+const ServiceList = lazy(() => import("./components/admin/ServiceList/ServiceList"));
+const ProductReassign = lazy(() => import("./components/products/ProductReassign/ProductReassign"));
+const AuditDashboard = lazy(() => import("./components/admin/AuditDashboard/AuditDashboard"));
+const Dashboard = lazy(() => import("./components/admin/Dashboard/Dashboard"));
+const DistributionList = lazy(() => import("./components/inventory/DistributionList/DistributionList"));
+const RestartService = lazy(() => import("./components/admin/RestartService/RestartService"));
 
 function App() {
-
-  useKeepAlive()
+  useKeepAlive();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
   const user = getUserData();
 
   useEffect(() => {
-    const user = getUserData();
     if (user) {
       setIsLoggedIn(true);
     }
   }, []);
 
-  const handleLogin = () => {
-    setIsLoggedIn(true);
-  };
+  const handleLogin = () => setIsLoggedIn(true);
 
   return (
     <Router>
-      {isLoggedIn ? <CustomNavbar /> : ""}
-
       <Routes>
         {isLoggedIn ? (
-          <>
-            <Route path="/tiendas/" element={<StoreList />} />
-            <Route path="/ventas/" element={<SaleList />} />
-            <Route path="/vender/" element={<SaleCreate />} />
-            <Route path="/importar-ventas/" element={<SaleImport />} />
-            <Route path="/corte-caja/" element={<CashSummary />} />
-            <Route path="/movimientos/" element={<CashFlowList />} />
-            <Route path="/distribuir/" element={<SaleCreate />} />
-            <Route path="/distribuciones/" element={<DistributionList />} />
-            <Route path="/traspasos/" element={<TransferList />} />
-            <Route path="/clientes/" element={<ClientList />} />
-            <Route path="/productos/" element={<ProductList />} />
-            <Route path="/importar-productos/" element={<ProductImport />} />
-            <Route path="/inventario/" element={<StoreProductList />} />
-            <Route path="/importar-inventario/" element={<StoreProductImport />} />
-            <Route path="/marcas/" element={<BrandList />} />
-            <Route path="/departamentos/" element={<DepartmentList />} />
-            <Route path="/reasignacion/" element={<ProductReassign />} />
-            <Route path="/logs/" element={<LogList />} />
-            <Route path="/pagos/" element={<TenantPaymentList />} />
-            <Route path="/vendedores/" element={<SellerList />} />
-            <Route path="/servicios/" element={<ServiceList />} />
-            <Route path="/tablero-auditoria/" element={<AuditDashboard />} />
-            <Route path="/tablero/" element={<Dashboard />} />
-            <Route path="/sincronizar/" element={<RestartRervice />} />
-            {user.store_id ? (<Route path="/*" element={<SaleCreate />} />): (<Route path="/*" element={<StoreList />} />)}
-          </>
+          <Route element={<MiniDrawer />}>
+            <Route path="/tiendas/" element={<Suspense fallback={<LoadingFallback />}><StoreList /></Suspense>} />
+            <Route path="/ventas/" element={<Suspense fallback={<LoadingFallback />}><SaleList /></Suspense>} />
+            <Route path="/vender/" element={<Suspense fallback={<LoadingFallback />}><SaleCreate /></Suspense>} />
+            <Route path="/importar-ventas/" element={<Suspense fallback={<LoadingFallback />}><SaleImport /></Suspense>} />
+            <Route path="/corte-caja/" element={<Suspense fallback={<LoadingFallback />}><CashSummary /></Suspense>} />
+            <Route path="/movimientos/" element={<Suspense fallback={<LoadingFallback />}><CashFlowList /></Suspense>} />
+            <Route path="/distribuciones/" element={<Suspense fallback={<LoadingFallback />}><DistributionList /></Suspense>} />
+            <Route path="/traspasos/" element={<Suspense fallback={<LoadingFallback />}><TransferList /></Suspense>} />
+            <Route path="/clientes/" element={<Suspense fallback={<LoadingFallback />}><ClientList /></Suspense>} />
+            <Route path="/productos/" element={<Suspense fallback={<LoadingFallback />}><ProductList /></Suspense>} />
+            <Route path="/inventario/" element={<Suspense fallback={<LoadingFallback />}><StoreProductList /></Suspense>} />
+            <Route path="/marcas/" element={<Suspense fallback={<LoadingFallback />}><BrandList /></Suspense>} />
+            <Route path="/departamentos/" element={<Suspense fallback={<LoadingFallback />}><DepartmentList /></Suspense>} />
+            <Route path="/logs/" element={<Suspense fallback={<LoadingFallback />}><LogList /></Suspense>} />
+            <Route path="/pagos/" element={<Suspense fallback={<LoadingFallback />}><TenantPaymentList /></Suspense>} />
+            <Route path="/vendedores/" element={<Suspense fallback={<LoadingFallback />}><SellerList /></Suspense>} />
+            <Route path="/servicios/" element={<Suspense fallback={<LoadingFallback />}><ServiceList /></Suspense>} />
+            <Route path="/tablero/" element={<Suspense fallback={<LoadingFallback />}><Dashboard /></Suspense>} />
+            <Route path="/reasignacion/" element={<Suspense fallback={<LoadingFallback />}><ProductReassign /></Suspense>} />
+            <Route path="/importar-productos/" element={<Suspense fallback={<LoadingFallback />}><ProductImport /></Suspense>} />
+            <Route path="/importar-inventario/" element={<Suspense fallback={<LoadingFallback />}><StoreProductImport /></Suspense>} />
+            <Route path="/auditoria/" element={<Suspense fallback={<LoadingFallback />}><AuditDashboard /></Suspense>} />
+            <Route path="/sincronizar/" element={<Suspense fallback={<LoadingFallback />}><RestartService /></Suspense>} />
+            {user?.store_id ? (
+              <Route path="*" element={<Suspense fallback={<LoadingFallback />}><SaleCreate /></Suspense>} />
+            ) : (
+              <Route path="*" element={<Suspense fallback={<LoadingFallback />}><StoreList /></Suspense>} />
+            )}
+          </Route>
         ) : (
-          <Route path="/" element={<Login onLogin={handleLogin} />} />
+          <Route path="*" element={<Login onLogin={handleLogin} />} />
         )}
       </Routes>
     </Router>
   );
+  
 }
 
 export default App;

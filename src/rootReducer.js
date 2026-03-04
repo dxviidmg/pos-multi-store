@@ -1,30 +1,10 @@
 import { combineReducers } from "redux";
-import cartReducer from "./components/redux/cart/cartReducer";
-import StockModalReducer from "./components/redux/stockModal/StockModalReducer";
-import PaymentModalReducer from "./components/redux/paymentModal/PaymentModalReducer";
-import BrandModalReducer from "./components/redux/brandModal/BrandModalReducer";
-import ProductModalReducer from "./components/redux/productModal/ProductModalReducer";
-import ClientModalReducer from "./components/redux/clientModal/ClientModalReducer";
-import SaleModalReducer from "./components/redux/saleModal/SaleModalReducer";
-import LogsModalReducer from "./components/redux/logsModal/LogsModalReducer";
-import CashFlowModalReducer from "./components/redux/cashFlowModal/CashFlowModalReducer";
-import SellerModalReducer from "./components/redux/sellerModal/SellerModalReducer";
-import DepartmentModalReducer from "./components/redux/departmentModal/DepartmentModalReducer";
-import PaymentModal2Reducer from "./components/redux/paymentReservationModal/PaymentReservationModalReducer";
+import cartReducer from "./redux/cart/cartReducer";
+import multiCartReducer from "./redux/cart/multiCartReducer";
 
 const rootReducer = combineReducers({
   cartReducer,
-  StockModalReducer,
-  PaymentModalReducer,
-  BrandModalReducer,
-  ProductModalReducer,
-  ClientModalReducer,
-  SaleModalReducer,
-  LogsModalReducer,
-  CashFlowModalReducer,
-  SellerModalReducer,
-  DepartmentModalReducer,
-  PaymentModal2Reducer
+  multiCartReducer,
 });
 
 export default rootReducer;
