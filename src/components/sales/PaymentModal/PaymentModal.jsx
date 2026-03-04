@@ -456,10 +456,10 @@ const PaymentModal = ({ isOpen, onClose }) => {
               <Grid item xs={12} md={6}>
                 <FormLabel className="me-3">Medios de pago:</FormLabel>
                 {["EF", "TA", "TR"].map((method) => (
-                  <div key={method} className="d-flex align-items-center" style={{ marginBottom: '4px' }}>
+                  <div key={method} className="d-flex align-items-center">
                     <div className="me-3" style={{ flex: "1" }}>
                       <FormControlLabel
-                        sx={{ mb: 0 }}
+                        sx={{ mb: -1 }}
                         control={
                           paymentMethods.type === "radio" ? (
                             <Radio

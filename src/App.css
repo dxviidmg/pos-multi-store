@@ -6,7 +6,7 @@
   --color-text: #000;
 }
 
-body, p, span, div, td, th, label, input, textarea {
+p{
   color: #000 !important;
   font-weight: bold !important;
 }
