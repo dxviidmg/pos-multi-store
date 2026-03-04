@@ -130,16 +130,33 @@ const SaleList = () => {
                 ? productsModal.data.products_sale.filter((item) => item.quantity === 0)
                 : productsModal.data.products_sale.filter((item) => item.quantity !== 0);
               
-              return productsToShow.map((item, index) => (
-                <div key={index} style={{ marginBottom: '12px', padding: '8px', borderBottom: '1px solid #eee' }}>
-                  <div style={{ fontSize: '1.1em', marginBottom: '4px' }}>
-                    <strong>{productsModal.data.is_canceled ? item.returned_quantity : item.quantity}</strong> x {item.name}
-                  </div>
-                  <div style={{ fontSize: '0.95em', color: '#666' }}>
-                    Precio: ${item.price} | Código: {item.code}
-                  </div>
-                </div>
-              ));
+              return (
+                <CustomTable
+                  data={productsToShow}
+                  columns={[
+                    {
+                      name: "Cantidad",
+                      selector: (row) => productsModal.data.is_canceled ? row.returned_quantity : row.quantity,
+                      width: '100px',
+                    },
+                    {
+                      name: "Nombre",
+                      selector: (row) => row.name,
+                      grow: 2,
+                    },
+                    {
+                      name: "Precio",
+                      selector: (row) => `$${row.price}`,
+                      width: '120px',
+                    },
+                    {
+                      name: "Código",
+                      selector: (row) => row.code,
+                      width: '150px',
+                    },
+                  ]}
+                />
+              );
             })()}
           </Grid>
         </Grid>
