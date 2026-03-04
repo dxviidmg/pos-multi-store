@@ -17,6 +17,11 @@
   margin-bottom: 1rem !important;
 }
 
+.modal-container {
+  padding: 1rem;
+  background-color: rgba(4, 53, 107, 0.2);
+}
+
 .custom-section-buttons {
   margin: 1rem;
 }
