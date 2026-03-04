@@ -104,7 +104,7 @@ const StockModal = ({ isOpen, product, onClose }) => {
          onClose={onClose}
          title="Revisión de Stock"
        >
-      <Grid container>
+      <Grid container sx={{ padding: '1rem', backgroundColor: 'rgba(4, 53, 107, 0.2)' }}>
         <Grid item xs={12} className="custom-section">
         <p>
           <b>Código:</b> {storeProduct.product?.code} <b>Nombre:</b> {storeProduct.product?.brand_name} {storeProduct.product?.name}
