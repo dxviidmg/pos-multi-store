@@ -265,17 +265,17 @@ const SaleList = () => {
                   : row.products_sale.filter((item) => item.quantity !== 0);
 
                 return (
-                  <>
+                  <div style={{ padding: '8px 0' }}>
                     {productsToShow.map((item, index) => (
-                      <span key={index}>
-                        {row.is_canceled
-                          ? item.returned_quantity
-                          : item.quantity}{" "}
-                        x {item.name} - ${item.price} - Código: {item.code}
+                      <div key={index} style={{ marginBottom: '4px' }}>
+                        <strong>{row.is_canceled ? item.returned_quantity : item.quantity}</strong> x {item.name}
                         <br />
-                      </span>
+                        <span style={{ fontSize: '0.9em', color: '#666' }}>
+                          ${item.price} | Código: {item.code}
+                        </span>
+                      </div>
                     ))}
-                  </>
+                  </div>
                 );
               },
               wrapText: true,
