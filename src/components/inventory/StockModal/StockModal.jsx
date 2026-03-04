@@ -7,7 +7,7 @@ import CustomButton from "../../ui/Button/Button";
 import { createTransfer } from "../../../api/transfers";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { getStockOtherStores } from "../../../api/products";
-import { Grid, TextField, Box } from "@mui/material";
+import { Grid, TextField } from "@mui/material";
 
 
 const StockModal = ({ isOpen, product, onClose }) => {
@@ -85,7 +85,7 @@ const StockModal = ({ isOpen, product, onClose }) => {
           <>
             <p><b>Nota:</b> Has alcanzado el límite de este producto en esta tienda</p>
             {reservedInOtherCarts > 0 && (
-              <p style={{ color: '#ff9800', fontWeight: 'bold' }}>
+              <p style={{ color: '#ff9800' }}>
                 ⚠️ Hay {reservedInOtherCarts} unidades reservadas en otros carritos activos
               </p>
             )}
@@ -104,25 +104,19 @@ const StockModal = ({ isOpen, product, onClose }) => {
          onClose={onClose}
          title="Revisión de Stock"
        >
-      <Grid container sx={{ padding: '1rem', backgroundColor: 'rgba(4, 53, 107, 0.2)' }}>
-        <Grid item xs={12} className="text-center custom-section">
+      <Grid container className="modal-container">
+        <Grid item xs={12} className="custom-section">
         <p>
           <b>Código:</b> {storeProduct.product?.code} <b>Nombre:</b> {storeProduct.product?.brand_name} {storeProduct.product?.name}
         </p>
         {renderStockInfo()}
 
       {storeProduct.showImage ? (
-        <Grid container spacing={2} justifyContent="center">
+        <Grid container spacing={2}>
           <Grid item xs={12} md={3}>
-            <Box
-              component="img"
+            <img
               src={storeProduct.product?.image}
               alt="Producto"
-              sx={{
-                width: '100%',
-                height: 'auto',
-                borderRadius: 1
-              }}
             />
           </Grid>
         </Grid>

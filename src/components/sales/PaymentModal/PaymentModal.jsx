@@ -388,6 +388,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
                   type="number"
                   value={total.toFixed(2)}
                   disabled
+                  InputProps={{ startAdornment: '$' }}
                 />
               </Grid>
 
@@ -399,6 +400,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
                   type="number"
                   value={totalDiscount.toFixed(2)}
                   disabled
+                  InputProps={{ startAdornment: '$' }}
                 />
               </Grid>
               <Grid item xs={12} md={3}>
@@ -410,6 +412,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
                   value={payment.paidWith}
                   onChange={handlePaidWithChange}
                   inputRef={inputPaymentRef}
+                  InputProps={{ startAdornment: '$' }}
                 />
               </Grid>
               <Grid item xs={12} md={3}>
@@ -432,6 +435,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
                     type="number"
                     value={payment.change}
                     disabled
+                    InputProps={{ startAdornment: '$' }}
                   />
                 )}
               </Grid>
@@ -441,80 +445,88 @@ const PaymentModal = ({ isOpen, onClose }) => {
           <Grid item xs={12} className="custom-section">
             <Grid container spacing={2}>
               <Grid item xs={12} md={3}>
-                <FormLabel className="me-1">Tipo de pago:</FormLabel>
+                <FormLabel>Tipo de pago:</FormLabel>
                 <RadioGroup
                   value={paymentMethods.type}
                   onChange={handleChangePayments}
                   name="paymentType"
-                  sx={{ gap: 0 }}
                 >
-                  <FormControlLabel value="radio" control={<Radio size="small" />} label="Único" sx={{ mb: -1 }} />
-                  <FormControlLabel value="checkbox" control={<Radio size="small" />} label="Mixto" sx={{ mb: -1 }} />
+                  <FormControlLabel value="radio" control={<Radio size="small" />} label="Único" />
+                  <FormControlLabel value="checkbox" control={<Radio size="small" />} label="Mixto" />
                 </RadioGroup>
               </Grid>
 
-              <Grid item xs={12} md={6}>
-                <FormLabel className="me-3">Medios de pago:</FormLabel>
+              <Grid item xs={12} md={3}>
+                <FormLabel>Medios de pago:</FormLabel>
+                <div>
+                  {["EF", "TA", "TR"].map((method) => (
+                    <FormControlLabel
+                      key={method}
+                      sx={{ display: 'block' }}
+                      control={
+                        paymentMethods.type === "radio" ? (
+                          <Radio
+                            size="small"
+                            checked={paymentMethods.methods[method] === totalDiscount}
+                            onChange={handleChangePayments}
+                            value={method}
+                            name="paymentMethod"
+                          />
+                        ) : (
+                          <Checkbox
+                            size="small"
+                            checked={
+                              (movementType === "apartado" && method === "EF") ||
+                              paymentMethods.methods[method] > 0
+                            }
+                            onChange={handleChangePayments}
+                            value={method}
+                            name="paymentMethod"
+                          />
+                        )
+                      }
+                      label={
+                        method === "EF"
+                          ? "Efectivo"
+                          : method === "TA"
+                          ? "Tarjeta"
+                          : "Transferencia"
+                      }
+                    />
+                  ))}
+                </div>
+              </Grid>
+
+              <Grid item xs={12} md={3}>
+                <FormLabel>Montos:</FormLabel>
                 {["EF", "TA", "TR"].map((method) => (
-                  <div key={method} className="d-flex align-items-center" style={{ marginBottom: '4px' }}>
-                    <div className="me-3" style={{ flex: "1" }}>
-                      <FormControlLabel
-                        sx={{ mb: 0 }}
-                        control={
-                          paymentMethods.type === "radio" ? (
-                            <Radio
-                              size="small"
-                              checked={paymentMethods.methods[method] === totalDiscount}
-                              onChange={handleChangePayments}
-                              value={method}
-                              name="paymentMethod"
-                            />
-                          ) : (
-                            <Checkbox
-                              size="small"
-                              checked={
-                                (movementType === "apartado" && method === "EF") ||
-                                paymentMethods.methods[method] > 0
-                              }
-                              onChange={handleChangePayments}
-                              value={method}
-                              name="paymentMethod"
-                            />
-                          )
-                        }
-                        label={
-                          method === "EF"
-                            ? "Efectivo"
-                            : method === "TA"
-                            ? "Tarjeta"
-                            : "Transferencia"
-                        }
-                      />
-                    </div>
+                  <div key={method}>
                     {paymentMethods.type === "checkbox" &&
                       paymentMethods.methods[method] > 0 && (
                         <TextField
                           size="small"
                           type="number"
                           placeholder="$"
-                          style={{ width: "120px" }}
+                          fullWidth
                           onChange={(e) =>
                             handlePaymentValueChange(method, e.target.value)
                           }
+                          sx={{ mb: 1 }}
                         />
                       )}
                   </div>
                 ))}
               </Grid>
+
               <Grid item xs={12} md={3}>
                 <CustomButton
                   disabled={handleDisableButton()}
                   fullWidth={true}
                   onClick={(e) => handleCreateSale()}
                   startIcon={<MoneyOffIcon />}
+                  sx={{ mb: 2 }}
                 >
                   Cobrar sin ticket
-                  <br />
                   (Ctrl + G)
                 </CustomButton>
 
@@ -525,7 +537,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
                   startIcon={<ReceiptIcon />}
                 >
                   Cobrar con ticket
-                  <br /> (Ctrl + H)
+                  (Ctrl + H)
                 </CustomButton>
               </Grid>
             </Grid>
