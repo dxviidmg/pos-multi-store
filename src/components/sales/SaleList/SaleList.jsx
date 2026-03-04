@@ -255,6 +255,7 @@ const SaleList = () => {
               name: "Hora",
               selector: (row) => getFormattedDateTime(row.created_at),
               wrapText: true,
+              minWidth: '150px',
             },
 
             {
