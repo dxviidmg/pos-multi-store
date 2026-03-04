@@ -133,7 +133,10 @@ const multiCartReducer = (state = initialState, action) => {
 
       // Calcular stock ya reservado en otros carritos
       const reservedInOtherCarts = getReservedStock(state.carts, action.payload.id, state.activeCartId);
-      const availableStock = action.payload.available_stock - reservedInOtherCarts;
+      const productStock = activeCart.movementType === "traspaso" 
+        ? action.payload.reserved_stock 
+        : action.payload.available_stock;
+      const availableStock = productStock - reservedInOtherCarts;
 
       let updatedCart;
       if (existingProductIndex !== -1) {
@@ -214,7 +217,10 @@ const multiCartReducer = (state = initialState, action) => {
     case UPDATE_QUANTITY_IN_CART: {
       // Calcular stock reservado en otros carritos
       const reservedInOtherCarts = getReservedStock(state.carts, action.payload.product.id, state.activeCartId);
-      const availableStock = action.payload.product.available_stock - reservedInOtherCarts;
+      const productStock = activeCart.movementType === "traspaso" 
+        ? action.payload.product.reserved_stock 
+        : action.payload.product.available_stock;
+      const availableStock = productStock - reservedInOtherCarts;
       
       // Limitar la cantidad al stock disponible
       const requestedQuantity = action.payload.newQuantity;
