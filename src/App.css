@@ -3,7 +3,12 @@
   --color-primary: #04346b;
   --color-background: #f1f5f9;
   --color-paper: #ffffff;
-  --color-text: #666;
+  --color-text: #000;
+}
+
+body, p, span, div, td, th, label, input, textarea {
+  color: #000 !important;
+  font-weight: bold !important;
 }
 
 .custom-section {

@@ -78,14 +78,14 @@ const StockModal = ({ isOpen, product, onClose }) => {
   const renderStockInfo = () => {
     if (!storeProduct.showImage) {
       if (storeProduct.available_stock === 0) {
-        return <p style={{ color: '#000', fontWeight: 'bold' }}><b>Nota:</b> Producto no disponible</p>;
+        return <p><b>Nota:</b> Producto no disponible</p>;
       }
       if (!storeProduct.onlyRead) {
         return (
           <>
-            <p style={{ color: '#000', fontWeight: 'bold' }}><b>Nota:</b> Has alcanzado el límite de este producto en esta tienda</p>
+            <p><b>Nota:</b> Has alcanzado el límite de este producto en esta tienda</p>
             {reservedInOtherCarts > 0 && (
-              <p style={{ color: '#ff9800', fontWeight: 'bold' }}>
+              <p style={{ color: '#ff9800' }}>
                 ⚠️ Hay {reservedInOtherCarts} unidades reservadas en otros carritos activos
               </p>
             )}
@@ -106,7 +106,7 @@ const StockModal = ({ isOpen, product, onClose }) => {
        >
       <Grid container className="modal-container">
         <Grid item xs={12} className="custom-section">
-        <p style={{ color: '#000', fontWeight: 'bold' }}>
+        <p>
           <b>Código:</b> {storeProduct.product?.code} <b>Nombre:</b> {storeProduct.product?.brand_name} {storeProduct.product?.name}
         </p>
         {renderStockInfo()}
