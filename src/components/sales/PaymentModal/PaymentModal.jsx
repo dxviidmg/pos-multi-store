@@ -454,40 +454,43 @@ const PaymentModal = ({ isOpen, onClose }) => {
 
               <Grid item xs={12} md={3}>
                 <FormLabel>Medios de pago:</FormLabel>
-                {["EF", "TA", "TR"].map((method) => (
-                  <FormControlLabel
-                    key={method}
-                    control={
-                      paymentMethods.type === "radio" ? (
-                        <Radio
-                          size="small"
-                          checked={paymentMethods.methods[method] === totalDiscount}
-                          onChange={handleChangePayments}
-                          value={method}
-                          name="paymentMethod"
-                        />
-                      ) : (
-                        <Checkbox
-                          size="small"
-                          checked={
-                            (movementType === "apartado" && method === "EF") ||
-                            paymentMethods.methods[method] > 0
-                          }
-                          onChange={handleChangePayments}
-                          value={method}
-                          name="paymentMethod"
-                        />
-                      )
-                    }
-                    label={
-                      method === "EF"
-                        ? "Efectivo"
-                        : method === "TA"
-                        ? "Tarjeta"
-                        : "Transferencia"
-                    }
-                  />
-                ))}
+                <div>
+                  {["EF", "TA", "TR"].map((method) => (
+                    <FormControlLabel
+                      key={method}
+                      sx={{ display: 'block' }}
+                      control={
+                        paymentMethods.type === "radio" ? (
+                          <Radio
+                            size="small"
+                            checked={paymentMethods.methods[method] === totalDiscount}
+                            onChange={handleChangePayments}
+                            value={method}
+                            name="paymentMethod"
+                          />
+                        ) : (
+                          <Checkbox
+                            size="small"
+                            checked={
+                              (movementType === "apartado" && method === "EF") ||
+                              paymentMethods.methods[method] > 0
+                            }
+                            onChange={handleChangePayments}
+                            value={method}
+                            name="paymentMethod"
+                          />
+                        )
+                      }
+                      label={
+                        method === "EF"
+                          ? "Efectivo"
+                          : method === "TA"
+                          ? "Tarjeta"
+                          : "Transferencia"
+                      }
+                    />
+                  ))}
+                </div>
               </Grid>
 
               <Grid item xs={12} md={3}>
