@@ -253,13 +253,13 @@ const SaleList = () => {
 
             {
               name: "Hora",
-              selector: (row) => getFormattedDateTime(row.created_at),
+              selector: (row) => (
+                <div style={{ whiteSpace: 'normal', wordBreak: 'break-word', lineHeight: '1.4' }}>
+                  {getFormattedDateTime(row.created_at)}
+                </div>
+              ),
               wrapText: true,
               minWidth: '150px',
-              style: {
-                whiteSpace: 'normal',
-                wordBreak: 'break-word'
-              }
             },
 
             {
