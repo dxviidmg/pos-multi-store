@@ -52,7 +52,7 @@ const Dashboard = () => {
 
     let intervalId;
     pollTask();
-    intervalId = setInterval(pollTask, 3000);
+    intervalId = setInterval(pollTask, 10000);
   };
 
   useEffect(() => {
