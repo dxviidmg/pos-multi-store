@@ -388,6 +388,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
                   type="number"
                   value={total.toFixed(2)}
                   disabled
+                  InputProps={{ startAdornment: '$' }}
                 />
               </Grid>
 
@@ -399,6 +400,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
                   type="number"
                   value={totalDiscount.toFixed(2)}
                   disabled
+                  InputProps={{ startAdornment: '$' }}
                 />
               </Grid>
               <Grid item xs={12} md={3}>
@@ -410,6 +412,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
                   value={payment.paidWith}
                   onChange={handlePaidWithChange}
                   inputRef={inputPaymentRef}
+                  InputProps={{ startAdornment: '$' }}
                 />
               </Grid>
               <Grid item xs={12} md={3}>
@@ -432,6 +435,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
                     type="number"
                     value={payment.change}
                     disabled
+                    InputProps={{ startAdornment: '$' }}
                   />
                 )}
               </Grid>
@@ -523,7 +527,6 @@ const PaymentModal = ({ isOpen, onClose }) => {
                   sx={{ mb: 2 }}
                 >
                   Cobrar sin ticket
-                  <br />
                   (Ctrl + G)
                 </CustomButton>
 
@@ -534,7 +537,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
                   startIcon={<ReceiptIcon />}
                 >
                   Cobrar con ticket
-                  <br /> (Ctrl + H)
+                  (Ctrl + H)
                 </CustomButton>
               </Grid>
             </Grid>
