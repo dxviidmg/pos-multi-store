@@ -131,9 +131,44 @@ const multiCartReducer = (state = initialState, action) => {
         (item) => item.id === action.payload.id
       );
 
+      // Si es "agregar", no validar stock
+      if (activeCart.movementType === "agregar") {
+        let updatedCart;
+        if (existingProductIndex !== -1) {
+          const currentQuantity = activeCart.cart[existingProductIndex].quantity;
+          const newQuantity = currentQuantity + action.payload.quantity;
+          
+          updatedCart = activeCart.cart.map((item, index) =>
+            index === existingProductIndex
+              ? { ...item, quantity: newQuantity }
+              : item
+          );
+        } else {
+          const clientSelected = aClientIsSelected(activeCart.client);
+          const product_price = calculateProductPrice(
+            action.payload.quantity,
+            action.payload.product.prices,
+            clientSelected
+          );
+          updatedCart = [...activeCart.cart, { ...action.payload, product_price }];
+        }
+
+        return {
+          ...state,
+          carts: state.carts.map(c => 
+            c.id === state.activeCartId 
+              ? { ...c, cart: updatedCart }
+              : c
+          )
+        };
+      }
+
       // Calcular stock ya reservado en otros carritos
       const reservedInOtherCarts = getReservedStock(state.carts, action.payload.id, state.activeCartId);
-      const availableStock = action.payload.available_stock - reservedInOtherCarts;
+      const productStock = activeCart.movementType === "traspaso" 
+        ? action.payload.reserved_stock 
+        : action.payload.available_stock;
+      const availableStock = productStock - reservedInOtherCarts;
 
       let updatedCart;
       if (existingProductIndex !== -1) {
@@ -212,9 +247,37 @@ const multiCartReducer = (state = initialState, action) => {
     }
 
     case UPDATE_QUANTITY_IN_CART: {
+      // Si es "agregar", no validar stock
+      if (activeCart.movementType === "agregar") {
+        const updatedCart = activeCart.cart.map((item) => {
+          if (item.id === action.payload.product.id) {
+            const clientSelected = aClientIsSelected(activeCart.client);
+            const product_price = calculateProductPrice(
+              action.payload.newQuantity,
+              item.product.prices,
+              clientSelected
+            );
+            return { ...item, quantity: action.payload.newQuantity, product_price };
+          }
+          return item;
+        });
+
+        return {
+          ...state,
+          carts: state.carts.map(c => 
+            c.id === state.activeCartId 
+              ? { ...c, cart: updatedCart }
+              : c
+          )
+        };
+      }
+
       // Calcular stock reservado en otros carritos
       const reservedInOtherCarts = getReservedStock(state.carts, action.payload.product.id, state.activeCartId);
-      const availableStock = action.payload.product.available_stock - reservedInOtherCarts;
+      const productStock = activeCart.movementType === "traspaso" 
+        ? action.payload.product.reserved_stock 
+        : action.payload.product.available_stock;
+      const availableStock = productStock - reservedInOtherCarts;
       
       // Limitar la cantidad al stock disponible
       const requestedQuantity = action.payload.newQuantity;

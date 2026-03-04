@@ -110,7 +110,10 @@ const StoreProductList = () => {
       
       {/* 2. MODALS */}
       <StoreProductLogsModal
-        onUpdateStoreProductList={handleUpdateStoreProductList}
+        isOpen={logsModal.isOpen}
+        logs={logsModal.data}
+        onClose={logsModal.close}
+        onUpdate={handleUpdateStoreProductList}
       />
       
       {/* 3. CONTENIDO PRINCIPAL */}

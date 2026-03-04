@@ -240,6 +240,19 @@ export default function MainLayout() {
           { label: "Traspasos", href: "/traspasos/" },
         ],
       },
+      {
+        label: "Productos",
+        dropdown: [
+          { label: "Productos", href: "/productos/" },
+          { label: "Inventario", href: "/inventario/" },
+          { divider: true },
+          { label: "Marcas", href: "/marcas/" },
+          { label: "Departamentos", href: "/departamentos/" },
+          { divider: true },
+          { label: "Importar Productos", href: "/importar-productos/" },
+          { label: "Importar inventario", href: "/importar-inventario/" },
+        ],
+      },
       { label: "Logs", href: "/logs/" },
     ],
     G: [
