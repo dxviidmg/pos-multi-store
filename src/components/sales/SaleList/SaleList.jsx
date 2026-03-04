@@ -256,6 +256,10 @@ const SaleList = () => {
               selector: (row) => getFormattedDateTime(row.created_at),
               wrapText: true,
               minWidth: '150px',
+              style: {
+                whiteSpace: 'normal',
+                wordBreak: 'break-word'
+              }
             },
 
             {
