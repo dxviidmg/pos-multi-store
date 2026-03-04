@@ -456,7 +456,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
                 <FormLabel>Medios de pago:</FormLabel>
                 {["EF", "TA", "TR"].map((method) => (
                   <div key={method} className="d-flex align-items-center">
-                    <div style={{ flex: "1" }}>
+                    <div style={{ flex: "0 0 auto" }}>
                       <FormControlLabel
                         control={
                           paymentMethods.type === "radio" ? (
@@ -495,7 +495,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
                           size="small"
                           type="number"
                           placeholder="$"
-                          style={{ width: "120px" }}
+                          style={{ width: "120px", marginLeft: "8px" }}
                           onChange={(e) =>
                             handlePaymentValueChange(method, e.target.value)
                           }
