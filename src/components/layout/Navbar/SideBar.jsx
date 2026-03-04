@@ -39,6 +39,7 @@ import SyncIcon from "@mui/icons-material/Sync";
 import MiscellaneousServicesIcon from "@mui/icons-material/MiscellaneousServices";
 import LogoutIcon from "@mui/icons-material/Logout";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import DescriptionIcon from "@mui/icons-material/Description";
 import logo from "../../../assets/images/logo.jpg";
 import { colors } from "../../../theme/colors";
 
@@ -64,6 +65,7 @@ const iconMap = {
   Tiendas: <StoreIcon />,
   Vendedores: <EngineeringIcon />,
   Mensualidades: <PaymentsIcon />,
+  Logs: <DescriptionIcon />,
   
   // Servicios y sincronización
   Servicios: <MiscellaneousServicesIcon />,
@@ -227,6 +229,7 @@ export default function MainLayout() {
           { label: "Traspasos", href: "/traspasos/" },
         ],
       },
+      { label: "Logs", href: "/logs/" },
     ],
     A: [
       { label: "Distribuir", href: "/distribuir/" },
@@ -237,6 +240,7 @@ export default function MainLayout() {
           { label: "Traspasos", href: "/traspasos/" },
         ],
       },
+      { label: "Logs", href: "/logs/" },
     ],
     G: [
       {
