@@ -15,6 +15,8 @@ import PrintIcon from "@mui/icons-material/Print";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import WarningIcon from "@mui/icons-material/Warning";
 import UndoIcon from "@mui/icons-material/Undo";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import ErrorIcon from "@mui/icons-material/Error";
 import Alert from "react-bootstrap/Alert";
 import { getUserData } from "../../../api/utils";
 import PaymentModal2 from "../PaymentModal2/PaymentModal2";
@@ -239,6 +241,18 @@ const SaleList = () => {
             {
               name: "#",
               selector: (row) => row.id,
+            },
+
+            {
+              name: "Estado",
+              selector: (row) => 
+                salesDuplicated.includes(row.id) ? (
+                  <ErrorIcon style={{ color: '#f44336' }} />
+                ) : (
+                  <CheckCircleIcon style={{ color: '#4caf50' }} />
+                ),
+              center: true,
+              width: '80px',
             },
 
             ...(showAllFields
