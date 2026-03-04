@@ -440,7 +440,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
 
           <Grid item xs={12} className="custom-section">
             <Grid container spacing={2}>
-              <Grid item xs={12} md={3}>
+              <Grid item xs={12} md={4}>
                 <FormLabel>Tipo de pago:</FormLabel>
                 <RadioGroup
                   value={paymentMethods.type}
@@ -452,7 +452,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
                 </RadioGroup>
               </Grid>
 
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} md={5}>
                 <FormLabel>Medios de pago:</FormLabel>
                 {["EF", "TA", "TR"].map((method) => (
                   <div key={method} className="d-flex align-items-center">
