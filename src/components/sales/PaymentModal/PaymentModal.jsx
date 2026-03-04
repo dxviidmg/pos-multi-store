@@ -441,25 +441,23 @@ const PaymentModal = ({ isOpen, onClose }) => {
           <Grid item xs={12} className="custom-section">
             <Grid container spacing={2}>
               <Grid item xs={12} md={3}>
-                <FormLabel className="me-1">Tipo de pago:</FormLabel>
+                <FormLabel>Tipo de pago:</FormLabel>
                 <RadioGroup
                   value={paymentMethods.type}
                   onChange={handleChangePayments}
                   name="paymentType"
-                  sx={{ gap: 0 }}
                 >
-                  <FormControlLabel value="radio" control={<Radio size="small" />} label="Único" sx={{ mb: -1 }} />
-                  <FormControlLabel value="checkbox" control={<Radio size="small" />} label="Mixto" sx={{ mb: -1 }} />
+                  <FormControlLabel value="radio" control={<Radio size="small" />} label="Único" />
+                  <FormControlLabel value="checkbox" control={<Radio size="small" />} label="Mixto" />
                 </RadioGroup>
               </Grid>
 
               <Grid item xs={12} md={6}>
-                <FormLabel className="me-3">Medios de pago:</FormLabel>
+                <FormLabel>Medios de pago:</FormLabel>
                 {["EF", "TA", "TR"].map((method) => (
                   <div key={method} className="d-flex align-items-center">
-                    <div className="me-3" style={{ flex: "1" }}>
+                    <div style={{ flex: "1" }}>
                       <FormControlLabel
-                        sx={{ mb: -1 }}
                         control={
                           paymentMethods.type === "radio" ? (
                             <Radio
