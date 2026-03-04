@@ -512,6 +512,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
                   fullWidth={true}
                   onClick={(e) => handleCreateSale()}
                   startIcon={<MoneyOffIcon />}
+                  sx={{ mb: 2 }}
                 >
                   Cobrar sin ticket
                   <br />
