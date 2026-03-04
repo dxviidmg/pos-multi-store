@@ -15,6 +15,8 @@ import PrintIcon from "@mui/icons-material/Print";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import WarningIcon from "@mui/icons-material/Warning";
 import UndoIcon from "@mui/icons-material/Undo";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import ErrorIcon from "@mui/icons-material/Error";
 import Alert from "react-bootstrap/Alert";
 import { getUserData } from "../../../api/utils";
 import PaymentModal2 from "../PaymentModal2/PaymentModal2";
@@ -241,6 +243,18 @@ const SaleList = () => {
               selector: (row) => row.id,
             },
 
+            {
+              name: "Estado",
+              selector: (row) => 
+                salesDuplicated.includes(row.id) ? (
+                  <ErrorIcon style={{ color: '#f44336' }} />
+                ) : (
+                  <CheckCircleIcon style={{ color: '#4caf50' }} />
+                ),
+              center: true,
+              width: '80px',
+            },
+
             ...(showAllFields
               ? [
                   {
@@ -253,8 +267,13 @@ const SaleList = () => {
 
             {
               name: "Hora",
-              selector: (row) => getFormattedDateTime(row.created_at),
+              selector: (row) => (
+                <div style={{ whiteSpace: 'normal', wordBreak: 'break-word', lineHeight: '1.4' }}>
+                  {getFormattedDateTime(row.created_at)}
+                </div>
+              ),
               wrapText: true,
+              minWidth: '150px',
             },
 
             {
@@ -265,17 +284,17 @@ const SaleList = () => {
                   : row.products_sale.filter((item) => item.quantity !== 0);
 
                 return (
-                  <>
+                  <div style={{ padding: '8px 0' }}>
                     {productsToShow.map((item, index) => (
-                      <span key={index}>
-                        {row.is_canceled
-                          ? item.returned_quantity
-                          : item.quantity}{" "}
-                        x {item.name} - ${item.price} - Código: {item.code}
+                      <div key={index} style={{ marginBottom: '4px' }}>
+                        <strong>{row.is_canceled ? item.returned_quantity : item.quantity}</strong> x {item.name}
                         <br />
-                      </span>
+                        <span style={{ fontSize: '0.9em', color: '#666' }}>
+                          ${item.price} | Código: {item.code}
+                        </span>
+                      </div>
                     ))}
-                  </>
+                  </div>
                 );
               },
               wrapText: true,
