@@ -78,12 +78,12 @@ const StockModal = ({ isOpen, product, onClose }) => {
   const renderStockInfo = () => {
     if (!storeProduct.showImage) {
       if (storeProduct.available_stock === 0) {
-        return <p><b>Nota:</b> Producto no disponible</p>;
+        return <p style={{ color: '#000', fontWeight: 'bold' }}><b>Nota:</b> Producto no disponible</p>;
       }
       if (!storeProduct.onlyRead) {
         return (
           <>
-            <p><b>Nota:</b> Has alcanzado el límite de este producto en esta tienda</p>
+            <p style={{ color: '#000', fontWeight: 'bold' }}><b>Nota:</b> Has alcanzado el límite de este producto en esta tienda</p>
             {reservedInOtherCarts > 0 && (
               <p style={{ color: '#ff9800', fontWeight: 'bold' }}>
                 ⚠️ Hay {reservedInOtherCarts} unidades reservadas en otros carritos activos
