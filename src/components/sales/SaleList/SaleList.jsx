@@ -21,6 +21,7 @@ import Alert from "react-bootstrap/Alert";
 import { getUserData } from "../../../api/utils";
 import PaymentModal2 from "../PaymentModal2/PaymentModal2";
 import CustomTooltip from "../../ui/Tooltip";
+import CustomModal from "../../ui/Modal/Modal";
 import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, Box } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 
@@ -65,6 +66,7 @@ const SaleList = () => {
   const [searchBy, setSearchBy] = useState("date");
   const saleModal = useModal();
   const paymentModal2 = useModal();
+  const productsModal = useModal();
 
   useEffect(() => {
     const fetchSalesData = async () => {
@@ -119,6 +121,46 @@ const SaleList = () => {
       {/* 2. MODALS */}
       <PaymentModal2 isOpen={paymentModal2.isOpen} sale={paymentModal2.data} onClose={paymentModal2.close} onUpdate={handleUpdateSaleList} />
       <SaleModal isOpen={saleModal.isOpen} sale={saleModal.data} onClose={saleModal.close} onUpdate={handleUpdateSaleList} />
+      
+      <CustomModal showOut={productsModal.isOpen} onClose={productsModal.close} title="Productos de la venta">
+        <Grid container className="modal-container">
+          <Grid item xs={12} className="custom-section">
+            {productsModal.data && (() => {
+              const productsToShow = productsModal.data.is_canceled
+                ? productsModal.data.products_sale.filter((item) => item.quantity === 0)
+                : productsModal.data.products_sale.filter((item) => item.quantity !== 0);
+              
+              return (
+                <CustomTable
+                  data={productsToShow}
+                  columns={[
+                    {
+                      name: "Cantidad",
+                      selector: (row) => productsModal.data.is_canceled ? row.returned_quantity : row.quantity,
+                      width: '100px',
+                    },
+                    {
+                      name: "Nombre",
+                      selector: (row) => row.name,
+                      grow: 2,
+                    },
+                    {
+                      name: "Precio",
+                      selector: (row) => `$${row.price}`,
+                      width: '120px',
+                    },
+                    {
+                      name: "Código",
+                      selector: (row) => row.code,
+                      width: '150px',
+                    },
+                  ]}
+                />
+              );
+            })()}
+          </Grid>
+        </Grid>
+      </CustomModal>
       
       {/* 3. CONTENIDO PRINCIPAL */}
       <Grid className="custom-section">
@@ -278,27 +320,12 @@ const SaleList = () => {
 
             {
               name: "Productos",
-              selector: (row) => {
-                const productsToShow = row.is_canceled
-                  ? row.products_sale.filter((item) => item.quantity === 0)
-                  : row.products_sale.filter((item) => item.quantity !== 0);
-
-                return (
-                  <div style={{ padding: '8px 0' }}>
-                    {productsToShow.map((item, index) => (
-                      <div key={index} style={{ marginBottom: '4px' }}>
-                        <strong>{row.is_canceled ? item.returned_quantity : item.quantity}</strong> x {item.name}
-                        <br />
-                        <span style={{ fontSize: '0.9em', color: '#666' }}>
-                          ${item.price} | Código: {item.code}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                );
-              },
-              wrapText: true,
-              grow: 3,
+              selector: (row) => (
+                <CustomButton onClick={() => productsModal.open(row)}>
+                  <VisibilityIcon />
+                </CustomButton>
+              ),
+              center: true,
             },
 
             {
