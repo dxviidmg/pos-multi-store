@@ -1,40 +1,31 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createProduct, updateProduct } from '../api/products';
-import { showSuccess, showError } from '../utils/alerts';
+import { useCrudMutation } from './useCrudMutation';
+import * as api from '../api/products';
 
-export const useCreateProduct = () => {
-  const queryClient = useQueryClient();
+const productErrorParser = (error) => {
+  if (error.response?.status === 400 && error.response.data?.code) {
+    const codeError = error.response.data.code[0];
+    if (codeError === 'product with this code already exists.') {
+      return 'El código ya existe.';
+    }
+  }
+  return 'Error desconocido. Por favor, contacte soporte.';
+};
 
-  return useMutation({
-    mutationFn: createProduct,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['products'] });
-      showSuccess('Producto creado');
-    },
-    onError: (error) => {
-      let message = 'Error desconocido. Por favor, contacte soporte.';
-      if (error.response?.status === 400 && error.response.data?.code) {
-        const codeError = error.response.data.code[0];
-        if (codeError === 'product with this code already exists.') {
-          message = 'El código ya existe.';
-        }
-      }
-      showError('Error al crear producto', message);
-    },
+export const useCreateProduct = (options = {}) => {
+  return useCrudMutation(api.createProduct, {
+    queryKey: 'products',
+    successMessage: 'Producto creado',
+    errorMessage: 'Error al crear producto',
+    errorParser: productErrorParser,
+    ...options,
   });
 };
 
-export const useUpdateProduct = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: updateProduct,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['products'] });
-      showSuccess('Producto actualizado');
-    },
-    onError: () => {
-      showError('Error al actualizar producto');
-    },
+export const useUpdateProduct = (options = {}) => {
+  return useCrudMutation(api.updateProduct, {
+    queryKey: 'products',
+    successMessage: 'Producto actualizado',
+    errorMessage: 'Error al actualizar producto',
+    ...options,
   });
 };
