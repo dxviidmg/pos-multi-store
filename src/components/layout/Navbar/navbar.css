@@ -1,17 +1,21 @@
+@import '../../theme/variables.css';
+
 .custom-navbar {
-    background-color: #04356b !important;
-  }
-  .custom-navbar * {
-    color: white !important;
-  }
-  
-  .custom-dropdown .dropdown-menu {
-    background-color: #04356b !important;
-  }
-  
-  .custom-dropdown .dropdown-item {
-    color: white !important;
-  }
-  .custom-dropdown .dropdown-item:hover {
-    background-color: #03294d !important; /* Fondo más oscuro para el hover */
-  }
+  background-color: var(--color-primary);
+}
+
+.custom-navbar * {
+  color: var(--color-white);
+}
+
+.custom-dropdown .dropdown-menu {
+  background-color: var(--color-primary);
+}
+
+.custom-dropdown .dropdown-item {
+  color: var(--color-white);
+}
+
+.custom-dropdown .dropdown-item:hover {
+  background-color: var(--color-primary-dark);
+}

@@ -55,7 +55,7 @@ const AuditDashboardData = ({ title, taskId, pollInterval = 7500 }) => {
 
   return (
     <div
-      className={`text-center custom-section2 ${
+      className={`text-center custom-section ${
         info.progress !== 100
           ? "bg-primary bg-opacity-75"
           : data.length === 0

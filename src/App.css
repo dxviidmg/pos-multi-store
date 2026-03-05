@@ -1,44 +1,35 @@
-/* Importar variables de colores */
-:root {
-  --color-primary: #04346b;
-  --color-background: #f1f5f9;
-  --color-paper: #f8fafc;
-  --color-text: #1e293b;
-  --color-border: #e2e8f0;
-}
+@import './theme/variables.css';
 
-p{
-  color: #334155 !important;
-  font-weight: 500 !important;
+p {
+  color: var(--color-text-secondary);
+  font-weight: 500;
 }
 
 .custom-section {
-  border-radius: 0.75rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 
-              0 1px 2px rgba(0, 0, 0, 0.04);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
   background-color: var(--color-paper);
   border: 1px solid var(--color-border);
-  padding: 1.5rem;
+  padding: var(--spacing-md);
   color: var(--color-text);
   overflow-x: auto;
-  margin-bottom: 1rem !important;
-  transition: box-shadow 0.2s ease;
+  margin-bottom: var(--spacing-sm);
+  transition: box-shadow var(--transition-base);
 }
 
 .custom-section:hover {
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 
-              0 2px 4px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--shadow-md);
 }
 
 .modal-container {
-  padding: 1.5rem;
+  padding: var(--spacing-md);
   background: linear-gradient(135deg, rgba(4, 53, 107, 0.03) 0%, rgba(4, 53, 107, 0.08) 100%);
   text-align: center;
-  border-radius: 0.75rem;
+  border-radius: var(--radius-md);
 }
 
 .custom-section-buttons {
-  margin: 1rem;
+  margin: var(--spacing-sm);
 }
 
 #root {
@@ -47,33 +38,12 @@ p{
   padding-bottom: 2px;
 }
 
-
-
-
-
-.custom-section2 {
-  border-radius: 0.75rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 
-              0 1px 2px rgba(0, 0, 0, 0.04);
-  border: 1px solid var(--color-border);
-  padding: 1.5rem;
-  margin: 0rem;
-  margin-top: 1rem;
-  background-color: var(--color-paper);
-  transition: box-shadow 0.2s ease;
-}
-
-.custom-section2:hover {
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 
-              0 2px 4px rgba(0, 0, 0, 0.06);
-}
-
 select option {
   font-weight: 500;
 }
 
 input, select, textarea {
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color var(--transition-base), box-shadow var(--transition-base);
 }
 
 input:focus, select:focus, textarea:focus {
