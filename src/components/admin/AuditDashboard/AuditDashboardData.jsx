@@ -53,15 +53,16 @@ const AuditDashboardData = ({ title, taskId, pollInterval = 7500 }) => {
     exportToExcel(data, title, false);
   };
 
+  const getBackgroundColor = () => {
+    if (info.progress !== 100) return 'rgba(25, 118, 210, 0.75)'; // primary
+    if (data.length === 0) return 'rgba(46, 125, 50, 0.75)'; // success
+    return 'rgba(211, 47, 47, 0.75)'; // danger
+  };
+
   return (
     <div
-      className={`text-center custom-section ${
-        info.progress !== 100
-          ? "bg-primary bg-opacity-75"
-          : data.length === 0
-          ? "bg-success bg-opacity-75"
-          : "bg-danger bg-opacity-75"
-      }`}
+      className="text-center custom-section"
+      style={{ backgroundColor: getBackgroundColor() }}
     >
       <h2 className="pt-3 pb-0 m-0">{title}</h2>
       <span className="fs-1">{data.length}</span>

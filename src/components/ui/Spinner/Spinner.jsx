@@ -1,6 +1,6 @@
 import { memo } from "react";
 import "./Spinner.css";
-import Spinner from 'react-bootstrap/Spinner';
+import { CircularProgress } from '@mui/material';
 
 export const CustomSpinner = memo(({isLoading}) => {
   if (!isLoading) {
@@ -9,11 +9,9 @@ export const CustomSpinner = memo(({isLoading}) => {
   
 	return (
     <div className="overlay">
-    <div className="spinner-container">
-      <Spinner animation="border" role="status">
-        <span className="visually-hidden">Loading...</span>
-      </Spinner>
+      <div className="spinner-container">
+        <CircularProgress size={60} />
+      </div>
     </div>
-  </div>
 	);
 });

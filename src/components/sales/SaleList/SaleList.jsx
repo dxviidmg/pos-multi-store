@@ -17,7 +17,7 @@ import WarningIcon from "@mui/icons-material/Warning";
 import UndoIcon from "@mui/icons-material/Undo";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ErrorIcon from "@mui/icons-material/Error";
-import Alert from "react-bootstrap/Alert";
+import { Alert } from "@mui/material";
 import { getUserData } from "../../../api/utils";
 import PaymentModal2 from "../PaymentModal2/PaymentModal2";
 import CustomTooltip from "../../ui/Tooltip";
@@ -166,7 +166,7 @@ const SaleList = () => {
       <Grid className="custom-section">
         {/* 3.1 Alerts */}
         {salesDuplicated.length > 0 && (
-          <Alert key={"primary"} variant={"primary"}>
+          <Alert severity="info" sx={{ mb: 2 }}>
             Ids de ventas duplicadas:{" "}
             {salesDuplicated.map((id) => (
               <span key={id}>{id}, </span>
