@@ -9,7 +9,7 @@ import { addToCart, updateMovementType } from "../../../redux/cart/cartActions";
 import { Chip } from "@mui/material";
 import StockModal from "../../inventory/StockModal/StockModal";
 import { useModal } from "../../../hooks/useModal";
-import { useFetchWithRetry } from "../../../hooks/useFetchWithRetry";
+import { useFetchWithRetry } from "../../../hooks/useFetch";
 import Swal from "sweetalert2";
 import { getPrinterUrl, getUserData } from "../../../api/utils";
 import PrintIcon from "@mui/icons-material/Print";
@@ -25,7 +25,10 @@ const SearchProduct = () => {
 
   const dispatch = useDispatch();
   const stockModal = useModal();
-  const { fetchWithRetry } = useFetchWithRetry(2, 3000);
+  const { refetch: fetchWithRetry } = useFetchWithRetry(
+    (params) => getStoreProducts(params),
+    { maxRetries: 2, timeout: 3000 }
+  );
   
   const { carts, activeCartId } = useSelector((state) => state.multiCartReducer);
   
@@ -75,7 +78,7 @@ const SearchProduct = () => {
       setSearching(true);
 
       try {
-        const fetchedData = await fetchWithRetry(getStoreProducts, { [queryType]: query });
+        const fetchedData = await fetchWithRetry({ [queryType]: query });
 
         setSearching(false);
 
