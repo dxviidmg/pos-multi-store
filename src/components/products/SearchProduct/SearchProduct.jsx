@@ -294,7 +294,7 @@ const SearchProduct = () => {
     <>
       <StockModal isOpen={stockModal.isOpen} product={stockModal.data} onClose={stockModal.close} />
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
         <h1 style={{ margin: 0 }}>Buscador de productos</h1>
         <CustomButton
           disabled={!urlPrinter}

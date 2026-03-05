@@ -1,10 +1,9 @@
 .custom-modal-header {
-    background-color: #04356b;
+    background: linear-gradient(135deg, #04356b 0%, #05428a 100%);
     color: white;
 }
 
-
 .custom-modal-body {
-    background-color:rgba(4, 53, 107, 0.2);
+    background-color: #f8fafc;
     padding: 0px;
 }

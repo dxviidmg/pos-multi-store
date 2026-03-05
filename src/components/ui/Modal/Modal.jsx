@@ -15,8 +15,9 @@ const style = {
   maxHeight: '90vh',
   overflow: 'auto',
   bgcolor: 'background.paper',
-  boxShadow: 24,
-  borderRadius: 1,
+  boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+  borderRadius: 2,
+  border: '1px solid #e2e8f0',
 };
 
 function CustomModal({ showOut, onClose, title, children}) {

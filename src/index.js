@@ -15,17 +15,17 @@ const theme = createTheme({
     fontWeightBold: 700,
     fontSize: 13,
     body1: {
-      fontSize: '0.8125rem',
+      fontSize: '0.8rem',
     },
     body2: {
-      fontSize: '0.8125rem',
+      fontSize: '0.8rem',
     },
     button: {
-      fontSize: '0.8125rem',
+      fontSize: '0.8rem',
       fontWeight: 600,
     },
     caption: {
-      fontSize: '0.6875rem',
+      fontSize: '0.875rem',
     },
   },
   palette: {
@@ -43,6 +43,7 @@ const theme = createTheme({
         },
         cell: {
           padding: '4px 8px',
+          fontSize: '0.875rem',
         },
       },
       defaultProps: {
