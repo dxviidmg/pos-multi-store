@@ -201,6 +201,7 @@ export default function MainLayout() {
           {
             label: "Movimientos",
             href: "/movimientos/",
+            hidden: user.role === "seller",
           },
           { divider: true, hidden: user.role === "seller" },
           { label: "Importar ventas", href: "/importar-ventas/", hidden: user.role === "seller" },
