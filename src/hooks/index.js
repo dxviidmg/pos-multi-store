@@ -22,3 +22,4 @@ export * from './useQueries';
 // Custom hooks
 export { useFetch, useFetchList, useFetchWithRetry } from './useFetch';
 export { useCrudMutation, createMutationHooks } from './useCrudMutation';
+export { useThemeMode } from './useThemeMode';

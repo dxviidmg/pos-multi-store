@@ -329,12 +329,12 @@ const Cart = () => {
     { name: "Stock", field: "available_stock", selector: (row) => row.available_stock },
     { name: "Precio", field: "price", selector: (row) => `$${row.product_price.toFixed(2)}` },
     {
-      name: "Total x prod",
+      name: "Subtotal",
       field: "total",
       selector: (row) => `$${(row.product_price * row.quantity).toFixed(2)}`,
     },
     {
-      name: "Precio mayorista",
+      name: "Aplicar mayoreo",
       field: "wholesale",
       selector: (row) => (
         <Checkbox size="small"
@@ -373,11 +373,11 @@ const Cart = () => {
     { name: "Stock", selector: (row) => row.available_stock },
     { name: "Precio", selector: (row) => `$${row.product_price.toFixed(2)}` },
     {
-      name: "Total x prod",
+      name: "Subtotal",
       selector: (row) => `$${(row.product_price * row.quantity).toFixed(2)}`,
     },
     {
-      name: "Precio mayorista",
+      name: "Aplicar mayoreo",
       selector: (row) => (
         <Checkbox size="small"
           type="switch"

@@ -175,7 +175,7 @@ const ClientList = () => {
               grow: 2,
             },
             {
-              name: "Suma de ventas",
+              name: "Total comprado",
               sortable: true,
               selector: (row) => row.total_sales_amount,
             },
