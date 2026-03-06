@@ -224,7 +224,7 @@ const ProductList = () => {
       
       {/* 3. CONTENIDO PRINCIPAL */}
       <Grid container>
-        <Grid item xs={12} className="custom-section">
+        <Grid item xs={12} className="card">
           {/* 3.1 Header */}
           <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
             <h1>Productos</h1>

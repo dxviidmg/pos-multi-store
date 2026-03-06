@@ -8,8 +8,8 @@ export const CustomSpinner = memo(({isLoading}) => {
   }
   
 	return (
-    <div className="overlay">
-      <div className="spinner-container">
+    <div className="spinner-overlay">
+      <div className="spinner">
         <CircularProgress size={60} />
       </div>
     </div>

@@ -59,7 +59,7 @@ const AuditDashboard = () => {
   return (
     <div>
       <CustomSpinner isLoading={isLoading}></CustomSpinner>
-      <Grid className="custom-section">
+      <Grid className="card">
         <h1>Tablero de auditoria</h1>
         <Grid container spacing={2}>
           {" "}

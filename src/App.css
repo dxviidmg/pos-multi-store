@@ -5,49 +5,57 @@ p {
   font-weight: 500;
 }
 
-.custom-section {
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
+/* Card component - Main content container */
+.card {
   background-color: var(--color-paper);
   border: 1px solid var(--color-border);
-  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
   color: var(--color-text);
+  margin-bottom: 2rem;
   overflow-x: auto;
-  margin-bottom: 2rem !important;
+  padding: var(--spacing-md);
   transition: box-shadow var(--transition-base);
 }
 
-.custom-section:hover {
+.card:hover {
   box-shadow: var(--shadow-md);
 }
 
-.modal-container {
-  padding: var(--spacing-md);
-  background: linear-gradient(135deg, rgba(4, 53, 107, 0.03) 0%, rgba(4, 53, 107, 0.08) 100%);
-  text-align: center;
-  border-radius: var(--radius-md);
-}
-
-.custom-section-buttons {
+.card__actions {
   margin: var(--spacing-sm);
 }
 
+/* Modal component */
+.modal-content {
+  background: linear-gradient(135deg, rgba(4, 53, 107, 0.03) 0%, rgba(4, 53, 107, 0.08) 100%);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  text-align: center;
+}
+
+/* Layout */
 #root {
   background-color: var(--color-background);
   min-height: 100vh;
   padding-bottom: 2px;
 }
 
+/* Form elements */
 select option {
   font-weight: 500;
 }
 
-input, select, textarea {
+input,
+select,
+textarea {
   transition: border-color var(--transition-base), box-shadow var(--transition-base);
 }
 
-input:focus, select:focus, textarea:focus {
-  outline: none;
+input:focus,
+select:focus,
+textarea:focus {
   border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(4, 52, 107, 0.1);
+  outline: none;
 }

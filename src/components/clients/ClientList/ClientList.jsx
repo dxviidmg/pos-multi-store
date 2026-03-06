@@ -84,7 +84,7 @@ const ClientList = () => {
       
       {/* 2. SECCIÓN DE DESCUENTOS (solo owner) */}
       {getUserData().role === "owner" && (
-        <Grid item xs={12} className="custom-section">
+        <Grid item xs={12} className="card">
           <h1>Crear descuento</h1>
           <Grid container spacing={2} sx={{ mt: 1 }}>
             <Grid item xs={12} md={6}>
@@ -114,7 +114,7 @@ const ClientList = () => {
       )}
 
       {/* 3. CONTENIDO PRINCIPAL */}
-      <Grid item xs={12} className="custom-section">
+      <Grid item xs={12} className="card">
         {/* 3.1 Header */}
         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
           <h1>Clientes</h1>

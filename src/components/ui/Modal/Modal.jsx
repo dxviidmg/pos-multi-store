@@ -24,7 +24,7 @@ function CustomModal({ showOut, onClose, title, children}) {
   return (
     <Modal open={showOut} onClose={onClose}>
       <Box sx={style}>
-        <Box className="custom-modal-header" sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box className="modal__header" sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Typography variant="h6" sx={{ flexGrow: 1, textAlign: 'center' }}>
             {title}
           </Typography>
@@ -32,7 +32,7 @@ function CustomModal({ showOut, onClose, title, children}) {
             <CloseIcon />
           </IconButton>
         </Box>
-        <Box className="custom-modal-body" sx={{ p: 2, backgroundColor: colors.background.main }}>
+        <Box className="modal__body" sx={{ p: 2, backgroundColor: colors.background.main }}>
           {children}
         </Box>
       </Box>

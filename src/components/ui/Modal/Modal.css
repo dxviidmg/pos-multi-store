@@ -1,9 +1,9 @@
-.custom-modal-header {
+.modal__header {
     background: linear-gradient(135deg, #04356b 0%, #05428a 100%);
     color: white;
 }
 
-.custom-modal-body {
+.modal__body {
     background-color: #f8fafc;
     padding: 0px;
 }

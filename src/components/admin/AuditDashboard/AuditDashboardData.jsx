@@ -60,7 +60,7 @@ const AuditDashboardData = ({ title, taskId, pollInterval = 7500 }) => {
 
   return (
     <div
-      className="text-center custom-section"
+      className="text-center card"
       style={{ backgroundColor: getBackgroundColor() }}
     >
       <h2 className="pt-3 pb-0 m-0">{title}</h2>

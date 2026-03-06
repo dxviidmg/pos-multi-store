@@ -1,21 +1,21 @@
 @import '../../theme/variables.css';
 
-.custom-navbar {
+.navbar {
   background-color: var(--color-primary);
 }
 
-.custom-navbar * {
+.navbar * {
   color: var(--color-white);
 }
 
-.custom-dropdown .dropdown-menu {
+.navbar__dropdown .dropdown-menu {
   background-color: var(--color-primary);
 }
 
-.custom-dropdown .dropdown-item {
+.navbar__dropdown .dropdown-item {
   color: var(--color-white);
 }
 
-.custom-dropdown .dropdown-item:hover {
+.navbar__dropdown .dropdown-item:hover {
   background-color: var(--color-primary-dark);
 }

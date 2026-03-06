@@ -57,7 +57,7 @@ const BrandList = () => {
       />
       
       {/* 2. CONTENIDO PRINCIPAL */}
-      <Grid item xs={12} className="custom-section">
+      <Grid item xs={12} className="card">
         {/* 2.1 Header */}
         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
           <h1>Marcas</h1>

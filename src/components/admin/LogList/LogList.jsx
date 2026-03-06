@@ -89,7 +89,7 @@ const LogList = () => {
       
       {/* 2. CONTENIDO PRINCIPAL */}
       <Grid container>
-        <Grid item xs={12} className="custom-section">
+        <Grid item xs={12} className="card">
           {/* 2.1 Header */}
           <h1>Logs</h1>
 

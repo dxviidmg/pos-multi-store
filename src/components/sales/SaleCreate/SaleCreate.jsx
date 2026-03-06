@@ -7,10 +7,10 @@ const SaleCreate = () => {
   return (
     <>
       <Grid container>
-      <Grid item xs={12} className="custom-section">
+      <Grid item xs={12} className="card">
         <SearchProduct />
       </Grid>
-      <Grid item xs={12} className="custom-section">
+      <Grid item xs={12} className="card">
         <MultiCart />
       </Grid>
       </Grid>

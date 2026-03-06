@@ -67,7 +67,7 @@ const CashFlowModal = ({ isOpen, cashFlow, onClose, onUpdate }) => {
       title={formData.id ? "Actualizar movimiento" : "Crear movimiento"}
     >
       <Grid container sx={{ padding: '1rem', backgroundColor: 'rgba(4, 53, 107, 0.2)' }}>
-        <Grid item xs={12} className="custom-section">
+        <Grid item xs={12} className="card">
 
       <Grid container spacing={2}>
         <Grid item xs={12} md={3}>

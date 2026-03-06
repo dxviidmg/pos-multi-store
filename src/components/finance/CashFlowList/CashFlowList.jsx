@@ -60,7 +60,7 @@ const CashFlowList = () => {
       
       {/* 3. CONTENIDO PRINCIPAL */}
       <Grid container>
-        <Grid item xs={12} className="custom-section">
+        <Grid item xs={12} className="card">
           {/* 3.1 Header */}
           <h1>Movimientos en caja</h1>
 

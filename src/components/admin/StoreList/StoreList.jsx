@@ -466,7 +466,7 @@ const StoreList = () => {
     <>
       <CustomSpinner isLoading={loading} />
       <Grid container>
-        <Grid item xs={12} className="custom-section">
+        <Grid item xs={12} className="card">
           {tenantInfo.notices && tenantInfo.notices.length > 0 && (
             <Box sx={{ mb: 3 }}>
               <Grid container spacing={2}>

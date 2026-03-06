@@ -101,7 +101,7 @@ const DistributionList = () => {
       <CustomSpinner isLoading={loading} />
       
       {/* 2. CONTENIDO PRINCIPAL - Lista de distribuciones */}
-      <Grid item xs={12} className="custom-section">
+      <Grid item xs={12} className="card">
         <h1>Distribuciones</h1>
         
         <CustomTable
@@ -138,7 +138,7 @@ const DistributionList = () => {
 
       {/* 3. DETALLE DE DISTRIBUCIÓN SELECCIONADA */}
       {Object.keys(distributionSelected).length !== 0 && (
-        <Grid item xs={12} className="custom-section">
+        <Grid item xs={12} className="card">
           <h1>Distribución #{distributionSelected.id}</h1>
           
           <CustomButton
