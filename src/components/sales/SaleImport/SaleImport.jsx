@@ -114,7 +114,7 @@ const SaleImport = () => {
   return (
     <>
       <Grid>
-      <Grid item xs={12} className="card">
+      <Grid item xs={12} className="card" sx={{ marginBottom: '1.5rem' }}>
         <h1>Importar ventas</h1>
         <Grid container spacing={2}>
           <Grid item xs={12} md={3}>
@@ -176,7 +176,7 @@ const SaleImport = () => {
         </Grid>
       </Grid>
 
-      <Grid item xs={12} className="card" hidden={showExample}>
+      <Grid item xs={12} className="card" hidden={showExample} sx={{ marginBottom: '1.5rem' }}>
         <h1>Ejemplo de plantilla</h1>
 
         <CustomTable

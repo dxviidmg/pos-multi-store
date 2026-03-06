@@ -84,7 +84,7 @@ const ClientList = () => {
       
       {/* 2. SECCIÓN DE DESCUENTOS (solo owner) */}
       {getUserData().role === "owner" && (
-        <Grid item xs={12} className="card">
+        <Grid item xs={12} className="card" sx={{ marginBottom: '1.5rem' }}>
           <h1>Crear descuento</h1>
           <Grid container spacing={2} sx={{ mt: 1 }}>
             <Grid item xs={12} md={6}>

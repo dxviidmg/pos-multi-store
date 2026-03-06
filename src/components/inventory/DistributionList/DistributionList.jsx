@@ -101,7 +101,7 @@ const DistributionList = () => {
       <CustomSpinner isLoading={loading} />
       
       {/* 2. CONTENIDO PRINCIPAL - Lista de distribuciones */}
-      <Grid item xs={12} className="card">
+      <Grid item xs={12} className="card" sx={{ marginBottom: '1.5rem' }}>
         <h1>Distribuciones</h1>
         
         <CustomTable

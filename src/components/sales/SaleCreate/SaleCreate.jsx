@@ -7,7 +7,7 @@ const SaleCreate = () => {
   return (
     <>
       <Grid container>
-      <Grid item xs={12} className="card">
+      <Grid item xs={12} className="card" sx={{ marginBottom: '1.5rem' }}>
         <SearchProduct />
       </Grid>
       <Grid item xs={12} className="card">

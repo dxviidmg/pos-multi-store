@@ -297,8 +297,8 @@ const SearchProduct = () => {
     <>
       <StockModal isOpen={stockModal.isOpen} product={stockModal.data} onClose={stockModal.close} />
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-        <h1 style={{ margin: 0 }}>Buscador de productos</h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
+        <h1 style={{ margin: 0, fontSize: '1.5rem' }}>Buscador de productos</h1>
         <CustomButton
           disabled={!urlPrinter}
           onClick={(e) => handlePrintTicket("test", {})}
@@ -308,119 +308,95 @@ const SearchProduct = () => {
         </CustomButton>
       </div>
 
-      <div className="mb-3">
-        <strong className="me-3">Tipo de búsqueda:</strong>
-        <label style={{ marginRight: '2rem' }}>
-          <input
-            type="radio"
-            value="code"
-            checked={queryType === "code"}
-            onChange={handleQueryTypeChange}
-            className="me-2"
-          />
-          Por código de barras (Ctrl+R)
-        </label>
-        <label style={{ marginRight: '2rem' }}>
-          <input
-            type="radio"
-            value="q"
-            checked={queryType === "q"}
-            onChange={handleQueryTypeChange}
-            className="me-2"
-          />
-          Por marca o nombre (Ctrl+Y)
-        </label>
-      </div>
-
-      <div>
-        <strong className="me-3">Tipo de operación:</strong>
-        <label className={storeType === "A" ? "d-none" : ""} style={{ marginRight: '2rem' }}>
-          <input
-            type="radio"
-            value="venta"
-            checked={movementType === "venta"}
-            onChange={handleMovementTypeChange}
-            className="me-2"
-          />
-          Venta (Ctrl+U)
-        </label>
-        <label style={{ marginRight: '2rem' }}>
-          <input
-            type="radio"
-            value="traspaso"
-            checked={movementType === "traspaso"}
-            onChange={handleMovementTypeChange}
-            className="me-2"
-          />
-          Confirmar traspaso (Ctrl+I)
-        </label>
-        <label className={storeType === "T" ? "d-none" : ""} style={{ marginRight: '2rem' }}>
-          <input
-            type="radio"
-            value="distribucion"
-            checked={movementType === "distribucion"}
-            onChange={handleMovementTypeChange}
-            className="me-2"
-          />
-          Distribucion (Ctrl+O)
-        </label>
-        <label style={{ marginRight: '2rem' }}>
-          <input
-            type="radio"
-            value="agregar"
-            checked={movementType === "agregar"}
-            onChange={handleMovementTypeChange}
-            className="me-2"
-          />
-          Agregar a inventario (Ctrl+P)
-        </label>
-        <label style={{ marginRight: '2rem' }}>
-          <input
-            type="radio"
-            value="checar"
-            checked={movementType === "checar"}
-            onChange={handleMovementTypeChange}
-            className="me-2"
-          />
-          Checar precio (Ctrl+A)
-        </label>
-        {supports_reservations && (
-          <label className={storeType === "A" ? "d-none" : ""} style={{ marginRight: '2rem' }}>
-            <input
-              type="radio"
-              value="apartado"
-              checked={movementType === "apartado"}
-              onChange={handleMovementTypeChange}
-              className="me-2"
+      <Grid container spacing={0} sx={{ mb: 0.5 }}>
+        <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', mb: 0.25 }}>
+          <FormLabel sx={{ fontWeight: 600, mr: 2, fontSize: '0.875rem' }}>Tipo de búsqueda:</FormLabel>
+          <RadioGroup row value={queryType} onChange={handleQueryTypeChange}>
+            <FormControlLabel 
+              value="code" 
+              control={<Radio size="small" />} 
+              label="Por código de barras (Ctrl+R)"
+              sx={{ mr: 4 }}
             />
-            Apartado (Sin atajo)
-          </label>
-        )}
-      </div>
+            <FormControlLabel 
+              value="q" 
+              control={<Radio size="small" />} 
+              label="Por marca o nombre (Ctrl+Y)"
+            />
+          </RadioGroup>
+        </Grid>
+
+        <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+          <FormLabel sx={{ fontWeight: 600, mr: 2, fontSize: '0.875rem' }}>Tipo de operación:</FormLabel>
+          <RadioGroup row value={movementType} onChange={handleMovementTypeChange}>
+            {storeType !== "A" && (
+              <FormControlLabel 
+                value="venta" 
+                control={<Radio size="small" />} 
+                label="Venta (Ctrl+U)"
+                sx={{ mr: 4 }}
+              />
+            )}
+            <FormControlLabel 
+              value="traspaso" 
+              control={<Radio size="small" />} 
+              label="Confirmar traspaso (Ctrl+I)"
+              sx={{ mr: 4 }}
+            />
+            {storeType !== "T" && (
+              <FormControlLabel 
+                value="distribucion" 
+                control={<Radio size="small" />} 
+                label="Distribucion (Ctrl+O)"
+                sx={{ mr: 4 }}
+              />
+            )}
+            <FormControlLabel 
+              value="agregar" 
+              control={<Radio size="small" />} 
+              label="Agregar a inventario (Ctrl+P)"
+              sx={{ mr: 4 }}
+            />
+            <FormControlLabel 
+              value="checar" 
+              control={<Radio size="small" />} 
+              label="Checar precio (Ctrl+A)"
+              sx={{ mr: 4 }}
+            />
+            {supports_reservations && storeType !== "A" && (
+              <FormControlLabel 
+                value="apartado" 
+                control={<Radio size="small" />} 
+                label="Apartado (Sin atajo)"
+              />
+            )}
+          </RadioGroup>
+        </Grid>
+      </Grid>
 
       <Chip 
         label="Aviso: Para añadir productos al carrito, el cursor debe estar en el campo de búsqueda de productos."
         color="success" 
         size="small"
-        sx={{ display: isInputFocused ? 'none' : 'inline-flex', mb: 1, maxWidth: '100%' }}
+        sx={{ display: isInputFocused ? 'none' : 'inline-flex', mb: 0.25, maxWidth: '100%' }}
       />
 
       <Chip 
         label="Buscando..."
         color="success" 
         size="small"
-        sx={{ display: !searching ? 'none' : 'inline-flex', mb: 1 }}
+        sx={{ display: !searching ? 'none' : 'inline-flex', mb: 0.25 }}
       />
 
       <Chip
         label={`${data.length} resultados ${data.length === 200 ? "(puede haber mas coincidencias)" : ""}`}
         color="success"
         size="small"
-        sx={{ display: (searching || data.length === 0) ? 'none' : 'inline-flex', mb: 1 }}
+        sx={{ display: (searching || data.length === 0) ? 'none' : 'inline-flex', mb: 0.25 }}
       />
 
       {!searching && isInputFocused && <br />}
-      <Grid container spacing={2}>
+      <Grid container spacing={2} sx={{ mb: 0.5 }}>
         <Grid item xs={queryType === "code" ? 12 : 10}>
           <TextField size="small" fullWidth className=""
             ref={inputRef}

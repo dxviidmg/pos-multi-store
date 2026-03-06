@@ -215,7 +215,7 @@ const ProductImport = () => {
 
   return (
       <Grid container>
-      <Grid item xs={12} className="card">
+      <Grid item xs={12} className="card" sx={{ marginBottom: '1.5rem' }}>
         <CustomSpinner isLoading={loading}></CustomSpinner>
         <h1>Importación de productos</h1>
         <Grid container spacing={2}>
@@ -377,7 +377,7 @@ const ProductImport = () => {
 
 
 
-      <Grid item xs={12} className="card" hidden={showExample}>
+      <Grid item xs={12} className="card" hidden={showExample} sx={{ marginBottom: '1.5rem' }}>
         <h1>Ejemplo de plantilla</h1>
 
         <CustomTable
