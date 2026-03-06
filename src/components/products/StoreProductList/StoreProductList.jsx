@@ -12,6 +12,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import { getDepartments } from "../../../api/departments";
 import { Grid, TextField, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
+import { UI_TEXT } from "../../../constants";
 
 const StoreProductList = () => {
   const logsModal = useModal();
@@ -151,7 +152,7 @@ const StoreProductList = () => {
                   name="department_id"
                   label="Departamento"
                 >
-                  <MenuItem value="">Todos las departamentos</MenuItem>
+                  <MenuItem value="">{UI_TEXT.ALL_DEPARTMENTS}</MenuItem>
                   {departments.map((department) => (
                     <MenuItem key={department.id} value={department.id}>
                       {department.name}

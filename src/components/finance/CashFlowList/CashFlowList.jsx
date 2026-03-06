@@ -6,7 +6,7 @@ import { getCashFlow } from "../../../api/cashflow";
 import CashFlowModal from "../CashFlowModal/CashFlowModal";
 import { useModal } from "../../../hooks/useModal";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
-import { Grid, TextField, Box } from "@mui/material";
+import { Grid, TextField } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 
 const today = getFormattedDate();

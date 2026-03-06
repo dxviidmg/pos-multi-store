@@ -308,98 +308,94 @@ const SearchProduct = () => {
         </CustomButton>
       </div>
 
-      <div>
-        <span className="me-3">
-          Tipo de búsqueda: 
-          <label className="ms-2">
-            <input
-              type="radio"
-              value="code"
-              checked={queryType === "code"}
-              onChange={handleQueryTypeChange}
-              className="me-1"
-            />
-            Por código de barras (Ctrl+R)
-          </label>
-          <label className="ms-3">
-            <input
-              type="radio"
-              value="q"
-              checked={queryType === "q"}
-              onChange={handleQueryTypeChange}
-              className="me-1"
-            />
-            Por marca o nombre (Ctrl+Y)
-          </label>
-        </span>
+      <div className="mb-3">
+        <strong className="me-3">Tipo de búsqueda:</strong>
+        <label style={{ marginRight: '2rem' }}>
+          <input
+            type="radio"
+            value="code"
+            checked={queryType === "code"}
+            onChange={handleQueryTypeChange}
+            className="me-2"
+          />
+          Por código de barras (Ctrl+R)
+        </label>
+        <label style={{ marginRight: '2rem' }}>
+          <input
+            type="radio"
+            value="q"
+            checked={queryType === "q"}
+            onChange={handleQueryTypeChange}
+            className="me-2"
+          />
+          Por marca o nombre (Ctrl+Y)
+        </label>
       </div>
 
       <div>
-        <span className="me-3">
-          Tipo de operación: 
-          <label className={`ms-2 ${storeType === "A" ? "d-none" : ""}`}>
+        <strong className="me-3">Tipo de operación:</strong>
+        <label className={storeType === "A" ? "d-none" : ""} style={{ marginRight: '2rem' }}>
+          <input
+            type="radio"
+            value="venta"
+            checked={movementType === "venta"}
+            onChange={handleMovementTypeChange}
+            className="me-2"
+          />
+          Venta (Ctrl+U)
+        </label>
+        <label style={{ marginRight: '2rem' }}>
+          <input
+            type="radio"
+            value="traspaso"
+            checked={movementType === "traspaso"}
+            onChange={handleMovementTypeChange}
+            className="me-2"
+          />
+          Confirmar traspaso (Ctrl+I)
+        </label>
+        <label className={storeType === "T" ? "d-none" : ""} style={{ marginRight: '2rem' }}>
+          <input
+            type="radio"
+            value="distribucion"
+            checked={movementType === "distribucion"}
+            onChange={handleMovementTypeChange}
+            className="me-2"
+          />
+          Distribucion (Ctrl+O)
+        </label>
+        <label style={{ marginRight: '2rem' }}>
+          <input
+            type="radio"
+            value="agregar"
+            checked={movementType === "agregar"}
+            onChange={handleMovementTypeChange}
+            className="me-2"
+          />
+          Agregar a inventario (Ctrl+P)
+        </label>
+        <label style={{ marginRight: '2rem' }}>
+          <input
+            type="radio"
+            value="checar"
+            checked={movementType === "checar"}
+            onChange={handleMovementTypeChange}
+            className="me-2"
+          />
+          Checar precio (Ctrl+A)
+        </label>
+        {supports_reservations && (
+          <label className={storeType === "A" ? "d-none" : ""} style={{ marginRight: '2rem' }}>
             <input
               type="radio"
-              value="venta"
-              checked={movementType === "venta"}
+              value="apartado"
+              checked={movementType === "apartado"}
               onChange={handleMovementTypeChange}
-              className="me-1"
+              className="me-2"
             />
-            Venta (Ctrl+U)
+            Apartado (Sin atajo)
           </label>
-          <label className="ms-3">
-            <input
-              type="radio"
-              value="traspaso"
-              checked={movementType === "traspaso"}
-              onChange={handleMovementTypeChange}
-              className="me-1"
-            />
-            Confirmar traspaso (Ctrl+I)
-          </label>
-          <label className={`ms-3 ${storeType === "T" ? "d-none" : ""}`}>
-            <input
-              type="radio"
-              value="distribucion"
-              checked={movementType === "distribucion"}
-              onChange={handleMovementTypeChange}
-              className="me-1"
-            />
-            Distribucion (Ctrl+O)
-          </label>
-          <label className="ms-3">
-            <input
-              type="radio"
-              value="agregar"
-              checked={movementType === "agregar"}
-              onChange={handleMovementTypeChange}
-              className="me-1"
-            />
-            Agregar a inventario (Ctrl+P)
-          </label>
-          <label className="ms-3">
-            <input
-              type="radio"
-              value="checar"
-              checked={movementType === "checar"}
-              onChange={handleMovementTypeChange}
-              className="me-1"
-            />
-            Checar precio (Ctrl+A)
-          </label>
-          {supports_reservations && (
-            <label className={`ms-3 ${storeType === "A" ? "d-none" : ""}`}>
-              <input
-                type="radio"
-                value="apartado"
-                checked={movementType === "apartado"}
-                onChange={handleMovementTypeChange}
-                className="me-1"
-              />
-              Apartado (Sin atajo)
-            </label>
-          )}
-        </span>
+        )}
       </div>
 
       <Chip 

@@ -16,6 +16,7 @@ import { useDepartments } from "../../../hooks/useDepartments";
 import { useInvestment } from "../../../hooks/useInvestment";
 import { Grid, FormLabel, FormControlLabel, Checkbox, Box, TextField, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
+import { UI_TEXT } from "../../../constants";
 
 
 const StoreList = () => {
@@ -291,7 +292,6 @@ const StoreList = () => {
       filtered = allColumns;
     }
     
-    console.log('quickFilter:', quickFilter, 'columns count:', filtered.length);
     return filtered;
   }, [quickFilter, showInvestment, averageSales, user?.store_id, tenantInfo.product_count]);
 
@@ -595,7 +595,7 @@ const StoreList = () => {
                         name="department_id"
                         label="Departamento"
                       >
-                        <MenuItem value="">Todos</MenuItem>
+                        <MenuItem value="">{UI_TEXT.ALL}</MenuItem>
                         <MenuItem value="0">Sin departamento</MenuItem>
                         {departments.map((departament) => (
                           <MenuItem key={departament.id} value={departament.id}>

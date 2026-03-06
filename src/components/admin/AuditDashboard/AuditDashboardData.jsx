@@ -28,7 +28,6 @@ const AuditDashboardData = ({ title, taskId, pollInterval = 7500 }) => {
           return false; // tarea no completada
         }
       } catch (error) {
-        console.error("Error fetching task result:", error);
         clearInterval(intervalId);
         return true; // parar en caso de error
       }

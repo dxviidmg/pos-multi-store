@@ -30,7 +30,7 @@ const StoreProductLogsModal = ({ isOpen, logs: logsData, onClose, onUpdate }) =>
         } );
           setLogs(response.data);
         } catch (error) {
-          console.error("Error fetching store product logs:", error);
+          // Error silencioso - logs no críticos
         }
       } else {
         setFormData(INITIAL_FORM_DATA);

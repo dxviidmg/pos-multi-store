@@ -10,7 +10,7 @@ import CustomTooltip from "../../ui/Tooltip";
 import { useBrands } from "../../../hooks/useBrands";
 import { useModal } from "../../../hooks/useModal";
 import Grid from "@mui/material/Grid";
-import { Checkbox, FormControlLabel, Box, Stack, Divider } from "@mui/material";
+import { Checkbox, FormControlLabel, Stack } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 

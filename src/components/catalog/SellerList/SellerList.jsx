@@ -6,7 +6,7 @@ import SellerModal from "../SellerModal/SellerModal";
 import { getDateDifference, getFormattedDate } from "../../../utils/utils";
 import { chooseIcon } from "../../ui/icons/Icons";
 import { useModal } from "../../../hooks/useModal";
-import { Grid, TextField, Box, Stack, Divider } from "@mui/material";
+import { Grid, TextField, Stack } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 
 const SellerList = () => {

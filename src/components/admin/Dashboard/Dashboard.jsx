@@ -42,7 +42,6 @@ const Dashboard = () => {
           clearInterval(intervalId);
         }
       } catch (error) {
-        console.error("Error fetching task result:", error);
         showError("Error al obtener los datos del dashboard", error.response?.data?.message || error.message || "Error de conexión");
         setLoading(false);
         setProgress(0);

@@ -56,3 +56,27 @@ export const PAGINATION = {
   DEFAULT_PAGE_SIZE: 10,
   PAGE_SIZE_OPTIONS: [10, 25, 50, 100]
 };
+
+// Opciones de filtros comunes
+export const FILTER_OPTIONS = {
+  ALL: "",
+  ALL_LABEL: "Todos",
+};
+
+// Textos de UI comunes
+export const UI_TEXT = {
+  ALL: "Todos",
+  ALL_DEPARTMENTS: "Todos los departamentos",
+  ALL_BRANDS: "Todas las marcas",
+  ALL_STORES: "Todas las tiendas",
+  LOADING: "Cargando...",
+  NO_DATA: "No hay datos disponibles",
+  ERROR: "Error",
+  SUCCESS: "Éxito",
+  CANCEL: "Cancelar",
+  SAVE: "Guardar",
+  DELETE: "Eliminar",
+  EDIT: "Editar",
+  ADD: "Agregar",
+  SEARCH: "Buscar",
+};

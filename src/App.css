@@ -13,7 +13,7 @@ p {
   padding: var(--spacing-md);
   color: var(--color-text);
   overflow-x: auto;
-  margin-bottom: var(--spacing-sm);
+  margin-bottom: 2rem !important;
   transition: box-shadow var(--transition-base);
 }
 

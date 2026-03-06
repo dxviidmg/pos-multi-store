@@ -11,7 +11,7 @@ import CustomTooltip from "../../ui/Tooltip";
 import { useClients } from "../../../hooks/useClients";
 import { useModal } from "../../../hooks/useModal";
 import Grid from "@mui/material/Grid";
-import { TextField, Box, Stack, Divider } from "@mui/material";
+import { TextField, Stack } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DiscountIcon from "@mui/icons-material/Discount";
 
