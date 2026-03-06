@@ -375,7 +375,7 @@ const ProductList = () => {
               },
 
               {
-                name: "Costo",
+                name: "Costo unitario",
                 selector: (row) => "$" + row.cost,
                 wrapText: true,
               },

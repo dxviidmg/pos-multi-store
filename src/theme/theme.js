@@ -1,6 +1,20 @@
 import { createTheme } from '@mui/material/styles';
 
-export const theme = createTheme({
+export const getTheme = (mode) => createTheme({
+  palette: {
+    mode,
+    ...(mode === 'light' ? {
+      text: {
+        primary: '#000000',
+        secondary: 'rgba(0, 0, 0, 0.85)',
+      },
+    } : {
+      background: {
+        default: '#121212',
+        paper: '#1e1e1e',
+      },
+    }),
+  },
   typography: {
     fontFamily: "'Plus Jakarta Sans', sans-serif",
     h1: { fontWeight: 600, fontSize: '2.25rem', lineHeight: '2.75rem' },
@@ -14,12 +28,6 @@ export const theme = createTheme({
     button: { textTransform: 'capitalize', fontWeight: 400 },
     subtitle1: { fontSize: '0.875rem', fontWeight: 400 },
     subtitle2: { fontSize: '0.875rem', fontWeight: 400 },
-  },
-  palette: {
-    text: {
-      primary: '#000000',
-      secondary: 'rgba(0, 0, 0, 0.85)',
-    },
   },
   components: {
     MuiDataGrid: {

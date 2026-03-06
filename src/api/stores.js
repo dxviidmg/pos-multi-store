@@ -7,15 +7,27 @@ const storeService = createApiService("store");
 export const getStores = storeService.getAll;
 
 export const getStoreInvestment = async (store) => {
-  const response = await httpClient.get(getApiUrl(`store/investment/${store.id}`), {
+  const response = await httpClient.get(getApiUrl(`store/${store.id}/investment`), {
     headers: getHeaders(),
   });
   return response;
 };
 
 export const getInvestment = async (storeId = null) => {
-  const url = storeId ? `investment/${storeId}` : "investment";
+  const url = storeId ? `store/${storeId}/investment` : "investment";
   const response = await httpClient.get(getApiUrl(url), {
+    headers: getHeaders(),
+  });
+  return response;
+};
+
+/**
+ * Reset store stock
+ * @param {number} storeId - Store ID
+ * @returns {Promise<Object>} Reset response
+ */
+export const resetStoreStock = async (storeId) => {
+  const response = await httpClient.post(getApiUrl(`store/${storeId}/reset-stock/`, false), {}, {
     headers: getHeaders(),
   });
   return response;

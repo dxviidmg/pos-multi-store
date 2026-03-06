@@ -308,7 +308,7 @@ const SaleList = () => {
               : []),
 
             {
-              name: "Hora",
+              name: "Fecha y hora",
               selector: (row) => (
                 <div style={{ whiteSpace: 'normal', wordBreak: 'break-word', lineHeight: '1.4' }}>
                   {getFormattedDateTime(row.created_at)}
@@ -347,7 +347,7 @@ const SaleList = () => {
               : []),
 
             {
-              name: "Metodos de pago",
+              name: "Métodos de pago",
               selector: (row) => row.payments_methods.join(", "),
               wrapText: true,
               grow: 1.5,

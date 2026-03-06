@@ -124,7 +124,7 @@ const CashFlowList = () => {
                 selector: (row) => "$" + row.amount,
               },
               {
-                name: "usuario",
+                name: "Usuario",
                 selector: (row) => row.user_username,
               },
             ]}

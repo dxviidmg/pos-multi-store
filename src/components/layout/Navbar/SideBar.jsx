@@ -24,6 +24,8 @@ import MenuIcon from "@mui/icons-material/Menu";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import DashboardIcon from "@mui/icons-material/Dashboard";
+import Brightness4Icon from "@mui/icons-material/Brightness4";
+import Brightness7Icon from "@mui/icons-material/Brightness7";
 import { Outlet, useNavigate } from "react-router-dom";
 import { getUserData } from "../../../api/utils";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
@@ -142,7 +144,7 @@ const Drawer = styled(MuiDrawer, {
   }),
 }));
 
-export default function MainLayout() {
+export default function MainLayout({ toggleTheme, themeMode }) {
   const theme = useTheme();
   const navigate = useNavigate();
   const user = getUserData();
@@ -203,8 +205,8 @@ export default function MainLayout() {
             href: "/movimientos/",
             hidden: user.role === "seller",
           },
-          { divider: true },
-          { label: "Importar ventas", href: "/importar-ventas/" },
+          { divider: true, hidden: user.role === "seller" },
+          { label: "Importar ventas", href: "/importar-ventas/", hidden: user.role === "seller" },
         ],
       },
       { label: "Clientes", href: "/clientes/", hidden: user.role === "seller" },
@@ -221,15 +223,16 @@ export default function MainLayout() {
           { label: "Importar Productos", href: "/importar-productos/" },
           { label: "Importar inventario", href: "/importar-inventario/" },
         ],
+        hidden: user.role === "seller",
       },
       {
         label: "Movimientos",
         dropdown: [
-          { label: "Distribuciones", href: "/distribuciones/" },
+          { label: "Distribuciones", href: "/distribuciones/", hidden: user.role === "seller" },
           { label: "Traspasos", href: "/traspasos/" },
         ],
       },
-      { label: "Logs", href: "/logs/" },
+      { label: "Logs", href: "/logs/", hidden: user.role === "seller" },
     ],
     A: [
       { label: "Distribuir", href: "/distribuir/" },
@@ -327,6 +330,14 @@ export default function MainLayout() {
           >
             {(user.store_name || user.tenant_name || 'U').charAt(0).toUpperCase()}
           </Avatar>
+
+          <IconButton
+            color="inherit"
+            onClick={toggleTheme}
+            sx={{ mr: 1 }}
+          >
+            {themeMode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+          </IconButton>
 
           {user.role === "owner" && user.store_id && (
             <IconButton
