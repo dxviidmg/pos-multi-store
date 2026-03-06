@@ -3,4 +3,4 @@
  */
 
 export { colors } from './colors';
-export { theme } from './theme';
+export { getTheme } from './theme';

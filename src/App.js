@@ -34,7 +34,7 @@ const Dashboard = lazy(() => import("./components/admin/Dashboard/Dashboard"));
 const DistributionList = lazy(() => import("./components/inventory/DistributionList/DistributionList"));
 const RestartService = lazy(() => import("./components/admin/RestartService/RestartService"));
 
-function App() {
+function App({ toggleTheme, themeMode }) {
   useKeepAlive();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const user = getUserData();
@@ -51,7 +51,7 @@ function App() {
     <Router>
       <Routes>
         {isLoggedIn ? (
-          <Route element={<MiniDrawer />}>
+          <Route element={<MiniDrawer toggleTheme={toggleTheme} themeMode={themeMode} />}>
             <Route path="/tiendas/" element={<Suspense fallback={<LoadingFallback />}><StoreList /></Suspense>} />
             <Route path="/ventas/" element={<Suspense fallback={<LoadingFallback />}><SaleList /></Suspense>} />
             <Route path="/vender/" element={<Suspense fallback={<LoadingFallback />}><SaleCreate /></Suspense>} />
