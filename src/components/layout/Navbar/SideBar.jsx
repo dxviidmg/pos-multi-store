@@ -225,10 +225,9 @@ export default function MainLayout() {
       {
         label: "Movimientos",
         dropdown: [
-          { label: "Distribuciones", href: "/distribuciones/" },
+          { label: "Distribuciones", href: "/distribuciones/", hidden: user.role === "seller" },
           { label: "Traspasos", href: "/traspasos/" },
         ],
-        hidden: user.role === "seller",
       },
       { label: "Logs", href: "/logs/", hidden: user.role === "seller" },
     ],
