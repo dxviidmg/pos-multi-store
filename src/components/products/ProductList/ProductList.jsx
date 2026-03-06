@@ -18,6 +18,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import ChecklistIcon from "@mui/icons-material/Checklist";
 import { getDepartments } from "../../../api/departments";
 import CustomTooltip from "../../ui/Tooltip";
+import { UI_TEXT } from "../../../constants";
 import {
   Grid,
   TextField,
@@ -223,7 +224,7 @@ const ProductList = () => {
       
       {/* 3. CONTENIDO PRINCIPAL */}
       <Grid container>
-        <Grid item xs={12} className="custom-section">
+        <Grid item xs={12} className="card">
           {/* 3.1 Header */}
           <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
             <h1>Productos</h1>
@@ -263,7 +264,7 @@ const ProductList = () => {
                     name="department_id"
                     label="Departamento"
                   >
-                    <MenuItem value="">Todos los departamentos</MenuItem>
+                    <MenuItem value="">{UI_TEXT.ALL_DEPARTMENTS}</MenuItem>
                     <MenuItem value="0">Sin departamento</MenuItem>
                     {departments.map((department) => (
                       <MenuItem key={department.id} value={department.id}>

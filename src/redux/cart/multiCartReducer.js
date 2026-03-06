@@ -177,7 +177,6 @@ const multiCartReducer = (state = initialState, action) => {
         
         // Verificar que no exceda el stock disponible
         if (newQuantity > availableStock) {
-          console.warn(`Stock insuficiente. Disponible: ${availableStock}, Intentando agregar: ${newQuantity}`);
           return state; // No agregar si excede el stock
         }
         

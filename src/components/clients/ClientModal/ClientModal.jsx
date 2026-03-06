@@ -50,7 +50,7 @@ const ClientModal = ({ isOpen, client, onClose, onUpdate }) => {
       title={values.id ? "Actualizar cliente" : "Crear cliente"}
     >
       <Grid container sx={{ padding: '1rem', backgroundColor: 'rgba(4, 53, 107, 0.2)' }}>
-        <Grid item xs={12} className="custom-section">
+        <Grid item xs={12} className="card">
 
       <Grid container spacing={2} >
         <Grid item xs={12}>

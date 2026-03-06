@@ -170,7 +170,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
       title={showStoreProducts? "Ver stock": formData.id ? "Actualizar producto" : "Crear producto"}
     >
       <Grid container sx={{ padding: '1rem', backgroundColor: 'rgba(4, 53, 107, 0.2)' }}>
-        <Grid item xs={12} className="custom-section">
+        <Grid item xs={12} className="card">
         <Grid container spacing={2} hidden={showStoreProducts}>
           <Grid item xs={12} md={4}>
             <Box

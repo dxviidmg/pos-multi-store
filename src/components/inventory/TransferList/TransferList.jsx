@@ -27,7 +27,7 @@ const TransferList = () => {
       <CustomSpinner isLoading={isLoading} />
       
       {/* 2. CONTENIDO PRINCIPAL */}
-      <div className="custom-section">
+      <div className="card">
         <h1>Traspasos Pendientes</h1>
         
         {/* 2.1 Tabla */}

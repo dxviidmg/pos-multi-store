@@ -34,7 +34,7 @@ const SERVICES = [
 
 const ServiceList = () => {
   return (
-      <Grid className="custom-section">
+      <Grid className="card">
         <h1>Estimado cliente.</h1>
 
         <p>

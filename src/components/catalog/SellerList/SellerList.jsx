@@ -6,7 +6,7 @@ import SellerModal from "../SellerModal/SellerModal";
 import { getDateDifference, getFormattedDate } from "../../../utils/utils";
 import { chooseIcon } from "../../ui/icons/Icons";
 import { useModal } from "../../../hooks/useModal";
-import { Grid, TextField, Box, Stack, Divider } from "@mui/material";
+import { Grid, TextField, Stack } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 
 const SellerList = () => {
@@ -59,7 +59,7 @@ const SellerList = () => {
       
       {/* 2. CONTENIDO PRINCIPAL */}
       <Grid container>
-        <Grid item xs={12} className="custom-section">
+        <Grid item xs={12} className="card">
           {/* 2.1 Header */}
           <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
             <h1>Vendedores</h1>

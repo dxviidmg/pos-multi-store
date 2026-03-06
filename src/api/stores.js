@@ -1,37 +1,21 @@
+import { createApiService } from "./apiFactory";
 import httpClient from "./httpClient";
-import { getApiUrl, getHeaders, buildUrlWithParams } from "./utils";
+import { getApiUrl, getHeaders } from "./utils";
 
-/**
- * Get stores list with optional filters
- * @param {Object} params - Query parameters
- * @returns {Promise<Object>} Stores list response
- */
-export const getStores = async (params) => {
-  const url = buildUrlWithParams(getApiUrl("store"), params);
-  const response = await httpClient.get(url, {
-    headers: getHeaders(),
-  });
-  return response;
-};
+const storeService = createApiService("store");
 
-/**
- * Get investment data for specific store
- * @param {Object} store - Store object with ID
- * @returns {Promise<Object>} Store investment data
- */
+export const getStores = storeService.getAll;
+
 export const getStoreInvestment = async (store) => {
-  const response = await httpClient.get(getApiUrl(`store/investments/${store.id}`), {
+  const response = await httpClient.get(getApiUrl(`store/investment/${store.id}`), {
     headers: getHeaders(),
   });
   return response;
 };
 
-/**
- * Get total investments across all stores
- * @returns {Promise<Object>} Total investments data
- */
-export const getInvestment = async () => {
-  const response = await httpClient.get(getApiUrl("investments"), {
+export const getInvestment = async (storeId = null) => {
+  const url = storeId ? `investment/${storeId}` : "investment";
+  const response = await httpClient.get(getApiUrl(url), {
     headers: getHeaders(),
   });
   return response;

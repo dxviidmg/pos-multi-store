@@ -14,8 +14,10 @@ import { useStores } from "../../../hooks/useStores";
 import { useTenantInfo } from "../../../hooks/useTenantInfo";
 import { useDepartments } from "../../../hooks/useDepartments";
 import { useInvestment } from "../../../hooks/useInvestment";
+import { getInvestment } from "../../../api/stores";
 import { Grid, FormLabel, FormControlLabel, Checkbox, Box, TextField, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
+import { UI_TEXT } from "../../../constants";
 
 
 const StoreList = () => {
@@ -23,7 +25,7 @@ const StoreList = () => {
   const today = getFormattedDate();
   const user = getStorage("user");
 
-  const [showInvestment, setShowInvestment] = useState(false);
+  const [storeInvestments, setStoreInvestments] = useState({});
   const [quickFilter, setQuickFilter] = useState("all"); // all, sales, pending, synced
   const [params, setParams] = useState({
     end_date: today,
@@ -34,24 +36,8 @@ const StoreList = () => {
   const { data: storesData, isLoading: loadingStores } = useStores(params);
   const { data: tenantInfo = {}, isLoading: loadingTenant } = useTenantInfo();
   const { data: departments = [] } = useDepartments();
-  const { data: investmentData, isLoading: loadingInvestment } =
-    useInvestment(showInvestment);
 
-  // Merge investment data with stores if available
-  const storesWithInvestment = useMemo(() => {
-    if (!showInvestment || !investmentData) return storesData?.stores || [];
-
-    return (storesData?.stores || []).map((store) => {
-      const matchingInvestment = investmentData.investments.find(
-        (inv) => inv.id === store.id
-      );
-      return matchingInvestment
-        ? { ...store, investment: matchingInvestment.investment }
-        : store;
-    });
-  }, [storesData, investmentData, showInvestment]);
-
-  const stores = storesWithInvestment;
+  const stores = storesData?.stores || [];
   
   // Calcular totales de distribuciones y traspasos
   const totalDistributions = stores.reduce((sum, store) => 
@@ -63,11 +49,10 @@ const StoreList = () => {
   
   const totals = {
     ...(storesData?.totals || {}),
-    investment: investmentData?.total || 0,
     distributions: totalDistributions,
     transfers: totalTransfers,
   };
-  const loading = loadingStores || loadingTenant || loadingInvestment;
+  const loading = loadingStores || loadingTenant;
   const range = getDateDifference(params.start_date, params.end_date);
 
   const handleParams = async (e) => {
@@ -77,7 +62,6 @@ const StoreList = () => {
 
   const handleStoreType = (e) => {
     setParams((prev) => ({ ...prev, store_type: e.target.value }));
-    setShowInvestment(false);
   };
 
   const handleSelectStore = async ({ store_type, full_name, id, printer }) => {
@@ -94,7 +78,23 @@ const StoreList = () => {
   };
 
   const handleShowInvestment = () => {
-    setShowInvestment(true);
+    setQuickFilter("investment");
+  };
+
+  const handleShowInvestmentForStore = async (storeId) => {
+    // Si ya tiene la inversión cargada, no hacer nada
+    if (storeInvestments[storeId] !== undefined) return;
+    
+    try {
+      const response = await getInvestment(storeId);
+      console.log('Investment response:', response.data);
+      setStoreInvestments(prev => ({
+        ...prev,
+        [storeId]: response.data // response.data es directamente el número
+      }));
+    } catch (error) {
+      console.error('Error loading investment:', error);
+    }
   };
 
   // Calcular promedio de ventas para indicadores
@@ -225,15 +225,29 @@ const StoreList = () => {
         style: alignTdStyles,
         selector: ({ cash_summary }) => getCashValue(cash_summary, 7),
       },
-      ...(showInvestment
-        ? [
-            {
-              style: alignTdStyles,
-              name: "Inversión",
-              selector: ({ investment }) => getCashValueTotal(investment),
-            },
-          ]
-        : []),
+      {
+        name: "Obtener (Inversión)",
+        cell: (row) => (
+          <CustomButton 
+            size="small"
+            onClick={() => handleShowInvestmentForStore(row.id)}
+            startIcon={<AttachMoneyIcon />}
+            disabled={storeInvestments[row.id] !== undefined}
+          >
+            Ver
+          </CustomButton>
+        ),
+      },
+      {
+        name: "Inversión",
+        cell: (row) => (
+          storeInvestments[row.id] !== undefined ? (
+            <span>{getCashValueTotal(storeInvestments[row.id])}</span>
+          ) : (
+            <span style={{ color: '#9ca3af' }}>Pendiente</span>
+          )
+        ),
+      },
       {
         name: "Entrar",
         cell: (row) => (
@@ -258,13 +272,13 @@ const StoreList = () => {
     // Filtrar columnas según quickFilter
     let filtered;
     if (quickFilter === "all") {
-      filtered = allColumns.filter(col => ["Nombre", "Efectivo", "Tarjeta", "Transferencia", "Entrar"].includes(col.name));
+      filtered = allColumns.filter(col => ["Nombre", "Efectivo", "Tarjeta", "Transferencia", "Caja", "Entrar"].includes(col.name));
     } else if (quickFilter === "sales") {
       filtered = allColumns.filter(col => ["Nombre", "Vendido", "Realizadas", "Canceladas", "Ganancia", "Entrar"].includes(col.name));
+    } else if (quickFilter === "investment") {
+      filtered = allColumns.filter(col => ["Nombre", "Obtener (Inversión)", "Inversión", "Entrar"].includes(col.name));
     } else if (quickFilter === "pending") {
       filtered = allColumns.filter(col => ["Nombre", "Distribuciones", "Traspasos", "Entrar"].includes(col.name));
-    } else if (quickFilter === "cash") {
-      filtered = allColumns.filter(col => ["Nombre", "Caja", "Entrar"].includes(col.name));
     } else if (quickFilter === "managers") {
       filtered = allColumns.filter(col => ["Nombre", "Administrador", "Entrar"].includes(col.name));
     } else if (quickFilter === "printer") {
@@ -291,9 +305,8 @@ const StoreList = () => {
       filtered = allColumns;
     }
     
-    console.log('quickFilter:', quickFilter, 'columns count:', filtered.length);
     return filtered;
-  }, [quickFilter, showInvestment, averageSales, user?.store_id, tenantInfo.product_count]);
+  }, [quickFilter, averageSales, user?.store_id, tenantInfo.product_count, storeInvestments]);
 
   const columnsStorages = [
     {
@@ -317,17 +330,6 @@ const StoreList = () => {
         );
       },
     },
-
-    ...(showInvestment
-      ? [
-          {
-            name: "Inversión",
-            style: alignTdStyles,
-            selector: ({ investment }) =>
-              investment ? `$${investment.toLocaleString()}` : "$0",
-          },
-        ]
-      : []),
 
     {
       name: "Entrar",
@@ -413,15 +415,6 @@ const StoreList = () => {
         style: alignTdStyles,
         selector: ({ cash }) => getCashValueTotal(cash),
       },
-      ...(showInvestment
-        ? [
-            {
-              name: "Inversión",
-              style: alignTdStyles,
-              selector: ({ investment }) => getCashValueTotal(investment),
-            },
-          ]
-        : []),
       {
         name: "Entrar",
         selector: () => "",
@@ -435,13 +428,13 @@ const StoreList = () => {
     // Filtrar columnas según quickFilter
     let filtered;
     if (quickFilter === "all") {
-      filtered = allColumns.filter(col => ["Nombre", "Efectivo", "Tarjeta", "Transferencia", "Entrar"].includes(col.name));
+      filtered = allColumns.filter(col => ["Nombre", "Efectivo", "Tarjeta", "Transferencia", "Caja", "Entrar"].includes(col.name));
     } else if (quickFilter === "sales") {
       filtered = allColumns.filter(col => ["Nombre", "Vendido", "Realizadas", "Canceladas", "Ganancia", "Entrar"].includes(col.name));
+    } else if (quickFilter === "investment") {
+      filtered = allColumns.filter(col => ["Nombre", "Obtener (Inversión)", "Inversión", "Entrar"].includes(col.name));
     } else if (quickFilter === "pending") {
       filtered = allColumns.filter(col => ["Nombre", "Distribuciones", "Traspasos", "Entrar"].includes(col.name));
-    } else if (quickFilter === "cash") {
-      filtered = allColumns.filter(col => ["Nombre", "Caja", "Entrar"].includes(col.name));
     } else if (quickFilter === "managers") {
       filtered = allColumns.filter(col => ["Nombre", "Administrador", "Entrar"].includes(col.name));
     } else if (quickFilter === "printer") {
@@ -460,13 +453,13 @@ const StoreList = () => {
     }
     
     return filtered;
-  }, [quickFilter, showInvestment]);
+  }, [quickFilter, storeInvestments]);
 
   return (
     <>
       <CustomSpinner isLoading={loading} />
       <Grid container>
-        <Grid item xs={12} className="custom-section">
+        <Grid item xs={12} className="card">
           {tenantInfo.notices && tenantInfo.notices.length > 0 && (
             <Box sx={{ mb: 3 }}>
               <Grid container spacing={2}>
@@ -531,16 +524,6 @@ const StoreList = () => {
                   </Box>
                 )}
               </Grid>
-
-              <Grid item xs={12} md={4}>
-                <CustomButton
-                  fullWidth
-                  onClick={handleShowInvestment}
-                  startIcon={<AttachMoneyIcon />}
-                >
-                  Ver inversión
-                </CustomButton>
-              </Grid>
             </Grid>
           </Box>
 
@@ -595,7 +578,7 @@ const StoreList = () => {
                         name="department_id"
                         label="Departamento"
                       >
-                        <MenuItem value="">Todos</MenuItem>
+                        <MenuItem value="">{UI_TEXT.ALL}</MenuItem>
                         <MenuItem value="0">Sin departamento</MenuItem>
                         {departments.map((departament) => (
                           <MenuItem key={departament.id} value={departament.id}>
@@ -627,13 +610,6 @@ const StoreList = () => {
                 Ventas ({stores.length})
               </CustomButton>
               <CustomButton 
-                variant={quickFilter === "cash" ? "contained" : "outlined"}
-                onClick={() => setQuickFilter("cash")}
-                size="small"
-              >
-                Caja ({stores.length})
-              </CustomButton>
-              <CustomButton 
                 variant={quickFilter === "pending" ? "contained" : "outlined"}
                 onClick={() => setQuickFilter("pending")}
                 size="small"
@@ -656,6 +632,14 @@ const StoreList = () => {
                 size="small"
               >
                 Impresoras ({stores.filter(s => s.printer).length})
+              </CustomButton>
+              <CustomButton 
+                variant={quickFilter === "investment" ? "contained" : "outlined"}
+                onClick={handleShowInvestment}
+                size="small"
+                startIcon={<AttachMoneyIcon />}
+              >
+                Inversión
               </CustomButton>
               <CustomButton 
                 variant={quickFilter === "synced" ? "contained" : "outlined"}

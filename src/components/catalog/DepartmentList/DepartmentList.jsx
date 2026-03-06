@@ -11,7 +11,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import CustomTooltip from "../../ui/Tooltip";
 import Grid from "@mui/material/Grid";
 import { useDepartments } from "../../../hooks/useDepartments";
-import { Checkbox, FormControlLabel, Box, Stack, Divider } from "@mui/material";
+import { Checkbox, FormControlLabel, Stack } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 
@@ -21,14 +21,6 @@ const DepartmentList = () => {
   const departmentModal = useModal();
 
   const { data: departments = [], isLoading: loading, refetch } = useDepartments();
-
-  const handleOpenModal = (department) => {
-    departmentModal.open(department);
-  };
-
-  const handleUpdateDepartmentList = () => {
-    refetch();
-  };
 
   const handleDeleteDepartments = async () => {
     const productsCount = selectedRows.reduce(
@@ -62,7 +54,7 @@ const DepartmentList = () => {
       <DepartmentModal isOpen={departmentModal.isOpen} department={departmentModal.data} onClose={departmentModal.close} onUpdate={refetch} />
       
       {/* 2. CONTENIDO PRINCIPAL */}
-      <Grid item xs={12} className="custom-section">
+      <Grid item xs={12} className="card">
         {/* 2.1 Header */}
         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
           <h1>Departamentos</h1>
