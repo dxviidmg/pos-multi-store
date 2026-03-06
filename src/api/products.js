@@ -11,7 +11,6 @@ const timedRequest = async (axiosCall, meta = {}) => {
     const duration = Math.round((end - start) / 1000);
     local[duration] = (local[duration] || 0) + 1;
     localStorage.setItem("monitoring", JSON.stringify(local));
-    console.log(`[OK] ${meta.name || "request"}: ${duration} ms`);
     return response;
   } catch (error) {
     const end = performance.now();

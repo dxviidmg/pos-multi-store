@@ -12,6 +12,7 @@ import {
 } from "../../../redux/cart/cartActions";
 import CustomButton from "../../ui/Button/Button";
 import PaymentModal from "../../sales/PaymentModal/PaymentModal";
+import StockModal from "../StockModal/StockModal";
 import { getStores } from "../../../api/stores";
 import { confirmTransfers, createDistribution } from "../../../api/transfers";
 import { showAlert } from "../../../utils/alerts";
@@ -118,6 +119,7 @@ const Cart = () => {
   const handleStockOtherStores = async (product) => {
     const response = await getStockOtherStores(product.product.code);
     dispatch(countStockOtherStores(product, response.data));
+    stockModal.open(product);
   };
 
   const handleChangePrice = (product) => {
@@ -269,25 +271,44 @@ const Cart = () => {
       name: "Nombre",
       field: "name",
       selector: (row) => row.product.name,
-      grow: 3,
-      wrapText: true,
+      grow: 5,
+      renderCell: (params) => (
+        <div style={{ 
+          whiteSpace: 'normal', 
+          wordWrap: 'break-word',
+          lineHeight: '1.3',
+          padding: '4px 0'
+        }}>
+          {params.row.product.name}
+        </div>
+      ),
     },
     { name: "Stock", field: "stock", selector: (row) => row.available_stock },
   ];
 
   const commonColumns2 = [
-    { name: "Código", field: "code", selector: (row) => row.product.code },
+    { name: "Código", field: "code", selector: (row) => row.product.code, width: 100 },
     {
       name: "Marca",
       field: "brand",
       selector: (row) => row.product.brand_name,
+      width: 100,
     },
     {
       name: "Nombre",
       field: "name",
       selector: (row) => row.product.name,
-      grow: 3,
-      wrapText: true,
+      grow: 2,
+      renderCell: (params) => (
+        <div style={{ 
+          whiteSpace: 'normal', 
+          wordWrap: 'break-word',
+          lineHeight: '1.3',
+          padding: '4px 0'
+        }}>
+          {params.row.product.name}
+        </div>
+      ),
     },
   ];
 
@@ -387,7 +408,16 @@ const Cart = () => {
       name: "Nombre",
       selector: (row) => row.product.name,
       grow: 3,
-      wrapText: true,
+      renderCell: (params) => (
+        <div style={{ 
+          whiteSpace: 'normal', 
+          wordWrap: 'break-word',
+          lineHeight: '1.3',
+          padding: '4px 0'
+        }}>
+          {params.row.product.name}
+        </div>
+      ),
     },
     { name: "Stock disponible", selector: (row) => row.available_stock },
     { name: "Stock apartado", selector: (row) => row.reserved_stock },
@@ -506,18 +536,18 @@ const Cart = () => {
     <div>
       <CustomSpinner isLoading={loading} />
       <PaymentModal isOpen={paymentModal.isOpen} onClose={paymentModal.close} />
+      <StockModal isOpen={stockModal.isOpen} product={stockModal.data} onClose={stockModal.close} />
       <div>
         {cart.length !== 0 && (
-          <Grid container spacing={2}>
+          <Grid container spacing={1} sx={{ mb: 1, alignItems: 'center' }}>
             {(movementType === "venta" || movementType === "apartado") && (
               <>
                 <Grid item xs={12} md={4}>
-                  {" "}
-                  <h1>Productos: {totalProducts}</h1>
+                  <h3 style={{ margin: 0 }}>Productos: {totalProducts}</h3>
                 </Grid>
 
-                <Grid item xs={12} md={4} className="text-center">
-                  <h1>Total: ${total.toFixed(2)}</h1>
+                <Grid item xs={12} md={4}>
+                  <h3 style={{ margin: 0 }}>Total: ${total.toFixed(2)}</h3>
                 </Grid>
                 <Grid item xs={12} md={4}>
                   <CustomButton fullWidth onClick={handleOpenModal} startIcon={<PaymentIcon />}>
@@ -530,7 +560,7 @@ const Cart = () => {
             {(movementType === "traspaso" ||
               movementType === "distribucion") && (
               <>
-                <Grid item xs={12} md={3}><h1>Productos: {totalProducts}</h1></Grid>
+                <Grid item xs={12} md={3}><h3 style={{ margin: 0 }}>Productos: {totalProducts}</h3></Grid>
                 <Grid item xs={12} md={3}>
                   <Select fullWidth size="small" value={selectedStore}
                     onChange={handleSelectChange}

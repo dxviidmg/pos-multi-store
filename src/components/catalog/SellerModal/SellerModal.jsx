@@ -1,6 +1,5 @@
 import { logger } from "../../../utils/logger";
 import React, { useEffect, useState } from "react";
-import { useForm } from "../../../hooks/useForm";
 import CustomModal from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
 import Swal from "sweetalert2";
@@ -122,7 +121,7 @@ const SellerModal = ({ isOpen, seller, onClose, onUpdate }) => {
       title={formData.id ? "Actualizar vendedor" : "Crear vendedor"}
     >
       <Grid container sx={{ padding: '1rem', backgroundColor: 'rgba(4, 53, 107, 0.2)' }}>
-        <Grid item xs={12} className="custom-section">
+        <Grid item xs={12} className="card">
         <Grid container spacing={2}>
           <Grid item xs={12} md={6}>
             <FormControl fullWidth size="small">

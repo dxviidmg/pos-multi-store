@@ -42,7 +42,6 @@ const Dashboard = () => {
           clearInterval(intervalId);
         }
       } catch (error) {
-        console.error("Error fetching task result:", error);
         showError("Error al obtener los datos del dashboard", error.response?.data?.message || error.message || "Error de conexión");
         setLoading(false);
         setProgress(0);
@@ -61,7 +60,7 @@ const Dashboard = () => {
 
   return (
     <Box>
-      <Box className="custom-section">
+      <Box className="card">
         <Typography variant="h4" sx={{ mb: 3, fontWeight: 600, color: 'var(--color-primary)' }}>
           Dashboard de Ventas
         </Typography>
@@ -110,7 +109,7 @@ const Dashboard = () => {
       ) : (
         <Grid container spacing={3}>
           <Grid item xs={12} md={6}>
-            <Box className="custom-section" sx={{ height: '100%' }}>
+            <Box className="card" sx={{ height: '100%' }}>
               <LineChart
                 title={"Ventas por mes"}
                 data={dashboardData}
@@ -136,7 +135,7 @@ const Dashboard = () => {
             </Box>
           </Grid>
           <Grid item xs={12} md={6}>
-            <Box className="custom-section" sx={{ height: '100%' }}>
+            <Box className="card" sx={{ height: '100%' }}>
               <LineChart
                 title={"Ventas por día"}
                 data={dashboardData}
@@ -158,7 +157,7 @@ const Dashboard = () => {
           </Grid>
 
           <Grid item xs={12} md={6}>
-            <Box className="custom-section" sx={{ height: '100%' }}>
+            <Box className="card" sx={{ height: '100%' }}>
               <LineChart
                 title={"Ventas por hora"}
                 data={dashboardData}
@@ -196,7 +195,7 @@ const Dashboard = () => {
             </Box>
           </Grid>
           <Grid item xs={12} md={6}>
-            <Box className="custom-section" sx={{ height: '100%' }}>
+            <Box className="card" sx={{ height: '100%' }}>
               <DoughnutChart
                 title={"Ventas por tienda"}
                 data={dashboardData}

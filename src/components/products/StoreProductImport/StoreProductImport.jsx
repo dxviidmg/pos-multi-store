@@ -133,7 +133,7 @@ const StoreProductImport = () => {
 
   return (
       <Grid container>
-      <Grid item xs={12} className="custom-section">
+      <Grid item xs={12} className="card" sx={{ marginBottom: '1.5rem' }}>
         <h1>Importación de inventario</h1>
         <Grid container spacing={2}>
           <Grid item xs={12} md={6} className="d-flex flex-column justify-content-end">
@@ -216,7 +216,7 @@ const StoreProductImport = () => {
         </Grid>
       </Grid>
 
-      <Grid item xs={12} className="custom-section" hidden={showExample}>
+      <Grid item xs={12} className="card" hidden={showExample} sx={{ marginBottom: '1.5rem' }}>
         <h1>Ejemplo de plantilla</h1>
 
         <CustomTable
@@ -238,7 +238,7 @@ const StoreProductImport = () => {
         ></CustomTable>
       </Grid>
 
-      <Grid item xs={12} className="custom-section">
+      <Grid item xs={12} className="card">
         <h1>Archivo actual</h1>
         <CustomTable
           data={products}

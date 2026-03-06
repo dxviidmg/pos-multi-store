@@ -1,19 +1,14 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useCrudMutation } from './useCrudMutation';
 import { cancelSale } from '../api/sales';
-import { showSuccess, showError } from '../utils/alerts';
 
-export const useCancelSale = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: cancelSale,
+export const useCancelSale = (options = {}) => {
+  return useCrudMutation(cancelSale, {
+    queryKey: 'sales',
+    errorMessage: 'Error al cancelar venta',
     onSuccess: (response) => {
-      queryClient.invalidateQueries({ queryKey: ['sales'] });
       const { cash_back } = response.data;
-      showSuccess(`Devolución exitosa. Devolver $${cash_back}`);
+      return `Devolución exitosa. Devolver $${cash_back}`;
     },
-    onError: () => {
-      showError('Error al cancelar venta', 'Error desconocido. Por favor, contacte soporte.');
-    },
+    ...options,
   });
 };

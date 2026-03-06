@@ -94,7 +94,7 @@ const PaymentModal2 = ({ isOpen, sale, onClose, onUpdate }) => {
       title="Cobrar apartado"
     >
       <Grid container sx={{ padding: '1rem', backgroundColor: 'rgba(4, 53, 107, 0.2)' }}>
-        <Grid item xs={12} className="custom-section">
+        <Grid item xs={12} className="card" sx={{ marginBottom: '1.5rem' }}>
           <Grid container spacing={2}>
             <h2>Información</h2>
             <Grid item xs={12} md={3}>
@@ -148,7 +148,7 @@ const PaymentModal2 = ({ isOpen, sale, onClose, onUpdate }) => {
           </Grid>
         </Grid>
 
-        <Grid item xs={12} className="custom-section">
+        <Grid item xs={12} className="card" sx={{ marginBottom: '1.5rem' }}>
           <h2>Totales</h2>
           <Grid container spacing={2}>
             <Grid item xs={12} md={3}>
@@ -184,7 +184,7 @@ const PaymentModal2 = ({ isOpen, sale, onClose, onUpdate }) => {
           </Grid>
         </Grid>
 
-        <Grid item xs={12} className="custom-section">
+        <Grid item xs={12} className="card">
           <Grid container spacing={2}>
             <Grid item xs={12} md={6}>
               <CustomButton

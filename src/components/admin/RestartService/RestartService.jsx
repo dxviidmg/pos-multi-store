@@ -64,7 +64,7 @@ function RestartService() {
   };
 
   return (
-    <Grid className="custom-section">
+    <Grid className="card">
       <CustomSpinner isLoading={isLoading} />
 
       <CustomButton
