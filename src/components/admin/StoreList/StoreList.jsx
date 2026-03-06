@@ -196,7 +196,7 @@ const StoreList = () => {
         selector: ({ cash_summary }) => getCashValue(cash_summary, 3),
       },
       {
-        name: "Realizadas",
+        name: "Ventas realizadas",
         style: alignTdStyles,
         selector: ({ cash_summary }) => cash_summary?.[10]?.amount?.toLocaleString() || "0",
       },
@@ -386,7 +386,7 @@ const StoreList = () => {
         selector: ({ totalPayment }) => getCashValueTotal(totalPayment),
       },
       {
-        name: "Realizadas",
+        name: "Ventas realizadas",
         style: alignTdStyles,
         selector: ({ totalSales }) => totalSales,
       },

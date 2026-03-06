@@ -118,7 +118,7 @@ const SellerList = () => {
                 selector: (row) => row.store_detail?.name,
               },
               {
-                name: "Username",
+                name: "Usuario",
                 selector: (row) => row.worker.username,
                 grow: 2,
               },
@@ -128,7 +128,7 @@ const SellerList = () => {
                   `${row.worker.first_name} ${row.worker.last_name}`,
               },
               {
-                name: "Esta activo",
+                name: "Activo",
                 selector: (row) => chooseIcon(row.worker.is_active),
               },
               {

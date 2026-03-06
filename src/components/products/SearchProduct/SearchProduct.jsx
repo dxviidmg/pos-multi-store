@@ -1,5 +1,5 @@
 import { logger } from "../../../utils/logger";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import CustomTable from "../../ui/Table/Table";
 import CustomButton from "../../ui/Button/Button";
@@ -32,27 +32,25 @@ const SearchProduct = () => {
   
   const { carts, activeCartId } = useSelector((state) => state.multiCartReducer);
   
-  const cart = useSelector((state) => {
-    const { carts, activeCartId } = state.multiCartReducer;
+  const cart = useMemo(() => {
     const activeCart = carts?.find(c => c.id === activeCartId) || carts?.[0];
     return activeCart?.cart || [];
-  });
+  }, [carts, activeCartId]);
   
-  const movementType = useSelector((state) => {
-    const { carts, activeCartId } = state.multiCartReducer;
+  const movementType = useMemo(() => {
     const activeCart = carts?.find(c => c.id === activeCartId) || carts?.[0];
     return activeCart?.movementType || "venta";
-  });
+  }, [carts, activeCartId]);
   
   // Calcular stock disponible considerando todos los carritos
-  const getAvailableStock = (productId, productStock) => {
+  const getAvailableStock = useCallback((productId, productStock) => {
     const reservedInOtherCarts = carts.reduce((total, cart) => {
       if (cart.id === activeCartId) return total;
       const item = cart.cart.find(item => item.id === productId);
       return total + (item ? item.quantity : 0);
     }, 0);
     return productStock - reservedInOtherCarts;
-  };
+  }, [carts, activeCartId]);
 
   const storeType = getUserData().store_type;
   const urlPrinter = getPrinterUrl();
@@ -104,6 +102,8 @@ const SearchProduct = () => {
           });
         } else if (fetchedData.length === 1) {
           handleSingleProductFetch(fetchedData[0]);
+        } else {
+          setData(fetchedData);
         }
       } catch (err) {
         if (err.name === "AbortError") return;
@@ -111,7 +111,7 @@ const SearchProduct = () => {
         setSearching(false);
       }
     },
-    [query, queryType, movementType]
+    [query, queryType]
   );
 
   const handleSearchProduct = async () => {
@@ -214,12 +214,17 @@ const SearchProduct = () => {
   };
 
   useEffect(() => {
-    if (query) {
+    if (queryType === "code" && query) {
       fetchData();
+    } else if (queryType === "q" && query) {
+      const timer = setTimeout(() => {
+        fetchData();
+      }, 300);
+      return () => clearTimeout(timer);
     } else {
       setData([]);
     }
-  }, [fetchData, query]);
+  }, [query, queryType]);
 
   const handleQueryTypeChange = (e) => {
     setQueryType(e.target.value);
