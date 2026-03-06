@@ -7,10 +7,8 @@ const SaleCreate = () => {
   return (
     <>
       <Grid container>
-      <Grid item xs={12} className="card" sx={{ marginBottom: '1.5rem' }}>
+      <Grid item xs={12} className="card" sx={{ marginBottom: '0.75rem' }}>
         <SearchProduct />
-      </Grid>
-      <Grid item xs={12} className="card">
         <MultiCart />
       </Grid>
       </Grid>

@@ -299,18 +299,38 @@ const SearchProduct = () => {
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
         <h1 style={{ margin: 0, fontSize: '1.5rem' }}>Buscador de productos</h1>
-        <CustomButton
-          disabled={!urlPrinter}
-          onClick={(e) => handlePrintTicket("test", {})}
-          startIcon={<PrintIcon fontSize="small" />}
-        >
-          Probar impresora
-        </CustomButton>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <Chip 
+            label="Enfoca el campo de búsqueda para agregar productos"
+            color="success" 
+            size="small"
+            sx={{ display: isInputFocused ? 'none' : 'inline-flex' }}
+          />
+          <Chip 
+            label="Buscando..."
+            color="success" 
+            size="small"
+            sx={{ display: !searching ? 'none' : 'inline-flex' }}
+          />
+          <Chip
+            label={`${data.length} resultados ${data.length === 200 ? "(puede haber mas coincidencias)" : ""}`}
+            color="success"
+            size="small"
+            sx={{ display: (searching || data.length === 0) ? 'none' : 'inline-flex' }}
+          />
+          <CustomButton
+            disabled={!urlPrinter}
+            onClick={(e) => handlePrintTicket("test", {})}
+            startIcon={<PrintIcon fontSize="small" />}
+          >
+            Probar impresora
+          </CustomButton>
+        </div>
       </div>
 
       <Grid container spacing={0} sx={{ mb: 0.5 }}>
         <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', mb: 0.25 }}>
-          <FormLabel sx={{ fontWeight: 600, mr: 2, fontSize: '0.875rem' }}>Tipo de búsqueda:</FormLabel>
+          <FormLabel sx={{ fontWeight: 600, mr: 1, fontSize: '0.875rem' }}>Tipo de búsqueda:</FormLabel>
           <RadioGroup row value={queryType} onChange={handleQueryTypeChange}>
             <FormControlLabel 
               value="code" 
@@ -327,7 +347,7 @@ const SearchProduct = () => {
         </Grid>
 
         <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
-          <FormLabel sx={{ fontWeight: 600, mr: 2, fontSize: '0.875rem' }}>Tipo de operación:</FormLabel>
+          <FormLabel sx={{ fontWeight: 600, mr: 1, fontSize: '0.875rem' }}>Tipo de operación:</FormLabel>
           <RadioGroup row value={movementType} onChange={handleMovementTypeChange}>
             {storeType !== "A" && (
               <FormControlLabel 
@@ -374,28 +394,6 @@ const SearchProduct = () => {
         </Grid>
       </Grid>
 
-      <Chip 
-        label="Aviso: Para añadir productos al carrito, el cursor debe estar en el campo de búsqueda de productos."
-        color="success" 
-        size="small"
-        sx={{ display: isInputFocused ? 'none' : 'inline-flex', mb: 0.25, maxWidth: '100%' }}
-      />
-
-      <Chip 
-        label="Buscando..."
-        color="success" 
-        size="small"
-        sx={{ display: !searching ? 'none' : 'inline-flex', mb: 0.25 }}
-      />
-
-      <Chip
-        label={`${data.length} resultados ${data.length === 200 ? "(puede haber mas coincidencias)" : ""}`}
-        color="success"
-        size="small"
-        sx={{ display: (searching || data.length === 0) ? 'none' : 'inline-flex', mb: 0.25 }}
-      />
-
-      {!searching && isInputFocused && <br />}
       <Grid container spacing={2} sx={{ mb: 0.5 }}>
         <Grid item xs={queryType === "code" ? 12 : 10}>
           <TextField size="small" fullWidth className=""

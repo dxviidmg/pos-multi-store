@@ -17,7 +17,7 @@ const CustomTable = ({
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [paginationModel, setPaginationModel] = useState({
-    pageSize: 10,
+    pageSize: 25,
     page: 0,
   });
 
@@ -113,14 +113,24 @@ const CustomTable = ({
           localeText={{
             noRowsLabel: showNoDataComponent ? noDataComponent : "",
           }}
-          hideFooter={data.length <= 10}
+          hideFooter={data.length <= 25}
+          density="compact"
           sx={{
             "& .MuiDataGrid-columnHeaders": {
               backgroundColor: colors.primary,
               color: colors.text.white,
+              minHeight: '36px !important',
+              maxHeight: '36px !important',
             },
             "& .MuiDataGrid-cell": {
-              py: 1.5,
+              py: 0.5,
+              fontSize: '0.8125rem',
+              whiteSpace: 'normal !important',
+              lineHeight: '1.3 !important',
+            },
+            "& .MuiDataGrid-row": {
+              minHeight: '32px !important',
+              maxHeight: 'none !important',
             },
           }}
         />
