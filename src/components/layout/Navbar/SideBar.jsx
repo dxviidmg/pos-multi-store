@@ -201,10 +201,9 @@ export default function MainLayout() {
           {
             label: "Movimientos",
             href: "/movimientos/",
-            hidden: user.role === "seller",
           },
-          { divider: true },
-          { label: "Importar ventas", href: "/importar-ventas/" },
+          { divider: true, hidden: user.role === "seller" },
+          { label: "Importar ventas", href: "/importar-ventas/", hidden: user.role === "seller" },
         ],
       },
       { label: "Clientes", href: "/clientes/", hidden: user.role === "seller" },
@@ -221,6 +220,7 @@ export default function MainLayout() {
           { label: "Importar Productos", href: "/importar-productos/" },
           { label: "Importar inventario", href: "/importar-inventario/" },
         ],
+        hidden: user.role === "seller",
       },
       {
         label: "Movimientos",
@@ -228,8 +228,9 @@ export default function MainLayout() {
           { label: "Distribuciones", href: "/distribuciones/" },
           { label: "Traspasos", href: "/traspasos/" },
         ],
+        hidden: user.role === "seller",
       },
-      { label: "Logs", href: "/logs/" },
+      { label: "Logs", href: "/logs/", hidden: user.role === "seller" },
     ],
     A: [
       { label: "Distribuir", href: "/distribuir/" },
