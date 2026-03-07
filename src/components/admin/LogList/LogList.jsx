@@ -179,6 +179,10 @@ const LogList = () => {
           loading={loading}
           columns={[
             {
+              name: "OK",
+              selector: (row) => chooseIcon(row.is_consistent),
+            },
+            {
               name: "Código",
               selector: (row) => row.product.code,
               grow: 2,
@@ -192,7 +196,8 @@ const LogList = () => {
               name: "Nombre",
               selector: (row) => row.product.name,
               wrapText: true,
-              grow: 2,
+              grow: 4,
+              width: 300,
             },
 
             {
@@ -217,10 +222,6 @@ const LogList = () => {
             {
               name: "S. nuevo",
               selector: (row) => row.updated_stock,
-            },
-            {
-              name: "OK",
-              selector: (row) => chooseIcon(row.is_consistent),
             },
           ]}
         />
