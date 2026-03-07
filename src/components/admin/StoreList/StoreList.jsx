@@ -780,15 +780,17 @@ const StoreList = () => {
               >
                 Inversión
               </CustomButton>
-              <CustomButton 
-                variant={quickFilter === "synced" ? "contained" : "outlined"}
-                onClick={() => setQuickFilter("synced")}
-                size="small"
-              >
-                Catálogo Incompleto ({stores.filter(s => 
-                  s.products_count !== tenantInfo.product_count
-                ).length})
-              </CustomButton>
+              {stores.filter(s => s.products_count !== tenantInfo.product_count).length > 0 && (
+                <CustomButton 
+                  variant={quickFilter === "synced" ? "contained" : "outlined"}
+                  onClick={() => setQuickFilter("synced")}
+                  size="small"
+                >
+                  Catálogo Incompleto ({stores.filter(s => 
+                    s.products_count !== tenantInfo.product_count
+                  ).length})
+                </CustomButton>
+              )}
               <CustomButton 
                 variant={quickFilter === "actions" ? "contained" : "outlined"}
                 onClick={() => setQuickFilter("actions")}
@@ -833,15 +835,17 @@ const StoreList = () => {
               >
                 Inversión
               </CustomButton>
-              <CustomButton 
-                variant={quickFilter === "synced" ? "contained" : "outlined"}
-                onClick={() => setQuickFilter("synced")}
-                size="small"
-              >
-                Catálogo Incompleto ({stores.filter(s => 
-                  s.products_count !== tenantInfo.product_count
-                ).length})
-              </CustomButton>
+              {stores.filter(s => s.products_count !== tenantInfo.product_count).length > 0 && (
+                <CustomButton 
+                  variant={quickFilter === "synced" ? "contained" : "outlined"}
+                  onClick={() => setQuickFilter("synced")}
+                  size="small"
+                >
+                  Catálogo Incompleto ({stores.filter(s => 
+                    s.products_count !== tenantInfo.product_count
+                  ).length})
+                </CustomButton>
+              )}
               <CustomButton 
                 variant={quickFilter === "actions" ? "contained" : "outlined"}
                 onClick={() => setQuickFilter("actions")}

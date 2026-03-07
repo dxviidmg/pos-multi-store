@@ -62,7 +62,7 @@ const TransferList = () => {
             },
             {
               name: "Antigüedad",
-              selector: (row) => calculateTimeAgo(row.created_at),
+              selector: (row) => row.created_at ? calculateTimeAgo(row.created_at) : "N/A",
               grow: 2,
             },
             {
