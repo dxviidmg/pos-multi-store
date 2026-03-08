@@ -51,6 +51,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
   const [storeProduct, setStoreProduct] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -107,6 +108,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
   };
 
   const handleProductSubmit = async (e) => {
+    setIsLoading(true);
     const apiCall = formData.id ? updateProduct : createProduct;
     const response = await apiCall(formData);
 
@@ -124,6 +126,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
     } else {
       handleClientError(response);
     }
+    setIsLoading(false);
   };
 
   const handleClientError = (response) => {
@@ -167,11 +170,13 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
     <CustomModal
       showOut={isOpen}
       onClose={onClose}
-      title={showStoreProducts? "Ver stock": formData.id ? "Actualizar producto" : "Crear producto"}
+      title={showStoreProducts ? "Stock del producto" : formData.id ? "Actualizar producto" : "Crear producto"}
     >
       <Grid container sx={{ padding: '1rem', backgroundColor: 'rgba(4, 53, 107, 0.2)' }}>
         <Grid item xs={12} className="card">
-        <Grid container spacing={2} hidden={showStoreProducts}>
+        
+        {!showStoreProducts && (
+        <Grid container spacing={2}>
           <Grid item xs={12} md={4}>
             <Box
               component="img"
@@ -301,36 +306,41 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
                 />
               </Grid>
 
-              <Grid item xs={12} md={12}>
+              <Grid item xs={12}>
                 <CustomButton
                   fullWidth={true}
                   onClick={(e) => handleProductSubmit(e)}
-                  disabled={isFormIncomplete()}
+                  disabled={isFormIncomplete() || isLoading}
                   marginTop="10px"
                   startIcon={<SaveIcon />}
                 >
-                  {formData.id ? "Actualizar" : "Crear"} producto
+                  {isLoading ? "Creando..." : formData.id ? "Actualizar" : "Crear"} producto
                 </CustomButton>
               </Grid>
             </Grid>
           </Grid>
         </Grid>
+        )}
 
-        <Grid container spacing={2} hidden={!showStoreProducts}>
-          <CustomTable
-            data={storeProduct}
-            columns={[
-              {
-                name: "Nombre",
-                selector: (row) => row.store.full_name,
-              },
-              {
-                name: "Stock",
-                selector: (row) => row.stock,
-              },
-            ]}
-          />
-        </Grid>
+        {showStoreProducts && (
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <CustomTable
+                data={storeProduct}
+                columns={[
+                  {
+                    name: "Nombre",
+                    selector: (row) => row.store.full_name,
+                  },
+                  {
+                    name: "Stock",
+                    selector: (row) => row.stock,
+                  },
+                ]}
+              />
+            </Grid>
+          </Grid>
+        )}
         </Grid>
       </Grid>
     </CustomModal>

@@ -20,6 +20,7 @@ const ClientModal = ({ isOpen, client, onClose, onUpdate }) => {
   const { data: discounts = [] } = useDiscounts();
   const createMutation = useCreateClient();
   const updateMutation = useUpdateClient();
+  const isLoading = createMutation.isPending || updateMutation.isPending;
 
   useEffect(() => {
     if (isOpen) {
@@ -100,11 +101,11 @@ const ClientModal = ({ isOpen, client, onClose, onUpdate }) => {
           <CustomButton
             fullWidth
             onClick={handleSaveClient}
-            disabled={isFormIncomplete}
+            disabled={isFormIncomplete || isLoading}
             marginTop="10px"
             startIcon={<SaveIcon />}
           >
-            {values.id ? "Actualizar" : "Crear"} cliente
+            {isLoading ? "Creando..." : values.id ? "Actualizar" : "Crear"} cliente
           </CustomButton>
         </Grid>
       </Grid>

@@ -11,6 +11,7 @@ const DepartmentModal = ({ isOpen, department, onClose, onUpdate }) => {
 
   const createMutation = useCreateDepartment();
   const updateMutation = useUpdateDepartment();
+  const isLoading = createMutation.isPending || updateMutation.isPending;
 
   useEffect(() => {
     if (isOpen) {
@@ -63,11 +64,11 @@ const DepartmentModal = ({ isOpen, department, onClose, onUpdate }) => {
             <CustomButton
               fullWidth={true}
               onClick={handleDepartmentSubmit}
-              disabled={values.name === ""}
+              disabled={values.name === "" || isLoading}
               marginTop="3px"
               startIcon={<SaveIcon />}
             >
-              {values.id ? "Actualizar" : "Crear"}
+              {isLoading ? "Creando..." : values.id ? "Actualizar" : "Crear"}
             </CustomButton>
           </Grid>
         </Grid>

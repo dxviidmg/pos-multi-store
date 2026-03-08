@@ -11,6 +11,7 @@ const BrandModal = ({ isOpen, brand, onClose, onUpdate }) => {
 
   const createMutation = useCreateBrand();
   const updateMutation = useUpdateBrand();
+  const isLoading = createMutation.isPending || updateMutation.isPending;
 
   useEffect(() => {
     if (isOpen) {
@@ -68,11 +69,11 @@ const BrandModal = ({ isOpen, brand, onClose, onUpdate }) => {
             <CustomButton
               fullWidth={true}
               onClick={handleBrandSubmit}
-              disabled={values.name === ""}
+              disabled={values.name === "" || isLoading}
               marginTop="3px"
               startIcon={<SaveIcon />}
             >
-              {values.id ? "Actualizar" : "Crear"}
+              {isLoading ? "Creando..." : values.id ? "Actualizar" : "Crear"}
             </CustomButton>
           </Grid>
         </Grid>
