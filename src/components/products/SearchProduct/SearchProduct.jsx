@@ -264,31 +264,31 @@ const SearchProduct = () => {
   };
 
   const handleShortcut = useCallback((event) => {
-    if (event.ctrlKey && (event.key === "j" || event.key === "J")) {
+    if (event.ctrlKey && (event.key === "q" || event.key === "Q")) {
       event.preventDefault();
       setQueryType("code");
     }
-    if (event.ctrlKey && (event.key === "m" || event.key === "M")) {
+    if (event.ctrlKey && (event.key === "w" || event.key === "W")) {
       event.preventDefault();
       setQueryType("q");
     }
-    if (event.ctrlKey && (event.key === "y" || event.key === "Y")) {
+    if (event.ctrlKey && (event.key === "e" || event.key === "E")) {
       event.preventDefault();
       dispatch(updateMovementType("venta"));
     }
-    if (event.ctrlKey && (event.key === "e" || event.key === "E")) {
+    if (event.ctrlKey && (event.key === "r" || event.key === "R")) {
       event.preventDefault();
       dispatch(updateMovementType("traspaso"));
     }
-    if (event.ctrlKey && (event.key === "i" || event.key === "I")) {
+    if (event.ctrlKey && (event.key === "t" || event.key === "T")) {
       event.preventDefault();
       dispatch(updateMovementType("distribucion"));
     }
-    if (event.ctrlKey && (event.key === "g" || event.key === "G")) {
+    if (event.ctrlKey && (event.key === "y" || event.key === "Y")) {
       event.preventDefault();
       dispatch(updateMovementType("agregar"));
     }
-    if (event.ctrlKey && (event.key === "k" || event.key === "K")) {
+    if (event.ctrlKey && (event.key === "u" || event.key === "U")) {
       event.preventDefault();
       dispatch(updateMovementType("checar"));
     }
@@ -343,13 +343,13 @@ const SearchProduct = () => {
             <FormControlLabel 
               value="code" 
               control={<Radio size="small" />} 
-              label="Por código de barras (Ctrl+J)"
+              label="Por código de barras (Ctrl+Q)"
               sx={{ mr: 4 }}
             />
             <FormControlLabel 
               value="q" 
               control={<Radio size="small" />} 
-              label="Por marca o nombre (Ctrl+M)"
+              label="Por marca o nombre (Ctrl+W)"
             />
           </RadioGroup>
         </Grid>
@@ -361,34 +361,34 @@ const SearchProduct = () => {
               <FormControlLabel 
                 value="venta" 
                 control={<Radio size="small" />} 
-                label="Venta (Ctrl+Y)"
+                label="Venta (Ctrl+E)"
                 sx={{ mr: 4 }}
               />
             )}
             <FormControlLabel 
               value="traspaso" 
               control={<Radio size="small" />} 
-              label="Confirmar traspaso (Ctrl+E)"
+              label="Confirmar traspaso (Ctrl+R)"
               sx={{ mr: 4 }}
             />
             {storeType !== "T" && (
               <FormControlLabel 
                 value="distribucion" 
                 control={<Radio size="small" />} 
-                label="Distribucion (Ctrl+I)"
+                label="Distribucion (Ctrl+T)"
                 sx={{ mr: 4 }}
               />
             )}
             <FormControlLabel 
               value="agregar" 
               control={<Radio size="small" />} 
-              label="Agregar a inventario (Ctrl+G)"
+              label="Agregar a inventario (Ctrl+Y)"
               sx={{ mr: 4 }}
             />
             <FormControlLabel 
               value="checar" 
               control={<Radio size="small" />} 
-              label="Checar precio (Ctrl+K)"
+              label="Checar precio (Ctrl+U)"
               sx={{ mr: 4 }}
             />
             {supports_reservations && storeType !== "A" && (
