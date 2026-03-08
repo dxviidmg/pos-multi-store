@@ -14,7 +14,7 @@ import Swal from "sweetalert2";
 import { getPrinterUrl, getUserData } from "../../../api/utils";
 import PrintIcon from "@mui/icons-material/Print";
 import { handlePrintTicket } from "../../../utils/utils";
-import { Grid, TextField, FormLabel, RadioGroup, FormControlLabel, Radio } from "@mui/material";
+import { Grid, TextField, FormLabel, RadioGroup, FormControlLabel, Radio, Checkbox } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import AddIcon from "@mui/icons-material/Add";
 import InventoryIcon from "@mui/icons-material/Inventory";
@@ -61,6 +61,7 @@ const SearchProduct = () => {
   const [barcode, setBarcode] = useState("");
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [searching, setSearching] = useState(false);
+  const [keepListOpen, setKeepListOpen] = useState(false);
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -164,8 +165,10 @@ const SearchProduct = () => {
         
         if (availableStock >= 1) {
           dispatch(addToCart({ ...storeProduct, quantity: 1 }));
-          setData([]);
-          setQuery("");
+          if (!keepListOpen) {
+            setData([]);
+            setQuery("");
+          }
         } else {
           Swal.fire({
             icon: "warning",
@@ -185,8 +188,10 @@ const SearchProduct = () => {
         dispatch(addToCart({ ...storeProduct, quantity: 1 }));
       } else if (currentQuantityInCart < availableStock) {
         dispatch(addToCart({ ...storeProduct, quantity: 1 }));
-        setData([]);
-        setQuery("");
+        if (!keepListOpen) {
+          setData([]);
+          setQuery("");
+        }
       } else if (
         movementType === "venta" &&
         currentQuantityInCart >= availableStock
@@ -400,7 +405,7 @@ const SearchProduct = () => {
       </Grid>
 
       <Grid container spacing={2} sx={{ mb: 0.5 }}>
-        <Grid item xs={queryType === "code" ? 12 : 10}>
+        <Grid item xs={queryType === "code" ? 12 : 8}>
           <TextField size="small" fullWidth className=""
             ref={inputRef}
             type="text"
@@ -417,16 +422,30 @@ const SearchProduct = () => {
           />
         </Grid>
         {queryType === "q" && (
-          <Grid item xs={2}>
-            <CustomButton 
-              fullWidth 
-              onClick={handleSearchProduct} 
-              startIcon={<SearchIcon />}
-              disabled={searching}
-            >
-              {searching ? "Buscando..." : "Buscar"}
-            </CustomButton>
-          </Grid>
+          <>
+            <Grid item xs={2}>
+              <CustomButton 
+                fullWidth 
+                onClick={handleSearchProduct} 
+                startIcon={<SearchIcon />}
+                disabled={searching}
+              >
+                {searching ? "Buscando..." : "Buscar"}
+              </CustomButton>
+            </Grid>
+            <Grid item xs={2} sx={{ display: 'flex', alignItems: 'center' }}>
+              <FormControlLabel
+                control={
+                  <Checkbox 
+                    size="small"
+                    checked={keepListOpen}
+                    onChange={(e) => setKeepListOpen(e.target.checked)}
+                  />
+                }
+                label="Mantener lista"
+              />
+            </Grid>
+          </>
         )}
         
         {data.length > 0 && (
