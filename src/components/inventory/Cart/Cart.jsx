@@ -66,7 +66,7 @@ const Cart = () => {
 
   useEffect(() => {
     const handleShortcut = (event) => {
-      if (event.ctrlKey && event.key === "d") {
+      if (event.ctrlKey && (event.key === "p" || event.key === "P")) {
         event.preventDefault();
         paymentModal.close();
         setTimeout(() => paymentModal.open(), 1);
@@ -551,7 +551,7 @@ const Cart = () => {
                 </Grid>
                 <Grid item xs={12} md={4}>
                   <CustomButton fullWidth onClick={handleOpenModal} startIcon={<PaymentIcon />}>
-                    Cobrar (Ctrl + D)
+                    Cobrar (Ctrl+P)
                   </CustomButton>
                 </Grid>
               </>
