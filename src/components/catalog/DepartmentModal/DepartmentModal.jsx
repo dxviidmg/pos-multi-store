@@ -13,15 +13,17 @@ const DepartmentModal = ({ isOpen, department, onClose, onUpdate }) => {
   const updateMutation = useUpdateDepartment();
 
   useEffect(() => {
-    if (department) {
-      setValues({
-        id: department.id || "",
-        name: department.name || "",
-      });
-    } else {
-      reset();
+    if (isOpen) {
+      if (department) {
+        setValues({
+          id: department.id || "",
+          name: department.name || "",
+        });
+      } else {
+        setValues({ name: "" });
+      }
     }
-  }, [department, setValues, reset]);
+  }, [isOpen, department, setValues]);
 
   const handleDepartmentSubmit = () => {
     const mutation = values.id ? updateMutation : createMutation;

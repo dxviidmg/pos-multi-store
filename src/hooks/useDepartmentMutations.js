@@ -1,5 +1,11 @@
 import { createMutationHooks } from './useCrudMutation';
-import * as api from '../api/departments';
+import { createDepartment, updateDepartment, deleteDepartments } from '../api/departments';
+
+const api = {
+  create: createDepartment,
+  update: updateDepartment,
+  delete: deleteDepartments
+};
 
 const { useCreate, useUpdate } = createMutationHooks('Departamento', 'departments', api);
 

@@ -1,5 +1,11 @@
 import { createMutationHooks } from './useCrudMutation';
-import * as api from '../api/brands';
+import { createBrand, updateBrand, deleteBrands } from '../api/brands';
+
+const api = {
+  create: createBrand,
+  update: updateBrand,
+  delete: deleteBrands
+};
 
 const { useCreate, useUpdate } = createMutationHooks('Marca', 'brands', api);
 

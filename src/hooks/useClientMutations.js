@@ -1,5 +1,11 @@
 import { createMutationHooks, useCrudMutation } from './useCrudMutation';
-import * as api from '../api/clients';
+import { createClient, updateClient, deleteClient } from '../api/clients';
+
+const api = {
+  create: createClient,
+  update: updateClient,
+  delete: deleteClient
+};
 
 const { useCreate, useUpdate } = createMutationHooks('Cliente', 'clients', api);
 
@@ -18,7 +24,7 @@ const clientErrorParser = (error) => {
 };
 
 export const useCreateClient = (options = {}) => {
-  return useCrudMutation(api.createClient, {
+  return useCrudMutation(createClient, {
     queryKey: 'clients',
     successMessage: 'Cliente creado',
     errorMessage: 'Error al guardar cliente',

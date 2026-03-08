@@ -27,4 +27,6 @@ const CustomButton = forwardRef(({
   );
 });
 
+CustomButton.displayName = 'CustomButton';
+
 export default memo(CustomButton);
