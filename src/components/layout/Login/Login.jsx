@@ -3,6 +3,7 @@ import { loginUser } from "../../../api/login";
 import { useNavigate } from "react-router-dom";
 import CustomButton from "../../ui/Button/Button";
 import Logo from "../../../assets/images/logo.jpg";
+import BgImage from "../../../assets/images/bg.webp";
 import './login.css';
 import { 
   TextField, 
@@ -101,13 +102,22 @@ function Login({ onLogin }) {
   return (
     <Box
       sx={{
-        height: '99vh',
+        minHeight: '100vh',
+        height: '100vh',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: colors.background.main,
+        backgroundImage: `url(${BgImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
         padding: 2,
         overflow: 'hidden',
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
       }}
     >
       <Paper
@@ -117,7 +127,7 @@ function Login({ onLogin }) {
           maxWidth: 380,
           borderRadius: 5,
           overflow: 'hidden',
-          background: `linear-gradient(145deg, ${colors.primary} 0%, #0d4d8c 50%, #0a5a9e 100%)`,
+          background: `linear-gradient(145deg, ${colors.primary} 0%, #032a56 50%, #021f3f 100%)`,
           boxShadow: '0 24px 80px rgba(4, 52, 107, 0.4), 0 0 1px rgba(4, 52, 107, 0.1)',
         }}
       >
@@ -299,14 +309,6 @@ function Login({ onLogin }) {
             </CustomButton>
           </Stack>
         </Box>
-
-        {/* Footer decorativo */}
-        <Box
-          sx={{
-            height: '5px',
-            background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%)',
-          }}
-        />
       </Paper>
     </Box>
   );
