@@ -64,7 +64,12 @@ const SearchProduct = () => {
   const [keepListOpen, setKeepListOpen] = useState(false);
 
   useEffect(() => {
-    inputRef.current?.focus();
+    const timer = setTimeout(() => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
+    }, 300);
+    return () => clearTimeout(timer);
   }, []);
 
   const fetchData = useCallback(
@@ -258,50 +263,43 @@ const SearchProduct = () => {
     stockModal.open(storeProduct);
   };
 
-  const handleShortcut = (event) => {
-    if (event.ctrlKey && event.key === "r") {
-      event.preventDefault(); // Evita la acción predeterminada del navegador
+  const handleShortcut = useCallback((event) => {
+    if (event.ctrlKey && (event.key === "j" || event.key === "J")) {
+      event.preventDefault();
       setQueryType("code");
     }
-    if (event.ctrlKey && event.key === "y") {
-      event.preventDefault(); // Evita la acción predeterminada del navegador
+    if (event.ctrlKey && (event.key === "m" || event.key === "M")) {
+      event.preventDefault();
       setQueryType("q");
     }
-    if (event.ctrlKey && event.key === "u") {
-      event.preventDefault(); // Evita la acción predeterminada del navegador
+    if (event.ctrlKey && (event.key === "y" || event.key === "Y")) {
+      event.preventDefault();
       dispatch(updateMovementType("venta"));
     }
-    if (event.ctrlKey && event.key === "i") {
-      event.preventDefault(); // Evita la acción predeterminada del navegador
+    if (event.ctrlKey && (event.key === "e" || event.key === "E")) {
+      event.preventDefault();
       dispatch(updateMovementType("traspaso"));
     }
-    if (event.ctrlKey && event.key === "o") {
-      event.preventDefault(); // Evita la acción predeterminada del navegador
+    if (event.ctrlKey && (event.key === "i" || event.key === "I")) {
+      event.preventDefault();
       dispatch(updateMovementType("distribucion"));
     }
-    if (event.ctrlKey && event.key === "p") {
-      event.preventDefault(); // Evita la acción predeterminada del navegador
+    if (event.ctrlKey && (event.key === "g" || event.key === "G")) {
+      event.preventDefault();
       dispatch(updateMovementType("agregar"));
     }
-    if (event.ctrlKey && event.key === "a") {
-      event.preventDefault(); // Evita la acción predeterminada del navegador
+    if (event.ctrlKey && (event.key === "k" || event.key === "K")) {
+      event.preventDefault();
       dispatch(updateMovementType("checar"));
     }
-    if (event.ctrlKey && event.key === "s") {
-      event.preventDefault(); // Evita la acción predeterminada del navegador
-      inputRef.current?.focus();
-    }
-  };
+  }, [dispatch]);
 
   useEffect(() => {
-    // Añadir el listener al montar el componente
     window.addEventListener("keydown", handleShortcut);
-
-    // Limpiar el listener al desmontar el componente
     return () => {
       window.removeEventListener("keydown", handleShortcut);
     };
-  }, []);
+  }, [handleShortcut]);
 
   return (
     <>
@@ -345,13 +343,13 @@ const SearchProduct = () => {
             <FormControlLabel 
               value="code" 
               control={<Radio size="small" />} 
-              label="Por código de barras (Ctrl+R)"
+              label="Por código de barras (Ctrl+J)"
               sx={{ mr: 4 }}
             />
             <FormControlLabel 
               value="q" 
               control={<Radio size="small" />} 
-              label="Por marca o nombre (Ctrl+Y)"
+              label="Por marca o nombre (Ctrl+M)"
             />
           </RadioGroup>
         </Grid>
@@ -363,34 +361,34 @@ const SearchProduct = () => {
               <FormControlLabel 
                 value="venta" 
                 control={<Radio size="small" />} 
-                label="Venta (Ctrl+U)"
+                label="Venta (Ctrl+Y)"
                 sx={{ mr: 4 }}
               />
             )}
             <FormControlLabel 
               value="traspaso" 
               control={<Radio size="small" />} 
-              label="Confirmar traspaso (Ctrl+I)"
+              label="Confirmar traspaso (Ctrl+E)"
               sx={{ mr: 4 }}
             />
             {storeType !== "T" && (
               <FormControlLabel 
                 value="distribucion" 
                 control={<Radio size="small" />} 
-                label="Distribucion (Ctrl+O)"
+                label="Distribucion (Ctrl+I)"
                 sx={{ mr: 4 }}
               />
             )}
             <FormControlLabel 
               value="agregar" 
               control={<Radio size="small" />} 
-              label="Agregar a inventario (Ctrl+P)"
+              label="Agregar a inventario (Ctrl+G)"
               sx={{ mr: 4 }}
             />
             <FormControlLabel 
               value="checar" 
               control={<Radio size="small" />} 
-              label="Checar precio (Ctrl+A)"
+              label="Checar precio (Ctrl+K)"
               sx={{ mr: 4 }}
             />
             {supports_reservations && storeType !== "A" && (
@@ -410,7 +408,7 @@ const SearchProduct = () => {
             ref={inputRef}
             type="text"
             value={queryType === "code" ? barcode : query}
-            placeholder="Buscar producto (Ctrl + S)"
+            placeholder="Buscar producto"
             onChange={
               queryType === "q"
                 ? handleQueryChange
