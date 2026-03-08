@@ -50,12 +50,12 @@ const SearchClient = () => {
   };
 
   const handleShortcut = (event) => {
-    if (event.ctrlKey && event.key === "q") {
-      event.preventDefault(); // Evita la acción predeterminada del navegador
-      inputRefClient.current?.focus(); // Enfocar el input
+    if (event.ctrlKey && (event.key === "i" || event.key === "I")) {
+      event.preventDefault();
+      inputRefClient.current?.focus();
     }
     if (event.ctrlKey && ["1", "2", "3", "4", "5"].includes(event.key)) {
-      event.preventDefault(); // Evita la acción predeterminada del navegador
+      event.preventDefault();
       const client = clients[parseInt(event.key) - 1];
 
       if (client) {
@@ -94,7 +94,7 @@ const SearchClient = () => {
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Nombre y/o número (Ctrl + Q)"
+        placeholder="Nombre y/o número (Ctrl+I)"
       />
       <CustomTable
         data={clients}

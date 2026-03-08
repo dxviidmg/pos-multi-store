@@ -12,8 +12,8 @@ const ClientSelected = () => {
   const dispatch = useDispatch();
 
   const handleShortcut = (event) => {
-    if (event.ctrlKey && event.key === "e") {
-      event.preventDefault(); // Evita la acción predeterminada del navegador
+    if (event.ctrlKey && (event.key === "o" || event.key === "O")) {
+      event.preventDefault();
       dispatch(removeClientfromCart())
     }
   };
@@ -64,7 +64,7 @@ const ClientSelected = () => {
         <Box>
           <CustomButton fullWidth={true} onClick={() => dispatch(removeClientfromCart())} startIcon={<PersonRemoveIcon />}>
           Borrar 
-          (Ctrl + E)
+          (Ctrl+O)
           </CustomButton>
         </Box>
       </Grid>
