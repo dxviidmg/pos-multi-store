@@ -22,12 +22,14 @@ const ClientModal = ({ isOpen, client, onClose, onUpdate }) => {
   const updateMutation = useUpdateClient();
 
   useEffect(() => {
-    if (client) {
-      setValues(client);
-    } else {
-      reset();
+    if (isOpen) {
+      if (client) {
+        setValues(client);
+      } else {
+        setValues(INITIAL_FORM_DATA);
+      }
     }
-  }, [client, setValues, reset]);
+  }, [isOpen, client, setValues]);
 
   const isFormIncomplete = Object.values(values).some((value) => value === "");
 

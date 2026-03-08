@@ -13,25 +13,32 @@ const BrandModal = ({ isOpen, brand, onClose, onUpdate }) => {
   const updateMutation = useUpdateBrand();
 
   useEffect(() => {
-    if (brand) {
-      setValues({
-        id: brand.id || "",
-        name: brand.name || "",
-      });
-    } else {
-      reset();
+    if (isOpen) {
+      if (brand) {
+        setValues({
+          id: brand.id || "",
+          name: brand.name || "",
+        });
+      } else {
+        setValues({ name: "" });
+      }
     }
-  }, [brand, setValues, reset]);
+  }, [isOpen, brand, setValues]);
 
   const handleBrandSubmit = () => {
+    console.log('Submitting:', values);
     const mutation = values.id ? updateMutation : createMutation;
     
     mutation.mutate(values, {
       onSuccess: () => {
+        console.log('Success');
         onClose();
         onUpdate();
         reset();
       },
+      onError: (error) => {
+        console.log('Error:', error);
+      }
     });
   };
 

@@ -31,11 +31,15 @@ export const useForm = (initialValues = {}) => {
     setValues(initialValues);
   }, [initialValues]);
 
+  const setValuesCallback = useCallback((newValues) => {
+    setValues(newValues);
+  }, []);
+
   return {
     values,
     handleChange,
     reset,
-    setValues,
+    setValues: setValuesCallback,
     setValue
   };
 };

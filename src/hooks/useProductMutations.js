@@ -1,5 +1,5 @@
 import { useCrudMutation } from './useCrudMutation';
-import * as api from '../api/products';
+import { createProduct, updateProduct } from '../api/products';
 
 const productErrorParser = (error) => {
   if (error.response?.status === 400 && error.response.data?.code) {
@@ -12,7 +12,7 @@ const productErrorParser = (error) => {
 };
 
 export const useCreateProduct = (options = {}) => {
-  return useCrudMutation(api.createProduct, {
+  return useCrudMutation(createProduct, {
     queryKey: 'products',
     successMessage: 'Producto creado',
     errorMessage: 'Error al crear producto',
@@ -22,7 +22,7 @@ export const useCreateProduct = (options = {}) => {
 };
 
 export const useUpdateProduct = (options = {}) => {
-  return useCrudMutation(api.updateProduct, {
+  return useCrudMutation(updateProduct, {
     queryKey: 'products',
     successMessage: 'Producto actualizado',
     errorMessage: 'Error al actualizar producto',
