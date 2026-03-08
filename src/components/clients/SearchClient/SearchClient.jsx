@@ -84,7 +84,7 @@ const SearchClient = () => {
   return (
     <>
 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-  <h2 style={{ margin: 0 }}>Buscador de clientes</h2>
+  <h2 style={{ margin: 0 }}>Seleccionar cliente</h2>
   {Object.keys(client).length === 0 && (
     <Chip label="Aviso: No hay cliente seleccionado" color="success" size="small" />
   )}
@@ -95,45 +95,48 @@ const SearchClient = () => {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Nombre y/o número (Ctrl+I)"
+        sx={{ mb: query ? 0 : 1 }}
       />
-      <CustomTable
-        data={clients}
-        showNoDataComponent={false}
-        columns={[
-          {
-            name: "Nombre",
-            selector: (row) => row.full_name,
-            sortable: true,
-          },
+      {query && (
+        <CustomTable
+          data={clients}
+          showNoDataComponent={false}
+          columns={[
+            {
+              name: "Nombre",
+              selector: (row) => row.full_name,
+              sortable: true,
+            },
 
-          {
-            name: "Teléfono",
-            selector: (row) => row.phone_number,
-            sortable: true,
-          },
+            {
+              name: "Teléfono",
+              selector: (row) => row.phone_number,
+              sortable: true,
+            },
 
-          {
-            name: "Descuento",
-            selector: (row) => row.discount_percentage + "%",
-            sortable: true,
-          },
+            {
+              name: "Descuento",
+              selector: (row) => row.discount_percentage + "%",
+              sortable: true,
+            },
 
-          {
-            name: "Acciones",
-            selector: (row) => (
-              <div>
-                <CustomButton onClick={() => handleSelectClient(row)} startIcon={<CheckCircleIcon />}>
-                  Seleccionar
-                </CustomButton>
-              </div>
-            ),
-          },
-          {
-            name: "Atajo",
-            selector: (row, index) => <div>Ctrl + {index + 1}</div>,
-          },
-        ]}
-      />
+            {
+              name: "Acciones",
+              selector: (row) => (
+                <div>
+                  <CustomButton onClick={() => handleSelectClient(row)} startIcon={<CheckCircleIcon />}>
+                    Seleccionar
+                  </CustomButton>
+                </div>
+              ),
+            },
+            {
+              name: "Atajo",
+              selector: (row, index) => <div>Ctrl + {index + 1}</div>,
+            },
+          ]}
+        />
+      )}
     </>
   );
 };
