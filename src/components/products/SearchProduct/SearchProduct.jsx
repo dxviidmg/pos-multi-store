@@ -14,7 +14,7 @@ import Swal from "sweetalert2";
 import { getPrinterUrl, getUserData } from "../../../api/utils";
 import PrintIcon from "@mui/icons-material/Print";
 import { handlePrintTicket } from "../../../utils/utils";
-import { Grid, TextField, FormLabel, RadioGroup, FormControlLabel, Radio } from "@mui/material";
+import { Grid, TextField, FormLabel, RadioGroup, FormControlLabel, Radio, Checkbox } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import AddIcon from "@mui/icons-material/Add";
 import InventoryIcon from "@mui/icons-material/Inventory";
@@ -61,9 +61,15 @@ const SearchProduct = () => {
   const [barcode, setBarcode] = useState("");
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [searching, setSearching] = useState(false);
+  const [keepListOpen, setKeepListOpen] = useState(false);
 
   useEffect(() => {
-    inputRef.current?.focus();
+    const timer = setTimeout(() => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
+    }, 300);
+    return () => clearTimeout(timer);
   }, []);
 
   const fetchData = useCallback(
@@ -164,8 +170,10 @@ const SearchProduct = () => {
         
         if (availableStock >= 1) {
           dispatch(addToCart({ ...storeProduct, quantity: 1 }));
-          setData([]);
-          setQuery("");
+          if (!keepListOpen) {
+            setData([]);
+            setQuery("");
+          }
         } else {
           Swal.fire({
             icon: "warning",
@@ -185,8 +193,10 @@ const SearchProduct = () => {
         dispatch(addToCart({ ...storeProduct, quantity: 1 }));
       } else if (currentQuantityInCart < availableStock) {
         dispatch(addToCart({ ...storeProduct, quantity: 1 }));
-        setData([]);
-        setQuery("");
+        if (!keepListOpen) {
+          setData([]);
+          setQuery("");
+        }
       } else if (
         movementType === "venta" &&
         currentQuantityInCart >= availableStock
@@ -253,50 +263,43 @@ const SearchProduct = () => {
     stockModal.open(storeProduct);
   };
 
-  const handleShortcut = (event) => {
-    if (event.ctrlKey && event.key === "r") {
-      event.preventDefault(); // Evita la acción predeterminada del navegador
+  const handleShortcut = useCallback((event) => {
+    if (event.ctrlKey && (event.key === "j" || event.key === "J")) {
+      event.preventDefault();
       setQueryType("code");
     }
-    if (event.ctrlKey && event.key === "y") {
-      event.preventDefault(); // Evita la acción predeterminada del navegador
+    if (event.ctrlKey && (event.key === "m" || event.key === "M")) {
+      event.preventDefault();
       setQueryType("q");
     }
-    if (event.ctrlKey && event.key === "u") {
-      event.preventDefault(); // Evita la acción predeterminada del navegador
+    if (event.ctrlKey && (event.key === "y" || event.key === "Y")) {
+      event.preventDefault();
       dispatch(updateMovementType("venta"));
     }
-    if (event.ctrlKey && event.key === "i") {
-      event.preventDefault(); // Evita la acción predeterminada del navegador
+    if (event.ctrlKey && (event.key === "e" || event.key === "E")) {
+      event.preventDefault();
       dispatch(updateMovementType("traspaso"));
     }
-    if (event.ctrlKey && event.key === "o") {
-      event.preventDefault(); // Evita la acción predeterminada del navegador
+    if (event.ctrlKey && (event.key === "i" || event.key === "I")) {
+      event.preventDefault();
       dispatch(updateMovementType("distribucion"));
     }
-    if (event.ctrlKey && event.key === "p") {
-      event.preventDefault(); // Evita la acción predeterminada del navegador
+    if (event.ctrlKey && (event.key === "g" || event.key === "G")) {
+      event.preventDefault();
       dispatch(updateMovementType("agregar"));
     }
-    if (event.ctrlKey && event.key === "a") {
-      event.preventDefault(); // Evita la acción predeterminada del navegador
+    if (event.ctrlKey && (event.key === "k" || event.key === "K")) {
+      event.preventDefault();
       dispatch(updateMovementType("checar"));
     }
-    if (event.ctrlKey && event.key === "s") {
-      event.preventDefault(); // Evita la acción predeterminada del navegador
-      inputRef.current?.focus();
-    }
-  };
+  }, [dispatch]);
 
   useEffect(() => {
-    // Añadir el listener al montar el componente
     window.addEventListener("keydown", handleShortcut);
-
-    // Limpiar el listener al desmontar el componente
     return () => {
       window.removeEventListener("keydown", handleShortcut);
     };
-  }, []);
+  }, [handleShortcut]);
 
   return (
     <>
@@ -340,13 +343,13 @@ const SearchProduct = () => {
             <FormControlLabel 
               value="code" 
               control={<Radio size="small" />} 
-              label="Por código de barras (Ctrl+R)"
+              label="Por código de barras (Ctrl+J)"
               sx={{ mr: 4 }}
             />
             <FormControlLabel 
               value="q" 
               control={<Radio size="small" />} 
-              label="Por marca o nombre (Ctrl+Y)"
+              label="Por marca o nombre (Ctrl+M)"
             />
           </RadioGroup>
         </Grid>
@@ -358,34 +361,34 @@ const SearchProduct = () => {
               <FormControlLabel 
                 value="venta" 
                 control={<Radio size="small" />} 
-                label="Venta (Ctrl+U)"
+                label="Venta (Ctrl+Y)"
                 sx={{ mr: 4 }}
               />
             )}
             <FormControlLabel 
               value="traspaso" 
               control={<Radio size="small" />} 
-              label="Confirmar traspaso (Ctrl+I)"
+              label="Confirmar traspaso (Ctrl+E)"
               sx={{ mr: 4 }}
             />
             {storeType !== "T" && (
               <FormControlLabel 
                 value="distribucion" 
                 control={<Radio size="small" />} 
-                label="Distribucion (Ctrl+O)"
+                label="Distribucion (Ctrl+I)"
                 sx={{ mr: 4 }}
               />
             )}
             <FormControlLabel 
               value="agregar" 
               control={<Radio size="small" />} 
-              label="Agregar a inventario (Ctrl+P)"
+              label="Agregar a inventario (Ctrl+G)"
               sx={{ mr: 4 }}
             />
             <FormControlLabel 
               value="checar" 
               control={<Radio size="small" />} 
-              label="Checar precio (Ctrl+A)"
+              label="Checar precio (Ctrl+K)"
               sx={{ mr: 4 }}
             />
             {supports_reservations && storeType !== "A" && (
@@ -400,12 +403,12 @@ const SearchProduct = () => {
       </Grid>
 
       <Grid container spacing={2} sx={{ mb: 0.5 }}>
-        <Grid item xs={queryType === "code" ? 12 : 10}>
+        <Grid item xs={queryType === "code" ? 12 : 8}>
           <TextField size="small" fullWidth className=""
             ref={inputRef}
             type="text"
             value={queryType === "code" ? barcode : query}
-            placeholder="Buscar producto (Ctrl + S)"
+            placeholder="Buscar producto"
             onChange={
               queryType === "q"
                 ? handleQueryChange
@@ -417,16 +420,30 @@ const SearchProduct = () => {
           />
         </Grid>
         {queryType === "q" && (
-          <Grid item xs={2}>
-            <CustomButton 
-              fullWidth 
-              onClick={handleSearchProduct} 
-              startIcon={<SearchIcon />}
-              disabled={searching}
-            >
-              {searching ? "Buscando..." : "Buscar"}
-            </CustomButton>
-          </Grid>
+          <>
+            <Grid item xs={2}>
+              <CustomButton 
+                fullWidth 
+                onClick={handleSearchProduct} 
+                startIcon={<SearchIcon />}
+                disabled={searching}
+              >
+                {searching ? "Buscando..." : "Buscar"}
+              </CustomButton>
+            </Grid>
+            <Grid item xs={2} sx={{ display: 'flex', alignItems: 'center' }}>
+              <FormControlLabel
+                control={
+                  <Checkbox 
+                    size="small"
+                    checked={keepListOpen}
+                    onChange={(e) => setKeepListOpen(e.target.checked)}
+                  />
+                }
+                label="Mantener lista"
+              />
+            </Grid>
+          </>
         )}
         
         {data.length > 0 && (

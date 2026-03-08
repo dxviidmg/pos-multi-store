@@ -299,7 +299,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
         title="Finalizar venta"
       >
         <Grid container sx={{ padding: '1rem', backgroundColor: 'rgba(4, 53, 107, 0.2)' }}>
-          <Grid item xs={12} className="card" sx={{ marginBottom: '1.5rem' }}>
+          <Grid item xs={12} className="card" sx={{ marginBottom: '1rem' }}>
             <Grid container spacing={2}>
               <Grid item xs={12} md={6}>
                 <CustomButton
@@ -377,7 +377,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
             </Grid>
           </Grid>
 
-          <Grid item xs={12} className="card" sx={{ marginBottom: '1.5rem' }}>
+          <Grid item xs={12} className="card" sx={{ marginBottom: '1rem' }}>
             <h2>Totales</h2>
             <Grid container spacing={2}>
               <Grid item xs={12} md={3}>
