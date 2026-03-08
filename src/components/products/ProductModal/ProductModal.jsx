@@ -306,7 +306,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
                 />
               </Grid>
 
-              <Grid item xs={12} md={formData.id ? 6 : 12}>
+              <Grid item xs={12}>
                 <CustomButton
                   fullWidth={true}
                   onClick={(e) => handleProductSubmit(e)}
