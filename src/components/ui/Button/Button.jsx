@@ -1,7 +1,7 @@
-import React, { memo } from "react";
+import React, { memo, forwardRef } from "react";
 import { Button } from "@mui/material";
 
-const CustomButton = ({
+const CustomButton = forwardRef(({
   children,
   onClick,
   size = "small",
@@ -9,9 +9,10 @@ const CustomButton = ({
   href,
   fullWidth = false,
   ...props
-}) => {
+}, ref) => {
   return (
     <Button
+      ref={ref}
       onClick={onClick}
       size={size}
       disabled={disabled}
@@ -24,6 +25,8 @@ const CustomButton = ({
       {children}
     </Button>
   );
-};
+});
+
+CustomButton.displayName = 'CustomButton';
 
 export default memo(CustomButton);

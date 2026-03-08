@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import CustomTable from "../../ui/Table/Table";
 import { getSales } from "../../../api/sales";
 import CustomButton from "../../ui/Button/Button";
@@ -17,13 +17,72 @@ import WarningIcon from "@mui/icons-material/Warning";
 import UndoIcon from "@mui/icons-material/Undo";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ErrorIcon from "@mui/icons-material/Error";
-import { Alert } from "@mui/material";
+import { Alert, Popper, Paper } from "@mui/material";
 import { getUserData } from "../../../api/utils";
 import PaymentModal2 from "../PaymentModal2/PaymentModal2";
 import CustomTooltip from "../../ui/Tooltip";
 import CustomModal from "../../ui/Modal/Modal";
 import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, Box } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+
+const ProductsPopperButton = ({ row, productsModal }) => {
+  const [anchorEl, setAnchorEl] = useState(null);
+  const timeoutRef = useRef(null);
+  const buttonRef = useRef(null);
+  const open = Boolean(anchorEl);
+  
+  const handleMouseEnter = () => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    setAnchorEl(buttonRef.current);
+  };
+  
+  const handleMouseLeave = () => {
+    timeoutRef.current = setTimeout(() => setAnchorEl(null), 200);
+  };
+  
+  return (
+    <>
+      <CustomButton 
+        ref={buttonRef}
+        onClick={() => productsModal.open(row)}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
+        <VisibilityIcon />
+      </CustomButton>
+      <Popper 
+        open={open} 
+        anchorEl={anchorEl} 
+        placement="right"
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
+        <Paper 
+          elevation={3}
+          sx={{ 
+            maxHeight: '400px', 
+            maxWidth: '350px', 
+            overflow: 'auto',
+            p: 1.5
+          }}
+        >
+          {row.products_sale?.map((p, i) => (
+            <Box 
+              key={i} 
+              sx={{ 
+                py: 0.5,
+                borderBottom: i < row.products_sale.length - 1 ? '1px solid #ddd' : 'none'
+              }}
+            >
+              {p.quantity} - {p.name} {p.code && `(${p.code})`}
+            </Box>
+          ))}
+        </Paper>
+      </Popper>
+    </>
+  );
+};
+
 
 const TYPE_OPTIONS = [
   {
@@ -122,7 +181,7 @@ const SaleList = () => {
       <PaymentModal2 isOpen={paymentModal2.isOpen} sale={paymentModal2.data} onClose={paymentModal2.close} onUpdate={handleUpdateSaleList} />
       <SaleModal isOpen={saleModal.isOpen} sale={saleModal.data} onClose={saleModal.close} onUpdate={handleUpdateSaleList} />
       
-      <CustomModal showOut={productsModal.isOpen} onClose={productsModal.close} title="Productos de la venta">
+      {/* <CustomModal showOut={productsModal.isOpen} onClose={productsModal.close} title="Productos de la venta">
         <Grid container className="modal-content">
           <Grid item xs={12} className="card">
             {productsModal.data && (() => {
@@ -160,7 +219,7 @@ const SaleList = () => {
             })()}
           </Grid>
         </Grid>
-      </CustomModal>
+      </CustomModal> */}
       
       {/* 3. CONTENIDO PRINCIPAL */}
       <Grid className="card">
@@ -320,12 +379,15 @@ const SaleList = () => {
 
             {
               name: "Productos",
-              selector: (row) => (
-                <CustomButton onClick={() => productsModal.open(row)}>
-                  <VisibilityIcon />
-                </CustomButton>
-              ),
+              selector: (row) => <ProductsPopperButton row={row} productsModal={productsModal} />,
               center: true,
+            },
+
+            {
+              name: "# Productos",
+              selector: (row) => row.products_sale?.length || 0,
+              center: true,
+              width: '100px',
             },
 
             {
