@@ -606,10 +606,10 @@ const StoreList = () => {
                   <Grid item xs={12} key={index}>
                     <Alert 
                       variant="filled" 
-                      severity={notice.includes('demo') ? 'success' : 'error'}
+                      severity={notice.variant}
                       sx={{ fontWeight: 600, fontSize: '1rem' }}
                     >
-                      {notice}
+                      {notice.notice}
                     </Alert>
                   </Grid>
                 ))}
