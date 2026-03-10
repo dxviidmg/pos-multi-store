@@ -16,42 +16,53 @@ const Dashboard = () => {
   const fetchData = async () => {
     setLoading(true);
     setProgress(0);
-    const response = await getSalesDashboard({ year });
-    const taskId = response.data.task;
     
-    // Poll para obtener el resultado
-    const pollTask = async () => {
-      try {
-        const { data: taskData } = await getTaskResult(taskId);
-        const { result, status, meta } = taskData;
+    try {
+      const response = await getSalesDashboard({ year });
+      const taskId = response.data.task;
+      
+      // Poll para obtener el resultado
+      const pollTask = async () => {
+        try {
+          const { data: taskData } = await getTaskResult(taskId);
+          const { result, status, meta } = taskData;
 
-        // Actualizar progreso si está disponible
-        if (meta?.current && meta?.total) {
-          setProgress((meta.current / meta.total) * 100);
-        }
+          // Actualizar progreso si está disponible
+          if (meta?.current && meta?.total) {
+            setProgress((meta.current / meta.total) * 100);
+          }
 
-        if (status === "SUCCESS") {
-          setDashboardData(result);
-          setLoading(false);
-          setProgress(100);
-          clearInterval(intervalId);
-        } else if (status === "FAILURE") {
-          showError("Error al cargar los datos del dashboard", taskData.error.message || "Error desconocido");
+          if (status === "SUCCESS") {
+            setDashboardData(result);
+            setLoading(false);
+            setProgress(100);
+            clearInterval(intervalId);
+          } else if (status === "FAILURE") {
+            showError("Error al cargar los datos del dashboard", taskData.error.message || "Error desconocido");
+            setLoading(false);
+            setProgress(0);
+            clearInterval(intervalId);
+          }
+        } catch (error) {
+          showError("Error al obtener los datos del dashboard", error.response?.data?.message || error.message || "Error de conexión");
           setLoading(false);
           setProgress(0);
           clearInterval(intervalId);
         }
-      } catch (error) {
-        showError("Error al obtener los datos del dashboard", error.response?.data?.message || error.message || "Error de conexión");
-        setLoading(false);
-        setProgress(0);
-        clearInterval(intervalId);
-      }
-    };
+      };
 
-    let intervalId;
-    pollTask();
-    intervalId = setInterval(pollTask, 10000);
+      let intervalId;
+      pollTask();
+      intervalId = setInterval(pollTask, 10000);
+    } catch (error) {
+      // Detectar error de Redis
+      if (error.response?.data?.message?.includes('max requests limit exceeded')) {
+        showError("Límite de Redis Excedido", "Se ha alcanzado el límite de solicitudes de Redis. Por favor, contacta al administrador del sistema");
+      } else {
+        showError("Error al cargar el dashboard", error.response?.data?.message || error.message);
+      }
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
