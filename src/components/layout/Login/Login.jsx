@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { loginUser } from "../../../api/login";
 import { useNavigate } from "react-router-dom";
 import CustomButton from "../../ui/Button/Button";
@@ -39,6 +39,13 @@ function Login({ onLogin }) {
     rememberMe: false,
     showPassword: false,
   });
+
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
