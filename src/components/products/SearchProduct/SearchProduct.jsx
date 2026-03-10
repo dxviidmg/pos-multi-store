@@ -440,84 +440,86 @@ const SearchProduct = () => {
         
         {data.length > 0 && (
           <Grid item xs={12}>
-            <CustomTable
-            showNoDataComponent={false}
-            data={data}
-            pagination={true}
-            columns={[
-              { name: "Código", selector: (row) => row.product.code, grow: 2 },
-              {
-                name: "Marca",
-                selector: (row) => row.product.brand_name,
-              },
-              {
-                name: "Nombre",
-                selector: (row) => row.product.name,
-                grow: 3,
-                wrapText: true,
-              },
-              { name: "Stock", selector: (row) => row.available_stock },
-              {
-                name: "Precio unitario",
-                selector: (row) =>
-                  `$${row.product.prices.unit_price.toFixed(2)}`,
-              },
-              {
-                name: "Precio mayoreo",
-                wrapText: true,
-                selector: (row) =>
-                  row.product.prices.apply_wholesale
-                    ? `${
-                        row.product.prices.min_wholesale_quantity
-                      } o más a $${row.product.prices.wholesale_price.toFixed(
-                        2
-                      )}`
-                    : "N/A",
-              },
-              {
-                name: "Acciones",
-                grow: 2,
-                cell: (row) => (
-                  <>
-                    <CustomTooltip text="Agregar al carrito">
-                      <CustomButton
-                        onClick={() => handleAddToCartIfAvailable(row)}
-                        disabled={
-                          movementType === "venta" && row.available_stock === 0
-                        }
-                        variant="primary"
-                      >
-                        <AddIcon />
-                      </CustomButton>
-                    </CustomTooltip>
+            <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
+              <CustomTable
+              showNoDataComponent={false}
+              data={data}
+              pagination={true}
+              columns={[
+                { name: "Código", selector: (row) => row.product.code, grow: 2 },
+                {
+                  name: "Marca",
+                  selector: (row) => row.product.brand_name,
+                },
+                {
+                  name: "Nombre",
+                  selector: (row) => row.product.name,
+                  grow: 3,
+                  wrapText: true,
+                },
+                { name: "Stock", selector: (row) => row.available_stock },
+                {
+                  name: "Precio unitario",
+                  selector: (row) =>
+                    `$${row.product.prices.unit_price.toFixed(2)}`,
+                },
+                {
+                  name: "Precio mayoreo",
+                  wrapText: true,
+                  selector: (row) =>
+                    row.product.prices.apply_wholesale
+                      ? `${
+                          row.product.prices.min_wholesale_quantity
+                        } o más a $${row.product.prices.wholesale_price.toFixed(
+                          2
+                        )}`
+                      : "N/A",
+                },
+                {
+                  name: "Acciones",
+                  grow: 2,
+                  cell: (row) => (
+                    <>
+                      <CustomTooltip text="Agregar al carrito">
+                        <CustomButton
+                          onClick={() => handleAddToCartIfAvailable(row)}
+                          disabled={
+                            movementType === "venta" && row.available_stock === 0
+                          }
+                          variant="primary"
+                        >
+                          <AddIcon />
+                        </CustomButton>
+                      </CustomTooltip>
 
-                    <CustomTooltip text="Ver stock en todas las tiendas">
-                      <CustomButton
-                        onClick={() =>
-                          handleOpenModal({ ...row, onlyRead: true })
-                        }
-                        variant="danger"
-                      >
-                        <InventoryIcon />
-                      </CustomButton>
-                    </CustomTooltip>
+                      <CustomTooltip text="Ver stock en todas las tiendas">
+                        <CustomButton
+                          onClick={() =>
+                            handleOpenModal({ ...row, onlyRead: true })
+                          }
+                          variant="danger"
+                        >
+                          <InventoryIcon />
+                        </CustomButton>
+                      </CustomTooltip>
 
-                    <CustomTooltip text="Ver imagen del producto">
-                      <CustomButton
-                        onClick={() =>
-                          handleOpenModal({ ...row, showImage: true })
-                        }
-                        variant="danger"
-                        disabled={!row.product.image}
-                      >
-                        <RemoveRedEyeIcon />
-                      </CustomButton>
-                    </CustomTooltip>
-                  </>
-                ),
-              },
-            ]}
-          />
+                      <CustomTooltip text="Ver imagen del producto">
+                        <CustomButton
+                          onClick={() =>
+                            handleOpenModal({ ...row, showImage: true })
+                          }
+                          variant="danger"
+                          disabled={!row.product.image}
+                        >
+                          <RemoveRedEyeIcon />
+                        </CustomButton>
+                      </CustomTooltip>
+                    </>
+                  ),
+                },
+              ]}
+            />
+            </div>
           </Grid>
         )}
       </Grid>
