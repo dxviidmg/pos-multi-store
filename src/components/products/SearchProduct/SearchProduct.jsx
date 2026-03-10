@@ -54,7 +54,6 @@ const SearchProduct = () => {
 
   const storeType = getUserData().store_type;
   const urlPrinter = getPrinterUrl();
-  const supports_reservations = getUserData().supports_reservations;
   const [query, setQuery] = useState("");
   const [data, setData] = useState([]);
   const [queryType, setQueryType] = useState("code");
@@ -391,13 +390,6 @@ const SearchProduct = () => {
               label="Checar precio (Ctrl+U)"
               sx={{ mr: 4 }}
             />
-            {supports_reservations && storeType !== "A" && (
-              <FormControlLabel 
-                value="apartado" 
-                control={<Radio size="small" />} 
-                label="Apartado (Sin atajo)"
-              />
-            )}
           </RadioGroup>
         </Grid>
       </Grid>

@@ -316,51 +316,6 @@ const Cart = () => {
     ...commonColumns2,
     {
       name: "Cantidad",
-      field: "quantity",
-      selector: (row) => (
-        <TextField size="small" fullWidth type="number"
-          value={row.quantity}
-          onChange={(e) => handleQuantityChangeToCart(e, row)}
-          min="1"
-          max={row.stock}
-        />
-      ),
-    },
-    { name: "Stock", field: "available_stock", selector: (row) => row.available_stock },
-    { name: "Precio", field: "price", selector: (row) => `$${row.product_price.toFixed(2)}` },
-    {
-      name: "Subtotal",
-      field: "total",
-      selector: (row) => `$${(row.product_price * row.quantity).toFixed(2)}`,
-    },
-    {
-      name: "Aplicar mayoreo",
-      field: "wholesale",
-      selector: (row) => (
-        <Checkbox size="small"
-          type="switch"
-          id="custom-switch"
-          checked={row.product_price === row.product.prices.wholesale_price}
-          onClick={() => handleChangePrice(row)}
-          disabled={!row.product.prices.wholesale_price}
-        />
-      ),
-    },
-    {
-      name: "Borrar",
-      field: "delete",
-      selector: (row) => (
-        <CustomButton onClick={() => handleRemoveFromCart(row)}>
-          <DeleteIcon />
-        </CustomButton>
-      ),
-    },
-  ];
-
-  const saleColumns2 = [
-    ...commonColumns2,
-    {
-      name: "Cantidad",
       selector: (row) => (
         <TextField size="small" fullWidth type="number"
           value={row.quantity}
@@ -516,7 +471,7 @@ const Cart = () => {
     switch (movementType) {
       case MOVEMENT_TYPES.SALE:
       case MOVEMENT_TYPES.RESERVATION:
-        return user.is_multi_store === true ? saleColumns2 : saleColumns;
+        return saleColumns;
 
       case MOVEMENT_TYPES.TRANSFER:
         return transferColumns;

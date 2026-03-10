@@ -12,3 +12,17 @@ export const getTenantInfo = async () => {
   });
   return response;
 };
+
+export const getTenant = async (tenantId) => {
+  const response = await httpClient.get(getApiUrl(`tenant/${tenantId}`), {
+    headers: getHeaders(),
+  });
+  return response;
+};
+
+export const updateTenant = async (tenantId, data) => {
+  const response = await httpClient.patch(getApiUrl(`tenant/${tenantId}`), data, {
+    headers: getHeaders(),
+  });
+  return response;
+};

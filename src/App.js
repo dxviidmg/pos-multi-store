@@ -33,6 +33,7 @@ const AuditDashboard = lazy(() => import("./components/admin/AuditDashboard/Audi
 const Dashboard = lazy(() => import("./components/admin/Dashboard/Dashboard"));
 const DistributionList = lazy(() => import("./components/inventory/DistributionList/DistributionList"));
 const RestartService = lazy(() => import("./components/admin/RestartService/RestartService"));
+const TenantProfile = lazy(() => import("./components/admin/TenantProfile/TenantProfile"));
 
 function App({ toggleTheme, themeMode }) {
   useKeepAlive();
@@ -75,6 +76,7 @@ function App({ toggleTheme, themeMode }) {
             <Route path="/importar-inventario/" element={<Suspense fallback={<LoadingFallback />}><StoreProductImport /></Suspense>} />
             <Route path="/auditoria/" element={<Suspense fallback={<LoadingFallback />}><AuditDashboard /></Suspense>} />
             <Route path="/sincronizar/" element={<Suspense fallback={<LoadingFallback />}><RestartService /></Suspense>} />
+            <Route path="/tenant-profile/" element={<Suspense fallback={<LoadingFallback />}><TenantProfile /></Suspense>} />
             {user?.store_id ? (
               <Route path="*" element={<Suspense fallback={<LoadingFallback />}><SaleCreate /></Suspense>} />
             ) : (
