@@ -54,7 +54,6 @@ const SearchProduct = () => {
 
   const storeType = getUserData().store_type;
   const urlPrinter = getPrinterUrl();
-  const supports_reservations = getUserData().supports_reservations;
   const [query, setQuery] = useState("");
   const [data, setData] = useState([]);
   const [queryType, setQueryType] = useState("code");
@@ -306,7 +305,7 @@ const SearchProduct = () => {
       <StockModal isOpen={stockModal.isOpen} product={stockModal.data} onClose={stockModal.close} />
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
-        <h1 style={{ margin: 0, fontSize: '1.5rem' }}>Buscador de productos</h1>
+        <h1 style={{ margin: 0, fontSize: '1.5rem' }}>Consulta de productos</h1>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <Chip 
             label="Enfoca el campo de búsqueda para agregar productos"
@@ -391,13 +390,6 @@ const SearchProduct = () => {
               label="Checar precio (Ctrl+U)"
               sx={{ mr: 4 }}
             />
-            {supports_reservations && storeType !== "A" && (
-              <FormControlLabel 
-                value="apartado" 
-                control={<Radio size="small" />} 
-                label="Apartado (Sin atajo)"
-              />
-            )}
           </RadioGroup>
         </Grid>
       </Grid>

@@ -606,10 +606,10 @@ const StoreList = () => {
                   <Grid item xs={12} key={index}>
                     <Alert 
                       variant="filled" 
-                      severity={notice.includes('demo') ? 'success' : 'error'}
+                      severity={notice.variant}
                       sx={{ fontWeight: 600, fontSize: '1rem' }}
                     >
-                      {notice}
+                      {notice.notice}
                     </Alert>
                   </Grid>
                 ))}
@@ -617,14 +617,13 @@ const StoreList = () => {
             </Box>
           )}
 
-          <Box sx={{ mb: 3 }}>
+          <Box sx={{ mb: 1 }}>
             <h1>{params.store_type === "T" ? "Tiendas" : "Almacenes"}</h1>
           </Box>
 
-          <Box sx={{ mb: 3 }}>
+          <Box sx={{ mb: 1 }}>
             <Grid container spacing={2} alignItems="center">
               <Grid item xs={12} md={4}>
-                <FormLabel className="me-3">Ver</FormLabel>
                 <FormControlLabel
                   control={
                     <Checkbox
@@ -653,6 +652,8 @@ const StoreList = () => {
                 <Box>
                   <b>{tenantInfo.product_count} productos registrados</b>
                 </Box>
+              </Grid>
+              <Grid item xs={12} md={4} style={{ textAlign: "center" }}>
                 {params.store_type === "T" && (
                   <Box sx={{ mt: 1, fontSize: '0.75rem', color: '#666' }}>
                     <span style={{ color: '#10b981' }}>● Arriba del promedio</span>
