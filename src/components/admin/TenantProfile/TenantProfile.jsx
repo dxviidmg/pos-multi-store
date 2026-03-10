@@ -10,9 +10,10 @@ import {
   FormControlLabel,
   Alert,
 } from '@mui/material';
-import { Save, Business, Settings } from '@mui/icons-material';
+import { Save, Business, Settings, Person } from '@mui/icons-material';
 import { getUserData } from '../../../api/utils';
 import { getTenant, updateTenant } from '../../../api/tenants';
+import { getUser, updateUser } from '../../../api/users';
 import { CustomSpinner } from '../../ui/Spinner/Spinner';
 
 const TenantProfile = () => {
@@ -23,30 +24,49 @@ const TenantProfile = () => {
     created_at: '',
   });
 
+  const [userData, setUserData] = useState({
+    username: '',
+    email: '',
+    first_name: '',
+    last_name: '',
+  });
+
   const [settings, setSettings] = useState({
     displays_stock_in_storages: false,
   });
 
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
+  const [savingTenant, setSavingTenant] = useState(false);
+  const [savingUser, setSavingUser] = useState(false);
   const [message, setMessage] = useState(null);
 
   useEffect(() => {
-    fetchTenantData();
+    fetchData();
   }, []);
 
-  const fetchTenantData = async () => {
+  const fetchData = async () => {
     try {
-      const response = await getTenant(user.tenant_id);
-      const data = response.data;
+      const [tenantResponse, userResponse] = await Promise.all([
+        getTenant(user.tenant_id),
+        getUser(user.user_id)
+      ]);
       
+      const tenantInfo = tenantResponse.data;
       setTenantData({
-        name: data.name || '',
-        short_name: data.short_name || '',
-        created_at: data.created_at || '',
+        name: tenantInfo.name || '',
+        short_name: tenantInfo.short_name || '',
+        created_at: tenantInfo.created_at || '',
       });
       setSettings({
-        displays_stock_in_storages: data.displays_stock_in_storages || false,
+        displays_stock_in_storages: tenantInfo.displays_stock_in_storages || false,
+      });
+
+      const userInfo = userResponse.data;
+      setUserData({
+        username: userInfo.username || '',
+        email: userInfo.email || '',
+        first_name: userInfo.first_name || '',
+        last_name: userInfo.last_name || '',
       });
     } catch (error) {
       console.error('Fetch error:', error);
@@ -61,23 +81,43 @@ const TenantProfile = () => {
     setTenantData(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleUserChange = (e) => {
+    const { name, value } = e.target;
+    setUserData(prev => ({ ...prev, [name]: value }));
+  };
+
   const handleSettingChange = (e) => {
     const { name, checked } = e.target;
     setSettings(prev => ({ ...prev, [name]: checked }));
   };
 
-  const handleSave = async () => {
-    setSaving(true);
+  const handleSaveTenant = async () => {
+    setSavingTenant(true);
     setMessage(null);
     
     try {
       await updateTenant(user.tenant_id, { ...tenantData, ...settings });
-      setMessage({ type: 'success', text: 'Cambios guardados correctamente' });
+      setMessage({ type: 'success', text: 'Datos del negocio guardados correctamente' });
     } catch (error) {
       console.error('Save error:', error);
-      setMessage({ type: 'error', text: 'Error al guardar los cambios' });
+      setMessage({ type: 'error', text: 'Error al guardar los datos del negocio' });
     } finally {
-      setSaving(false);
+      setSavingTenant(false);
+    }
+  };
+
+  const handleSaveUser = async () => {
+    setSavingUser(true);
+    setMessage(null);
+    
+    try {
+      await updateUser(user.user_id, userData);
+      setMessage({ type: 'success', text: 'Datos del usuario guardados correctamente' });
+    } catch (error) {
+      console.error('Save error:', error);
+      setMessage({ type: 'error', text: 'Error al guardar los datos del usuario' });
+    } finally {
+      setSavingUser(false);
     }
   };
 
@@ -166,14 +206,81 @@ const TenantProfile = () => {
             </Box>
 
             <Button
-            fullWidth
-            variant="contained"
-            startIcon={<Save />}
-            onClick={handleSave}
-            disabled={saving}
-          >
-            Guardar Cambios
-          </Button>
+              fullWidth
+              variant="contained"
+              startIcon={<Save />}
+              onClick={handleSaveTenant}
+              disabled={savingTenant}
+            >
+              Guardar Datos del Negocio
+            </Button>
+          </Grid>
+
+          {/* Información del Usuario */}
+          <Grid item xs={12} md={6}>
+            <Box sx={{ mb: 3 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <Person sx={{ mr: 1 }} />
+                <Typography variant="h6" fontWeight={600}>
+                  Información del Usuario
+                </Typography>
+              </Box>
+              <Divider sx={{ mb: 2 }} />
+              
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Usuario"
+                    name="username"
+                    value={userData.username}
+                    size="small"
+                    disabled
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Nombre"
+                    name="first_name"
+                    value={userData.first_name}
+                    onChange={handleUserChange}
+                    size="small"
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Apellido"
+                    name="last_name"
+                    value={userData.last_name}
+                    onChange={handleUserChange}
+                    size="small"
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Email"
+                    name="email"
+                    value={userData.email}
+                    onChange={handleUserChange}
+                    size="small"
+                    type="email"
+                  />
+                </Grid>
+              </Grid>
+            </Box>
+
+            <Button
+              fullWidth
+              variant="contained"
+              startIcon={<Save />}
+              onClick={handleSaveUser}
+              disabled={savingUser}
+            >
+              Guardar Datos del Usuario
+            </Button>
           </Grid>
         </Grid>
 
