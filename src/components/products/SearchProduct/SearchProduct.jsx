@@ -409,6 +409,7 @@ const SearchProduct = () => {
             onKeyDown={queryType === "code" ? handleBarcodeSearch : undefined}
             onFocus={() => setIsInputFocused(true)}
             onBlur={() => setIsInputFocused(false)}
+            autoComplete="off"
           />
         </Grid>
         {queryType === "q" && (
@@ -440,7 +441,7 @@ const SearchProduct = () => {
         
         {data.length > 0 && (
           <Grid item xs={12}>
-            <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
+            <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
               <CustomTable
               showNoDataComponent={false}
               data={data}
