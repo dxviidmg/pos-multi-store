@@ -3,12 +3,6 @@
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
-}
-
-body, html, #root {
-  margin: 0 !important;
-  padding: 0 !important;
-  overflow: hidden !important;
-  height: 100%;
+  height: 100vh;
   width: 100%;
 }
