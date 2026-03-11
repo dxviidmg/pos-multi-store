@@ -10,6 +10,7 @@ const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [metricType, setMetricType] = useState("count");
   const [year, setYear] = useState(new Date().getFullYear());
+  const [month, setMonth] = useState(new Date().getMonth() + 1);
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
   
@@ -18,7 +19,7 @@ const Dashboard = () => {
     setProgress(0);
     
     try {
-      const response = await getSalesDashboard({ year });
+      const response = await getSalesDashboard({ year, month });
       const taskId = response.data.task;
       
       // Poll para obtener el resultado
@@ -67,7 +68,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchData();
-  }, [year]);
+  }, [year, month]);
 
   return (
     <Box>
@@ -99,6 +100,29 @@ const Dashboard = () => {
             </Select>
           </FormControl>
 
+          <FormControl size="small" sx={{ minWidth: 150 }}>
+            <InputLabel>Mes</InputLabel>
+            <Select
+              value={month}
+              label="Mes"
+              onChange={(e) => setMonth(e.target.value)}
+            >
+              <MenuItem value={0}>Todo el año</MenuItem>
+              <MenuItem value={1}>Enero</MenuItem>
+              <MenuItem value={2}>Febrero</MenuItem>
+              <MenuItem value={3}>Marzo</MenuItem>
+              <MenuItem value={4}>Abril</MenuItem>
+              <MenuItem value={5}>Mayo</MenuItem>
+              <MenuItem value={6}>Junio</MenuItem>
+              <MenuItem value={7}>Julio</MenuItem>
+              <MenuItem value={8}>Agosto</MenuItem>
+              <MenuItem value={9}>Septiembre</MenuItem>
+              <MenuItem value={10}>Octubre</MenuItem>
+              <MenuItem value={11}>Noviembre</MenuItem>
+              <MenuItem value={12}>Diciembre</MenuItem>
+            </Select>
+          </FormControl>
+
           <FormControl size="small" sx={{ minWidth: 200 }}>
             <InputLabel>Métrica</InputLabel>
             <Select
@@ -119,32 +143,49 @@ const Dashboard = () => {
         </Box>
       ) : (
         <Grid container spacing={3}>
-          <Grid item xs={12} md={6}>
-            <Box className="card" sx={{ height: '100%' }}>
-              <LineChart
-                title={"Ventas por mes"}
-                data={dashboardData}
-                metricType={metricType}
-                labels={[
-                  "Ene",
-                  "Feb",
-                  "Mar",
-                  "Abr",
-                  "May",
-                  "Jun",
-                  "Jul",
-                  "Ago",
-                  "Sep",
-                  "Oct",
-                  "Nov",
-                  "Dic",
-                ]}
-                yText={"Ventas"}
-                xText={"Meses"}
-                dataType="monthly"
-              />
-            </Box>
-          </Grid>
+          {month === 0 && (
+            <Grid item xs={12} md={6}>
+              <Box className="card" sx={{ height: '100%' }}>
+                <LineChart
+                  title={"Ventas por mes"}
+                  data={dashboardData}
+                  metricType={metricType}
+                  labels={[
+                    "Ene",
+                    "Feb",
+                    "Mar",
+                    "Abr",
+                    "May",
+                    "Jun",
+                    "Jul",
+                    "Ago",
+                    "Sep",
+                    "Oct",
+                    "Nov",
+                    "Dic",
+                  ]}
+                  yText={"Ventas"}
+                  xText={"Meses"}
+                  dataType="monthly"
+                />
+              </Box>
+            </Grid>
+          )}
+          {month !== 0 && (
+            <Grid item xs={12} md={6}>
+              <Box className="card" sx={{ height: '100%' }}>
+                <LineChart
+                  title={"Ventas por día del mes"}
+                  data={dashboardData}
+                  metricType={metricType}
+                  labels={Array.from({ length: 31 }, (_, i) => (i + 1).toString())}
+                  yText={"Ventas"}
+                  xText={"Días"}
+                  dataType="day_of_month"
+                />
+              </Box>
+            </Grid>
+          )}
           <Grid item xs={12} md={6}>
             <Box className="card" sx={{ height: '100%' }}>
               <LineChart

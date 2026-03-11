@@ -8,7 +8,7 @@ import {
 import { Alert } from "@mui/material";
 import CustomButton from "../../ui/Button/Button";
 import Swal from "sweetalert2";
-import { chooseIcon } from "../../ui/icons/Icons";
+import { chooseIcon } from "../../ui/Icons/Icons";
 import { useRef } from "react";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { Grid, Select, MenuItem, FormControl, InputLabel, styled } from "@mui/material";

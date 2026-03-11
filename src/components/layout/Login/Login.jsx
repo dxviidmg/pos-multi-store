@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import CustomButton from "../../ui/Button/Button";
 import Logo from "../../../assets/images/logo.jpg";
 import BgImage from "../../../assets/images/bg.webp";
-import './login.css';
+import './Login.css';
 import { 
   TextField, 
   Box, 
