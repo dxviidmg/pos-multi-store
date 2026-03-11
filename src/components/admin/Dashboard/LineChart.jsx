@@ -78,6 +78,29 @@ const processData = (result, dataType, metricType, labels) => {
       }));
     }
     
+    case 'day_of_month': {
+      const storeData = {};
+      
+      stores.forEach(store => {
+        storeData[store.name] = Array(31).fill(0);
+      });
+      
+      sales.forEach(item => {
+        const date = new Date(item.created_at);
+        const day = date.getDate() - 1;
+        const storeName = item.store_name;
+        if (storeData[storeName] && day >= 0 && day < 31) {
+          storeData[storeName][day] += metricType === 'total' ? (item.total || 0) : 1;
+        }
+      });
+      
+      return Object.entries(storeData).map(([storeName, dayData], index) => ({
+        data: dayData,
+        label: storeName,
+        color: colors[index % colors.length],
+      }));
+    }
+    
     default:
       return [];
   }
