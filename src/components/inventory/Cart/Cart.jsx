@@ -1,7 +1,7 @@
 import { logger } from "../../../utils/logger";
 import React, { useEffect, useMemo, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import CustomTable from "../../ui/Table/Table";
+import CustomTable2 from "../../ui/Table/CustomTable2";
 import {
   cleanCart,
   removeFromCart,
@@ -319,8 +319,22 @@ const Cart = () => {
       selector: (row) => (
         <TextField size="small" fullWidth type="number"
           value={row.quantity}
-          onChange={(e) => handleQuantityChangeToCart(e, row)} // Implementa esta función para manejar el cambio
-          min="1" // Opcional, para establecer un valor mínimo
+          onChange={(e) => handleQuantityChangeToCart(e, row)}
+          onKeyDown={(e) => {
+            if (e.key === "ArrowUp") {
+              e.preventDefault();
+              const newValue = row.quantity + 1;
+              const availableStock = movementType === "agregar" ? Infinity : getAvailableStock(row.id, row.available_stock);
+              if (newValue <= availableStock) {
+                handleQuantityChangeToCart({ target: { value: newValue } }, row);
+              }
+            } else if (e.key === "ArrowDown") {
+              e.preventDefault();
+              const newValue = Math.max(1, row.quantity - 1);
+              handleQuantityChangeToCart({ target: { value: newValue } }, row);
+            }
+          }}
+          min="1"
           max={row.available_stock}
         />
       ),
@@ -382,8 +396,22 @@ const Cart = () => {
       selector: (row) => (
         <TextField size="small" fullWidth type="number"
           value={row.quantity}
-          onChange={(e) => handleQuantityChangeToCart(e, row)} // Implementa esta función para manejar el cambio
-          min="1" // Opcional, para establecer un valor mínimo
+          onChange={(e) => handleQuantityChangeToCart(e, row)}
+          onKeyDown={(e) => {
+            if (e.key === "ArrowUp") {
+              e.preventDefault();
+              const newValue = row.quantity + 1;
+              const availableStock = getAvailableStock(row.id, row.available_stock);
+              if (newValue <= availableStock) {
+                handleQuantityChangeToCart({ target: { value: newValue } }, row);
+              }
+            } else if (e.key === "ArrowDown") {
+              e.preventDefault();
+              const newValue = Math.max(1, row.quantity - 1);
+              handleQuantityChangeToCart({ target: { value: newValue } }, row);
+            }
+          }}
+          min="1"
           max={row.available_stock}
         />
       ),
@@ -405,8 +433,22 @@ const Cart = () => {
       selector: (row) => (
         <TextField size="small" fullWidth type="number"
           value={row.quantity}
-          onChange={(e) => handleQuantityChangeToCart(e, row)} // Implementa esta función para manejar el cambio
-          min="1" // Opcional, para establecer un valor mínimo
+          onChange={(e) => handleQuantityChangeToCart(e, row)}
+          onKeyDown={(e) => {
+            if (e.key === "ArrowUp") {
+              e.preventDefault();
+              const newValue = row.quantity + 1;
+              const availableStock = getAvailableStock(row.id, row.available_stock);
+              if (newValue <= availableStock) {
+                handleQuantityChangeToCart({ target: { value: newValue } }, row);
+              }
+            } else if (e.key === "ArrowDown") {
+              e.preventDefault();
+              const newValue = Math.max(1, row.quantity - 1);
+              handleQuantityChangeToCart({ target: { value: newValue } }, row);
+            }
+          }}
+          min="1"
           max={row.available_stock}
         />
       ),
@@ -452,8 +494,19 @@ const Cart = () => {
       selector: (row) => (
         <TextField size="small" fullWidth type="number"
           value={row.quantity}
-          onChange={(e) => handleQuantityChangeToCart(e, row)} // Implementa esta función para manejar el cambio
-          min="1" // Opcional, para establecer un valor mínimo
+          onChange={(e) => handleQuantityChangeToCart(e, row)}
+          onKeyDown={(e) => {
+            if (e.key === "ArrowUp") {
+              e.preventDefault();
+              const newValue = row.quantity + 1;
+              handleQuantityChangeToCart({ target: { value: newValue } }, row);
+            } else if (e.key === "ArrowDown") {
+              e.preventDefault();
+              const newValue = Math.max(1, row.quantity - 1);
+              handleQuantityChangeToCart({ target: { value: newValue } }, row);
+            }
+          }}
+          min="1"
         />
       ),
     },
@@ -573,7 +626,7 @@ const Cart = () => {
             )}
           </Grid>
         )}
-        <CustomTable
+        <CustomTable2
           noDataComponent="Sin productos"
           data={cart}
           columns={getColumns()}
