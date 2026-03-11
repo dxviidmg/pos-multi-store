@@ -9,6 +9,8 @@ import { chooseIcon } from "../../ui/icons/Icons";
 import HomeIcon from "@mui/icons-material/Home";
 import PrintIcon from "@mui/icons-material/Print";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
+import EditIcon from "@mui/icons-material/Edit";
+import LockResetIcon from "@mui/icons-material/LockReset";
 import { getStorage, setStorage } from "../../../utils/storage";
 import CustomTooltip from "../../ui/Tooltip";
 import { useStores } from "../../../hooks/useStores";
@@ -16,6 +18,9 @@ import { useTenantInfo } from "../../../hooks/useTenantInfo";
 import { useDepartments } from "../../../hooks/useDepartments";
 import { useInvestment } from "../../../hooks/useInvestment";
 import { getInvestment, resetStoreStock } from "../../../api/stores";
+import { useUserManagement } from "../../../hooks/useUserManagement";
+import EditUserModal from "../../ui/UserModals/EditUserModal";
+import ChangePasswordModal from "../../ui/UserModals/ChangePasswordModal";
 import { Grid, FormLabel, FormControlLabel, Checkbox, Box, TextField, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { UI_TEXT } from "../../../constants";
@@ -28,12 +33,28 @@ const StoreList = () => {
   const user = getStorage("user");
 
   const [storeInvestments, setStoreInvestments] = useState({});
-  const [quickFilter, setQuickFilter] = useState("all"); // all, sales, pending, synced
+  const [quickFilter, setQuickFilter] = useState("all");
   const [params, setParams] = useState({
     end_date: today,
     start_date: today,
     store_type: "T",
   });
+
+  const {
+    editUserModal,
+    changePasswordModal,
+    passwordData,
+    showPasswords,
+    handleOpenEditUser,
+    handleCloseEditUser,
+    handleEditUserChange,
+    handleSaveUser,
+    handleOpenChangePassword,
+    handleCloseChangePassword,
+    handlePasswordChange,
+    togglePasswordVisibility,
+    handleSavePassword,
+  } = useUserManagement();
 
   const { data: storesData, isLoading: loadingStores } = useStores(params);
   const { data: tenantInfo = {}, isLoading: loadingTenant } = useTenantInfo();
@@ -216,6 +237,24 @@ const StoreList = () => {
         selector: ({ manager_username }) => manager_username || "-",
       },
       {
+        name: "Editar usuario",
+        omit: user?.role !== "owner",
+        cell: (row) => row.manager_username ? (
+          <CustomButton size="small" startIcon={<EditIcon />} onClick={() => handleOpenEditUser(row.manager)}>
+            Editar
+          </CustomButton>
+        ) : "-",
+      },
+      {
+        name: "Cambiar contraseña",
+        omit: user?.role !== "owner",
+        cell: (row) => row.manager_username ? (
+          <CustomButton size="small" startIcon={<LockResetIcon />} onClick={() => handleOpenChangePassword(row.manager)}>
+            Cambiar
+          </CustomButton>
+        ) : "-",
+      },
+      {
         name: "Impresora",
         cell: ({ printer }) => printer ? <PrintIcon /> : "-",
       },
@@ -337,7 +376,7 @@ const StoreList = () => {
     } else if (quickFilter === "pending") {
       filtered = allColumns.filter(col => ["Nombre", "Distribuciones", "Traspasos", "Entrar"].includes(col.name));
     } else if (quickFilter === "managers") {
-      filtered = allColumns.filter(col => ["Nombre", "Administrador", "Entrar"].includes(col.name));
+      filtered = allColumns.filter(col => ["Nombre", "Administrador", "Editar usuario", "Cambiar contraseña", "Entrar"].includes(col.name));
     } else if (quickFilter === "printer") {
       filtered = allColumns.filter(col => ["Nombre", "Impresora", "Entrar"].includes(col.name));
     } else if (quickFilter === "synced") {
@@ -376,6 +415,24 @@ const StoreList = () => {
       {
         name: "Administrador",
         selector: ({ manager_username }) => manager_username || "-",
+      },
+      {
+        name: "Editar usuario",
+        omit: user?.role !== "owner",
+        cell: (row) => row.manager_username ? (
+          <CustomButton size="small" startIcon={<EditIcon />} onClick={() => handleOpenEditUser(row.manager)}>
+            Editar
+          </CustomButton>
+        ) : "-",
+      },
+      {
+        name: "Cambiar contraseña",
+        omit: user?.role !== "owner",
+        cell: (row) => row.manager_username ? (
+          <CustomButton size="small" startIcon={<LockResetIcon />} onClick={() => handleOpenChangePassword(row.manager)}>
+            Cambiar
+          </CustomButton>
+        ) : "-",
       },
       {
         name: "Pendientes",
@@ -454,7 +511,7 @@ const StoreList = () => {
     } else if (quickFilter === "pending") {
       filtered = allColumns.filter(col => ["Nombre", "Pendientes", "Entrar"].includes(col.name));
     } else if (quickFilter === "managers") {
-      filtered = allColumns.filter(col => ["Nombre", "Administrador", "Entrar"].includes(col.name));
+      filtered = allColumns.filter(col => ["Nombre", "Administrador", "Editar usuario", "Cambiar contraseña", "Entrar"].includes(col.name));
     } else if (quickFilter === "investment") {
       filtered = allColumns.filter(col => ["Nombre", "Obtener (Inversión)", "Inversión", "Entrar"].includes(col.name));
     } else if (quickFilter === "synced") {
@@ -492,6 +549,16 @@ const StoreList = () => {
       },
       {
         name: "Administrador",
+        selector: () => "",
+      },
+      {
+        name: "Editar usuario",
+        omit: user?.role !== "owner",
+        selector: () => "",
+      },
+      {
+        name: "Cambiar contraseña",
+        omit: user?.role !== "owner",
         selector: () => "",
       },
       {
@@ -573,7 +640,7 @@ const StoreList = () => {
     } else if (quickFilter === "pending") {
       filtered = allColumns.filter(col => ["Nombre", "Distribuciones", "Traspasos", "Entrar"].includes(col.name));
     } else if (quickFilter === "managers") {
-      filtered = allColumns.filter(col => ["Nombre", "Administrador", "Entrar"].includes(col.name));
+      filtered = allColumns.filter(col => ["Nombre", "Administrador", "Editar usuario", "Cambiar contraseña", "Entrar"].includes(col.name));
     } else if (quickFilter === "printer") {
       filtered = allColumns.filter(col => ["Nombre", "Impresora", "Entrar"].includes(col.name));
     } else if (quickFilter === "synced") {
@@ -904,6 +971,24 @@ const StoreList = () => {
           )}
         </Grid>
       </Grid>
+
+      <EditUserModal
+        open={editUserModal.open}
+        onClose={handleCloseEditUser}
+        userData={editUserModal.data}
+        onChange={handleEditUserChange}
+        onSave={handleSaveUser}
+      />
+
+      <ChangePasswordModal
+        open={changePasswordModal.open}
+        onClose={handleCloseChangePassword}
+        passwordData={passwordData}
+        onChange={handlePasswordChange}
+        onSave={handleSavePassword}
+        showPasswords={showPasswords}
+        onToggleVisibility={togglePasswordVisibility}
+      />
     </>
   );
 };
