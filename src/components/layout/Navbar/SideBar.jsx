@@ -318,20 +318,22 @@ export default function MainLayout({ toggleTheme, themeMode }) {
             {user.store_name || user.tenant_name}
           </Typography>
 
-          <Avatar 
-            onClick={() => navigate('/tenant-profile')}
-            sx={{ 
-              width: 36, 
-              height: 36,
-              bgcolor: 'rgba(255,255,255,0.2)',
-              fontSize: '0.9rem',
-              fontWeight: 'bold',
-              mr: 1,
-              cursor: 'pointer',
-            }}
-          >
-            {(user.store_name || user.tenant_name || 'U').charAt(0).toUpperCase()}
-          </Avatar>
+          {user.role === "owner" && (
+            <Avatar 
+              onClick={() => navigate('/tenant-profile')}
+              sx={{ 
+                width: 36, 
+                height: 36,
+                bgcolor: 'rgba(255,255,255,0.2)',
+                fontSize: '0.9rem',
+                fontWeight: 'bold',
+                mr: 1,
+                cursor: 'pointer',
+              }}
+            >
+              {(user.store_name || user.tenant_name || 'U').charAt(0).toUpperCase()}
+            </Avatar>
+          )}
 
           <IconButton
             color="inherit"
