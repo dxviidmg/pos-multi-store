@@ -10,7 +10,7 @@ import PaymentIcon from "@mui/icons-material/Payment";
 
 const INITIAL_PAYMENT_STATE = { paidWith: 0, change: 0 };
 
-const PaymentModal2 = ({ isOpen, sale, onClose, onUpdate }) => {
+const PaymentEditModal = ({ isOpen, sale, onClose, onUpdate }) => {
   const inputPaymentRef = useRef(null);
   const reservation = sale || {};
 
@@ -213,4 +213,4 @@ const PaymentModal2 = ({ isOpen, sale, onClose, onUpdate }) => {
   );
 };
 
-export default PaymentModal2;
+export default PaymentEditModal;

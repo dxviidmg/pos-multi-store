@@ -13,7 +13,7 @@ import {
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { getBrands } from "../../../api/brands";
 import CustomButton from "../../ui/Button/Button";
-import { chooseIcon } from "../../ui/icons/Icons";
+import { chooseIcon } from "../../ui/Icons/Icons";
 import { getStores } from "../../../api/stores";
 import { Grid, TextField, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";

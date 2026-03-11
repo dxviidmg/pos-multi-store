@@ -5,7 +5,7 @@ import CustomButton from "../../ui/Button/Button";
 import { useNavigate } from "react-router-dom";
 import { getDateDifference, getFormattedDate } from "../../../utils/utils";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
-import { chooseIcon } from "../../ui/icons/Icons";
+import { chooseIcon } from "../../ui/Icons/Icons";
 import HomeIcon from "@mui/icons-material/Home";
 import PrintIcon from "@mui/icons-material/Print";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";

@@ -10,7 +10,7 @@ import {
   TablePagination,
 } from "@mui/material";
 
-const CustomTable2 = ({ data, columns, noDataComponent, pagination = false }) => {
+const DataTable = ({ data, columns, noDataComponent, pagination = false }) => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
@@ -77,4 +77,4 @@ const CustomTable2 = ({ data, columns, noDataComponent, pagination = false }) =>
   );
 };
 
-export default CustomTable2;
+export default DataTable;

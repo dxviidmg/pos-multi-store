@@ -19,7 +19,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ErrorIcon from "@mui/icons-material/Error";
 import { Alert, Popper, Paper } from "@mui/material";
 import { getUserData } from "../../../api/utils";
-import PaymentModal2 from "../PaymentModal2/PaymentModal2";
+import PaymentEditModal from "../PaymentEditModal/PaymentEditModal";
 import CustomTooltip from "../../ui/Tooltip";
 import CustomModal from "../../ui/Modal/Modal";
 import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, Box } from "@mui/material";
@@ -124,7 +124,7 @@ const SaleList = () => {
   const [showAllFields, setShowAllFields] = useState(false);
   const [searchBy, setSearchBy] = useState("date");
   const saleModal = useModal();
-  const paymentModal2 = useModal();
+  const paymentEditModal = useModal();
   const productsModal = useModal();
 
   useEffect(() => {
@@ -169,7 +169,7 @@ const SaleList = () => {
   };
 
   const handleOpenModal2 = (row) => {
-    paymentModal2.open(row);
+    paymentEditModal.open(row);
   };
 
   return (
@@ -178,7 +178,7 @@ const SaleList = () => {
       <CustomSpinner isLoading={loading} />
       
       {/* 2. MODALS */}
-      <PaymentModal2 isOpen={paymentModal2.isOpen} sale={paymentModal2.data} onClose={paymentModal2.close} onUpdate={handleUpdateSaleList} />
+      <PaymentEditModal isOpen={paymentEditModal.isOpen} sale={paymentEditModal.data} onClose={paymentEditModal.close} onUpdate={handleUpdateSaleList} />
       <SaleModal isOpen={saleModal.isOpen} sale={saleModal.data} onClose={saleModal.close} onUpdate={handleUpdateSaleList} />
       
       {/* <CustomModal showOut={productsModal.isOpen} onClose={productsModal.close} title="Productos de la venta">
