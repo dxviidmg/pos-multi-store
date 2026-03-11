@@ -4,17 +4,40 @@ import { getSellers } from "../../../api/sellers";
 import CustomButton from "../../ui/Button/Button";
 import SellerModal from "../SellerModal/SellerModal";
 import { getDateDifference, getFormattedDate } from "../../../utils/utils";
-import { chooseIcon } from "../../ui/icons/Icons";
+import { chooseIcon } from "../../ui/Icons/Icons";
 import { useModal } from "../../../hooks/useModal";
+import { useUserManagement } from "../../../hooks/useUserManagement";
+import EditUserModal from "../../ui/UserModals/EditUserModal";
+import ChangePasswordModal from "../../ui/UserModals/ChangePasswordModal";
 import { Grid, TextField, Stack } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import EditIcon from "@mui/icons-material/Edit";
+import LockResetIcon from "@mui/icons-material/LockReset";
+import { getUserData } from "../../../api/utils";
 
 const SellerList = () => {
   const today = getFormattedDate();
+  const user = getUserData();
   const sellerModal = useModal();
   const [sellers, setSellers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [range, setRange] = useState("");
+
+  const {
+    editUserModal,
+    changePasswordModal,
+    passwordData,
+    showPasswords,
+    handleOpenEditUser,
+    handleCloseEditUser,
+    handleEditUserChange,
+    handleSaveUser,
+    handleOpenChangePassword,
+    handleCloseChangePassword,
+    handlePasswordChange,
+    togglePasswordVisibility,
+    handleSavePassword,
+  } = useUserManagement();
 
   const [params, setParams] = useState({
     end_date: today,
@@ -55,6 +78,24 @@ const SellerList = () => {
         seller={sellerModal.data}
         onClose={sellerModal.close}
         onUpdate={handleUpdateSellerList}
+      />
+
+      <EditUserModal
+        open={editUserModal.open}
+        onClose={handleCloseEditUser}
+        userData={editUserModal.data}
+        onChange={handleEditUserChange}
+        onSave={handleSaveUser}
+      />
+
+      <ChangePasswordModal
+        open={changePasswordModal.open}
+        onClose={handleCloseChangePassword}
+        passwordData={passwordData}
+        onChange={handlePasswordChange}
+        onSave={handleSavePassword}
+        showPasswords={showPasswords}
+        onToggleVisibility={togglePasswordVisibility}
       />
       
       {/* 2. CONTENIDO PRINCIPAL */}
@@ -134,6 +175,24 @@ const SellerList = () => {
               {
                 name: "Vendido",
                 selector: (row) => `$${row.total_sales}`,
+              },
+              {
+                name: "Editar usuario",
+                omit: user?.role !== "owner",
+                cell: (row) => (
+                  <CustomButton size="small" startIcon={<EditIcon />} onClick={() => handleOpenEditUser(row.worker.id)}>
+                    Editar
+                  </CustomButton>
+                ),
+              },
+              {
+                name: "Cambiar contraseña",
+                omit: user?.role !== "owner",
+                cell: (row) => (
+                  <CustomButton size="small" startIcon={<LockResetIcon />} onClick={() => handleOpenChangePassword(row.worker.id)}>
+                    Cambiar
+                  </CustomButton>
+                ),
               },
             ]}
           />

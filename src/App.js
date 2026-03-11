@@ -7,7 +7,7 @@ import LoadingFallback from "./components/ui/LoadingFallback";
 
 // Componentes críticos (carga inmediata)
 import Login from "./components/layout/Login/Login";
-import MiniDrawer from "./components/layout/Navbar/SideBar";
+import MainLayout from "./components/layout/MainLayout/MainLayout";
 
 // Lazy loading para rutas
 const SaleCreate = lazy(() => import("./components/sales/SaleCreate/SaleCreate"));
@@ -52,7 +52,7 @@ function App({ toggleTheme, themeMode }) {
     <Router>
       <Routes>
         {isLoggedIn ? (
-          <Route element={<MiniDrawer toggleTheme={toggleTheme} themeMode={themeMode} />}>
+          <Route element={<MainLayout toggleTheme={toggleTheme} themeMode={themeMode} />}>
             <Route path="/tiendas/" element={<Suspense fallback={<LoadingFallback />}><StoreList /></Suspense>} />
             <Route path="/ventas/" element={<Suspense fallback={<LoadingFallback />}><SaleList /></Suspense>} />
             <Route path="/vender/" element={<Suspense fallback={<LoadingFallback />}><SaleCreate /></Suspense>} />

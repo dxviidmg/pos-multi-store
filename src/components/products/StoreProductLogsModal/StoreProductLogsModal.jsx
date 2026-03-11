@@ -6,7 +6,7 @@ import { getStoreProductLogs, updateStoreProduct } from "../../../api/products";
 import { getFormattedDateTime } from "../../../utils/utils";
 import Swal from "sweetalert2";
 import CustomButton from "../../ui/Button/Button";
-import { chooseIcon } from "../../ui/icons/Icons";
+import { chooseIcon } from "../../ui/Icons/Icons";
 import { Grid, TextField } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 
