@@ -59,3 +59,21 @@ textarea:focus {
   box-shadow: 0 0 0 3px rgba(4, 52, 107, 0.1);
   outline: none;
 }
+
+/* Force number input spinners to always show */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  opacity: 1;
+  height: 100%;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: inner-spin-button !important;
+  opacity: 1 !important;
+}
