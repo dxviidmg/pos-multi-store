@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { LineChart as MuiLineChart } from '@mui/x-charts/LineChart';
 import { Box, Typography } from '@mui/material';
 
-const processData = (result, dataType, metricType, labels) => {
+const COLORS = ['#2563eb', '#7c3aed', '#059669', '#dc2626', '#ea580c', '#f59e0b', '#06b6d4'];
+
+const processData = (result, dataType, metricType) => {
   if (!result || !result.sales || result.sales.length === 0) return [];
 
   const { stores, sales } = result;
@@ -140,7 +142,14 @@ const LineChart = ({ title, data, labels, xText, yText, dataType, metricType = '
           area: false,
         }))}
         height={300}
-        margin={{ top: 10, bottom: 50, left: 70, right: 10 }}
+        margin={{ top: 70, bottom: 50, left: 70, right: 10 }}
+        slotProps={{
+          legend: {
+            direction: 'row',
+            position: { vertical: 'top', horizontal: 'middle' },
+            padding: 0,
+          }
+        }}
         grid={{ vertical: true, horizontal: true }}
         sx={{
           '& .MuiLineElement-root': {
