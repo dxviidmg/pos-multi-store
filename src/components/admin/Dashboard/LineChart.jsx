@@ -168,7 +168,7 @@ const LineChart = ({ title, data, labels, xText, yText, dataType, metricType = '
           area: false,
         }))}
         height={300}
-        margin={{ top: 70, bottom: 50, left: 70, right: 10 }}
+        margin={{ top: 50, bottom: 50, left: 70, right: 10 }}
         slotProps={{
           legend: {
             direction: 'row',
