@@ -3,7 +3,7 @@ import { getSalesDashboard } from "../../../api/sales";
 import { getTaskResult } from "../../../api/products";
 import LineChart from "./LineChart";
 import DoughnutChart from "./DoughnutChart";
-import { Grid, FormControl, InputLabel, Select, MenuItem, Box, Typography, CircularProgress, LinearProgress } from "@mui/material";
+import { Grid, FormControl, InputLabel, Select, MenuItem, Box, Typography, CircularProgress } from "@mui/material";
 import { showError } from "../../../utils/alerts";
 
 const Dashboard = () => {
@@ -76,15 +76,6 @@ const Dashboard = () => {
         <Typography variant="h4" sx={{ mb: 3, fontWeight: 600, color: 'var(--color-primary)' }}>
           Dashboard de Ventas
         </Typography>
-
-        {loading && (
-          <Box sx={{ width: '100%', mb: 3 }}>
-            <LinearProgress variant="determinate" value={progress} />
-            <Typography variant="caption" sx={{ mt: 0.5, display: 'block', textAlign: 'center' }}>
-              Cargando datos... {Math.round(progress)}%
-            </Typography>
-          </Box>
-        )}
 
         <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
           <FormControl size="small" sx={{ minWidth: 150 }}>

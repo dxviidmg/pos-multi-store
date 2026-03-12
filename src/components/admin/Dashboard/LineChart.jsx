@@ -114,7 +114,33 @@ const LineChart = ({ title, data, labels, xText, yText, dataType, metricType = '
   useEffect(() => {
     if (!data) return;
     const processedData = processData(data, dataType, metricType, labels);
-    setSeries(processedData);
+    
+    // Calcular promedio solo si hay más de una tienda
+    if (processedData.length > 1) {
+      const dataLength = processedData[0].data.length;
+      const avgData = Array(dataLength).fill(0);
+      
+      processedData.forEach(store => {
+        store.data.forEach((value, index) => {
+          avgData[index] += value;
+        });
+      });
+      
+      const average = avgData.map(sum => sum / processedData.length);
+      
+      setSeries([
+        ...processedData,
+        {
+          data: average,
+          label: 'Promedio',
+          color: '#94a3b8',
+          curve: 'linear',
+          showMark: false,
+        }
+      ]);
+    } else {
+      setSeries(processedData);
+    }
   }, [data, dataType, metricType, labels]);
 
   return (
@@ -142,7 +168,7 @@ const LineChart = ({ title, data, labels, xText, yText, dataType, metricType = '
           area: false,
         }))}
         height={300}
-        margin={{ top: 70, bottom: 50, left: 70, right: 10 }}
+        margin={{ top: 50, bottom: 50, left: 70, right: 10 }}
         slotProps={{
           legend: {
             direction: 'row',
