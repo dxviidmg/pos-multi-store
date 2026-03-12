@@ -37,7 +37,7 @@ import StoreIcon from "@mui/icons-material/Store";
 import EngineeringIcon from "@mui/icons-material/Engineering";
 import PaymentsIcon from "@mui/icons-material/Payments";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
-import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
 import SyncIcon from "@mui/icons-material/Sync";
 import MiscellaneousServicesIcon from "@mui/icons-material/MiscellaneousServices";
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -60,7 +60,7 @@ const iconMap = {
   Distribuciones: <LocalShippingIcon />,
   Traspasos: <SwapHorizIcon />,
   Movimientos: <SwapHorizIcon />,
-  Cashflow: <AttachMoneyIcon />,
+  Caja: <PointOfSaleIcon />,
 
   // Productos e inventario
   Productos: <InventoryIcon />,
@@ -256,6 +256,7 @@ export default function MainLayout({ toggleTheme, themeMode }) {
         dropdown: [
           { label: "Distribuciones", href: "/distribuciones/" },
           { label: "Traspasos", href: "/traspasos/" },
+          { label: "Caja", href: "/cashflow/" },
         ],
       },
       {
