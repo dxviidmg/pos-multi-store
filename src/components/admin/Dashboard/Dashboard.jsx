@@ -78,33 +78,38 @@ const Dashboard = () => {
   const calculateKPIs = () => {
     if (!dashboardData || typeof dashboardData !== 'object') return null;
 
-    const allData = Object.values(dashboardData).flat();
-    if (!allData.length) return null;
+    const salesData = dashboardData.sales || [];
+    if (!salesData.length) return null;
 
-    const totalSales = allData.reduce((sum, item) => sum + (item.count || 0), 0);
-    const totalAmount = allData.reduce((sum, item) => sum + (item.total || 0), 0);
+    const totalSales = salesData.length;
+    const totalAmount = salesData.reduce((sum, item) => sum + (item.total || 0), 0);
     
-    const dailyData = dashboardData.daily || [];
-    const bestDay = dailyData.length > 0 
-      ? dailyData.reduce((max, item) => item.count > max.count ? item : max, dailyData[0])
-      : null;
-    
-    const hourlyData = dashboardData.hourly || [];
-    const bestHour = hourlyData.length > 0
-      ? hourlyData.reduce((max, item) => item.count > max.count ? item : max, hourlyData[0])
-      : null;
-
     const daysInPeriod = month === 0 ? 365 : new Date(year, month, 0).getDate();
     const avgDaily = totalSales / daysInPeriod;
 
+    // Agrupar por día de la semana
+    const salesByDay = {};
+    salesData.forEach(sale => {
+      const date = new Date(sale.created_at);
+      const dayOfWeek = date.getDay();
+      if (!salesByDay[dayOfWeek]) {
+        salesByDay[dayOfWeek] = { count: 0, total: 0 };
+      }
+      salesByDay[dayOfWeek].count++;
+      salesByDay[dayOfWeek].total += sale.total;
+    });
+
     const dayNames = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+    const bestDayIndex = Object.keys(salesByDay).reduce((max, day) => 
+      salesByDay[day].count > (salesByDay[max]?.count || 0) ? day : max, 0
+    );
 
     return {
       totalSales,
       totalAmount,
       avgDaily,
-      bestDay: bestDay ? dayNames[bestDay.daily] : "N/A",
-      bestHour: bestHour ? `${bestHour.hourly}:00` : "N/A"
+      bestDay: salesByDay[bestDayIndex] ? dayNames[bestDayIndex] : "N/A",
+      bestHour: "N/A"
     };
   };
 
