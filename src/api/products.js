@@ -2,21 +2,13 @@ import httpClient from "./httpClient";
 import { getApiUrl, getHeaders, buildUrlWithParams } from "./utils";
 
 const timedRequest = async (axiosCall, meta = {}) => {
-  const localString = localStorage.getItem("monitoring");
-  let local = localString ? JSON.parse(localString) : {};
   const start = performance.now();
   try {
     const response = await axiosCall();
-    const end = performance.now();
-    const duration = Math.round((end - start) / 1000);
-    local[duration] = (local[duration] || 0) + 1;
-    localStorage.setItem("monitoring", JSON.stringify(local));
     return response;
   } catch (error) {
     const end = performance.now();
     const duration = Math.round((end - start) / 1000);
-    local[duration] = (local[duration] || 0) + 1;
-    localStorage.setItem("monitoring", JSON.stringify(local));
     console.log(`[FAIL] ${meta.name || "request"}: ${duration} s`);
     throw error;
   }
