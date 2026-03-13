@@ -26,8 +26,8 @@ const SearchProduct = () => {
   const dispatch = useDispatch();
   const stockModal = useModal();
   const { refetch: fetchWithRetry } = useFetchWithRetry(
-    (params) => getStoreProducts(params),
-    { maxRetries: 2, timeout: 3000 }
+    (params, config) => getStoreProducts(params, config),
+    { maxRetries: 1, timeout: 8000 }
   );
   
   const { carts, activeCartId } = useSelector((state) => state.multiCartReducer);
@@ -71,6 +71,8 @@ const SearchProduct = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  const searchingRef = useRef(false);
+
   const fetchData = useCallback(
     async () => {
       if (!query || queryType === "q") {
@@ -78,20 +80,23 @@ const SearchProduct = () => {
         return;
       }
 
+      if (searchingRef.current) return;
+      searchingRef.current = true;
       setSearching(true);
 
       try {
         const fetchedData = await fetchWithRetry({ [queryType]: query });
 
+        searchingRef.current = false;
         setSearching(false);
 
         if (!fetchedData) {
-          logger.log("No se pudo completar la búsqueda después de 2 intentos.");
+          logger.log("No se pudo completar la búsqueda después de reintentos.");
 
           Swal.fire({
             icon: "error",
             title: "Búsqueda tardada",
-            text: "La búsqueda tardó más de 6 segundos. Reintentar o buscar de manera manual",
+            text: "La búsqueda tardó demasiado. Reintentar o buscar de manera manual",
             timer: 5000,
           });
 
@@ -111,12 +116,13 @@ const SearchProduct = () => {
           setData(fetchedData);
         }
       } catch (err) {
-        if (err.name === "AbortError") return;
+        searchingRef.current = false;
+        if (err.name === "AbortError" || err.name === "CanceledError") return;
         logger.error(err);
         setSearching(false);
       }
     },
-    [query, queryType]
+    [query, queryType, fetchWithRetry]
   );
 
   const handleSearchProduct = async () => {
