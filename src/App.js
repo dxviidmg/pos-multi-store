@@ -58,7 +58,7 @@ function App({ toggleTheme, themeMode }) {
             <Route path="/vender/" element={<Suspense fallback={<LoadingFallback />}><SaleCreate /></Suspense>} />
             <Route path="/importar-ventas/" element={<Suspense fallback={<LoadingFallback />}><SaleImport /></Suspense>} />
             <Route path="/corte-caja/" element={<Suspense fallback={<LoadingFallback />}><CashSummary /></Suspense>} />
-            <Route path="/movimientos/" element={<Suspense fallback={<LoadingFallback />}><CashFlowList /></Suspense>} />
+            <Route path="/movimientos-caja/" element={<Suspense fallback={<LoadingFallback />}><CashFlowList /></Suspense>} />
             <Route path="/distribuciones/" element={<Suspense fallback={<LoadingFallback />}><DistributionList /></Suspense>} />
             <Route path="/traspasos/" element={<Suspense fallback={<LoadingFallback />}><TransferList /></Suspense>} />
             <Route path="/clientes/" element={<Suspense fallback={<LoadingFallback />}><ClientList /></Suspense>} />

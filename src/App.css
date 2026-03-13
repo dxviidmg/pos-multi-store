@@ -1,5 +1,39 @@
 @import './theme/variables.css';
 
+/* Animaciones globales */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 p {
   color: var(--color-text-secondary);
   font-weight: 500;
@@ -15,11 +49,13 @@ p {
   margin-bottom: 2rem;
   overflow-x: auto;
   padding: var(--spacing-md);
-  transition: box-shadow var(--transition-base);
+  transition: all 0.3s ease;
+  animation: fadeIn 0.4s ease;
 }
 
 .card:hover {
   box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
 }
 
 .card__actions {
@@ -32,6 +68,7 @@ p {
   border-radius: var(--radius-md);
   padding: var(--spacing-md);
   text-align: center;
+  animation: scaleIn 0.3s ease;
 }
 
 /* Layout */
@@ -48,8 +85,9 @@ select option {
 
 input,
 select,
-textarea {
-  transition: border-color var(--transition-base), box-shadow var(--transition-base);
+textarea,
+button {
+  transition: all 0.2s ease;
 }
 
 input:focus,
@@ -58,32 +96,73 @@ textarea:focus {
   border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(4, 52, 107, 0.1);
   outline: none;
+  transform: scale(1.01);
 }
 
-/* Force number input spinners to always show - All browsers including mobile */
-input[type="number"] {
-  -webkit-appearance: textfield;
-  -moz-appearance: textfield;
-  appearance: textfield;
+button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
-  -webkit-appearance: inner-spin-button !important;
-  appearance: inner-spin-button !important;
-  opacity: 1 !important;
-  display: inline-block !important;
-  height: auto !important;
-  margin: 0 !important;
-  position: relative !important;
+button:active:not(:disabled) {
+  transform: translateY(0);
 }
 
-/* Specific for iOS Safari and mobile browsers */
-@supports (-webkit-touch-callout: none) {
-  input[type="number"]::-webkit-inner-spin-button,
-  input[type="number"]::-webkit-outer-spin-button {
-    -webkit-appearance: inner-spin-button !important;
-    opacity: 1 !important;
-    display: block !important;
-  }
+/* Animación para tablas y listas */
+table tbody tr,
+.MuiTableRow-root {
+  transition: all 0.2s ease;
+}
+
+table tbody tr:hover,
+.MuiTableRow-root:hover {
+  background-color: rgba(4, 52, 107, 0.03);
+  transform: scale(1.005);
+}
+
+/* Animaciones para componentes MUI */
+.MuiButton-root {
+  transition: all 0.2s ease !important;
+}
+
+.MuiButton-root:hover {
+  transform: translateY(-2px) !important;
+}
+
+.MuiButton-root:active {
+  transform: translateY(0) !important;
+}
+
+.MuiCard-root {
+  transition: all 0.3s ease !important;
+  animation: fadeIn 0.4s ease;
+}
+
+.MuiCard-root:hover {
+  transform: translateY(-3px) !important;
+}
+
+.MuiChip-root {
+  transition: all 0.2s ease !important;
+}
+
+.MuiChip-root:hover {
+  transform: scale(1.05) !important;
+}
+
+.MuiListItemButton-root {
+  transition: all 0.2s ease !important;
+}
+
+.MuiPaper-root {
+  animation: scaleIn 0.3s ease;
+}
+
+/* Animación para iconos */
+.MuiSvgIcon-root {
+  transition: all 0.2s ease;
+}
+
+.MuiIconButton-root:hover .MuiSvgIcon-root {
+  transform: scale(1.15);
 }
