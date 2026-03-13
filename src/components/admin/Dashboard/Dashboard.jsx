@@ -238,7 +238,7 @@ const Dashboard = () => {
                   title={"Ventas por día del mes"}
                   data={dashboardData}
                   metricType={metricType}
-                  labels={Array.from({ length: 31 }, (_, i) => (i + 1).toString())}
+                  labels={Array.from({ length: new Date(year, month, 0).getDate() }, (_, i) => (i + 1).toString())}
                   yText={"Ventas"}
                   xText={"Días"}
                   dataType="day_of_month"

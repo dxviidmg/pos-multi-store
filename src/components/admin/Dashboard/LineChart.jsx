@@ -4,11 +4,11 @@ import { Box, Typography } from '@mui/material';
 
 const COLORS = ['#2563eb', '#7c3aed', '#059669', '#dc2626', '#ea580c', '#f59e0b', '#06b6d4'];
 
-const processData = (result, dataType, metricType) => {
+const processData = (result, dataType, metricType, daysInMonth = 31) => {
   if (!result || !result.sales || result.sales.length === 0) return [];
 
   const { stores, sales } = result;
-  const colors = ['#2563eb', '#7c3aed', '#059669', '#dc2626', '#ea580c'];
+  const colors = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444'];
 
   switch (dataType) {
     case 'monthly': {
@@ -84,14 +84,14 @@ const processData = (result, dataType, metricType) => {
       const storeData = {};
       
       stores.forEach(store => {
-        storeData[store.name] = Array(31).fill(0);
+        storeData[store.name] = Array(daysInMonth).fill(0);
       });
       
       sales.forEach(item => {
         const date = new Date(item.created_at);
         const day = date.getDate() - 1;
         const storeName = item.store_name;
-        if (storeData[storeName] && day >= 0 && day < 31) {
+        if (storeData[storeName] && day >= 0 && day < daysInMonth) {
           storeData[storeName][day] += metricType === 'total' ? (item.total || 0) : 1;
         }
       });
@@ -113,7 +113,8 @@ const LineChart = ({ title, data, labels, xText, yText, dataType, metricType = '
 
   useEffect(() => {
     if (!data) return;
-    const processedData = processData(data, dataType, metricType, labels);
+    const daysInMonth = labels?.length || 31;
+    const processedData = processData(data, dataType, metricType, daysInMonth);
     
     // Calcular promedio solo si hay más de una tienda
     if (processedData.length > 1) {
@@ -163,7 +164,7 @@ const LineChart = ({ title, data, labels, xText, yText, dataType, metricType = '
         }]}
         series={series.map(s => ({
           ...s,
-          curve: 'linear',
+          curve: 'catmullRom',
           showMark: true,
           area: false,
         }))}
