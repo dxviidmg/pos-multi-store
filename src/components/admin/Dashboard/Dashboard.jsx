@@ -3,8 +3,13 @@ import { getSalesDashboard } from "../../../api/sales";
 import { getTaskResult } from "../../../api/products";
 import LineChart from "./LineChart";
 import DoughnutChart from "./DoughnutChart";
+import KPICard from "./KPICard";
 import { Grid, FormControl, InputLabel, Select, MenuItem, Box, Typography, CircularProgress } from "@mui/material";
 import { showError } from "../../../utils/alerts";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import TrendingUpIcon from "@mui/icons-material/TrendingUp";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
 
 const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
@@ -70,6 +75,69 @@ const Dashboard = () => {
     fetchData();
   }, [year, month]);
 
+  const calculateKPIs = () => {
+    if (!dashboardData || typeof dashboardData !== 'object') return null;
+
+    const salesData = dashboardData.sales || [];
+    if (!salesData.length) return null;
+
+    const totalSales = salesData.length;
+    const totalAmount = salesData.reduce((sum, item) => sum + (item.total || 0), 0);
+    
+    const daysInPeriod = month === 0 ? 365 : new Date(year, month, 0).getDate();
+    const avgDaily = totalSales / daysInPeriod;
+
+    let bestPeriod = "N/A";
+
+    if (month === 0) {
+      // Agrupar por mes
+      const salesByMonth = {};
+      salesData.forEach(sale => {
+        const date = new Date(sale.created_at);
+        const monthIndex = date.getMonth();
+        if (!salesByMonth[monthIndex]) {
+          salesByMonth[monthIndex] = { count: 0, total: 0 };
+        }
+        salesByMonth[monthIndex].count++;
+        salesByMonth[monthIndex].total += sale.total;
+      });
+
+      const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+      const bestMonthIndex = Object.keys(salesByMonth).reduce((max, m) => 
+        salesByMonth[m].count > (salesByMonth[max]?.count || 0) ? m : max, 0
+      );
+      bestPeriod = salesByMonth[bestMonthIndex] ? monthNames[bestMonthIndex] : "N/A";
+    } else {
+      // Agrupar por día de la semana
+      const salesByDay = {};
+      salesData.forEach(sale => {
+        const date = new Date(sale.created_at);
+        const dayOfWeek = date.getDay();
+        if (!salesByDay[dayOfWeek]) {
+          salesByDay[dayOfWeek] = { count: 0, total: 0 };
+        }
+        salesByDay[dayOfWeek].count++;
+        salesByDay[dayOfWeek].total += sale.total;
+      });
+
+      const dayNames = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+      const bestDayIndex = Object.keys(salesByDay).reduce((max, day) => 
+        salesByDay[day].count > (salesByDay[max]?.count || 0) ? day : max, 0
+      );
+      bestPeriod = salesByDay[bestDayIndex] ? dayNames[bestDayIndex] : "N/A";
+    }
+
+    return {
+      totalSales,
+      totalAmount,
+      avgDaily,
+      bestDay: bestPeriod,
+      bestHour: "N/A"
+    };
+  };
+
+  const kpis = calculateKPIs();
+
   return (
     <Box>
       <Box className="card">
@@ -77,55 +145,56 @@ const Dashboard = () => {
           Dashboard de Ventas
         </Typography>
 
-        <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-          <FormControl size="small" sx={{ minWidth: 150 }}>
-            <InputLabel>Año</InputLabel>
-            <Select
-              value={year}
-              label="Año"
-              onChange={(e) => setYear(e.target.value)}
-            >
-              {Array.from({ length: new Date().getFullYear() - 2024 }, (_, i) => 2025 + i).map(y => (
-                <MenuItem key={y} value={y}>{y}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+        <Grid container spacing={2} alignItems="center">
+          <Grid item xs={12} sm={2}>
+            <FormControl size="small" fullWidth>
+              <InputLabel>Métrica</InputLabel>
+              <Select value={metricType} label="Métrica" onChange={(e) => setMetricType(e.target.value)}>
+                <MenuItem value="count">Cantidad</MenuItem>
+                <MenuItem value="total">Monto</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
 
-          <FormControl size="small" sx={{ minWidth: 150 }}>
-            <InputLabel>Mes</InputLabel>
-            <Select
-              value={month}
-              label="Mes"
-              onChange={(e) => setMonth(e.target.value)}
-            >
-              <MenuItem value={0}>Todo el año</MenuItem>
-              <MenuItem value={1}>Enero</MenuItem>
-              <MenuItem value={2}>Febrero</MenuItem>
-              <MenuItem value={3}>Marzo</MenuItem>
-              <MenuItem value={4}>Abril</MenuItem>
-              <MenuItem value={5}>Mayo</MenuItem>
-              <MenuItem value={6}>Junio</MenuItem>
-              <MenuItem value={7}>Julio</MenuItem>
-              <MenuItem value={8}>Agosto</MenuItem>
-              <MenuItem value={9}>Septiembre</MenuItem>
-              <MenuItem value={10}>Octubre</MenuItem>
-              <MenuItem value={11}>Noviembre</MenuItem>
-              <MenuItem value={12}>Diciembre</MenuItem>
-            </Select>
-          </FormControl>
+          <Grid item xs={12} sm={2}>
+            <FormControl size="small" fullWidth>
+              <InputLabel>Año</InputLabel>
+              <Select value={year} label="Año" onChange={(e) => setYear(e.target.value)}>
+                {Array.from({ length: new Date().getFullYear() - 2024 }, (_, i) => 2025 + i).map(y => (
+                  <MenuItem key={y} value={y}>{y}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
 
-          <FormControl size="small" sx={{ minWidth: 200 }}>
-            <InputLabel>Métrica</InputLabel>
-            <Select
-              value={metricType}
-              label="Métrica"
-              onChange={(e) => setMetricType(e.target.value)}
-            >
-              <MenuItem value="count">Cantidad de ventas</MenuItem>
-              <MenuItem value="total">Monto total</MenuItem>
-            </Select>
-          </FormControl>
-        </Box>
+          <Grid item xs={12} sm={2}>
+            <FormControl size="small" fullWidth>
+              <InputLabel>Mes</InputLabel>
+              <Select value={month} label="Mes" onChange={(e) => setMonth(e.target.value)}>
+                <MenuItem value={0}>Todo el año</MenuItem>
+                {["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"].map((m, i) => (
+                  <MenuItem key={i + 1} value={i + 1}>{m}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+
+          {!loading && kpis && (metricType === 'count' ? [
+            { label: 'Total Ventas', value: kpis.totalSales.toLocaleString() },
+            { label: 'Promedio Diario', value: kpis.avgDaily.toFixed(1) },
+            { label: month === 0 ? 'Mejor Mes' : 'Mejor Día', value: kpis.bestDay }
+          ] : [
+            { label: 'Monto Total', value: `$${kpis.totalAmount.toLocaleString('es-MX', { minimumFractionDigits: 0 })}` },
+            { label: 'Promedio Diario', value: `$${kpis.avgDaily.toFixed(0)}` },
+            { label: month === 0 ? 'Mejor Mes' : 'Mejor Día', value: kpis.bestDay }
+          ]).map((kpi, i) => (
+            <Grid item xs={12} sm={2} key={i}>
+              <Box sx={{ bgcolor: 'var(--color-primary)', p: 1, borderRadius: 1, textAlign: 'center' }}>
+                <Typography variant="caption" sx={{ color: '#fff', fontWeight: 600 }}>{kpi.label}: {kpi.value}</Typography>
+              </Box>
+            </Grid>
+          ))}
+        </Grid>
       </Box>
 
       {loading ? (
@@ -169,7 +238,7 @@ const Dashboard = () => {
                   title={"Ventas por día del mes"}
                   data={dashboardData}
                   metricType={metricType}
-                  labels={Array.from({ length: 31 }, (_, i) => (i + 1).toString())}
+                  labels={Array.from({ length: new Date(year, month, 0).getDate() }, (_, i) => (i + 1).toString())}
                   yText={"Ventas"}
                   xText={"Días"}
                   dataType="day_of_month"
