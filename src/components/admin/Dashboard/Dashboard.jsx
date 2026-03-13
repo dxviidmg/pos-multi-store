@@ -87,28 +87,51 @@ const Dashboard = () => {
     const daysInPeriod = month === 0 ? 365 : new Date(year, month, 0).getDate();
     const avgDaily = totalSales / daysInPeriod;
 
-    // Agrupar por día de la semana
-    const salesByDay = {};
-    salesData.forEach(sale => {
-      const date = new Date(sale.created_at);
-      const dayOfWeek = date.getDay();
-      if (!salesByDay[dayOfWeek]) {
-        salesByDay[dayOfWeek] = { count: 0, total: 0 };
-      }
-      salesByDay[dayOfWeek].count++;
-      salesByDay[dayOfWeek].total += sale.total;
-    });
+    let bestPeriod = "N/A";
 
-    const dayNames = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
-    const bestDayIndex = Object.keys(salesByDay).reduce((max, day) => 
-      salesByDay[day].count > (salesByDay[max]?.count || 0) ? day : max, 0
-    );
+    if (month === 0) {
+      // Agrupar por mes
+      const salesByMonth = {};
+      salesData.forEach(sale => {
+        const date = new Date(sale.created_at);
+        const monthIndex = date.getMonth();
+        if (!salesByMonth[monthIndex]) {
+          salesByMonth[monthIndex] = { count: 0, total: 0 };
+        }
+        salesByMonth[monthIndex].count++;
+        salesByMonth[monthIndex].total += sale.total;
+      });
+
+      const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+      const bestMonthIndex = Object.keys(salesByMonth).reduce((max, m) => 
+        salesByMonth[m].count > (salesByMonth[max]?.count || 0) ? m : max, 0
+      );
+      bestPeriod = salesByMonth[bestMonthIndex] ? monthNames[bestMonthIndex] : "N/A";
+    } else {
+      // Agrupar por día de la semana
+      const salesByDay = {};
+      salesData.forEach(sale => {
+        const date = new Date(sale.created_at);
+        const dayOfWeek = date.getDay();
+        if (!salesByDay[dayOfWeek]) {
+          salesByDay[dayOfWeek] = { count: 0, total: 0 };
+        }
+        salesByDay[dayOfWeek].count++;
+        salesByDay[dayOfWeek].total += sale.total;
+      });
+
+      const dayNames = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+      const bestDayIndex = Object.keys(salesByDay).reduce((max, day) => 
+        salesByDay[day].count > (salesByDay[max]?.count || 0) ? day : max, 0
+      );
+      bestPeriod = salesByDay[bestDayIndex] ? dayNames[bestDayIndex] : "N/A";
+    }
 
     return {
       totalSales,
       totalAmount,
       avgDaily,
-      bestDay: salesByDay[bestDayIndex] ? dayNames[bestDayIndex] : "N/A",
+      bestDay: bestPeriod,
       bestHour: "N/A"
     };
   };
@@ -159,11 +182,11 @@ const Dashboard = () => {
           {!loading && kpis && (metricType === 'count' ? [
             { label: 'Total Ventas', value: kpis.totalSales.toLocaleString() },
             { label: 'Promedio Diario', value: kpis.avgDaily.toFixed(1) },
-            { label: 'Mejor Día', value: kpis.bestDay }
+            { label: month === 0 ? 'Mejor Mes' : 'Mejor Día', value: kpis.bestDay }
           ] : [
             { label: 'Monto Total', value: `$${kpis.totalAmount.toLocaleString('es-MX', { minimumFractionDigits: 0 })}` },
             { label: 'Promedio Diario', value: `$${kpis.avgDaily.toFixed(0)}` },
-            { label: 'Mejor Día', value: kpis.bestDay }
+            { label: month === 0 ? 'Mejor Mes' : 'Mejor Día', value: kpis.bestDay }
           ]).map((kpi, i) => (
             <Grid item xs={12} sm={2} key={i}>
               <Box sx={{ bgcolor: 'var(--color-primary)', p: 1, borderRadius: 1, textAlign: 'center' }}>
