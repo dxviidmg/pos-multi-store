@@ -55,7 +55,6 @@ p {
 
 .card:hover {
   box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
 }
 
 .card__actions {
@@ -96,16 +95,13 @@ textarea:focus {
   border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(4, 52, 107, 0.1);
   outline: none;
-  transform: scale(1.01);
 }
 
 button:hover:not(:disabled) {
-  transform: translateY(-1px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 button:active:not(:disabled) {
-  transform: translateY(0);
 }
 
 /* Animación para tablas y listas */
@@ -117,7 +113,6 @@ table tbody tr,
 table tbody tr:hover,
 .MuiTableRow-root:hover {
   background-color: rgba(4, 52, 107, 0.03);
-  transform: scale(1.005);
 }
 
 /* Animaciones para componentes MUI */
@@ -126,11 +121,9 @@ table tbody tr:hover,
 }
 
 .MuiButton-root:hover {
-  transform: translateY(-2px) !important;
 }
 
 .MuiButton-root:active {
-  transform: translateY(0) !important;
 }
 
 .MuiCard-root {
@@ -139,7 +132,6 @@ table tbody tr:hover,
 }
 
 .MuiCard-root:hover {
-  transform: translateY(-3px) !important;
 }
 
 .MuiChip-root {
@@ -147,7 +139,6 @@ table tbody tr:hover,
 }
 
 .MuiChip-root:hover {
-  transform: scale(1.05) !important;
 }
 
 .MuiListItemButton-root {
@@ -164,5 +155,4 @@ table tbody tr:hover,
 }
 
 .MuiIconButton-root:hover .MuiSvgIcon-root {
-  transform: scale(1.15);
 }
