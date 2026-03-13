@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import CustomTable from "../../ui/Table/Table";
-import { Alert, Typography } from "@mui/material";
+import { Alert, Typography, Chip } from "@mui/material";
 import CustomButton from "../../ui/Button/Button";
 import { useNavigate } from "react-router-dom";
 import { getDateDifference, getFormattedDate } from "../../../utils/utils";
@@ -666,70 +666,52 @@ const StoreList = () => {
       <CustomSpinner isLoading={loading} />
       <Grid container>
         <Grid item xs={12} className="card">
-          {tenantInfo.notices && tenantInfo.notices.length > 0 && (
-            <Box sx={{ mb: 3 }}>
-              <Grid container spacing={2}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <h1 style={{ margin: 0 }}>{params.store_type === "T" ? "Tiendas" : "Almacenes"}</h1>
+            {tenantInfo.notices && tenantInfo.notices.length > 0 && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 {tenantInfo.notices.map((notice, index) => (
-                  <Grid item xs={12} key={index}>
-                    <Alert 
-                      variant="filled" 
-                      severity={notice.variant}
-                      sx={{ fontWeight: 600, fontSize: '1rem' }}
-                    >
-                      {notice.notice}
-                    </Alert>
-                  </Grid>
+                  <Chip 
+                    key={index}
+                    label={notice.notice}
+                    color={notice.variant === 'error' ? 'error' : notice.variant === 'warning' ? 'warning' : 'success'}
+                    size="small"
+                  />
                 ))}
-              </Grid>
-            </Box>
-          )}
-
-          <Box sx={{ mb: 1 }}>
-            <h1>{params.store_type === "T" ? "Tiendas" : "Almacenes"}</h1>
-          </Box>
+              </div>
+            )}
+          </div>
 
           {params.store_type === "T" && (
-            <Grid container spacing={2} sx={{ mb: 3 }}>
-              <Grid item xs={12} sm={6} md={2}>
-                <Box sx={{ bgcolor: 'var(--color-primary)', p: 1, borderRadius: 1, textAlign: 'center' }}>
-                  <Typography variant="caption" sx={{ color: '#fff', fontWeight: 600 }}>Total Tiendas</Typography>
-                  <Typography variant="h5" sx={{ color: '#fff', fontWeight: 700 }}>{stores.length}</Typography>
-                </Box>
-              </Grid>
-              <Grid item xs={12} sm={6} md={2}>
-                <Box sx={{ bgcolor: 'var(--color-primary)', p: 1, borderRadius: 1, textAlign: 'center' }}>
-                  <Typography variant="caption" sx={{ color: '#fff', fontWeight: 600 }}>Ventas Totales</Typography>
-                  <Typography variant="h5" sx={{ color: '#fff', fontWeight: 700 }}>{totals.totalSales || 0}</Typography>
-                </Box>
-              </Grid>
-              <Grid item xs={12} sm={6} md={2}>
-                <Box sx={{ bgcolor: 'var(--color-primary)', p: 1, borderRadius: 1, textAlign: 'center' }}>
-                  <Typography variant="caption" sx={{ color: '#fff', fontWeight: 600 }}>Monto Total</Typography>
-                  <Typography variant="h5" sx={{ color: '#fff', fontWeight: 700 }}>{getCashValueTotal(totals.totalPayment)}</Typography>
-                </Box>
-              </Grid>
-              <Grid item xs={12} sm={6} md={2}>
-                <Box sx={{ bgcolor: 'var(--color-primary)', p: 1, borderRadius: 1, textAlign: 'center' }}>
-                  <Typography variant="caption" sx={{ color: '#fff', fontWeight: 600 }}>Ganancia Total</Typography>
-                  <Typography variant="h5" sx={{ color: '#fff', fontWeight: 700 }}>{getCashValueTotal(totals.profit)}</Typography>
-                </Box>
-              </Grid>
-              <Grid item xs={12} sm={6} md={2}>
+            <Grid container spacing={2} sx={{ mb: 1 }}>
+              <Grid item xs={12} sm={6} md={3}>
                 <Box sx={{ bgcolor: 'var(--color-primary)', p: 1, borderRadius: 1, textAlign: 'center' }}>
                   <Typography variant="caption" sx={{ color: '#fff', fontWeight: 600 }}># Productos</Typography>
                   <Typography variant="h5" sx={{ color: '#fff', fontWeight: 700 }}>{tenantInfo.product_count || 0}</Typography>
                 </Box>
               </Grid>
-              <Grid item xs={12} sm={6} md={2}>
+              <Grid item xs={12} sm={6} md={3}>
                 <Box sx={{ bgcolor: 'var(--color-primary)', p: 1, borderRadius: 1, textAlign: 'center' }}>
-                  <Typography variant="caption" sx={{ color: '#fff', fontWeight: 600 }}>Prom por tienda</Typography>
-                  <Typography variant="h5" sx={{ color: '#fff', fontWeight: 700 }}>{getCashValueTotal(stores.length > 0 ? totals.totalPayment / stores.length : 0)}</Typography>
+                  <Typography variant="caption" sx={{ color: '#fff', fontWeight: 600 }}>Ventas Totales</Typography>
+                  <Typography variant="h5" sx={{ color: '#fff', fontWeight: 700 }}>{totals.totalSales || 0}</Typography>
+                </Box>
+              </Grid>
+              <Grid item xs={12} sm={6} md={3}>
+                <Box sx={{ bgcolor: 'var(--color-primary)', p: 1, borderRadius: 1, textAlign: 'center' }}>
+                  <Typography variant="caption" sx={{ color: '#fff', fontWeight: 600 }}>Monto Total</Typography>
+                  <Typography variant="h5" sx={{ color: '#fff', fontWeight: 700 }}>{getCashValueTotal(totals.totalPayment)}</Typography>
+                </Box>
+              </Grid>
+              <Grid item xs={12} sm={6} md={3}>
+                <Box sx={{ bgcolor: 'var(--color-primary)', p: 1, borderRadius: 1, textAlign: 'center' }}>
+                  <Typography variant="caption" sx={{ color: '#fff', fontWeight: 600 }}>Ganancia Total</Typography>
+                  <Typography variant="h5" sx={{ color: '#fff', fontWeight: 700 }}>{getCashValueTotal(totals.profit)}</Typography>
                 </Box>
               </Grid>
             </Grid>
           )}
 
-          <Box>
+          <Box sx={{ mb: 1 }}>
             <Grid container spacing={2} alignItems="center">
               <Grid item xs={12} md={4}>
                 <FormControlLabel
@@ -770,7 +752,7 @@ const StoreList = () => {
           </Box>
 
           {params.store_type === "T" && (
-            <Box component="form" sx={{ mb: 3 }}>
+            <Box component="form" sx={{ mb: 2 }}>
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6} md={3}>
                   <TextField
