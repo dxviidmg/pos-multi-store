@@ -236,6 +236,18 @@ const ProductList = () => {
           {/* 3.2 Filtros */}
           <Grid container spacing={2} sx={{ mb: 2 }}>
             <Grid item xs={12} md={3}>
+              <TextField
+                size="small"
+                label="Buscar por código"
+                fullWidth
+                value={params.code || ""}
+                onChange={handleDataChange}
+                name="code"
+                onKeyDown={(e) => e.key === "Enter" && fetchProducts()}
+              />
+            </Grid>
+
+            <Grid item xs={12} md={3}>
               <FormControl fullWidth size="small">
                 <InputLabel>Marca</InputLabel>
                 <Select
