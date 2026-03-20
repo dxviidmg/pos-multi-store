@@ -220,7 +220,7 @@ const SaleList = () => {
               name: "Productos",
               selector: (row) => <ProductsPopperButton row={row} productsModal={productsModal} />,
             },
-            { name: "# Productos", selector: (row) => row.products_sale?.length || 0, width: '100px' },
+            { name: "# Productos", selector: (row) => row.products_sale?.reduce((sum, p) => sum + p.quantity, 0) || 0, width: '100px' },
             { name: "Total", selector: (row) => `$${row.total}` },
             ...(params.reservation_in_progress === "true"
               ? [

@@ -68,8 +68,7 @@ const Cart = () => {
     const handleShortcut = (event) => {
       if (event.ctrlKey && (event.key === "p" || event.key === "P")) {
         event.preventDefault();
-        paymentModal.close();
-        setTimeout(() => paymentModal.open(), 1);
+        paymentModal.open();
       }
     };
     window.addEventListener("keydown", handleShortcut);
@@ -255,10 +254,6 @@ const Cart = () => {
     }
   };
 
-  const handleOpenModal = () => {
-    paymentModal.close();
-    setTimeout(() => paymentModal.open(), 1);
-  };
 
   const commonColumns = [
     { name: "Código", field: "code", selector: (row) => row.product.code },
@@ -558,7 +553,7 @@ const Cart = () => {
                   <h3>Total: ${total.toFixed(2)}</h3>
                 </Grid>
                 <Grid item xs={12} md={4}>
-                  <CustomButton fullWidth onClick={handleOpenModal} startIcon={<PaymentIcon />}>
+                  <CustomButton fullWidth onClick={() => paymentModal.open()} startIcon={<PaymentIcon />}>
                     Cobrar (Ctrl+P)
                   </CustomButton>
                 </Grid>

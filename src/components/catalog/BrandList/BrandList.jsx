@@ -3,20 +3,19 @@ import DataTable from "../../ui/DataTable/DataTable";
 import CustomButton from "../../ui/Button/Button";
 import { deleteBrands } from "../../../api/brands";
 import BrandModal from "../BrandModal/BrandModal";
-import { showSuccess, showError } from "../../../utils/alerts";
+import { showSuccess, showError, showConfirm } from "../../../utils/alerts";
 import { getUserData } from "../../../api/utils";
 import EditIcon from "@mui/icons-material/Edit";
 import CustomTooltip from "../../ui/Tooltip";
 import { useBrands } from "../../../hooks/useBrands";
 import { useModal } from "../../../hooks/useModal";
-import { Grid, Checkbox, FormControlLabel, Stack } from "@mui/material";
+import { Grid, Stack } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 const BrandList = () => {
   const user = getUserData();
   const [selectedRows, setSelectedRows] = useState([]);
-  const [confirmDeletion, setConfirmDeletion] = useState(false);
   const brandModal = useModal();
   const { data: brands = [], isLoading: loading, refetch } = useBrands();
 
@@ -26,6 +25,8 @@ const BrandList = () => {
       showError("Error al borrar marcas", "Las marcas no deben tener productos relacionados");
       return;
     }
+    const confirmed = await showConfirm("¿Eliminar marcas seleccionadas?", `Se eliminarán ${selectedRows.length} marca(s)`);
+    if (!confirmed) return;
     const selectedIds = selectedRows.map((el) => el.id);
     const response = await deleteBrands(selectedIds);
     if (response.status === 200) {
@@ -50,16 +51,10 @@ const BrandList = () => {
 
         <Grid container spacing={2} alignItems="center" sx={{ mb: 2 }}>
           <Grid item xs={12} md={3}>
-            <FormControlLabel
-              control={<Checkbox size="small" checked={confirmDeletion} onChange={(e) => setConfirmDeletion(e.target.checked)} />}
-              label="Confirmar eliminación"
-            />
-          </Grid>
-          <Grid item xs={12} md={3}>
             <CustomButton
               fullWidth
               onClick={handleDeleteBrands}
-              disabled={selectedRows.length === 0 || !confirmDeletion || user.role !== "owner"}
+              disabled={selectedRows.length === 0 || user.role !== "owner"}
               startIcon={<DeleteIcon />}
             >
               Eliminar seleccionadas

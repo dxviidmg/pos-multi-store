@@ -2,21 +2,20 @@ import React, { useState } from "react";
 import DataTable from "../../ui/DataTable/DataTable";
 import CustomButton from "../../ui/Button/Button";
 import { deleteDepartments } from "../../../api/departments";
-import { showSuccess, showError } from "../../../utils/alerts";
+import { showSuccess, showError, showConfirm } from "../../../utils/alerts";
 import { useModal } from "../../../hooks/useModal";
 import DepartmentModal from "../DepartmentModal/DepartmentModal";
 import { getUserData } from "../../../api/utils";
 import EditIcon from "@mui/icons-material/Edit";
 import CustomTooltip from "../../ui/Tooltip";
 import { useDepartments } from "../../../hooks/useDepartments";
-import { Grid, Checkbox, FormControlLabel, Stack } from "@mui/material";
+import { Grid, Stack } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 const DepartmentList = () => {
   const user = getUserData();
   const [selectedRows, setSelectedRows] = useState([]);
-  const [confirmDeletion, setConfirmDeletion] = useState(false);
   const departmentModal = useModal();
   const { data: departments = [], isLoading: loading, refetch } = useDepartments();
 
@@ -26,6 +25,8 @@ const DepartmentList = () => {
       showError("Error al borrar departamentos", "Los departamentos no deben tener productos relacionados");
       return;
     }
+    const confirmed = await showConfirm("¿Eliminar departamentos seleccionados?", `Se eliminarán ${selectedRows.length} departamento(s)`);
+    if (!confirmed) return;
     const selectedIds = selectedRows.map((el) => el.id);
     const response = await deleteDepartments(selectedIds);
     if (response.status === 200) {
@@ -50,16 +51,10 @@ const DepartmentList = () => {
 
         <Grid container spacing={2} alignItems="center" sx={{ mb: 2 }}>
           <Grid item xs={12} md={3}>
-            <FormControlLabel
-              control={<Checkbox size="small" checked={confirmDeletion} onChange={(e) => setConfirmDeletion(e.target.checked)} />}
-              label="Confirmar eliminación"
-            />
-          </Grid>
-          <Grid item xs={12} md={3}>
             <CustomButton
               fullWidth
               onClick={handleDeleteDepartments}
-              disabled={selectedRows.length === 0 || !confirmDeletion || user.role !== "owner"}
+              disabled={selectedRows.length === 0 || user.role !== "owner"}
               startIcon={<DeleteIcon />}
             >
               Eliminar seleccionados

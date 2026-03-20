@@ -9,12 +9,11 @@ import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { getBrands } from "../../../api/brands";
 import { getDepartments } from "../../../api/departments";
 import { getUserData } from "../../../api/utils";
-import { showSuccess, showError } from "../../../utils/alerts";
+import { showSuccess, showError, showConfirm } from "../../../utils/alerts";
 import CustomTooltip from "../../ui/Tooltip";
 import { UI_TEXT } from "../../../constants";
 import {
-  Grid, TextField, Select, MenuItem, FormControl, InputLabel,
-  Checkbox, FormControlLabel, Box, Stack,
+  Grid, TextField, Select, MenuItem, FormControl, InputLabel, Box, Stack,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import EditIcon from "@mui/icons-material/Edit";
@@ -32,7 +31,6 @@ const ProductList = () => {
   const [departments, setDepartments] = useState([]);
   const [params, setParams] = useState({});
   const [selectedRows, setSelectedRows] = useState([]);
-  const [confirmDeletion, setConfirmDeletion] = useState(false);
   const [outOfStockPercentage, setOutOfStockPercentage] = useState(0);
   const productModal = useModal();
 
@@ -91,6 +89,8 @@ const ProductList = () => {
       showError("Error al borrar productos", "Los productos no deben tener stock cero para ser borrados");
       return;
     }
+    const confirmed = await showConfirm("¿Eliminar productos seleccionados?", `Se eliminarán ${selectedRows.length} producto(s)`);
+    if (!confirmed) return;
 
     const selectedIds = selectedRows.map((el) => el.id);
     const response = await deleteProducts(selectedIds);
@@ -193,16 +193,10 @@ const ProductList = () => {
 
           <Grid container spacing={2} alignItems="center" sx={{ mb: 2 }}>
             <Grid item xs={12} md={3}>
-              <FormControlLabel
-                control={<Checkbox size="small" checked={confirmDeletion} onChange={(e) => setConfirmDeletion(e.target.checked)} />}
-                label="Confirmar borrado"
-              />
-            </Grid>
-            <Grid item xs={12} md={3}>
               <CustomButton
                 fullWidth
                 onClick={handleDeleteProducts}
-                disabled={selectedRows.length === 0 || !confirmDeletion || user.role !== "owner"}
+                disabled={selectedRows.length === 0 || user.role !== "owner"}
                 startIcon={<DeleteIcon />}
               >
                 Eliminar
