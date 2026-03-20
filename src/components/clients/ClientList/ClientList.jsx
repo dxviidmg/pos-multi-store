@@ -27,9 +27,9 @@ const ClientList = () => {
   const { data: clients = [], isLoading, refetch } = useClients(params);
   const range = getDateDifference(params.start_date, params.end_date);
 
-  const handleParams = async (e) => {
-    let { name, value } = e.target;
-    setParams((prevData) => ({ ...prevData, [name]: value }));
+  const handleParams = (e) => {
+    const { name, value } = e.target;
+    setParams((prev) => ({ ...prev, [name]: value }));
   };
 
   return (
@@ -74,7 +74,7 @@ const ClientList = () => {
               type="date"
               value={params.start_date}
               onChange={handleParams}
-              max={today}
+              inputProps={{ max: today }}
             />
           </Grid>
           <Grid item xs={12} md={4}>
@@ -86,7 +86,7 @@ const ClientList = () => {
               type="date"
               value={params.end_date}
               onChange={handleParams}
-              max={today}
+              inputProps={{ max: today }}
             />
           </Grid>
           <Grid item xs={12} md={4}>
@@ -95,7 +95,7 @@ const ClientList = () => {
               fullWidth
               label="Rango"
               name="range"
-              type="input"
+              type="text"
               value={range}
               disabled
             />
@@ -118,7 +118,7 @@ const ClientList = () => {
               name: "Total comprado",
               field: "total_sales_amount",
               sortable: true,
-              selector: (row) => row.total_sales_amount,
+              selector: (row) => `$${Number(row.total_sales_amount).toLocaleString()}`,
             },
             {
               name: "Descuento",
@@ -127,7 +127,7 @@ const ClientList = () => {
             {
               name: "Acciones",
               cell: (row) => (
-                <CustomTooltip text={"Editar usuario"}>
+                <CustomTooltip text="Editar cliente">
                   <CustomButton onClick={() => clientModal.open(row)}>
                     <EditIcon />
                   </CustomButton>

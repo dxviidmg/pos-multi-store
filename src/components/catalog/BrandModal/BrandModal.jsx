@@ -27,19 +27,14 @@ const BrandModal = ({ isOpen, brand, onClose, onUpdate }) => {
   }, [isOpen, brand, setValues]);
 
   const handleBrandSubmit = () => {
-    console.log('Submitting:', values);
     const mutation = values.id ? updateMutation : createMutation;
     
     mutation.mutate(values, {
       onSuccess: () => {
-        console.log('Success');
         onClose();
         onUpdate();
         reset();
       },
-      onError: (error) => {
-        console.log('Error:', error);
-      }
     });
   };
 
@@ -65,7 +60,7 @@ const BrandModal = ({ isOpen, brand, onClose, onUpdate }) => {
             />
           </Grid>
 
-          <Grid item xs={12} md={6} className="d-flex flex-column justify-content-end">
+          <Grid item xs={12} md={6}>
             <CustomButton
               fullWidth={true}
               onClick={handleBrandSubmit}

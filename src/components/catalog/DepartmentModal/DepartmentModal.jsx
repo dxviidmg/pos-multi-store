@@ -60,7 +60,7 @@ const DepartmentModal = ({ isOpen, department, onClose, onUpdate }) => {
             />
           </Grid>
 
-          <Grid item xs={12} md={6} className="d-flex flex-column justify-content-end">
+          <Grid item xs={12} md={6}>
             <CustomButton
               fullWidth={true}
               onClick={handleDepartmentSubmit}
