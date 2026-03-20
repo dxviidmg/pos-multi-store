@@ -189,9 +189,6 @@ const ProductList = () => {
                 Descargar productos
               </CustomButton>
             </Grid>
-          </Grid>
-
-          <Grid container spacing={2} alignItems="center" sx={{ mb: 2 }}>
             <Grid item xs={12} md={3}>
               <CustomButton
                 fullWidth
