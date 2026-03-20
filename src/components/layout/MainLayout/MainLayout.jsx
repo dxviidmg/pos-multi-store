@@ -280,6 +280,7 @@ export default function MainLayout({ toggleTheme, themeMode }) {
               sx={{
                 width: 34, height: 34,
                 bgcolor: "rgba(233,69,96,0.85)",
+                color: "#fff",
                 fontSize: "0.85rem", fontWeight: 700, mr: 1, cursor: "pointer",
                 transition: "all 0.2s",
                 "&:hover": { transform: "scale(1.1)", bgcolor: "#e94560" },
