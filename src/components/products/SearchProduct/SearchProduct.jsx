@@ -310,8 +310,8 @@ const SearchProduct = () => {
     <>
       <StockModal isOpen={stockModal.isOpen} product={stockModal.data} onClose={stockModal.close} />
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
-        <h1 style={{ margin: 0, fontSize: '1.5rem' }}>Consulta de productos</h1>
+      <div className="flex-between" style={{ marginBottom: '0.25rem' }}>
+        <h1>Consulta de productos</h1>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <Chip 
             label="Enfoca el campo de búsqueda para agregar productos"

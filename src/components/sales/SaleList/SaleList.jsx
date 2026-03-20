@@ -348,9 +348,9 @@ const SaleList = () => {
               name: "Estado",
               selector: (row) => 
                 salesDuplicated.includes(row.id) ? (
-                  <ErrorIcon style={{ color: '#f44336' }} />
+                  <ErrorIcon className="icon-danger" />
                 ) : (
-                  <CheckCircleIcon style={{ color: '#4caf50' }} />
+                  <CheckCircleIcon className="icon-success" />
                 ),
               center: true,
               width: '80px',
@@ -369,7 +369,7 @@ const SaleList = () => {
             {
               name: "Fecha y hora",
               selector: (row) => (
-                <div style={{ whiteSpace: 'normal', wordBreak: 'break-word', lineHeight: '1.4' }}>
+                <div className="text-wrap-cell">
                   {getFormattedDateTime(row.created_at)}
                 </div>
               ),

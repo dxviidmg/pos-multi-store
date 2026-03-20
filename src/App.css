@@ -49,6 +49,38 @@ p {
   font-size: 1.5rem;
 }
 
+/* Utility classes */
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.text-wrap-cell {
+  white-space: normal;
+  word-break: break-word;
+  line-height: 1.4;
+}
+
+.status-dot {
+  font-size: 20px;
+}
+.status-dot--success { color: #10b981; }
+.status-dot--danger { color: #ef4444; }
+.status-dot--warning { color: #f59e0b; }
+
+.text-success { color: #10b981; }
+.text-danger { color: #ef4444; }
+.text-warning { color: #ff9800; }
+.text-muted { color: #9ca3af; }
+
+.icon-success { color: #4caf50; }
+.icon-danger { color: #f44336; }
+
+h1, h2, h3 {
+  margin: 0;
+}
+
 /* Modal component */
 .modal-content {
   background: linear-gradient(135deg, rgba(4,52,107,0.03) 0%, rgba(4,52,107,0.07) 100%);

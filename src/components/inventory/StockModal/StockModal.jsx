@@ -85,7 +85,7 @@ const StockModal = ({ isOpen, product, onClose }) => {
           <>
             <p><b>Nota:</b> Has alcanzado el límite de este producto en esta tienda</p>
             {reservedInOtherCarts > 0 && (
-              <p style={{ color: '#ff9800' }}>
+              <p className="text-warning">
                 ⚠️ Hay {reservedInOtherCarts} unidades reservadas en otros carritos activos
               </p>
             )}

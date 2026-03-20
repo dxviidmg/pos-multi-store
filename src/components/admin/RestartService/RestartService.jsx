@@ -84,7 +84,7 @@ function RestartService() {
       )}
 
       {isDisabled && (
-        <p style={{ color: "orange" }}>
+        <p className="text-warning">
           El servicio se está reiniciando, intenta más tarde.
         </p>
       )}

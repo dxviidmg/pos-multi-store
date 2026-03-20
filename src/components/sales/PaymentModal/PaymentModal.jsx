@@ -378,7 +378,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
           </Grid>
 
           <Grid item xs={12} className="card" sx={{ marginBottom: '1rem' }}>
-            <h2 style={{ marginTop: 0, marginBottom: '0.5rem' }}>Totales</h2>
+            <h2 style={{ marginBottom: '0.5rem' }}>Totales</h2>
             <Grid container spacing={2}>
               <Grid item xs={12} md={3}>
                 <TextField

@@ -83,8 +83,8 @@ const SearchClient = () => {
 
   return (
     <>
-<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-  <h2 style={{ margin: 0 }}>Seleccionar cliente</h2>
+<div className="flex-between" style={{ marginBottom: '0.5rem' }}>
+  <h2>Seleccionar cliente</h2>
   {Object.keys(client).length === 0 && (
     <Chip label="Aviso: No hay cliente seleccionado" color="success" size="small" />
   )}

@@ -551,11 +551,11 @@ const Cart = () => {
             {(movementType === "venta" || movementType === "apartado") && (
               <>
                 <Grid item xs={12} md={4}>
-                  <h3 style={{ margin: 0 }}>Productos: {totalProducts}</h3>
+                  <h3>Productos: {totalProducts}</h3>
                 </Grid>
 
                 <Grid item xs={12} md={4}>
-                  <h3 style={{ margin: 0 }}>Total: ${total.toFixed(2)}</h3>
+                  <h3>Total: ${total.toFixed(2)}</h3>
                 </Grid>
                 <Grid item xs={12} md={4}>
                   <CustomButton fullWidth onClick={handleOpenModal} startIcon={<PaymentIcon />}>
@@ -568,7 +568,7 @@ const Cart = () => {
             {(movementType === "traspaso" ||
               movementType === "distribucion") && (
               <>
-                <Grid item xs={12} md={3}><h3 style={{ margin: 0 }}>Productos: {totalProducts}</h3></Grid>
+                <Grid item xs={12} md={3}><h3>Productos: {totalProducts}</h3></Grid>
                 <Grid item xs={12} md={3}>
                   <Select fullWidth size="small" value={selectedStore}
                     onChange={handleSelectChange}
