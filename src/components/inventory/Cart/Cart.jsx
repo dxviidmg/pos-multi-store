@@ -28,7 +28,7 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 import CalculateIcon from "@mui/icons-material/Calculate";
 import { MOVEMENT_TYPES, STORE_TYPES } from "../../../constants";
 
-const Cart = () => {
+const Cart = ({ searchInputRef }) => {
   const store_type = getUserData().store_type;
   const dispatch = useDispatch();
   const stockModal = useModal();
@@ -538,7 +538,7 @@ const Cart = () => {
   return (
     <div>
       <CustomSpinner isLoading={loading} />
-      <PaymentModal isOpen={paymentModal.isOpen} onClose={paymentModal.close} />
+      <PaymentModal isOpen={paymentModal.isOpen} onClose={() => { paymentModal.close(); setTimeout(() => searchInputRef?.current?.focus(), 100); }} />
       <StockModal isOpen={stockModal.isOpen} product={stockModal.data} onClose={stockModal.close} />
       <div>
         {cart.length !== 0 && (

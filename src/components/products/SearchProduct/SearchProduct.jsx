@@ -19,8 +19,9 @@ import AddIcon from "@mui/icons-material/Add";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 
-const SearchProduct = () => {
-  const inputRef = useRef(null);
+const SearchProduct = ({ searchInputRef }) => {
+  const localRef = useRef(null);
+  const inputRef = searchInputRef || localRef;
 
   const dispatch = useDispatch();
   const stockModal = useModal();

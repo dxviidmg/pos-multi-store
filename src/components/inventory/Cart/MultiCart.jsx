@@ -6,7 +6,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import Cart from "./Cart";
 import { createNewCart, switchCart, closeCart } from "../../../redux/cart/multiCartReducer";
 
-const MultiCart = () => {
+const MultiCart = ({ searchInputRef }) => {
   const dispatch = useDispatch();
   const { carts, activeCartId } = useSelector((state) => state.multiCartReducer);
   
@@ -81,7 +81,7 @@ const MultiCart = () => {
         />
       </Tabs>
       
-      <Cart />
+      <Cart searchInputRef={searchInputRef} />
     </Box>
   );
 };
