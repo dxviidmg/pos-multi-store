@@ -1,4 +1,4 @@
-import { logger } from "../../../utils/logger";
+import { showSuccess, showError, showWarning } from "../../../utils/alerts";
 import React, { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import DataTable from "../../ui/DataTable/DataTable";
@@ -10,7 +10,6 @@ import { Chip } from "@mui/material";
 import StockModal from "../../inventory/StockModal/StockModal";
 import { useModal } from "../../../hooks/useModal";
 import { useFetchWithRetry } from "../../../hooks/useFetch";
-import Swal from "sweetalert2";
 import { getPrinterUrl, getUserData } from "../../../api/utils";
 import PrintIcon from "@mui/icons-material/Print";
 import { handlePrintTicket } from "../../../utils/utils";
@@ -91,25 +90,15 @@ const SearchProduct = () => {
         setSearching(false);
 
         if (!fetchedData) {
-          logger.log("No se pudo completar la búsqueda después de reintentos.");
+          
 
-          Swal.fire({
-            icon: "error",
-            title: "Búsqueda tardada",
-            text: "La búsqueda tardó demasiado. Reintentar o buscar de manera manual",
-            timer: 5000,
-          });
+          showError("Búsqueda tardada", "La búsqueda tardó demasiado. Reintentar o buscar de manera manual");
 
           return;
         }
 
         if (fetchedData.length === 0) {
-          Swal.fire({
-            icon: "error",
-            title: "Producto no encontrado",
-            text: "No se pudo encontrar este producto mediante su código",
-            timer: 5000,
-          });
+          showError("Producto no encontrado", "No se pudo encontrar este producto mediante su código");
         } else if (fetchedData.length === 1) {
           handleSingleProductFetch(fetchedData[0]);
         } else {
@@ -118,7 +107,7 @@ const SearchProduct = () => {
       } catch (err) {
         searchingRef.current = false;
         if (err.name === "AbortError" || err.name === "CanceledError") return;
-        logger.error(err);
+        
         setSearching(false);
       }
     },
@@ -139,18 +128,9 @@ const SearchProduct = () => {
       movementType === "traspaso" &&
       storeProduct.reserved_stock === 0
     ) {
-      Swal.fire({
-        icon: "error",
-        title: "Este producto no esta relacionado a algun traspaso",
-        timer: 5000,
-      });
+      showError("Este producto no está relacionado a algún traspaso");
     } else if (movementType === "checar") {
-      Swal.fire({
-        icon: "success",
-        title: storeProduct.product.name,
-        text: "Precio unitario $" + storeProduct.product.prices.unit_price,
-        timer: 5000,
-      });
+      showSuccess(storeProduct.product.name, "Precio unitario $" + storeProduct.product.prices.unit_price);
     } else {
       handleAddToCartIfAvailable(storeProduct);
     }
@@ -180,11 +160,7 @@ const SearchProduct = () => {
             setQuery("");
           }
         } else {
-          Swal.fire({
-            icon: "warning",
-            title: "Stock insuficiente",
-            text: `Este producto ya está reservado en otros carritos. Stock disponible: ${availableStock}`,
-          });
+          showWarning("Stock insuficiente", `Este producto ya está reservado en otros carritos. Stock disponible: ${availableStock}`);
         }
       }
     } else {
@@ -208,24 +184,17 @@ const SearchProduct = () => {
       ) {
         handleOpenModal(cart[existingProductIndex]);
       } else {
-        Swal.fire({
-          icon: "warning",
-          title: "Stock insuficiente",
-          text: `Este producto ya está reservado en otros carritos. Stock disponible: ${availableStock}`,
-        });
+        showWarning("Stock insuficiente", `Este producto ya está reservado en otros carritos. Stock disponible: ${availableStock}`);
       }
     }
   };
 
   const displayStockLimitAlert = () => {
-    Swal.fire({
-      icon: "error",
-      title:
-        movementType === "traspaso"
-          ? "Llegaste al límite de producto reservado para traspasar"
-          : "No hay suficiente stock para vender",
-      timer: 5000,
-    });
+    showError(
+      movementType === "traspaso"
+        ? "Llegaste al límite de producto reservado para traspasar"
+        : "No hay suficiente stock para vender"
+    );
   };
 
   useEffect(() => {

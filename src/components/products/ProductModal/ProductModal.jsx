@@ -3,7 +3,7 @@ import { useForm } from "../../../hooks/useForm";
 import CustomModal from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
 import { getBrands } from "../../../api/brands";
-import Swal from "sweetalert2";
+import { showSuccess, showError } from "../../../utils/alerts";
 import {
   createProduct,
   getStoreProducts,
@@ -118,31 +118,18 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
       setFormData(INITIAL_FORM_DATA);
       setSelectedImage(null);
       setPreviewImage(null);
-      Swal.fire({
-        icon: "success",
-        title: `Producto ${formData.id ? "actualizado" : "creado"}`,
-        timer: 5000,
-      });
+      showSuccess(`Producto ${formData.id ? "actualizado" : "creado"}`);
     } else {
-      handleClientError(response);
+      let message = "Error desconocido. Por favor, contacte soporte.";
+      if (response.response?.status === 400 && response.response.data?.code) {
+        const codeError = response.response.data.code[0];
+        if (codeError === "product with this code already exists.") {
+          message = "El código ya existe.";
+        }
+      }
+      showError(`Error al ${formData.id ? "actualizar" : "crear"} producto`, message);
     }
     setIsLoading(false);
-  };
-
-  const handleClientError = (response) => {
-    let message = "Error desconocido. Por favor, contacte soporte.";
-    if (response.response?.status === 400 && response.response.data?.code) {
-      const codeError = response.response.data.code[0];
-      if (codeError === "product with this code already exists.") {
-        message = "El código ya existe.";
-      }
-    }
-    Swal.fire({
-      icon: "error",
-      title: `Error al ${formData.id ? "actualizar" : "crear"} producto`,
-      text: message,
-      timer: 5000,
-    });
   };
 
   const isFormIncomplete = () => {

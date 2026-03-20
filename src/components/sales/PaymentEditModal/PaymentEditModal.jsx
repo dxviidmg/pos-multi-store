@@ -5,7 +5,7 @@ import { updateSale } from "../../../api/sales";
 import { showSuccess, showError } from "../../../utils/alerts";
 import { handlePrintTicket } from "../../../utils/utils";
 import { getUserData } from "../../../api/utils";
-import { Grid, TextField, Checkbox, FormLabel } from "@mui/material";
+import { Grid, TextField, Checkbox, FormLabel, Box } from "@mui/material";
 import PaymentIcon from "@mui/icons-material/Payment";
 
 const INITIAL_PAYMENT_STATE = { paidWith: 0, change: 0 };
@@ -122,10 +122,10 @@ const PaymentEditModal = ({ isOpen, sale, onClose, onUpdate }) => {
             </Grid>
 
             <Grid item xs={12} md={3}>
-              <FormLabel className="me-3">Medios de pago:</FormLabel>
+              <FormLabel sx={{ mb: 1 }}>Medios de pago:</FormLabel>
               {["EF", "TA", "TR"].map((method) => (
-                <div key={method} className="d-flex align-items-center mb-1">
-                  <div className="me-3" style={{ flex: 1 }}>
+                <Box key={method} sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}>
+                  <Box sx={{ flex: 1 }}>
                     <Checkbox size="small"
                       id={method}
                       label={
@@ -141,8 +141,8 @@ const PaymentEditModal = ({ isOpen, sale, onClose, onUpdate }) => {
                       name="paymentMethod"
                       checked={paymentMethod === method}
                     />
-                  </div>
-                </div>
+                  </Box>
+                </Box>
               ))}
             </Grid>
           </Grid>

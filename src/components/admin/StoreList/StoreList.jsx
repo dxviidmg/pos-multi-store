@@ -78,9 +78,9 @@ const StoreList = () => {
   const loading = loadingStores || loadingTenant;
   const range = getDateDifference(params.start_date, params.end_date);
 
-  const handleParams = async (e) => {
-    let { name, value } = e.target;
-    setParams((prevData) => ({ ...prevData, [name]: value }));
+  const handleParams = (e) => {
+    const { name, value } = e.target;
+    setParams((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleStoreType = (e) => {
@@ -110,13 +110,12 @@ const StoreList = () => {
     
     try {
       const response = await getInvestment(storeId);
-      console.log('Investment response:', response.data);
       setStoreInvestments(prev => ({
         ...prev,
         [storeId]: response.data // response.data es directamente el número
       }));
     } catch (error) {
-      console.error('Error loading investment:', error);
+      // Error loading investment
     }
   };
 

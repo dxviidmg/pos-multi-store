@@ -347,7 +347,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
                 />
               </Grid>
 
-              <Grid item xs={12} md={3} className="d-flex flex-column justify-content-end">
+              <Grid item xs={12} md={3}>
                 <CustomButton fullWidth onClick={handleSearchSaleForChange}>
                   <SearchIcon /> Buscar
                 </CustomButton>

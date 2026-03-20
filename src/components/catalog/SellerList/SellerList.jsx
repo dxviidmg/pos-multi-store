@@ -56,18 +56,18 @@ const SellerList = () => {
     fetchSellersData();
   }, [params]);
 
-  const handleUpdateSellerList = (updatedBrand) => {
-    setSellers((prevBrands) => {
-      const brandExists = prevBrands.some((b) => b.id === updatedBrand.id);
-      return brandExists
-        ? prevBrands.map((b) => (b.id === updatedBrand.id ? updatedBrand : b))
-        : [...prevBrands, updatedBrand];
+  const handleUpdateSellerList = (updated) => {
+    setSellers((prev) => {
+      const exists = prev.some((item) => item.id === updated.id);
+      return exists
+        ? prev.map((item) => (item.id === updated.id ? updated : item))
+        : [...prev, updated];
     });
   };
 
-  const handleParams = async (e) => {
-    let { name, value } = e.target;
-    setParams((prevData) => ({ ...prevData, [name]: value }));
+  const handleParams = (e) => {
+    const { name, value } = e.target;
+    setParams((prev) => ({ ...prev, [name]: value }));
   };
 
   return (
@@ -120,7 +120,7 @@ const SellerList = () => {
                 type="date"
                 value={params.start_date}
                 onChange={handleParams}
-                max={today}
+                inputProps={{ max: today }}
               />
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
@@ -132,7 +132,7 @@ const SellerList = () => {
                 type="date"
                 value={params.end_date}
                 onChange={handleParams}
-                max={today}
+                inputProps={{ max: today }}
               />
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
@@ -141,7 +141,7 @@ const SellerList = () => {
                 fullWidth
                 label="Rango"
                 name="range"
-                type="input"
+                type="text"
                 value={range}
                 disabled
               />
