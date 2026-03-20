@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import CustomTable from "../../ui/Table/Table";
+import DataTable from "../../ui/DataTable/DataTable";
 import CustomButton from "../../ui/Button/Button";
-import { createDiscount } from "../../../api/discounts";
-import { showSuccess, showError } from "../../../utils/alerts";
 import ClientModal from "../ClientModal/ClientModal";
+import DiscountModal from "../DiscountModal/DiscountModal";
 import EditIcon from "@mui/icons-material/Edit";
 import { getUserData } from "../../../api/utils";
 import { getDateDifference, getFormattedDate } from "../../../utils/utils";
@@ -18,10 +17,7 @@ import DiscountIcon from "@mui/icons-material/Discount";
 const ClientList = () => {
   const today = getFormattedDate();
   const clientModal = useModal();
-
-  const [discountFormData, setDiscountFormData] = useState({
-    discount_percentage: "",
-  });
+  const discountModal = useModal();
 
   const [params, setParams] = useState({
     end_date: today,
@@ -31,45 +27,9 @@ const ClientList = () => {
   const { data: clients = [], isLoading, refetch } = useClients(params);
   const range = getDateDifference(params.start_date, params.end_date);
 
-  const handleDiscountInputChange = (e) => {
+  const handleParams = (e) => {
     const { name, value } = e.target;
-    setDiscountFormData((prevData) => ({ ...prevData, [name]: value }));
-  };
-
-  const handleSaveDiscount = async () => {
-    const response = await createDiscount(discountFormData);
-
-    if (response.status === 201) {
-      setDiscountFormData({ discount_percentage: "" });
-
-      showSuccess("Descuento creado");
-    } else {
-      handleDiscountError(response);
-    }
-  };
-
-  const handleDiscountError = (error) => {
-    let message = "Error desconocido, por favor comuníquese con soporte";
-
-    if (
-      error.response?.status === 400 &&
-      error.response.data.discount_percentage
-    ) {
-      const discountError = error.response.data.discount_percentage[0];
-      if (
-        discountError ===
-        "discount with this discount percentage already exists."
-      ) {
-        message = "El descuento ya existe";
-      }
-    }
-
-    showError("Error al crear descuento", message);
-  };
-
-  const handleParams = async (e) => {
-    let { name, value } = e.target;
-    setParams((prevData) => ({ ...prevData, [name]: value }));
+    setParams((prev) => ({ ...prev, [name]: value }));
   };
 
   return (
@@ -81,49 +41,29 @@ const ClientList = () => {
         onClose={clientModal.close}
         onUpdate={refetch}
       />
+      <DiscountModal
+        isOpen={discountModal.isOpen}
+        onClose={discountModal.close}
+      />
       
-      {/* 2. SECCIÓN DE DESCUENTOS (solo owner) */}
-      {getUserData().role === "owner" && (
-        <Grid item xs={12} className="card" sx={{ marginBottom: '1.5rem' }}>
-          <h1>Crear descuento</h1>
-          <Grid container spacing={2} sx={{ mt: 1 }}>
-            <Grid item xs={12} md={6}>
-              <TextField
-                size="small"
-                fullWidth
-                label="Descuento"
-                type="number"
-                value={discountFormData.discount_percentage}
-                placeholder="Descuento"
-                name="discount_percentage"
-                onChange={handleDiscountInputChange}
-              />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <CustomButton
-                fullWidth
-                onClick={handleSaveDiscount}
-                disabled={!discountFormData.discount_percentage}
-                startIcon={<DiscountIcon />}
-              >
-                Crear descuento
-              </CustomButton>
-            </Grid>
-          </Grid>
-        </Grid>
-      )}
-
-      {/* 3. CONTENIDO PRINCIPAL */}
+      {/* 2. CONTENIDO PRINCIPAL */}
       <Grid item xs={12} className="card">
-        {/* 3.1 Header */}
+        {/* 2.1 Header */}
         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
           <h1>Clientes</h1>
-          <CustomButton onClick={() => clientModal.open()} startIcon={<AddIcon />}>
-            Nuevo Cliente
-          </CustomButton>
+          <Stack direction="row" spacing={1}>
+            {getUserData().role === "owner" && (
+              <CustomButton onClick={() => discountModal.open()} startIcon={<DiscountIcon />}>
+                Crear descuento
+              </CustomButton>
+            )}
+            <CustomButton onClick={() => clientModal.open()} startIcon={<AddIcon />}>
+              Nuevo Cliente
+            </CustomButton>
+          </Stack>
         </Stack>
 
-        {/* 3.2 Filtros */}
+        {/* 2.2 Filtros */}
         <Grid container spacing={2} sx={{ mb: 2 }}>
           <Grid item xs={12} md={4}>
             <TextField
@@ -134,7 +74,7 @@ const ClientList = () => {
               type="date"
               value={params.start_date}
               onChange={handleParams}
-              max={today}
+              inputProps={{ max: today }}
             />
           </Grid>
           <Grid item xs={12} md={4}>
@@ -146,7 +86,7 @@ const ClientList = () => {
               type="date"
               value={params.end_date}
               onChange={handleParams}
-              max={today}
+              inputProps={{ max: today }}
             />
           </Grid>
           <Grid item xs={12} md={4}>
@@ -155,15 +95,15 @@ const ClientList = () => {
               fullWidth
               label="Rango"
               name="range"
-              type="input"
+              type="text"
               value={range}
               disabled
             />
           </Grid>
         </Grid>
 
-        {/* 3.3 Tabla */}
-        <CustomTable
+        {/* 2.3 Tabla */}
+        <DataTable
           searcher={true}
           data={clients}
           columns={[
@@ -176,8 +116,9 @@ const ClientList = () => {
             },
             {
               name: "Total comprado",
+              field: "total_sales_amount",
               sortable: true,
-              selector: (row) => row.total_sales_amount,
+              selector: (row) => `$${Number(row.total_sales_amount).toLocaleString()}`,
             },
             {
               name: "Descuento",
@@ -186,7 +127,7 @@ const ClientList = () => {
             {
               name: "Acciones",
               cell: (row) => (
-                <CustomTooltip text={"Editar usuario"}>
+                <CustomTooltip text="Editar cliente">
                   <CustomButton onClick={() => clientModal.open(row)}>
                     <EditIcon />
                   </CustomButton>

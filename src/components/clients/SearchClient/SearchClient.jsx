@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import CustomTable from "../../ui/Table/Table";
+import DataTable from "../../ui/DataTable/DataTable";
 import { getClients } from "../../../api/clients";
 import CustomButton from "../../ui/Button/Button";
 import { useDispatch, useSelector } from "react-redux";
 import { Chip } from "@mui/material";
 import { addClientToCart } from "../../../redux/cart/cartActions";
-import Swal from "sweetalert2";
+import { showError } from "../../../utils/alerts";
 import { TextField } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
@@ -22,19 +22,6 @@ const SearchClient = () => {
       if (query) {
         const response = await getClients({q: query});
         setClients(response.data.slice(0, 5));
-      } else {
-        setClients([]);
-      }
-    };
-
-    fetchData();
-  }, [query]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      if (query) {
-        const response = await getClients({q: query});
-        setClients(response.data);
       } else {
         setClients([]);
       }
@@ -61,12 +48,7 @@ const SearchClient = () => {
       if (client) {
         handleSelectClient(client);
       } else {
-        Swal.fire({
-          icon: "error",
-          title: "Error al seleccionar cliente",
-          text: "Fuera de rango",
-          timer: 5000,
-        });
+        showError("Error al seleccionar cliente", "Fuera de rango");
       }
     }
   };
@@ -83,8 +65,8 @@ const SearchClient = () => {
 
   return (
     <>
-<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-  <h2 style={{ margin: 0 }}>Seleccionar cliente</h2>
+<div className="flex-between" style={{ marginBottom: '0.5rem' }}>
+  <h2>Seleccionar cliente</h2>
   {Object.keys(client).length === 0 && (
     <Chip label="Aviso: No hay cliente seleccionado" color="success" size="small" />
   )}
@@ -98,7 +80,7 @@ const SearchClient = () => {
         sx={{ mb: query ? 0 : 1 }}
       />
       {query && (
-        <CustomTable
+        <DataTable
           data={clients}
           showNoDataComponent={false}
           columns={[

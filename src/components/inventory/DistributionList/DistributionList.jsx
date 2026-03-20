@@ -1,132 +1,110 @@
 import React, { useEffect, useState } from "react";
-import CustomTable from "../../ui/Table/Table";
+import DataTable from "../../ui/DataTable/DataTable";
 import CustomButton from "../../ui/Button/Button";
 import { getFormattedDateTime } from "../../../utils/utils";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
-import ChecklistIcon from "@mui/icons-material/Checklist";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import CustomTooltip from "../../ui/Tooltip";
+import { showSuccess, showError } from "../../../utils/alerts";
+import { getUserData } from "../../../api/utils";
 import {
   confirmDistribution,
   deleteTranfer,
   getDistributions,
   updateTranfer,
 } from "../../../api/transfers";
-
-import { showSuccess, showError } from "../../../utils/alerts";
-import { getUserData } from "../../../api/utils";
-import Grid from "@mui/material/Grid";
-import { TextField } from "@mui/material";
+import CustomTooltip from "../../ui/Tooltip";
+import { Grid, TextField, Stack } from "@mui/material";
+import ChecklistIcon from "@mui/icons-material/Checklist";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from "@mui/icons-material/Save";
 import SendIcon from "@mui/icons-material/Send";
 
-
 const DistributionList = () => {
+  const user = getUserData();
   const [distributions, setDistributions] = useState([]);
-  const [distributionSelected, setDistributionSelected] = useState({});
-
+  const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [editingRow, setEditingRow] = useState(null);
+  const [editedQuantity, setEditedQuantity] = useState("");
 
   useEffect(() => {
-    const fetchSalesData = async () => {
+    const fetchDistributions = async () => {
       setLoading(true);
-
-      const distributions = await getDistributions();
-
-      setDistributions(distributions.data);
+      const res = await getDistributions();
+      setDistributions(res.data);
       setLoading(false);
     };
-
-    fetchSalesData();
+    fetchDistributions();
   }, []);
-
-  const handleOpenModal = (distribution) => {
-    setDistributionSelected(distribution);
-  };
 
   const handleSubmit = async () => {
     if (loading) return;
     setLoading(true);
-    const response = await confirmDistribution({ id: distributionSelected.id });
+    const response = await confirmDistribution({ id: selected.id });
+    setLoading(false);
 
     if (response.status === 200) {
-      const distributions2 = distributions.filter(
-        (distribution) => distribution.id !== distributionSelected.id
-      );
-
-      setDistributions(distributions2);
-      setDistributionSelected({});
-      setTimeout(() => {
-        setLoading(false);
-      }, 200);
+      setDistributions((prev) => prev.filter((d) => d.id !== selected.id));
+      setSelected(null);
       showSuccess("Distribución realizada");
     } else {
-      setLoading(false);
       showError("Error al distribuir");
     }
   };
 
-  const [editingRow, setEditingRow] = useState(null);
-  const [editedQuantity, setEditedQuantity] = useState("");
-
   const handleEditClick = (row) => {
-    setEditingRow(row.product_code); // o row.id si lo tienes
+    setEditingRow(row.product_code);
     setEditedQuantity(row.quantity);
   };
 
   const handleSaveClick = async (row) => {
-    row.quantity = editedQuantity;
-    const response = await updateTranfer(row);
-    setEditingRow(null);
+    const response = await updateTranfer({ ...row, quantity: editedQuantity });
+    if (response.status === 200) {
+      setSelected((prev) => ({
+        ...prev,
+        transfers: prev.transfers.map((t) =>
+          t.id === row.id ? { ...t, quantity: editedQuantity } : t
+        ),
+      }));
+      setEditingRow(null);
+    } else {
+      showError("Error al actualizar cantidad");
+    }
   };
 
   const handleDeleteTransfer = async (row) => {
-    const updatedList = distributionSelected.transfers.filter(
-      (transfer) => transfer.id !== row.id
-    );
     const response = await deleteTranfer(row);
-
     if (response.status === 204) {
-      setDistributionSelected({
-        ...distributionSelected, // conserva las demás propiedades
-        transfers: updatedList, // actualiza solo la lista de transfers
-      });
+      setSelected((prev) => ({
+        ...prev,
+        transfers: prev.transfers.filter((t) => t.id !== row.id),
+      }));
+    } else {
+      showError("Error al eliminar producto");
     }
   };
 
   return (
     <>
-      {/* 1. SPINNERS */}
       <CustomSpinner isLoading={loading} />
-      
-      {/* 2. CONTENIDO PRINCIPAL - Lista de distribuciones */}
-      <Grid item xs={12} className="card" sx={{ marginBottom: '1.5rem' }}>
-        <h1>Distribuciones</h1>
-        
-        <CustomTable
+
+      <Grid item xs={12} className="card" sx={{ mb: '1.5rem' }}>
+        <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+          <h1>Distribuciones</h1>
+        </Stack>
+
+        <DataTable
           data={distributions}
           pagination={true}
           columns={[
-            {
-              name: "#",
-              selector: (row) => row.id,
-            },
-            {
-              name: "Creacion",
-              selector: (row) => getFormattedDateTime(row.created_at),
-              wrapText: true,
-            },
-            {
-              name: "Descripción",
-              grow: 2,
-              selector: (row) => row.description,
-            },
+            { name: "#", selector: (row) => row.id },
+            { name: "Creación", selector: (row) => getFormattedDateTime(row.created_at) },
+            { name: "Descripción", grow: 2, selector: (row) => row.description },
             {
               name: "Acciones",
               cell: (row) => (
-                <CustomTooltip text={"Ver productos"}>
-                  <CustomButton onClick={() => handleOpenModal(row)}>
+                <CustomTooltip text="Ver productos">
+                  <CustomButton onClick={() => setSelected(row)}>
                     <ChecklistIcon />
                   </CustomButton>
                 </CustomTooltip>
@@ -136,45 +114,30 @@ const DistributionList = () => {
         />
       </Grid>
 
-      {/* 3. DETALLE DE DISTRIBUCIÓN SELECCIONADA */}
-      {Object.keys(distributionSelected).length !== 0 && (
+      {selected && (
         <Grid item xs={12} className="card">
-          <h1>Distribución #{distributionSelected.id}</h1>
-          
-          <CustomButton
-            fullWidth
-            onClick={handleSubmit}
-            startIcon={<SendIcon />}
-            sx={{ mb: 2 }}
-          >
+          <h1>Distribución #{selected.id}</h1>
+
+          <CustomButton fullWidth onClick={handleSubmit} startIcon={<SendIcon />} sx={{ mb: 2 }}>
             Confirmar distribución
           </CustomButton>
-          
-          <CustomTable
-            data={distributionSelected.transfers || []}
+
+          <DataTable
+            data={selected.transfers || []}
             pagination={true}
             columns={[
-              {
-                name: "Código",
-                selector: (row) => row.product_code,
-              },
-              {
-                name: "Producto",
-                selector: (row) => row.product_description,
-              },
+              { name: "Código", selector: (row) => row.product_code },
+              { name: "Producto", selector: (row) => row.product_description },
               {
                 name: "Cantidad",
                 cell: (row) =>
                   editingRow === row.product_code ? (
                     <TextField
                       size="small"
-                      fullWidth
                       type="number"
                       value={editedQuantity}
                       onChange={(e) => setEditedQuantity(e.target.value)}
-                      style={{ width: "80px", textAlign: "center" }}
-                      min={1}
-                      max={row.editable_product_max_stock}
+                      sx={{ width: 80 }}
                     />
                   ) : (
                     row.quantity
@@ -183,12 +146,9 @@ const DistributionList = () => {
               {
                 name: "Acciones",
                 cell: (row) =>
-                  getUserData().role === "owner" ? (
+                  user.role === "owner" ? (
                     editingRow === row.product_code ? (
-                      <CustomButton
-                        onClick={() => handleSaveClick(row)}
-                        startIcon={<SaveIcon />}
-                      >
+                      <CustomButton onClick={() => handleSaveClick(row)} startIcon={<SaveIcon />}>
                         Guardar
                       </CustomButton>
                     ) : (

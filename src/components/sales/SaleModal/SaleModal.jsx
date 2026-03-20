@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import CustomModal from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
-import CustomTable from "../../ui/Table/Table";
+import DataTable from "../../ui/DataTable/DataTable";
 import { useCancelSale } from "../../../hooks/useSaleMutations";
-import { Grid, TextField, Checkbox, FormLabel } from "@mui/material";
+import { Grid, TextField, Checkbox, FormControlLabel } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
 const INITIAL_FORM_DATA = {
@@ -108,15 +108,15 @@ const SaleModal = ({ isOpen, sale, onClose, onUpdate }) => {
             />
           </Grid>
           <Grid item xs={12} md={4}>
-            <FormLabel></FormLabel>
-            <div className="d-flex flex-column justify-content-end">
-              <Checkbox size="small"
-                label="Cancelación total"
-                className="m-3"
-                checked={totalCancel}
-                onChange={handleCheck}
-              />
-            </div>
+            <FormControlLabel
+              control={
+                <Checkbox size="small"
+                  checked={totalCancel}
+                  onChange={handleCheck}
+                />
+              }
+              label="Cancelación total"
+            />
           </Grid>
           <Grid item xs={12} md={5}>
             <TextField size="small" fullWidth label="Razon cancelacion" type="text"
@@ -128,7 +128,7 @@ const SaleModal = ({ isOpen, sale, onClose, onUpdate }) => {
           {/* Tabla de productos */}
           <Grid item xs={12} md={12}>
             <h5>Productos comprados</h5>
-            <CustomTable
+            <DataTable
               data={formData.products_sale}
               setSelectedRows={setSelectedRows}
               columns={[

@@ -1,7 +1,7 @@
-import { logger } from "../../../utils/logger";
+import { showSuccess, showError, showWarning } from "../../../utils/alerts";
 import React, { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import CustomTable from "../../ui/Table/Table";
+import DataTable from "../../ui/DataTable/DataTable";
 import CustomButton from "../../ui/Button/Button";
 import CustomTooltip from "../../ui/Tooltip";
 import { getStoreProducts } from "../../../api/products";
@@ -10,18 +10,20 @@ import { Chip } from "@mui/material";
 import StockModal from "../../inventory/StockModal/StockModal";
 import { useModal } from "../../../hooks/useModal";
 import { useFetchWithRetry } from "../../../hooks/useFetch";
-import Swal from "sweetalert2";
 import { getPrinterUrl, getUserData } from "../../../api/utils";
 import PrintIcon from "@mui/icons-material/Print";
 import { handlePrintTicket } from "../../../utils/utils";
-import { Grid, TextField, FormLabel, RadioGroup, FormControlLabel, Radio, Checkbox } from "@mui/material";
+import { Grid, TextField, FormLabel, RadioGroup, FormControlLabel, Radio, Checkbox, InputAdornment, IconButton } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import PushPinIcon from "@mui/icons-material/PushPin";
+import PushPinOutlinedIcon from "@mui/icons-material/PushPinOutlined";
 import AddIcon from "@mui/icons-material/Add";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 
-const SearchProduct = () => {
-  const inputRef = useRef(null);
+const SearchProduct = ({ searchInputRef }) => {
+  const localRef = useRef(null);
+  const inputRef = searchInputRef || localRef;
 
   const dispatch = useDispatch();
   const stockModal = useModal();
@@ -91,25 +93,15 @@ const SearchProduct = () => {
         setSearching(false);
 
         if (!fetchedData) {
-          logger.log("No se pudo completar la búsqueda después de reintentos.");
+          
 
-          Swal.fire({
-            icon: "error",
-            title: "Búsqueda tardada",
-            text: "La búsqueda tardó demasiado. Reintentar o buscar de manera manual",
-            timer: 5000,
-          });
+          showError("Búsqueda tardada", "La búsqueda tardó demasiado. Reintentar o buscar de manera manual");
 
           return;
         }
 
         if (fetchedData.length === 0) {
-          Swal.fire({
-            icon: "error",
-            title: "Producto no encontrado",
-            text: "No se pudo encontrar este producto mediante su código",
-            timer: 5000,
-          });
+          showError("Producto no encontrado", "No se pudo encontrar este producto mediante su código");
         } else if (fetchedData.length === 1) {
           handleSingleProductFetch(fetchedData[0]);
         } else {
@@ -118,7 +110,7 @@ const SearchProduct = () => {
       } catch (err) {
         searchingRef.current = false;
         if (err.name === "AbortError" || err.name === "CanceledError") return;
-        logger.error(err);
+        
         setSearching(false);
       }
     },
@@ -131,6 +123,9 @@ const SearchProduct = () => {
     const fetchedData = response.data;
     setData(fetchedData);
     setSearching(false);
+    if (fetchedData.length === 0) {
+      showError("Sin resultados", "No se encontraron productos con esa búsqueda");
+    }
   };
   const handleSingleProductFetch = (storeProduct) => {
     if (movementType === "venta" && storeProduct.available_stock === 0) {
@@ -139,18 +134,9 @@ const SearchProduct = () => {
       movementType === "traspaso" &&
       storeProduct.reserved_stock === 0
     ) {
-      Swal.fire({
-        icon: "error",
-        title: "Este producto no esta relacionado a algun traspaso",
-        timer: 5000,
-      });
+      showError("Este producto no está relacionado a algún traspaso");
     } else if (movementType === "checar") {
-      Swal.fire({
-        icon: "success",
-        title: storeProduct.product.name,
-        text: "Precio unitario $" + storeProduct.product.prices.unit_price,
-        timer: 5000,
-      });
+      showSuccess(storeProduct.product.name, "Precio unitario $" + storeProduct.product.prices.unit_price);
     } else {
       handleAddToCartIfAvailable(storeProduct);
     }
@@ -180,11 +166,7 @@ const SearchProduct = () => {
             setQuery("");
           }
         } else {
-          Swal.fire({
-            icon: "warning",
-            title: "Stock insuficiente",
-            text: `Este producto ya está reservado en otros carritos. Stock disponible: ${availableStock}`,
-          });
+          showWarning("Stock insuficiente", `Este producto ya está reservado en otros carritos. Stock disponible: ${availableStock}`);
         }
       }
     } else {
@@ -208,24 +190,17 @@ const SearchProduct = () => {
       ) {
         handleOpenModal(cart[existingProductIndex]);
       } else {
-        Swal.fire({
-          icon: "warning",
-          title: "Stock insuficiente",
-          text: `Este producto ya está reservado en otros carritos. Stock disponible: ${availableStock}`,
-        });
+        showWarning("Stock insuficiente", `Este producto ya está reservado en otros carritos. Stock disponible: ${availableStock}`);
       }
     }
   };
 
   const displayStockLimitAlert = () => {
-    Swal.fire({
-      icon: "error",
-      title:
-        movementType === "traspaso"
-          ? "Llegaste al límite de producto reservado para traspasar"
-          : "No hay suficiente stock para vender",
-      timer: 5000,
-    });
+    showError(
+      movementType === "traspaso"
+        ? "Llegaste al límite de producto reservado para traspasar"
+        : "No hay suficiente stock para vender"
+    );
   };
 
   useEffect(() => {
@@ -310,8 +285,8 @@ const SearchProduct = () => {
     <>
       <StockModal isOpen={stockModal.isOpen} product={stockModal.data} onClose={stockModal.close} />
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
-        <h1 style={{ margin: 0, fontSize: '1.5rem' }}>Consulta de productos</h1>
+      <div className="flex-between" style={{ marginBottom: '0.25rem' }}>
+        <h1>Consulta de productos</h1>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <Chip 
             label="Enfoca el campo de búsqueda para agregar productos"
@@ -400,10 +375,24 @@ const SearchProduct = () => {
         </Grid>
       </Grid>
 
-      <Grid container spacing={2} sx={{ mb: 0.5 }}>
-        <Grid item xs={queryType === "code" ? 12 : 8}>
-          <TextField size="small" fullWidth className=""
-            ref={inputRef}
+      <Grid container spacing={1} sx={{ mb: 0.5 }}>
+        <Grid item xs={12} sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+          {queryType === "q" && (
+            <>
+              <IconButton
+                size="small"
+                onClick={() => setKeepListOpen(!keepListOpen)}
+                sx={{ width: 36, height: 36, bgcolor: keepListOpen ? 'primary.main' : 'transparent', color: keepListOpen ? 'white' : 'text.secondary', borderRadius: 1, '&:hover': { bgcolor: keepListOpen ? 'primary.dark' : 'action.hover' } }}
+              >
+                {keepListOpen ? <PushPinIcon fontSize="small" /> : <PushPinOutlinedIcon fontSize="small" />}
+              </IconButton>
+              <IconButton size="small" onClick={handleSearchProduct} disabled={searching} sx={{ width: 36, height: 36, bgcolor: 'primary.main', color: 'white', borderRadius: 1, '&:hover': { bgcolor: 'primary.dark' } }}>
+                <SearchIcon />
+              </IconButton>
+            </>
+          )}
+          <TextField size="small" fullWidth
+            inputRef={inputRef}
             type="text"
             value={queryType === "code" ? barcode : query}
             placeholder="Buscar producto"
@@ -418,37 +407,11 @@ const SearchProduct = () => {
             autoComplete="off"
           />
         </Grid>
-        {queryType === "q" && (
-          <>
-            <Grid item xs={2}>
-              <CustomButton 
-                fullWidth 
-                onClick={handleSearchProduct} 
-                startIcon={<SearchIcon />}
-                disabled={searching}
-              >
-                {searching ? "Buscando..." : "Buscar"}
-              </CustomButton>
-            </Grid>
-            <Grid item xs={2} sx={{ display: 'flex', alignItems: 'center' }}>
-              <FormControlLabel
-                control={
-                  <Checkbox 
-                    size="small"
-                    checked={keepListOpen}
-                    onChange={(e) => setKeepListOpen(e.target.checked)}
-                  />
-                }
-                label="Mantener lista"
-              />
-            </Grid>
-          </>
-        )}
         
         {data.length > 0 && (
           <Grid item xs={12}>
             <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
-              <CustomTable
+              <DataTable
               showNoDataComponent={false}
               data={data}
               pagination={true}

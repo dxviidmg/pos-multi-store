@@ -1,9 +1,27 @@
 import React, { useEffect, useState } from "react";
-import { LinearProgress, Box, Typography } from "@mui/material";
+import {
+  LinearProgress,
+  Box,
+  Typography,
+  Card,
+  CardContent,
+  Chip,
+  Divider,
+} from "@mui/material";
 import { getTaskResult } from "../../../api/products";
 import CustomButton from "../../ui/Button/Button";
 import { exportToExcel } from "../../../utils/utils";
 import DownloadIcon from "@mui/icons-material/Download";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import ErrorIcon from "@mui/icons-material/Error";
+import HourglassTopIcon from "@mui/icons-material/HourglassTop";
+
+const statusConfig = {
+  idle: { color: "default", icon: <HourglassTopIcon />, label: "En espera" },
+  pending: { color: "info", icon: <HourglassTopIcon />, label: "Procesando" },
+  success: { color: "success", icon: <CheckCircleIcon />, label: "Sin problemas" },
+  danger: { color: "error", icon: <ErrorIcon />, label: "Requiere atención" },
+};
 
 const AuditDashboardData = ({ title, taskId, pollInterval = 7500 }) => {
   const [data, setData] = useState([]);
@@ -22,23 +40,21 @@ const AuditDashboardData = ({ title, taskId, pollInterval = 7500 }) => {
           setData(result || []);
           setInfo((prev) => ({ ...prev, total: prev.total, progress: 100 }));
           clearInterval(intervalId);
-          return true; // tarea completada
+          return true;
         } else {
           setInfo({ total: taskInfo.total, progress: taskInfo.percent });
-          return false; // tarea no completada
+          return false;
         }
       } catch (error) {
         clearInterval(intervalId);
-        return true; // parar en caso de error
+        return true;
       }
     };
 
     let intervalId;
 
-    // Llamada inmediata
     fetchTask().then((finished) => {
       if (!finished) {
-        // luego iniciar polling
         intervalId = setInterval(fetchTask, pollInterval);
       }
     });
@@ -47,46 +63,61 @@ const AuditDashboardData = ({ title, taskId, pollInterval = 7500 }) => {
   }, [taskId, pollInterval]);
 
   const isComplete = info.progress === 100;
+  const status = !taskId ? "idle" : !isComplete ? "pending" : data.length === 0 ? "success" : "danger";
+  const { color, icon, label } = statusConfig[status];
 
   const handleDownload = () => {
     exportToExcel(data, title, false);
   };
 
-  const getBackgroundColor = () => {
-    if (info.progress !== 100) return 'rgba(25, 118, 210, 0.75)'; // primary
-    if (data.length === 0) return 'rgba(46, 125, 50, 0.75)'; // success
-    return 'rgba(211, 47, 47, 0.75)'; // danger
-  };
-
   return (
-    <div
-      className="text-center card"
-      style={{ backgroundColor: getBackgroundColor() }}
+    <Card
+      variant="outlined"
+      sx={{
+        height: "100%",
+        bgcolor: "background.default",
+        boxShadow: "none",
+        "&:hover": { boxShadow: "none", transform: "none" },
+      }}
     >
-      <h2 className="pt-3 pb-0 m-0">{title}</h2>
-      <span className="fs-1">{data.length}</span>
-      <span> de {info.total}</span>
-
-      <Box sx={{ width: '100%', my: 2 }}>
-        <LinearProgress 
-          variant="determinate" 
-          value={info.progress}
-          color={isComplete ? "success" : "primary"}
-        />
-        <Typography variant="body2" color="text.secondary" align="center" sx={{ mt: 0.5 }}>
-          {info.progress}%
+      <CardContent sx={{ textAlign: "center", pb: 1 }}>
+        <Typography variant="subtitle1" fontWeight={600} gutterBottom>
+          {title}
         </Typography>
-      </Box>
 
-      <CustomButton
-        fullWidth
-        disabled={!data || data.length === 0}
-        onClick={handleDownload}
-        startIcon={<DownloadIcon />}
-      >
-        Descargar
-      </CustomButton>
-    </div>
+        <Divider sx={{ mb: 2 }} />
+
+        <Typography variant="h3" fontWeight={700} color={`${color}.main`}>
+          {data.length}
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+          de {info.total} registros
+        </Typography>
+
+        <Chip icon={icon} label={label} color={color} size="small" variant="outlined" sx={{ mb: 2 }} />
+
+        <Box sx={{ width: "100%", mb: 2 }}>
+          <LinearProgress
+            variant="determinate"
+            value={info.progress}
+            color={isComplete ? "success" : "primary"}
+            sx={{ height: 8, borderRadius: 4 }}
+          />
+          <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: "block" }}>
+            {info.progress}%
+          </Typography>
+        </Box>
+
+        <CustomButton
+          fullWidth
+          disabled={!data || data.length === 0}
+          onClick={handleDownload}
+          startIcon={<DownloadIcon />}
+        >
+          Descargar
+        </CustomButton>
+      </CardContent>
+    </Card>
   );
 };
 

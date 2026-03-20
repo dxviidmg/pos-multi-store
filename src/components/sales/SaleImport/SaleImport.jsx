@@ -1,15 +1,17 @@
 import React, { useState, useRef } from "react";
-import CustomTable from "../../ui/Table/Table";
+import SimpleTable from "../../ui/SimpleTable/SimpleTable";
 import CustomButton from "../../ui/Button/Button";
 import { importSales, importSalesValidation } from "../../../api/sales";
-import Swal from "sweetalert2";
+import { showSuccess, showError } from "../../../utils/alerts";
+import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import CancelIcon from "@mui/icons-material/Cancel";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import { Grid, styled } from "@mui/material";
+import { Grid, Typography, styled } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import PublishIcon from "@mui/icons-material/Publish";
 import DownloadIcon from "@mui/icons-material/Download";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -35,195 +37,127 @@ const URL_TEMPLATE =
 
 const SaleImport = () => {
   const fileInputRef = useRef(null);
-  const [formData, setFormData] = useState({
-    file: "",
-  });
-
+  const [formData, setFormData] = useState({ file: "" });
   const [showExample, setShowExample] = useState(false);
-
   const [sales, setSales] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const handleDataChange = (e) => {
-    var { name, files } = e.target;
-
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: files[0],
-    }));
+    setFormData((prev) => ({ ...prev, file: e.target.files[0] }));
   };
 
   const handleValidation = async () => {
+    setLoading(true);
     const response = await importSalesValidation(formData);
+    setLoading(false);
 
     if (response.status === 200) {
       setSales(response.data);
-
-      Swal.fire({
-        icon: "success",
-        title: "Archivo cargado",
-        timer: 5000,
-      });
+      showSuccess("Archivo cargado");
     } else if (response.status === 400) {
-      Swal.fire({
-        icon: "error",
-        title: "Error al cargar archivo",
-        text: response.response.data.error,
-        timer: 5000,
-      });
+      showError("Error al cargar archivo", response.response.data.error);
     } else {
-      Swal.fire({
-        icon: "error",
-        title: "Error al cargar archivo",
-        text: "Llame a soporte",
-        timer: 5000,
-      });
+      showError("Error al cargar archivo", "Llame a soporte");
     }
   };
 
   const handleImport = async () => {
+    setLoading(true);
     const response = await importSales(formData);
+    setLoading(false);
 
     if (response.status === 200) {
       setSales([]);
-      setFormData({ ...formData, file: null });
-      if (fileInputRef.current) {
-        fileInputRef.current.value = ""; // Limpia el input de archivo
-      }
-      Swal.fire({
-        icon: "success",
-        title: "Ventas importadas",
-        timer: 5000,
-      });
+      setFormData({ file: null });
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      showSuccess("Ventas importadas");
     } else if (response.status === 400) {
-      Swal.fire({
-        icon: "error",
-        title: "Error al cargar archivo",
-        text: "Archivo incorrecto",
-        timer: 5000,
-      });
+      showError("Error al cargar archivo", "Archivo incorrecto");
     } else {
-      Swal.fire({
-        icon: "error",
-        title: "Error al cargar archivo",
-        text: "Llame a soporte",
-        timer: 5000,
-      });
+      showError("Error al cargar archivo", "Llame a soporte");
     }
   };
 
   return (
     <>
-      <Grid>
-      <Grid item xs={12} className="card" sx={{ marginBottom: '1.5rem' }}>
+      <CustomSpinner isLoading={loading} />
+
+      <Grid item xs={12} className="card" sx={{ mb: '1.5rem' }}>
         <h1>Importar ventas</h1>
+        {formData.file && (
+          <Typography variant="body2" sx={{ mb: 1 }}>
+            Archivo: {formData.file.name}
+          </Typography>
+        )}
         <Grid container spacing={2}>
           <Grid item xs={12} md={3}>
-            <CustomButton
-              component="label"
-              fullWidth
-              startIcon={<CloudUploadIcon />}
-            >
+            <CustomButton component="label" fullWidth startIcon={<CloudUploadIcon />}>
               Subir archivo
-              <VisuallyHiddenInput
-                type="file"
-                ref={fileInputRef}
-                onChange={handleDataChange}
-                name="file"
-              />
+              <VisuallyHiddenInput type="file" ref={fileInputRef} onChange={handleDataChange} name="file" />
             </CustomButton>
           </Grid>
-
           <Grid item xs={12} md={3}>
-            <CustomButton
-              onClick={handleValidation}
-              disabled={formData.file === ""}
-              fullWidth
-              startIcon={<CheckCircleIcon />}
-            >
+            <CustomButton onClick={handleValidation} disabled={!formData.file} fullWidth startIcon={<CheckCircleIcon />}>
               Validar
             </CustomButton>
           </Grid>
-
           <Grid item xs={12} md={3}>
             <CustomButton
               onClick={handleImport}
-              disabled={
-                sales.length === 0 ||
-                sales.some((item) => item.status !== "Exitoso")
-              }
+              disabled={sales.length === 0 || sales.some((item) => item.status !== "Exitoso")}
               fullWidth
               startIcon={<PublishIcon />}
             >
               Importar
             </CustomButton>
           </Grid>
-
           <Grid item xs={12} md={3}>
             <CustomButton href={URL_TEMPLATE} fullWidth startIcon={<DownloadIcon />}>
               Descargar plantilla
             </CustomButton>
           </Grid>
-
           <Grid item xs={12} md={3}>
             <CustomButton
               onClick={() => setShowExample(!showExample)}
               fullWidth
-              startIcon={<VisibilityIcon />}
+              startIcon={showExample ? <VisibilityOffIcon /> : <VisibilityIcon />}
             >
-              Ver Ejemplo
+              {showExample ? "Ocultar ejemplo" : "Ver ejemplo"}
             </CustomButton>
           </Grid>
         </Grid>
       </Grid>
 
-      <Grid item xs={12} className="card" hidden={showExample} sx={{ marginBottom: '1.5rem' }}>
-        <h1>Ejemplo de plantilla</h1>
-
-        <CustomTable
-          data={DATA_SAMPLE}
-          columns={[
-            {
-              name: "Código",
-              selector: (row) => row.code,
-            },
-            {
-              name: "Cantidad",
-              selector: (row) => row.quantity,
-            },
-            {
-              name: "Descripción",
-              selector: (row) => row.description,
-            },
-          ]}
-        />
-
-        <h1>Notas</h1>
-        <p>
-          1-.Las descripciones pueden ser NO Exactas la información de la
-          base de datos, pero si una referencia en caso de que haya escrito
-          mal el codigó. <br /> 2-. Podemos añadir el mismo producto en
-          diferentes renglones haciendo referencia a que el mismo producto
-          fue comprado varias veces.
-        </p>
-      </Grid>
+      {showExample && (
+        <Grid item xs={12} className="card" sx={{ mb: '1.5rem' }}>
+          <h1>Ejemplo de plantilla</h1>
+          <SimpleTable
+            data={DATA_SAMPLE}
+            columns={[
+              { name: "Código", selector: (row) => row.code },
+              { name: "Cantidad", selector: (row) => row.quantity },
+              { name: "Descripción", selector: (row) => row.description },
+            ]}
+          />
+          <h1>Notas</h1>
+          <p>
+            1-. Las descripciones pueden ser NO exactas a la información de la
+            base de datos, pero sí una referencia en caso de que haya escrito
+            mal el código. <br /> 2-. Podemos añadir el mismo producto en
+            diferentes renglones haciendo referencia a que el mismo producto
+            fue comprado varias veces.
+          </p>
+        </Grid>
+      )}
 
       <Grid item xs={12} className="card">
         <h1>Archivo actual</h1>
-        <CustomTable
+        <SimpleTable
           data={sales}
           columns={[
-            {
-              name: "Código",
-              selector: (row) => row.code,
-            },
-            {
-              name: "Cantidad",
-              selector: (row) => row.quantity,
-            },
-            {
-              name: "Descripción",
-              selector: (row) => row.product_description,
-            },
+            { name: "Código", selector: (row) => row.code },
+            { name: "Cantidad", selector: (row) => row.quantity },
+            { name: "Descripción", selector: (row) => row.product_description },
             {
               name: "Status",
               selector: (row) =>
@@ -236,10 +170,9 @@ const SaleImport = () => {
                 ),
             },
           ]}
-        ></CustomTable>
+        />
       </Grid>
-    </Grid>
-  </>
+    </>
   );
 };
 

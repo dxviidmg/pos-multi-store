@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import CustomTable from "../../ui/Table/Table";
+import DataTable from "../../ui/DataTable/DataTable";
 import { Alert, Typography, Chip } from "@mui/material";
 import CustomButton from "../../ui/Button/Button";
 import { useNavigate } from "react-router-dom";
@@ -78,9 +78,9 @@ const StoreList = () => {
   const loading = loadingStores || loadingTenant;
   const range = getDateDifference(params.start_date, params.end_date);
 
-  const handleParams = async (e) => {
-    let { name, value } = e.target;
-    setParams((prevData) => ({ ...prevData, [name]: value }));
+  const handleParams = (e) => {
+    const { name, value } = e.target;
+    setParams((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleStoreType = (e) => {
@@ -110,13 +110,12 @@ const StoreList = () => {
     
     try {
       const response = await getInvestment(storeId);
-      console.log('Investment response:', response.data);
       setStoreInvestments(prev => ({
         ...prev,
         [storeId]: response.data // response.data es directamente el número
       }));
     } catch (error) {
-      console.error('Error loading investment:', error);
+      // Error loading investment
     }
   };
 
@@ -222,9 +221,9 @@ const StoreList = () => {
           
           return (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              {isAboveAverage && <span style={{ color: '#10b981', fontSize: '20px' }}>●</span>}
-              {isBelowAverage && <span style={{ color: '#ef4444', fontSize: '20px' }}>●</span>}
-              {!isAboveAverage && !isBelowAverage && <span style={{ color: '#f59e0b', fontSize: '20px' }}>●</span>}
+              {isAboveAverage && <span className="status-dot status-dot--success">●</span>}
+              {isBelowAverage && <span className="status-dot status-dot--danger">●</span>}
+              {!isAboveAverage && !isBelowAverage && <span className="status-dot status-dot--warning">●</span>}
               <span style={{ fontWeight: id === user?.store_id ? 'bold' : 'normal' }}>
                 {name}
               </span>
@@ -327,7 +326,7 @@ const StoreList = () => {
           storeInvestments[row.id] !== undefined ? (
             <span>{getCashValueTotal(storeInvestments[row.id])}</span>
           ) : (
-            <span style={{ color: '#9ca3af' }}>Pendiente</span>
+            <span className="text-muted">Pendiente</span>
           )
         ),
       },
@@ -469,7 +468,7 @@ const StoreList = () => {
           storeInvestments[row.id] !== undefined ? (
             <span>{getCashValueTotal(storeInvestments[row.id])}</span>
           ) : (
-            <span style={{ color: '#9ca3af' }}>Pendiente</span>
+            <span className="text-muted">Pendiente</span>
           )
         ),
       },
@@ -666,8 +665,8 @@ const StoreList = () => {
       <CustomSpinner isLoading={loading} />
       <Grid container>
         <Grid item xs={12} className="card">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-            <h1 style={{ margin: 0 }}>{params.store_type === "T" ? "Tiendas" : "Almacenes"}</h1>
+          <div className="flex-between" style={{ marginBottom: '1rem' }}>
+            <h1>{params.store_type === "T" ? "Tiendas" : "Almacenes"}</h1>
             {tenantInfo.notices && tenantInfo.notices.length > 0 && (
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 {tenantInfo.notices.map((notice, index) => (
@@ -740,11 +739,11 @@ const StoreList = () => {
               <Grid item xs={12} md={4} style={{ textAlign: "center" }}>
                 {params.store_type === "T" && (
                   <Box sx={{ mt: 1, fontSize: '0.75rem', color: '#666' }}>
-                    <span style={{ color: '#10b981' }}>● Arriba del promedio</span>
+                    <span className="text-success">● Arriba del promedio</span>
                     {' | '}
-                    <span style={{ color: '#f59e0b' }}>● Promedio</span>
+                    <span className="status-dot--warning">● Promedio</span>
                     {' | '}
-                    <span style={{ color: '#ef4444' }}>● Debajo del promedio</span>
+                    <span className="text-danger">● Debajo del promedio</span>
                   </Box>
                 )}
               </Grid>
@@ -942,7 +941,7 @@ const StoreList = () => {
           )}
 
           <Box sx={{ mb: 2 }}>
-            <CustomTable
+            <DataTable
               progressPending={loading}
               data={memoStores}
               columns={
@@ -965,7 +964,7 @@ const StoreList = () => {
               <Box sx={{ mb: 2 }}>
                 <h2>Totales</h2>
               </Box>
-              <CustomTable
+              <DataTable
                 progressPending={loading}
                 data={[
                   {
