@@ -13,7 +13,7 @@ import { useFetchWithRetry } from "../../../hooks/useFetch";
 import { getPrinterUrl, getUserData } from "../../../api/utils";
 import PrintIcon from "@mui/icons-material/Print";
 import { handlePrintTicket } from "../../../utils/utils";
-import { Grid, TextField, FormLabel, RadioGroup, FormControlLabel, Radio, Checkbox, InputAdornment, IconButton } from "@mui/material";
+import { Grid, TextField, FormLabel, RadioGroup, FormControlLabel, Radio, Checkbox, InputAdornment, IconButton, CircularProgress, LinearProgress, Alert } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import PushPinIcon from "@mui/icons-material/PushPin";
 import PushPinOutlinedIcon from "@mui/icons-material/PushPinOutlined";
@@ -285,21 +285,14 @@ const SearchProduct = ({ searchInputRef }) => {
     <>
       <StockModal isOpen={stockModal.isOpen} product={stockModal.data} onClose={stockModal.close} />
 
-      <div className="flex-between" style={{ marginBottom: '0.25rem' }}>
-        <h1>Consulta de productos</h1>
+      <div className="flex-between" style={{ marginBottom: '0.25rem', alignItems: 'center' }}>
+        <h1 style={{ margin: 0 }}>Consulta de productos</h1>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <Chip 
-            label="Enfoca el campo de búsqueda para agregar productos"
-            color="success" 
-            size="small"
-            sx={{ display: isInputFocused ? 'none' : 'inline-flex' }}
-          />
-          <Chip 
-            label="Buscando..."
-            color="success" 
-            size="small"
-            sx={{ display: !searching ? 'none' : 'inline-flex' }}
-          />
+          {!isInputFocused && (
+            <Alert severity="warning" variant="filled" sx={{ py: 0 }}>
+              Enfoca el campo de búsqueda para agregar productos
+            </Alert>
+          )}
           <Chip
             label={`${data.length} resultados ${data.length === 200 ? "(puede haber mas coincidencias)" : ""}`}
             color="success"
@@ -387,7 +380,7 @@ const SearchProduct = ({ searchInputRef }) => {
                 {keepListOpen ? <PushPinIcon fontSize="small" /> : <PushPinOutlinedIcon fontSize="small" />}
               </IconButton>
               <IconButton size="small" onClick={handleSearchProduct} disabled={searching} sx={{ width: 36, height: 36, bgcolor: 'primary.main', color: 'white', borderRadius: 1, '&:hover': { bgcolor: 'primary.dark' } }}>
-                <SearchIcon />
+                {searching ? <CircularProgress size={20} sx={{ color: 'white' }} /> : <SearchIcon />}
               </IconButton>
             </>
           )}
@@ -407,6 +400,11 @@ const SearchProduct = ({ searchInputRef }) => {
             autoComplete="off"
           />
         </Grid>
+        {searching && (
+          <Grid item xs={12}>
+            <LinearProgress />
+          </Grid>
+        )}
         
         {data.length > 0 && (
           <Grid item xs={12}>

@@ -132,6 +132,8 @@ export default function MainLayout({ toggleTheme, themeMode }) {
   const location = useLocation();
   const user = getUserData();
 
+  const accent = '#a78bfa';
+
   const [open, setOpen] = React.useState(false);
   const [openMenus, setOpenMenus] = React.useState({});
 
@@ -258,8 +260,8 @@ export default function MainLayout({ toggleTheme, themeMode }) {
   const menuItems = linksByType[type];
 
   const activeSx = {
-    background: "rgba(233,69,96,0.15)",
-    "&:hover": { background: "rgba(233,69,96,0.2)" },
+    background: `${accent}26`,
+    "&:hover": { background: `${accent}33` },
   };
 
   return (
@@ -279,11 +281,11 @@ export default function MainLayout({ toggleTheme, themeMode }) {
               onClick={() => navigate("/tenant-profile")}
               sx={{
                 width: 34, height: 34,
-                bgcolor: "rgba(233,69,96,0.85)",
+                bgcolor: `${accent}d9`,
                 color: "#fff",
                 fontSize: "0.85rem", fontWeight: 700, mr: 1, cursor: "pointer",
                 transition: "all 0.2s",
-                "&:hover": { transform: "scale(1.1)", bgcolor: "#e94560" },
+                "&:hover": { transform: "scale(1.1)", bgcolor: accent },
               }}
             >
               {(user.store_name || user.tenant_name || "U").charAt(0).toUpperCase()}
@@ -364,7 +366,7 @@ export default function MainLayout({ toggleTheme, themeMode }) {
                             <ListItemText primary={sub.label}
                               primaryTypographyProps={{
                                 fontSize: "0.75rem",
-                                color: isActive(sub.href) ? "#e94560" : "rgba(255,255,255,0.75)",
+                                color: isActive(sub.href) ? accent : "rgba(255,255,255,0.75)",
                                 fontWeight: isActive(sub.href) ? 600 : 400,
                               }}
                             />
@@ -388,7 +390,7 @@ export default function MainLayout({ toggleTheme, themeMode }) {
                   }}
                 >
                   <ListItemIcon sx={{
-                    color: isActive(item.href) ? "#e94560" : "rgba(255,255,255,0.7)",
+                    color: isActive(item.href) ? accent : "rgba(255,255,255,0.7)",
                     minWidth: open ? 38 : 0, justifyContent: "center",
                   }}>
                     {iconMap[item.label] || <DashboardIcon />}
@@ -396,7 +398,7 @@ export default function MainLayout({ toggleTheme, themeMode }) {
                   <ListItemText primary={item.label}
                     primaryTypographyProps={{
                       fontWeight: 600, fontSize: "0.8rem",
-                      color: isActive(item.href) ? "#e94560" : "inherit",
+                      color: isActive(item.href) ? accent : "inherit",
                     }}
                     sx={{ opacity: open ? 1 : 0 }}
                   />
