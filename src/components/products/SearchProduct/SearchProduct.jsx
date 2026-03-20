@@ -372,7 +372,7 @@ const SearchProduct = () => {
       <Grid container spacing={2} sx={{ mb: 0.5 }}>
         <Grid item xs={queryType === "code" ? 12 : 8}>
           <TextField size="small" fullWidth className=""
-            ref={inputRef}
+            inputRef={inputRef}
             type="text"
             value={queryType === "code" ? barcode : query}
             placeholder="Buscar producto"
