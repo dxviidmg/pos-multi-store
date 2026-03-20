@@ -13,8 +13,10 @@ import { useFetchWithRetry } from "../../../hooks/useFetch";
 import { getPrinterUrl, getUserData } from "../../../api/utils";
 import PrintIcon from "@mui/icons-material/Print";
 import { handlePrintTicket } from "../../../utils/utils";
-import { Grid, TextField, FormLabel, RadioGroup, FormControlLabel, Radio, Checkbox } from "@mui/material";
+import { Grid, TextField, FormLabel, RadioGroup, FormControlLabel, Radio, Checkbox, InputAdornment, IconButton } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import PushPinIcon from "@mui/icons-material/PushPin";
+import PushPinOutlinedIcon from "@mui/icons-material/PushPinOutlined";
 import AddIcon from "@mui/icons-material/Add";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
@@ -121,6 +123,9 @@ const SearchProduct = ({ searchInputRef }) => {
     const fetchedData = response.data;
     setData(fetchedData);
     setSearching(false);
+    if (fetchedData.length === 0) {
+      showError("Sin resultados", "No se encontraron productos con esa búsqueda");
+    }
   };
   const handleSingleProductFetch = (storeProduct) => {
     if (movementType === "venta" && storeProduct.available_stock === 0) {
@@ -370,9 +375,23 @@ const SearchProduct = ({ searchInputRef }) => {
         </Grid>
       </Grid>
 
-      <Grid container spacing={2} sx={{ mb: 0.5 }}>
-        <Grid item xs={queryType === "code" ? 12 : 8}>
-          <TextField size="small" fullWidth className=""
+      <Grid container spacing={1} sx={{ mb: 0.5 }}>
+        <Grid item xs={12} sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+          {queryType === "q" && (
+            <>
+              <IconButton
+                size="small"
+                onClick={() => setKeepListOpen(!keepListOpen)}
+                sx={{ width: 36, height: 36, bgcolor: keepListOpen ? 'primary.main' : 'transparent', color: keepListOpen ? 'white' : 'text.secondary', borderRadius: 1, '&:hover': { bgcolor: keepListOpen ? 'primary.dark' : 'action.hover' } }}
+              >
+                {keepListOpen ? <PushPinIcon fontSize="small" /> : <PushPinOutlinedIcon fontSize="small" />}
+              </IconButton>
+              <IconButton size="small" onClick={handleSearchProduct} disabled={searching} sx={{ width: 36, height: 36, bgcolor: 'primary.main', color: 'white', borderRadius: 1, '&:hover': { bgcolor: 'primary.dark' } }}>
+                <SearchIcon />
+              </IconButton>
+            </>
+          )}
+          <TextField size="small" fullWidth
             inputRef={inputRef}
             type="text"
             value={queryType === "code" ? barcode : query}
@@ -388,32 +407,6 @@ const SearchProduct = ({ searchInputRef }) => {
             autoComplete="off"
           />
         </Grid>
-        {queryType === "q" && (
-          <>
-            <Grid item xs={2}>
-              <CustomButton 
-                fullWidth 
-                onClick={handleSearchProduct} 
-                startIcon={<SearchIcon />}
-                disabled={searching}
-              >
-                {searching ? "Buscando..." : "Buscar"}
-              </CustomButton>
-            </Grid>
-            <Grid item xs={2} sx={{ display: 'flex', alignItems: 'center' }}>
-              <FormControlLabel
-                control={
-                  <Checkbox 
-                    size="small"
-                    checked={keepListOpen}
-                    onChange={(e) => setKeepListOpen(e.target.checked)}
-                  />
-                }
-                label="Mantener lista"
-              />
-            </Grid>
-          </>
-        )}
         
         {data.length > 0 && (
           <Grid item xs={12}>
