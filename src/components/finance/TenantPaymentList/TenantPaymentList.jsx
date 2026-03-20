@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import CustomTable from "../../ui/Table/Table";
+import DataTable from "../../ui/DataTable/DataTable";
 import { getPayments } from "../../../api/tenants";
 import { Grid } from "@mui/material";
 
@@ -20,7 +20,7 @@ const TenantPaymentList = () => {
       <Grid container>
       <Grid item xs={12} className="card">
       <h1>Pagos del servicio</h1>
-      <CustomTable
+      <DataTable
         data={payments}
         columns={[
           {

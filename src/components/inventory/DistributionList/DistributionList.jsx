@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import CustomTable from "../../ui/Table/Table";
+import DataTable from "../../ui/DataTable/DataTable";
 import CustomButton from "../../ui/Button/Button";
 import { getFormattedDateTime } from "../../../utils/utils";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
@@ -104,7 +104,7 @@ const DistributionList = () => {
       <Grid item xs={12} className="card" sx={{ marginBottom: '1.5rem' }}>
         <h1>Distribuciones</h1>
         
-        <CustomTable
+        <DataTable
           data={distributions}
           pagination={true}
           columns={[
@@ -150,7 +150,7 @@ const DistributionList = () => {
             Confirmar distribución
           </CustomButton>
           
-          <CustomTable
+          <DataTable
             data={distributionSelected.transfers || []}
             pagination={true}
             columns={[

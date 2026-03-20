@@ -1,7 +1,7 @@
 import { logger } from "../../../utils/logger";
 import React, { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import CustomTable from "../../ui/Table/Table";
+import DataTable from "../../ui/DataTable/DataTable";
 import CustomButton from "../../ui/Button/Button";
 import CustomTooltip from "../../ui/Tooltip";
 import { getStoreProducts } from "../../../api/products";
@@ -448,7 +448,7 @@ const SearchProduct = () => {
         {data.length > 0 && (
           <Grid item xs={12}>
             <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
-              <CustomTable
+              <DataTable
               showNoDataComponent={false}
               data={data}
               pagination={true}

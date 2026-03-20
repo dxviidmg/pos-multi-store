@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "../../../hooks/useForm";
 import CustomModal from "../../ui/Modal/Modal";
-import CustomTable from "../../ui/Table/Table";
+import DataTable from "../../ui/DataTable/DataTable";
 import { getStoreProductLogs, updateStoreProduct } from "../../../api/products";
 import { getFormattedDateTime } from "../../../utils/utils";
 import Swal from "sweetalert2";
@@ -127,7 +127,7 @@ const StoreProductLogsModal = ({ isOpen, logs: logsData, onClose, onUpdate }) =>
 
         <Grid item xs={12} md={12} className={adjustStock ? "d-none" : ""}>
         <h1>Utimos movimientos</h1>
-          <CustomTable
+          <DataTable
             data={logs}
             columns={[
               {

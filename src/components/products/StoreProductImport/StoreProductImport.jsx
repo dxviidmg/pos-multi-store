@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import CustomTable from "../../ui/Table/Table";
+import DataTable from "../../ui/DataTable/DataTable";
 import { importStoreProducts, importStoreProductsValidation } from "../../../api/products";
 
 import CustomButton from "../../ui/Button/Button";
@@ -219,7 +219,7 @@ const StoreProductImport = () => {
       <Grid item xs={12} className="card" hidden={showExample} sx={{ marginBottom: '1.5rem' }}>
         <h1>Ejemplo de plantilla</h1>
 
-        <CustomTable
+        <DataTable
           data={DATA_SAMPLE}
           columns={[
             {
@@ -235,12 +235,12 @@ const StoreProductImport = () => {
               selector: (row) => row.description,
             }
           ]}
-        ></CustomTable>
+        ></DataTable>
       </Grid>
 
       <Grid item xs={12} className="card">
         <h1>Archivo actual</h1>
-        <CustomTable
+        <DataTable
           data={products}
           columns={[
             {
@@ -269,7 +269,7 @@ const StoreProductImport = () => {
                 ),
             },
           ]}
-        ></CustomTable>
+        ></DataTable>
       </Grid>
     </Grid>
   );

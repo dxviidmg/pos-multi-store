@@ -1,5 +1,5 @@
 import React from "react";
-import CustomTable from "../../ui/Table/Table";
+import DataTable from "../../ui/DataTable/DataTable";
 import { calculateTimeAgo } from "../../../utils/utils";
 import CustomButton from "../../ui/Button/Button";
 import { showSuccess, showError } from "../../../utils/alerts";
@@ -31,7 +31,7 @@ const TransferList = () => {
         <h1>Traspasos Pendientes</h1>
         
         {/* 2.1 Tabla */}
-        <CustomTable
+        <DataTable
           noDataComponent="Sin traspasos pendientes"
           data={transfers}
           columns={[

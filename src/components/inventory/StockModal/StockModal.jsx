@@ -2,7 +2,7 @@ import { logger } from "../../../utils/logger";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import CustomModal from "../../ui/Modal/Modal";
-import CustomTable from "../../ui/Table/Table";
+import DataTable from "../../ui/DataTable/DataTable";
 import CustomButton from "../../ui/Button/Button";
 import { createTransfer } from "../../../api/transfers";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
@@ -122,7 +122,7 @@ const StockModal = ({ isOpen, product, onClose }) => {
         </Grid>
       ) : (
         stockOtherStores.length > 0 && (
-          <CustomTable
+          <DataTable
             data={stockOtherStores}
             columns={[
               { name: "Locación", selector: (row) => row.store_name, sortable: true },

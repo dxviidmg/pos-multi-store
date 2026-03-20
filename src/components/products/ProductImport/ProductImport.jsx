@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import CustomTable from "../../ui/Table/Table";
+import DataTable from "../../ui/DataTable/DataTable";
 import {
   getImportCanIncludeQuantity,
   importProducts,
@@ -380,7 +380,7 @@ const ProductImport = () => {
       <Grid item xs={12} className="card" hidden={showExample} sx={{ marginBottom: '1.5rem' }}>
         <h1>Ejemplo de plantilla</h1>
 
-        <CustomTable
+        <DataTable
           data={DATA_SAMPLE}
           columns={[
             {
@@ -427,13 +427,13 @@ const ProductImport = () => {
               selector: (row) => row.wholesale_price_on_client_discount,
             },
           ]}
-        ></CustomTable>
+        ></DataTable>
       </Grid>
 
 
       <Grid item xs={12} className="card">
         <h1>Archivo actual</h1>
-        <CustomTable
+        <DataTable
           data={products}
           columns={[
             {
@@ -501,7 +501,7 @@ const ProductImport = () => {
               ),
             },
           ]}
-        ></CustomTable>
+        ></DataTable>
       </Grid>
     </Grid>
   );

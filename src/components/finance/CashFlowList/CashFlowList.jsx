@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import CustomTable from "../../ui/Table/Table";
+import DataTable from "../../ui/DataTable/DataTable";
 import CustomButton from "../../ui/Button/Button";
 import { getFormattedDate, formatTimeFromDate } from "../../../utils/utils";
 import { getCashFlow } from "../../../api/cashflow";
@@ -102,7 +102,7 @@ const CashFlowList = () => {
           </Grid>
 
           {/* 3.3 Tabla */}
-          <CustomTable
+          <DataTable
             data={cashFlow}
             searcher={true}
             columns={[

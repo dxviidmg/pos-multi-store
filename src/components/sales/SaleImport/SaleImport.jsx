@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import CustomTable from "../../ui/Table/Table";
+import DataTable from "../../ui/DataTable/DataTable";
 import CustomButton from "../../ui/Button/Button";
 import { importSales, importSalesValidation } from "../../../api/sales";
 import Swal from "sweetalert2";
@@ -179,7 +179,7 @@ const SaleImport = () => {
       <Grid item xs={12} className="card" hidden={showExample} sx={{ marginBottom: '1.5rem' }}>
         <h1>Ejemplo de plantilla</h1>
 
-        <CustomTable
+        <DataTable
           data={DATA_SAMPLE}
           columns={[
             {
@@ -209,7 +209,7 @@ const SaleImport = () => {
 
       <Grid item xs={12} className="card">
         <h1>Archivo actual</h1>
-        <CustomTable
+        <DataTable
           data={sales}
           columns={[
             {
@@ -236,7 +236,7 @@ const SaleImport = () => {
                 ),
             },
           ]}
-        ></CustomTable>
+        ></DataTable>
       </Grid>
     </Grid>
   </>

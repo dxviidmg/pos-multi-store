@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import CustomTable from "../../ui/Table/Table";
+import DataTable from "../../ui/DataTable/DataTable";
 import CustomButton from "../../ui/Button/Button";
 import { createDiscount } from "../../../api/discounts";
 import { showSuccess, showError } from "../../../utils/alerts";
@@ -163,7 +163,7 @@ const ClientList = () => {
         </Grid>
 
         {/* 3.3 Tabla */}
-        <CustomTable
+        <DataTable
           searcher={true}
           data={clients}
           columns={[

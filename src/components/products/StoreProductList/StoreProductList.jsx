@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import CustomTable from "../../ui/Table/Table";
+import DataTable from "../../ui/DataTable/DataTable";
 import { getStoreProducts } from "../../../api/products";
 import CustomButton from "../../ui/Button/Button";
 import { getUserData } from "../../../api/utils";
@@ -205,7 +205,7 @@ const StoreProductList = () => {
           </Grid>
 
           {/* 3.4 Tabla */}
-          <CustomTable
+          <DataTable
             searcher={true}
             progressPending={loading}
             data={storeProducts}

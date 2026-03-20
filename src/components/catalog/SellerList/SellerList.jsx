@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import CustomTable from "../../ui/Table/Table";
+import DataTable from "../../ui/DataTable/DataTable";
 import { getSellers } from "../../../api/sellers";
 import CustomButton from "../../ui/Button/Button";
 import SellerModal from "../SellerModal/SellerModal";
@@ -149,7 +149,7 @@ const SellerList = () => {
           </Grid>
 
           {/* 2.3 Tabla */}
-          <CustomTable
+          <DataTable
             progressPending={loading}
             data={sellers}
             pagination={true}

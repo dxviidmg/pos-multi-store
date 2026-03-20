@@ -1,7 +1,7 @@
 import { logger } from "../../../utils/logger";
 import React, { useEffect, useMemo, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import DataTable from "../../ui/Table/DataTable";
+import SimpleTable from "../../ui/SimpleTable/SimpleTable";
 import {
   cleanCart,
   removeFromCart,
@@ -626,7 +626,7 @@ const Cart = () => {
             )}
           </Grid>
         )}
-        <DataTable
+        <SimpleTable
           noDataComponent="Sin productos"
           data={cart}
           columns={getColumns()}

@@ -11,7 +11,7 @@ import {
 } from "../../../api/products";
 import noPhoto from "../../../assets/images/noPhoto.jpg";
 import { getDepartments } from "../../../api/departments";
-import CustomTable from "../../ui/Table/Table";
+import DataTable from "../../ui/DataTable/DataTable";
 import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, Box, Checkbox, FormControlLabel, styled } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import SaveIcon from "@mui/icons-material/Save";
@@ -325,7 +325,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
         {showStoreProducts && (
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <CustomTable
+              <DataTable
                 data={storeProduct}
                 columns={[
                   {

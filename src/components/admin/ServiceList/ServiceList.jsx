@@ -1,5 +1,5 @@
 import React from "react";
-import CustomTable from "../../ui/Table/Table";
+import DataTable from "../../ui/DataTable/DataTable";
 import { Grid } from "@mui/material";
 
 const SERVICES = [
@@ -45,7 +45,7 @@ const ServiceList = () => {
           nuestra lista de servicios adicionales que podrían ser de tu interés:
         </p>
 
-        <CustomTable
+        <DataTable
           data={SERVICES}
           columns={[
             {

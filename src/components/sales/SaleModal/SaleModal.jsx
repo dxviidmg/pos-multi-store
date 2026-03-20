@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import CustomModal from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
-import CustomTable from "../../ui/Table/Table";
+import DataTable from "../../ui/DataTable/DataTable";
 import { useCancelSale } from "../../../hooks/useSaleMutations";
 import { Grid, TextField, Checkbox, FormLabel } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
@@ -128,7 +128,7 @@ const SaleModal = ({ isOpen, sale, onClose, onUpdate }) => {
           {/* Tabla de productos */}
           <Grid item xs={12} md={12}>
             <h5>Productos comprados</h5>
-            <CustomTable
+            <DataTable
               data={formData.products_sale}
               setSelectedRows={setSelectedRows}
               columns={[

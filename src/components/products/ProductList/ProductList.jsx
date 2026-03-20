@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import CustomTable from "../../ui/Table/Table";
+import DataTable from "../../ui/DataTable/DataTable";
 import {
   deleteProducts,
   getProducts,
@@ -353,7 +353,7 @@ const ProductList = () => {
           </Stack>
 
           {/* 3.4 Tabla */}
-          <CustomTable
+          <DataTable
             setSelectedRows={setSelectedRows}
             searcher={true}
             progressPending={loading}

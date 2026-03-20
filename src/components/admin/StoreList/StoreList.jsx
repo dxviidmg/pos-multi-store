@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import CustomTable from "../../ui/Table/Table";
+import DataTable from "../../ui/DataTable/DataTable";
 import { Alert, Typography, Chip } from "@mui/material";
 import CustomButton from "../../ui/Button/Button";
 import { useNavigate } from "react-router-dom";
@@ -942,7 +942,7 @@ const StoreList = () => {
           )}
 
           <Box sx={{ mb: 2 }}>
-            <CustomTable
+            <DataTable
               progressPending={loading}
               data={memoStores}
               columns={
@@ -965,7 +965,7 @@ const StoreList = () => {
               <Box sx={{ mb: 2 }}>
                 <h2>Totales</h2>
               </Box>
-              <CustomTable
+              <DataTable
                 progressPending={loading}
                 data={[
                   {

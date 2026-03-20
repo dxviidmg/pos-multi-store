@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import CustomTable from "../../ui/Table/Table";
+import DataTable from "../../ui/DataTable/DataTable";
 import CustomButton from "../../ui/Button/Button";
 import { deleteBrands } from "../../../api/brands";
 import BrandModal from "../BrandModal/BrandModal";
@@ -93,7 +93,7 @@ const BrandList = () => {
         </Stack>
 
         {/* 2.3 Tabla */}
-        <CustomTable
+        <DataTable
           progressPending={loading}
           data={brands}
           setSelectedRows={setSelectedRows}

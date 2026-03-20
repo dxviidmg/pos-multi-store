@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import CustomTable from "../../ui/Table/Table";
+import DataTable from "../../ui/DataTable/DataTable";
 
 import {
   exportToExcel,
@@ -174,7 +174,7 @@ const LogList = () => {
 
           {/* 2.3 Tabla */}
 
-        <CustomTable
+        <DataTable
           data={logs}
           loading={loading}
           columns={[

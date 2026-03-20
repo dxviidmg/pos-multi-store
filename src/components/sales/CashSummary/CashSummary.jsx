@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import CustomTable from "../../ui/Table/Table";
+import DataTable from "../../ui/DataTable/DataTable";
 
 import { getCashSummary } from "../../../api/sales";
 import CustomButton from "../../ui/Button/Button";
@@ -142,7 +142,7 @@ const CashSummary = () => {
               <PaymentIcon color="primary" />
               <Typography variant="h6">Métodos de pago</Typography>
             </Stack>
-            <CustomTable
+            <DataTable
               data={paymentMethodsSummary}
               columns={[
                 {
@@ -165,7 +165,7 @@ const CashSummary = () => {
               <AccountBalanceWalletIcon color="primary" />
               <Typography variant="h6">Flujo de caja</Typography>
             </Stack>
-            <CustomTable
+            <DataTable
               data={cashFlowSummary}
               columns={[
                 {
@@ -188,7 +188,7 @@ const CashSummary = () => {
               <PointOfSaleIcon color="primary" />
               <Typography variant="h6">Total en caja</Typography>
             </Stack>
-            <CustomTable
+            <DataTable
               data={totalSummary}
               columns={[
                 {

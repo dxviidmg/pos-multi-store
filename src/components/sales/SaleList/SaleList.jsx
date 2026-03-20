@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import CustomTable from "../../ui/Table/Table";
+import DataTable from "../../ui/DataTable/DataTable";
 import { getSales } from "../../../api/sales";
 import CustomButton from "../../ui/Button/Button";
 import {
@@ -190,7 +190,7 @@ const SaleList = () => {
                 : productsModal.data.products_sale.filter((item) => item.quantity !== 0);
               
               return (
-                <CustomTable
+                <DataTable
                   data={productsToShow}
                   columns={[
                     {
@@ -335,7 +335,7 @@ const SaleList = () => {
         </Grid>
 
         {/* 3.4 Tabla */}
-        <CustomTable
+        <DataTable
           data={sales}
           pagination={true}
           columns={[

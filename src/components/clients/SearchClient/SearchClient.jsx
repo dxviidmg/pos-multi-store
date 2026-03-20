@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import CustomTable from "../../ui/Table/Table";
+import DataTable from "../../ui/DataTable/DataTable";
 import { getClients } from "../../../api/clients";
 import CustomButton from "../../ui/Button/Button";
 import { useDispatch, useSelector } from "react-redux";
@@ -98,7 +98,7 @@ const SearchClient = () => {
         sx={{ mb: query ? 0 : 1 }}
       />
       {query && (
-        <CustomTable
+        <DataTable
           data={clients}
           showNoDataComponent={false}
           columns={[

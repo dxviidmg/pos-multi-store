@@ -3,7 +3,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import { Box, TextField } from "@mui/material";
 import { colors } from "../../../theme/colors";
 
-const CustomTable = ({
+const DataTable = ({
   columns,
   data,
   progressPending = false,
@@ -139,4 +139,4 @@ const CustomTable = ({
   );
 };
 
-export default memo(CustomTable);
+export default memo(DataTable);

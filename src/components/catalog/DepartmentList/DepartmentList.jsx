@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import CustomTable from "../../ui/Table/Table";
+import DataTable from "../../ui/DataTable/DataTable";
 import CustomButton from "../../ui/Button/Button";
 import { deleteDepartments } from "../../../api/departments";
 
@@ -90,7 +90,7 @@ const DepartmentList = () => {
         </Stack>
 
         {/* 2.3 Tabla */}
-        <CustomTable
+        <DataTable
           progressPending={loading}
           data={departments}
           setSelectedRows={setSelectedRows}
