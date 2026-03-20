@@ -3,7 +3,6 @@ import Modal from '@mui/material/Modal';
 import { Box, IconButton, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import './Modal.css';
-import { colors } from '../../../theme/colors';
 
 const style = {
   position: 'absolute',
@@ -15,24 +14,24 @@ const style = {
   maxHeight: '90vh',
   overflow: 'auto',
   bgcolor: 'background.paper',
-  boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-  borderRadius: 2,
-  border: '1px solid #e2e8f0',
+  boxShadow: '0 24px 48px rgba(0,0,0,0.12)',
+  borderRadius: 1,
+  border: '1px solid #e8ecf1',
 };
 
-function CustomModal({ showOut, onClose, title, children}) {
+function CustomModal({ showOut, onClose, title, children }) {
   return (
     <Modal open={showOut} onClose={onClose}>
       <Box sx={style}>
         <Box className="modal__header" sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Typography variant="h6" sx={{ flexGrow: 1, textAlign: 'center' }}>
+          <Typography variant="h6" sx={{ flexGrow: 1, textAlign: 'center', fontWeight: 600 }}>
             {title}
           </Typography>
-          <IconButton onClick={onClose} size="small">
+          <IconButton onClick={onClose} size="small" sx={{ color: 'white', '&:hover': { bgcolor: 'rgba(255,255,255,0.1)' } }}>
             <CloseIcon />
           </IconButton>
         </Box>
-        <Box className="modal__body" sx={{ p: 2, backgroundColor: colors.background.main }}>
+        <Box>
           {children}
         </Box>
       </Box>
