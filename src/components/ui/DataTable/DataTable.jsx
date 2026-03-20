@@ -60,6 +60,7 @@ const DataTable = ({
             const value = col.selector(params.row);
             return React.isValidElement(value) ? value : value;
           };
+          column.valueGetter = (params) => col.selector(params.row);
         }
 
         return column;

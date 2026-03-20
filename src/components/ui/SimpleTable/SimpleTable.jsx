@@ -9,6 +9,7 @@ import {
   Paper,
   TablePagination,
 } from "@mui/material";
+import { colors } from "../../../theme/colors";
 
 const SimpleTable = ({ data, columns, noDataComponent, pagination = false }) => {
   const [page, setPage] = React.useState(0);
@@ -32,9 +33,9 @@ const SimpleTable = ({ data, columns, noDataComponent, pagination = false }) => 
       <TableContainer component={Paper}>
         <Table size="small">
           <TableHead>
-            <TableRow>
+            <TableRow sx={{ backgroundColor: colors.primary }}>
               {columns.map((col, idx) => (
-                <TableCell key={idx} sx={{ fontWeight: "bold" }}>
+                <TableCell key={idx} sx={{ fontWeight: "bold", color: colors.text.white, py: 0.5, fontSize: "0.8125rem" }}>
                   {col.name}
                 </TableCell>
               ))}
@@ -43,7 +44,7 @@ const SimpleTable = ({ data, columns, noDataComponent, pagination = false }) => 
           <TableBody>
             {displayData.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={columns.length} align="center">
+                <TableCell colSpan={columns.length} align="center" sx={{ py: 0.5, fontSize: "0.8125rem" }}>
                   {noDataComponent || "No hay datos"}
                 </TableCell>
               </TableRow>
@@ -51,7 +52,7 @@ const SimpleTable = ({ data, columns, noDataComponent, pagination = false }) => 
               displayData.map((row, rowIdx) => (
                 <TableRow key={rowIdx}>
                   {columns.map((col, colIdx) => (
-                    <TableCell key={colIdx}>
+                    <TableCell key={colIdx} sx={{ py: 0.5, fontSize: "0.8125rem" }}>
                       {col.selector ? col.selector(row) : row[col.field]}
                     </TableCell>
                   ))}

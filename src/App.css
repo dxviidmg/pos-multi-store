@@ -108,11 +108,11 @@ input:focus, select:focus, textarea:focus {
 }
 
 /* Table rows */
-table tbody tr, .MuiTableRow-root {
+table tbody tr, .MuiTableBody-root .MuiTableRow-root {
   transition: background-color 0.2s ease;
 }
 
-table tbody tr:hover, .MuiTableRow-root:hover {
+table tbody tr:hover, .MuiTableBody-root .MuiTableRow-root:hover {
   background-color: rgba(4, 52, 107, 0.03);
 }
 
