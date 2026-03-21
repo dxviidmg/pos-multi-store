@@ -23,7 +23,7 @@ const statusConfig = {
   danger: { color: "error", icon: <ErrorIcon />, label: "Requiere atención" },
 };
 
-const AuditDashboardData = ({ title, taskId, pollInterval = 7500 }) => {
+const TransactionAuditData = ({ title, taskId, pollInterval = 7500 }) => {
   const [data, setData] = useState([]);
   const [info, setInfo] = useState({ total: "por definir", progress: 0 });
 
@@ -121,4 +121,4 @@ const AuditDashboardData = ({ title, taskId, pollInterval = 7500 }) => {
   );
 };
 
-export default AuditDashboardData;
+export default TransactionAuditData;

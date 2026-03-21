@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import { getFormattedDate } from "../../../utils/utils";
-import AuditDashboardData from "./AuditDashboardData";
+import TransactionAuditData from "./TransactionAuditData";
 import CustomButton from "../../ui/Button/Button";
 import { getAudit, getAudit2 } from "../../../api/audit";
 import { getStores } from "../../../api/stores";
@@ -9,7 +9,7 @@ import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, Box } from "@mui/material";
 import AssessmentIcon from "@mui/icons-material/Assessment";
 
-const AuditDashboard = () => {
+const TransactionAudit = () => {
   const today = getFormattedDate();
   const [tasks, setTasks] = useState({});
   const [params, setParams] = useState({
@@ -60,7 +60,7 @@ const AuditDashboard = () => {
     <div>
       <CustomSpinner isLoading={isLoading}></CustomSpinner>
       <Grid className="card">
-        <h1>Tablero de auditoria</h1>
+        <h1>Auditoría de transacciones</h1>
         <Grid container spacing={2}>
           {" "}
           <Grid item xs={12} md={6} lg={4}>
@@ -114,24 +114,24 @@ const AuditDashboard = () => {
             </CustomButton>
           </Grid>
           <Grid item xs={12} lg={4}>
-            <AuditDashboardData
+            <TransactionAuditData
               title={"Ventas repetidas"}
               taskId={tasks?.task1}
-            ></AuditDashboardData>
+            ></TransactionAuditData>
           </Grid>
           <Grid item xs={12} lg={4}>
             {" "}
-            <AuditDashboardData
+            <TransactionAuditData
               title={"Logs repetidos o inconsistentes"}
               taskId={tasks?.task2}
-            ></AuditDashboardData>
+            ></TransactionAuditData>
           </Grid>
           <Grid item xs={12} lg={4}>
             {" "}
-            <AuditDashboardData
+            <TransactionAuditData
               title={"Stock y ultimo log"}
               taskId={tasks?.task3}
-            ></AuditDashboardData>
+            ></TransactionAuditData>
           </Grid>
         </Grid>
       </Grid>
@@ -139,4 +139,4 @@ const AuditDashboard = () => {
   );
 };
 
-export default AuditDashboard;
+export default TransactionAudit;

@@ -229,13 +229,7 @@ export default function MainLayout({ toggleTheme, themeMode }) {
       { label: "Logs", href: "/logs/" },
     ],
     G: [
-      {
-        label: "Dashboard",
-        dropdown: [
-          { label: "General", href: "/tablero/" },
-          { label: "Auditoria", href: "/auditoria/" },
-        ],
-      },
+      { label: "Dashboard", href: "/tablero/" },
       { label: "Tiendas", href: "/tiendas/" },
       { label: "Clientes", href: "/clientes/" },
       { label: "Vendedores", href: "/vendedores/" },
@@ -249,6 +243,12 @@ export default function MainLayout({ toggleTheme, themeMode }) {
           { label: "Reasignación", href: "/reasignacion/" },
           { divider: true },
           { label: "Importar Productos", href: "/importar-productos/" },
+        ],
+      },
+      {
+        label: "Auditoria",
+        dropdown: [
+          { label: "Transacciones", href: "/auditoria-transacciones/" },
         ],
       },
       { label: "Mensualidades", href: "/pagos/" },
