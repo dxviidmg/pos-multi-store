@@ -6,7 +6,7 @@ import TrendingDownIcon from "@mui/icons-material/TrendingDown";
 const gradients = [
   "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
   "linear-gradient(135deg, #11998e 0%, #38ef7d 100%)",
-  "linear-gradient(135deg, #e94560 0%, #c23152 100%)",
+  "linear-gradient(135deg, #a78bfa 0%, #7c5cbf 100%)",
   "linear-gradient(135deg, #f2994a 0%, #f2c94c 100%)",
   "linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%)",
 ];

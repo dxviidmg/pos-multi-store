@@ -40,6 +40,8 @@ import MiscellaneousServicesIcon from "@mui/icons-material/MiscellaneousServices
 import LogoutIcon from "@mui/icons-material/Logout";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import DescriptionIcon from "@mui/icons-material/Description";
+import PolicyIcon from "@mui/icons-material/Policy";
+import BarChartIcon from "@mui/icons-material/BarChart";
 import logo from "../../../assets/images/logo.jpg";
 import { colors } from "../../../theme/colors";
 import PageHelp from "../../ui/PageHelp/PageHelp";
@@ -48,7 +50,7 @@ const iconMap = {
   Vender: <ShoppingCartIcon />,
   Ventas: <ReceiptIcon />,
   Clientes: <PersonSearchIcon />,
-  Dashboard: <DashboardIcon />,
+  Dashboard: <BarChartIcon />,
   Tienda: <LocalShippingIcon />,
   Distribuciones: <LocalShippingIcon />,
   Traspasos: <SwapHorizIcon />,
@@ -62,6 +64,7 @@ const iconMap = {
   Servicios: <MiscellaneousServicesIcon />,
   Sincronizar: <SyncIcon />,
   Distribuir: <LocalShippingIcon />,
+  Auditoria: <PolicyIcon />,
 };
 
 const drawerWidth = 256;
@@ -317,9 +320,11 @@ export default function MainLayout({ toggleTheme, themeMode }) {
           }}
         >
           {open && (
-            <Box component="img" src={logo} alt="SmartVenta"
-              sx={{ height: "38px", width: "auto", objectFit: "contain", borderRadius: 1 }}
-            />
+            <a href="https://smartventa-pos.vercel.app/" target="_blank" rel="noopener noreferrer">
+              <Box component="img" src={logo} alt="SmartVenta"
+                sx={{ height: "38px", width: "auto", objectFit: "contain", borderRadius: 1, cursor: "pointer" }}
+              />
+            </a>
           )}
         </DrawerHeader>
 

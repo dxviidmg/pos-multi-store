@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { getFormattedDate } from "../../../utils/utils";
-import TransactionAuditData from "./TransactionAuditData";
+import React, { useState } from "react";
+import AuditCard from "../../ui/AuditCard/AuditCard";
 import CustomButton from "../../ui/Button/Button";
 import { getAudit, getAudit2 } from "../../../api/audit";
-import { getStores } from "../../../api/stores";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { Grid, TextField, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 import AssessmentIcon from "@mui/icons-material/Assessment";
+import { getFormattedDate } from "../../../utils/utils";
+import { getStores } from "../../../api/stores";
+import { useEffect } from "react";
 
 const TransactionAudit = () => {
   const today = getFormattedDate();
@@ -78,13 +79,13 @@ const TransactionAudit = () => {
             </CustomButton>
           </Grid>
           <Grid item xs={12} lg={4}>
-            <TransactionAuditData title="Ventas duplicadas" taskId={tasks?.task1} />
+            <AuditCard title="Ventas duplicadas" taskId={tasks?.task1} />
           </Grid>
           <Grid item xs={12} lg={4}>
-            <TransactionAuditData title="Logs inconsistentes" taskId={tasks?.task2} />
+            <AuditCard title="Logs inconsistentes" taskId={tasks?.task2} />
           </Grid>
           <Grid item xs={12} lg={4}>
-            <TransactionAuditData title="Discrepancias de stock" taskId={tasks?.task3} />
+            <AuditCard title="Discrepancias de stock" taskId={tasks?.task3} />
           </Grid>
         </Grid>
       </Grid>

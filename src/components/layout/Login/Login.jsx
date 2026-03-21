@@ -99,11 +99,11 @@ function Login({ onLogin }) {
           {alertData.shown && (
             <Alert severity="error" sx={{
               mb: 2.5, borderRadius: 1,
-              backgroundColor: 'rgba(233,69,96,0.15)',
+              backgroundColor: 'rgba(167,139,250,0.15)',
               backdropFilter: 'blur(10px)',
               color: 'white',
-              border: '1px solid rgba(233,69,96,0.3)',
-              '& .MuiAlert-icon': { color: '#e94560' },
+              border: '1px solid rgba(167,139,250,0.3)',
+              '& .MuiAlert-icon': { color: '#a78bfa' },
             }}>
               {alertData.message}
             </Alert>
@@ -160,10 +160,10 @@ function Login({ onLogin }) {
             <CustomButton onClick={handleSubmit} fullWidth
               sx={{
                 py: 1.3, mt: 1, borderRadius: 1, fontWeight: 700, fontSize: '0.95rem',
-                background: 'linear-gradient(135deg, #e94560 0%, #c23152 100%)',
+                background: 'linear-gradient(135deg, #a78bfa 0%, #7c5cbf 100%)',
                 '&:hover': {
-                  background: 'linear-gradient(135deg, #c23152 0%, #a02040 100%)',
-                  boxShadow: '0 6px 20px rgba(233,69,96,0.4)',
+                  background: 'linear-gradient(135deg, #7c5cbf 0%, #6344a3 100%)',
+                  boxShadow: '0 6px 20px rgba(167,139,250,0.4)',
                 },
               }}
             >
