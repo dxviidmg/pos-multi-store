@@ -45,7 +45,7 @@ const CREATE_OPTIONS = [
 ];
 
 const productColumns = [
-  { name: "# Col", selector: (row) => row.excel_row },
+  { name: "Número de columna", selector: (row) => row.excel_row },
   { name: "Código", selector: (row) => row.code },
   { name: "Marca", selector: (row) => row.brand },
   { name: "Departamento", selector: (row) => row.departament },
@@ -264,7 +264,7 @@ const ProductImport = () => {
               ? [{ name: "Cantidad", selector: (row) => row.quantity }]
               : []),
             {
-              name: "Status",
+              name: "Estado",
               selector: (row) => (
                 <>
                   {chooseIcon(row.status === "Exitoso")}

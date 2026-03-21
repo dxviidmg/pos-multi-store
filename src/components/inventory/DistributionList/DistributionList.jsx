@@ -98,8 +98,8 @@ const DistributionList = () => {
           pagination={true}
           columns={[
             { name: "#", selector: (row) => row.id },
-            { name: "Creación", selector: (row) => getFormattedDateTime(row.created_at) },
-            { name: "Descripción", grow: 2, selector: (row) => row.description },
+            { name: "Fecha y hora", selector: (row) => getFormattedDateTime(row.created_at) },
+            { name: "Descripción", selector: (row) => row.description },
             {
               name: "Acciones",
               cell: (row) => (
@@ -127,7 +127,7 @@ const DistributionList = () => {
             pagination={true}
             columns={[
               { name: "Código", selector: (row) => row.product_code },
-              { name: "Producto", selector: (row) => row.product_description },
+              { name: "Nombre", selector: (row) => row.product_description },
               {
                 name: "Cantidad",
                 cell: (row) =>

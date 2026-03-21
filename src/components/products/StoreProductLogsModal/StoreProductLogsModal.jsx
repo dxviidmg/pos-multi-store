@@ -120,34 +120,28 @@ const StoreProductLogsModal = ({ isOpen, logs: logsData, onClose, onUpdate }) =>
             data={logs}
             columns={[
               {
-                name: "Fecha",
+                name: "Fecha y hora",
                 selector: (row) => getFormattedDateTime(row.created_at),
-                grow: 2,
-                wrapText: true,
               },
               {
                 name: "Descripción",
                 selector: (row) => row.description,
-                grow: 2,
-                wrapText: true,
               },
               {
-                name: "S. anterior",
+                name: "Stock anterior",
                 selector: (row) => row.previous_stock,
               },
               {
-                name: "S. actualizado",
+                name: "Stock actualizado",
                 selector: (row) => row.updated_stock,
               },
               {
-                name: "Dif",
+                name: "Diferencia",
                 selector: (row) => row.difference,
               },
               {
-                name: "Hecho por",
+                name: "Usuario",
                 selector: (row) => row.user_username,
-                grow: 3,
-                wrapText: true,
               },
               {
                 name: "OK",

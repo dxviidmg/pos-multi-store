@@ -220,7 +220,7 @@ const SaleList = () => {
               name: "Productos",
               selector: (row) => <ProductsPopperButton row={row} productsModal={productsModal} />,
             },
-            { name: "# Productos", selector: (row) => row.products_sale?.reduce((sum, p) => sum + p.quantity, 0) || 0, width: '100px' },
+            { name: "Número de productos", selector: (row) => row.products_sale?.reduce((sum, p) => sum + p.quantity, 0) || 0, width: '100px' },
             { name: "Total", selector: (row) => `$${row.total}` },
             ...(params.reservation_in_progress === "true"
               ? [
@@ -228,16 +228,15 @@ const SaleList = () => {
                   { name: "Falta", selector: (row) => "$" + (row.total - row.paid) },
                 ]
               : []),
-            { name: "Métodos de pago", selector: (row) => row.payments_methods.join(", "), grow: 1.5 },
+            { name: "Métodos de pago", selector: (row) => row.payments_methods.join(", ") },
             ...(showAllFields
               ? [
-                  { name: "Referencia", selector: (row) => row.reference, grow: 2 },
-                  { name: "Vendedor", selector: (row) => row.seller_username, grow: 1.5 },
+                  { name: "Referencia", selector: (row) => row.reference },
+                  { name: "Vendedor", selector: (row) => row.seller_username },
                 ]
               : []),
             {
               name: "Acciones",
-              grow: showAllFields ? 3 : 2,
               cell: (row) => (
                 <>
                   {row.is_canceled ? (

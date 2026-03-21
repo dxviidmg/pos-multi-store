@@ -132,8 +132,8 @@ const SaleModal = ({ isOpen, sale, onClose, onUpdate }) => {
               data={formData.products_sale}
               setSelectedRows={setSelectedRows}
               columns={[
-                { name: "Descripción", selector: (row) => row.name, grow: 3 },
-                { name: "C. Vendida", selector: (row) => row.quantity },
+                { name: "Descripción", selector: (row) => row.name },
+                { name: "Cantidad vendida", selector: (row) => row.quantity },
                 {
                   name: "Devolver",
                   selector: (row) => (
@@ -152,7 +152,7 @@ const SaleModal = ({ isOpen, sale, onClose, onUpdate }) => {
                     />
                   ),
                 },
-                { name: "P. unitario", selector: (row) => `$${row.price}` },
+                { name: "Precio unitario", selector: (row) => `$${row.price}` },
                 {
                   name: "Importe",
                   selector: (row) => `$${row.price * row.quantity}`,

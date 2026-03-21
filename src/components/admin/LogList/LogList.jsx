@@ -117,14 +117,14 @@ const LogList = () => {
             data={logs}
             columns={[
               { name: "OK", selector: (row) => chooseIcon(row.is_consistent) },
-              { name: "Código", selector: (row) => row.product.code, grow: 2 },
+              { name: "Código", selector: (row) => row.product.code },
               { name: "Marca", selector: (row) => row.product.brand_name },
-              { name: "Nombre", selector: (row) => row.product.name, grow: 4 },
-              { name: "Descripción", selector: (row) => row.description, grow: 2 },
+              { name: "Nombre", selector: (row) => row.product.name },
+              { name: "Descripción", selector: (row) => row.description },
               { name: "Hora", selector: (row) => formatTimeFromDate(row.created_at) },
-              { name: "S. anterior", selector: (row) => row.previous_stock },
+              { name: "Stock anterior", selector: (row) => row.previous_stock },
               { name: "Diferencia", selector: (row) => row.difference },
-              { name: "S. nuevo", selector: (row) => row.updated_stock },
+              { name: "Stock nuevo", selector: (row) => row.updated_stock },
             ]}
           />
         </Grid>

@@ -213,7 +213,6 @@ const StoreList = () => {
     const allColumns = [
       {
         name: "Nombre",
-        wrapText: true,
         cell: ({ name, id, cash_summary }) => {
           const vendido = cash_summary?.[3]?.amount || 0;
           const isAboveAverage = vendido > averageSales;
@@ -354,7 +353,7 @@ const StoreList = () => {
         ),
       },
       {
-        name: "Opciones",
+        name: "Acciones",
         cell: (row) => (
           <>
             {chooseIcon(row.products_count === tenantInfo.product_count)}
@@ -496,7 +495,7 @@ const StoreList = () => {
         ),
       },
       {
-        name: "Opciones",
+        name: "Acciones",
         cell: ({ products_count }) => (
           <>{chooseIcon(products_count === tenantInfo.product_count)}</>
         ),
@@ -623,7 +622,7 @@ const StoreList = () => {
         selector: () => "",
       },
       {
-        name: "Opciones",
+        name: "Acciones",
         selector: () => "",
       },
     ];

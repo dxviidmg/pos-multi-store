@@ -266,7 +266,6 @@ const Cart = ({ searchInputRef }) => {
       name: "Nombre",
       field: "name",
       selector: (row) => row.product.name,
-      grow: 5,
       renderCell: (params) => (
         <div style={{ 
           whiteSpace: 'normal', 
@@ -293,7 +292,6 @@ const Cart = ({ searchInputRef }) => {
       name: "Nombre",
       field: "name",
       selector: (row) => row.product.name,
-      grow: 2,
       renderCell: (params) => (
         <div style={{ 
           whiteSpace: 'normal', 
@@ -371,7 +369,6 @@ const Cart = ({ searchInputRef }) => {
     {
       name: "Nombre",
       selector: (row) => row.product.name,
-      grow: 3,
       renderCell: (params) => (
         <div style={{ 
           whiteSpace: 'normal', 
@@ -451,8 +448,6 @@ const Cart = ({ searchInputRef }) => {
 
     {
       name: "Stock General",
-      wrapText: true,
-      grow: 1.5,
       cell: (row) => (
         <div>
           {row.stockOtherStores && row.stockOtherStores.length > 0 ? (

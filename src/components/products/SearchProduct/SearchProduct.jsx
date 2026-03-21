@@ -414,7 +414,7 @@ const SearchProduct = ({ searchInputRef }) => {
               data={data}
               pagination={true}
               columns={[
-                { name: "Código", selector: (row) => row.product.code, grow: 2 },
+                { name: "Código", selector: (row) => row.product.code },
                 {
                   name: "Marca",
                   selector: (row) => row.product.brand_name,
@@ -422,8 +422,6 @@ const SearchProduct = ({ searchInputRef }) => {
                 {
                   name: "Nombre",
                   selector: (row) => row.product.name,
-                  grow: 3,
-                  wrapText: true,
                 },
                 { name: "Stock", selector: (row) => row.available_stock },
                 {
@@ -433,7 +431,6 @@ const SearchProduct = ({ searchInputRef }) => {
                 },
                 {
                   name: "Precio mayoreo",
-                  wrapText: true,
                   selector: (row) =>
                     row.product.prices.apply_wholesale
                       ? `${
@@ -445,7 +442,7 @@ const SearchProduct = ({ searchInputRef }) => {
                 },
                 {
                   name: "Acciones",
-                  grow: 2,
+                  width: 180,
                   cell: (row) => (
                     <>
                       <CustomTooltip text="Agregar al carrito">
@@ -465,7 +462,7 @@ const SearchProduct = ({ searchInputRef }) => {
                           onClick={() =>
                             handleOpenModal({ ...row, onlyRead: true })
                           }
-                          variant="danger"
+                          variant="primary"
                         >
                           <InventoryIcon />
                         </CustomButton>
@@ -476,7 +473,7 @@ const SearchProduct = ({ searchInputRef }) => {
                           onClick={() =>
                             handleOpenModal({ ...row, showImage: true })
                           }
-                          variant="danger"
+                          variant="primary"
                           disabled={!row.product.image}
                         >
                           <RemoveRedEyeIcon />

@@ -221,14 +221,13 @@ const ProductList = () => {
             progressPending={loading}
             data={products}
             columns={[
-              { name: "Código", selector: (row) => row.code, grow: 2 },
+              { name: "Código", selector: (row) => row.code },
               { name: "Marca", selector: (row) => row.brand_name },
               { name: "Departamento", selector: (row) => row.department_name },
-              { name: "Nombre", selector: (row) => row.name, grow: 2 },
+              { name: "Nombre", selector: (row) => row.name },
               { name: "Stock", selector: (row) => row.stock, omit: user.role !== "owner" },
-              { name: "Costo unitario", selector: (row) => "$" + row.cost },
+              { name: "Costo", selector: (row) => "$" + row.cost },
               {
-                grow: 2.5,
                 name: "Precios",
                 cell: (row) => (
                   <>
@@ -241,7 +240,6 @@ const ProductList = () => {
               },
               {
                 name: "Acciones",
-                grow: user.role === "owner" ? 2.5 : 1,
                 cell: (row) => (
                   <>
                     <CustomTooltip text="Editar producto">

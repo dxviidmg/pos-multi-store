@@ -169,7 +169,7 @@ const StoreProductImport = () => {
             { name: "Cantidad", selector: (row) => row.quantity },
             { name: "Descripción", selector: (row) => row.description },
             {
-              name: "Status",
+              name: "Estado",
               selector: (row) =>
                 row.status === "Exitoso" ? (
                   <CheckCircleIcon color="success" />

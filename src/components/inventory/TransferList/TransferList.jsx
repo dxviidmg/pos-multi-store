@@ -35,14 +35,13 @@ const TransferList = () => {
           data={transfers}
           columns={[
             { name: "#", selector: (row) => row.id },
-            { name: "Código", selector: (row) => row.product_code, grow: 2 },
-            { name: "Producto", selector: (row) => row.product_description, grow: 4 },
+            { name: "Código", selector: (row) => row.product_code },
+            { name: "Nombre", selector: (row) => row.product_description },
             { name: "Cantidad", selector: (row) => row.quantity },
-            { name: "Descripción", selector: (row) => row.description, grow: 4 },
-            { name: "Antigüedad", selector: (row) => row.created_at ? calculateTimeAgo(row.created_at) : "N/A", grow: 2 },
+            { name: "Descripción", selector: (row) => row.description },
+            { name: "Antigüedad", selector: (row) => row.created_at ? calculateTimeAgo(row.created_at) : "N/A" },
             {
               name: "Acciones",
-              grow: 2,
               cell: (row) => (
                 <CustomButton onClick={() => handleDelete(row)} disabled={row.description.includes("prov")}>
                   <DeleteIcon />
