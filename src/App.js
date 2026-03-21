@@ -30,6 +30,7 @@ const StoreProductImport = lazy(() => import("./components/products/StoreProduct
 const ServiceList = lazy(() => import("./components/admin/ServiceList/ServiceList"));
 const ProductReassign = lazy(() => import("./components/products/ProductReassign/ProductReassign"));
 const TransactionAudit = lazy(() => import("./components/admin/TransactionAudit/TransactionAudit"));
+const ProductAudit = lazy(() => import("./components/admin/ProductAudit/ProductAudit"));
 const Dashboard = lazy(() => import("./components/admin/Dashboard/Dashboard"));
 const DistributionList = lazy(() => import("./components/inventory/DistributionList/DistributionList"));
 const RestartService = lazy(() => import("./components/admin/RestartService/RestartService"));
@@ -75,6 +76,7 @@ function App({ toggleTheme, themeMode }) {
             <Route path="/importar-productos/" element={<Suspense fallback={<LoadingFallback />}><ProductImport /></Suspense>} />
             <Route path="/importar-inventario/" element={<Suspense fallback={<LoadingFallback />}><StoreProductImport /></Suspense>} />
             <Route path="/auditoria-transacciones/" element={<Suspense fallback={<LoadingFallback />}><TransactionAudit /></Suspense>} />
+            <Route path="/auditoria-productos/" element={<Suspense fallback={<LoadingFallback />}><ProductAudit /></Suspense>} />
             <Route path="/sincronizar/" element={<Suspense fallback={<LoadingFallback />}><RestartService /></Suspense>} />
             <Route path="/tenant-profile/" element={<Suspense fallback={<LoadingFallback />}><TenantProfile /></Suspense>} />
             {user?.store_id ? (

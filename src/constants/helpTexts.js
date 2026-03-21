@@ -76,8 +76,12 @@ const helpTexts = {
     text: "Métricas generales de tu negocio: ventas totales, productos más vendidos, rendimiento por tienda. Visión global para tomar decisiones.",
   },
   "/auditoria-transacciones/": {
-    title: "Auditoría",
+    title: "Auditoría de transacciones",
     text: "Herramientas para detectar inconsistencias: ventas duplicadas, logs repetidos y discrepancias de stock. Ejecuta análisis por rango de fechas.",
+  },
+  "/auditoria-productos/": {
+    title: "Auditoría de productos",
+    text: "Revisa y detecta problemas en tu catálogo de productos: duplicados, datos incompletos y discrepancias de inventario.",
   },
   "/vendedores/": {
     title: "Vendedores",

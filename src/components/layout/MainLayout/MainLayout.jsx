@@ -248,6 +248,7 @@ export default function MainLayout({ toggleTheme, themeMode }) {
       {
         label: "Auditoria",
         dropdown: [
+          { label: "Productos", href: "/auditoria-productos/" },
           { label: "Transacciones", href: "/auditoria-transacciones/" },
         ],
       },
