@@ -48,8 +48,8 @@ const DataTable = ({
         const column = {
           field: col.field || `field_${index}`,
           headerName: col.name,
-          flex: col.grow || 1,
-          minWidth: col.width || 120,
+          ...(col.width ? { width: col.width } : { flex: 1 }),
+          minWidth: col.minWidth || 0,
           sortable: col.sortable !== false,
         };
 
@@ -90,7 +90,7 @@ const DataTable = ({
         </Box>
       )}
 
-      <Box sx={{width: "100%", height: height || 'auto' }}>
+      <Box sx={{width: "100%", maxWidth: "100%", overflowX: "auto", height: height || 'auto' }}>
         <DataGrid
           rows={rowsWithIds}
           columns={muiColumns}
@@ -110,7 +110,7 @@ const DataTable = ({
             }
           }}
           disableRowSelectionOnClick
-          autoHeight={autoHeight}
+          getRowHeight={() => 'auto'}
           localeText={{
             noRowsLabel: showNoDataComponent ? noDataComponent : "",
           }}
@@ -124,10 +124,13 @@ const DataTable = ({
               maxHeight: '36px !important',
             },
             "& .MuiDataGrid-cell": {
-              py: 0.5,
+              py: 0,
               fontSize: '0.8125rem',
               whiteSpace: 'normal !important',
               lineHeight: '1.3 !important',
+              '& .MuiButtonBase-root': {
+                transform: 'scale(0.8)',
+              },
             },
             "& .MuiDataGrid-row": {
               minHeight: '32px !important',

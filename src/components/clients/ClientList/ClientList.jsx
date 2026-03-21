@@ -108,11 +108,10 @@ const ClientList = () => {
           data={clients}
           columns={[
             { name: "#", selector: (row) => row.id },
-            { name: "Nombre", selector: (row) => row.full_name, grow: 2 },
+            { name: "Nombre", selector: (row) => row.full_name },
             {
               name: "Teléfono",
               selector: (row) => row.phone_number,
-              grow: 2,
             },
             {
               name: "Total comprado",

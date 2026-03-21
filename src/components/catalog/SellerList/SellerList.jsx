@@ -161,7 +161,6 @@ const SellerList = () => {
               {
                 name: "Usuario",
                 selector: (row) => row.worker.username,
-                grow: 2,
               },
               {
                 name: "Nombre",

@@ -122,14 +122,10 @@ const StoreProductLogsModal = ({ isOpen, logs: logsData, onClose, onUpdate }) =>
               {
                 name: "Fecha",
                 selector: (row) => getFormattedDateTime(row.created_at),
-                grow: 2,
-                wrapText: true,
               },
               {
                 name: "Descripción",
                 selector: (row) => row.description,
-                grow: 2,
-                wrapText: true,
               },
               {
                 name: "S. anterior",
@@ -146,8 +142,6 @@ const StoreProductLogsModal = ({ isOpen, logs: logsData, onClose, onUpdate }) =>
               {
                 name: "Hecho por",
                 selector: (row) => row.user_username,
-                grow: 3,
-                wrapText: true,
               },
               {
                 name: "OK",

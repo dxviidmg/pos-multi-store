@@ -213,7 +213,6 @@ const StoreList = () => {
     const allColumns = [
       {
         name: "Nombre",
-        wrapText: true,
         cell: ({ name, id, cash_summary }) => {
           const vendido = cash_summary?.[3]?.amount || 0;
           const isAboveAverage = vendido > averageSales;

@@ -67,7 +67,7 @@ const BrandList = () => {
           data={brands}
           setSelectedRows={setSelectedRows}
           columns={[
-            { name: "Nombre", selector: (row) => row.name, grow: 2 },
+            { name: "Nombre", selector: (row) => row.name },
             { name: "Número de productos", selector: (row) => row.product_count },
             {
               name: "Acciones",

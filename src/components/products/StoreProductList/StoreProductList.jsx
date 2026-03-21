@@ -12,6 +12,9 @@ import { getDepartments } from "../../../api/departments";
 import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, Box, Stack } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import DownloadIcon from "@mui/icons-material/Download";
+import TuneIcon from "@mui/icons-material/Tune";
+import HistoryIcon from "@mui/icons-material/History";
+import CustomTooltip from "../../ui/Tooltip";
 import { UI_TEXT } from "../../../constants";
 
 const StoreProductList = () => {
@@ -138,23 +141,27 @@ const StoreProductList = () => {
             progressPending={loading}
             data={storeProducts}
             columns={[
-              { name: "Código", selector: (row) => row.product.code, grow: 2 },
+              { name: "Código", selector: (row) => row.product.code },
               { name: "Marca", selector: (row) => row.product.brand_name },
-              { name: "Nombre", selector: (row) => row.product.name, grow: 3 },
+              { name: "Departamento", selector: (row) => row.product.department_name },
+              { name: "Nombre", selector: (row) => row.product.name },
               { name: "Stock", selector: (row) => row.stock },
               {
                 name: "Acciones",
-                grow: 4,
                 cell: (row) => (
                   <>
                     {user.role === "owner" && (
-                      <CustomButton onClick={() => logsModal.open({ storeProduct: row, adjustStock: true })}>
-                        Ajustar cantidad
-                      </CustomButton>
+                      <CustomTooltip text="Ajustar cantidad">
+                        <CustomButton onClick={() => logsModal.open({ storeProduct: row, adjustStock: true })}>
+                          <TuneIcon />
+                        </CustomButton>
+                      </CustomTooltip>
                     )}
-                    <CustomButton onClick={() => logsModal.open({ storeProduct: row, adjustStock: false })}>
-                      Movimientos de stock
-                    </CustomButton>
+                    <CustomTooltip text="Movimientos de stock">
+                      <CustomButton onClick={() => logsModal.open({ storeProduct: row, adjustStock: false })}>
+                        <HistoryIcon />
+                      </CustomButton>
+                    </CustomTooltip>
                   </>
                 ),
               },

@@ -99,7 +99,7 @@ const DistributionList = () => {
           columns={[
             { name: "#", selector: (row) => row.id },
             { name: "Creación", selector: (row) => getFormattedDateTime(row.created_at) },
-            { name: "Descripción", grow: 2, selector: (row) => row.description },
+            { name: "Descripción", selector: (row) => row.description },
             {
               name: "Acciones",
               cell: (row) => (
