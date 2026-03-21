@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import ProductAuditData from "./ProductAuditData";
+import AuditCard from "../../ui/AuditCard/AuditCard";
 import CustomButton from "../../ui/Button/Button";
 import { getProductAudit, getProductAuditActivity } from "../../../api/audit";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
@@ -37,16 +37,16 @@ const ProductAudit = () => {
             </CustomButton>
           </Grid>
           <Grid item xs={12} lg={3}>
-            <ProductAuditData title="Códigos repetidos" syncResult={syncData?.duplicate_codes} />
+            <AuditCard title="Códigos repetidos" syncResult={syncData?.duplicate_codes} />
           </Grid>
           <Grid item xs={12} lg={3}>
-            <ProductAuditData title="Costo en cero" syncResult={syncData?.zero_cost} />
+            <AuditCard title="Costo en cero" syncResult={syncData?.zero_cost} />
           </Grid>
           <Grid item xs={12} lg={3}>
-            <ProductAuditData title="Precio mayoreo inconsistente" syncResult={syncData?.wholesale_issues} />
+            <AuditCard title="Precio mayoreo inconsistente" syncResult={syncData?.wholesale_issues} />
           </Grid>
           <Grid item xs={12} lg={3}>
-            <ProductAuditData title="Faltantes en tiendas" syncResult={syncData?.missing_in_stores} />
+            <AuditCard title="Faltantes en tiendas" syncResult={syncData?.missing_in_stores} />
           </Grid>
 
           <Grid item xs={12}>
@@ -54,7 +54,7 @@ const ProductAudit = () => {
               Auditar actividad
             </CustomButton>
             <div style={{ marginTop: 16 }}>
-              <ProductAuditData title="Productos sin movimiento" taskId={activityTaskId} />
+              <AuditCard title="Productos sin movimiento" taskId={activityTaskId} />
             </div>
           </Grid>
         </Grid>

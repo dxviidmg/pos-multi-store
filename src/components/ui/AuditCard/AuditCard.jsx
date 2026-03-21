@@ -9,7 +9,7 @@ import {
   Divider,
 } from "@mui/material";
 import { getTaskResult } from "../../../api/products";
-import CustomButton from "../../ui/Button/Button";
+import CustomButton from "../Button/Button";
 import { exportToExcel } from "../../../utils/utils";
 import DownloadIcon from "@mui/icons-material/Download";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
@@ -23,19 +23,17 @@ const statusConfig = {
   danger: { color: "error", icon: <ErrorIcon />, label: "Requiere atención" },
 };
 
-const ProductAuditData = ({ title, taskId, syncResult, pollInterval = 7500 }) => {
+const AuditCard = ({ title, taskId, syncResult, pollInterval = 7500 }) => {
   const [data, setData] = useState([]);
   const [info, setInfo] = useState({ total: "por definir", progress: 0 });
   const isSync = syncResult !== undefined;
 
-  // Sync mode: data comes directly from props
   useEffect(() => {
     if (syncResult === undefined || syncResult === null) return;
     setData(syncResult);
     setInfo({ total: syncResult.length, progress: 100 });
   }, [syncResult]);
 
-  // Async mode: poll task
   useEffect(() => {
     if (!taskId) return;
 
@@ -96,7 +94,7 @@ const ProductAuditData = ({ title, taskId, syncResult, pollInterval = 7500 }) =>
           {data.length}
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-          {isComplete ? `de ${info.total} registros` : `de ${info.total} registros`}
+          de {info.total} registros
         </Typography>
 
         <Chip icon={icon} label={label} color={color} size="small" variant="outlined" sx={{ mb: 2 }} />
@@ -128,4 +126,4 @@ const ProductAuditData = ({ title, taskId, syncResult, pollInterval = 7500 }) =>
   );
 };
 
-export default ProductAuditData;
+export default AuditCard;
