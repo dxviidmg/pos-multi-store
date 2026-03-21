@@ -85,9 +85,24 @@ const Dashboard = () => {
     const totalAmount = salesData.reduce((sum, item) => sum + (item.total || 0), 0);
     
     const daysInPeriod = month === 0 ? 365 : new Date(year, month, 0).getDate();
-    const avgDaily = totalSales / daysInPeriod;
+    const avgDaily = totalAmount / daysInPeriod;
+
+    // Mejor/peor tienda por monto
+    const salesByStore = {};
+    salesData.forEach(sale => {
+      const store = sale.store_name || "Sin tienda";
+      salesByStore[store] = (salesByStore[store] || 0) + (sale.total || 0);
+    });
+    const allStores = dashboardData.stores || [];
+    const bestStore = Object.entries(salesByStore).reduce((max, [name, total]) =>
+      total > (max.total || 0) ? { name, total } : max, { name: "N/A", total: 0 }
+    ).name;
+    const worstStore = Object.entries(salesByStore).reduce((min, [name, total]) =>
+      total < min.total ? { name, total } : min, { name: "N/A", total: Infinity }
+    ).name;
 
     let bestPeriod = "N/A";
+    let worstPeriod = "N/A";
 
     if (month === 0) {
       // Agrupar por mes
@@ -103,36 +118,64 @@ const Dashboard = () => {
       });
 
       const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
-      const bestMonthIndex = Object.keys(salesByMonth).reduce((max, m) => 
-        salesByMonth[m].count > (salesByMonth[max]?.count || 0) ? m : max, 0
+      const entries = Object.keys(salesByMonth);
+      const bestMonthIndex = entries.reduce((max, m) => 
+        salesByMonth[m].count > (salesByMonth[max]?.count || 0) ? m : max, entries[0]
       );
-      bestPeriod = salesByMonth[bestMonthIndex] ? monthNames[bestMonthIndex] : "N/A";
+      const worstMonthIndex = entries.reduce((min, m) => 
+        salesByMonth[m].count < (salesByMonth[min]?.count || Infinity) ? m : min, entries[0]
+      );
+      bestPeriod = monthNames[bestMonthIndex] || "N/A";
+      worstPeriod = monthNames[worstMonthIndex] || "N/A";
     } else {
-      // Agrupar por día de la semana
-      const salesByDay = {};
+      // Agrupar por día del mes
+      const salesByDate = {};
       salesData.forEach(sale => {
-        const date = new Date(sale.created_at);
-        const dayOfWeek = date.getDay();
-        if (!salesByDay[dayOfWeek]) {
-          salesByDay[dayOfWeek] = { count: 0, total: 0 };
-        }
-        salesByDay[dayOfWeek].count++;
-        salesByDay[dayOfWeek].total += sale.total;
+        const d = new Date(sale.created_at).getDate();
+        salesByDate[d] = (salesByDate[d] || 0) + 1;
       });
-
-      const dayNames = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
-      const bestDayIndex = Object.keys(salesByDay).reduce((max, day) => 
-        salesByDay[day].count > (salesByDay[max]?.count || 0) ? day : max, 0
-      );
-      bestPeriod = salesByDay[bestDayIndex] ? dayNames[bestDayIndex] : "N/A";
+      const dateEntries = Object.entries(salesByDate);
+      const bestDate = dateEntries.reduce((max, [d, c]) => c > max[1] ? [d, c] : max, [0, 0]);
+      const worstDate = dateEntries.reduce((min, [d, c]) => c < min[1] ? [d, c] : min, [0, Infinity]);
+      bestPeriod = `Día ${bestDate[0]}`;
+      worstPeriod = `Día ${worstDate[0]}`;
     }
+
+    // Mejor/peor día de la semana (siempre)
+    const dayNames = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+    const salesByWeekday = {};
+    salesData.forEach(sale => {
+      const d = new Date(sale.created_at).getDay();
+      salesByWeekday[d] = (salesByWeekday[d] || 0) + 1;
+    });
+    const wdEntries = Object.entries(salesByWeekday);
+    const bestWeekday = wdEntries.length ? dayNames[wdEntries.reduce((max, [d, c]) => c > max[1] ? [d, c] : max, [0, 0])[0]] : "N/A";
+    const worstWeekday = wdEntries.length ? dayNames[wdEntries.reduce((min, [d, c]) => c < min[1] ? [d, c] : min, [0, Infinity])[0]] : "N/A";
 
     return {
       totalSales,
       totalAmount,
       avgDaily,
+      bestStore,
+      worstStore,
       bestDay: bestPeriod,
-      bestHour: "N/A"
+      worstDay: worstPeriod,
+      bestWeekday,
+      worstWeekday,
+      bestHour: (() => {
+        const salesByHour = {};
+        salesData.forEach(sale => {
+          const h = new Date(sale.created_at).getHours();
+          salesByHour[h] = (salesByHour[h] || 0) + 1;
+        });
+        const best = Object.entries(salesByHour).reduce((max, [h, count]) =>
+          count > max.count ? { h, count } : max, { h: 0, count: 0 }
+        );
+        const worst = Object.entries(salesByHour).reduce((min, [h, count]) =>
+          count < min.count ? { h, count } : min, { h: 0, count: Infinity }
+        );
+        return { best: `${best.h}:00`, worst: `${worst.h}:00` };
+      })(),
     };
   };
 
@@ -146,7 +189,7 @@ const Dashboard = () => {
         </Typography>
 
         <Grid container spacing={2} alignItems="center">
-          <Grid item xs={12} sm={2}>
+          <Grid item xs={12} sm={3}>
             <FormControl size="small" fullWidth>
               <InputLabel>Métrica</InputLabel>
               <Select value={metricType} label="Métrica" onChange={(e) => setMetricType(e.target.value)}>
@@ -156,7 +199,7 @@ const Dashboard = () => {
             </FormControl>
           </Grid>
 
-          <Grid item xs={12} sm={2}>
+          <Grid item xs={12} sm={3}>
             <FormControl size="small" fullWidth>
               <InputLabel>Año</InputLabel>
               <Select value={year} label="Año" onChange={(e) => setYear(e.target.value)}>
@@ -167,7 +210,7 @@ const Dashboard = () => {
             </FormControl>
           </Grid>
 
-          <Grid item xs={12} sm={2}>
+          <Grid item xs={12} sm={3}>
             <FormControl size="small" fullWidth>
               <InputLabel>Mes</InputLabel>
               <Select value={month} label="Mes" onChange={(e) => setMonth(e.target.value)}>
@@ -179,22 +222,41 @@ const Dashboard = () => {
             </FormControl>
           </Grid>
 
-          {!loading && kpis && (metricType === 'count' ? [
-            { label: 'Total Ventas', value: kpis.totalSales.toLocaleString() },
-            { label: 'Promedio Diario', value: kpis.avgDaily.toFixed(1) },
-            { label: month === 0 ? 'Mejor Mes' : 'Mejor Día', value: kpis.bestDay }
-          ] : [
-            { label: 'Monto Total', value: `$${kpis.totalAmount.toLocaleString('es-MX', { minimumFractionDigits: 0 })}` },
-            { label: 'Promedio Diario', value: `$${kpis.avgDaily.toFixed(0)}` },
-            { label: month === 0 ? 'Mejor Mes' : 'Mejor Día', value: kpis.bestDay }
-          ]).map((kpi, i) => (
-            <Grid item xs={12} sm={2} key={i}>
-              <Box sx={{ bgcolor: 'var(--color-primary)', p: 1, borderRadius: 1, textAlign: 'center' }}>
-                <Typography variant="caption" sx={{ color: '#fff', fontWeight: 600 }}>{kpi.label}: {kpi.value}</Typography>
+          {!loading && kpis && (
+            <>
+            <Grid item xs={12} sm={3}>
+              <Box sx={{ bgcolor: '#04346b', p: 1, borderRadius: 1, textAlign: 'center', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Typography variant="caption" sx={{ color: '#fff', fontWeight: 600 }}>
+                  {metricType === 'count' ? 'Total Ventas' : 'Monto Total'}: {metricType === 'count' ? kpis.totalSales.toLocaleString() : `$${kpis.totalAmount.toLocaleString('es-MX', { minimumFractionDigits: 0 })}`}
+                </Typography>
               </Box>
             </Grid>
-          ))}
+            </> 
+          )}
         </Grid>
+
+        {!loading && kpis && (
+          <Grid container spacing={1} sx={{ mt: 1 }}>
+              {[
+                  ...(dashboardData.stores?.length > 1 ? [
+                    { label: 'Mejor Tienda', value: kpis.bestStore, color: '#0d7c3e' },
+                    { label: 'Peor Tienda', value: kpis.worstStore, color: '#b91c1c' },
+                  ] : []),
+                  { label: month === 0 ? 'Mejor Mes' : 'Mejor Día', value: kpis.bestDay, color: '#0d7c3e' },
+                  { label: month === 0 ? 'Peor Mes' : 'Peor Día', value: kpis.worstDay, color: '#b91c1c' },
+                  { label: 'Mejor Día Semana', value: kpis.bestWeekday, color: '#0d7c3e' },
+                  { label: 'Peor Día Semana', value: kpis.worstWeekday, color: '#b91c1c' },
+                  { label: 'Mejor Hora', value: kpis.bestHour.best, color: '#0d7c3e' },
+                  { label: 'Peor Hora', value: kpis.bestHour.worst, color: '#b91c1c' },
+                ].map((kpi, i) => (
+                  <Grid item xs={12} sm={3} key={i}>
+                    <Box sx={{ bgcolor: kpi.color, p: 1, borderRadius: 1, textAlign: 'center' }}>
+                      <Typography variant="caption" sx={{ color: '#fff', fontWeight: 600 }}>{kpi.label}: {kpi.value}</Typography>
+                    </Box>
+                  </Grid>
+                ))}
+            </Grid>
+          )}
       </Box>
 
       {loading ? (
