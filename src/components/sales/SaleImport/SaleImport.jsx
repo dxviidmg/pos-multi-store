@@ -159,7 +159,7 @@ const SaleImport = () => {
             { name: "Cantidad", selector: (row) => row.quantity },
             { name: "Descripción", selector: (row) => row.product_description },
             {
-              name: "Status",
+              name: "Estado",
               selector: (row) =>
                 row.status === "Exitoso" ? (
                   <CheckCircleIcon color="success" />

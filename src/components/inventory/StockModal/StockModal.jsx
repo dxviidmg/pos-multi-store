@@ -125,7 +125,7 @@ const StockModal = ({ isOpen, product, onClose }) => {
           <DataTable
             data={stockOtherStores}
             columns={[
-              { name: "Locación", selector: (row) => row.store_name, sortable: true },
+              { name: "Tienda o almacén", selector: (row) => row.store_name, sortable: true },
               { name: "Stock disponible", selector: (row) => row.available_stock, sortable: true },
               {
                 name: "Cantidad a solicitar",

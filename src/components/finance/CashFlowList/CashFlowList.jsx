@@ -99,7 +99,7 @@ const CashFlowList = () => {
           searcher={true}
           columns={[
             {
-              name: "Creación",
+              name: "Hora",
               selector: (row) => formatTimeFromDate(row.created_at),
             },
             { name: "Concepto", selector: (row) => row.concept },

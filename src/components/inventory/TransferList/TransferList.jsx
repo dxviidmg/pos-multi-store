@@ -36,7 +36,7 @@ const TransferList = () => {
           columns={[
             { name: "#", selector: (row) => row.id },
             { name: "Código", selector: (row) => row.product_code },
-            { name: "Producto", selector: (row) => row.product_description },
+            { name: "Nombre", selector: (row) => row.product_description },
             { name: "Cantidad", selector: (row) => row.quantity },
             { name: "Descripción", selector: (row) => row.description },
             { name: "Antigüedad", selector: (row) => row.created_at ? calculateTimeAgo(row.created_at) : "N/A" },

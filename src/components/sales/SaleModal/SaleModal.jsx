@@ -133,7 +133,7 @@ const SaleModal = ({ isOpen, sale, onClose, onUpdate }) => {
               setSelectedRows={setSelectedRows}
               columns={[
                 { name: "Descripción", selector: (row) => row.name },
-                { name: "C. Vendida", selector: (row) => row.quantity },
+                { name: "Cantidad vendida", selector: (row) => row.quantity },
                 {
                   name: "Devolver",
                   selector: (row) => (
@@ -152,7 +152,7 @@ const SaleModal = ({ isOpen, sale, onClose, onUpdate }) => {
                     />
                   ),
                 },
-                { name: "P. unitario", selector: (row) => `$${row.price}` },
+                { name: "Precio unitario", selector: (row) => `$${row.price}` },
                 {
                   name: "Importe",
                   selector: (row) => `$${row.price * row.quantity}`,

@@ -353,7 +353,7 @@ const StoreList = () => {
         ),
       },
       {
-        name: "Opciones",
+        name: "Acciones",
         cell: (row) => (
           <>
             {chooseIcon(row.products_count === tenantInfo.product_count)}
@@ -495,7 +495,7 @@ const StoreList = () => {
         ),
       },
       {
-        name: "Opciones",
+        name: "Acciones",
         cell: ({ products_count }) => (
           <>{chooseIcon(products_count === tenantInfo.product_count)}</>
         ),
@@ -622,7 +622,7 @@ const StoreList = () => {
         selector: () => "",
       },
       {
-        name: "Opciones",
+        name: "Acciones",
         selector: () => "",
       },
     ];

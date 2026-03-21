@@ -122,9 +122,9 @@ const LogList = () => {
               { name: "Nombre", selector: (row) => row.product.name },
               { name: "Descripción", selector: (row) => row.description },
               { name: "Hora", selector: (row) => formatTimeFromDate(row.created_at) },
-              { name: "S. anterior", selector: (row) => row.previous_stock },
+              { name: "Stock anterior", selector: (row) => row.previous_stock },
               { name: "Diferencia", selector: (row) => row.difference },
-              { name: "S. nuevo", selector: (row) => row.updated_stock },
+              { name: "Stock nuevo", selector: (row) => row.updated_stock },
             ]}
           />
         </Grid>
