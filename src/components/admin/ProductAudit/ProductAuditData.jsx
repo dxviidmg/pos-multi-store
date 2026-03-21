@@ -23,10 +23,19 @@ const statusConfig = {
   danger: { color: "error", icon: <ErrorIcon />, label: "Requiere atención" },
 };
 
-const AuditDashboardData = ({ title, taskId, pollInterval = 7500 }) => {
+const ProductAuditData = ({ title, taskId, syncResult, pollInterval = 7500 }) => {
   const [data, setData] = useState([]);
   const [info, setInfo] = useState({ total: "por definir", progress: 0 });
+  const isSync = syncResult !== undefined;
 
+  // Sync mode: data comes directly from props
+  useEffect(() => {
+    if (syncResult === undefined || syncResult === null) return;
+    setData(syncResult);
+    setInfo({ total: syncResult.length, progress: 100 });
+  }, [syncResult]);
+
+  // Async mode: poll task
   useEffect(() => {
     if (!taskId) return;
 
@@ -52,7 +61,6 @@ const AuditDashboardData = ({ title, taskId, pollInterval = 7500 }) => {
     };
 
     let intervalId;
-
     fetchTask().then((finished) => {
       if (!finished) {
         intervalId = setInterval(fetchTask, pollInterval);
@@ -63,12 +71,9 @@ const AuditDashboardData = ({ title, taskId, pollInterval = 7500 }) => {
   }, [taskId, pollInterval]);
 
   const isComplete = info.progress === 100;
-  const status = !taskId ? "idle" : !isComplete ? "pending" : data.length === 0 ? "success" : "danger";
+  const hasSource = isSync ? syncResult !== undefined && syncResult !== null : !!taskId;
+  const status = !hasSource ? "idle" : !isComplete ? "pending" : data.length === 0 ? "success" : "danger";
   const { color, icon, label } = statusConfig[status];
-
-  const handleDownload = () => {
-    exportToExcel(data, title, false);
-  };
 
   return (
     <Card
@@ -91,27 +96,29 @@ const AuditDashboardData = ({ title, taskId, pollInterval = 7500 }) => {
           {data.length}
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-          de {info.total} registros
+          {isComplete ? `de ${info.total} registros` : `de ${info.total} registros`}
         </Typography>
 
         <Chip icon={icon} label={label} color={color} size="small" variant="outlined" sx={{ mb: 2 }} />
 
-        <Box sx={{ width: "100%", mb: 2 }}>
-          <LinearProgress
-            variant="determinate"
-            value={info.progress}
-            color={isComplete ? "success" : "primary"}
-            sx={{ height: 8, borderRadius: 4 }}
-          />
-          <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: "block" }}>
-            {info.progress}%
-          </Typography>
-        </Box>
+        {!isSync && (
+          <Box sx={{ width: "100%", mb: 2 }}>
+            <LinearProgress
+              variant="determinate"
+              value={info.progress}
+              color={isComplete ? "success" : "primary"}
+              sx={{ height: 8, borderRadius: 4 }}
+            />
+            <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: "block" }}>
+              {info.progress}%
+            </Typography>
+          </Box>
+        )}
 
         <CustomButton
           fullWidth
           disabled={!data || data.length === 0}
-          onClick={handleDownload}
+          onClick={() => exportToExcel(data, title, false)}
           startIcon={<DownloadIcon />}
         >
           Descargar
@@ -121,4 +128,4 @@ const AuditDashboardData = ({ title, taskId, pollInterval = 7500 }) => {
   );
 };
 
-export default AuditDashboardData;
+export default ProductAuditData;
