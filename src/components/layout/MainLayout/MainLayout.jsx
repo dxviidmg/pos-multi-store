@@ -320,9 +320,11 @@ export default function MainLayout({ toggleTheme, themeMode }) {
           }}
         >
           {open && (
-            <Box component="img" src={logo} alt="SmartVenta"
-              sx={{ height: "38px", width: "auto", objectFit: "contain", borderRadius: 1 }}
-            />
+            <a href="https://smartventa-pos.vercel.app/" target="_blank" rel="noopener noreferrer">
+              <Box component="img" src={logo} alt="SmartVenta"
+                sx={{ height: "38px", width: "auto", objectFit: "contain", borderRadius: 1, cursor: "pointer" }}
+              />
+            </a>
           )}
         </DrawerHeader>
 
