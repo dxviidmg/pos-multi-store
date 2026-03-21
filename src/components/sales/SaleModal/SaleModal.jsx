@@ -132,7 +132,7 @@ const SaleModal = ({ isOpen, sale, onClose, onUpdate }) => {
               data={formData.products_sale}
               setSelectedRows={setSelectedRows}
               columns={[
-                { name: "Descripción", selector: (row) => row.name, grow: 3 },
+                { name: "Descripción", selector: (row) => row.name },
                 { name: "C. Vendida", selector: (row) => row.quantity },
                 {
                   name: "Devolver",
