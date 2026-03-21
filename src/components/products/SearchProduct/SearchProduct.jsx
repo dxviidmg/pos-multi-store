@@ -293,12 +293,6 @@ const SearchProduct = ({ searchInputRef }) => {
               Enfoca el campo de búsqueda para agregar productos
             </Alert>
           )}
-          <Chip
-            label={`${data.length} resultados ${data.length === 200 ? "(puede haber mas coincidencias)" : ""}`}
-            color="success"
-            size="small"
-            sx={{ display: (searching || data.length === 0) ? 'none' : 'inline-flex' }}
-          />
           <CustomButton
             disabled={!urlPrinter}
             onClick={(e) => handlePrintTicket("test", {})}
@@ -399,6 +393,9 @@ const SearchProduct = ({ searchInputRef }) => {
             onBlur={() => setIsInputFocused(false)}
             autoComplete="off"
           />
+          {queryType === "q" && data.length > 0 && (
+            <Chip label={`${data.length} resultados`} color="primary" size="small" sx={{ height: 36 }} />
+          )}
         </Grid>
         {searching && (
           <Grid item xs={12}>
@@ -451,7 +448,6 @@ const SearchProduct = ({ searchInputRef }) => {
                           disabled={
                             movementType === "venta" && row.available_stock === 0
                           }
-                          variant="primary"
                         >
                           <AddIcon />
                         </CustomButton>
@@ -462,7 +458,6 @@ const SearchProduct = ({ searchInputRef }) => {
                           onClick={() =>
                             handleOpenModal({ ...row, onlyRead: true })
                           }
-                          variant="primary"
                         >
                           <InventoryIcon />
                         </CustomButton>
@@ -473,7 +468,6 @@ const SearchProduct = ({ searchInputRef }) => {
                           onClick={() =>
                             handleOpenModal({ ...row, showImage: true })
                           }
-                          variant="primary"
                           disabled={!row.product.image}
                         >
                           <RemoveRedEyeIcon />

@@ -199,14 +199,14 @@ const SaleList = () => {
           data={sales}
           pagination={true}
           columns={[
-            { name: "#", selector: (row) => row.id },
+            { name: "#", selector: (row) => row.id, width: 70 },
             {
               name: "Estado",
               selector: (row) =>
                 salesDuplicated.includes(row.id)
                   ? <ErrorIcon className="icon-danger" />
                   : <CheckCircleIcon className="icon-success" />,
-              width: '80px',
+              width: 70,
             },
             ...(showAllFields
               ? [{ name: "Cliente", selector: (row) => row.client?.full_name }]
@@ -214,18 +214,18 @@ const SaleList = () => {
             {
               name: "Fecha y hora",
               selector: (row) => getFormattedDateTime(row.created_at),
-              minWidth: '150px',
+              minWidth: 150,
             },
             {
               name: "Productos",
               selector: (row) => <ProductsPopperButton row={row} productsModal={productsModal} />,
             },
-            { name: "Número de productos", selector: (row) => row.products_sale?.reduce((sum, p) => sum + p.quantity, 0) || 0, width: '100px' },
-            { name: "Total", selector: (row) => `$${row.total}` },
+            { name: "Número de productos", selector: (row) => row.products_sale?.reduce((sum, p) => sum + p.quantity, 0) || 0, width: 80 },
+            { name: "Total", selector: (row) => `$${row.total}`, width: 80 },
             ...(params.reservation_in_progress === "true"
               ? [
-                  { name: "Pagado", selector: (row) => "$" + row.paid },
-                  { name: "Falta", selector: (row) => "$" + (row.total - row.paid) },
+                  { name: "Pagado", selector: (row) => "$" + row.paid, width: 80 },
+                  { name: "Falta", selector: (row) => "$" + (row.total - row.paid), width: 80 },
                 ]
               : []),
             { name: "Métodos de pago", selector: (row) => row.payments_methods.join(", ") },

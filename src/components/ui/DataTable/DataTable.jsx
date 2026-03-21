@@ -54,7 +54,11 @@ const DataTable = ({
         };
 
         if (col.cell) {
-          column.renderCell = (params) => col.cell(params.row);
+          column.renderCell = (params) => (
+            <div style={{ display: 'flex', gap: '1px', padding: '0 1px', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
+              {col.cell(params.row)}
+            </div>
+          );
         } else if (col.selector) {
           column.renderCell = (params) => {
             const value = col.selector(params.row);
@@ -123,11 +127,25 @@ const DataTable = ({
               minHeight: '36px !important',
               maxHeight: '36px !important',
             },
+            "& .MuiDataGrid-columnHeaderTitle": {
+              textAlign: 'center',
+              width: '100%',
+            },
+            "& .MuiDataGrid-columnHeader": {
+              justifyContent: 'center',
+            },
+            "& .MuiDataGrid-columnHeaderTitleContainer": {
+              justifyContent: 'center',
+            },
             "& .MuiDataGrid-cell": {
               py: 0,
+              px: '2px',
               fontSize: '0.8125rem',
               whiteSpace: 'normal !important',
               lineHeight: '1.3 !important',
+              justifyContent: 'center',
+              textAlign: 'center',
+              gap: '2px',
               '& .MuiButtonBase-root': {
                 transform: 'scale(0.8)',
               },

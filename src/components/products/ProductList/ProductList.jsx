@@ -226,16 +226,12 @@ const ProductList = () => {
               { name: "Departamento", selector: (row) => row.department_name },
               { name: "Nombre", selector: (row) => row.name },
               { name: "Stock", selector: (row) => row.stock, omit: user.role !== "owner" },
-              { name: "Costo", selector: (row) => "$" + row.cost },
               {
                 name: "Precios",
                 cell: (row) => (
-                  <>
-                    Unitario: ${row.unit_price}<br />
-                    Mayoreo: {row.apply_wholesale
-                      ? `$${row.wholesale_price} (${row.min_wholesale_quantity}+)`
-                      : "NA"}
-                  </>
+                  row.apply_wholesale
+                    ? <>Men: ${row.unit_price}<br />May: ${row.wholesale_price} ({row.min_wholesale_quantity}+)</>
+                    : `$${row.unit_price}`
                 ),
               },
               {
@@ -254,11 +250,6 @@ const ProductList = () => {
                         </CustomButton>
                       </CustomTooltip>
                     )}
-                    <CustomTooltip text="Generar código de barras">
-                      <CustomButton onClick={() => handleGenerate(row.code)}>
-                        <span style={{ fontSize: "11px" }}>BC39</span>
-                      </CustomButton>
-                    </CustomTooltip>
                   </>
                 ),
               },

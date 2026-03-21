@@ -1,65 +1,59 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import CustomButton from "../../ui/Button/Button";
 import { getRedeployRender } from "../../../api/restart";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { formatTimeFromDate } from "../../../utils/utils";
-import { Grid } from "@mui/material";
+import { Grid, Typography, Alert, Box, Divider } from "@mui/material";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
+import SyncIcon from "@mui/icons-material/Sync";
+
+const DEPLOY_KEY = "deploy_finish_at";
+const DEPLOY_MINUTES = 3;
 
 function RestartService() {
   const [isLoading, setIsLoading] = useState(false);
-  const [data, setData] = useState({});
-  const [isDisabled, setIsDisabled] = useState(false);
+  const [finishAt, setFinishAt] = useState(null);
+  const [error, setError] = useState(null);
 
-  // 🔹 Verificar localStorage al cargar
-  useEffect(() => {
-    const finishAt = localStorage.getItem("deploy_finish_at");
+  const isDisabled = finishAt && new Date(finishAt).getTime() > Date.now();
 
-    if (finishAt) {
-      const now = Date.now();
-      const finishTime = new Date(finishAt).getTime();
-
-      if (now < finishTime) {
-        setIsDisabled(true);
-
-        // ⏱️ re-habilitar automáticamente cuando pase el tiempo
-        const timeout = setTimeout(() => {
-          setIsDisabled(false);
-          localStorage.removeItem("deploy_finish_at");
-        }, finishTime - now);
-
-        return () => clearTimeout(timeout);
-      }
-    }
+  const scheduleEnable = useCallback((finishTime) => {
+    const delay = new Date(finishTime).getTime() - Date.now();
+    if (delay <= 0) return;
+    const timeout = setTimeout(() => {
+      setFinishAt(null);
+      localStorage.removeItem(DEPLOY_KEY);
+    }, delay);
+    return () => clearTimeout(timeout);
   }, []);
+
+  useEffect(() => {
+    const stored = localStorage.getItem(DEPLOY_KEY);
+    if (stored && new Date(stored).getTime() > Date.now()) {
+      setFinishAt(stored);
+      return scheduleEnable(stored);
+    }
+  }, [scheduleEnable]);
 
   const handleRedeploy = async () => {
     setIsLoading(true);
-    const response = await getRedeployRender();
-    setIsLoading(false);
-
-    if (response.status === 200) {
-      const createdAt = new Date(response.data.deploy.createdAt);
-      createdAt.setMinutes(createdAt.getMinutes() + 3);
-
-      const finishAt = createdAt.toISOString();
-
-      // 💾 guardar en localStorage
-      localStorage.setItem("deploy_finish_at", finishAt);
-
-      setIsDisabled(true);
-
-      setData(response.data);
-
-      // ⏱️ re-habilitar botón después de 5 min
-      const delay = new Date(finishAt).getTime() - Date.now();
-      setTimeout(() => {
-        setIsDisabled(false);
-        localStorage.removeItem("deploy_finish_at");
-      }, delay);
-
-    } else {
-      setData(response.response?.data);
+    setError(null);
+    try {
+      const { status, data, response } = await getRedeployRender();
+      if (status === 200) {
+        const finish = new Date(data.deploy.createdAt);
+        finish.setMinutes(finish.getMinutes() + DEPLOY_MINUTES);
+        const finishIso = finish.toISOString();
+        localStorage.setItem(DEPLOY_KEY, finishIso);
+        setFinishAt(finishIso);
+        scheduleEnable(finishIso);
+      } else {
+        setError(response?.data?.error || "Error al sincronizar");
+      }
+    } catch {
+      setError("Error de conexión");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -67,29 +61,31 @@ function RestartService() {
     <Grid className="card">
       <CustomSpinner isLoading={isLoading} />
 
-      <CustomButton
-        onClick={handleRedeploy}
-        disabled={isDisabled || isLoading}
-        startIcon={<RestartAltIcon />}
-      >
-        Sincronizar servicio
-      </CustomButton>
+      <Box sx={{ textAlign: "center", mb: 3 }}>
+        <SyncIcon sx={{ fontSize: 48, color: "primary.main", mb: 1 }} />
+        <Typography variant="h5" fontWeight={700}>Sincronizar servicio</Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+          Si el sistema está lento, sincroniza para mejorar la velocidad. El proceso tarda aproximadamente {DEPLOY_MINUTES} minutos.
+        </Typography>
+      </Box>
 
-      {data?.deploy && (
-        <p>
-          Inicio: {formatTimeFromDate(data.deploy.createdAt)} <br />
-          Disponible nuevamente a las:{" "}
-          {formatTimeFromDate(data.finishAt)}
-        </p>
-      )}
+      <Divider sx={{ mb: 3 }} />
+
+      <Box sx={{ display: "flex", justifyContent: "center", mb: 3 }}>
+        <CustomButton onClick={handleRedeploy} disabled={!!isDisabled || isLoading} startIcon={<RestartAltIcon />}>
+          {isLoading ? "Sincronizando..." : "Sincronizar ahora"}
+        </CustomButton>
+      </Box>
 
       {isDisabled && (
-        <p className="text-warning">
-          El servicio se está reiniciando, intenta más tarde.
-        </p>
+        <Alert severity="warning" variant="outlined">
+          El servicio se está sincronizando. Disponible a las: <b>{formatTimeFromDate(finishAt)}</b>
+        </Alert>
       )}
 
-      {data?.error && <p>{data.error}</p>}
+      {error && (
+        <Alert severity="error" variant="outlined" sx={{ mt: 2 }}>{error}</Alert>
+      )}
     </Grid>
   );
 }
