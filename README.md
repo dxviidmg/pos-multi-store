@@ -14,7 +14,8 @@ Negocios minoristas y mayoristas que operan con varias tiendas y/o almacenes, y 
 - **Traspasos y distribuciones** — Mueve mercancía entre almacenes y tiendas con trazabilidad completa. Confirma recepciones desde cada sucursal.
 - **Clientes y mensualidades** — Registro de clientes, historial de compras y gestión de pagos recurrentes.
 - **Corte de caja** — Resumen diario de ventas por método de pago (efectivo, tarjeta, transferencia), con movimientos de caja detallados.
-- **Dashboard y auditoría** — Tablero general con métricas del negocio. Herramientas de auditoría para detectar ventas duplicadas, logs inconsistentes y discrepancias de stock.
+- **Dashboard y auditoría** — Tablero general con métricas del negocio (mejor/peor tienda, día, hora). Dos módulos de auditoría: transacciones (ventas duplicadas, logs inconsistentes, discrepancias de stock) y productos (códigos repetidos, costo en cero, precio mayoreo inconsistente, faltantes en tiendas, productos sin movimiento).
+- **Ayuda contextual** — Botón de ayuda en el navbar que muestra una descripción de la página actual según la ruta.
 - **Importación masiva** — Carga productos, inventario y ventas desde archivos Excel.
 - **Roles y permisos** — Tres niveles de acceso: dueño, administrador y vendedor, cada uno con su vista y permisos específicos.
 - **Modo oscuro/claro** — Interfaz adaptable a la preferencia del usuario.
