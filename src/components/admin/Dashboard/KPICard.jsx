@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Typography, Paper } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import TrendingDownIcon from "@mui/icons-material/TrendingDown";
 
@@ -15,12 +15,7 @@ const KPICard = ({ title, value, subtitle, trend, icon: Icon, index = 0 }) => {
   const gradient = gradients[index % gradients.length];
 
   return (
-    <Paper elevation={0} sx={{
-      p: 2.5, height: "100%", borderRadius: 3.5,
-      border: "1px solid #e8ecf1",
-      transition: "all 0.3s cubic-bezier(0.4,0,0.2,1)",
-      "&:hover": { transform: "translateY(-3px)", boxShadow: "0 8px 30px rgba(0,0,0,0.08)" },
-    }}>
+    <Box sx={{ height: "100%" }}>
       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
         <Box sx={{ flex: 1 }}>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5, fontWeight: 500 }}>
@@ -56,7 +51,7 @@ const KPICard = ({ title, value, subtitle, trend, icon: Icon, index = 0 }) => {
           </Box>
         )}
       </Box>
-    </Paper>
+    </Box>
   );
 };
 

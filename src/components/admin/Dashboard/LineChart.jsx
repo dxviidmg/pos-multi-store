@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { LineChart as MuiLineChart } from '@mui/x-charts/LineChart';
+import { ChartsReferenceLine } from '@mui/x-charts/ChartsReferenceLine';
 import { Box, Typography } from '@mui/material';
 
 const COLORS = ['#2563eb', '#7c3aed', '#059669', '#dc2626', '#ea580c', '#f59e0b', '#06b6d4'];
@@ -108,40 +109,25 @@ const processData = (result, dataType, metricType, daysInMonth = 31) => {
   }
 };
 
-const LineChart = ({ title, data, labels, xText, yText, dataType, metricType = 'count' }) => {
-  const [series, setSeries] = useState([]);
-
-  useEffect(() => {
-    if (!data) return;
+const LineChart = ({ title, data, labels, xText, yText, dataType, metricType = 'count', todayLabel }) => {
+  const series = React.useMemo(() => {
+    if (!data) return [];
     const daysInMonth = labels?.length || 31;
     const processedData = processData(data, dataType, metricType, daysInMonth);
-    
-    // Calcular promedio solo si hay más de una tienda
+
     if (processedData.length > 1) {
       const dataLength = processedData[0].data.length;
       const avgData = Array(dataLength).fill(0);
-      
       processedData.forEach(store => {
-        store.data.forEach((value, index) => {
-          avgData[index] += value;
-        });
+        store.data.forEach((value, index) => { avgData[index] += value; });
       });
-      
       const average = avgData.map(sum => sum / processedData.length);
-      
-      setSeries([
+      return [
         ...processedData,
-        {
-          data: average,
-          label: 'Promedio',
-          color: '#94a3b8',
-          curve: 'linear',
-          showMark: false,
-        }
-      ]);
-    } else {
-      setSeries(processedData);
+        { data: average, label: 'Promedio', color: '#94a3b8', curve: 'linear', showMark: false },
+      ];
     }
+    return processedData;
   }, [data, dataType, metricType, labels]);
 
   return (
@@ -187,7 +173,9 @@ const LineChart = ({ title, data, labels, xText, yText, dataType, metricType = '
             strokeWidth: 2,
           },
         }}
-      />
+      >
+        {todayLabel && <ChartsReferenceLine x={todayLabel} lineStyle={{ stroke: '#ef4444', strokeWidth: 2, strokeDasharray: '6 3' }} labelStyle={{ fill: '#ef4444', fontSize: 11, fontWeight: 600 }} label="Hoy" />}
+      </MuiLineChart>
     </Box>
   );
 };
