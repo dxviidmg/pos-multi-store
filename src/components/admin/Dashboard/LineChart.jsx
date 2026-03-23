@@ -1,5 +1,6 @@
 import React from "react";
 import { LineChart as MuiLineChart } from '@mui/x-charts/LineChart';
+import { ChartsReferenceLine } from '@mui/x-charts/ChartsReferenceLine';
 import { Box, Typography } from '@mui/material';
 
 const COLORS = ['#2563eb', '#7c3aed', '#059669', '#dc2626', '#ea580c', '#f59e0b', '#06b6d4'];
@@ -108,7 +109,7 @@ const processData = (result, dataType, metricType, daysInMonth = 31) => {
   }
 };
 
-const LineChart = ({ title, data, labels, xText, yText, dataType, metricType = 'count' }) => {
+const LineChart = ({ title, data, labels, xText, yText, dataType, metricType = 'count', todayLabel }) => {
   const series = React.useMemo(() => {
     if (!data) return [];
     const daysInMonth = labels?.length || 31;
@@ -172,7 +173,9 @@ const LineChart = ({ title, data, labels, xText, yText, dataType, metricType = '
             strokeWidth: 2,
           },
         }}
-      />
+      >
+        {todayLabel && <ChartsReferenceLine x={todayLabel} lineStyle={{ stroke: '#ef4444', strokeWidth: 2, strokeDasharray: '6 3' }} labelStyle={{ fill: '#ef4444', fontSize: 11, fontWeight: 600 }} label="Hoy" />}
+      </MuiLineChart>
     </Box>
   );
 };

@@ -7,6 +7,7 @@ import SalesHeatmap from "./SalesHeatmap";
 import AvgTicketChart from "./AvgTicketChart";
 import KPICard from "./KPICard";
 import { BarChart } from "@mui/x-charts/BarChart";
+import { ChartsReferenceLine } from "@mui/x-charts/ChartsReferenceLine";
 import {
   Grid, FormControl, InputLabel, Select, MenuItem, Box, Typography,
   LinearProgress, Skeleton, useTheme,
@@ -82,18 +83,26 @@ const Dashboard = () => {
     const salesData = dashboardData.sales;
     const totalSales = salesData.length;
     const totalAmount = salesData.reduce((sum, s) => sum + (s.total || 0), 0);
-    const daysInPeriod = month === 0 ? 365 : new Date(year, month, 0).getDate();
+    const now = new Date();
+    const totalDaysInPeriod = month === 0 ? 365 : new Date(year, month, 0).getDate();
+    const isCurrentPeriod = month === 0 ? year === now.getFullYear() : (year === now.getFullYear() && month === now.getMonth() + 1);
+    const daysInPeriod = isCurrentPeriod ? (month === 0 ? Math.floor((now - new Date(year, 0, 1)) / 86400000) + 1 : now.getDate()) : totalDaysInPeriod;
     const avgDaily = totalAmount / daysInPeriod;
+
+    const getTied = (entries, mapLabel, mode) => {
+      if (!entries.length) return "N/A";
+      const vals = entries.map(e => e[1]);
+      const target = mode === "best" ? Math.max(...vals) : Math.min(...vals);
+      return entries.filter(e => e[1] === target).map(e => mapLabel(e[0])).join(", ");
+    };
 
     // Por tienda
     const salesByStore = {};
-    salesData.forEach(s => {
-      const store = s.store_name || "Sin tienda";
-      salesByStore[store] = (salesByStore[store] || 0) + (s.total || 0);
-    });
+    if (dashboardData.stores) dashboardData.stores.forEach(s => { salesByStore[s.name] = 0; });
+    salesData.forEach(s => { const store = s.store_name || "Sin tienda"; salesByStore[store] = (salesByStore[store] || 0) + (s.total || 0); });
     const storeEntries = Object.entries(salesByStore);
-    const bestStore = storeEntries.reduce((a, b) => b[1] > a[1] ? b : a, ["N/A", 0])[0];
-    const worstStore = storeEntries.reduce((a, b) => b[1] < a[1] ? b : a, ["N/A", Infinity])[0];
+    const bestStore = getTied(storeEntries, k => k, "best");
+    const worstStore = getTied(storeEntries, k => k, "worst");
 
     // Mejor/peor periodo
     let bestPeriod = "N/A", worstPeriod = "N/A";
@@ -101,31 +110,34 @@ const Dashboard = () => {
       const byMonth = {};
       salesData.forEach(s => { const m = new Date(s.created_at).getMonth(); byMonth[m] = (byMonth[m] || 0) + 1; });
       const entries = Object.entries(byMonth);
-      bestPeriod = MONTH_NAMES[entries.reduce((a, b) => b[1] > a[1] ? b : a, [0, 0])[0]] || "N/A";
-      worstPeriod = MONTH_NAMES[entries.reduce((a, b) => b[1] < a[1] ? b : a, [0, Infinity])[0]] || "N/A";
+      bestPeriod = getTied(entries, k => MONTH_NAMES[k] || "N/A", "best");
+      worstPeriod = getTied(entries, k => MONTH_NAMES[k] || "N/A", "worst");
     } else {
       const byDate = {};
       salesData.forEach(s => { const d = new Date(s.created_at).getDate(); byDate[d] = (byDate[d] || 0) + 1; });
       const entries = Object.entries(byDate);
-      bestPeriod = `Día ${entries.reduce((a, b) => b[1] > a[1] ? b : a, [0, 0])[0]}`;
-      worstPeriod = `Día ${entries.reduce((a, b) => b[1] < a[1] ? b : a, [0, Infinity])[0]}`;
+      bestPeriod = getTied(entries, k => `Día ${k}`, "best");
+      worstPeriod = getTied(entries, k => `Día ${k}`, "worst");
     }
 
     // Por día de semana
     const byWeekday = {};
     salesData.forEach(s => { const d = new Date(s.created_at).getDay(); byWeekday[d] = (byWeekday[d] || 0) + 1; });
     const wdEntries = Object.entries(byWeekday);
-    const bestWeekday = wdEntries.length ? DAY_NAMES[wdEntries.reduce((a, b) => b[1] > a[1] ? b : a, [0, 0])[0]] : "N/A";
-    const worstWeekday = wdEntries.length ? DAY_NAMES[wdEntries.reduce((a, b) => b[1] < a[1] ? b : a, [0, Infinity])[0]] : "N/A";
+    const bestWeekday = getTied(wdEntries, k => DAY_NAMES[k], "best");
+    const worstWeekday = getTied(wdEntries, k => DAY_NAMES[k], "worst");
 
     // Por hora
     const byHour = {};
     salesData.forEach(s => { const h = new Date(s.created_at).getHours(); byHour[h] = (byHour[h] || 0) + 1; });
     const hourEntries = Object.entries(byHour);
-    const bestHour = hourEntries.length ? `${hourEntries.reduce((a, b) => b[1] > a[1] ? b : a, [0, 0])[0]}:00` : "N/A";
-    const worstHour = hourEntries.length ? `${hourEntries.reduce((a, b) => b[1] < a[1] ? b : a, [0, Infinity])[0]}:00` : "N/A";
+    const bestHour = getTied(hourEntries, k => `${k}:00`, "best");
+    const worstHour = getTied(hourEntries, k => `${k}:00`, "worst");
 
-    return { totalSales, totalAmount, avgDaily, bestStore, worstStore, bestPeriod, worstPeriod, bestWeekday, worstWeekday, bestHour, worstHour };
+    const storeCount = dashboardData.stores?.length || 1;
+    const avgPerStore = totalAmount / storeCount;
+
+    return { totalSales, totalAmount, avgDaily, avgPerStore, daysInPeriod, bestStore, worstStore, bestPeriod, worstPeriod, bestWeekday, worstWeekday, bestHour, worstHour };
   };
 
   const kpis = calculateKPIs();
@@ -210,6 +222,10 @@ const Dashboard = () => {
     ? Array.from({ length: new Date(year, month, 0).getDate() }, (_, i) => (i + 1).toString())
     : [];
 
+  const now = new Date();
+  const todayLabel = month !== 0 && year === now.getFullYear() && month === now.getMonth() + 1
+    ? now.getDate().toString() : null;
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
       {/* Header + Filtros */}
@@ -238,12 +254,12 @@ const Dashboard = () => {
         </Grid>
         <Grid item xs={6} md={3}>
           <Box className="card" sx={{ height: "100%", mb: 0 }}>
-            <KPICard title="Promedio Diario" value={`$${kpis.avgDaily.toLocaleString("es-MX", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`} subtitle="Ingreso promedio/día" icon={TrendingUpIcon} index={2} />
+            <KPICard title="Ingreso Diario" value={`$${kpis.avgDaily.toLocaleString("es-MX", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`} subtitle={`$${kpis.totalAmount.toLocaleString("es-MX", { minimumFractionDigits: 0 })} ÷ ${kpis.daysInPeriod} días`} icon={TrendingUpIcon} index={2} />
           </Box>
         </Grid>
         <Grid item xs={6} md={3}>
           <Box className="card" sx={{ height: "100%", mb: 0 }}>
-            <KPICard title="Hora Pico" value={kpis.bestHour} subtitle="Mayor actividad" icon={AccessTimeIcon} index={3} />
+            <KPICard title="Promedio por Tienda" value={`$${kpis.avgPerStore.toLocaleString("es-MX", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`} subtitle={`$${kpis.totalAmount.toLocaleString("es-MX", { minimumFractionDigits: 0 })} ÷ ${dashboardData.stores?.length || 1} tienda${(dashboardData.stores?.length || 1) > 1 ? 's' : ''}`} icon={StorefrontIcon} index={4} />
           </Box>
         </Grid>
 
@@ -297,6 +313,7 @@ const Dashboard = () => {
             yText="Ventas"
             xText={month === 0 ? "Meses" : "Días"}
             dataType={month === 0 ? "monthly" : "day_of_month"}
+            todayLabel={todayLabel}
           />
         ) : (
           <MainBarChart
@@ -308,6 +325,7 @@ const Dashboard = () => {
             }
             dataType={month === 0 ? "monthly" : "day_of_month"}
             daysInMonth={month !== 0 ? daysLabels.length : 12}
+            todayLabel={todayLabel}
           />
         )}
       </Box>
@@ -361,7 +379,7 @@ const processBarData = (result, dataType, metricType, daysInMonth) => {
   }));
 };
 
-const MainBarChart = ({ data, metricType, labels, dataType, daysInMonth }) => {
+const MainBarChart = ({ data, metricType, labels, dataType, daysInMonth, todayLabel }) => {
   const series = React.useMemo(() => processBarData(data, dataType, metricType, daysInMonth), [data, dataType, metricType, daysInMonth]);
   if (!series.length) return null;
   return (
@@ -376,7 +394,9 @@ const MainBarChart = ({ data, metricType, labels, dataType, daysInMonth }) => {
         legend: { direction: "row", position: { vertical: "top", horizontal: "middle" }, padding: 0 },
       }}
       grid={{ horizontal: true }}
-    />
+    >
+      {todayLabel && <ChartsReferenceLine x={todayLabel} lineStyle={{ stroke: "#ef4444", strokeWidth: 2, strokeDasharray: "6 3" }} labelStyle={{ fill: "#ef4444", fontSize: 11, fontWeight: 600 }} label="Hoy" />}
+    </BarChart>
   );
 };
 
