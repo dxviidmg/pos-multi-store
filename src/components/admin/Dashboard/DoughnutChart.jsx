@@ -48,7 +48,11 @@ const DoughnutChart = ({ title, data, dataType, metricType = 'count' }) => {
   useEffect(() => {
     if (!data) return;
     const processedData = processData(data, dataType, metricType);
-    setChartData(processedData);
+    const total = processedData.reduce((sum, d) => sum + d.value, 0);
+    setChartData(processedData.map(d => ({
+      ...d,
+      label: `${d.label} (${total ? ((d.value / total) * 100).toFixed(1) : 0}%)`,
+    })));
   }, [data, dataType, metricType]);
 
   return (

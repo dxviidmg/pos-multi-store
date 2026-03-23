@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { LineChart as MuiLineChart } from '@mui/x-charts/LineChart';
 import { Box, Typography } from '@mui/material';
 
@@ -109,39 +109,24 @@ const processData = (result, dataType, metricType, daysInMonth = 31) => {
 };
 
 const LineChart = ({ title, data, labels, xText, yText, dataType, metricType = 'count' }) => {
-  const [series, setSeries] = useState([]);
-
-  useEffect(() => {
-    if (!data) return;
+  const series = React.useMemo(() => {
+    if (!data) return [];
     const daysInMonth = labels?.length || 31;
     const processedData = processData(data, dataType, metricType, daysInMonth);
-    
-    // Calcular promedio solo si hay más de una tienda
+
     if (processedData.length > 1) {
       const dataLength = processedData[0].data.length;
       const avgData = Array(dataLength).fill(0);
-      
       processedData.forEach(store => {
-        store.data.forEach((value, index) => {
-          avgData[index] += value;
-        });
+        store.data.forEach((value, index) => { avgData[index] += value; });
       });
-      
       const average = avgData.map(sum => sum / processedData.length);
-      
-      setSeries([
+      return [
         ...processedData,
-        {
-          data: average,
-          label: 'Promedio',
-          color: '#94a3b8',
-          curve: 'linear',
-          showMark: false,
-        }
-      ]);
-    } else {
-      setSeries(processedData);
+        { data: average, label: 'Promedio', color: '#94a3b8', curve: 'linear', showMark: false },
+      ];
     }
+    return processedData;
   }, [data, dataType, metricType, labels]);
 
   return (
