@@ -40,6 +40,7 @@ const StoreList = () => {
     start_date: today,
     store_type: "T",
   });
+  const hasDepartment = Boolean(params.department_id);
 
   const {
     editUserModal,
@@ -63,19 +64,7 @@ const StoreList = () => {
 
   const stores = storesData?.stores || [];
   
-  // Calcular totales de distribuciones y traspasos
-  const totalDistributions = stores.reduce((sum, store) => 
-    sum + (store.cash_summary?.[12]?.amount || 0), 0
-  );
-  const totalTransfers = stores.reduce((sum, store) => 
-    sum + (store.cash_summary?.[13]?.amount || 0), 0
-  );
-  
-  const totals = {
-    ...(storesData?.totals || {}),
-    distributions: totalDistributions,
-    transfers: totalTransfers,
-  };
+  const totals = storesData?.totals || {};
   const loading = loadingStores || loadingTenant;
   const range = getDateDifference(params.start_date, params.end_date);
 
@@ -167,7 +156,7 @@ const StoreList = () => {
   const averageSales = useMemo(() => {
     if (stores.length === 0) return 0;
     const totalSales = stores.reduce((sum, store) => 
-      sum + (store.cash_summary?.[3]?.amount || 0), 0
+      sum + (store.cash_summary?.total_payment || 0), 0
     );
     return totalSales / stores.length;
   }, [stores]);
@@ -177,8 +166,8 @@ const StoreList = () => {
     if (quickFilter === "all") return stores;
     if (quickFilter === "pending") {
       return stores.filter(store => 
-        (store.cash_summary?.[12]?.amount || 0) > 0 || 
-        (store.cash_summary?.[13]?.amount || 0) > 0
+        (store.cash_summary?.pending_distributions || 0) > 0 || 
+        (store.cash_summary?.pending_transfers || 0) > 0
       );
     }
     if (quickFilter === "synced") {
@@ -199,8 +188,8 @@ const StoreList = () => {
     textAlign: "right",
   };
 
-  const getCashValue = (cash_summary, index) =>
-    formatCurrency(cash_summary?.[index]?.amount || 0);
+  const getCashValue = (cash_summary, key) =>
+    formatCurrency(cash_summary?.[key] || 0);
 
   const getCashValueTotal = (value) =>
     formatCurrency(value || 0);
@@ -210,7 +199,7 @@ const StoreList = () => {
       {
         name: "Nombre",
         cell: ({ name, id, cash_summary }) => {
-          const vendido = cash_summary?.[3]?.amount || 0;
+          const vendido = cash_summary?.total_payment || 0;
           const isAboveAverage = vendido > averageSales;
           const isBelowAverage = vendido < averageSales * 0.8;
           
@@ -255,52 +244,52 @@ const StoreList = () => {
       {
         name: "Efectivo",
         style: alignTdStyles,
-        selector: ({ cash_summary }) => getCashValue(cash_summary, 0),
+        selector: ({ cash_summary }) => getCashValue(cash_summary, "EF"),
       },
       {
         name: "Tarjeta",
         style: alignTdStyles,
-        selector: ({ cash_summary }) => getCashValue(cash_summary, 1),
+        selector: ({ cash_summary }) => getCashValue(cash_summary, "TA"),
       },
       {
         name: "Transferencia",
         style: alignTdStyles,
-        selector: ({ cash_summary }) => getCashValue(cash_summary, 2),
+        selector: ({ cash_summary }) => getCashValue(cash_summary, "TR"),
       },
       {
         name: "Vendido",
         style: alignTdStyles,
-        selector: ({ cash_summary }) => getCashValue(cash_summary, 3),
+        selector: ({ cash_summary }) => getCashValue(cash_summary, "total_payment"),
       },
       {
         name: "Ventas realizadas",
         style: alignTdStyles,
-        selector: ({ cash_summary }) => cash_summary?.[10]?.amount?.toLocaleString() || "0",
+        selector: ({ cash_summary }) => cash_summary?.total_sales?.toLocaleString() || "0",
       },
       {
         name: "Canceladas",
         style: alignTdStyles,
-        selector: ({ cash_summary }) => cash_summary?.[11]?.amount?.toLocaleString() || "0",
+        selector: ({ cash_summary }) => cash_summary?.canceled_sales?.toLocaleString() || "0",
       },
       {
         name: "Distribuciones",
         style: alignTdStyles,
-        selector: ({ cash_summary }) => cash_summary?.[12]?.amount?.toLocaleString() || "0",
+        selector: ({ cash_summary }) => cash_summary?.pending_distributions?.toLocaleString() || "0",
       },
       {
         name: "Traspasos",
         style: alignTdStyles,
-        selector: ({ cash_summary }) => cash_summary?.[13]?.amount?.toLocaleString() || "0",
+        selector: ({ cash_summary }) => cash_summary?.pending_transfers?.toLocaleString() || "0",
       },
       {
         name: "Ganancia",
         style: alignTdStyles,
-        selector: ({ cash_summary }) => getCashValue(cash_summary, 8),
+        selector: ({ cash_summary }) => getCashValue(cash_summary, "profit"),
       },
       {
         name: "Caja",
         style: alignTdStyles,
-        selector: ({ cash_summary }) => getCashValue(cash_summary, 7),
+        selector: ({ cash_summary }) => getCashValue(cash_summary, "cash"),
       },
       {
         name: "Obtener (Inversión)",
@@ -362,7 +351,9 @@ const StoreList = () => {
     // Filtrar columnas según quickFilter
     let filtered;
     if (quickFilter === "all") {
-      filtered = allColumns.filter(col => ["Nombre", "Efectivo", "Tarjeta", "Transferencia", "Caja", "Entrar"].includes(col.name));
+      filtered = hasDepartment
+        ? allColumns.filter(col => ["Nombre", "Vendido", "Ventas realizadas", "Canceladas", "Ganancia", "Entrar"].includes(col.name))
+        : allColumns.filter(col => ["Nombre", "Efectivo", "Tarjeta", "Transferencia", "Caja", "Entrar"].includes(col.name));
     } else if (quickFilter === "sales") {
       filtered = allColumns.filter(col => ["Nombre", "Vendido", "Ventas realizadas", "Canceladas", "Ganancia", "Entrar"].includes(col.name));
     } else if (quickFilter === "investment") {
@@ -398,7 +389,7 @@ const StoreList = () => {
     }
     
     return filtered;
-  }, [quickFilter, averageSales, user?.store_id, tenantInfo.product_count, storeInvestments]);
+  }, [quickFilter, averageSales, user?.store_id, tenantInfo.product_count, storeInvestments, hasDepartment]);
 
   const columnsStorages = useMemo(() => {
     const allColumns = [
@@ -433,8 +424,8 @@ const StoreList = () => {
         style: alignTdStyles,
         cell: ({ cash_summary }) => {
           const distributions =
-            cash_summary?.[12]?.amount?.toLocaleString() || "0";
-          const transfers = cash_summary?.[13]?.amount?.toLocaleString() || "0";
+            cash_summary?.pending_distributions?.toLocaleString() || "0";
+          const transfers = cash_summary?.pending_transfers?.toLocaleString() || "0";
 
           return (
             <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
@@ -626,7 +617,9 @@ const StoreList = () => {
     // Filtrar columnas según quickFilter
     let filtered;
     if (quickFilter === "all") {
-      filtered = allColumns.filter(col => ["Nombre", "Efectivo", "Tarjeta", "Transferencia", "Caja", "Entrar"].includes(col.name));
+      filtered = hasDepartment
+        ? allColumns.filter(col => ["Nombre", "Vendido", "Ventas realizadas", "Canceladas", "Ganancia", "Entrar"].includes(col.name))
+        : allColumns.filter(col => ["Nombre", "Efectivo", "Tarjeta", "Transferencia", "Caja", "Entrar"].includes(col.name));
     } else if (quickFilter === "sales") {
       filtered = allColumns.filter(col => ["Nombre", "Vendido", "Ventas realizadas", "Canceladas", "Ganancia", "Entrar"].includes(col.name));
     } else if (quickFilter === "investment") {
@@ -653,7 +646,7 @@ const StoreList = () => {
     }
     
     return filtered;
-  }, [quickFilter, storeInvestments]);
+  }, [quickFilter, storeInvestments, hasDepartment]);
 
   return (
     <>
@@ -687,13 +680,13 @@ const StoreList = () => {
               <Grid item xs={12} sm={6} md={3}>
                 <Box sx={{ bgcolor: 'var(--color-primary)', p: 1, borderRadius: 1, textAlign: 'center' }}>
                   <Typography variant="caption" sx={{ color: '#fff', fontWeight: 600 }}>Ventas Totales</Typography>
-                  <Typography variant="h5" sx={{ color: '#fff', fontWeight: 700 }}>{totals.totalSales || 0}</Typography>
+                  <Typography variant="h5" sx={{ color: '#fff', fontWeight: 700 }}>{totals.total_sales || 0}</Typography>
                 </Box>
               </Grid>
               <Grid item xs={12} sm={6} md={3}>
                 <Box sx={{ bgcolor: 'var(--color-primary)', p: 1, borderRadius: 1, textAlign: 'center' }}>
                   <Typography variant="caption" sx={{ color: '#fff', fontWeight: 600 }}>Monto Total</Typography>
-                  <Typography variant="h5" sx={{ color: '#fff', fontWeight: 700 }}>{getCashValueTotal(totals.totalPayment)}</Typography>
+                  <Typography variant="h5" sx={{ color: '#fff', fontWeight: 700 }}>{getCashValueTotal(totals.total_payment)}</Typography>
                 </Box>
               </Grid>
               <Grid item xs={12} sm={6} md={3}>
@@ -833,8 +826,8 @@ const StoreList = () => {
                 size="small"
               >
                 Pendientes ({stores.filter(s => 
-                  (s.cash_summary?.[12]?.amount || 0) > 0 || 
-                  (s.cash_summary?.[13]?.amount || 0) > 0
+                  (s.cash_summary?.pending_distributions || 0) > 0 || 
+                  (s.cash_summary?.pending_transfers || 0) > 0
                 ).length})
               </CustomButton>
               <CustomButton 
@@ -895,8 +888,8 @@ const StoreList = () => {
                 size="small"
               >
                 Pendientes ({stores.filter(s => 
-                  (s.cash_summary?.[12]?.amount || 0) > 0 || 
-                  (s.cash_summary?.[13]?.amount || 0) > 0
+                  (s.cash_summary?.pending_distributions || 0) > 0 || 
+                  (s.cash_summary?.pending_transfers || 0) > 0
                 ).length})
               </CustomButton>
               <CustomButton 
@@ -964,16 +957,13 @@ const StoreList = () => {
                 data={[
                   {
                     profit: totals.profit,
-                    paymentCash: totals.paymentCash,
-                    paymentCard: totals.paymentCard,
-                    paymentTransfer: totals.paymentTransfer,
-                    totalPayment: totals.totalPayment,
+                    paymentCash: totals.EF,
+                    paymentCard: totals.TA,
+                    paymentTransfer: totals.TR,
+                    totalPayment: totals.total_payment,
                     cash: totals.cash,
-                    investment: totals.investment,
-                    totalSales: `${totals.totalSales}`,
-                    canceledSales: totals.canceledSales,
-                    distributions: totals.distributions,
-                    transfers: totals.transfers,
+                    totalSales: `${totals.total_sales || 0}`,
+                    canceledSales: totals.canceled_sales,
                   },
                 ]}
                 columns={columnsTotals}
