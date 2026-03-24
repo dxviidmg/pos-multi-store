@@ -37,7 +37,6 @@ const Cart = ({ searchInputRef }) => {
   const [selectedStore, setSelectedStore] = useState("");
   const [confirmedStore, setConfirmedStore] = useState("");
   const [loading, setLoading] = useState(false);
-  const user = getUserData();
   
   const { carts, activeCartId } = useSelector((state) => state.multiCartReducer);
   

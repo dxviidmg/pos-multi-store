@@ -10,9 +10,14 @@ import { BarChart } from "@mui/x-charts/BarChart";
 import { ChartsReferenceLine } from "@mui/x-charts/ChartsReferenceLine";
 import {
   Grid, FormControl, InputLabel, Select, MenuItem, Box, Typography,
-  LinearProgress, Skeleton, useTheme,
+  LinearProgress, Skeleton,
 } from "@mui/material";
 import { showError } from "../../../utils/alerts";
+import {
+  MONTH_NAMES, MONTH_NAMES_SHORT, DAY_NAMES, CHART_COLORS,
+  formatCurrency, getErrorMessage, getTied,
+} from "../../../utils/utils";
+import { getUserData } from "../../../api/utils";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
@@ -22,12 +27,13 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import InboxIcon from "@mui/icons-material/Inbox";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-
-const MONTH_NAMES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
-const DAY_NAMES = ["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
+import LockIcon from "@mui/icons-material/Lock";
 
 const Dashboard = () => {
-  const theme = useTheme();
+  const user = getUserData();
+  const currentHour = new Date().getHours();
+  const isRestricted = user.store_count > 1 && currentHour >= 10 && currentHour < 21;
+
   const [dashboardData, setDashboardData] = useState(null);
   const [metricType, setMetricType] = useState("count");
   const [year, setYear] = useState(new Date().getFullYear());
@@ -58,7 +64,7 @@ const Dashboard = () => {
             clearInterval(intervalId);
           }
         } catch (error) {
-          showError("Error al obtener los datos del dashboard", error.response?.data?.message || error.message || "Error de conexión");
+          showError("Error al obtener los datos del dashboard", getErrorMessage(error));
           setLoading(false);
           clearInterval(intervalId);
         }
@@ -70,13 +76,25 @@ const Dashboard = () => {
       if (error.response?.data?.message?.includes('max requests limit exceeded')) {
         showError("Límite de Redis Excedido", "Se ha alcanzado el límite de solicitudes de Redis. Por favor, contacta al administrador del sistema");
       } else {
-        showError("Error al cargar el dashboard", error.response?.data?.message || error.message);
+        showError("Error al cargar el dashboard", getErrorMessage(error));
       }
       setLoading(false);
     }
   };
 
   useEffect(() => { fetchData(); }, [year, month]);
+
+  if (isRestricted) {
+    return (
+      <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: 400, gap: 2 }}>
+        <LockIcon sx={{ fontSize: 64, color: "text.secondary" }} />
+        <Typography variant="h5" sx={{ fontWeight: 700 }}>Dashboard no disponible</Typography>
+        <Typography variant="body1" color="text.secondary" align="center">
+          El dashboard está disponible únicamente de 9:00 PM a 10:00 AM.
+        </Typography>
+      </Box>
+    );
+  }
 
   const calculateKPIs = () => {
     if (!dashboardData?.sales?.length) return null;
@@ -88,13 +106,6 @@ const Dashboard = () => {
     const isCurrentPeriod = month === 0 ? year === now.getFullYear() : (year === now.getFullYear() && month === now.getMonth() + 1);
     const daysInPeriod = isCurrentPeriod ? (month === 0 ? Math.floor((now - new Date(year, 0, 1)) / 86400000) + 1 : now.getDate()) : totalDaysInPeriod;
     const avgDaily = totalAmount / daysInPeriod;
-
-    const getTied = (entries, mapLabel, mode) => {
-      if (!entries.length) return "N/A";
-      const vals = entries.map(e => e[1]);
-      const target = mode === "best" ? Math.max(...vals) : Math.min(...vals);
-      return entries.filter(e => e[1] === target).map(e => mapLabel(e[0])).join(", ");
-    };
 
     // Por tienda
     const salesByStore = {};
@@ -249,17 +260,17 @@ const Dashboard = () => {
         </Grid>
         <Grid item xs={6} md={3}>
           <Box className="card" sx={{ height: "100%", mb: 0 }}>
-            <KPICard title="Monto Total" value={`$${kpis.totalAmount.toLocaleString("es-MX", { minimumFractionDigits: 0 })}`} subtitle="Ingresos del periodo" icon={AttachMoneyIcon} index={1} />
+            <KPICard title="Monto Total" value={formatCurrency(kpis.totalAmount)} subtitle="Ingresos del periodo" icon={AttachMoneyIcon} index={1} />
           </Box>
         </Grid>
         <Grid item xs={6} md={3}>
           <Box className="card" sx={{ height: "100%", mb: 0 }}>
-            <KPICard title="Ingreso Diario" value={`$${kpis.avgDaily.toLocaleString("es-MX", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`} subtitle={`$${kpis.totalAmount.toLocaleString("es-MX", { minimumFractionDigits: 0 })} ÷ ${kpis.daysInPeriod} días`} icon={TrendingUpIcon} index={2} />
+            <KPICard title="Ingreso Diario" value={formatCurrency(kpis.avgDaily)} subtitle={`${formatCurrency(kpis.totalAmount)} ÷ ${kpis.daysInPeriod} días`} icon={TrendingUpIcon} index={2} />
           </Box>
         </Grid>
         <Grid item xs={6} md={3}>
           <Box className="card" sx={{ height: "100%", mb: 0 }}>
-            <KPICard title="Promedio por Tienda" value={`$${kpis.avgPerStore.toLocaleString("es-MX", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`} subtitle={`$${kpis.totalAmount.toLocaleString("es-MX", { minimumFractionDigits: 0 })} ÷ ${dashboardData.stores?.length || 1} tienda${(dashboardData.stores?.length || 1) > 1 ? 's' : ''}`} icon={StorefrontIcon} index={4} />
+            <KPICard title="Promedio por Tienda" value={formatCurrency(kpis.avgPerStore)} subtitle={`${formatCurrency(kpis.totalAmount)} ÷ ${dashboardData.stores?.length || 1} tienda${(dashboardData.stores?.length || 1) > 1 ? 's' : ''}`} icon={StorefrontIcon} index={4} />
           </Box>
         </Grid>
 
@@ -307,7 +318,7 @@ const Dashboard = () => {
             data={dashboardData}
             metricType={metricType}
             labels={month === 0
-              ? ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"]
+              ? MONTH_NAMES_SHORT
               : daysLabels
             }
             yText="Ventas"
@@ -320,7 +331,7 @@ const Dashboard = () => {
             data={dashboardData}
             metricType={metricType}
             labels={month === 0
-              ? ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"]
+              ? MONTH_NAMES_SHORT
               : daysLabels
             }
             dataType={month === 0 ? "monthly" : "day_of_month"}
@@ -358,8 +369,6 @@ const Dashboard = () => {
 };
 
 // --- Barras agrupadas para gráfica principal ---
-const BAR_COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444'];
-
 const processBarData = (result, dataType, metricType, daysInMonth) => {
   if (!result?.sales?.length) return [];
   const { stores, sales } = result;
@@ -375,7 +384,7 @@ const processBarData = (result, dataType, metricType, daysInMonth) => {
   return stores.map((store, i) => ({
     data: grouped[store.name],
     label: store.name,
-    color: BAR_COLORS[i % BAR_COLORS.length],
+    color: CHART_COLORS[i % CHART_COLORS.length],
   }));
 };
 

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { styled, useTheme } from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
 import {
   Box,
   CssBaseline,
@@ -45,6 +45,7 @@ import BarChartIcon from "@mui/icons-material/BarChart";
 import logo from "../../../assets/images/logo.jpg";
 import { colors } from "../../../theme/colors";
 import PageHelp from "../../ui/PageHelp/PageHelp";
+import NotificationsMenu from "../../ui/NotificationsMenu/NotificationsMenu";
 
 const iconMap = {
   Vender: <ShoppingCartIcon />,
@@ -131,7 +132,6 @@ const Drawer = styled(MuiDrawer, {
 });
 
 export default function MainLayout({ toggleTheme, themeMode }) {
-  const theme = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
   const user = getUserData();
@@ -296,6 +296,7 @@ export default function MainLayout({ toggleTheme, themeMode }) {
               {(user.store_name || user.tenant_name || "U").charAt(0).toUpperCase()}
             </Avatar>
           )}
+          <NotificationsMenu storeType={user.store_type} />
           <PageHelp />
           <IconButton color="inherit" onClick={toggleTheme} sx={{ mr: 0.5 }}>
             {themeMode === "dark" ? <Brightness7Icon /> : <Brightness4Icon />}

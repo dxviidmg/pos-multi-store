@@ -7,7 +7,7 @@ const api = {
   delete: deleteClient
 };
 
-const { useCreate, useUpdate } = createMutationHooks('Cliente', 'clients', api);
+const { useUpdate } = createMutationHooks('Cliente', 'clients', api);
 
 // Parser personalizado para errores de cliente
 const clientErrorParser = (error) => {

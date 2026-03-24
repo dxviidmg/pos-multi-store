@@ -103,20 +103,6 @@ const ProductList = () => {
     }
   };
 
-  const handleGenerate = (code) => {
-    if (code.trim() === "") return;
-    const url = `https://barcodeapi.org/api/code39/${encodeURIComponent(code)}`;
-    fetch(url)
-      .then((res) => res.blob())
-      .then((blob) => {
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.download = `barcode_${code}.png`;
-        link.click();
-      })
-      .catch(() => showError("Error al generar código de barras"));
-  };
-
   const handleUpperCodeProducts = async () => {
     const response = await upperCodeProducts();
     if (response.status === 200) {

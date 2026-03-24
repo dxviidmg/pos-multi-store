@@ -3,6 +3,7 @@ import DataTable from "../../ui/DataTable/DataTable";
 import { Alert, Typography, Chip } from "@mui/material";
 import CustomButton from "../../ui/Button/Button";
 import { useNavigate } from "react-router-dom";
+import { formatCurrency } from "../../../utils/utils";
 import { getDateDifference, getFormattedDate } from "../../../utils/utils";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import { chooseIcon } from "../../ui/Icons/Icons";
@@ -198,16 +199,10 @@ const StoreList = () => {
   };
 
   const getCashValue = (cash_summary, index) =>
-    `$${(cash_summary?.[index]?.amount || 0).toLocaleString("es-MX", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    })}`;
+    formatCurrency(cash_summary?.[index]?.amount || 0);
 
   const getCashValueTotal = (value) =>
-    `$${(value || 0).toLocaleString("es-MX", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    })}`;
+    formatCurrency(value || 0);
 
   const columnsStore = useMemo(() => {
     const allColumns = [

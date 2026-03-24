@@ -2,14 +2,12 @@ import React from "react";
 import { LineChart as MuiLineChart } from '@mui/x-charts/LineChart';
 import { ChartsReferenceLine } from '@mui/x-charts/ChartsReferenceLine';
 import { Box, Typography } from '@mui/material';
-
-const COLORS = ['#2563eb', '#7c3aed', '#059669', '#dc2626', '#ea580c', '#f59e0b', '#06b6d4'];
+import { CHART_COLORS } from '../../../utils/utils';
 
 const processData = (result, dataType, metricType, daysInMonth = 31) => {
   if (!result || !result.sales || result.sales.length === 0) return [];
 
   const { stores, sales } = result;
-  const colors = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444'];
 
   switch (dataType) {
     case 'monthly': {
@@ -31,7 +29,7 @@ const processData = (result, dataType, metricType, daysInMonth = 31) => {
       return Object.entries(storeData).map(([storeName, monthlyData], index) => ({
         data: monthlyData,
         label: storeName,
-        color: colors[index % colors.length],
+        color: CHART_COLORS[index % CHART_COLORS.length],
       }));
     }
     
@@ -54,7 +52,7 @@ const processData = (result, dataType, metricType, daysInMonth = 31) => {
       return Object.entries(storeData).map(([storeName, dailyData], index) => ({
         data: dailyData,
         label: storeName,
-        color: colors[index % colors.length],
+        color: CHART_COLORS[index % CHART_COLORS.length],
       }));
     }
     
@@ -77,7 +75,7 @@ const processData = (result, dataType, metricType, daysInMonth = 31) => {
       return Object.entries(storeData).map(([storeName, hourlyData], index) => ({
         data: hourlyData,
         label: storeName,
-        color: colors[index % colors.length],
+        color: CHART_COLORS[index % CHART_COLORS.length],
       }));
     }
     
@@ -100,7 +98,7 @@ const processData = (result, dataType, metricType, daysInMonth = 31) => {
       return Object.entries(storeData).map(([storeName, dayData], index) => ({
         data: dayData,
         label: storeName,
-        color: colors[index % colors.length],
+        color: CHART_COLORS[index % CHART_COLORS.length],
       }));
     }
     
