@@ -2,7 +2,7 @@ import { logger } from "../../../utils/logger";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import CustomModal from "../../ui/Modal/Modal";
-import CustomTable from "../../ui/Table/Table";
+import DataTable from "../../ui/DataTable/DataTable";
 import CustomButton from "../../ui/Button/Button";
 import { createTransfer } from "../../../api/transfers";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
@@ -59,7 +59,7 @@ const StockModal = ({ isOpen, product, onClose }) => {
       const data = {
         quantity,
         origin_store: row.store_id,
-        destination_store: storeProduct.store.id,
+        destination_store: storeProduct.store,
         product: storeProduct.product.id,
       };
 
@@ -85,7 +85,7 @@ const StockModal = ({ isOpen, product, onClose }) => {
           <>
             <p><b>Nota:</b> Has alcanzado el límite de este producto en esta tienda</p>
             {reservedInOtherCarts > 0 && (
-              <p style={{ color: '#ff9800' }}>
+              <p className="text-warning">
                 ⚠️ Hay {reservedInOtherCarts} unidades reservadas en otros carritos activos
               </p>
             )}
@@ -122,10 +122,10 @@ const StockModal = ({ isOpen, product, onClose }) => {
         </Grid>
       ) : (
         stockOtherStores.length > 0 && (
-          <CustomTable
+          <DataTable
             data={stockOtherStores}
             columns={[
-              { name: "Locación", selector: (row) => row.store_name, sortable: true },
+              { name: "Tienda o almacén", selector: (row) => row.store_name, sortable: true },
               { name: "Stock disponible", selector: (row) => row.available_stock, sortable: true },
               {
                 name: "Cantidad a solicitar",

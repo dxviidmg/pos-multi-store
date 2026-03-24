@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import CustomTable from "../../ui/Table/Table";
+import DataTable from "../../ui/DataTable/DataTable";
 import { getStoreProducts } from "../../../api/products";
 import CustomButton from "../../ui/Button/Button";
 import { getUserData } from "../../../api/utils";
@@ -8,241 +8,160 @@ import { useModal } from "../../../hooks/useModal";
 import StoreProductLogsModal from "../StoreProductLogsModal/StoreProductLogsModal";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { getBrands } from "../../../api/brands";
-import SearchIcon from "@mui/icons-material/Search";
 import { getDepartments } from "../../../api/departments";
-import { Grid, TextField, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
+import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, Box, Stack } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
 import DownloadIcon from "@mui/icons-material/Download";
+import TuneIcon from "@mui/icons-material/Tune";
+import HistoryIcon from "@mui/icons-material/History";
+import CustomTooltip from "../../ui/Tooltip";
 import { UI_TEXT } from "../../../constants";
 
 const StoreProductList = () => {
+  const user = getUserData();
   const logsModal = useModal();
   const [storeProducts, setStoreProducts] = useState([]);
   const [brands, setBrands] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [params, setParams] = useState({ only_stock: true });
-  const user = getUserData();
-  const [outOfStockPercentage, setoutOfStockPercentage] = useState(0);
+  const [outOfStockPercentage, setOutOfStockPercentage] = useState(0);
 
   useEffect(() => {
-    const fetchBrands = async () => {
-      const response = await getBrands();
-      setBrands(response.data);
-      const response2 = await getDepartments();
-      setDepartments(response2.data);
+    const fetchOptions = async () => {
+      const [brandsRes, deptsRes] = await Promise.all([getBrands(), getDepartments()]);
+      setBrands(brandsRes.data);
+      setDepartments(deptsRes.data);
     };
-
-    fetchBrands();
-  }, []); // Solo se ejecuta una vez al montar
+    fetchOptions();
+  }, []);
 
   const fetchStoreProducts = async () => {
     setLoading(true);
-
-    if (Object.keys(params).length === 1) {
-      const response = await getStoreProducts(params);
-      const storeProducts = response.data;
-      setStoreProducts(storeProducts);
-
-      const totalStoreProducts = storeProducts.length;
-      const outOfStockCount = storeProducts.filter(
-        (product) => product.stock === 0
-      ).length;
-      const outOfStockPercentage = (outOfStockCount / totalStoreProducts) * 100;
-      setoutOfStockPercentage(outOfStockPercentage);
-      setLoading(false);
-    } else {
-      const response = await getStoreProducts(params);
-      const storeProducts = response.data;
-      setStoreProducts(storeProducts);
-
-      const totalStoreProducts = storeProducts.length;
-      const outOfStockCount = storeProducts.filter(
-        (product) => product.stock === 0
-      ).length;
-      const outOfStockPercentage = (outOfStockCount / totalStoreProducts) * 100;
-      setoutOfStockPercentage(outOfStockPercentage);
-      setLoading(false);
-    }
+    const response = await getStoreProducts(params);
+    const data = response.data;
+    setStoreProducts(data);
+    const outOfStock = data.filter((p) => p.stock === 0).length;
+    setOutOfStockPercentage((outOfStock / data.length) * 100);
+    setLoading(false);
   };
 
-  const handleDownload = async () => {
-    const storeProductsForReport = storeProducts.map(
-      ({
-        product: { code: Código, brand_name: Marca, name: Nombre },
-        stock: Stock,
-      }) => ({
-        Código,
-        Marca,
-        Nombre,
-        Stock,
-      })
-    );
-
-    const prefixName = "Reporte Inventario " + getUserData().store_name;
-    exportToExcel(storeProductsForReport, prefixName);
+  const handleDownload = () => {
+    const data = storeProducts.map(({ product: { code, brand_name, name }, stock }) => ({
+      Código: code, Marca: brand_name, Nombre: name, Stock: stock,
+    }));
+    exportToExcel(data, "Reporte Inventario " + user.store_name);
   };
 
-  const handleOpenModal = (storeProduct, adjustStock) => {
-    logsModal.open({ storeProduct, adjustStock });
-  };
-
-  const handleUpdateStoreProductList = (updatedStoreProduct) => {
-    setStoreProducts((prevStoreProducts) => {
-      const StoreProductsExists = prevStoreProducts.some(
-        (b) => b.id === updatedStoreProduct.id
-      );
-      return StoreProductsExists
-        ? prevStoreProducts.map((b) =>
-            b.id === updatedStoreProduct.id ? updatedStoreProduct : b
-          )
-        : [...prevStoreProducts, updatedStoreProduct];
+  const handleUpdateStoreProductList = (updated) => {
+    setStoreProducts((prev) => {
+      const exists = prev.some((item) => item.id === updated.id);
+      return exists
+        ? prev.map((item) => (item.id === updated.id ? updated : item))
+        : [...prev, updated];
     });
   };
 
-  const handleDataChange = async (e) => {
-    let { name, value } = e.target;
-    setParams((prevData) => ({ ...prevData, [name]: value }));
+  const handleDataChange = (e) => {
+    const { name, value } = e.target;
+    setParams((prev) => ({ ...prev, [name]: value }));
   };
 
   return (
     <>
-      {/* 1. SPINNERS */}
       <CustomSpinner isLoading={loading} />
-      
-      {/* 2. MODALS */}
       <StoreProductLogsModal
         isOpen={logsModal.isOpen}
         logs={logsModal.data}
         onClose={logsModal.close}
         onUpdate={handleUpdateStoreProductList}
       />
-      
-      {/* 3. CONTENIDO PRINCIPAL */}
+
       <Grid container>
         <Grid item xs={12} className="card">
-          {/* 3.1 Header */}
-          <h1>Inventario</h1>
+          <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+            <h1>Inventario</h1>
+          </Stack>
 
-          {/* 3.2 Filtros */}
           <Grid container spacing={2} sx={{ mb: 2 }}>
-            <Grid item xs={3}>
+            <Grid item xs={12} md={3}>
+              <TextField size="small" fullWidth label="Código" type="text"
+                value={params.code || ""} onChange={handleDataChange} name="code"
+                onKeyDown={(e) => e.key === "Enter" && fetchStoreProducts()}
+              />
+            </Grid>
+            <Grid item xs={12} md={3}>
               <FormControl fullWidth size="small">
                 <InputLabel>Marca</InputLabel>
-                <Select
-                  value={params.brand_id || ""}
-                  onChange={handleDataChange}
-                  name="brand_id"
-                  label="Marca"
-                >
+                <Select value={params.brand_id || ""} onChange={handleDataChange} name="brand_id" label="Marca">
                   <MenuItem value="">Todas las marcas</MenuItem>
                   {brands.map((brand) => (
-                    <MenuItem key={brand.id} value={brand.id}>
-                      {brand.name}
-                    </MenuItem>
+                    <MenuItem key={brand.id} value={brand.id}>{brand.name}</MenuItem>
                   ))}
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={3}>
+            <Grid item xs={12} md={3}>
               <FormControl fullWidth size="small">
                 <InputLabel>Departamento</InputLabel>
-                <Select
-                  value={params.department_id || ""}
-                  onChange={handleDataChange}
-                  name="department_id"
-                  label="Departamento"
-                >
+                <Select value={params.department_id || ""} onChange={handleDataChange} name="department_id" label="Departamento">
                   <MenuItem value="">{UI_TEXT.ALL_DEPARTMENTS}</MenuItem>
-                  {departments.map((department) => (
-                    <MenuItem key={department.id} value={department.id}>
-                      {department.name}
-                    </MenuItem>
+                  {departments.map((dept) => (
+                    <MenuItem key={dept.id} value={dept.id}>{dept.name}</MenuItem>
                   ))}
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={3}>
-              <TextField
-                size="small"
-                fullWidth
-                label="Código"
-                type="text"
-                value={params.code || ""}
-                onChange={handleDataChange}
-                name="code"
+            <Grid item xs={12} md={3}>
+              <TextField size="small" fullWidth label="Stock máximo" type="number"
+                value={params.max_stock || ""} onChange={handleDataChange} name="max_stock"
               />
             </Grid>
-            <Grid item xs={3}>
-              <TextField
-                size="small"
-                fullWidth
-                label="Stock maximo"
-                type="number"
-                value={params.max_stock || ""}
-                onChange={handleDataChange}
-                name="max_stock"
-              />
-            </Grid>
-          </Grid>
-
-          {/* 3.3 Acciones */}
-          <Grid container spacing={2} sx={{ mb: 2 }}>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={3}>
               <CustomButton fullWidth onClick={fetchStoreProducts} startIcon={<SearchIcon />}>
                 Buscar
               </CustomButton>
             </Grid>
-            <Grid item xs={12} md={6}>
-              <CustomButton fullWidth onClick={handleDownload} startIcon={<DownloadIcon />}>
+            <Grid item xs={12} md={3}>
+              <CustomButton fullWidth onClick={handleDownload} disabled={storeProducts.length === 0} startIcon={<DownloadIcon />}>
                 Descargar inventario
               </CustomButton>
             </Grid>
             {storeProducts.length > 0 && (
-              <Grid item xs={12}>
-                {outOfStockPercentage.toFixed(0)}% de los productos esta vacio
+              <Grid item xs={12} md={3}>
+                <Box sx={{ fontSize: '0.875rem', lineHeight: '40px' }}>
+                  {outOfStockPercentage.toFixed(0)}% de los productos está vacío
+                </Box>
               </Grid>
             )}
           </Grid>
 
-          {/* 3.4 Tabla */}
-          <CustomTable
+          <DataTable
             searcher={true}
             progressPending={loading}
             data={storeProducts}
             columns={[
-              {
-                name: "Código",
-                selector: (row) => row.product.code,
-                grow: 2,
-              },
-              {
-                name: "Marca",
-                selector: (row) => row.product.brand_name,
-              },
-              {
-                name: "Nombre",
-                selector: (row) => row.product.name,
-                grow: 3,
-                wrapText: true,
-              },
-              {
-                name: "Stock",
-                selector: (row) => row.stock,
-                sort: true,
-              },
+              { name: "Código", selector: (row) => row.product.code },
+              { name: "Marca", selector: (row) => row.product.brand_name },
+              { name: "Departamento", selector: (row) => row.product.department_name },
+              { name: "Nombre", selector: (row) => row.product.name },
+              { name: "Stock", selector: (row) => row.stock },
               {
                 name: "Acciones",
-                grow: 4,
                 cell: (row) => (
                   <>
                     {user.role === "owner" && (
-                      <CustomButton onClick={() => handleOpenModal(row, true)}>
-                        Ajustar cantidad
-                      </CustomButton>
+                      <CustomTooltip text="Ajustar cantidad">
+                        <CustomButton onClick={() => logsModal.open({ storeProduct: row, adjustStock: true })}>
+                          <TuneIcon />
+                        </CustomButton>
+                      </CustomTooltip>
                     )}
-                    <CustomButton onClick={() => handleOpenModal(row, false)}>
-                      Movimientos de stock
-                    </CustomButton>
+                    <CustomTooltip text="Movimientos de stock">
+                      <CustomButton onClick={() => logsModal.open({ storeProduct: row, adjustStock: false })}>
+                        <HistoryIcon />
+                      </CustomButton>
+                    </CustomTooltip>
                   </>
                 ),
               },

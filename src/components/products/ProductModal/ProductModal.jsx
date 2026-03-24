@@ -3,15 +3,16 @@ import { useForm } from "../../../hooks/useForm";
 import CustomModal from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
 import { getBrands } from "../../../api/brands";
-import Swal from "sweetalert2";
+import { showSuccess, showError } from "../../../utils/alerts";
 import {
   createProduct,
   getStoreProducts,
   updateProduct,
 } from "../../../api/products";
+import { getStores } from "../../../api/stores";
 import noPhoto from "../../../assets/images/noPhoto.jpg";
 import { getDepartments } from "../../../api/departments";
-import CustomTable from "../../ui/Table/Table";
+import DataTable from "../../ui/DataTable/DataTable";
 import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, Box, Checkbox, FormControlLabel, styled } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import SaveIcon from "@mui/icons-material/Save";
@@ -48,7 +49,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
   const [brands, setBrands] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [, setSelectedImage] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
   const [storeProduct, setStoreProduct] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -60,11 +61,12 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
         setPreviewImage(productData.image || noPhoto);
 
         if (showStoreProducts) {
-          const r = await getStoreProducts({
-            code: productData.code,
-            all_stores: "Y",
-          });
-          setStoreProduct(r.data);
+          const [r, s] = await Promise.all([
+            getStoreProducts({ code: productData.code, all_stores: "Y" }),
+            getStores(),
+          ]);
+          const storeMap = Object.fromEntries(s.data.map((st) => [st.id, st.full_name]));
+          setStoreProduct(r.data.map((sp) => ({ ...sp, store_name: storeMap[sp.store] || `Tienda #${sp.store}` })));
         }
       } else {
         setFormData(INITIAL_FORM_DATA);
@@ -118,31 +120,18 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
       setFormData(INITIAL_FORM_DATA);
       setSelectedImage(null);
       setPreviewImage(null);
-      Swal.fire({
-        icon: "success",
-        title: `Producto ${formData.id ? "actualizado" : "creado"}`,
-        timer: 5000,
-      });
+      showSuccess(`Producto ${formData.id ? "actualizado" : "creado"}`);
     } else {
-      handleClientError(response);
+      let message = "Error desconocido. Por favor, contacte soporte.";
+      if (response.response?.status === 400 && response.response.data?.code) {
+        const codeError = response.response.data.code[0];
+        if (codeError === "product with this code already exists.") {
+          message = "El código ya existe.";
+        }
+      }
+      showError(`Error al ${formData.id ? "actualizar" : "crear"} producto`, message);
     }
     setIsLoading(false);
-  };
-
-  const handleClientError = (response) => {
-    let message = "Error desconocido. Por favor, contacte soporte.";
-    if (response.response?.status === 400 && response.response.data?.code) {
-      const codeError = response.response.data.code[0];
-      if (codeError === "product with this code already exists.") {
-        message = "El código ya existe.";
-      }
-    }
-    Swal.fire({
-      icon: "error",
-      title: `Error al ${formData.id ? "actualizar" : "crear"} producto`,
-      text: message,
-      timer: 5000,
-    });
   };
 
   const isFormIncomplete = () => {
@@ -325,12 +314,12 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
         {showStoreProducts && (
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <CustomTable
+              <DataTable
                 data={storeProduct}
                 columns={[
                   {
                     name: "Nombre",
-                    selector: (row) => row.store.full_name,
+                    selector: (row) => row.store_name,
                   },
                   {
                     name: "Stock",

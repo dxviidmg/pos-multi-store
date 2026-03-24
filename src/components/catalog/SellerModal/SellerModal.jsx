@@ -1,8 +1,7 @@
-import { logger } from "../../../utils/logger";
 import React, { useEffect, useState } from "react";
 import CustomModal from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
-import Swal from "sweetalert2";
+import { showSuccess, showError } from "../../../utils/alerts";
 import { updateProduct } from "../../../api/products";
 import { getStores } from "../../../api/stores";
 import { getUserData } from "../../../api/utils";
@@ -33,16 +32,16 @@ const SellerModal = ({ isOpen, seller, onClose, onUpdate }) => {
       setFormData(INITIAL_FORM_DATA);
     }
 
-    const fetchBrands = async () => {
+    const fetchStores = async () => {
       try {
         const response = await getStores({ store_type: "T" });
         setStores(response.data);
       } catch (error) {
-        logger.error("Error fetching brands:", error);
+        // Error fetching stores
       }
     };
 
-    fetchBrands();
+    fetchStores();
   }, [seller]);
 
   const handleDataChange = (e) => {
@@ -57,12 +56,11 @@ const SellerModal = ({ isOpen, seller, onClose, onUpdate }) => {
       if (name === "store_id") {
         updatedData.store_id = value;
   
-        const store = stores.find((s) => s.id == value);
+        const store = stores.find((s) => s.id === value);
   
         if (store) {
           const storeName = store.name.toLowerCase();
           const workersCount = store.workers_count + 1;
-          logger.log(workersCount)
           const username = `${short_name}.tienda.${storeName}.vendedor${workersCount}`;
           updatedData.worker.username = username;
         }
@@ -76,7 +74,7 @@ const SellerModal = ({ isOpen, seller, onClose, onUpdate }) => {
     });
   };
 
-  const handleProductSubmit = async () => {
+  const handleSubmit = async () => {
     const apiCall = formData.id ? updateProduct : createSeller;
     const response = await apiCall(formData);
 
@@ -84,30 +82,17 @@ const SellerModal = ({ isOpen, seller, onClose, onUpdate }) => {
       onClose();
       onUpdate(response.data);
       setFormData(INITIAL_FORM_DATA);
-      Swal.fire({
-        icon: "success",
-        title: `Producto ${formData.id ? "actualizado" : "creado"}`,
-        timer: 5000,
-      });
+      showSuccess(`Vendedor ${formData.id ? "actualizado" : "creado"}`);
     } else {
-      handleClientError(response);
-    }
-  };
-
-  const handleClientError = (response) => {
-    let message = "Error desconocido. Por favor, contacte soporte.";
-    if (response.response?.status === 400 && response.response.data?.code) {
-      const codeError = response.response.data.code[0];
-      if (codeError === "product with this code already exists.") {
-        message = "El código ya existe.";
+      let message = "Error desconocido. Por favor, contacte soporte.";
+      if (response.response?.status === 400 && response.response.data?.code) {
+        const codeError = response.response.data.code[0];
+        if (codeError === "product with this code already exists.") {
+          message = "El código ya existe.";
+        }
       }
+      showError(`Error al ${formData.id ? "actualizar" : "crear"} vendedor`, message);
     }
-    Swal.fire({
-      icon: "error",
-      title: `Error al ${formData.id ? "actualizar" : "crear"} producto`,
-      text: message,
-      timer: 5000,
-    });
   };
 
   const isFormIncomplete = () => {
@@ -168,7 +153,7 @@ const SellerModal = ({ isOpen, seller, onClose, onUpdate }) => {
           <Grid item xs={12} md={12}>
             <CustomButton
               fullWidth={true}
-              onClick={handleProductSubmit}
+              onClick={handleSubmit}
               disabled={isFormIncomplete()}
               marginTop="10px"
               startIcon={<SaveIcon />}

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { styled, useTheme } from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
 import {
   Box,
   CssBaseline,
@@ -14,9 +14,6 @@ import {
   ListItemText,
   Collapse,
   Avatar,
-  Badge,
-  LinearProgress,
-  Chip,
 } from "@mui/material";
 import MuiDrawer from "@mui/material/Drawer";
 import MuiAppBar from "@mui/material/AppBar";
@@ -26,7 +23,7 @@ import ExpandMore from "@mui/icons-material/ExpandMore";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { getUserData } from "../../../api/utils";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
@@ -43,46 +40,41 @@ import MiscellaneousServicesIcon from "@mui/icons-material/MiscellaneousServices
 import LogoutIcon from "@mui/icons-material/Logout";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import DescriptionIcon from "@mui/icons-material/Description";
+import PolicyIcon from "@mui/icons-material/Policy";
+import BarChartIcon from "@mui/icons-material/BarChart";
 import logo from "../../../assets/images/logo.jpg";
 import { colors } from "../../../theme/colors";
+import PageHelp from "../../ui/PageHelp/PageHelp";
+import NotificationsMenu from "../../ui/NotificationsMenu/NotificationsMenu";
 
 const iconMap = {
-  // Ventas y clientes
   Vender: <ShoppingCartIcon />,
   Ventas: <ReceiptIcon />,
   Clientes: <PersonSearchIcon />,
-
-  // Dashboard y reportes
-  Dashboard: <DashboardIcon />,
-
-  // Tienda y logística
+  Dashboard: <BarChartIcon />,
   Tienda: <LocalShippingIcon />,
   Distribuciones: <LocalShippingIcon />,
   Traspasos: <SwapHorizIcon />,
   Movimientos: <SwapHorizIcon />,
   Caja: <PointOfSaleIcon />,
-
-  // Productos e inventario
   Productos: <InventoryIcon />,
-
-  // Administración
   Tiendas: <StoreIcon />,
   Vendedores: <EngineeringIcon />,
   Mensualidades: <PaymentsIcon />,
   Logs: <DescriptionIcon />,
-
-  // Servicios y sincronización
   Servicios: <MiscellaneousServicesIcon />,
   Sincronizar: <SyncIcon />,
+  Distribuir: <LocalShippingIcon />,
+  Auditoria: <PolicyIcon />,
 };
 
-const drawerWidth = 240;
+const drawerWidth = 256;
 
 const openedMixin = (theme) => ({
   width: drawerWidth,
   transition: theme.transitions.create("width", {
     easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.enteringScreen,
+    duration: 280,
   }),
   overflowX: "hidden",
 });
@@ -90,10 +82,10 @@ const openedMixin = (theme) => ({
 const closedMixin = (theme) => ({
   transition: theme.transitions.create("width", {
     easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
+    duration: 280,
   }),
   overflowX: "hidden",
-  width: `calc(${theme.spacing(7)} + 1px)`,
+  width: `calc(${theme.spacing(8)} + 1px)`,
 });
 
 const DrawerHeader = styled("div")(({ theme }) => ({
@@ -104,9 +96,9 @@ const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
 })(({ theme, open }) => ({
   zIndex: theme.zIndex.drawer + 1,
-  transition: theme.transitions.create(["width", "margin"]),
-  background: colors.primary,
-  boxShadow: colors.shadow.light,
+  transition: theme.transitions.create(["width", "margin"], { duration: 280, easing: theme.transitions.easing.sharp }),
+  background: colors.gradient.appbar,
+  boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
   ...(open && {
     marginLeft: drawerWidth,
     width: `calc(100% - ${drawerWidth}px)`,
@@ -115,59 +107,48 @@ const AppBar = styled(MuiAppBar, {
 
 const Drawer = styled(MuiDrawer, {
   shouldForwardProp: (prop) => prop !== "open",
-})(({ theme, open }) => ({
-  width: drawerWidth,
-  flexShrink: 0,
-  whiteSpace: "nowrap",
-  boxSizing: "border-box",
-  ...(open && {
-    ...openedMixin(theme),
-    "& .MuiDrawer-paper": {
+})(({ theme, open }) => {
+  const paperBase = {
+    background: colors.gradient.sidebar,
+    color: "#fff",
+    borderRight: "none",
+    display: "flex",
+    flexDirection: "column",
+  };
+  return {
+    width: drawerWidth,
+    flexShrink: 0,
+    whiteSpace: "nowrap",
+    boxSizing: "border-box",
+    ...(open && {
       ...openedMixin(theme),
-      background: colors.primary,
-      color: "#fff",
-      borderRight: "none",
-      boxShadow: colors.shadow.medium,
-      display: "flex",
-      flexDirection: "column",
-    },
-  }),
-  ...(!open && {
-    ...closedMixin(theme),
-    "& .MuiDrawer-paper": {
+      "& .MuiDrawer-paper": { ...openedMixin(theme), ...paperBase },
+    }),
+    ...(!open && {
       ...closedMixin(theme),
-      background: colors.primary,
-      color: "#fff",
-      borderRight: "none",
-      boxShadow: colors.shadow.medium,
-      display: "flex",
-      flexDirection: "column",
-    },
-  }),
-}));
+      "& .MuiDrawer-paper": { ...closedMixin(theme), ...paperBase },
+    }),
+  };
+});
 
 export default function MainLayout({ toggleTheme, themeMode }) {
-  const theme = useTheme();
   const navigate = useNavigate();
+  const location = useLocation();
   const user = getUserData();
+
+  const accent = '#a78bfa';
 
   const [open, setOpen] = React.useState(false);
   const [openMenus, setOpenMenus] = React.useState({});
 
   const handleDrawerToggle = () => {
     setOpen(!open);
-    if (open) {
-      setOpenMenus({});
-    }
+    if (open) setOpenMenus({});
   };
 
   const handleToggleMenu = (label) => {
     setOpen(true);
-    setOpenMenus((prev) => {
-      const newState = {};
-      newState[label] = !prev[label];
-      return newState;
-    });
+    setOpenMenus((prev) => ({ [label]: !prev[label] }));
   };
 
   const handleLogout = () => {
@@ -176,19 +157,13 @@ export default function MainLayout({ toggleTheme, themeMode }) {
   };
 
   const handleBack = () => {
-    const updatedUser = {
-      ...user,
-      store_type: "",
-      store_name: "",
-      store_id: "",
-    };
+    const updatedUser = { ...user, store_type: "", store_name: "", store_id: "" };
     localStorage.setItem("user", JSON.stringify(updatedUser));
+    window.dispatchEvent(new Event("store-changed"));
     navigate("/tiendas/", { replace: true });
   };
 
-  // ===============================
-  // MENU DINÁMICO
-  // ===============================
+  const isActive = (href) => location.pathname === href;
 
   const linksByType = {
     T: [
@@ -197,27 +172,14 @@ export default function MainLayout({ toggleTheme, themeMode }) {
         label: "Ventas",
         dropdown: [
           { label: "Ventas", href: "/ventas/" },
-          {
-            label: "Importar ventas",
-            href: "/importar-ventas/",
-            hidden: user.role === "seller",
-          },
+          { label: "Importar ventas", href: "/importar-ventas/", hidden: user.role === "seller" },
         ],
       },
-
       {
         label: "Caja",
         dropdown: [
-          {
-            label: "Corte de caja",
-            href: "/corte-caja/",
-            hidden: user.role === "seller",
-          },
-          {
-            label: "Movimientos en caja",
-            href: "/movimientos-caja/",
-            hidden: user.role === "seller",
-          },
+          { label: "Corte de caja", href: "/corte-caja/", hidden: user.role === "seller" },
+          { label: "Movimientos en caja", href: "/movimientos-caja/", hidden: user.role === "seller" },
         ],
       },
       { label: "Clientes", href: "/clientes/", hidden: user.role === "seller" },
@@ -239,11 +201,7 @@ export default function MainLayout({ toggleTheme, themeMode }) {
       {
         label: "Movimientos",
         dropdown: [
-          {
-            label: "Distribuciones",
-            href: "/distribuciones/",
-            hidden: user.role === "seller",
-          },
+          { label: "Distribuciones", href: "/distribuciones/", hidden: user.role === "seller" },
           { label: "Traspasos", href: "/traspasos/" },
         ],
       },
@@ -252,11 +210,10 @@ export default function MainLayout({ toggleTheme, themeMode }) {
     A: [
       { label: "Distribuir", href: "/distribuir/" },
       {
-        label: "Tienda",
+        label: "Movimientos",
         dropdown: [
           { label: "Distribuciones", href: "/distribuciones/" },
           { label: "Traspasos", href: "/traspasos/" },
-          { label: "Caja", href: "/cashflow/" },
         ],
       },
       {
@@ -275,13 +232,7 @@ export default function MainLayout({ toggleTheme, themeMode }) {
       { label: "Logs", href: "/logs/" },
     ],
     G: [
-      {
-        label: "Dashboard",
-        dropdown: [
-          { label: "General", href: "/tablero/" },
-          { label: "Auditoria", href: "/auditoria/" },
-        ],
-      },
+      { label: "Dashboard", href: "/tablero/" },
       { label: "Tiendas", href: "/tiendas/" },
       { label: "Clientes", href: "/clientes/" },
       { label: "Vendedores", href: "/vendedores/" },
@@ -297,210 +248,135 @@ export default function MainLayout({ toggleTheme, themeMode }) {
           { label: "Importar Productos", href: "/importar-productos/" },
         ],
       },
+      {
+        label: "Auditoria",
+        dropdown: [
+          { label: "Productos", href: "/auditoria-productos/" },
+          { label: "Transacciones", href: "/auditoria-transacciones/" },
+        ],
+      },
       { label: "Mensualidades", href: "/pagos/" },
       { label: "Servicios", href: "/servicios/" },
       { label: "Sincronizar", href: "/sincronizar/" },
     ],
   };
 
-  const type =
-    user.store_type === "T" ? "T" : user.store_type === "A" ? "A" : "G";
-
+  const type = user.store_type === "T" ? "T" : user.store_type === "A" ? "A" : "G";
   const menuItems = linksByType[type];
+
+  const activeSx = {
+    background: `${accent}26`,
+    "&:hover": { background: `${accent}33` },
+  };
 
   return (
     <Box sx={{ display: "flex", overflow: "hidden" }}>
       <CssBaseline />
 
-      {/* APP BAR */}
       <AppBar position="fixed" open={open}>
-        <Toolbar sx={{ minHeight: "64px !important" }}>
-          <IconButton
-            color="inherit"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 2 }}
-          >
+        <Toolbar sx={{ minHeight: "60px !important" }}>
+          <IconButton color="inherit" edge="start" onClick={handleDrawerToggle} sx={{ mr: 2 }}>
             <MenuIcon />
           </IconButton>
-
-          <Typography
-            variant="h6"
-            sx={{
-              flexGrow: 1,
-              fontWeight: 600,
-            }}
-          >
+          <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 700, letterSpacing: "-0.01em" }}>
             {user.store_name || user.tenant_name}
           </Typography>
-
           {user.role === "owner" && (
             <Avatar
               onClick={() => navigate("/tenant-profile")}
               sx={{
-                width: 36,
-                height: 36,
-                bgcolor: "rgba(255,255,255,0.2)",
-                fontSize: "0.9rem",
-                fontWeight: "bold",
-                mr: 1,
-                cursor: "pointer",
+                width: 34, height: 34,
+                bgcolor: `${accent}d9`,
+                color: "#fff",
+                fontSize: "0.85rem", fontWeight: 700, mr: 1, cursor: "pointer",
+                transition: "all 0.2s",
+                "&:hover": { transform: "scale(1.1)", bgcolor: accent },
               }}
             >
-              {(user.store_name || user.tenant_name || "U")
-                .charAt(0)
-                .toUpperCase()}
+              {(user.store_name || user.tenant_name || "U").charAt(0).toUpperCase()}
             </Avatar>
           )}
-
-          <IconButton color="inherit" onClick={toggleTheme} sx={{ mr: 1 }}>
+          <NotificationsMenu />
+          <PageHelp />
+          <IconButton color="inherit" onClick={toggleTheme} sx={{ mr: 0.5 }}>
             {themeMode === "dark" ? <Brightness7Icon /> : <Brightness4Icon />}
           </IconButton>
-
           {user.role === "owner" && user.store_id && (
-            <IconButton color="inherit" onClick={handleBack} sx={{ mr: 1 }}>
+            <IconButton color="inherit" onClick={handleBack} sx={{ mr: 0.5 }}>
               <ArrowBackIcon />
             </IconButton>
           )}
-
           <IconButton color="inherit" onClick={handleLogout}>
             <LogoutIcon />
           </IconButton>
         </Toolbar>
       </AppBar>
 
-      {/* DRAWER */}
       <Drawer variant="permanent" open={open}>
         <DrawerHeader
           sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            background: "transparent",
-            minHeight: "64px !important",
-            borderBottom: "1px solid rgba(255,255,255,0.08)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            minHeight: "60px !important",
+            borderBottom: "1px solid rgba(255,255,255,0.06)",
           }}
         >
           {open && (
-            <Box
-              component="img"
-              src={logo}
-              alt="SmartVenta"
-              sx={{
-                height: "40px",
-                width: "auto",
-                objectFit: "contain",
-              }}
-            />
+            <a href="https://smartventa-pos.vercel.app/" target="_blank" rel="noopener noreferrer">
+              <Box component="img" src={logo} alt="SmartVenta"
+                sx={{ height: "38px", width: "auto", objectFit: "contain", borderRadius: 1, cursor: "pointer" }}
+              />
+            </a>
           )}
         </DrawerHeader>
 
-        <Divider sx={{ backgroundColor: "rgba(255,255,255,0.08)" }} />
+        <Divider sx={{ backgroundColor: "rgba(255,255,255,0.06)" }} />
 
-        <List
-          sx={{
-            pt: 1,
-            px: 1,
-            flex: 1,
-            overflowY: "auto",
-            overflowX: "hidden",
-            "&::-webkit-scrollbar": { width: "6px" },
-            "&::-webkit-scrollbar-thumb": {
-              backgroundColor: "rgba(255,255,255,0.3)",
-              borderRadius: "4px",
-            },
-            "&::-webkit-scrollbar-track": {
-              backgroundColor: "rgba(0,0,0,0.1)",
-            },
-          }}
-        >
+        <List sx={{
+          pt: 1.5, px: 1, flex: 1, overflowY: "auto", overflowX: "hidden",
+          "&::-webkit-scrollbar": { width: "4px" },
+          "&::-webkit-scrollbar-thumb": { backgroundColor: "rgba(255,255,255,0.2)", borderRadius: "4px" },
+        }}>
           {menuItems.map((item, idx) => {
             if (item.hidden) return null;
 
             if (item.dropdown) {
               return (
                 <React.Fragment key={idx}>
-                  <ListItem disablePadding sx={{ mb: 0.4 }}>
+                  <ListItem disablePadding sx={{ mb: 0.3 }}>
                     <ListItemButton
                       onClick={() => handleToggleMenu(item.label)}
                       sx={{
-                        borderRadius: "10px",
-                        py: 0.96,
-                        transition: "all 0.2s",
+                        borderRadius: "10px", py: 1,
                         justifyContent: open ? "initial" : "center",
-                        "&:hover": {
-                          backgroundColor: "rgba(255, 255, 255, 0.12)",
-                          transform: "translateX(2px)",
-                        },
+                        "&:hover": { backgroundColor: "rgba(255,255,255,0.08)" },
                       }}
                     >
-                      <ListItemIcon
-                        sx={{
-                          color: "rgba(255,255,255,0.8)",
-                          minWidth: open ? 40 : 0,
-                          justifyContent: "center",
-                        }}
-                      >
+                      <ListItemIcon sx={{ color: "rgba(255,255,255,0.7)", minWidth: open ? 38 : 0, justifyContent: "center" }}>
                         {iconMap[item.label] || <DashboardIcon />}
                       </ListItemIcon>
-                      <ListItemText
-                        primary={item.label}
-                        primaryTypographyProps={{
-                          fontWeight: 600,
-                          fontSize: "0.72rem",
-                          letterSpacing: "0.24px",
-                        }}
+                      <ListItemText primary={item.label}
+                        primaryTypographyProps={{ fontWeight: 600, fontSize: "0.8rem" }}
                         sx={{ opacity: open ? 1 : 0 }}
                       />
-                      {open &&
-                        (openMenus[item.label] ? (
-                          <ExpandLess />
-                        ) : (
-                          <ExpandMore />
-                        ))}
+                      {open && (openMenus[item.label] ? <ExpandLess sx={{ fontSize: 18 }} /> : <ExpandMore sx={{ fontSize: 18 }} />)}
                     </ListItemButton>
                   </ListItem>
-
-                  <Collapse
-                    in={openMenus[item.label]}
-                    timeout="auto"
-                    unmountOnExit
-                  >
-                    <List
-                      component="div"
-                      disablePadding
-                      sx={{
-                        maxHeight: "300px",
-                        overflow: "auto",
-                        "&::-webkit-scrollbar": { width: "4px" },
-                        "&::-webkit-scrollbar-thumb": {
-                          backgroundColor: "rgba(255,255,255,0.3)",
-                          borderRadius: "4px",
-                        },
-                      }}
-                    >
+                  <Collapse in={openMenus[item.label]} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
                       {item.dropdown.map((sub, i) =>
-                        sub.divider ? null : sub.hidden ? null : (
-                          <ListItemButton
-                            key={i}
+                        sub.divider || sub.hidden ? null : (
+                          <ListItemButton key={i} onClick={() => navigate(sub.href)}
                             sx={{
-                              pl: 7,
-                              py: 0.64,
-                              borderRadius: "8px",
-                              my: 0.24,
-                              transition: "all 0.2s",
-                              "&:hover": {
-                                backgroundColor: "rgba(255, 255, 255, 0.08)",
-                              },
+                              pl: 6.5, py: 0.6, borderRadius: "8px", my: 0.2, mx: 0.5,
+                              ...(isActive(sub.href) ? activeSx : {}),
+                              "&:hover": { backgroundColor: "rgba(255,255,255,0.06)" },
                             }}
-                            onClick={() => navigate(sub.href)}
                           >
-                            <ListItemText
-                              primary={sub.label}
+                            <ListItemText primary={sub.label}
                               primaryTypographyProps={{
-                                fontSize: "0.68rem",
-                                color: "rgba(255,255,255,0.85)",
-                                fontWeight: 500,
+                                fontSize: "0.75rem",
+                                color: isActive(sub.href) ? accent : "rgba(255,255,255,0.75)",
+                                fontWeight: isActive(sub.href) ? 600 : 400,
                               }}
                             />
                           </ListItemButton>
@@ -513,35 +389,25 @@ export default function MainLayout({ toggleTheme, themeMode }) {
             }
 
             return (
-              <ListItem key={idx} disablePadding sx={{ mb: 0.4 }}>
-                <ListItemButton
-                  onClick={() => navigate(item.href)}
+              <ListItem key={idx} disablePadding sx={{ mb: 0.3 }}>
+                <ListItemButton onClick={() => navigate(item.href)}
                   sx={{
-                    borderRadius: "10px",
-                    py: 0.96,
-                    transition: "all 0.2s",
+                    borderRadius: "10px", py: 1,
                     justifyContent: open ? "initial" : "center",
-                    "&:hover": {
-                      backgroundColor: "rgba(255, 255, 255, 0.12)",
-                      transform: "translateX(2px)",
-                    },
+                    ...(isActive(item.href) ? activeSx : {}),
+                    "&:hover": { backgroundColor: "rgba(255,255,255,0.08)" },
                   }}
                 >
-                  <ListItemIcon
-                    sx={{
-                      color: "rgba(255,255,255,0.8)",
-                      minWidth: open ? 40 : 0,
-                      justifyContent: "center",
-                    }}
-                  >
+                  <ListItemIcon sx={{
+                    color: isActive(item.href) ? accent : "rgba(255,255,255,0.7)",
+                    minWidth: open ? 38 : 0, justifyContent: "center",
+                  }}>
                     {iconMap[item.label] || <DashboardIcon />}
                   </ListItemIcon>
-                  <ListItemText
-                    primary={item.label}
+                  <ListItemText primary={item.label}
                     primaryTypographyProps={{
-                      fontWeight: 600,
-                      fontSize: "0.72rem",
-                      letterSpacing: "0.24px",
+                      fontWeight: 600, fontSize: "0.8rem",
+                      color: isActive(item.href) ? accent : "inherit",
                     }}
                     sx={{ opacity: open ? 1 : 0 }}
                   />
@@ -552,11 +418,7 @@ export default function MainLayout({ toggleTheme, themeMode }) {
         </List>
       </Drawer>
 
-      {/* CONTENIDO */}
-      <Box
-        component="main"
-        sx={{ flexGrow: 1, p: 3, overflow: "auto", maxWidth: "100%" }}
-      >
+      <Box component="main" sx={{ flexGrow: 1, p: 3, overflow: "auto", maxWidth: "100%" }}>
         <DrawerHeader />
         <Outlet />
       </Box>

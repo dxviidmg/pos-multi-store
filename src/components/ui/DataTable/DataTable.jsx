@@ -3,7 +3,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import { Box, TextField } from "@mui/material";
 import { colors } from "../../../theme/colors";
 
-const CustomTable = ({
+const DataTable = ({
   columns,
   data,
   progressPending = false,
@@ -48,18 +48,23 @@ const CustomTable = ({
         const column = {
           field: col.field || `field_${index}`,
           headerName: col.name,
-          flex: col.grow || 1,
-          minWidth: col.width || 120,
+          ...(col.width ? { width: col.width } : { flex: 1 }),
+          minWidth: col.minWidth || 0,
           sortable: col.sortable !== false,
         };
 
         if (col.cell) {
-          column.renderCell = (params) => col.cell(params.row);
+          column.renderCell = (params) => (
+            <div style={{ display: 'flex', gap: '1px', padding: '0 1px', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
+              {col.cell(params.row)}
+            </div>
+          );
         } else if (col.selector) {
           column.renderCell = (params) => {
             const value = col.selector(params.row);
             return React.isValidElement(value) ? value : value;
           };
+          column.valueGetter = (params) => col.selector(params.row);
         }
 
         return column;
@@ -89,7 +94,7 @@ const CustomTable = ({
         </Box>
       )}
 
-      <Box sx={{width: "100%", height: height || 'auto' }}>
+      <Box sx={{width: "100%", maxWidth: "100%", overflowX: "auto", height: height || 'auto' }}>
         <DataGrid
           rows={rowsWithIds}
           columns={muiColumns}
@@ -109,7 +114,7 @@ const CustomTable = ({
             }
           }}
           disableRowSelectionOnClick
-          autoHeight={autoHeight}
+          getRowHeight={() => 'auto'}
           localeText={{
             noRowsLabel: showNoDataComponent ? noDataComponent : "",
           }}
@@ -122,11 +127,28 @@ const CustomTable = ({
               minHeight: '36px !important',
               maxHeight: '36px !important',
             },
+            "& .MuiDataGrid-columnHeaderTitle": {
+              textAlign: 'center',
+              width: '100%',
+            },
+            "& .MuiDataGrid-columnHeader": {
+              justifyContent: 'center',
+            },
+            "& .MuiDataGrid-columnHeaderTitleContainer": {
+              justifyContent: 'center',
+            },
             "& .MuiDataGrid-cell": {
-              py: 0.5,
+              py: 0,
+              px: '2px',
               fontSize: '0.8125rem',
               whiteSpace: 'normal !important',
               lineHeight: '1.3 !important',
+              justifyContent: 'center',
+              textAlign: 'center',
+              gap: '2px',
+              '& .MuiButtonBase-root': {
+                transform: 'scale(0.8)',
+              },
             },
             "& .MuiDataGrid-row": {
               minHeight: '32px !important',
@@ -139,4 +161,4 @@ const CustomTable = ({
   );
 };
 
-export default memo(CustomTable);
+export default memo(DataTable);

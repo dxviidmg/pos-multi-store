@@ -2,6 +2,31 @@ import * as XLSX from "xlsx";
 import Swal from "sweetalert2";
 import { getPrint } from "../api/printers";
 
+// --- Constantes de fechas ---
+export const MONTH_NAMES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+export const MONTH_NAMES_SHORT = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
+export const DAY_NAMES = ["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
+export const DAY_NAMES_SHORT = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
+
+// --- Paleta de colores para gráficas ---
+export const CHART_COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444'];
+
+// --- Formateo de moneda ---
+export const formatCurrency = (value, decimals = 2) =>
+  `$${(value || 0).toLocaleString("es-MX", { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}`;
+
+// --- Extractor de mensaje de error ---
+export const getErrorMessage = (error, fallback = "Error de conexión") =>
+  error.response?.data?.message || error.message || fallback;
+
+// --- Encuentra todos los empatados en max/min ---
+export const getTied = (entries, mapLabel, mode) => {
+  if (!entries.length) return "N/A";
+  const vals = entries.map(e => e[1]);
+  const target = mode === "best" ? Math.max(...vals) : Math.min(...vals);
+  return entries.filter(e => e[1] === target).map(e => mapLabel(e[0])).join(", ");
+};
+
 export const getFormattedDate = (date = new Date()) => {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed

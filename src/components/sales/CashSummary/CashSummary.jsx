@@ -1,23 +1,23 @@
-import React, { useEffect, useState } from "react";
-import CustomTable from "../../ui/Table/Table";
-
-import { getCashSummary } from "../../../api/sales";
+import React, { useEffect, useState, useCallback } from "react";
+import SimpleTable from "../../ui/SimpleTable/SimpleTable";
 import CustomButton from "../../ui/Button/Button";
 import { getUserData } from "../../../api/utils";
-import {
-  exportToExcel,
-  getFormattedDate,
-  formatTimeFromDate,
-} from "../../../utils/utils";
+import { exportToExcel, getFormattedDate, formatTimeFromDate } from "../../../utils/utils";
+import { getCashSummary } from "../../../api/sales";
 import { getCashFlow } from "../../../api/cashflow";
 import CashFlowModal from "../../finance/CashFlowModal/CashFlowModal";
 import { useModal } from "../../../hooks/useModal";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
-import { Grid, TextField, Box, Typography, Stack } from "@mui/material";
+import { Grid, TextField, Box, Typography, Stack, Chip } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
 import PaymentIcon from "@mui/icons-material/Payment";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
+
+const summaryColumns = [
+  { name: "Tipo", selector: (row) => row.name },
+  { name: "Cantidad", selector: (row) => "$" + row.amount },
+];
 
 const CashSummary = () => {
   const cashFlowModal = useModal();
@@ -30,102 +30,90 @@ const CashSummary = () => {
   const [totalSummary, setTotalSummary] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const fetchCashData = async () => {
-      setLoading(true);
-      const cashSummary = await getCashSummary(date);
-      const paymentMethods = cashSummary.data.filter(
-        (cash) => cash.payment_method_data === true
-      );
-      const cashFlowSummary = cashSummary.data.filter(
-        (cash) => cash.cashflow_data === true
-      );
-      const totalSummary = cashSummary.data.filter(
-        (cash) => cash.total_data === true
-      );
-      setPaymentMethodsSummary(paymentMethods);
-      setCashSummary(cashSummary.data);
-      setCashFlowSummary(cashFlowSummary);
-      setTotalSummary(totalSummary);
-      const cashFlow = await getCashFlow({start_date: date, end_date: date});
-      setCashFlow(cashFlow.data);
-      setLoading(false);
-    };
+  const isPartial = date === today;
 
-    fetchCashData();
+  const processSummary = (data) => {
+    setPaymentMethodsSummary(data.filter((c) => c.payment_method_data));
+    setCashFlowSummary(data.filter((c) => c.cashflow_data));
+    setTotalSummary(data.filter((c) => c.total_data));
+    setCashSummary(data);
+  };
+
+  const fetchSummary = useCallback(async () => {
+    const res = await getCashSummary(date);
+    processSummary(res.data);
   }, [date]);
 
   useEffect(() => {
-    const fetchCashData = async () => {
-      const cashSummary = await getCashSummary(date);
-      const paymentMethods = cashSummary.data.filter(
-        (cash) => cash.payment_method_data === true
-      );
-      const cashFlowSummary = cashSummary.data.filter(
-        (cash) => cash.cashflow_data === true
-      );
-      const totalSummary = cashSummary.data.filter(
-        (cash) => cash.total_data === true
-      );
-      setPaymentMethodsSummary(paymentMethods);
-      setCashSummary(cashSummary.data);
-      setCashFlowSummary(cashFlowSummary);
-      setTotalSummary(totalSummary);
+    const fetchData = async () => {
+      setLoading(true);
+      const [summaryRes, cashFlowRes] = await Promise.all([
+        getCashSummary(date),
+        getCashFlow({ start_date: date, end_date: date }),
+      ]);
+      processSummary(summaryRes.data);
+      setCashFlow(cashFlowRes.data);
+      setLoading(false);
     };
+    fetchData();
+  }, [date]);
 
-    fetchCashData();
-  }, [date, cashFlow]);
+  useEffect(() => {
+    fetchSummary();
+  }, [cashFlow, fetchSummary]);
 
   const handleExport = () => {
-    // Definir valores iniciales
-    const isPartial = date === today;
     const dateFile = `${date}${isPartial ? " " + formatTimeFromDate() : ""}`;
     const type = isPartial ? "parcial " : "total ";
-
-    // Generar el prefijo del nombre del archivo
-    const prefixName = `Corte de caja ${type}${
-      getUserData().store_name
-    } ${dateFile}`;
-
-    // Exportar a Excel
-    exportToExcel(cashSummary, prefixName, false);
+    exportToExcel(cashSummary, `Corte de caja ${type}${getUserData().store_name} ${dateFile}`, false);
   };
 
-  const handleUpdateCashFlowList = (updateCashFlow) => {
-    setCashFlow((prevBrands) => {
-      const brandExists = prevBrands.some((b) => b.id === updateCashFlow.id);
-      return brandExists
-        ? prevBrands.map((b) =>
-            b.id === updateCashFlow.id ? updateCashFlow : b
-          )
-        : [...prevBrands, updateCashFlow];
+  const handleUpdateCashFlowList = (updated) => {
+    setCashFlow((prev) => {
+      const exists = prev.some((item) => item.id === updated.id);
+      return exists
+        ? prev.map((item) => (item.id === updated.id ? updated : item))
+        : [...prev, updated];
     });
   };
+
+  const totalColumns = [
+    { name: "Tipo", selector: (row) => row.name },
+    {
+      name: "Cantidad",
+      selector: (row) => row.name === "Ventas canceladas" ? row.amount : "$" + row.amount,
+    },
+  ];
 
   return (
     <>
       <CustomSpinner isLoading={loading} />
-      <CashFlowModal 
+      <CashFlowModal
         isOpen={cashFlowModal.isOpen}
         cashFlow={cashFlowModal.data}
         onClose={cashFlowModal.close}
         onUpdate={handleUpdateCashFlowList}
       />
-      
+
       <Grid item xs={12} className="card">
-        {/* Header */}
         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
-          <Typography variant="h4" component="h1">Corte de caja</Typography>
+          <Stack direction="row" spacing={2} alignItems="center">
+            <Typography variant="h4" component="h1">Corte de caja</Typography>
+            <Chip
+              label={isPartial ? "Parcial" : "Total"}
+              color={isPartial ? "warning" : "success"}
+              size="small"
+            />
+          </Stack>
           <CustomButton onClick={handleExport} startIcon={<DownloadIcon />}>
             Descargar corte
           </CustomButton>
         </Stack>
 
-        {/* Selector de fecha */}
         <Box sx={{ mb: 3, maxWidth: 300 }}>
-          <TextField 
-            size="small" 
-            fullWidth 
+          <TextField
+            size="small"
+            fullWidth
             type="date"
             label="Fecha"
             value={date}
@@ -134,75 +122,29 @@ const CashSummary = () => {
           />
         </Box>
 
-        {/* Tarjetas de resumen */}
         <Grid container spacing={3}>
-          {/* Métodos de pago */}
           <Grid item xs={12} md={4}>
             <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
               <PaymentIcon color="primary" />
               <Typography variant="h6">Métodos de pago</Typography>
             </Stack>
-            <CustomTable
-              data={paymentMethodsSummary}
-              columns={[
-                {
-                  name: "Tipo",
-                  selector: (row) => row.name,
-                  grow: 1.5,
-                },
-                {
-                  name: "Cantidad",
-                  selector: (row) => "$" + row.amount,
-                  grow: 1,
-                },
-              ]}
-            />
+            <SimpleTable data={paymentMethodsSummary} columns={summaryColumns} />
           </Grid>
 
-          {/* Flujo de caja */}
           <Grid item xs={12} md={4}>
             <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
               <AccountBalanceWalletIcon color="primary" />
               <Typography variant="h6">Flujo de caja</Typography>
             </Stack>
-            <CustomTable
-              data={cashFlowSummary}
-              columns={[
-                {
-                  name: "Tipo",
-                  selector: (row) => row.name,
-                  grow: 1.5,
-                },
-                {
-                  name: "Cantidad",
-                  selector: (row) => "$" + row.amount,
-                  grow: 1,
-                },
-              ]}
-            />
+            <SimpleTable data={cashFlowSummary} columns={summaryColumns} />
           </Grid>
 
-          {/* Total en caja */}
           <Grid item xs={12} md={4}>
             <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
               <PointOfSaleIcon color="primary" />
               <Typography variant="h6">Total en caja</Typography>
             </Stack>
-            <CustomTable
-              data={totalSummary}
-              columns={[
-                {
-                  name: "Tipo",
-                  selector: (row) => row.name,
-                  grow: 1.5,
-                },
-                {
-                  name: "Cantidad",
-                  selector: (row) => row.name === "Ventas canceladas" ? row.amount : "$" + row.amount,
-                  grow: 1,
-                },
-              ]}
-            />
+            <SimpleTable data={totalSummary} columns={totalColumns} />
           </Grid>
         </Grid>
       </Grid>

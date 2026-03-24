@@ -9,31 +9,35 @@ import LoadingFallback from "./components/ui/LoadingFallback";
 import Login from "./components/layout/Login/Login";
 import MainLayout from "./components/layout/MainLayout/MainLayout";
 
+const lazyRetry = (importFn) =>
+  lazy(() => importFn().catch(() => { window.location.reload(); return new Promise(() => {}); }));
+
 // Lazy loading para rutas
-const SaleCreate = lazy(() => import("./components/sales/SaleCreate/SaleCreate"));
-const SaleList = lazy(() => import("./components/sales/SaleList/SaleList"));
-const TransferList = lazy(() => import("./components/inventory/TransferList/TransferList"));
-const ClientList = lazy(() => import("./components/clients/ClientList/ClientList"));
-const ProductList = lazy(() => import("./components/products/ProductList/ProductList"));
-const BrandList = lazy(() => import("./components/catalog/BrandList/BrandList"));
-const SaleImport = lazy(() => import("./components/sales/SaleImport/SaleImport"));
-const StoreProductList = lazy(() => import("./components/products/StoreProductList/StoreProductList"));
-const StoreList = lazy(() => import("./components/admin/StoreList/StoreList"));
-const ProductImport = lazy(() => import("./components/products/ProductImport/ProductImport"));
-const CashSummary = lazy(() => import("./components/sales/CashSummary/CashSummary"));
-const LogList = lazy(() => import("./components/admin/LogList/LogList"));
-const TenantPaymentList = lazy(() => import("./components/finance/TenantPaymentList/TenantPaymentList"));
-const CashFlowList = lazy(() => import("./components/finance/CashFlowList/CashFlowList"));
-const SellerList = lazy(() => import("./components/catalog/SellerList/SellerList"));
-const DepartmentList = lazy(() => import("./components/catalog/DepartmentList/DepartmentList"));
-const StoreProductImport = lazy(() => import("./components/products/StoreProductImport/StoreProductImport"));
-const ServiceList = lazy(() => import("./components/admin/ServiceList/ServiceList"));
-const ProductReassign = lazy(() => import("./components/products/ProductReassign/ProductReassign"));
-const AuditDashboard = lazy(() => import("./components/admin/AuditDashboard/AuditDashboard"));
-const Dashboard = lazy(() => import("./components/admin/Dashboard/Dashboard"));
-const DistributionList = lazy(() => import("./components/inventory/DistributionList/DistributionList"));
-const RestartService = lazy(() => import("./components/admin/RestartService/RestartService"));
-const TenantProfile = lazy(() => import("./components/admin/TenantProfile/TenantProfile"));
+const SaleCreate = lazyRetry(() => import("./components/sales/SaleCreate/SaleCreate"));
+const SaleList = lazyRetry(() => import("./components/sales/SaleList/SaleList"));
+const TransferList = lazyRetry(() => import("./components/inventory/TransferList/TransferList"));
+const ClientList = lazyRetry(() => import("./components/clients/ClientList/ClientList"));
+const ProductList = lazyRetry(() => import("./components/products/ProductList/ProductList"));
+const BrandList = lazyRetry(() => import("./components/catalog/BrandList/BrandList"));
+const SaleImport = lazyRetry(() => import("./components/sales/SaleImport/SaleImport"));
+const StoreProductList = lazyRetry(() => import("./components/products/StoreProductList/StoreProductList"));
+const StoreList = lazyRetry(() => import("./components/admin/StoreList/StoreList"));
+const ProductImport = lazyRetry(() => import("./components/products/ProductImport/ProductImport"));
+const CashSummary = lazyRetry(() => import("./components/sales/CashSummary/CashSummary"));
+const LogList = lazyRetry(() => import("./components/admin/LogList/LogList"));
+const TenantPaymentList = lazyRetry(() => import("./components/finance/TenantPaymentList/TenantPaymentList"));
+const CashFlowList = lazyRetry(() => import("./components/finance/CashFlowList/CashFlowList"));
+const SellerList = lazyRetry(() => import("./components/catalog/SellerList/SellerList"));
+const DepartmentList = lazyRetry(() => import("./components/catalog/DepartmentList/DepartmentList"));
+const StoreProductImport = lazyRetry(() => import("./components/products/StoreProductImport/StoreProductImport"));
+const ServiceList = lazyRetry(() => import("./components/admin/ServiceList/ServiceList"));
+const ProductReassign = lazyRetry(() => import("./components/products/ProductReassign/ProductReassign"));
+const TransactionAudit = lazyRetry(() => import("./components/admin/TransactionAudit/TransactionAudit"));
+const ProductAudit = lazyRetry(() => import("./components/admin/ProductAudit/ProductAudit"));
+const Dashboard = lazyRetry(() => import("./components/admin/Dashboard/Dashboard"));
+const DistributionList = lazyRetry(() => import("./components/inventory/DistributionList/DistributionList"));
+const RestartService = lazyRetry(() => import("./components/admin/RestartService/RestartService"));
+const TenantProfile = lazyRetry(() => import("./components/admin/TenantProfile/TenantProfile"));
 
 function App({ toggleTheme, themeMode }) {
   useKeepAlive();
@@ -74,7 +78,8 @@ function App({ toggleTheme, themeMode }) {
             <Route path="/reasignacion/" element={<Suspense fallback={<LoadingFallback />}><ProductReassign /></Suspense>} />
             <Route path="/importar-productos/" element={<Suspense fallback={<LoadingFallback />}><ProductImport /></Suspense>} />
             <Route path="/importar-inventario/" element={<Suspense fallback={<LoadingFallback />}><StoreProductImport /></Suspense>} />
-            <Route path="/auditoria/" element={<Suspense fallback={<LoadingFallback />}><AuditDashboard /></Suspense>} />
+            <Route path="/auditoria-transacciones/" element={<Suspense fallback={<LoadingFallback />}><TransactionAudit /></Suspense>} />
+            <Route path="/auditoria-productos/" element={<Suspense fallback={<LoadingFallback />}><ProductAudit /></Suspense>} />
             <Route path="/sincronizar/" element={<Suspense fallback={<LoadingFallback />}><RestartService /></Suspense>} />
             <Route path="/tenant-profile/" element={<Suspense fallback={<LoadingFallback />}><TenantProfile /></Suspense>} />
             {user?.store_id ? (

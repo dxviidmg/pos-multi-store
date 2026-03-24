@@ -1,17 +1,17 @@
-import React, { useState } from "react";
-import CustomTable from "../../ui/Table/Table";
+import React, { useState, useRef } from "react";
+import SimpleTable from "../../ui/SimpleTable/SimpleTable";
 import { importStoreProducts, importStoreProductsValidation } from "../../../api/products";
-
 import CustomButton from "../../ui/Button/Button";
-import Swal from "sweetalert2";
+import { showSuccess, showError } from "../../../utils/alerts";
+import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import CancelIcon from "@mui/icons-material/Cancel";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import { useRef } from "react";
-import { Grid, Select, MenuItem, FormControl, InputLabel, styled } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import PublishIcon from "@mui/icons-material/Publish";
 import DownloadIcon from "@mui/icons-material/Download";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import { Grid, Select, MenuItem, FormControl, InputLabel, Typography, styled } from "@mui/material";
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -29,236 +29,147 @@ const URL_TEMPLATE =
   process.env.REACT_APP_API_URL +
   "/static/templates/SmartVenta_plantilla_importacion_inventario.xlsx";
 
-  const DATA_SAMPLE = [
-    { code: 1, quantity: 1, description: "Descripción del producto 1" },
-    { code: 2, quantity: 2, description: "Descripción del producto 2" },
-  ];
+const DATA_SAMPLE = [
+  { code: 1, quantity: 1, description: "Descripción del producto 1" },
+  { code: 2, quantity: 2, description: "Descripción del producto 2" },
+];
 
 const ACTION_OPTIONS = [
-  {
-    value: "E",
-    label: "Añadir",
-  },
-  {
-    value: "A",
-    label: "Sustituir",
-  },
+  { value: "E", label: "Añadir" },
+  { value: "A", label: "Sustituir" },
 ];
 
 const StoreProductImport = () => {
   const fileInputRef = useRef(null);
   const [products, setProducts] = useState([]);
-  const [formData, setFormData] = useState({
-    file: "",
-    action: "",
-  });
-  const [showExample, setShowExample] = useState([]);
+  const [formData, setFormData] = useState({ file: "", action: "" });
+  const [showExample, setShowExample] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleDataChange = (e) => {
-    var { name, value, files } = e.target;
-
-    if (name === "file") {
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: files[0],
-      }));
-    } else {
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: value,
-      }));
-    }
+    const { name, value, files } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === "file" ? files[0] : value,
+    }));
   };
 
   const handleValidation = async () => {
+    setLoading(true);
     const response = await importStoreProductsValidation(formData);
+    setLoading(false);
 
     if (response.status === 200) {
       setProducts(response.data);
-
-      Swal.fire({
-        icon: "success",
-        title: "Archivo cargado",
-        timer: 5000,
-      });
+      showSuccess("Archivo cargado");
     } else if (response.status === 400) {
-      Swal.fire({
-        icon: "error",
-        title: "Error al cargar archivo",
-        text: response.response.data.error,
-        timer: 5000,
-      });
+      showError("Error al cargar archivo", response.response.data.error);
     } else {
-      Swal.fire({
-        icon: "error",
-        title: "Error al cargar archivo",
-        text: "Llame a soporte",
-        timer: 5000,
-      });
+      showError("Error al cargar archivo", "Llame a soporte");
     }
   };
 
   const handleImport = async () => {
+    setLoading(true);
     const response = await importStoreProducts(formData);
+    setLoading(false);
 
     if (response.status === 200) {
       setProducts([]);
-
       setFormData({ ...formData, file: null });
-      if (fileInputRef.current) {
-        fileInputRef.current.value = ""; // Limpia el input de archivo
-      }
-
-      Swal.fire({
-        icon: "success",
-        title: "Productos importados",
-        timer: 5000,
-      });
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      showSuccess("Productos importados");
     } else if (response.status === 400) {
-      Swal.fire({
-        icon: "error",
-        title: "Error al cargar archivo",
-        text: "Archivo incorrecto",
-        timer: 5000,
-      });
+      showError("Error al cargar archivo", "Archivo incorrecto");
     } else {
-      Swal.fire({
-        icon: "error",
-        title: "Error al cargar archivo",
-        text: "Llame a soporte",
-        timer: 5000,
-      });
+      showError("Error al cargar archivo", "Llame a soporte");
     }
   };
 
   return (
-      <Grid container>
-      <Grid item xs={12} className="card" sx={{ marginBottom: '1.5rem' }}>
+    <>
+      <CustomSpinner isLoading={loading} />
+
+      <Grid item xs={12} className="card" sx={{ mb: '1.5rem' }}>
         <h1>Importación de inventario</h1>
+        {formData.file && (
+          <Typography variant="body2" sx={{ mb: 1 }}>
+            Archivo: {formData.file.name}
+          </Typography>
+        )}
         <Grid container spacing={2}>
-          <Grid item xs={12} md={6} className="d-flex flex-column justify-content-end">
-            <CustomButton
-              component="label"
-              fullWidth
-              startIcon={<CloudUploadIcon />}
-            >
+          <Grid item xs={12} md={3}>
+            <CustomButton component="label" fullWidth startIcon={<CloudUploadIcon />}>
               Subir archivo
-              <VisuallyHiddenInput
-                type="file"
-                ref={fileInputRef}
-                onChange={handleDataChange}
-                name="file"
-              />
+              <VisuallyHiddenInput type="file" ref={fileInputRef} onChange={handleDataChange} name="file" />
             </CustomButton>
           </Grid>
-
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={3}>
             <FormControl fullWidth size="small">
-              <InputLabel>¿Desea adicionar o sustituir la cantidad?</InputLabel>
-              <Select fullWidth size="small" value={formData.action}
-              onChange={handleDataChange}
-              name="action"
-              //              disabled={isLoading}
-             label="¿Desea adicionar o sustituir la cantidad?">
-              <MenuItem value="">Tipo de operación</MenuItem>
-              {ACTION_OPTIONS.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </Select>
+              <InputLabel>Acción</InputLabel>
+              <Select value={formData.action} onChange={handleDataChange} name="action" label="Acción">
+                <MenuItem value="">Tipo de operación</MenuItem>
+                {ACTION_OPTIONS.map((opt) => (
+                  <MenuItem key={opt.value} value={opt.value}>{opt.label}</MenuItem>
+                ))}
+              </Select>
             </FormControl>
           </Grid>
-
           <Grid item xs={12} md={3}>
-            <CustomButton
-              onClick={handleValidation}
-              disabled={
-                formData.file === "" ||
-                formData.action === ""
-              }
-              fullWidth
-              startIcon={<CheckCircleIcon />}
-            >
+            <CustomButton onClick={handleValidation} disabled={!formData.file || !formData.action} fullWidth startIcon={<CheckCircleIcon />}>
               Validar
             </CustomButton>
           </Grid>
-
           <Grid item xs={12} md={3}>
             <CustomButton
               onClick={handleImport}
-              disabled={
-                products.length === 0 ||
-                products.some((item) => item.status !== "Exitoso")
-              }
-              fullWidth
-              startIcon={<PublishIcon />}
+              disabled={products.length === 0 || products.some((item) => item.status !== "Exitoso")}
+              fullWidth startIcon={<PublishIcon />}
             >
               Importar
             </CustomButton>
           </Grid>
-
           <Grid item xs={12} md={3}>
             <CustomButton href={URL_TEMPLATE} fullWidth startIcon={<DownloadIcon />}>
               Descargar plantilla
             </CustomButton>
           </Grid>
-
           <Grid item xs={12} md={3}>
             <CustomButton
               onClick={() => setShowExample(!showExample)}
               fullWidth
-              startIcon={<VisibilityIcon />}
+              startIcon={showExample ? <VisibilityOffIcon /> : <VisibilityIcon />}
             >
-              Ver Ejemplo
+              {showExample ? "Ocultar ejemplo" : "Ver ejemplo"}
             </CustomButton>
           </Grid>
         </Grid>
       </Grid>
 
-      <Grid item xs={12} className="card" hidden={showExample} sx={{ marginBottom: '1.5rem' }}>
-        <h1>Ejemplo de plantilla</h1>
-
-        <CustomTable
-          data={DATA_SAMPLE}
-          columns={[
-            {
-              name: "Código",
-              selector: (row) => row.code,
-            },
-            {
-              name: "Cantidad",
-              selector: (row) => row.quantity,
-            },
-            {
-              name: "Descripción (Opcional)",
-              selector: (row) => row.description,
-            }
-          ]}
-        ></CustomTable>
-      </Grid>
+      {showExample && (
+        <Grid item xs={12} className="card" sx={{ mb: '1.5rem' }}>
+          <h1>Ejemplo de plantilla</h1>
+          <SimpleTable
+            data={DATA_SAMPLE}
+            columns={[
+              { name: "Código", selector: (row) => row.code },
+              { name: "Cantidad", selector: (row) => row.quantity },
+              { name: "Descripción (Opcional)", selector: (row) => row.description },
+            ]}
+          />
+        </Grid>
+      )}
 
       <Grid item xs={12} className="card">
         <h1>Archivo actual</h1>
-        <CustomTable
+        <SimpleTable
           data={products}
           columns={[
+            { name: "Código", selector: (row) => row.code },
+            { name: "Cantidad", selector: (row) => row.quantity },
+            { name: "Descripción", selector: (row) => row.description },
             {
-              name: "Código",
-              selector: (row) => row.code,
-            },
-            {
-              name: "Cantidad",
-              selector: (row) => row.quantity,
-            },
-            {
-              name: "Descripcíon",
-              selector: (row) => row.description,
-            },
-
-            {
-              name: "Status",
-              wrapText: true,
+              name: "Estado",
               selector: (row) =>
                 row.status === "Exitoso" ? (
                   <CheckCircleIcon color="success" />
@@ -269,9 +180,9 @@ const StoreProductImport = () => {
                 ),
             },
           ]}
-        ></CustomTable>
+        />
       </Grid>
-    </Grid>
+    </>
   );
 };
 

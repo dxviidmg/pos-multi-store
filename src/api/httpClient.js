@@ -2,7 +2,7 @@ import axios from 'axios';
 import { logger } from '../utils/logger';
 
 const httpClient = axios.create({
-  timeout: 30000,
+  timeout: 60000,
 });
 
 // Request interceptor

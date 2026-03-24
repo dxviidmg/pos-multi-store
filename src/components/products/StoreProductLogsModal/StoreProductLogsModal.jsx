@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "../../../hooks/useForm";
 import CustomModal from "../../ui/Modal/Modal";
-import CustomTable from "../../ui/Table/Table";
+import DataTable from "../../ui/DataTable/DataTable";
 import { getStoreProductLogs, updateStoreProduct } from "../../../api/products";
 import { getFormattedDateTime } from "../../../utils/utils";
-import Swal from "sweetalert2";
+import { showSuccess, showError } from "../../../utils/alerts";
 import CustomButton from "../../ui/Button/Button";
 import { chooseIcon } from "../../ui/Icons/Icons";
 import { Grid, TextField } from "@mui/material";
@@ -53,18 +53,9 @@ const StoreProductLogsModal = ({ isOpen, logs: logsData, onClose, onUpdate }) =>
       setFormData(INITIAL_FORM_DATA);
       onClose();
       onUpdate(response.data);
-      Swal.fire({
-        icon: "success",
-        title: "Ajuste exitoso",
-        timer: 5000,
-      });
+      showSuccess("Ajuste exitoso");
     } else {
-      Swal.fire({
-        icon: "error",
-        title: "Error al realizar el ajuste",
-        text: "Por favor llame a soporte técnico",
-        timer: 5000,
-      });
+      showError("Error al realizar el ajuste", "Por favor llame a soporte técnico");
     }
   };
 
@@ -110,55 +101,47 @@ const StoreProductLogsModal = ({ isOpen, logs: logsData, onClose, onUpdate }) =>
           />
         </Grid>
 
-        <Grid item xs={12} md={3}
-          className={`d-flex flex-column justify-content-end ${
-            !adjustStock ? "d-none" : ""
-          }`}
-        >
+        {adjustStock && (
+        <Grid item xs={12} md={3}>
           <CustomButton
             onClick={() => handleCreateAdjustStock()}
             fullWidth
-            disabled={!adjustStock}
             startIcon={<SaveIcon />}
           >
             Ajustar
           </CustomButton>
         </Grid>
+        )}
 
-        <Grid item xs={12} md={12} className={adjustStock ? "d-none" : ""}>
-        <h1>Utimos movimientos</h1>
-          <CustomTable
+        {!adjustStock && (
+        <Grid item xs={12} md={12}>
+        <h1>Últimos movimientos</h1>
+          <DataTable
             data={logs}
             columns={[
               {
-                name: "Fecha",
+                name: "Fecha y hora",
                 selector: (row) => getFormattedDateTime(row.created_at),
-                grow: 2,
-                wrapText: true,
               },
               {
-                name: "Descripcion",
+                name: "Descripción",
                 selector: (row) => row.description,
-                grow: 2,
-                wrapText: true,
               },
               {
-                name: "S. anterior",
+                name: "Stock anterior",
                 selector: (row) => row.previous_stock,
               },
               {
-                name: "S. actualizado",
+                name: "Stock actualizado",
                 selector: (row) => row.updated_stock,
               },
               {
-                name: "Dif",
+                name: "Diferencia",
                 selector: (row) => row.difference,
               },
               {
-                name: "Hecho por",
+                name: "Usuario",
                 selector: (row) => row.user_username,
-                grow: 3,
-                wrapText: true,
               },
               {
                 name: "OK",
@@ -167,6 +150,7 @@ const StoreProductLogsModal = ({ isOpen, logs: logsData, onClose, onUpdate }) =>
             ]}
           />
         </Grid>
+        )}
       </Grid>
        </Grid>
       </Grid>

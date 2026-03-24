@@ -1,7 +1,7 @@
 import { logger } from "../../../utils/logger";
 import React, { useEffect, useMemo, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import DataTable from "../../ui/Table/DataTable";
+import SimpleTable from "../../ui/SimpleTable/SimpleTable";
 import {
   cleanCart,
   removeFromCart,
@@ -28,7 +28,7 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 import CalculateIcon from "@mui/icons-material/Calculate";
 import { MOVEMENT_TYPES, STORE_TYPES } from "../../../constants";
 
-const Cart = () => {
+const Cart = ({ searchInputRef }) => {
   const store_type = getUserData().store_type;
   const dispatch = useDispatch();
   const stockModal = useModal();
@@ -37,7 +37,6 @@ const Cart = () => {
   const [selectedStore, setSelectedStore] = useState("");
   const [confirmedStore, setConfirmedStore] = useState("");
   const [loading, setLoading] = useState(false);
-  const user = getUserData();
   
   const { carts, activeCartId } = useSelector((state) => state.multiCartReducer);
   
@@ -68,8 +67,7 @@ const Cart = () => {
     const handleShortcut = (event) => {
       if (event.ctrlKey && (event.key === "p" || event.key === "P")) {
         event.preventDefault();
-        paymentModal.close();
-        setTimeout(() => paymentModal.open(), 1);
+        paymentModal.open();
       }
     };
     window.addEventListener("keydown", handleShortcut);
@@ -255,10 +253,6 @@ const Cart = () => {
     }
   };
 
-  const handleOpenModal = () => {
-    paymentModal.close();
-    setTimeout(() => paymentModal.open(), 1);
-  };
 
   const commonColumns = [
     { name: "Código", field: "code", selector: (row) => row.product.code },
@@ -271,7 +265,6 @@ const Cart = () => {
       name: "Nombre",
       field: "name",
       selector: (row) => row.product.name,
-      grow: 5,
       renderCell: (params) => (
         <div style={{ 
           whiteSpace: 'normal', 
@@ -298,7 +291,6 @@ const Cart = () => {
       name: "Nombre",
       field: "name",
       selector: (row) => row.product.name,
-      grow: 2,
       renderCell: (params) => (
         <div style={{ 
           whiteSpace: 'normal', 
@@ -376,7 +368,6 @@ const Cart = () => {
     {
       name: "Nombre",
       selector: (row) => row.product.name,
-      grow: 3,
       renderCell: (params) => (
         <div style={{ 
           whiteSpace: 'normal', 
@@ -456,8 +447,6 @@ const Cart = () => {
 
     {
       name: "Stock General",
-      wrapText: true,
-      grow: 1.5,
       cell: (row) => (
         <div>
           {row.stockOtherStores && row.stockOtherStores.length > 0 ? (
@@ -543,7 +532,7 @@ const Cart = () => {
   return (
     <div>
       <CustomSpinner isLoading={loading} />
-      <PaymentModal isOpen={paymentModal.isOpen} onClose={paymentModal.close} />
+      <PaymentModal isOpen={paymentModal.isOpen} onClose={() => { paymentModal.close(); setTimeout(() => searchInputRef?.current?.focus(), 100); }} />
       <StockModal isOpen={stockModal.isOpen} product={stockModal.data} onClose={stockModal.close} />
       <div>
         {cart.length !== 0 && (
@@ -551,14 +540,14 @@ const Cart = () => {
             {(movementType === "venta" || movementType === "apartado") && (
               <>
                 <Grid item xs={12} md={4}>
-                  <h3 style={{ margin: 0 }}>Productos: {totalProducts}</h3>
+                  <h3>Productos: {totalProducts}</h3>
                 </Grid>
 
                 <Grid item xs={12} md={4}>
-                  <h3 style={{ margin: 0 }}>Total: ${total.toFixed(2)}</h3>
+                  <h3>Total: ${total.toFixed(2)}</h3>
                 </Grid>
                 <Grid item xs={12} md={4}>
-                  <CustomButton fullWidth onClick={handleOpenModal} startIcon={<PaymentIcon />}>
+                  <CustomButton fullWidth onClick={() => paymentModal.open()} startIcon={<PaymentIcon />}>
                     Cobrar (Ctrl+P)
                   </CustomButton>
                 </Grid>
@@ -568,7 +557,7 @@ const Cart = () => {
             {(movementType === "traspaso" ||
               movementType === "distribucion") && (
               <>
-                <Grid item xs={12} md={3}><h3 style={{ margin: 0 }}>Productos: {totalProducts}</h3></Grid>
+                <Grid item xs={12} md={3}><h3>Productos: {totalProducts}</h3></Grid>
                 <Grid item xs={12} md={3}>
                   <Select fullWidth size="small" value={selectedStore}
                     onChange={handleSelectChange}
@@ -626,7 +615,7 @@ const Cart = () => {
             )}
           </Grid>
         )}
-        <DataTable
+        <SimpleTable
           noDataComponent="Sin productos"
           data={cart}
           columns={getColumns()}

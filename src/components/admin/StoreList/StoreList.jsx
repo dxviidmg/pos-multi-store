@@ -1,8 +1,9 @@
 import { useMemo, useState } from "react";
-import CustomTable from "../../ui/Table/Table";
+import DataTable from "../../ui/DataTable/DataTable";
 import { Alert, Typography, Chip } from "@mui/material";
 import CustomButton from "../../ui/Button/Button";
 import { useNavigate } from "react-router-dom";
+import { formatCurrency } from "../../../utils/utils";
 import { getDateDifference, getFormattedDate } from "../../../utils/utils";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import { chooseIcon } from "../../ui/Icons/Icons";
@@ -39,6 +40,7 @@ const StoreList = () => {
     start_date: today,
     store_type: "T",
   });
+  const hasDepartment = Boolean(params.department_id);
 
   const {
     editUserModal,
@@ -62,25 +64,13 @@ const StoreList = () => {
 
   const stores = storesData?.stores || [];
   
-  // Calcular totales de distribuciones y traspasos
-  const totalDistributions = stores.reduce((sum, store) => 
-    sum + (store.cash_summary?.[12]?.amount || 0), 0
-  );
-  const totalTransfers = stores.reduce((sum, store) => 
-    sum + (store.cash_summary?.[13]?.amount || 0), 0
-  );
-  
-  const totals = {
-    ...(storesData?.totals || {}),
-    distributions: totalDistributions,
-    transfers: totalTransfers,
-  };
+  const totals = storesData?.totals || {};
   const loading = loadingStores || loadingTenant;
   const range = getDateDifference(params.start_date, params.end_date);
 
-  const handleParams = async (e) => {
-    let { name, value } = e.target;
-    setParams((prevData) => ({ ...prevData, [name]: value }));
+  const handleParams = (e) => {
+    const { name, value } = e.target;
+    setParams((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleStoreType = (e) => {
@@ -97,6 +87,7 @@ const StoreList = () => {
       store_printer: printer,
     });
 
+    window.dispatchEvent(new Event("store-changed"));
     navigate("/vender/", { replace: true });
   };
 
@@ -110,13 +101,12 @@ const StoreList = () => {
     
     try {
       const response = await getInvestment(storeId);
-      console.log('Investment response:', response.data);
       setStoreInvestments(prev => ({
         ...prev,
         [storeId]: response.data // response.data es directamente el número
       }));
     } catch (error) {
-      console.error('Error loading investment:', error);
+      // Error loading investment
     }
   };
 
@@ -166,7 +156,7 @@ const StoreList = () => {
   const averageSales = useMemo(() => {
     if (stores.length === 0) return 0;
     const totalSales = stores.reduce((sum, store) => 
-      sum + (store.cash_summary?.[3]?.amount || 0), 0
+      sum + (store.cash_summary?.total_payment || 0), 0
     );
     return totalSales / stores.length;
   }, [stores]);
@@ -176,8 +166,8 @@ const StoreList = () => {
     if (quickFilter === "all") return stores;
     if (quickFilter === "pending") {
       return stores.filter(store => 
-        (store.cash_summary?.[12]?.amount || 0) > 0 || 
-        (store.cash_summary?.[13]?.amount || 0) > 0
+        (store.cash_summary?.pending_distributions || 0) > 0 || 
+        (store.cash_summary?.pending_transfers || 0) > 0
       );
     }
     if (quickFilter === "synced") {
@@ -198,33 +188,26 @@ const StoreList = () => {
     textAlign: "right",
   };
 
-  const getCashValue = (cash_summary, index) =>
-    `$${(cash_summary?.[index]?.amount || 0).toLocaleString("es-MX", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    })}`;
+  const getCashValue = (cash_summary, key) =>
+    formatCurrency(cash_summary?.[key] || 0);
 
   const getCashValueTotal = (value) =>
-    `$${(value || 0).toLocaleString("es-MX", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    })}`;
+    formatCurrency(value || 0);
 
   const columnsStore = useMemo(() => {
     const allColumns = [
       {
         name: "Nombre",
-        wrapText: true,
         cell: ({ name, id, cash_summary }) => {
-          const vendido = cash_summary?.[3]?.amount || 0;
+          const vendido = cash_summary?.total_payment || 0;
           const isAboveAverage = vendido > averageSales;
           const isBelowAverage = vendido < averageSales * 0.8;
           
           return (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              {isAboveAverage && <span style={{ color: '#10b981', fontSize: '20px' }}>●</span>}
-              {isBelowAverage && <span style={{ color: '#ef4444', fontSize: '20px' }}>●</span>}
-              {!isAboveAverage && !isBelowAverage && <span style={{ color: '#f59e0b', fontSize: '20px' }}>●</span>}
+              {isAboveAverage && <span className="status-dot status-dot--success">●</span>}
+              {isBelowAverage && <span className="status-dot status-dot--danger">●</span>}
+              {!isAboveAverage && !isBelowAverage && <span className="status-dot status-dot--warning">●</span>}
               <span style={{ fontWeight: id === user?.store_id ? 'bold' : 'normal' }}>
                 {name}
               </span>
@@ -261,52 +244,52 @@ const StoreList = () => {
       {
         name: "Efectivo",
         style: alignTdStyles,
-        selector: ({ cash_summary }) => getCashValue(cash_summary, 0),
+        selector: ({ cash_summary }) => getCashValue(cash_summary, "EF"),
       },
       {
         name: "Tarjeta",
         style: alignTdStyles,
-        selector: ({ cash_summary }) => getCashValue(cash_summary, 1),
+        selector: ({ cash_summary }) => getCashValue(cash_summary, "TA"),
       },
       {
         name: "Transferencia",
         style: alignTdStyles,
-        selector: ({ cash_summary }) => getCashValue(cash_summary, 2),
+        selector: ({ cash_summary }) => getCashValue(cash_summary, "TR"),
       },
       {
         name: "Vendido",
         style: alignTdStyles,
-        selector: ({ cash_summary }) => getCashValue(cash_summary, 3),
+        selector: ({ cash_summary }) => getCashValue(cash_summary, "total_payment"),
       },
       {
         name: "Ventas realizadas",
         style: alignTdStyles,
-        selector: ({ cash_summary }) => cash_summary?.[10]?.amount?.toLocaleString() || "0",
+        selector: ({ cash_summary }) => cash_summary?.total_sales?.toLocaleString() || "0",
       },
       {
         name: "Canceladas",
         style: alignTdStyles,
-        selector: ({ cash_summary }) => cash_summary?.[11]?.amount?.toLocaleString() || "0",
+        selector: ({ cash_summary }) => cash_summary?.canceled_sales?.toLocaleString() || "0",
       },
       {
         name: "Distribuciones",
         style: alignTdStyles,
-        selector: ({ cash_summary }) => cash_summary?.[12]?.amount?.toLocaleString() || "0",
+        selector: ({ cash_summary }) => cash_summary?.pending_distributions?.toLocaleString() || "0",
       },
       {
         name: "Traspasos",
         style: alignTdStyles,
-        selector: ({ cash_summary }) => cash_summary?.[13]?.amount?.toLocaleString() || "0",
+        selector: ({ cash_summary }) => cash_summary?.pending_transfers?.toLocaleString() || "0",
       },
       {
         name: "Ganancia",
         style: alignTdStyles,
-        selector: ({ cash_summary }) => getCashValue(cash_summary, 8),
+        selector: ({ cash_summary }) => getCashValue(cash_summary, "profit"),
       },
       {
         name: "Caja",
         style: alignTdStyles,
-        selector: ({ cash_summary }) => getCashValue(cash_summary, 7),
+        selector: ({ cash_summary }) => getCashValue(cash_summary, "cash"),
       },
       {
         name: "Obtener (Inversión)",
@@ -327,7 +310,7 @@ const StoreList = () => {
           storeInvestments[row.id] !== undefined ? (
             <span>{getCashValueTotal(storeInvestments[row.id])}</span>
           ) : (
-            <span style={{ color: '#9ca3af' }}>Pendiente</span>
+            <span className="text-muted">Pendiente</span>
           )
         ),
       },
@@ -355,7 +338,7 @@ const StoreList = () => {
         ),
       },
       {
-        name: "Opciones",
+        name: "Acciones",
         cell: (row) => (
           <>
             {chooseIcon(row.products_count === tenantInfo.product_count)}
@@ -368,7 +351,9 @@ const StoreList = () => {
     // Filtrar columnas según quickFilter
     let filtered;
     if (quickFilter === "all") {
-      filtered = allColumns.filter(col => ["Nombre", "Efectivo", "Tarjeta", "Transferencia", "Caja", "Entrar"].includes(col.name));
+      filtered = hasDepartment
+        ? allColumns.filter(col => ["Nombre", "Vendido", "Ventas realizadas", "Canceladas", "Ganancia", "Entrar"].includes(col.name))
+        : allColumns.filter(col => ["Nombre", "Efectivo", "Tarjeta", "Transferencia", "Caja", "Entrar"].includes(col.name));
     } else if (quickFilter === "sales") {
       filtered = allColumns.filter(col => ["Nombre", "Vendido", "Ventas realizadas", "Canceladas", "Ganancia", "Entrar"].includes(col.name));
     } else if (quickFilter === "investment") {
@@ -404,7 +389,7 @@ const StoreList = () => {
     }
     
     return filtered;
-  }, [quickFilter, averageSales, user?.store_id, tenantInfo.product_count, storeInvestments]);
+  }, [quickFilter, averageSales, user?.store_id, tenantInfo.product_count, storeInvestments, hasDepartment]);
 
   const columnsStorages = useMemo(() => {
     const allColumns = [
@@ -439,8 +424,8 @@ const StoreList = () => {
         style: alignTdStyles,
         cell: ({ cash_summary }) => {
           const distributions =
-            cash_summary?.[12]?.amount?.toLocaleString() || "0";
-          const transfers = cash_summary?.[13]?.amount?.toLocaleString() || "0";
+            cash_summary?.pending_distributions?.toLocaleString() || "0";
+          const transfers = cash_summary?.pending_transfers?.toLocaleString() || "0";
 
           return (
             <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
@@ -469,7 +454,7 @@ const StoreList = () => {
           storeInvestments[row.id] !== undefined ? (
             <span>{getCashValueTotal(storeInvestments[row.id])}</span>
           ) : (
-            <span style={{ color: '#9ca3af' }}>Pendiente</span>
+            <span className="text-muted">Pendiente</span>
           )
         ),
       },
@@ -497,7 +482,7 @@ const StoreList = () => {
         ),
       },
       {
-        name: "Opciones",
+        name: "Acciones",
         cell: ({ products_count }) => (
           <>{chooseIcon(products_count === tenantInfo.product_count)}</>
         ),
@@ -624,7 +609,7 @@ const StoreList = () => {
         selector: () => "",
       },
       {
-        name: "Opciones",
+        name: "Acciones",
         selector: () => "",
       },
     ];
@@ -632,7 +617,9 @@ const StoreList = () => {
     // Filtrar columnas según quickFilter
     let filtered;
     if (quickFilter === "all") {
-      filtered = allColumns.filter(col => ["Nombre", "Efectivo", "Tarjeta", "Transferencia", "Caja", "Entrar"].includes(col.name));
+      filtered = hasDepartment
+        ? allColumns.filter(col => ["Nombre", "Vendido", "Ventas realizadas", "Canceladas", "Ganancia", "Entrar"].includes(col.name))
+        : allColumns.filter(col => ["Nombre", "Efectivo", "Tarjeta", "Transferencia", "Caja", "Entrar"].includes(col.name));
     } else if (quickFilter === "sales") {
       filtered = allColumns.filter(col => ["Nombre", "Vendido", "Ventas realizadas", "Canceladas", "Ganancia", "Entrar"].includes(col.name));
     } else if (quickFilter === "investment") {
@@ -659,15 +646,15 @@ const StoreList = () => {
     }
     
     return filtered;
-  }, [quickFilter, storeInvestments]);
+  }, [quickFilter, storeInvestments, hasDepartment]);
 
   return (
     <>
       <CustomSpinner isLoading={loading} />
       <Grid container>
         <Grid item xs={12} className="card">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-            <h1 style={{ margin: 0 }}>{params.store_type === "T" ? "Tiendas" : "Almacenes"}</h1>
+          <div className="flex-between" style={{ marginBottom: '1rem' }}>
+            <h1>{params.store_type === "T" ? "Tiendas" : "Almacenes"}</h1>
             {tenantInfo.notices && tenantInfo.notices.length > 0 && (
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 {tenantInfo.notices.map((notice, index) => (
@@ -693,13 +680,13 @@ const StoreList = () => {
               <Grid item xs={12} sm={6} md={3}>
                 <Box sx={{ bgcolor: 'var(--color-primary)', p: 1, borderRadius: 1, textAlign: 'center' }}>
                   <Typography variant="caption" sx={{ color: '#fff', fontWeight: 600 }}>Ventas Totales</Typography>
-                  <Typography variant="h5" sx={{ color: '#fff', fontWeight: 700 }}>{totals.totalSales || 0}</Typography>
+                  <Typography variant="h5" sx={{ color: '#fff', fontWeight: 700 }}>{totals.total_sales || 0}</Typography>
                 </Box>
               </Grid>
               <Grid item xs={12} sm={6} md={3}>
                 <Box sx={{ bgcolor: 'var(--color-primary)', p: 1, borderRadius: 1, textAlign: 'center' }}>
                   <Typography variant="caption" sx={{ color: '#fff', fontWeight: 600 }}>Monto Total</Typography>
-                  <Typography variant="h5" sx={{ color: '#fff', fontWeight: 700 }}>{getCashValueTotal(totals.totalPayment)}</Typography>
+                  <Typography variant="h5" sx={{ color: '#fff', fontWeight: 700 }}>{getCashValueTotal(totals.total_payment)}</Typography>
                 </Box>
               </Grid>
               <Grid item xs={12} sm={6} md={3}>
@@ -740,11 +727,11 @@ const StoreList = () => {
               <Grid item xs={12} md={4} style={{ textAlign: "center" }}>
                 {params.store_type === "T" && (
                   <Box sx={{ mt: 1, fontSize: '0.75rem', color: '#666' }}>
-                    <span style={{ color: '#10b981' }}>● Arriba del promedio</span>
+                    <span className="text-success">● Arriba del promedio</span>
                     {' | '}
-                    <span style={{ color: '#f59e0b' }}>● Promedio</span>
+                    <span className="status-dot--warning">● Promedio</span>
                     {' | '}
-                    <span style={{ color: '#ef4444' }}>● Debajo del promedio</span>
+                    <span className="text-danger">● Debajo del promedio</span>
                   </Box>
                 )}
               </Grid>
@@ -839,8 +826,8 @@ const StoreList = () => {
                 size="small"
               >
                 Pendientes ({stores.filter(s => 
-                  (s.cash_summary?.[12]?.amount || 0) > 0 || 
-                  (s.cash_summary?.[13]?.amount || 0) > 0
+                  (s.cash_summary?.pending_distributions || 0) > 0 || 
+                  (s.cash_summary?.pending_transfers || 0) > 0
                 ).length})
               </CustomButton>
               <CustomButton 
@@ -901,8 +888,8 @@ const StoreList = () => {
                 size="small"
               >
                 Pendientes ({stores.filter(s => 
-                  (s.cash_summary?.[12]?.amount || 0) > 0 || 
-                  (s.cash_summary?.[13]?.amount || 0) > 0
+                  (s.cash_summary?.pending_distributions || 0) > 0 || 
+                  (s.cash_summary?.pending_transfers || 0) > 0
                 ).length})
               </CustomButton>
               <CustomButton 
@@ -942,7 +929,7 @@ const StoreList = () => {
           )}
 
           <Box sx={{ mb: 2 }}>
-            <CustomTable
+            <DataTable
               progressPending={loading}
               data={memoStores}
               columns={
@@ -965,21 +952,18 @@ const StoreList = () => {
               <Box sx={{ mb: 2 }}>
                 <h2>Totales</h2>
               </Box>
-              <CustomTable
+              <DataTable
                 progressPending={loading}
                 data={[
                   {
                     profit: totals.profit,
-                    paymentCash: totals.paymentCash,
-                    paymentCard: totals.paymentCard,
-                    paymentTransfer: totals.paymentTransfer,
-                    totalPayment: totals.totalPayment,
+                    paymentCash: totals.EF,
+                    paymentCard: totals.TA,
+                    paymentTransfer: totals.TR,
+                    totalPayment: totals.total_payment,
                     cash: totals.cash,
-                    investment: totals.investment,
-                    totalSales: `${totals.totalSales}`,
-                    canceledSales: totals.canceledSales,
-                    distributions: totals.distributions,
-                    transfers: totals.transfers,
+                    totalSales: `${totals.total_sales || 0}`,
+                    canceledSales: totals.canceled_sales,
                   },
                 ]}
                 columns={columnsTotals}

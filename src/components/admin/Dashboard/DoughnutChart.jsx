@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { PieChart } from '@mui/x-charts/PieChart';
 import { Box, Typography } from '@mui/material';
+import { CHART_COLORS } from '../../../utils/utils';
 
 const processData = (result, dataType, metricType) => {
   if (!result || !result.sales || result.sales.length === 0) return [];
 
   const { sales } = result;
-  const colors = ['#2563eb', '#7c3aed', '#059669', '#dc2626', '#ea580c'];
 
   switch (dataType) {
     case 'payment': {
@@ -19,7 +19,7 @@ const processData = (result, dataType, metricType) => {
         id: index,
         value: value,
         label: label,
-        color: colors[index % colors.length],
+        color: CHART_COLORS[index % CHART_COLORS.length],
       }));
     }
     
@@ -33,7 +33,7 @@ const processData = (result, dataType, metricType) => {
         id: index,
         value: value,
         label: label,
-        color: colors[index % colors.length],
+        color: CHART_COLORS[index % CHART_COLORS.length],
       }));
     }
     
@@ -48,7 +48,11 @@ const DoughnutChart = ({ title, data, dataType, metricType = 'count' }) => {
   useEffect(() => {
     if (!data) return;
     const processedData = processData(data, dataType, metricType);
-    setChartData(processedData);
+    const total = processedData.reduce((sum, d) => sum + d.value, 0);
+    setChartData(processedData.map(d => ({
+      ...d,
+      label: `${d.label} (${total ? ((d.value / total) * 100).toFixed(1) : 0}%)`,
+    })));
   }, [data, dataType, metricType]);
 
   return (
