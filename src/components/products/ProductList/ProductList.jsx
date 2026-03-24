@@ -186,7 +186,7 @@ const ProductList = () => {
               </CustomButton>
             </Grid>
             <Grid item xs={12} md={3}>
-              <CustomTooltip text="Formatea a mayúsculas y reemplaza la comilla simple (') por guión medio (-)">
+              <CustomTooltip text="Formatea a mayúsculas y reemplaza la comilla simple (') por guión medio (-)" fullWidth>
                 <CustomButton fullWidth onClick={handleUpperCodeProducts} startIcon={<TextFormatIcon />}>
                   Formatear códigos
                 </CustomButton>
@@ -220,7 +220,7 @@ const ProductList = () => {
                     : `$${row.unit_price}`
                 ),
               },
-              {
+              ...(user.role === "owner" ? [{
                 name: "Acciones",
                 cell: (row) => (
                   <>
@@ -238,7 +238,7 @@ const ProductList = () => {
                     )}
                   </>
                 ),
-              },
+              }] : []),
             ]}
           />
         </Grid>

@@ -117,6 +117,10 @@ const SaleList = () => {
   };
 
   const handleUpdateSaleList = (updated) => {
+    if (!updated) {
+      setParams((prev) => ({ ...prev }));
+      return;
+    }
     setSales((prev) => {
       const exists = prev.some((item) => item.id === updated.id);
       return exists

@@ -63,7 +63,7 @@ const LogList = () => {
       <Grid container>
         <Grid item xs={12} className="card">
           <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-            <h1>Logs</h1>
+            <h1>Historial de stock</h1>
           </Stack>
 
           <Grid container spacing={2} sx={{ mb: 2 }}>
