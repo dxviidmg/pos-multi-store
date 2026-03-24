@@ -88,7 +88,7 @@ const Dashboard = () => {
     return (
       <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: 400, gap: 2 }}>
         <LockIcon sx={{ fontSize: 64, color: "text.secondary" }} />
-        <Typography variant="h5" sx={{ fontWeight: 700 }}>Dashboard no disponible</Typography>
+        <Typography variant="h5" sx={{ fontWeight: 700 }}>Tablero no disponible</Typography>
         <Typography variant="body1" color="text.secondary" align="center">
           El dashboard está disponible únicamente antes de las 10:00 AM y después de las 9:00 PM.
         </Typography>
@@ -160,7 +160,7 @@ const Dashboard = () => {
     return (
       <Box>
         <Box className="card" sx={{ mb: 3 }}>
-          <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>Dashboard de Ventas</Typography>
+          <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>Tablero de Ventas</Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>Procesando datos...</Typography>
           <LinearProgress
             variant={progress > 0 ? "determinate" : "indeterminate"}
@@ -194,7 +194,7 @@ const Dashboard = () => {
     return (
       <Box>
         <Box className="card">
-          <Typography variant="h4" sx={{ fontWeight: 700, mb: 2 }}>Dashboard de Ventas</Typography>
+          <Typography variant="h4" sx={{ fontWeight: 700, mb: 2 }}>Tablero de Ventas</Typography>
           <Filters {...{ metricType, setMetricType, year, setYear, month, setMonth }} />
         </Box>
         <Box sx={{
@@ -243,7 +243,7 @@ const Dashboard = () => {
       <Box className="card" sx={{ mb: 0 }}>
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 1, mb: 2 }}>
           <Box>
-            <Typography variant="h4" sx={{ fontWeight: 700 }}>Dashboard de Ventas</Typography>
+            <Typography variant="h4" sx={{ fontWeight: 700 }}>Tablero de Ventas</Typography>
             <Typography variant="body2" color="text.secondary">{periodLabel}</Typography>
           </Box>
         </Box>

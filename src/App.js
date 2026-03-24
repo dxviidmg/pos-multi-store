@@ -70,7 +70,7 @@ function App({ toggleTheme, themeMode }) {
             <Route path="/inventario/" element={<Suspense fallback={<LoadingFallback />}><StoreProductList /></Suspense>} />
             <Route path="/marcas/" element={<Suspense fallback={<LoadingFallback />}><BrandList /></Suspense>} />
             <Route path="/departamentos/" element={<Suspense fallback={<LoadingFallback />}><DepartmentList /></Suspense>} />
-            <Route path="/logs/" element={<Suspense fallback={<LoadingFallback />}><LogList /></Suspense>} />
+            <Route path="/historial-stock/" element={<Suspense fallback={<LoadingFallback />}><LogList /></Suspense>} />
             <Route path="/pagos/" element={<Suspense fallback={<LoadingFallback />}><TenantPaymentList /></Suspense>} />
             <Route path="/vendedores/" element={<Suspense fallback={<LoadingFallback />}><SellerList /></Suspense>} />
             <Route path="/servicios/" element={<Suspense fallback={<LoadingFallback />}><ServiceList /></Suspense>} />
