@@ -59,7 +59,7 @@ const StockModal = ({ isOpen, product, onClose }) => {
       const data = {
         quantity,
         origin_store: row.store_id,
-        destination_store: storeProduct.store,
+        destination_store: storeProduct.store?.id || storeProduct.store,
         product: storeProduct.product.id,
       };
 
