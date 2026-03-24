@@ -239,7 +239,7 @@ const StoreList = () => {
       },
       {
         name: "Impresora",
-        cell: ({ printer }) => printer ? <PrintIcon /> : "-",
+        cell: ({ printer }) => printer ? `${printer.brand} ${printer.model}` : "-",
       },
       {
         name: "Efectivo",
@@ -342,7 +342,7 @@ const StoreList = () => {
         cell: (row) => (
           <>
             {chooseIcon(row.has_all_products)}
-            {row.printer && <PrintIcon />}
+            {row.printer && <PrintIcon titleAccess={`${row.printer.brand} ${row.printer.model}`} />}
           </>
         ),
       },

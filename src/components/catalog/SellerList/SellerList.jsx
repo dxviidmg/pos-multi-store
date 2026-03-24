@@ -14,6 +14,7 @@ import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import LockResetIcon from "@mui/icons-material/LockReset";
 import { getUserData } from "../../../api/utils";
+import CustomTooltip from "../../ui/Tooltip";
 
 const SellerList = () => {
   const today = getFormattedDate();
@@ -175,24 +176,23 @@ const SellerList = () => {
                 name: "Vendido",
                 selector: (row) => `$${row.total_sales}`,
               },
-              {
-                name: "Editar usuario",
-                omit: user?.role !== "owner",
+              ...(user?.role === "owner" ? [{
+                name: "Acciones",
                 cell: (row) => (
-                  <CustomButton size="small" startIcon={<EditIcon />} onClick={() => handleOpenEditUser(row.worker.id)}>
-                    Editar
-                  </CustomButton>
+                  <>
+                    <CustomTooltip text="Editar usuario">
+                      <CustomButton size="small" onClick={() => handleOpenEditUser(row.worker.id)}>
+                        <EditIcon />
+                      </CustomButton>
+                    </CustomTooltip>
+                    <CustomTooltip text="Cambiar contraseña">
+                      <CustomButton size="small" onClick={() => handleOpenChangePassword(row.worker.id)}>
+                        <LockResetIcon />
+                      </CustomButton>
+                    </CustomTooltip>
+                  </>
                 ),
-              },
-              {
-                name: "Cambiar contraseña",
-                omit: user?.role !== "owner",
-                cell: (row) => (
-                  <CustomButton size="small" startIcon={<LockResetIcon />} onClick={() => handleOpenChangePassword(row.worker.id)}>
-                    Cambiar
-                  </CustomButton>
-                ),
-              },
+              }] : []),
             ]}
           />
         </Grid>
