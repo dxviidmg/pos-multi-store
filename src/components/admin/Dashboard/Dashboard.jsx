@@ -249,17 +249,17 @@ const Dashboard = () => {
         </Grid>
         <Grid item xs={6} md={3}>
           <Box className="card" sx={{ height: "100%", mb: 0 }}>
-            <KPICard title="Monto Total" value={`$${kpis.totalAmount.toLocaleString("es-MX", { minimumFractionDigits: 0 })}`} subtitle="Ingresos del periodo" icon={AttachMoneyIcon} index={1} />
+            <KPICard title="Monto Total" value={`$${kpis.totalAmount.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} subtitle="Ingresos del periodo" icon={AttachMoneyIcon} index={1} />
           </Box>
         </Grid>
         <Grid item xs={6} md={3}>
           <Box className="card" sx={{ height: "100%", mb: 0 }}>
-            <KPICard title="Ingreso Diario" value={`$${kpis.avgDaily.toLocaleString("es-MX", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`} subtitle={`$${kpis.totalAmount.toLocaleString("es-MX", { minimumFractionDigits: 0 })} ÷ ${kpis.daysInPeriod} días`} icon={TrendingUpIcon} index={2} />
+            <KPICard title="Ingreso Diario" value={`$${kpis.avgDaily.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} subtitle={`$${kpis.totalAmount.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ÷ ${kpis.daysInPeriod} días`} icon={TrendingUpIcon} index={2} />
           </Box>
         </Grid>
         <Grid item xs={6} md={3}>
           <Box className="card" sx={{ height: "100%", mb: 0 }}>
-            <KPICard title="Promedio por Tienda" value={`$${kpis.avgPerStore.toLocaleString("es-MX", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`} subtitle={`$${kpis.totalAmount.toLocaleString("es-MX", { minimumFractionDigits: 0 })} ÷ ${dashboardData.stores?.length || 1} tienda${(dashboardData.stores?.length || 1) > 1 ? 's' : ''}`} icon={StorefrontIcon} index={4} />
+            <KPICard title="Promedio por Tienda" value={`$${kpis.avgPerStore.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} subtitle={`$${kpis.totalAmount.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ÷ ${dashboardData.stores?.length || 1} tienda${(dashboardData.stores?.length || 1) > 1 ? 's' : ''}`} icon={StorefrontIcon} index={4} />
           </Box>
         </Grid>
 
