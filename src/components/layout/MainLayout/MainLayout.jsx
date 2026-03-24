@@ -209,11 +209,10 @@ export default function MainLayout({ toggleTheme, themeMode }) {
     A: [
       { label: "Distribuir", href: "/distribuir/" },
       {
-        label: "Tienda",
+        label: "Movimientos",
         dropdown: [
           { label: "Distribuciones", href: "/distribuciones/" },
           { label: "Traspasos", href: "/traspasos/" },
-          { label: "Caja", href: "/cashflow/" },
         ],
       },
       {
