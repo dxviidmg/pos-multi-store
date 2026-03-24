@@ -7,58 +7,30 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
+import CancelIcon from "@mui/icons-material/Cancel";
 import InboxIcon from "@mui/icons-material/Inbox";
 import { useNavigate } from "react-router-dom";
-import { getTransfers, getDistributions } from "../../../api/transfers";
-import { getSales } from "../../../api/sales";
-import { calculateTimeAgo, getFormattedDate } from "../../../utils/utils";
+import { getOwnerNotifications } from "../../../api/notifications";
 
-const NotificationsMenu = memo(({ storeType }) => {
+const NotificationsMenu = memo(() => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [notifications, setNotifications] = useState([]);
   const navigate = useNavigate();
 
   const fetchNotifications = async () => {
     try {
+      const { data } = await getOwnerNotifications();
       const items = [];
-      const { data: transfers } = await getTransfers();
-      if (transfers?.length) {
-        transfers.forEach((t) =>
-          items.push({
-            id: `t-${t.id}`,
-            icon: <SwapHorizIcon fontSize="small" />,
-            text: `Traspaso: ${t.product_description} (x${t.quantity})`,
-            time: t.created_at,
-            href: "/traspasos/",
-          })
-        );
-      }
-      if (storeType === "T") {
-        const { data: distributions } = await getDistributions();
-        if (distributions?.length) {
-          distributions.filter((d) => !d.confirmed).forEach((d) =>
-            items.push({
-              id: `d-${d.id}`,
-              icon: <LocalShippingIcon fontSize="small" />,
-              text: `Distribución pendiente: ${d.product_description || "Productos"} (x${d.quantity})`,
-              time: d.created_at,
-              href: "/distribuciones/",
-            })
-          );
-        }
-      }
-      const { data: sales } = await getSales({ date: getFormattedDate() });
-      const duplicated = sales?.filter((s) => s.is_repeated) || [];
-      if (duplicated.length) {
-        items.push({
-          id: "dup-sales",
-          icon: <WarningAmberIcon fontSize="small" />,
-          text: `${duplicated.length} venta(s) duplicada(s) hoy`,
-          time: duplicated[0].created_at,
-          href: "/ventas/",
-        });
-      }
-      items.sort((a, b) => new Date(b.time) - new Date(a.time));
+      data.forEach((s) => {
+        if (s.pending_transfers)
+          items.push({ id: `t-${s.store}`, icon: <SwapHorizIcon fontSize="small" />, text: `${s.pending_transfers} traspaso(s) pendiente(s)`, store: s.store, href: "/traspasos/" });
+        if (s.pending_distributions)
+          items.push({ id: `d-${s.store}`, icon: <LocalShippingIcon fontSize="small" />, text: `${s.pending_distributions} distribución(es) pendiente(s)`, store: s.store, href: "/distribuciones/" });
+        if (s.duplicate_sales?.length)
+          items.push({ id: `dup-${s.store}`, icon: <WarningAmberIcon fontSize="small" />, text: `${s.duplicate_sales.length} venta(s) duplicada(s): #${s.duplicate_sales.join(", #")}`, store: s.store, href: "/ventas/" });
+        if (s.canceled_sales?.length)
+          items.push({ id: `can-${s.store}`, icon: <CancelIcon fontSize="small" />, text: `${s.canceled_sales.length} venta(s) cancelada(s): #${s.canceled_sales.join(", #")}`, store: s.store, href: "/ventas/" });
+      });
       setNotifications(items);
     } catch {
       // silently fail
@@ -69,7 +41,7 @@ const NotificationsMenu = memo(({ storeType }) => {
     fetchNotifications();
     const interval = setInterval(fetchNotifications, 60000);
     return () => clearInterval(interval);
-  }, [storeType]);
+  }, []);
 
   const handleClick = (href) => {
     setAnchorEl(null);
@@ -108,7 +80,7 @@ const NotificationsMenu = memo(({ storeType }) => {
                 <ListItemIcon sx={{ minWidth: 36, color: "primary.main" }}>{n.icon}</ListItemIcon>
                 <ListItemText
                   primary={n.text}
-                  secondary={n.time ? calculateTimeAgo(n.time) : ""}
+                  secondary={n.store}
                   primaryTypographyProps={{ fontSize: "0.8rem", fontWeight: 500 }}
                   secondaryTypographyProps={{ fontSize: "0.7rem" }}
                 />

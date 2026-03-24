@@ -296,7 +296,7 @@ export default function MainLayout({ toggleTheme, themeMode }) {
               {(user.store_name || user.tenant_name || "U").charAt(0).toUpperCase()}
             </Avatar>
           )}
-          <NotificationsMenu storeType={user.store_type} />
+          <NotificationsMenu />
           <PageHelp />
           <IconButton color="inherit" onClick={toggleTheme} sx={{ mr: 0.5 }}>
             {themeMode === "dark" ? <Brightness7Icon /> : <Brightness4Icon />}

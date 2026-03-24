@@ -174,14 +174,14 @@ const Dashboard = () => {
         <Grid container spacing={2} sx={{ mb: 3 }}>
           {[0,1,2,3].map(i => (
             <Grid item xs={12} sm={6} md={3} key={i}>
-              <Skeleton variant="rounded" height={120} sx={{ borderRadius: 3.5 }} />
+              <Skeleton variant="rounded" height={120} sx={{ borderRadius: "14px" }} />
             </Grid>
           ))}
         </Grid>
         <Grid container spacing={3}>
           {[0,1].map(i => (
             <Grid item xs={12} md={6} key={i}>
-              <Skeleton variant="rounded" height={350} sx={{ borderRadius: 3.5 }} />
+              <Skeleton variant="rounded" height={350} sx={{ borderRadius: "14px" }} />
             </Grid>
           ))}
         </Grid>
