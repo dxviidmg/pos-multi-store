@@ -172,14 +172,14 @@ const StoreList = () => {
     }
     if (quickFilter === "synced") {
       return stores.filter(store => 
-        store.products_count !== tenantInfo.product_count
+        !store.has_all_products
       );
     }
     if (quickFilter === "printer") {
       return stores.filter(store => store.printer);
     }
     return stores;
-  }, [stores, quickFilter, tenantInfo.product_count]);
+  }, [stores, quickFilter]);
 
   const memoStores = useMemo(() => filteredStores, [filteredStores]);
 
@@ -341,7 +341,7 @@ const StoreList = () => {
         name: "Acciones",
         cell: (row) => (
           <>
-            {chooseIcon(row.products_count === tenantInfo.product_count)}
+            {chooseIcon(row.has_all_products)}
             {row.printer && <PrintIcon />}
           </>
         ),
@@ -352,8 +352,8 @@ const StoreList = () => {
     let filtered;
     if (quickFilter === "all") {
       filtered = hasDepartment
-        ? allColumns.filter(col => ["Nombre", "Vendido", "Ventas realizadas", "Canceladas", "Ganancia", "Administrador", "Editar usuario", "Cambiar contraseña", "Entrar"].includes(col.name))
-        : allColumns.filter(col => ["Nombre", "Efectivo", "Tarjeta", "Transferencia", "Caja", "Administrador", "Editar usuario", "Cambiar contraseña", "Entrar"].includes(col.name));
+        ? allColumns.filter(col => ["Nombre", "Vendido", "Ventas realizadas", "Canceladas", "Ganancia", "Entrar"].includes(col.name))
+        : allColumns.filter(col => ["Nombre", "Efectivo", "Tarjeta", "Transferencia", "Caja", "Entrar"].includes(col.name));
     } else if (quickFilter === "sales") {
       filtered = allColumns.filter(col => ["Nombre", "Vendido", "Ventas realizadas", "Canceladas", "Ganancia", "Entrar"].includes(col.name));
     } else if (quickFilter === "investment") {
@@ -369,15 +369,10 @@ const StoreList = () => {
         allColumns.find(col => col.name === "Nombre"),
         {
           name: "Catálogo",
-          cell: ({ products_count }) => (
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-              <span style={{ fontSize: '13px', color: '#64748b' }}>
-                Debe ser: <strong>{tenantInfo.product_count}</strong>
-              </span>
-              <span style={{ fontSize: '13px', color: '#dc2626' }}>
-                Faltan: <strong>{tenantInfo.product_count - products_count}</strong>
-              </span>
-            </Box>
+          cell: ({ has_all_products }) => (
+            <span style={{ fontSize: '13px', color: has_all_products ? '#16a34a' : '#dc2626', fontWeight: 600 }}>
+              {has_all_products ? "Completo" : "Incompleto"}
+            </span>
           ),
         },
         allColumns.find(col => col.name === "Entrar"),
@@ -389,7 +384,7 @@ const StoreList = () => {
     }
     
     return filtered;
-  }, [quickFilter, averageSales, user?.store_id, tenantInfo.product_count, storeInvestments, hasDepartment]);
+  }, [quickFilter, averageSales, user?.store_id, storeInvestments, hasDepartment]);
 
   const columnsStorages = useMemo(() => {
     const allColumns = [
@@ -483,8 +478,8 @@ const StoreList = () => {
       },
       {
         name: "Acciones",
-        cell: ({ products_count }) => (
-          <>{chooseIcon(products_count === tenantInfo.product_count)}</>
+        cell: ({ has_all_products }) => (
+          <>{chooseIcon(has_all_products)}</>
         ),
       },
     ];
@@ -504,15 +499,10 @@ const StoreList = () => {
         allColumns.find(col => col.name === "Nombre"),
         {
           name: "Catálogo",
-          cell: ({ products_count }) => (
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-              <span style={{ fontSize: '13px', color: '#64748b' }}>
-                Debe ser: <strong>{tenantInfo.product_count}</strong>
-              </span>
-              <span style={{ fontSize: '13px', color: '#dc2626' }}>
-                Faltan: <strong>{tenantInfo.product_count - products_count}</strong>
-              </span>
-            </Box>
+          cell: ({ has_all_products }) => (
+            <span style={{ fontSize: '13px', color: has_all_products ? '#16a34a' : '#dc2626', fontWeight: 600 }}>
+              {has_all_products ? "Completo" : "Incompleto"}
+            </span>
           ),
         },
         allColumns.find(col => col.name === "Entrar"),
@@ -524,7 +514,7 @@ const StoreList = () => {
     }
     
     return filtered;
-  }, [quickFilter, tenantInfo.product_count, storeInvestments]);
+  }, [quickFilter, storeInvestments]);
 
   const columnsTotals = useMemo(() => {
     const allColumns = [
@@ -831,13 +821,6 @@ const StoreList = () => {
                 ).length})
               </CustomButton>
               <CustomButton 
-                variant={quickFilter === "managers" ? "contained" : "outlined"}
-                onClick={() => setQuickFilter("managers")}
-                size="small"
-              >
-                Administradores ({stores.length})
-              </CustomButton>
-              <CustomButton 
                 variant={quickFilter === "printer" ? "contained" : "outlined"}
                 onClick={() => setQuickFilter("printer")}
                 size="small"
@@ -852,14 +835,14 @@ const StoreList = () => {
               >
                 Inversión
               </CustomButton>
-              {stores.filter(s => s.products_count !== tenantInfo.product_count).length > 0 && (
+              {stores.filter(s => !s.has_all_products).length > 0 && (
                 <CustomButton 
                   variant={quickFilter === "synced" ? "contained" : "outlined"}
                   onClick={() => setQuickFilter("synced")}
                   size="small"
                 >
                   Catálogo Incompleto ({stores.filter(s => 
-                    s.products_count !== tenantInfo.product_count
+                    !s.has_all_products
                   ).length})
                 </CustomButton>
               )}
@@ -893,13 +876,6 @@ const StoreList = () => {
                 ).length})
               </CustomButton>
               <CustomButton 
-                variant={quickFilter === "managers" ? "contained" : "outlined"}
-                onClick={() => setQuickFilter("managers")}
-                size="small"
-              >
-                Administradores
-              </CustomButton>
-              <CustomButton 
                 variant={quickFilter === "investment" ? "contained" : "outlined"}
                 onClick={handleShowInvestment}
                 size="small"
@@ -907,14 +883,14 @@ const StoreList = () => {
               >
                 Inversión
               </CustomButton>
-              {stores.filter(s => s.products_count !== tenantInfo.product_count).length > 0 && (
+              {stores.filter(s => !s.has_all_products).length > 0 && (
                 <CustomButton 
                   variant={quickFilter === "synced" ? "contained" : "outlined"}
                   onClick={() => setQuickFilter("synced")}
                   size="small"
                 >
                   Catálogo Incompleto ({stores.filter(s => 
-                    s.products_count !== tenantInfo.product_count
+                    !s.has_all_products
                   ).length})
                 </CustomButton>
               )}
