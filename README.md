@@ -1,5 +1,7 @@
 # SmartVenta — Sistema de Punto de Venta Multi-Tienda
 
+> Última actualización: 24 de marzo de 2026, 15:56 hrs
+
 Sistema de punto de venta (POS) diseñado para negocios con múltiples sucursales. Permite gestionar ventas, inventario, traspasos y distribuciones desde una sola plataforma, con visibilidad en tiempo real de todas las tiendas y almacenes.
 
 ## ¿Para quién es?
@@ -8,18 +10,21 @@ Negocios minoristas y mayoristas que operan con varias tiendas y/o almacenes, y 
 
 ## Funcionalidades principales
 
-- **Punto de venta rápido** — Búsqueda por código de barras o nombre, múltiples carritos simultáneos, precios unitarios y de mayoreo, impresión de tickets, y soporte para ventas, traspasos y distribuciones desde la misma pantalla.
-- **Gestión multi-tienda** — Administra tiendas y almacenes desde un panel central. Cambia entre sucursales sin cerrar sesión.
-- **Inventario en tiempo real** — Consulta stock disponible en todas las tiendas, con alertas de stock insuficiente y reservas automáticas entre carritos.
+- **Punto de venta rápido** — Búsqueda por código de barras o nombre, múltiples carritos simultáneos, precios unitarios y de mayoreo, impresión de tickets, y soporte para ventas, traspasos y distribuciones desde la misma pantalla. Atajos de teclado para cambiar tipo de búsqueda (Ctrl+Q/W), tipo de operación (Ctrl+E/R/T/Y/U), enfocar el buscador (Ctrl+B) y buscar con Enter en modo manual.
+- **Gestión multi-tienda** — Administra tiendas y almacenes desde un panel central. Cambia entre sucursales sin cerrar sesión. Indicador de catálogo completo/incompleto por tienda.
+- **Inventario en tiempo real** — Consulta stock disponible en todas las tiendas, con alertas de stock insuficiente y reservas automáticas entre carritos. Acciones restringidas por rol (solo el dueño puede ajustar stock y editar productos).
 - **Traspasos y distribuciones** — Mueve mercancía entre almacenes y tiendas con trazabilidad completa. Confirma recepciones desde cada sucursal.
-- **Clientes y mensualidades** — Registro de clientes, historial de compras y gestión de pagos recurrentes.
+- **Clientes y mensualidades** — Registro de clientes, historial de compras y gestión de pagos recurrentes. Creación de descuentos desde modal dedicado.
 - **Corte de caja** — Resumen diario de ventas por método de pago (efectivo, tarjeta, transferencia), con movimientos de caja detallados.
-- **Dashboard y auditoría** — Tablero general con métricas del negocio (mejor/peor tienda, día, hora). Dos módulos de auditoría: transacciones (ventas duplicadas, logs inconsistentes, discrepancias de stock) y productos (códigos repetidos, costo en cero, precio mayoreo inconsistente, faltantes en tiendas, productos sin movimiento).
+- **Tablero y auditoría** — Tablero de ventas con KPIs (mejor/peor tienda, día, hora pico), heatmap de ventas, ticket promedio por día, y gráficas de tendencia. Dos módulos de auditoría: transacciones (ventas duplicadas, registros inconsistentes, discrepancias de stock) y productos (códigos repetidos, costo en cero, precio mayoreo inconsistente, faltantes en tiendas, productos sin movimiento). Restricción de acceso al tablero por horario configurable.
+- **Historial de stock** — Registro detallado de todos los movimientos de inventario: ventas, traspasos, distribuciones, ajustes manuales. Útil para rastrear discrepancias y verificar que entradas y salidas coincidan.
+- **Notificaciones** — Menú de notificaciones en el navbar con badge de conteo y endpoint dedicado.
 - **Ayuda contextual** — Botón de ayuda en el navbar que muestra una descripción de la página actual según la ruta.
 - **Importación masiva** — Carga productos, inventario y ventas desde archivos Excel.
-- **Roles y permisos** — Tres niveles de acceso: dueño, administrador y vendedor, cada uno con su vista y permisos específicos.
+- **Roles y permisos** — Tres niveles de acceso: dueño, administrador y vendedor, cada uno con su vista y permisos específicos. Columnas y acciones se ocultan según el rol.
 - **Modo oscuro/claro** — Interfaz adaptable a la preferencia del usuario.
 - **Impresión de tickets** — Integración con impresoras térmicas para tickets de venta.
+- **Monitoreo de rendimiento** — Registro en localStorage del tiempo de respuesta de búsquedas por código, agrupado por segundos, con detección de queries que superan el timeout.
 
 ## Stack técnico
 
