@@ -217,13 +217,13 @@ const StoreList = () => {
       },
       {
         name: "Administrador",
-        selector: ({ manager_username }) => manager_username || "-",
+        selector: ({ manager }) => manager?.username || "-",
       },
       {
         name: "Editar usuario",
         omit: user?.role !== "owner",
-        cell: (row) => row.manager_username ? (
-          <CustomButton size="small" startIcon={<EditIcon />} onClick={() => handleOpenEditUser(row.manager)}>
+        cell: (row) => row.manager?.username ? (
+          <CustomButton size="small" startIcon={<EditIcon />} onClick={() => handleOpenEditUser(row.manager.id)}>
             Editar
           </CustomButton>
         ) : "-",
@@ -231,8 +231,8 @@ const StoreList = () => {
       {
         name: "Cambiar contraseña",
         omit: user?.role !== "owner",
-        cell: (row) => row.manager_username ? (
-          <CustomButton size="small" startIcon={<LockResetIcon />} onClick={() => handleOpenChangePassword(row.manager)}>
+        cell: (row) => row.manager?.username ? (
+          <CustomButton size="small" startIcon={<LockResetIcon />} onClick={() => handleOpenChangePassword(row.manager.id)}>
             Cambiar
           </CustomButton>
         ) : "-",
@@ -352,8 +352,8 @@ const StoreList = () => {
     let filtered;
     if (quickFilter === "all") {
       filtered = hasDepartment
-        ? allColumns.filter(col => ["Nombre", "Vendido", "Ventas realizadas", "Canceladas", "Ganancia", "Entrar"].includes(col.name))
-        : allColumns.filter(col => ["Nombre", "Efectivo", "Tarjeta", "Transferencia", "Caja", "Entrar"].includes(col.name));
+        ? allColumns.filter(col => ["Nombre", "Vendido", "Ventas realizadas", "Canceladas", "Ganancia", "Administrador", "Editar usuario", "Cambiar contraseña", "Entrar"].includes(col.name))
+        : allColumns.filter(col => ["Nombre", "Efectivo", "Tarjeta", "Transferencia", "Caja", "Administrador", "Editar usuario", "Cambiar contraseña", "Entrar"].includes(col.name));
     } else if (quickFilter === "sales") {
       filtered = allColumns.filter(col => ["Nombre", "Vendido", "Ventas realizadas", "Canceladas", "Ganancia", "Entrar"].includes(col.name));
     } else if (quickFilter === "investment") {
@@ -399,13 +399,13 @@ const StoreList = () => {
       },
       {
         name: "Administrador",
-        selector: ({ manager_username }) => manager_username || "-",
+        selector: ({ manager }) => manager?.username || "-",
       },
       {
         name: "Editar usuario",
         omit: user?.role !== "owner",
-        cell: (row) => row.manager_username ? (
-          <CustomButton size="small" startIcon={<EditIcon />} onClick={() => handleOpenEditUser(row.manager)}>
+        cell: (row) => row.manager?.username ? (
+          <CustomButton size="small" startIcon={<EditIcon />} onClick={() => handleOpenEditUser(row.manager.id)}>
             Editar
           </CustomButton>
         ) : "-",
@@ -413,8 +413,8 @@ const StoreList = () => {
       {
         name: "Cambiar contraseña",
         omit: user?.role !== "owner",
-        cell: (row) => row.manager_username ? (
-          <CustomButton size="small" startIcon={<LockResetIcon />} onClick={() => handleOpenChangePassword(row.manager)}>
+        cell: (row) => row.manager?.username ? (
+          <CustomButton size="small" startIcon={<LockResetIcon />} onClick={() => handleOpenChangePassword(row.manager.id)}>
             Cambiar
           </CustomButton>
         ) : "-",

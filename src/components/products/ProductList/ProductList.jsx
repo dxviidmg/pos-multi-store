@@ -220,7 +220,7 @@ const ProductList = () => {
                     : `$${row.unit_price}`
                 ),
               },
-              {
+              ...(user.role === "owner" ? [{
                 name: "Acciones",
                 cell: (row) => (
                   <>
@@ -238,7 +238,7 @@ const ProductList = () => {
                     )}
                   </>
                 ),
-              },
+              }] : []),
             ]}
           />
         </Grid>
