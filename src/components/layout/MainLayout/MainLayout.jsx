@@ -279,7 +279,7 @@ export default function MainLayout({ toggleTheme, themeMode }) {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 700, letterSpacing: "-0.01em" }}>
-            {user.store_name || user.tenant_name}
+            {user.store_name ? `${user.tenant_name} - ${user.store_name}` : user.tenant_name}
           </Typography>
           {user.role === "owner" && (
             <Avatar

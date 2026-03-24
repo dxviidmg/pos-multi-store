@@ -77,12 +77,12 @@ const StoreList = () => {
     setParams((prev) => ({ ...prev, store_type: e.target.value }));
   };
 
-  const handleSelectStore = async ({ store_type, full_name, id, printer }) => {
+  const handleSelectStore = async ({ store_type, full_name, name, id, printer }) => {
     const user = getStorage("user");
     setStorage("user", {
       ...user,
       store_type,
-      store_name: full_name,
+      store_name: full_name || name,
       store_id: id,
       store_printer: printer,
     });
