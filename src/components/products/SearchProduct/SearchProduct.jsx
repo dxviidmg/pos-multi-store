@@ -75,6 +75,14 @@ const SearchProduct = ({ searchInputRef }) => {
 
   const searchingRef = useRef(false);
 
+  const logSearchTiming = (ms, queryCode, productName) => {
+    const stats = JSON.parse(localStorage.getItem("search_timing_stats") || '{"tiempos":{},"mas_de_8s":[]}');
+    const bucket = ms <= 500 ? 0 : Math.ceil((ms - 500) / 1000);
+    stats.tiempos[bucket] = (stats.tiempos[bucket] || 0) + 1;
+    if (ms > 8000) stats.mas_de_8s.push(queryCode);
+    localStorage.setItem("search_timing_stats", JSON.stringify(stats));
+  };
+
   const fetchData = useCallback(
     async () => {
       if (!query || queryType === "q") {
@@ -86,11 +94,17 @@ const SearchProduct = ({ searchInputRef }) => {
       searchingRef.current = true;
       setSearching(true);
 
+      const startTime = performance.now();
+
       try {
         const fetchedData = await fetchWithRetry({ [queryType]: query });
+        const elapsed = Math.round(performance.now() - startTime);
 
         searchingRef.current = false;
         setSearching(false);
+
+        const productName = fetchedData?.[0]?.product?.name || null;
+        logSearchTiming(elapsed, query, productName);
 
         if (!fetchedData) {
           
