@@ -1,9 +1,7 @@
 import React, { useMemo } from "react";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { Box, Typography } from "@mui/material";
-
-const COLORS = ["#2563eb", "#10b981", "#f59e0b", "#8b5cf6", "#ef4444"];
-const DAY_NAMES = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
+import { CHART_COLORS, DAY_NAMES_SHORT } from "../../../utils/utils";
 
 const AvgTicketChart = ({ data }) => {
   const series = useMemo(() => {
@@ -22,7 +20,7 @@ const AvgTicketChart = ({ data }) => {
     return data.stores.map((store, i) => ({
       data: grouped[store.name].map((d) => d.count ? Math.round((d.total / d.count) * 100) / 100 : 0),
       label: store.name,
-      color: COLORS[i % COLORS.length],
+      color: CHART_COLORS[i % CHART_COLORS.length],
     }));
   }, [data]);
 
@@ -34,7 +32,7 @@ const AvgTicketChart = ({ data }) => {
         Ticket promedio por día de la semana
       </Typography>
       <BarChart
-        xAxis={[{ data: DAY_NAMES, scaleType: "band", tickLabelStyle: { fontSize: 11, fill: "#64748b" } }]}
+        xAxis={[{ data: DAY_NAMES_SHORT, scaleType: "band", tickLabelStyle: { fontSize: 11, fill: "#64748b" } }]}
         yAxis={[{ tickLabelStyle: { fontSize: 11, fill: "#64748b" } }]}
         series={series}
         height={300}

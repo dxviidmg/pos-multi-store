@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { Box, Typography, Tooltip, useTheme } from "@mui/material";
+import { DAY_NAMES_SHORT, formatCurrency } from "../../../utils/utils";
 
-const DAY_LABELS = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
 const HOUR_LABELS = Array.from({ length: 24 }, (_, i) => `${i}:00`);
 const STORE_COLORS = [
   { base: [37, 99, 235], label: "#2563eb" },
@@ -36,7 +36,7 @@ const SalesHeatmap = ({ data, metricType = "count" }) => {
   }, [data, metricType]);
 
   const formatValue = (v) =>
-    metricType === "total" ? `$${v.toLocaleString("es-MX", { minimumFractionDigits: 0 })}` : v;
+    metricType === "total" ? formatCurrency(v, 0) : v;
 
   const getColor = (value, colorIdx) => {
     if (!globalMax || !value) return isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.04)";
@@ -71,7 +71,7 @@ const SalesHeatmap = ({ data, metricType = "count" }) => {
                     </Typography>
                   ) : <Box key={i} />
                 )}
-                {DAY_LABELS.map((day, di) => (
+                {DAY_NAMES_SHORT.map((day, di) => (
                   <React.Fragment key={di}>
                     <Typography variant="caption" sx={{ display: "flex", alignItems: "center", fontWeight: 600, color: "text.secondary", fontSize: 10 }}>
                       {day}
