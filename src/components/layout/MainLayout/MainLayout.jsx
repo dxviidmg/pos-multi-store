@@ -1,5 +1,5 @@
 import * as React from "react";
-import { styled, useTheme } from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
 import {
   Box,
   CssBaseline,
@@ -131,7 +131,6 @@ const Drawer = styled(MuiDrawer, {
 });
 
 export default function MainLayout({ toggleTheme, themeMode }) {
-  const theme = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
   const user = getUserData();

@@ -48,7 +48,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
   const [brands, setBrands] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [, setSelectedImage] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
   const [storeProduct, setStoreProduct] = useState([]);
   const [isLoading, setIsLoading] = useState(false);

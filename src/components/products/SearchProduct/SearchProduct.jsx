@@ -195,14 +195,6 @@ const SearchProduct = ({ searchInputRef }) => {
     }
   };
 
-  const displayStockLimitAlert = () => {
-    showError(
-      movementType === "traspaso"
-        ? "Llegaste al límite de producto reservado para traspasar"
-        : "No hay suficiente stock para vender"
-    );
-  };
-
   useEffect(() => {
     if (queryType === "code" && query) {
       fetchData();

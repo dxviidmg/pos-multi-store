@@ -3,8 +3,6 @@ import { LineChart as MuiLineChart } from '@mui/x-charts/LineChart';
 import { ChartsReferenceLine } from '@mui/x-charts/ChartsReferenceLine';
 import { Box, Typography } from '@mui/material';
 
-const COLORS = ['#2563eb', '#7c3aed', '#059669', '#dc2626', '#ea580c', '#f59e0b', '#06b6d4'];
-
 const processData = (result, dataType, metricType, daysInMonth = 31) => {
   if (!result || !result.sales || result.sales.length === 0) return [];
 

@@ -10,7 +10,7 @@ import { BarChart } from "@mui/x-charts/BarChart";
 import { ChartsReferenceLine } from "@mui/x-charts/ChartsReferenceLine";
 import {
   Grid, FormControl, InputLabel, Select, MenuItem, Box, Typography,
-  LinearProgress, Skeleton, useTheme,
+  LinearProgress, Skeleton,
 } from "@mui/material";
 import { showError } from "../../../utils/alerts";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
@@ -27,7 +27,6 @@ const MONTH_NAMES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","A
 const DAY_NAMES = ["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
 
 const Dashboard = () => {
-  const theme = useTheme();
   const [dashboardData, setDashboardData] = useState(null);
   const [metricType, setMetricType] = useState("count");
   const [year, setYear] = useState(new Date().getFullYear());
