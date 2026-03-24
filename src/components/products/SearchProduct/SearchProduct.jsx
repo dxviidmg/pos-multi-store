@@ -278,6 +278,10 @@ const SearchProduct = ({ searchInputRef }) => {
       event.preventDefault();
       dispatch(updateMovementType("checar"));
     }
+    if (event.ctrlKey && (event.key === "b" || event.key === "B")) {
+      event.preventDefault();
+      inputRef.current?.focus();
+    }
   }, [dispatch]);
 
   useEffect(() => {
@@ -388,13 +392,13 @@ const SearchProduct = ({ searchInputRef }) => {
             inputRef={inputRef}
             type="text"
             value={queryType === "code" ? barcode : query}
-            placeholder="Buscar producto"
+            placeholder="Buscar producto (Ctrl+B)"
             onChange={
               queryType === "q"
                 ? handleQueryChange
                 : (e) => setBarcode(e.target.value.replace("'", "-"))
             }
-            onKeyDown={queryType === "code" ? handleBarcodeSearch : undefined}
+            onKeyDown={queryType === "code" ? handleBarcodeSearch : (e) => { if (e.key === "Enter") handleSearchProduct(); }}
             onFocus={() => setIsInputFocused(true)}
             onBlur={() => setIsInputFocused(false)}
             autoComplete="off"
