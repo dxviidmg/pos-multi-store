@@ -90,7 +90,7 @@ const Dashboard = () => {
         <LockIcon sx={{ fontSize: 64, color: "text.secondary" }} />
         <Typography variant="h5" sx={{ fontWeight: 700 }}>Dashboard no disponible</Typography>
         <Typography variant="body1" color="text.secondary" align="center">
-          El dashboard está disponible únicamente de 9:00 PM a 10:00 AM.
+          El dashboard está disponible únicamente antes de las 10:00 AM y después de las 9:00 PM.
         </Typography>
       </Box>
     );

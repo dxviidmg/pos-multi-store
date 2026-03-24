@@ -1,4 +1,5 @@
 import { logger } from "../../../utils/logger";
+import { showSuccess } from "../../../utils/alerts";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import CustomModal from "../../ui/Modal/Modal";
@@ -65,6 +66,7 @@ const StockModal = ({ isOpen, product, onClose }) => {
 
       const response = await createTransfer(data);
       if ([201, 202].includes(response.status)) {
+        showSuccess("Traspaso creado exitosamente");
         setRequestedQuantities({});
         onClose();
         setIsLoading(false)
