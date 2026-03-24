@@ -21,6 +21,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import DashboardIcon from "@mui/icons-material/Dashboard";
+import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
@@ -416,6 +417,24 @@ export default function MainLayout({ toggleTheme, themeMode }) {
             );
           })}
         </List>
+        <Box sx={{ mt: "auto", p: 1 }}>
+          <ListItemButton
+            component="a"
+            href={`https://api.whatsapp.com/send/?phone=${process.env.REACT_APP_WHATSAPP_NUMBER}&text=${encodeURIComponent(`Soporte SmartVenta\nTenant: ${user.tenant_name}\nTienda: ${user.store_name || "General"}`)}&type=phone_number&app_absent=0`}
+            target="_blank"
+            rel="noopener noreferrer"
+            sx={{
+              borderRadius: 2, justifyContent: open ? "initial" : "center",
+              backgroundColor: "rgba(37, 211, 102, 0.15)", color: "#25D366",
+              "&:hover": { backgroundColor: "rgba(37, 211, 102, 0.3)" },
+            }}
+          >
+            <ListItemIcon sx={{ color: "#25D366", minWidth: open ? 38 : 0, justifyContent: "center" }}>
+              <WhatsAppIcon />
+            </ListItemIcon>
+            <ListItemText primary="Soporte" primaryTypographyProps={{ fontWeight: 600, fontSize: "0.8rem" }} sx={{ opacity: open ? 1 : 0 }} />
+          </ListItemButton>
+        </Box>
       </Drawer>
 
       <Box component="main" sx={{ flexGrow: 1, p: 3, overflow: "auto", maxWidth: "100%" }}>
