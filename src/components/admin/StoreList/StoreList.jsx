@@ -98,6 +98,7 @@ const StoreList = () => {
       store_printer: printer,
     });
 
+    window.dispatchEvent(new Event("store-changed"));
     navigate("/vender/", { replace: true });
   };
 

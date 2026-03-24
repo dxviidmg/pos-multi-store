@@ -1,4 +1,4 @@
-import { memo, useState, useEffect } from "react";
+import React, { memo, useState, useEffect, useRef } from "react";
 import {
   IconButton, Badge, Popover, Box, Typography, List, ListItemButton,
   ListItemIcon, ListItemText,
@@ -15,6 +15,8 @@ import { getOwnerNotifications } from "../../../api/notifications";
 const NotificationsMenu = memo(() => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [notifications, setNotifications] = useState([]);
+  const [seen, setSeen] = useState(false);
+  const prevCountRef = useRef(0);
   const navigate = useNavigate();
 
   const fetchNotifications = async () => {
@@ -31,6 +33,8 @@ const NotificationsMenu = memo(() => {
         if (s.canceled_sales?.length)
           items.push({ id: `can-${s.store}`, icon: <CancelIcon fontSize="small" />, text: `${s.canceled_sales.length} venta(s) cancelada(s): #${s.canceled_sales.join(", #")}`, store: s.store, href: "/ventas/" });
       });
+      if (items.length !== prevCountRef.current) setSeen(false);
+      prevCountRef.current = items.length;
       setNotifications(items);
     } catch {
       // silently fail
@@ -39,8 +43,10 @@ const NotificationsMenu = memo(() => {
 
   useEffect(() => {
     fetchNotifications();
-    const interval = setInterval(fetchNotifications, 60000);
-    return () => clearInterval(interval);
+    const interval = setInterval(fetchNotifications, 300000);
+    const onStoreChange = () => { setSeen(false); fetchNotifications(); };
+    window.addEventListener("store-changed", onStoreChange);
+    return () => { clearInterval(interval); window.removeEventListener("store-changed", onStoreChange); };
   }, []);
 
   const handleClick = (href) => {
@@ -52,8 +58,8 @@ const NotificationsMenu = memo(() => {
 
   return (
     <>
-      <IconButton color="inherit" onClick={(e) => { setAnchorEl(e.currentTarget); fetchNotifications(); }}>
-        <Badge badgeContent={count} color="error" max={99}>
+      <IconButton color="inherit" onClick={(e) => { setAnchorEl(e.currentTarget); setSeen(true); fetchNotifications(); }}>
+        <Badge badgeContent={seen ? 0 : count} color="error" max={99}>
           <NotificationsIcon />
         </Badge>
       </IconButton>
