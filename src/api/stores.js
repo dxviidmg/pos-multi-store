@@ -1,10 +1,16 @@
 import { createApiService } from "./apiFactory";
 import httpClient from "./httpClient";
-import { getApiUrl, getHeaders } from "./utils";
+import { getApiUrl, getHeaders, buildUrlWithParams } from "./utils";
 
 const storeService = createApiService("store");
 
 export const getStores = storeService.getAll;
+
+export const getStoresCashSummary = async (params) => {
+  const url = buildUrlWithParams(getApiUrl("stores-cash-summary"), params);
+  const response = await httpClient.get(url, { headers: getHeaders() });
+  return response;
+};
 
 export const getStoreInvestment = async (store) => {
   const response = await httpClient.get(getApiUrl(`store/${store.id}/investment`), {
