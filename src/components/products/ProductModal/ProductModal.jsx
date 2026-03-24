@@ -9,6 +9,7 @@ import {
   getStoreProducts,
   updateProduct,
 } from "../../../api/products";
+import { getStores } from "../../../api/stores";
 import noPhoto from "../../../assets/images/noPhoto.jpg";
 import { getDepartments } from "../../../api/departments";
 import DataTable from "../../ui/DataTable/DataTable";
@@ -60,11 +61,12 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
         setPreviewImage(productData.image || noPhoto);
 
         if (showStoreProducts) {
-          const r = await getStoreProducts({
-            code: productData.code,
-            all_stores: "Y",
-          });
-          setStoreProduct(r.data);
+          const [r, s] = await Promise.all([
+            getStoreProducts({ code: productData.code, all_stores: "Y" }),
+            getStores(),
+          ]);
+          const storeMap = Object.fromEntries(s.data.map((st) => [st.id, st.full_name]));
+          setStoreProduct(r.data.map((sp) => ({ ...sp, store_name: storeMap[sp.store] || `Tienda #${sp.store}` })));
         }
       } else {
         setFormData(INITIAL_FORM_DATA);
@@ -317,7 +319,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
                 columns={[
                   {
                     name: "Nombre",
-                    selector: (row) => row.store.full_name,
+                    selector: (row) => row.store_name,
                   },
                   {
                     name: "Stock",

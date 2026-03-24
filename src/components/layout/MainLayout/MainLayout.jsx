@@ -159,6 +159,7 @@ export default function MainLayout({ toggleTheme, themeMode }) {
   const handleBack = () => {
     const updatedUser = { ...user, store_type: "", store_name: "", store_id: "" };
     localStorage.setItem("user", JSON.stringify(updatedUser));
+    window.dispatchEvent(new Event("store-changed"));
     navigate("/tiendas/", { replace: true });
   };
 
@@ -209,11 +210,10 @@ export default function MainLayout({ toggleTheme, themeMode }) {
     A: [
       { label: "Distribuir", href: "/distribuir/" },
       {
-        label: "Tienda",
+        label: "Movimientos",
         dropdown: [
           { label: "Distribuciones", href: "/distribuciones/" },
           { label: "Traspasos", href: "/traspasos/" },
-          { label: "Caja", href: "/cashflow/" },
         ],
       },
       {
