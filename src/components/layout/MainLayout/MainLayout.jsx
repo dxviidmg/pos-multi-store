@@ -205,7 +205,7 @@ export default function MainLayout({ toggleTheme, themeMode }) {
           { label: "Traspasos", href: "/traspasos/" },
         ],
       },
-      { label: "Logs", href: "/logs/", hidden: user.role === "seller" },
+      { label: "Historial de stock", href: "/historial-stock/", hidden: user.role === "seller" },
     ],
     A: [
       { label: "Distribuir", href: "/distribuir/" },
@@ -229,10 +229,10 @@ export default function MainLayout({ toggleTheme, themeMode }) {
           { label: "Importar inventario", href: "/importar-inventario/" },
         ],
       },
-      { label: "Logs", href: "/logs/" },
+      { label: "Historial de stock", href: "/historial-stock/" },
     ],
     G: [
-      { label: "Dashboard", href: "/tablero/" },
+      { label: "Tablero", href: "/tablero/" },
       { label: "Tiendas", href: "/tiendas/" },
       { label: "Clientes", href: "/clientes/" },
       { label: "Vendedores", href: "/vendedores/" },

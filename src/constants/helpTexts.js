@@ -63,8 +63,8 @@ const helpTexts = {
     title: "Distribuir mercancía",
     text: "Desde el almacén, selecciona productos y envíalos a una o varias tiendas. Las tiendas recibirán un traspaso pendiente de confirmar.",
   },
-  "/logs/": {
-    title: "Logs de movimientos",
+  "/historial-stock/": {
+    title: "Historial de stock",
     text: "Registro detallado de todos los movimientos de inventario: ventas, traspasos, distribuciones, ajustes manuales. Útil para rastrear discrepancias.",
   },
   "/tiendas/": {
@@ -72,12 +72,12 @@ const helpTexts = {
     text: "Panel central de tu negocio. Desde aquí ves el resumen de todas tus sucursales y almacenes, y puedes entrar a administrar cada una.",
   },
   "/tablero/": {
-    title: "Dashboard general",
+    title: "Tablero general",
     text: "Métricas generales de tu negocio: ventas totales, productos más vendidos, rendimiento por tienda. Visión global para tomar decisiones.",
   },
   "/auditoria-transacciones/": {
     title: "Auditoría de transacciones",
-    text: "Herramientas para detectar inconsistencias: ventas duplicadas, logs repetidos y discrepancias de stock. Ejecuta análisis por rango de fechas.",
+    text: "Herramientas para detectar inconsistencias: ventas duplicadas, registros repetidos y discrepancias de stock. Ejecuta análisis por rango de fechas.",
   },
   "/auditoria-productos/": {
     title: "Auditoría de productos",
