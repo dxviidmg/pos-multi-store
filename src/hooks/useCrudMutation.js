@@ -39,7 +39,10 @@ export const useCrudMutation = (mutationFn, options = {}) => {
         showSuccess(successMessage);
       }
       
-      onSuccessCallback?.(data, variables, context);
+      const dynamicMessage = onSuccessCallback?.(data, variables, context);
+      if (dynamicMessage && !successMessage) {
+        showSuccess(dynamicMessage);
+      }
     },
     onError: (error, variables, context) => {
       let message = errorMessage;
