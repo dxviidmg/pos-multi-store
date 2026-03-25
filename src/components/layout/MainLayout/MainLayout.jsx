@@ -247,6 +247,8 @@ export default function MainLayout({ toggleTheme, themeMode }) {
           { label: "Reasignación", href: "/reasignacion/" },
           { divider: true },
           { label: "Importar Productos", href: "/importar-productos/" },
+          { divider: true },
+          { label: "Solicitudes de ajustes", href: "/solicitudes-ajustes/" },
         ],
       },
       {
