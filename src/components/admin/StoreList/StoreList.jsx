@@ -223,18 +223,22 @@ const StoreList = () => {
         name: "Editar usuario",
         omit: user?.role !== "owner",
         cell: (row) => row.manager?.username ? (
-          <CustomButton size="small" startIcon={<EditIcon />} onClick={() => handleOpenEditUser(row.manager.id)}>
-            Editar
-          </CustomButton>
+          <CustomTooltip text="Editar usuario">
+            <CustomButton size="small" onClick={() => handleOpenEditUser(row.manager.id)}>
+              <EditIcon />
+            </CustomButton>
+          </CustomTooltip>
         ) : "-",
       },
       {
         name: "Cambiar contraseña",
         omit: user?.role !== "owner",
         cell: (row) => row.manager?.username ? (
-          <CustomButton size="small" startIcon={<LockResetIcon />} onClick={() => handleOpenChangePassword(row.manager.id)}>
-            Cambiar
-          </CustomButton>
+          <CustomTooltip text="Cambiar contraseña">
+            <CustomButton size="small" onClick={() => handleOpenChangePassword(row.manager.id)}>
+              <LockResetIcon />
+            </CustomButton>
+          </CustomTooltip>
         ) : "-",
       },
       {
@@ -352,8 +356,8 @@ const StoreList = () => {
     let filtered;
     if (quickFilter === "all") {
       filtered = hasDepartment
-        ? allColumns.filter(col => ["Nombre", "Vendido", "Ventas realizadas", "Canceladas", "Ganancia", "Entrar"].includes(col.name))
-        : allColumns.filter(col => ["Nombre", "Efectivo", "Tarjeta", "Transferencia", "Caja", "Entrar"].includes(col.name));
+        ? allColumns.filter(col => ["Nombre", "Vendido", "Ventas realizadas", "Canceladas", "Ganancia", "Administrador", "Entrar"].includes(col.name))
+        : allColumns.filter(col => ["Nombre", "Efectivo", "Tarjeta", "Transferencia", "Caja", "Administrador", "Entrar"].includes(col.name));
     } else if (quickFilter === "sales") {
       filtered = allColumns.filter(col => ["Nombre", "Vendido", "Ventas realizadas", "Canceladas", "Ganancia", "Entrar"].includes(col.name));
     } else if (quickFilter === "investment") {
@@ -400,18 +404,22 @@ const StoreList = () => {
         name: "Editar usuario",
         omit: user?.role !== "owner",
         cell: (row) => row.manager?.username ? (
-          <CustomButton size="small" startIcon={<EditIcon />} onClick={() => handleOpenEditUser(row.manager.id)}>
-            Editar
-          </CustomButton>
+          <CustomTooltip text="Editar usuario">
+            <CustomButton size="small" onClick={() => handleOpenEditUser(row.manager.id)}>
+              <EditIcon />
+            </CustomButton>
+          </CustomTooltip>
         ) : "-",
       },
       {
         name: "Cambiar contraseña",
         omit: user?.role !== "owner",
         cell: (row) => row.manager?.username ? (
-          <CustomButton size="small" startIcon={<LockResetIcon />} onClick={() => handleOpenChangePassword(row.manager.id)}>
-            Cambiar
-          </CustomButton>
+          <CustomTooltip text="Cambiar contraseña">
+            <CustomButton size="small" onClick={() => handleOpenChangePassword(row.manager.id)}>
+              <LockResetIcon />
+            </CustomButton>
+          </CustomTooltip>
         ) : "-",
       },
       {
@@ -819,6 +827,13 @@ const StoreList = () => {
                   (s.cash_summary?.pending_distributions || 0) > 0 || 
                   (s.cash_summary?.pending_transfers || 0) > 0
                 ).length})
+              </CustomButton>
+              <CustomButton 
+                variant={quickFilter === "managers" ? "contained" : "outlined"}
+                onClick={() => setQuickFilter("managers")}
+                size="small"
+              >
+                Administradores
               </CustomButton>
               <CustomButton 
                 variant={quickFilter === "printer" ? "contained" : "outlined"}
