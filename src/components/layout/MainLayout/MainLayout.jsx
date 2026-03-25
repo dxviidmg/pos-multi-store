@@ -25,6 +25,7 @@ import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import UpdatesModal from "../../ui/UpdatesModal/UpdatesModal";
 import { getUserData } from "../../../api/utils";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
@@ -441,6 +442,7 @@ export default function MainLayout({ toggleTheme, themeMode }) {
 
       <Box component="main" sx={{ flexGrow: 1, p: 3, overflow: "auto", maxWidth: "100%" }}>
         <DrawerHeader />
+        <UpdatesModal />
         <Outlet />
       </Box>
     </Box>
