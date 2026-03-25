@@ -1,6 +1,6 @@
 # SmartVenta — Sistema de Punto de Venta Multi-Tienda
 
-> Última actualización: 24 de marzo de 2026, 15:56 hrs
+> Última actualización: 25 de marzo de 2026, 07:50 hrs
 
 Sistema de punto de venta (POS) diseñado para negocios con múltiples sucursales. Permite gestionar ventas, inventario, traspasos y distribuciones desde una sola plataforma, con visibilidad en tiempo real de todas las tiendas y almacenes.
 
@@ -18,8 +18,11 @@ Negocios minoristas y mayoristas que operan con varias tiendas y/o almacenes, y 
 - **Corte de caja** — Resumen diario de ventas por método de pago (efectivo, tarjeta, transferencia), con movimientos de caja detallados.
 - **Tablero y auditoría** — Tablero de ventas con KPIs (mejor/peor tienda, día, hora pico), heatmap de ventas, ticket promedio por día, y gráficas de tendencia. Dos módulos de auditoría: transacciones (ventas duplicadas, registros inconsistentes, discrepancias de stock) y productos (códigos repetidos, costo en cero, precio mayoreo inconsistente, faltantes en tiendas, productos sin movimiento). Restricción de acceso al tablero por horario configurable.
 - **Historial de stock** — Registro detallado de todos los movimientos de inventario: ventas, traspasos, distribuciones, ajustes manuales. Útil para rastrear discrepancias y verificar que entradas y salidas coincidan.
-- **Notificaciones** — Menú de notificaciones en el navbar con badge de conteo y endpoint dedicado.
+- **Notificaciones** — Notificaciones en tiempo real vía WebSocket con reconexión automática. Soporte para traspasos, distribuciones, solicitudes de ajuste y apartados. Fetch inicial HTTP al cargar y al cambiar de tienda.
 - **Ayuda contextual** — Botón de ayuda en el navbar que muestra una descripción de la página actual según la ruta.
+- **Solicitudes de ajuste de stock** — Los administradores y vendedores pueden solicitar ajustes de stock. El dueño aprueba o rechaza desde un panel dedicado.
+- **Historial de precios** — Registro de cambios de precios por producto, agrupado por fecha, accesible desde la lista de productos.
+- **Soporte por WhatsApp** — Botón en el sidebar que abre WhatsApp con mensaje prellenado (tenant y tienda).
 - **Importación masiva** — Carga productos, inventario y ventas desde archivos Excel.
 - **Roles y permisos** — Tres niveles de acceso: dueño, administrador y vendedor, cada uno con su vista y permisos específicos. Columnas y acciones se ocultan según el rol.
 - **Modo oscuro/claro** — Interfaz adaptable a la preferencia del usuario.
@@ -31,9 +34,11 @@ Negocios minoristas y mayoristas que operan con varias tiendas y/o almacenes, y 
 - **Frontend:** React 18 con Create React App
 - **UI:** Material UI (MUI) con tema personalizado (paleta azul oscuro, tipografía Inter/Plus Jakarta Sans, componentes con bordes redondeados y gradientes)
 - **Estado global:** Redux con patrón multi-carrito (múltiples carritos simultáneos por sesión)
+- **Estado del servidor:** React Query (@tanstack/react-query) con caché configurable
 - **Routing:** React Router v6 con lazy loading y Suspense para todas las rutas
 - **HTTP:** Cliente Axios centralizado con headers de autenticación por token
-- **Backend:** API REST (Django/DRF con tareas asíncronas vía Celery)
+- **Tiempo real:** WebSocket (Django Channels) para notificaciones
+- **Backend:** API REST (Django/DRF con tareas asíncronas vía Celery, WebSocket vía Channels)
 
 ## Arquitectura
 

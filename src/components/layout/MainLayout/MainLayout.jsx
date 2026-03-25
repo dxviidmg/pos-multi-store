@@ -158,7 +158,7 @@ export default function MainLayout({ toggleTheme, themeMode }) {
   };
 
   const handleBack = () => {
-    const updatedUser = { ...user, store_type: "", store_name: "", store_id: "" };
+    const updatedUser = { ...user, store_type: "", store_name: "", store_id: null };
     localStorage.setItem("user", JSON.stringify(updatedUser));
     window.dispatchEvent(new Event("store-changed"));
     navigate("/tiendas/", { replace: true });
