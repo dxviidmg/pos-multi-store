@@ -7,3 +7,10 @@ export const getOwnerNotifications = async () => {
   });
   return response;
 };
+
+export const checkNotifications = async () => {
+  const response = await httpClient.get(getApiUrl("notifications/check"), {
+    headers: getHeaders(),
+  });
+  return response;
+};

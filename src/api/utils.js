@@ -18,11 +18,12 @@ export const getHeaders = (isMultipart = false) => {
     throw new Error('User not authenticated');
   }
   
-  return {
+  const headers = {
     "Content-Type": isMultipart ? "multipart/form-data" : "application/json",
     "Authorization": `Token ${user.token}`,
-    "store-id": user.store_id,
   };
+  if (user.store_id) headers["store-id"] = user.store_id;
+  return headers;
 };
 
 /**

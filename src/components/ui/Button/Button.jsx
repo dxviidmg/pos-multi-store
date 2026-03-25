@@ -19,7 +19,7 @@ const CustomButton = forwardRef(({
       href={href}
       fullWidth={fullWidth}
       variant="contained"
-      
+      sx={{ minWidth: 0, ...props.sx }}
       {...props}
     >
       {children}

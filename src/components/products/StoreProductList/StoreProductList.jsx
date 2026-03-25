@@ -6,6 +6,7 @@ import { getUserData } from "../../../api/utils";
 import { exportToExcel } from "../../../utils/utils";
 import { useModal } from "../../../hooks/useModal";
 import StoreProductLogsModal from "../StoreProductLogsModal/StoreProductLogsModal";
+import StockUpdateRequestModal from "../../inventory/StockUpdateRequestModal/StockUpdateRequestModal";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { getBrands } from "../../../api/brands";
 import { getDepartments } from "../../../api/departments";
@@ -14,12 +15,14 @@ import SearchIcon from "@mui/icons-material/Search";
 import DownloadIcon from "@mui/icons-material/Download";
 import TuneIcon from "@mui/icons-material/Tune";
 import HistoryIcon from "@mui/icons-material/History";
+import SendIcon from "@mui/icons-material/Send";
 import CustomTooltip from "../../ui/Tooltip";
 import { UI_TEXT } from "../../../constants";
 
 const StoreProductList = () => {
   const user = getUserData();
   const logsModal = useModal();
+  const requestModal = useModal();
   const [storeProducts, setStoreProducts] = useState([]);
   const [brands, setBrands] = useState([]);
   const [departments, setDepartments] = useState([]);
@@ -76,6 +79,7 @@ const StoreProductList = () => {
         onClose={logsModal.close}
         onUpdate={handleUpdateStoreProductList}
       />
+      <StockUpdateRequestModal isOpen={requestModal.isOpen} storeProduct={requestModal.data} onClose={requestModal.close} />
 
       <Grid container>
         <Grid item xs={12} className="card">
@@ -162,6 +166,13 @@ const StoreProductList = () => {
                         <HistoryIcon />
                       </CustomButton>
                     </CustomTooltip>
+                    {user.role !== "owner" && (
+                      <CustomTooltip text="Solicitar ajuste de stock">
+                        <CustomButton onClick={() => requestModal.open(row)}>
+                          <SendIcon />
+                        </CustomButton>
+                      </CustomTooltip>
+                    )}
                   </>
                 ),
               },
