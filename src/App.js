@@ -16,6 +16,7 @@ const lazyRetry = (importFn) =>
 const SaleCreate = lazyRetry(() => import("./components/sales/SaleCreate/SaleCreate"));
 const SaleList = lazyRetry(() => import("./components/sales/SaleList/SaleList"));
 const TransferList = lazyRetry(() => import("./components/inventory/TransferList/TransferList"));
+const StockUpdateRequestList = lazyRetry(() => import("./components/inventory/StockUpdateRequestList/StockUpdateRequestList"));
 const ClientList = lazyRetry(() => import("./components/clients/ClientList/ClientList"));
 const ProductList = lazyRetry(() => import("./components/products/ProductList/ProductList"));
 const BrandList = lazyRetry(() => import("./components/catalog/BrandList/BrandList"));
@@ -65,6 +66,7 @@ function App({ toggleTheme, themeMode }) {
             <Route path="/movimientos-caja/" element={<Suspense fallback={<LoadingFallback />}><CashFlowList /></Suspense>} />
             <Route path="/distribuciones/" element={<Suspense fallback={<LoadingFallback />}><DistributionList /></Suspense>} />
             <Route path="/traspasos/" element={<Suspense fallback={<LoadingFallback />}><TransferList /></Suspense>} />
+            <Route path="/solicitudes-ajustes/" element={<Suspense fallback={<LoadingFallback />}><StockUpdateRequestList /></Suspense>} />
             <Route path="/clientes/" element={<Suspense fallback={<LoadingFallback />}><ClientList /></Suspense>} />
             <Route path="/productos/" element={<Suspense fallback={<LoadingFallback />}><ProductList /></Suspense>} />
             <Route path="/inventario/" element={<Suspense fallback={<LoadingFallback />}><StoreProductList /></Suspense>} />

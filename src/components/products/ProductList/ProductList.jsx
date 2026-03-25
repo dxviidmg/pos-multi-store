@@ -22,6 +22,8 @@ import AddIcon from "@mui/icons-material/Add";
 import DownloadIcon from "@mui/icons-material/Download";
 import DeleteIcon from "@mui/icons-material/Delete";
 import TextFormatIcon from "@mui/icons-material/TextFormat";
+import HistoryIcon from "@mui/icons-material/History";
+import PriceLogsModal from "../PriceLogsModal/PriceLogsModal";
 
 const ProductList = () => {
   const user = getUserData();
@@ -33,6 +35,7 @@ const ProductList = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [outOfStockPercentage, setOutOfStockPercentage] = useState(0);
   const productModal = useModal();
+  const priceLogsModal = useModal();
 
   useEffect(() => {
     const fetchOptions = async () => {
@@ -117,6 +120,7 @@ const ProductList = () => {
     <>
       <CustomSpinner isLoading={loading} />
       <ProductModal isOpen={productModal.isOpen} product={productModal.data} onClose={productModal.close} onUpdate={handleUpdateProductList} />
+      <PriceLogsModal isOpen={priceLogsModal.isOpen} product={priceLogsModal.data} onClose={priceLogsModal.close} />
 
       <Grid container>
         <Grid item xs={12} className="card">
@@ -222,11 +226,17 @@ const ProductList = () => {
               },
               ...(user.role === "owner" ? [{
                 name: "Acciones",
+                width: 180,
                 cell: (row) => (
                   <>
                     <CustomTooltip text="Editar producto">
                       <CustomButton onClick={() => productModal.open({ product: row, showStoreProducts: false })}>
                         <EditIcon />
+                      </CustomButton>
+                    </CustomTooltip>
+                    <CustomTooltip text="Historial de precios">
+                      <CustomButton onClick={() => priceLogsModal.open(row)}>
+                        <HistoryIcon />
                       </CustomButton>
                     </CustomTooltip>
                     {user.role === "owner" && (

@@ -245,3 +245,11 @@ export const getStockOtherStores = async (code) => {
   });
   return response;
 };
+
+export const getProductPriceLogs = async (productId) => {
+  const url = buildUrlWithParams(getApiUrl("product-price-logs"), { product_id: productId });
+  const response = await httpClient.get(url, {
+    headers: getHeaders(),
+  });
+  return response;
+};
