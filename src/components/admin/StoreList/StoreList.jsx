@@ -819,16 +819,6 @@ const StoreList = () => {
                 Ventas ({stores.length})
               </CustomButton>
               <CustomButton 
-                variant={quickFilter === "pending" ? "contained" : "outlined"}
-                onClick={() => setQuickFilter("pending")}
-                size="small"
-              >
-                Pendientes ({stores.filter(s => 
-                  (s.cash_summary?.pending_distributions || 0) > 0 || 
-                  (s.cash_summary?.pending_transfers || 0) > 0
-                ).length})
-              </CustomButton>
-              <CustomButton 
                 variant={quickFilter === "managers" ? "contained" : "outlined"}
                 onClick={() => setQuickFilter("managers")}
                 size="small"
@@ -879,16 +869,6 @@ const StoreList = () => {
                 size="small"
               >
                 Todos
-              </CustomButton>
-              <CustomButton 
-                variant={quickFilter === "pending" ? "contained" : "outlined"}
-                onClick={() => setQuickFilter("pending")}
-                size="small"
-              >
-                Pendientes ({stores.filter(s => 
-                  (s.cash_summary?.pending_distributions || 0) > 0 || 
-                  (s.cash_summary?.pending_transfers || 0) > 0
-                ).length})
               </CustomButton>
               <CustomButton 
                 variant={quickFilter === "investment" ? "contained" : "outlined"}
