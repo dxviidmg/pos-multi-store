@@ -4,45 +4,20 @@ import { importStoreProducts, importStoreProductsValidation } from "../../../api
 import CustomButton from "../../ui/Button/Button";
 import { showSuccess, showError } from "../../../utils/alerts";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
+import PageHeader from "../../ui/PageHeader";
+import DropZone from "../../ui/DropZone";
+import VisuallyHiddenInput from "../../ui/VisuallyHiddenInput";
+import StatusChip from "../../ui/StatusChip";
 import {
   Grid, Select, MenuItem, FormControl, InputLabel,
-  Typography, styled, Stack, Stepper, Step, StepLabel,
-  Chip, LinearProgress, Tooltip,
+  Typography, Stepper, Step, StepLabel, Chip,
+  LinearProgress, Tooltip,
 } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import PublishIcon from "@mui/icons-material/Publish";
 import DownloadIcon from "@mui/icons-material/Download";
 import ErrorIcon from "@mui/icons-material/Error";
-
-const VisuallyHiddenInput = styled('input')({
-  clip: 'rect(0 0 0 0)',
-  clipPath: 'inset(50%)',
-  height: 1,
-  overflow: 'hidden',
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  whiteSpace: 'nowrap',
-  width: 1,
-});
-
-const DropZone = styled('label')(({ theme, isDragging }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  padding: '1.5rem',
-  border: `2px dashed ${isDragging ? theme.palette.primary.main : theme.palette.divider}`,
-  borderRadius: 12,
-  cursor: 'pointer',
-  backgroundColor: isDragging ? 'rgba(4, 52, 107, 0.06)' : 'transparent',
-  transition: 'all 0.2s ease',
-  '&:hover': {
-    borderColor: theme.palette.primary.main,
-    backgroundColor: 'rgba(4, 52, 107, 0.04)',
-  },
-}));
 
 const URL_TEMPLATE =
   process.env.REACT_APP_API_URL +
@@ -152,12 +127,9 @@ const StoreProductImport = () => {
       <CustomSpinner isLoading={loading} />
 
       <Grid item xs={12} className="card" sx={{ mb: '1.5rem' }}>
-        <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-          <h1>Importación de inventario</h1>
-          <CustomButton href={URL_TEMPLATE} startIcon={<DownloadIcon />}>
-            Descargar plantilla
-          </CustomButton>
-        </Stack>
+        <PageHeader title="Importación de inventario">
+          <CustomButton href={URL_TEMPLATE} startIcon={<DownloadIcon />}>Descargar plantilla</CustomButton>
+        </PageHeader>
 
         <Stepper activeStep={activeStep} alternativeLabel sx={{ mb: 3,
           '& .MuiStepIcon-root.Mui-completed': { color: 'success.main' },
@@ -245,17 +217,7 @@ const StoreProductImport = () => {
             data={products}
             columns={[
               ...productColumns,
-              {
-                name: "Estado",
-                cell: (row) => (
-                  <Chip
-                    size="small"
-                    label={row.status}
-                    color={row.status === "Exitoso" ? "success" : "error"}
-                    variant="outlined"
-                  />
-                ),
-              },
+                { name: "Estado", cell: (row) => <StatusChip status={row.status} /> },
             ]}
           />
         </Grid>

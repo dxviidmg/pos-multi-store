@@ -12,8 +12,9 @@ import { getUserData } from "../../../api/utils";
 import { showSuccess, showError, showConfirm } from "../../../utils/alerts";
 import CustomTooltip from "../../ui/Tooltip";
 import { UI_TEXT } from "../../../constants";
+import PageHeader from "../../ui/PageHeader";
 import {
-  Grid, TextField, Select, MenuItem, FormControl, InputLabel, Box, Stack,
+  Grid, TextField, Select, MenuItem, FormControl, InputLabel, Box,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import EditIcon from "@mui/icons-material/Edit";
@@ -124,12 +125,11 @@ const ProductList = () => {
 
       <Grid container>
         <Grid item xs={12} className="card">
-          <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-            <h1>Productos</h1>
+          <PageHeader title="Productos">
             <CustomButton onClick={() => productModal.open({ product: null, showStoreProducts: false })} startIcon={<AddIcon />}>
               Nuevo Producto
             </CustomButton>
-          </Stack>
+          </PageHeader>
 
           <Grid container spacing={2} sx={{ mb: 2 }}>
             <Grid item xs={12} md={3}>

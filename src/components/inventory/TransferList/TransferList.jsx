@@ -5,8 +5,9 @@ import CustomButton from "../../ui/Button/Button";
 import { showSuccess, showError } from "../../../utils/alerts";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { useTransfers, useDeleteTransfer } from "../../../hooks/useQueries";
-import { Grid, Stack } from "@mui/material";
+import { Grid} from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import PageHeader from "../../ui/PageHeader";
 
 const TransferList = () => {
   const { data: transfers = [], isLoading } = useTransfers();
@@ -26,9 +27,7 @@ const TransferList = () => {
       <CustomSpinner isLoading={isLoading} />
 
       <Grid item xs={12} className="card">
-        <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-          <h1>Traspasos Pendientes</h1>
-        </Stack>
+        <PageHeader title="Traspasos Pendientes" />
 
         <DataTable
           noDataComponent="Sin traspasos pendientes"

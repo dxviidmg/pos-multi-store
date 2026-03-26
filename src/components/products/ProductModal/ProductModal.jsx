@@ -13,21 +13,10 @@ import { getStores } from "../../../api/stores";
 import noPhoto from "../../../assets/images/noPhoto.jpg";
 import { getDepartments } from "../../../api/departments";
 import DataTable from "../../ui/DataTable/DataTable";
-import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, Box, Checkbox, FormControlLabel, styled } from "@mui/material";
+import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, Box, Checkbox, FormControlLabel } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import SaveIcon from "@mui/icons-material/Save";
-
-const VisuallyHiddenInput = styled('input')({
-  clip: 'rect(0 0 0 0)',
-  clipPath: 'inset(50%)',
-  height: 1,
-  overflow: 'hidden',
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  whiteSpace: 'nowrap',
-  width: 1,
-});
+import VisuallyHiddenInput from "../../ui/VisuallyHiddenInput";
 
 const INITIAL_FORM_DATA = {
   brand: "",

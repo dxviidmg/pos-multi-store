@@ -9,7 +9,8 @@ import { getUserData } from "../../../api/utils";
 import EditIcon from "@mui/icons-material/Edit";
 import CustomTooltip from "../../ui/Tooltip";
 import { useDepartments } from "../../../hooks/useDepartments";
-import { Grid, Stack } from "@mui/material";
+import PageHeader from "../../ui/PageHeader";
+import { Grid } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 
@@ -42,12 +43,11 @@ const DepartmentList = () => {
       <DepartmentModal isOpen={departmentModal.isOpen} department={departmentModal.data} onClose={departmentModal.close} onUpdate={refetch} />
 
       <Grid item xs={12} className="card">
-        <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-          <h1>Departamentos</h1>
+        <PageHeader title="Departamentos">
           <CustomButton onClick={() => departmentModal.open()} startIcon={<AddIcon />}>
             Nuevo Departamento
           </CustomButton>
-        </Stack>
+        </PageHeader>
 
         <Grid container spacing={2} alignItems="center" sx={{ mb: 2 }}>
           <Grid item xs={12} md={3}>
