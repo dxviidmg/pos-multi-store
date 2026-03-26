@@ -52,8 +52,8 @@ const SimpleTable = ({ data, columns, noDataComponent, pagination = false }) => 
               displayData.map((row, rowIdx) => (
                 <TableRow key={rowIdx}>
                   {columns.map((col, colIdx) => (
-                    <TableCell key={colIdx} sx={{ py: 0.5, fontSize: "0.8125rem" }}>
-                      {col.selector ? col.selector(row) : row[col.field]}
+                    <TableCell key={colIdx} sx={{ py: 0.5, fontSize: "0.8125rem" }} width={col.width}>
+                      {col.cell ? col.cell(row) : col.selector ? col.selector(row) : row[col.field]}
                     </TableCell>
                   ))}
                 </TableRow>

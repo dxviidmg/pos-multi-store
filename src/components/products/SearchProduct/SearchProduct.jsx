@@ -4,8 +4,8 @@ import { useSelector, useDispatch } from "react-redux";
 import DataTable from "../../ui/DataTable/DataTable";
 import CustomButton from "../../ui/Button/Button";
 import CustomTooltip from "../../ui/Tooltip";
-import { getStoreProducts } from "../../../api/products";
-import { addToCart, updateMovementType } from "../../../redux/cart/cartActions";
+import { getStoreProducts, getStockOtherStores } from "../../../api/products";
+import { addToCart, updateMovementType, countStockOtherStores } from "../../../redux/cart/cartActions";
 import { Chip } from "@mui/material";
 import StockModal from "../../inventory/StockModal/StockModal";
 import { useModal } from "../../../hooks/useModal";
@@ -157,15 +157,22 @@ const SearchProduct = ({ searchInputRef }) => {
     setQuery("");
   };
 
+  const fetchAndCountStock = async (storeProduct) => {
+    const response = await getStockOtherStores(storeProduct.id);
+    dispatch(countStockOtherStores(storeProduct, response.data));
+  };
+
   const handleAddToCartIfAvailable = (storeProduct) => {
     const existingProductIndex = cart.findIndex(
       (item) => item.id === storeProduct.id
     );
     const currentQuantityInCart = existingProductIndex !== -1 ? cart[existingProductIndex].quantity : 0;
+    let added = false;
 
     if (existingProductIndex === -1) {
       if (movementType === "agregar") {
         dispatch(addToCart({ ...storeProduct, quantity: 1 }));
+        added = true;
       } else {
         const stock =
           movementType === "traspaso"
@@ -175,6 +182,7 @@ const SearchProduct = ({ searchInputRef }) => {
         
         if (availableStock >= 1) {
           dispatch(addToCart({ ...storeProduct, quantity: 1 }));
+          added = true;
           if (!keepListOpen) {
             setData([]);
             setQuery("");
@@ -192,8 +200,10 @@ const SearchProduct = ({ searchInputRef }) => {
 
       if (movementType === "agregar") {
         dispatch(addToCart({ ...storeProduct, quantity: 1 }));
+        added = true;
       } else if (currentQuantityInCart < availableStock) {
         dispatch(addToCart({ ...storeProduct, quantity: 1 }));
+        added = true;
         if (!keepListOpen) {
           setData([]);
           setQuery("");
@@ -206,6 +216,10 @@ const SearchProduct = ({ searchInputRef }) => {
       } else {
         showWarning("Stock insuficiente", `Este producto ya está reservado en otros carritos. Stock disponible: ${availableStock}`);
       }
+    }
+
+    if (added && movementType === "distribucion") {
+      fetchAndCountStock(storeProduct);
     }
   };
 

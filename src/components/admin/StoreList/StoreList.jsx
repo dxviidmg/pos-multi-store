@@ -22,7 +22,7 @@ import { getInvestment, resetStoreStock } from "../../../api/stores";
 import { useUserManagement } from "../../../hooks/useUserManagement";
 import EditUserModal from "../../ui/UserModals/EditUserModal";
 import ChangePasswordModal from "../../ui/UserModals/ChangePasswordModal";
-import { Grid, FormLabel, FormControlLabel, Checkbox, Box, TextField, FormControl, InputLabel, Select, MenuItem, Fade } from "@mui/material";
+import { Grid, FormLabel, FormControlLabel, Checkbox, Box, TextField, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { UI_TEXT } from "../../../constants";
 import Swal from "sweetalert2";
@@ -668,11 +668,7 @@ const StoreList = () => {
             )}
           </div>
 
-          <Fade in={true} key={params.store_type} timeout={700}>
-            <div>
-
-          {params.store_type === "T" && (
-            <Grid container spacing={2} sx={{ mb: 1 }}>
+          <Grid container spacing={2} sx={{ mb: 1 }}>
               <Grid item xs={12} sm={6} md={3}>
                 <Box sx={{ bgcolor: 'var(--color-primary)', p: 1, borderRadius: 1, textAlign: 'center' }}>
                   <Typography variant="caption" sx={{ color: '#fff', fontWeight: 600 }}># Productos</Typography>
@@ -698,7 +694,6 @@ const StoreList = () => {
                 </Box>
               </Grid>
             </Grid>
-          )}
 
           <Box sx={{ mb: 1 }}>
             <Grid container spacing={2} alignItems="center">
@@ -740,8 +735,7 @@ const StoreList = () => {
             </Grid>
           </Box>
 
-          {params.store_type === "T" && (
-            <Box component="form" sx={{ mb: 2 }}>
+          <Box component="form" sx={{ mb: 2 }}>
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6} md={3}>
                   <TextField
@@ -753,6 +747,8 @@ const StoreList = () => {
                     value={params.start_date}
                     onChange={handleParams}
                     inputProps={{ max: today }}
+                    InputLabelProps={{ shrink: true }}
+                    disabled={params.store_type === "A"}
                   />
                 </Grid>
 
@@ -766,6 +762,8 @@ const StoreList = () => {
                     value={params.end_date}
                     onChange={handleParams}
                     inputProps={{ max: today }}
+                    InputLabelProps={{ shrink: true }}
+                    disabled={params.store_type === "A"}
                   />
                 </Grid>
 
@@ -777,13 +775,14 @@ const StoreList = () => {
                     name="range"
                     type="text"
                     value={range}
+                    InputLabelProps={{ shrink: true }}
                     disabled
                   />
                 </Grid>
 
                 {departments.length > 0 && (
                   <Grid item xs={12} sm={6} md={3}>
-                    <FormControl fullWidth size="small">
+                    <FormControl fullWidth size="small" disabled={params.store_type === "A"}>
                       <InputLabel>Departamento</InputLabel>
                       <Select
                         value={params.department_id || ""}
@@ -804,7 +803,6 @@ const StoreList = () => {
                 )}
               </Grid>
             </Box>
-          )}
 
           {params.store_type === "T" && (
             <Grid container spacing={2} sx={{ mb: 2 }}>
@@ -824,13 +822,13 @@ const StoreList = () => {
                 </CustomButton>
               </Grid>
               <Grid item md={2} xs={6}>
-                <CustomButton fullWidth variant={quickFilter === "printer" ? "contained" : "outlined"} onClick={() => setQuickFilter("printer")} size="small">
-                  Impresoras ({stores.filter(s => s.printer).length})
+                <CustomButton fullWidth variant={quickFilter === "investment" ? "contained" : "outlined"} onClick={handleShowInvestment} size="small" startIcon={<AttachMoneyIcon />}>
+                  Inversión
                 </CustomButton>
               </Grid>
               <Grid item md={2} xs={6}>
-                <CustomButton fullWidth variant={quickFilter === "investment" ? "contained" : "outlined"} onClick={handleShowInvestment} size="small" startIcon={<AttachMoneyIcon />}>
-                  Inversión
+                <CustomButton fullWidth variant={quickFilter === "printer" ? "contained" : "outlined"} onClick={() => setQuickFilter("printer")} size="small">
+                  Impresoras ({stores.filter(s => s.printer).length})
                 </CustomButton>
               </Grid>
               {stores.filter(s => !s.has_all_products).length > 0 && (
@@ -899,7 +897,7 @@ const StoreList = () => {
             />
           </Box>
 
-          {params.store_type === "T" && stores.length > 1 && (
+          {params.store_type === "T" && stores.length > 1 && !["managers", "printer", "actions"].includes(quickFilter) && (
             <Box sx={{ mt: 4 }}>
               <Box sx={{ mb: 2 }}>
                 <h2>Totales</h2>
@@ -922,8 +920,6 @@ const StoreList = () => {
               />
             </Box>
           )}
-            </div>
-          </Fade>
         </Grid>
       </Grid>
 

@@ -239,8 +239,8 @@ export const getTaskResult = async (id) => {
  * @param {string} code - Product code
  * @returns {Promise<Object>} Stock information response
  */
-export const getStockOtherStores = async (code) => {
-  const response = await httpClient.get(getApiUrl(`products/stock-other-stores/?code=${code}`, false), {
+export const getStockOtherStores = async (storeProductId) => {
+  const response = await httpClient.get(getApiUrl(`products/stock-other-stores/?store-product=${storeProductId}`, false), {
     headers: getHeaders(),
   });
   return response;
