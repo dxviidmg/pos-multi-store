@@ -237,12 +237,12 @@ export default function MainLayout({ toggleTheme, themeMode }) {
     ],
     G: [
       {
-        label: "Tablero",
+        label: "Tableros",
         disabled: isDashboardRestricted,
-        disabledMessage: "Disponible de 9 PM a 10 AM",
+        disabledMessage: "Disponible antes de las 10 AM y despues de las 9 PM",
         dropdown: [
-          { label: "Ventas exitosas", href: "/tablero/" },
-          { label: "Ventas modificadas y/o canceladas", href: "/tablero-cancelaciones/" },
+          { label: "Ventas exitosas", href: "/tablero-ventas/" },
+          { label: "Ventas ajustadas o canceladas", href: "/tablero-ventas-ajustadas-cancelaciones/" },
           { label: "Marcas y productos", href: "/tablero-productos/" },
         ],
       },
@@ -296,9 +296,8 @@ export default function MainLayout({ toggleTheme, themeMode }) {
           <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 700, letterSpacing: "-0.01em" }}>
             {user.store_name ? `${user.tenant_name} - ${user.store_name}` : user.tenant_name}
           </Typography>
-          {user.role === "owner" && (
-            <Avatar
-              onClick={() => navigate("/tenant-profile")}
+          <Avatar
+              onClick={() => navigate("/perfil")}
               sx={{
                 width: 34, height: 34,
                 bgcolor: `${accent}d9`,
@@ -310,7 +309,6 @@ export default function MainLayout({ toggleTheme, themeMode }) {
             >
               {(user.store_name || user.tenant_name || "U").charAt(0).toUpperCase()}
             </Avatar>
-          )}
           <PendingMenu />
           <NotificationsMenu />
           <PageHelp />
