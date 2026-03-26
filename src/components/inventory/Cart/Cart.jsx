@@ -115,7 +115,7 @@ const Cart = ({ searchInputRef }) => {
   const handleRemoveFromCart = (product) => dispatch(removeFromCart(product.id));
 
   const handleStockOtherStores = async (product) => {
-    const response = await getStockOtherStores(product.product.code);
+    const response = await getStockOtherStores(product.id);
     dispatch(countStockOtherStores(product, response.data));
     stockModal.open(product);
   };
@@ -309,7 +309,7 @@ const Cart = ({ searchInputRef }) => {
     {
       name: "Cantidad",
       selector: (row) => (
-        <TextField size="small" fullWidth type="number"
+        <TextField size="small" type="number" sx={{ width: 80 }}
           value={row.quantity}
           onChange={(e) => handleQuantityChangeToCart(e, row)}
           onKeyDown={(e) => {
@@ -385,7 +385,7 @@ const Cart = ({ searchInputRef }) => {
     {
       name: "Cantidad",
       selector: (row) => (
-        <TextField size="small" fullWidth type="number"
+        <TextField size="small" type="number" sx={{ width: 80 }}
           value={row.quantity}
           onChange={(e) => handleQuantityChangeToCart(e, row)}
           onKeyDown={(e) => {
@@ -422,7 +422,7 @@ const Cart = ({ searchInputRef }) => {
     {
       name: "Cantidad",
       selector: (row) => (
-        <TextField size="small" fullWidth type="number"
+        <TextField size="small" type="number" sx={{ width: 80 }}
           value={row.quantity}
           onChange={(e) => handleQuantityChangeToCart(e, row)}
           onKeyDown={(e) => {
@@ -481,7 +481,7 @@ const Cart = ({ searchInputRef }) => {
     {
       name: "Cantidad",
       selector: (row) => (
-        <TextField size="small" fullWidth type="number"
+        <TextField size="small" type="number" sx={{ width: 80 }}
           value={row.quantity}
           onChange={(e) => handleQuantityChangeToCart(e, row)}
           onKeyDown={(e) => {
