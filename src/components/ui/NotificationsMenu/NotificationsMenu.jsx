@@ -10,9 +10,7 @@ import SendIcon from "@mui/icons-material/Send";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import InboxIcon from "@mui/icons-material/Inbox";
-import { useNavigate } from "react-router-dom";
 import { getUserData } from "../../../api/utils";
-import { getOwnerNotifications } from "../../../api/notifications";
 
 const WS_BASE = process.env.REACT_APP_API_URL?.replace(/^http/, "ws");
 
@@ -29,25 +27,9 @@ const EVENT_CONFIG = {
 const NotificationsMenu = memo(() => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [notifications, setNotifications] = useState([]);
-  const [seen, setSeen] = useState(false);
+  const [seen, setSeen] = useState(true);
   const wsRef = useRef(null);
   const reconnectRef = useRef(null);
-  const navigate = useNavigate();
-
-  const fetchPending = useCallback(async () => {
-    try {
-      const { data } = await getOwnerNotifications();
-      const items = [];
-      data.forEach((s) => {
-        if (s.pending_transfers)
-          items.push({ id: `t-${s.store}`, icon: EVENT_CONFIG.transfer_created.icon, text: `${s.pending_transfers} traspaso(s) pendiente(s)`, storeName: s.store_name, storeId: s.store, href: "/traspasos/" });
-        if (s.pending_distributions)
-          items.push({ id: `d-${s.store}`, icon: EVENT_CONFIG.distribution_created.icon, text: `${s.pending_distributions} distribución(es) pendiente(s)`, storeName: s.store_name, storeId: s.store, href: "/distribuciones/" });
-      });
-      setNotifications(items);
-      if (items.length > 0) setSeen(false);
-    } catch {}
-  }, []);
 
   const connectWs = useCallback(() => {
     const user = getUserData();
@@ -66,7 +48,7 @@ const NotificationsMenu = memo(() => {
       const msg = JSON.parse(event.data);
       const config = EVENT_CONFIG[msg.event] || { icon: <NotificationsIcon fontSize="small" />, href: "/" };
       setNotifications((prev) => [
-        { id: `${msg.event}-${Date.now()}`, icon: config.icon, text: msg.message, storeName: msg.store_name, storeId: msg.store_id, href: config.href },
+        { id: `${msg.event}-${Date.now()}`, icon: config.icon, text: msg.message, storeName: msg.store_name, href: config.href },
         ...prev,
       ]);
       setSeen(false);
@@ -78,31 +60,15 @@ const NotificationsMenu = memo(() => {
   }, []);
 
   useEffect(() => {
-    fetchPending();
     connectWs();
-
-    const onStoreChange = () => { fetchPending(); connectWs(); };
+    const onStoreChange = () => connectWs();
     window.addEventListener("store-changed", onStoreChange);
-
     return () => {
       if (wsRef.current) wsRef.current.close();
       if (reconnectRef.current) clearTimeout(reconnectRef.current);
       window.removeEventListener("store-changed", onStoreChange);
     };
   }, [connectWs]);
-
-  const handleClick = (n) => {
-    setAnchorEl(null);
-    if (n.storeId) {
-      const user = getUserData();
-      const updated = { ...user, store_id: n.storeId, store_name: n.storeName };
-      localStorage.setItem("user", JSON.stringify(updated));
-      window.dispatchEvent(new Event("store-changed"));
-    }
-    navigate(n.href);
-  };
-
-  const handleClear = () => setNotifications([]);
 
   const count = notifications.length;
 
@@ -124,7 +90,7 @@ const NotificationsMenu = memo(() => {
         <Box sx={{ px: 2.5, py: 1.5, borderBottom: 1, borderColor: "divider", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>Notificaciones</Typography>
           {count > 0 && (
-            <Typography variant="caption" sx={{ cursor: "pointer", color: "primary.main" }} onClick={handleClear}>
+            <Typography variant="caption" sx={{ cursor: "pointer", color: "primary.main" }} onClick={() => setNotifications([])}>
               Limpiar
             </Typography>
           )}
@@ -137,7 +103,7 @@ const NotificationsMenu = memo(() => {
         ) : (
           <List dense sx={{ maxHeight: 340, overflow: "auto", py: 0 }}>
             {notifications.map((n) => (
-              <ListItemButton key={n.id} onClick={() => handleClick(n)} sx={{ py: 1.2 }}>
+              <ListItemButton key={n.id} onClick={() => setAnchorEl(null)} sx={{ py: 1.2 }}>
                 <ListItemIcon sx={{ minWidth: 36, color: "primary.main" }}>{n.icon}</ListItemIcon>
                 <ListItemText
                   primary={n.text}

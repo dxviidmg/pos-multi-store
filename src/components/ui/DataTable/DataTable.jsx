@@ -21,18 +21,9 @@ const DataTable = ({
     page: 0,
   });
 
-  // 🔎 Buscador
   const searchInObject = (obj, search) => {
-    if (typeof obj === "string") {
-      return obj.toLowerCase().includes(search.toLowerCase());
-    }
-
-    if (typeof obj === "object" && obj !== null) {
-      return Object.values(obj).some((value) =>
-        searchInObject(value, search)
-      );
-    }
-
+    if (typeof obj === "string") return obj.toLowerCase().includes(search.toLowerCase());
+    if (typeof obj === "object" && obj !== null) return Object.values(obj).some((v) => searchInObject(v, search));
     return false;
   };
 
@@ -41,7 +32,6 @@ const DataTable = ({
     [data, searchTerm]
   );
 
-  // 🔄 Adaptador de columnas
   const muiColumns = useMemo(
     () =>
       columns.map((col, index) => {
@@ -72,13 +62,8 @@ const DataTable = ({
     [columns]
   );
 
-  // 🆔 Asegurar IDs
   const rowsWithIds = useMemo(
-    () =>
-      filteredData.map((row, index) => ({
-        ...row,
-        _id: row.id ?? row._id ?? index,
-      })),
+    () => filteredData.map((row, index) => ({ ...row, _id: row.id ?? row._id ?? index })),
     [filteredData]
   );
 
@@ -87,14 +72,12 @@ const DataTable = ({
       {searcher && (
         <Box sx={{ mb: 2 }}>
           <TextField size="small" fullWidth label="Buscar" placeholder="Buscar"
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
           />
         </Box>
       )}
 
-      <Box sx={{width: "100%", maxWidth: "100%", overflowX: "auto", height: height || 'auto' }}>
+      <Box sx={{ width: "100%", maxWidth: "100%", overflowX: "auto", height: height || 'auto' }}>
         <DataGrid
           rows={rowsWithIds}
           columns={muiColumns}
@@ -107,17 +90,13 @@ const DataTable = ({
           checkboxSelection={!!setSelectedRows}
           onRowSelectionModelChange={(ids) => {
             if (setSelectedRows) {
-              const selected = rowsWithIds.filter((row) =>
-                ids.includes(row._id)
-              );
+              const selected = rowsWithIds.filter((row) => ids.includes(row._id));
               setSelectedRows(selected);
             }
           }}
           disableRowSelectionOnClick
           getRowHeight={() => 'auto'}
-          localeText={{
-            noRowsLabel: showNoDataComponent ? noDataComponent : "",
-          }}
+          localeText={{ noRowsLabel: showNoDataComponent ? noDataComponent : "" }}
           hideFooter={data.length <= 25}
           density="compact"
           sx={{
@@ -127,28 +106,14 @@ const DataTable = ({
               minHeight: '36px !important',
               maxHeight: '36px !important',
             },
-            "& .MuiDataGrid-columnHeaderTitle": {
-              textAlign: 'center',
-              width: '100%',
-            },
-            "& .MuiDataGrid-columnHeader": {
-              justifyContent: 'center',
-            },
-            "& .MuiDataGrid-columnHeaderTitleContainer": {
-              justifyContent: 'center',
-            },
+            "& .MuiDataGrid-columnHeaderTitle": { textAlign: 'center', width: '100%' },
+            "& .MuiDataGrid-columnHeader": { justifyContent: 'center' },
+            "& .MuiDataGrid-columnHeaderTitleContainer": { justifyContent: 'center' },
             "& .MuiDataGrid-cell": {
-              py: 0,
-              px: '2px',
-              fontSize: '0.8125rem',
-              whiteSpace: 'normal !important',
-              lineHeight: '1.3 !important',
-              justifyContent: 'center',
-              textAlign: 'center',
-              gap: '2px',
-              '& .MuiButtonBase-root': {
-                transform: 'scale(0.8)',
-              },
+              py: 0, px: '2px', fontSize: '0.8125rem',
+              whiteSpace: 'normal !important', lineHeight: '1.3 !important',
+              justifyContent: 'center', textAlign: 'center', gap: '2px',
+              '& .MuiButtonBase-root': { transform: 'scale(0.8)' },
             },
             "& .MuiDataGrid-row": {
               minHeight: '32px !important',

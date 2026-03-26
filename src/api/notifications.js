@@ -1,15 +1,8 @@
 import httpClient from "./httpClient";
 import { getApiUrl, getHeaders } from "./utils";
 
-export const getOwnerNotifications = async () => {
-  const response = await httpClient.get(getApiUrl("notifications"), {
-    headers: getHeaders(),
-  });
-  return response;
-};
-
-export const checkNotifications = async () => {
-  const response = await httpClient.get(getApiUrl("notifications/check"), {
+export const getPendingMovements = async () => {
+  const response = await httpClient.get(getApiUrl("pending-movements"), {
     headers: getHeaders(),
   });
   return response;
