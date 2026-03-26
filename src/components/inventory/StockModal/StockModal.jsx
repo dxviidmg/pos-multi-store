@@ -42,7 +42,7 @@ const StockModal = ({ isOpen, product, onClose }) => {
   
   useEffect(() => {
     const fetchData = async () => {
-      const response = await getStockOtherStores(storeProduct.product?.code);
+      const response = await getStockOtherStores(storeProduct.id);
       setStockOtherStores(response.data);
     };
   

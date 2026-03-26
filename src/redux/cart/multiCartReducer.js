@@ -334,8 +334,8 @@ const multiCartReducer = (state = initialState, action) => {
 
     case COUNT_STOCK_OTHER_STORES: {
       const updatedCart = activeCart.cart.map((item) =>
-        item.id === action.payload.id
-          ? { ...item, stock_other_stores: action.payload.stock_other_stores }
+        item.id === action.payload.product.id
+          ? { ...item, stockOtherStores: action.payload.stock_other_storages }
           : item
       );
 
