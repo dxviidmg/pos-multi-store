@@ -10,7 +10,8 @@ import CustomTooltip from "../../ui/Tooltip";
 import { useClients } from "../../../hooks/useClients";
 import { useModal } from "../../../hooks/useModal";
 import Grid from "@mui/material/Grid";
-import { TextField, Stack } from "@mui/material";
+import PageHeader from "../../ui/PageHeader";
+import { TextField } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DiscountIcon from "@mui/icons-material/Discount";
 
@@ -34,7 +35,6 @@ const ClientList = () => {
 
   return (
     <>
-      {/* 1. MODALS */}
       <ClientModal 
         isOpen={clientModal.isOpen}
         client={clientModal.data}
@@ -46,24 +46,18 @@ const ClientList = () => {
         onClose={discountModal.close}
       />
       
-      {/* 2. CONTENIDO PRINCIPAL */}
       <Grid item xs={12} className="card">
-        {/* 2.1 Header */}
-        <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-          <h1>Clientes</h1>
-          <Stack direction="row" spacing={1}>
-            {getUserData().role === "owner" && (
-              <CustomButton onClick={() => discountModal.open()} startIcon={<DiscountIcon />}>
-                Crear descuento
-              </CustomButton>
-            )}
-            <CustomButton onClick={() => clientModal.open()} startIcon={<AddIcon />}>
-              Nuevo Cliente
+        <PageHeader title="Clientes">
+          {getUserData().role === "owner" && (
+            <CustomButton onClick={() => discountModal.open()} startIcon={<DiscountIcon />}>
+              Crear descuento
             </CustomButton>
-          </Stack>
-        </Stack>
+          )}
+          <CustomButton onClick={() => clientModal.open()} startIcon={<AddIcon />}>
+            Nuevo Cliente
+          </CustomButton>
+        </PageHeader>
 
-        {/* 2.2 Filtros */}
         <Grid container spacing={2} sx={{ mb: 2 }}>
           <Grid item xs={12} md={4}>
             <TextField
@@ -102,7 +96,6 @@ const ClientList = () => {
           </Grid>
         </Grid>
 
-        {/* 2.3 Tabla */}
         <DataTable
           searcher={true}
           data={clients}

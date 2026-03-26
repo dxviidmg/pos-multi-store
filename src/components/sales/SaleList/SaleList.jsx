@@ -13,16 +13,18 @@ import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import CancelIcon from "@mui/icons-material/Cancel";
 import PrintIcon from "@mui/icons-material/Print";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import BlockIcon from "@mui/icons-material/Block";
 import WarningIcon from "@mui/icons-material/Warning";
 import UndoIcon from "@mui/icons-material/Undo";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ErrorIcon from "@mui/icons-material/Error";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import { Alert, Popper, Paper, Grid, TextField, Select, MenuItem, FormControl, InputLabel, Box, Stack } from "@mui/material";
+import { Alert, Popper, Paper, Grid, TextField, Select, MenuItem, FormControl, InputLabel, Box} from "@mui/material";
 import { getUserData } from "../../../api/utils";
 import PaymentEditModal from "../PaymentEditModal/PaymentEditModal";
 import CustomTooltip from "../../ui/Tooltip";
+import PageHeader from "../../ui/PageHeader";
 
 const ProductsPopperButton = ({ row, productsModal }) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -93,6 +95,7 @@ const SaleList = () => {
   const [loading, setLoading] = useState(false);
   const [salesDuplicated, setSalesDuplicated] = useState([]);
   const [showAllFields, setShowAllFields] = useState(false);
+  const [quickFilter, setQuickFilter] = useState("all");
   const [searchBy, setSearchBy] = useState("date");
   const saleModal = useModal();
   const paymentEditModal = useModal();
@@ -142,9 +145,7 @@ const SaleList = () => {
           </Alert>
         )}
 
-        <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-          <h1>Ventas</h1>
-        </Stack>
+        <PageHeader title="Ventas" />
 
         <Grid container spacing={2} sx={{ mb: 2 }}>
           <Grid item xs={12} md={3}>
@@ -199,13 +200,40 @@ const SaleList = () => {
           </Grid>
         </Grid>
 
+        <Grid container spacing={2} sx={{ mb: 1 }}>
+          <Grid item xs={6} md={3}>
+            <CustomButton fullWidth variant={quickFilter === "all" ? "contained" : "outlined"} onClick={() => setQuickFilter("all")} size="small">
+              Todas ({sales.length})
+            </CustomButton>
+          </Grid>
+          <Grid item xs={6} md={3}>
+            <CustomButton fullWidth variant={quickFilter === "duplicated" ? "contained" : "outlined"} onClick={() => setQuickFilter("duplicated")} size="small">
+              Duplicadas ({salesDuplicated.length})
+            </CustomButton>
+          </Grid>
+          <Grid item xs={6} md={3}>
+            <CustomButton fullWidth variant={quickFilter === "canceled" ? "contained" : "outlined"} onClick={() => setQuickFilter("canceled")} size="small">
+              Canceladas ({sales.filter(s => s.is_canceled).length})
+            </CustomButton>
+          </Grid>
+          <Grid item xs={6} md={3}>
+            <CustomButton fullWidth variant={quickFilter === "returned" ? "contained" : "outlined"} onClick={() => setQuickFilter("returned")} size="small">
+              Con devolución ({sales.filter(s => s.has_return).length})
+            </CustomButton>
+          </Grid>
+        </Grid>
+
         <DataTable
-          data={sales}
+          data={quickFilter === "all" ? sales
+            : quickFilter === "duplicated" ? sales.filter(s => salesDuplicated.includes(s.id))
+            : quickFilter === "canceled" ? sales.filter(s => s.is_canceled)
+            : sales.filter(s => s.has_return)
+          }
           pagination={true}
           columns={[
             { name: "#", selector: (row) => row.id, width: 70 },
             {
-              name: "Estado",
+              name: "Unica",
               selector: (row) =>
                 salesDuplicated.includes(row.id)
                   ? <ErrorIcon className="icon-danger" />
@@ -244,24 +272,40 @@ const SaleList = () => {
               cell: (row) => (
                 <>
                   {row.is_canceled ? (
+                    <CustomTooltip text={row.reason_cancel || "Sin motivo"}>
+                      <CustomButton disabled><BlockIcon color="error" /></CustomButton>
+                    </CustomTooltip>
+                  ) : row.has_return ? (
                     <>
-                      <CancelIcon color="error" /> Razón cancelación:{" "}
-                      {row.reason_cancel || "Desconocida"}
+                      {printer && (
+                        <CustomTooltip text="Imprimir ticket">
+                          <CustomButton onClick={() => handlePrintTicket("ticket", row)}>
+                            <PrintIcon />
+                          </CustomButton>
+                        </CustomTooltip>
+                      )}
+                      <CustomTooltip text={row.reason_return || "Sin motivo"}>
+                        <CustomButton disabled><UndoIcon color="info" /></CustomButton>
+                      </CustomTooltip>
                     </>
                   ) : (
                     <>
                       {printer && (
-                        <CustomButton onClick={() => handlePrintTicket("ticket", row)}>
-                          <PrintIcon />
-                        </CustomButton>
+                        <CustomTooltip text="Imprimir ticket">
+                          <CustomButton onClick={() => handlePrintTicket("ticket", row)}>
+                            <PrintIcon />
+                          </CustomButton>
+                        </CustomTooltip>
                       )}
                       {params.reservation_in_progress === "true" && (
-                        <CustomButton fullWidth onClick={() => paymentEditModal.open(row)}>
-                          <AttachMoneyIcon />
-                        </CustomButton>
+                        <CustomTooltip text="Editar pago">
+                          <CustomButton onClick={() => paymentEditModal.open(row)}>
+                            <AttachMoneyIcon />
+                          </CustomButton>
+                        </CustomTooltip>
                       )}
-                      {(row.is_cancelable || row.is_repeated) && (
-                        <CustomTooltip text="Generar devolución">
+                      {row.is_cancelable && (
+                        <CustomTooltip text="Devolución">
                           <CustomButton onClick={() => saleModal.open(row)}>
                             <UndoIcon />
                           </CustomButton>

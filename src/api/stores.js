@@ -12,13 +12,6 @@ export const getStoresCashSummary = async (params) => {
   return response;
 };
 
-export const getStoreInvestment = async (store) => {
-  const response = await httpClient.get(getApiUrl(`store/${store.id}/investment`), {
-    headers: getHeaders(),
-  });
-  return response;
-};
-
 export const getInvestment = async (storeId = null) => {
   const url = storeId ? `store/${storeId}/investment` : "investment";
   const response = await httpClient.get(getApiUrl(url), {

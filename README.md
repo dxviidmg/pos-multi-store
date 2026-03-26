@@ -1,6 +1,6 @@
 # SmartVenta — Sistema de Punto de Venta Multi-Tienda
 
-> Última actualización: 25 de marzo de 2026, 07:50 hrs
+> Última actualización: 26 de marzo de 2026, 15:34 hrs
 
 Sistema de punto de venta (POS) diseñado para negocios con múltiples sucursales. Permite gestionar ventas, inventario, traspasos y distribuciones desde una sola plataforma, con visibilidad en tiempo real de todas las tiendas y almacenes.
 
@@ -16,14 +16,17 @@ Negocios minoristas y mayoristas que operan con varias tiendas y/o almacenes, y 
 - **Traspasos y distribuciones** — Mueve mercancía entre almacenes y tiendas con trazabilidad completa. Confirma recepciones desde cada sucursal.
 - **Clientes y mensualidades** — Registro de clientes, historial de compras y gestión de pagos recurrentes. Creación de descuentos desde modal dedicado.
 - **Corte de caja** — Resumen diario de ventas por método de pago (efectivo, tarjeta, transferencia), con movimientos de caja detallados.
+- **Devoluciones y cancelaciones** — Cancelación total de ventas con motivo, devolución parcial de productos (ajusta cantidades o elimina productos de la venta), y registro del motivo en ambos casos. Filtros rápidos por ventas duplicadas, canceladas y con devolución.
 - **Tablero y auditoría** — Tablero de ventas con KPIs (mejor/peor tienda, día, hora pico), heatmap de ventas, ticket promedio por día, y gráficas de tendencia. Dos módulos de auditoría: transacciones (ventas duplicadas, registros inconsistentes, discrepancias de stock) y productos (códigos repetidos, costo en cero, precio mayoreo inconsistente, faltantes en tiendas, productos sin movimiento). Restricción de acceso al tablero por horario configurable.
+- **Tablero de cancelaciones** — Tablero dedicado a ventas canceladas y con devolución: KPIs, gráficas de tendencia, distribución por tienda y tipo, listado de motivos.
+- **Tablero de marcas y productos** — Top marcas y productos más/menos vendidos con porcentaje de participación.
 - **Historial de stock** — Registro detallado de todos los movimientos de inventario: ventas, traspasos, distribuciones, ajustes manuales. Útil para rastrear discrepancias y verificar que entradas y salidas coincidan.
-- **Notificaciones** — Notificaciones en tiempo real vía WebSocket con reconexión automática. Soporte para traspasos, distribuciones, solicitudes de ajuste y apartados. Fetch inicial HTTP al cargar y al cambiar de tienda.
+- **Notificaciones** — Notificaciones en tiempo real con reconexión automática. Soporte para traspasos, distribuciones, solicitudes de ajuste y apartados. Consulta inicial al cargar y al cambiar de tienda. Indicador de ventas duplicadas en la barra superior con contador y detalle por tienda.
 - **Ayuda contextual** — Botón de ayuda en el navbar que muestra una descripción de la página actual según la ruta.
 - **Solicitudes de ajuste de stock** — Los administradores y vendedores pueden solicitar ajustes de stock. El dueño aprueba o rechaza desde un panel dedicado.
 - **Historial de precios** — Registro de cambios de precios por producto, agrupado por fecha, accesible desde la lista de productos.
 - **Soporte por WhatsApp** — Botón en el sidebar que abre WhatsApp con mensaje prellenado (tenant y tienda).
-- **Importación masiva** — Carga productos, inventario y ventas desde archivos Excel.
+- **Importación masiva** — Carga productos, inventario y ventas desde archivos Excel. Flujo guiado con pasos visuales, arrastrar y soltar archivos, validación con resumen de errores y confirmación antes de importar.
 - **Roles y permisos** — Tres niveles de acceso: dueño, administrador y vendedor, cada uno con su vista y permisos específicos. Columnas y acciones se ocultan según el rol.
 - **Modo oscuro/claro** — Interfaz adaptable a la preferencia del usuario.
 - **Impresión de tickets** — Integración con impresoras térmicas para tickets de venta.
@@ -45,6 +48,7 @@ Negocios minoristas y mayoristas que operan con varias tiendas y/o almacenes, y 
 - **Multi-tenant:** Soporta múltiples negocios (tenants), cada uno con sus tiendas, productos y usuarios.
 - **Tres tipos de vista:** Tienda (T), Almacén (A) y General/Admin (G), cada una con su menú y funcionalidades específicas.
 - **API Factory:** Patrón genérico para CRUD de entidades (`createApiService`) que reduce código repetitivo.
+- **Componentes compartidos:** `PageHeader`, `DropZone`, `VisuallyHiddenInput`, `StatusChip` para evitar duplicación entre vistas.
 - **Hooks personalizados:** `useFetch`, `useCrudMutation`, `useModal`, `useForm`, `useQueries` para lógica reutilizable.
 - **Tareas asíncronas:** Operaciones pesadas (auditoría, exportaciones) se ejecutan como tareas en background con polling de progreso.
 - **Keep-alive:** Mecanismo para mantener la sesión activa.

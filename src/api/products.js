@@ -212,17 +212,6 @@ export const reassignProducts = async (data) => {
 };
 
 /**
- * Get store products asynchronously
- * @returns {Promise<Object>} Async task response
- */
-export const getStoreProductsAsync = async () => {
-  const response = await httpClient.get(getApiUrl("async-store-product"), {
-    headers: getHeaders(),
-  });
-  return response;
-};
-
-/**
  * Get async task result
  * @param {string} id - Task ID
  * @returns {Promise<Object>} Task result response
@@ -239,8 +228,8 @@ export const getTaskResult = async (id) => {
  * @param {string} code - Product code
  * @returns {Promise<Object>} Stock information response
  */
-export const getStockOtherStores = async (code) => {
-  const response = await httpClient.get(getApiUrl(`products/stock-other-stores/?code=${code}`, false), {
+export const getStockOtherStores = async (storeProductId) => {
+  const response = await httpClient.get(getApiUrl(`products/stock-other-stores/?store-product=${storeProductId}`, false), {
     headers: getHeaders(),
   });
   return response;

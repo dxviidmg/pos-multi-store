@@ -3,7 +3,7 @@ import DataTable from "../../ui/DataTable/DataTable";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import CustomButton from "../../ui/Button/Button";
 import CustomTooltip from "../../ui/Tooltip";
-import { Grid, Stack, Chip } from "@mui/material";
+import { Grid,  Chip } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import DeleteIcon from "@mui/icons-material/Delete";
 import httpClient from "../../../api/httpClient";
@@ -11,6 +11,7 @@ import { getApiUrl, getHeaders } from "../../../api/utils";
 import { getFormattedDateTime } from "../../../utils/utils";
 import { showSuccess, showError } from "../../../utils/alerts";
 import Swal from "sweetalert2";
+import PageHeader from "../../ui/PageHeader";
 
 const StockUpdateRequestList = () => {
   const [requests, setRequests] = useState([]);
@@ -68,9 +69,7 @@ const StockUpdateRequestList = () => {
     <>
       <CustomSpinner isLoading={loading} />
       <Grid item xs={12} className="card">
-        <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-          <h1>Solicitudes de ajustes</h1>
-        </Stack>
+        <PageHeader title="Solicitudes de ajustes" />
         <DataTable
           noDataComponent="Sin solicitudes pendientes"
           data={requests}

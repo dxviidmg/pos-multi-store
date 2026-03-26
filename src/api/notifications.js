@@ -1,15 +1,15 @@
 import httpClient from "./httpClient";
 import { getApiUrl, getHeaders } from "./utils";
 
-export const getOwnerNotifications = async () => {
-  const response = await httpClient.get(getApiUrl("notifications"), {
+export const getPendingMovements = async () => {
+  const response = await httpClient.get(getApiUrl("pending-movements"), {
     headers: getHeaders(),
   });
   return response;
 };
 
-export const checkNotifications = async () => {
-  const response = await httpClient.get(getApiUrl("notifications/check"), {
+export const getDuplicateSales = async () => {
+  const response = await httpClient.get(getApiUrl("duplicate-sales"), {
     headers: getHeaders(),
   });
   return response;

@@ -17,7 +17,6 @@ import {
   MONTH_NAMES, MONTH_NAMES_SHORT, DAY_NAMES, CHART_COLORS,
   formatCurrency, getErrorMessage, getTied,
 } from "../../../utils/utils";
-import { getUserData } from "../../../api/utils";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
@@ -27,13 +26,8 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import InboxIcon from "@mui/icons-material/Inbox";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-import LockIcon from "@mui/icons-material/Lock";
 
 const Dashboard = () => {
-  const user = getUserData();
-  const currentHour = new Date().getHours();
-  const isRestricted = user.store_count > 1 && currentHour >= 10 && currentHour < 21;
-
   const [dashboardData, setDashboardData] = useState(null);
   const [metricType, setMetricType] = useState("count");
   const [year, setYear] = useState(new Date().getFullYear());
@@ -83,18 +77,6 @@ const Dashboard = () => {
   };
 
   useEffect(() => { fetchData(); }, [year, month]);
-
-  if (isRestricted) {
-    return (
-      <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: 400, gap: 2 }}>
-        <LockIcon sx={{ fontSize: 64, color: "text.secondary" }} />
-        <Typography variant="h5" sx={{ fontWeight: 700 }}>Tablero no disponible</Typography>
-        <Typography variant="body1" color="text.secondary" align="center">
-          El dashboard está disponible únicamente antes de las 10:00 AM y después de las 9:00 PM.
-        </Typography>
-      </Box>
-    );
-  }
 
   const calculateKPIs = () => {
     if (!dashboardData?.sales?.length) return null;
@@ -239,7 +221,6 @@ const Dashboard = () => {
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-      {/* Header + Filtros */}
       <Box className="card" sx={{ mb: 0 }}>
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 1, mb: 2 }}>
           <Box>
@@ -250,9 +231,7 @@ const Dashboard = () => {
         <Filters {...{ metricType, setMetricType, year, setYear, month, setMonth }} />
       </Box>
 
-      {/* KPI Cards + Insights en un solo bloque */}
       <Grid container spacing={2}>
-        {/* KPIs */}
         <Grid item xs={6} md={3}>
           <Box className="card" sx={{ height: "100%", mb: 0 }}>
             <KPICard title="Total Ventas" value={kpis.totalSales.toLocaleString()} subtitle={periodLabel} icon={ShoppingCartIcon} index={0} />
@@ -274,7 +253,6 @@ const Dashboard = () => {
           </Box>
         </Grid>
 
-        {/* Insights — misma fila visual */}
         {insightPairs.map((pair, i) => (
           <Grid item xs={6} md={3} key={`insight-${i}`}>
             <Box className="card" sx={{
@@ -299,7 +277,6 @@ const Dashboard = () => {
         ))}
       </Grid>
 
-      {/* Gráfica principal */}
       <Box className="card">
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
           <Typography variant="h6" sx={{ fontWeight: 500, color: "text.primary" }}>
@@ -341,7 +318,6 @@ const Dashboard = () => {
         )}
       </Box>
 
-      {/* Gráficas secundarias */}
       <Grid container spacing={3}>
         <Grid item xs={12} md={6}>
           <Box className="card" sx={{ height: "100%" }}>

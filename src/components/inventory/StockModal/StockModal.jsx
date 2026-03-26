@@ -42,7 +42,7 @@ const StockModal = ({ isOpen, product, onClose }) => {
   
   useEffect(() => {
     const fetchData = async () => {
-      const response = await getStockOtherStores(storeProduct.product?.code);
+      const response = await getStockOtherStores(storeProduct.id);
       setStockOtherStores(response.data);
     };
   
@@ -66,7 +66,7 @@ const StockModal = ({ isOpen, product, onClose }) => {
 
       const response = await createTransfer(data);
       if ([201, 202].includes(response.status)) {
-        showSuccess("Traspaso creado exitosamente");
+        showSuccess("Traspaso creado, esperando confirmación");
         setRequestedQuantities({});
         onClose();
         setIsLoading(false)

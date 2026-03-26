@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { getUser, updateUser, changePassword } from "../api/users";
-import Swal from "sweetalert2";
+import { showSuccess, showError } from "../utils/alerts";
 
 export const useUserManagement = () => {
   const [editUserModal, setEditUserModal] = useState({ open: false, userId: null, data: {} });
@@ -13,7 +13,7 @@ export const useUserManagement = () => {
       const response = await getUser(userId);
       setEditUserModal({ open: true, userId, data: response.data });
     } catch (error) {
-      Swal.fire('Error', 'No se pudo cargar la información del usuario', 'error');
+      showError('Error', 'No se pudo cargar la información del usuario');
     }
   };
 
@@ -29,10 +29,10 @@ export const useUserManagement = () => {
   const handleSaveUser = async () => {
     try {
       await updateUser(editUserModal.userId, editUserModal.data);
-      Swal.fire('Guardado', 'Usuario actualizado correctamente', 'success');
+      showSuccess('Guardado', 'Usuario actualizado correctamente');
       handleCloseEditUser();
     } catch (error) {
-      Swal.fire('Error', 'No se pudo actualizar el usuario', 'error');
+      showError('Error', 'No se pudo actualizar el usuario');
     }
   };
 
@@ -64,10 +64,10 @@ export const useUserManagement = () => {
         confirm_password: passwordData.confirm_password,
         user_id: changePasswordModal.userId
       });
-      Swal.fire('Guardado', 'Contraseña cambiada correctamente', 'success');
+      showSuccess('Guardado', 'Contraseña cambiada correctamente');
       handleCloseChangePassword();
     } catch (error) {
-      Swal.fire('Error', error.response?.data?.message || 'No se pudo cambiar la contraseña', 'error');
+      showError('Error', error.response?.data?.message || 'No se pudo cambiar la contraseña');
     }
   };
 

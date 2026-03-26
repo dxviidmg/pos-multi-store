@@ -36,9 +36,11 @@ const ProductReassign = lazyRetry(() => import("./components/products/ProductRea
 const TransactionAudit = lazyRetry(() => import("./components/admin/TransactionAudit/TransactionAudit"));
 const ProductAudit = lazyRetry(() => import("./components/admin/ProductAudit/ProductAudit"));
 const Dashboard = lazyRetry(() => import("./components/admin/Dashboard/Dashboard"));
+const CancellationsDashboard = lazyRetry(() => import("./components/admin/Dashboard/CancellationsDashboard"));
+const ProductsDashboard = lazyRetry(() => import("./components/admin/Dashboard/ProductsDashboard"));
 const DistributionList = lazyRetry(() => import("./components/inventory/DistributionList/DistributionList"));
 const RestartService = lazyRetry(() => import("./components/admin/RestartService/RestartService"));
-const TenantProfile = lazyRetry(() => import("./components/admin/TenantProfile/TenantProfile"));
+const Profile = lazyRetry(() => import("./components/admin/Profile/Profile"));
 
 function App({ toggleTheme, themeMode }) {
   useKeepAlive();
@@ -76,14 +78,16 @@ function App({ toggleTheme, themeMode }) {
             <Route path="/pagos/" element={<Suspense fallback={<LoadingFallback />}><TenantPaymentList /></Suspense>} />
             <Route path="/vendedores/" element={<Suspense fallback={<LoadingFallback />}><SellerList /></Suspense>} />
             <Route path="/servicios/" element={<Suspense fallback={<LoadingFallback />}><ServiceList /></Suspense>} />
-            <Route path="/tablero/" element={<Suspense fallback={<LoadingFallback />}><Dashboard /></Suspense>} />
+            <Route path="/tablero-ventas/" element={<Suspense fallback={<LoadingFallback />}><Dashboard /></Suspense>} />
+            <Route path="/tablero-ventas-ajustadas-cancelaciones/" element={<Suspense fallback={<LoadingFallback />}><CancellationsDashboard /></Suspense>} />
+            <Route path="/tablero-productos/" element={<Suspense fallback={<LoadingFallback />}><ProductsDashboard /></Suspense>} />
             <Route path="/reasignacion/" element={<Suspense fallback={<LoadingFallback />}><ProductReassign /></Suspense>} />
             <Route path="/importar-productos/" element={<Suspense fallback={<LoadingFallback />}><ProductImport /></Suspense>} />
             <Route path="/importar-inventario/" element={<Suspense fallback={<LoadingFallback />}><StoreProductImport /></Suspense>} />
             <Route path="/auditoria-transacciones/" element={<Suspense fallback={<LoadingFallback />}><TransactionAudit /></Suspense>} />
             <Route path="/auditoria-productos/" element={<Suspense fallback={<LoadingFallback />}><ProductAudit /></Suspense>} />
             <Route path="/sincronizar/" element={<Suspense fallback={<LoadingFallback />}><RestartService /></Suspense>} />
-            <Route path="/tenant-profile/" element={<Suspense fallback={<LoadingFallback />}><TenantProfile /></Suspense>} />
+            <Route path="/perfil/" element={<Suspense fallback={<LoadingFallback />}><Profile /></Suspense>} />
             {user?.store_id ? (
               <Route path="*" element={<Suspense fallback={<LoadingFallback />}><SaleCreate /></Suspense>} />
             ) : (

@@ -17,17 +17,9 @@ import { getUserData } from '../../../api/utils';
 import { getTenant, updateTenant } from '../../../api/tenants';
 import { getUser, updateUser, changePassword } from '../../../api/users';
 import { CustomSpinner } from '../../ui/Spinner/Spinner';
-import { useNavigate } from 'react-router-dom';
 
-const TenantProfile = () => {
+const Profile = () => {
   const user = getUserData();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (user.role !== 'owner') {
-      navigate('/');
-    }
-  }, [user.role, navigate]);
   const [tenantData, setTenantData] = useState({
     name: '',
     short_name: '',
@@ -69,12 +61,10 @@ const TenantProfile = () => {
 
   const fetchData = async () => {
     try {
-      const [tenantResponse, userResponse] = await Promise.all([
-        getTenant(user.tenant_id),
-        getUser(user.user_id)
-      ]);
+      const promises = [getTenant(user.tenant_id), getUser(user.user_id)];
+      const results = await Promise.all(promises);
       
-      const tenantInfo = tenantResponse.data;
+      const tenantInfo = results[0].data;
       setTenantData({
         name: tenantInfo.name || '',
         short_name: tenantInfo.short_name || '',
@@ -84,7 +74,7 @@ const TenantProfile = () => {
         displays_stock_in_storages: tenantInfo.displays_stock_in_storages || false,
       });
 
-      const userInfo = userResponse.data;
+      const userInfo = results[1].data;
       setUserData({
         username: userInfo.username || '',
         email: userInfo.email || '',
@@ -195,7 +185,6 @@ const TenantProfile = () => {
         )}
 
         <Grid container spacing={3}>
-          {/* Información del Tenant */}
           <Grid item xs={12} md={6}>
             <Box sx={{ mb: 3 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -241,7 +230,6 @@ const TenantProfile = () => {
             </Box>
           </Grid>
 
-          {/* Configuraciones */}
           <Grid item xs={12} md={6}>
             <Box sx={{ mb: 3 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -277,7 +265,6 @@ const TenantProfile = () => {
             </Button>
           </Grid>
 
-          {/* Información del Usuario */}
           <Grid item xs={12} md={6}>
             <Box sx={{ mb: 3 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -344,7 +331,6 @@ const TenantProfile = () => {
             </Button>
           </Grid>
 
-          {/* Cambiar Contraseña */}
           <Grid item xs={12} md={6}>
             <Box sx={{ mb: 3 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -449,4 +435,4 @@ const TenantProfile = () => {
   );
 };
 
-export default TenantProfile;
+export default Profile;

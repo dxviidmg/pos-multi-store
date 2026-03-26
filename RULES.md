@@ -8,6 +8,7 @@
   - Stock se permite por ser término común en comercio.
 - Nombres de variables, componentes y archivos en inglés.
 - Mensajes de commit en inglés, formato convencional: `feat:`, `fix:`, `refactor:`, `docs:`, `style:`, `perf:`, `chore:`.
+- Al generar un mensaje de commit, actualizar el README si los cambios afectan funcionalidades, stack o arquitectura documentados.
 
 ## Estructura de archivos
 
