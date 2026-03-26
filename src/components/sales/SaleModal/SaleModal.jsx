@@ -77,7 +77,6 @@ const SaleModal = ({ isOpen, sale, onClose, onUpdate }) => {
       <Grid container sx={{ padding: '1rem', backgroundColor: 'rgba(4, 53, 107, 0.2)' }}>
         <Grid item xs={12} className="card">
         <Grid container spacing={2}>
-          {/* Información general de la venta */}
           <Grid item xs={12} md={2}>
             <TextField size="small" fullWidth label="Folio" type="text" value={formData.id} disabled />
           </Grid>
@@ -116,7 +115,6 @@ const SaleModal = ({ isOpen, sale, onClose, onUpdate }) => {
               onChange={(e) => setReason(e.target.value)}
             />
           </Grid>
-          {/* Tabla de productos */}
           <Grid item xs={12} md={12}>
             <h5>{totalCancel ? "Todos los productos serán devueltos" : "Selecciona los productos a devolver"}</h5>
             <SimpleTable
@@ -141,7 +139,6 @@ const SaleModal = ({ isOpen, sale, onClose, onUpdate }) => {
             />
           </Grid>
 
-          {/* Botón de acción */}
           <Grid item xs={12} md={12}>
             <CustomButton
               fullWidth

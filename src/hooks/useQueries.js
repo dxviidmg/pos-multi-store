@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getBrands, createBrand, updateBrand, deleteBrands } from '../api/brands';
-import { getDepartments, createDepartment, updateDepartment, deleteDepartments } from '../api/departments';
-import { getProducts, deleteProducts } from '../api/products';
+import { getBrands, createBrand, updateBrand } from '../api/brands';
+import { getDepartments, createDepartment, updateDepartment } from '../api/departments';
+import { getProducts } from '../api/products';
 import { getSellers } from '../api/sellers';
 import { getStores } from '../api/stores';
 import { getClients } from '../api/clients';
@@ -39,16 +39,6 @@ export const useUpdateBrand = () => {
   });
 };
 
-export const useDeleteBrands = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: deleteBrands,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['brands'] });
-    }
-  });
-};
-
 // Departments
 export const useDepartments = () => {
   return useQuery({
@@ -80,16 +70,6 @@ export const useUpdateDepartment = () => {
   });
 };
 
-export const useDeleteDepartments = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: deleteDepartments,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['departments'] });
-    }
-  });
-};
-
 // Products
 export const useProducts = (params = {}) => {
   return useQuery({
@@ -97,16 +77,6 @@ export const useProducts = (params = {}) => {
     queryFn: async () => {
       const response = await getProducts(params);
       return response.data;
-    }
-  });
-};
-
-export const useDeleteProducts = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: deleteProducts,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['products'] });
     }
   });
 };

@@ -185,7 +185,6 @@ const Profile = () => {
         )}
 
         <Grid container spacing={3}>
-          {/* Información del Tenant */}
           <Grid item xs={12} md={6}>
             <Box sx={{ mb: 3 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -231,7 +230,6 @@ const Profile = () => {
             </Box>
           </Grid>
 
-          {/* Configuraciones */}
           <Grid item xs={12} md={6}>
             <Box sx={{ mb: 3 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -267,7 +265,6 @@ const Profile = () => {
             </Button>
           </Grid>
 
-          {/* Información del Usuario */}
           <Grid item xs={12} md={6}>
             <Box sx={{ mb: 3 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -334,7 +331,6 @@ const Profile = () => {
             </Button>
           </Grid>
 
-          {/* Cambiar Contraseña */}
           <Grid item xs={12} md={6}>
             <Box sx={{ mb: 3 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>

@@ -240,7 +240,6 @@ const CancellationsDashboard = () => {
         </Grid>
       )}
 
-      {/* Listado de motivos */}
       <Box className="card">
         <Typography variant="h6" sx={{ fontWeight: 500, mb: 2 }}>Motivos</Typography>
         {data.sales.filter(s => s.reason_cancel || s.reason_return).map((s) => (
