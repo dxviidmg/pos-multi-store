@@ -167,6 +167,9 @@ export default function MainLayout({ toggleTheme, themeMode }) {
 
   const isActive = (href) => location.pathname === href;
 
+  const currentHour = new Date().getHours();
+  const isDashboardRestricted = user.store_count > 1 && currentHour >= 10 && currentHour < 21;
+
   const linksByType = {
     T: [
       { label: "Vender", href: "/vender/" },
@@ -234,7 +237,16 @@ export default function MainLayout({ toggleTheme, themeMode }) {
       { label: "Historial de stock", href: "/historial-stock/" },
     ],
     G: [
-      { label: "Tablero", href: "/tablero/" },
+      {
+        label: "Tablero",
+        disabled: isDashboardRestricted,
+        disabledMessage: "Disponible de 9 PM a 10 AM",
+        dropdown: [
+          { label: "Ventas exitosas", href: "/tablero/" },
+          { label: "Ventas modificadas y/o canceladas", href: "/tablero-cancelaciones/" },
+          { label: "Marcas y productos", href: "/tablero-productos/" },
+        ],
+      },
       { label: "Tiendas", href: "/tiendas/" },
       { label: "Clientes", href: "/clientes/" },
       { label: "Vendedores", href: "/vendedores/" },
@@ -349,21 +361,25 @@ export default function MainLayout({ toggleTheme, themeMode }) {
                 <React.Fragment key={idx}>
                   <ListItem disablePadding sx={{ mb: 0.3 }}>
                     <ListItemButton
-                      onClick={() => handleToggleMenu(item.label)}
+                      onClick={() => !item.disabled && handleToggleMenu(item.label)}
+                      disabled={item.disabled}
                       sx={{
                         borderRadius: "10px", py: 1,
                         justifyContent: open ? "initial" : "center",
-                        "&:hover": { backgroundColor: "rgba(255,255,255,0.08)" },
+                        "&:hover": { backgroundColor: item.disabled ? "transparent" : "rgba(255,255,255,0.08)" },
                       }}
                     >
-                      <ListItemIcon sx={{ color: "rgba(255,255,255,0.7)", minWidth: open ? 38 : 0, justifyContent: "center" }}>
+                      <ListItemIcon sx={{ color: item.disabled ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.7)", minWidth: open ? 38 : 0, justifyContent: "center" }}>
                         {iconMap[item.label] || <DashboardIcon />}
                       </ListItemIcon>
-                      <ListItemText primary={item.label}
+                      <ListItemText
+                        primary={item.label}
+                        secondary={item.disabled && open ? item.disabledMessage : null}
                         primaryTypographyProps={{ fontWeight: 600, fontSize: "0.8rem" }}
+                        secondaryTypographyProps={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.4)" }}
                         sx={{ opacity: open ? 1 : 0 }}
                       />
-                      {open && (openMenus[item.label] ? <ExpandLess sx={{ fontSize: 18 }} /> : <ExpandMore sx={{ fontSize: 18 }} />)}
+                      {open && !item.disabled && (openMenus[item.label] ? <ExpandLess sx={{ fontSize: 18 }} /> : <ExpandMore sx={{ fontSize: 18 }} />)}
                     </ListItemButton>
                   </ListItem>
                   <Collapse in={openMenus[item.label]} timeout="auto" unmountOnExit>

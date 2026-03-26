@@ -17,7 +17,6 @@ import {
   MONTH_NAMES, MONTH_NAMES_SHORT, DAY_NAMES, CHART_COLORS,
   formatCurrency, getErrorMessage, getTied,
 } from "../../../utils/utils";
-import { getUserData } from "../../../api/utils";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
@@ -27,13 +26,8 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import InboxIcon from "@mui/icons-material/Inbox";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-import LockIcon from "@mui/icons-material/Lock";
 
 const Dashboard = () => {
-  const user = getUserData();
-  const currentHour = new Date().getHours();
-  const isRestricted = user.store_count > 1 && currentHour >= 10 && currentHour < 21;
-
   const [dashboardData, setDashboardData] = useState(null);
   const [metricType, setMetricType] = useState("count");
   const [year, setYear] = useState(new Date().getFullYear());
@@ -83,18 +77,6 @@ const Dashboard = () => {
   };
 
   useEffect(() => { fetchData(); }, [year, month]);
-
-  if (isRestricted) {
-    return (
-      <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: 400, gap: 2 }}>
-        <LockIcon sx={{ fontSize: 64, color: "text.secondary" }} />
-        <Typography variant="h5" sx={{ fontWeight: 700 }}>Tablero no disponible</Typography>
-        <Typography variant="body1" color="text.secondary" align="center">
-          El dashboard está disponible únicamente antes de las 10:00 AM y después de las 9:00 PM.
-        </Typography>
-      </Box>
-    );
-  }
 
   const calculateKPIs = () => {
     if (!dashboardData?.sales?.length) return null;
