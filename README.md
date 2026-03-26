@@ -1,6 +1,6 @@
 # SmartVenta — Sistema de Punto de Venta Multi-Tienda
 
-> Última actualización: 25 de marzo de 2026, 15:15 hrs
+> Última actualización: 25 de marzo de 2026, 23:55 hrs
 
 Sistema de punto de venta (POS) diseñado para negocios con múltiples sucursales. Permite gestionar ventas, inventario, traspasos y distribuciones desde una sola plataforma, con visibilidad en tiempo real de todas las tiendas y almacenes.
 
@@ -18,6 +18,8 @@ Negocios minoristas y mayoristas que operan con varias tiendas y/o almacenes, y 
 - **Corte de caja** — Resumen diario de ventas por método de pago (efectivo, tarjeta, transferencia), con movimientos de caja detallados.
 - **Devoluciones y cancelaciones** — Cancelación total de ventas con motivo, devolución parcial de productos (ajusta cantidades o elimina productos de la venta), y registro del motivo en ambos casos. Filtros rápidos por ventas duplicadas, canceladas y con devolución.
 - **Tablero y auditoría** — Tablero de ventas con KPIs (mejor/peor tienda, día, hora pico), heatmap de ventas, ticket promedio por día, y gráficas de tendencia. Dos módulos de auditoría: transacciones (ventas duplicadas, registros inconsistentes, discrepancias de stock) y productos (códigos repetidos, costo en cero, precio mayoreo inconsistente, faltantes en tiendas, productos sin movimiento). Restricción de acceso al tablero por horario configurable.
+- **Tablero de cancelaciones** — Tablero dedicado a ventas canceladas y con devolución: KPIs, gráficas de tendencia, distribución por tienda y tipo, listado de motivos.
+- **Tablero de marcas y productos** — Top marcas y productos más/menos vendidos con porcentaje de participación.
 - **Historial de stock** — Registro detallado de todos los movimientos de inventario: ventas, traspasos, distribuciones, ajustes manuales. Útil para rastrear discrepancias y verificar que entradas y salidas coincidan.
 - **Notificaciones** — Notificaciones en tiempo real vía WebSocket con reconexión automática. Soporte para traspasos, distribuciones, solicitudes de ajuste y apartados. Fetch inicial HTTP al cargar y al cambiar de tienda.
 - **Ayuda contextual** — Botón de ayuda en el navbar que muestra una descripción de la página actual según la ruta.
