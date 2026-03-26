@@ -31,7 +31,7 @@ const PendingMenu = memo(() => {
   return (
     <>
       <IconButton color="inherit" onClick={(e) => { setAnchorEl(e.currentTarget); setSeen(true); fetchPending(); }}>
-        <Badge badgeContent={seen ? 0 : count} color="warning" max={99}>
+        <Badge badgeContent={seen ? 0 : count} color="error" max={99}>
           <AssignmentIcon />
         </Badge>
       </IconButton>

@@ -444,8 +444,7 @@ export default function MainLayout({ toggleTheme, themeMode }) {
             rel="noopener noreferrer"
             sx={{
               borderRadius: 2, justifyContent: open ? "initial" : "center",
-              backgroundColor: "rgba(37, 211, 102, 0.15)", color: "#25D366",
-              "&:hover": { backgroundColor: "rgba(37, 211, 102, 0.3)" },
+              "&:hover": { backgroundColor: "rgba(37, 211, 102, 0.12)" },
             }}
           >
             <ListItemIcon sx={{ color: "#25D366", minWidth: open ? 38 : 0, justifyContent: "center" }}>
