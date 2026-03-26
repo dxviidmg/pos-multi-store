@@ -34,7 +34,6 @@ const ClientList = () => {
 
   return (
     <>
-      {/* 1. MODALS */}
       <ClientModal 
         isOpen={clientModal.isOpen}
         client={clientModal.data}
@@ -46,9 +45,7 @@ const ClientList = () => {
         onClose={discountModal.close}
       />
       
-      {/* 2. CONTENIDO PRINCIPAL */}
       <Grid item xs={12} className="card">
-        {/* 2.1 Header */}
         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
           <h1>Clientes</h1>
           <Stack direction="row" spacing={1}>
@@ -63,7 +60,6 @@ const ClientList = () => {
           </Stack>
         </Stack>
 
-        {/* 2.2 Filtros */}
         <Grid container spacing={2} sx={{ mb: 2 }}>
           <Grid item xs={12} md={4}>
             <TextField
@@ -102,7 +98,6 @@ const ClientList = () => {
           </Grid>
         </Grid>
 
-        {/* 2.3 Tabla */}
         <DataTable
           searcher={true}
           data={clients}

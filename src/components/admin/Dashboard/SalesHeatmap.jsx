@@ -95,7 +95,6 @@ const SalesHeatmap = ({ data, metricType = "count" }) => {
           </Box>
         ))}
       </Box>
-      {/* Legend */}
       <Box sx={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 0.5, mt: 2 }}>
         <Typography variant="caption" sx={{ color: "text.secondary", fontSize: 10, mr: 0.5 }}>Menos</Typography>
         {[0, 0.25, 0.5, 0.75, 1].map((intensity) => (

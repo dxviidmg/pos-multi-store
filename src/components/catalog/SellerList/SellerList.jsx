@@ -73,7 +73,6 @@ const SellerList = () => {
 
   return (
     <>
-      {/* 1. MODALS */}
       <SellerModal 
         isOpen={sellerModal.isOpen}
         seller={sellerModal.data}
@@ -99,10 +98,8 @@ const SellerList = () => {
         onToggleVisibility={togglePasswordVisibility}
       />
       
-      {/* 2. CONTENIDO PRINCIPAL */}
       <Grid container>
         <Grid item xs={12} className="card">
-          {/* 2.1 Header */}
           <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
             <h1>Vendedores</h1>
             <CustomButton onClick={() => sellerModal.open()} startIcon={<AddIcon />}>
@@ -110,7 +107,6 @@ const SellerList = () => {
             </CustomButton>
           </Stack>
 
-          {/* 2.2 Filtros */}
           <Grid container spacing={2} sx={{ mb: 2 }}>
             <Grid item xs={12} sm={6} md={4}>
               <TextField
@@ -149,7 +145,6 @@ const SellerList = () => {
             </Grid>
           </Grid>
 
-          {/* 2.3 Tabla */}
           <DataTable
             progressPending={loading}
             data={sellers}

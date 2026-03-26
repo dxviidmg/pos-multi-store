@@ -173,7 +173,6 @@ const StoreProductImport = () => {
         {loading && <LinearProgress sx={{ mb: 2, borderRadius: 1 }} />}
 
         <Grid container spacing={2}>
-          {/* Col 1: Archivo */}
           <Grid item xs={12} md={3}>
             <DropZone
               isDragging={isDragging}
@@ -192,7 +191,6 @@ const StoreProductImport = () => {
             </DropZone>
           </Grid>
 
-          {/* Col 2: Configuración */}
           <Grid item xs={12} md={3} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <FormControl fullWidth size="small">
               <InputLabel>Acción</InputLabel>
@@ -205,7 +203,6 @@ const StoreProductImport = () => {
             </FormControl>
           </Grid>
 
-          {/* Col 3: Validar */}
           <Grid item xs={12} md={3} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <CustomButton
               onClick={handleValidation}
@@ -229,7 +226,6 @@ const StoreProductImport = () => {
             )}
           </Grid>
 
-          {/* Col 4: Importar */}
           <Grid item xs={12} md={3}>
             <Tooltip title={!canImport ? "Primero valida el archivo sin errores" : ""}>
               <span>
