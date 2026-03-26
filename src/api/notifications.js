@@ -7,3 +7,10 @@ export const getPendingMovements = async () => {
   });
   return response;
 };
+
+export const getDuplicateSales = async () => {
+  const response = await httpClient.get(getApiUrl("duplicate-sales"), {
+    headers: getHeaders(),
+  });
+  return response;
+};
