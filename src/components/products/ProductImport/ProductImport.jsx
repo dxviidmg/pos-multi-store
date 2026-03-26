@@ -10,7 +10,7 @@ import { showSuccess, showError } from "../../../utils/alerts";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import {
   Alert, Grid, Select, MenuItem, FormControl, InputLabel,
-  Typography, styled, Stepper, Step, StepLabel, Paper, Chip,
+  Typography, styled, Stepper, Step, StepLabel, Chip,
   LinearProgress, Tooltip, Stack,
 } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
@@ -52,12 +52,6 @@ const URL_TEMPLATE =
   process.env.REACT_APP_API_URL +
   "/static/templates/SmartVenta_plantilla_importacion_productos.xlsx";
 
-const DATA_SAMPLE = [
-  { code: 1, brand: "Marca 1", name: "Nombre del producto 1", departament: "Departamento 1", cost: 10, unit_price: 20, wholesale_price: 15, min_wholesale_quantity: 3, wholesale_price_on_client_discount: "Si" },
-  { code: 2, brand: "Marca 2", name: "Nombre del producto 2", departament: "Departamento 1", cost: 12, unit_price: 22 },
-  { code: 3, brand: "Marca 3", name: "Nombre del producto 3", departament: "", cost: 14, unit_price: 22, wholesale_price: 15, min_wholesale_quantity: 3 },
-];
-
 const CREATE_OPTIONS = [
   { value: "Y", label: "Si" },
   { value: "N", label: "No" },
@@ -87,7 +81,6 @@ const ProductImport = () => {
     departments_mandatory: "",
     import_stock: "N",
   });
-  const [showExample, setShowExample] = useState(false);
   const [canIncludeQuantity, setCanIncludeQuantity] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -323,13 +316,6 @@ const ProductImport = () => {
           </Grid>
         </Grid>
       </Grid>
-
-      {/* {showExample && (
-        <Grid item xs={12} className="card" sx={{ mb: '1.5rem' }}>
-          <h1>Ejemplo de plantilla</h1>
-          <SimpleTable data={DATA_SAMPLE} columns={productColumns} />
-        </Grid>
-      )} */}
 
       {productsError.length > 0 && (
       <Grid item xs={12} className="card" ref={fileTableRef}>
