@@ -419,7 +419,6 @@ const SearchProduct = ({ searchInputRef }) => {
               <DataTable
               showNoDataComponent={false}
               data={data}
-              pagination={true}
               columns={[
                 { name: "Código", selector: (row) => row.product.code },
                 {
@@ -432,20 +431,12 @@ const SearchProduct = ({ searchInputRef }) => {
                 },
                 { name: "Stock", selector: (row) => row.available_stock },
                 {
-                  name: "Precio unitario",
-                  selector: (row) =>
-                    `$${row.product.prices.unit_price.toFixed(2)}`,
-                },
-                {
-                  name: "Precio mayoreo",
-                  selector: (row) =>
+                  name: "Precios",
+                  cell: (row) => (
                     row.product.prices.apply_wholesale
-                      ? `${
-                          row.product.prices.min_wholesale_quantity
-                        } o más a $${row.product.prices.wholesale_price.toFixed(
-                          2
-                        )}`
-                      : "N/A",
+                      ? <>Men: ${row.product.prices.unit_price.toFixed(2)}<br />May: ${row.product.prices.wholesale_price.toFixed(2)} ({row.product.prices.min_wholesale_quantity}+)</>
+                      : `$${row.product.prices.unit_price.toFixed(2)}`
+                  ),
                 },
                 {
                   name: "Acciones",
