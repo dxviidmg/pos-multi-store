@@ -66,7 +66,7 @@ const StockModal = ({ isOpen, product, onClose }) => {
 
       const response = await createTransfer(data);
       if ([201, 202].includes(response.status)) {
-        showSuccess("Traspaso creado exitosamente");
+        showSuccess("Traspaso creado, esperando confirmación");
         setRequestedQuantities({});
         onClose();
         setIsLoading(false)
