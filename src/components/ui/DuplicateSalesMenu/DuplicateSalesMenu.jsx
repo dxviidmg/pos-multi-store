@@ -3,36 +3,36 @@ import {
   IconButton, Badge, Popover, Box, Typography, List, ListItem,
   ListItemText,
 } from "@mui/material";
-import AssignmentIcon from "@mui/icons-material/Assignment";
-import InboxIcon from "@mui/icons-material/Inbox";
-import { getPendingMovements } from "../../../api/notifications";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import { getDuplicateSales } from "../../../api/notifications";
 
-const PendingMenu = memo(() => {
+const DuplicateSalesMenu = memo(() => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [items, setItems] = useState([]);
   const [seen, setSeen] = useState(false);
 
-  const fetchPending = useCallback(async () => {
+  const fetchDuplicates = useCallback(async () => {
     try {
-      const { data } = await getPendingMovements();
+      const { data } = await getDuplicateSales();
       setItems(data);
     } catch {}
   }, []);
 
   useEffect(() => {
-    fetchPending();
-    const onStoreChange = () => fetchPending();
+    fetchDuplicates();
+    const onStoreChange = () => fetchDuplicates();
     window.addEventListener("store-changed", onStoreChange);
     return () => window.removeEventListener("store-changed", onStoreChange);
-  }, [fetchPending]);
+  }, [fetchDuplicates]);
 
   const count = items.reduce((sum, g) => sum + g.messages.length, 0);
 
   return (
     <>
-      <IconButton color="inherit" onClick={(e) => { setAnchorEl(e.currentTarget); setSeen(true); fetchPending(); }}>
+      <IconButton color="inherit" onClick={(e) => { setAnchorEl(e.currentTarget); setSeen(true); fetchDuplicates(); }}>
         <Badge badgeContent={seen ? 0 : count} color="error" max={99}>
-          <AssignmentIcon />
+          <ContentCopyIcon />
         </Badge>
       </IconButton>
       <Popover
@@ -44,12 +44,12 @@ const PendingMenu = memo(() => {
         slotProps={{ paper: { sx: { width: 360, maxHeight: 420, borderRadius: 3, overflow: "hidden" } } }}
       >
         <Box sx={{ px: 2.5, py: 1.5, borderBottom: 1, borderColor: "divider" }}>
-          <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>Movimientos pendientes</Typography>
+          <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>Ventas duplicadas</Typography>
         </Box>
         {items.length === 0 ? (
           <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", py: 4, gap: 1, opacity: 0.6 }}>
-            <InboxIcon sx={{ fontSize: 40 }} />
-            <Typography variant="body2">Sin pendientes</Typography>
+            <CheckCircleOutlineIcon sx={{ fontSize: 40 }} />
+            <Typography variant="body2">Sin duplicadas hoy</Typography>
           </Box>
         ) : (
           <List dense sx={{ maxHeight: 340, overflow: "auto", py: 0 }}>
@@ -73,6 +73,6 @@ const PendingMenu = memo(() => {
   );
 });
 
-PendingMenu.displayName = "PendingMenu";
+DuplicateSalesMenu.displayName = "DuplicateSalesMenu";
 
-export default PendingMenu;
+export default DuplicateSalesMenu;

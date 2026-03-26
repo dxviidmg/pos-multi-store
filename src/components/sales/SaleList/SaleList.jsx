@@ -20,10 +20,11 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ErrorIcon from "@mui/icons-material/Error";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import { Alert, Popper, Paper, Grid, TextField, Select, MenuItem, FormControl, InputLabel, Box, Stack } from "@mui/material";
+import { Alert, Popper, Paper, Grid, TextField, Select, MenuItem, FormControl, InputLabel, Box} from "@mui/material";
 import { getUserData } from "../../../api/utils";
 import PaymentEditModal from "../PaymentEditModal/PaymentEditModal";
 import CustomTooltip from "../../ui/Tooltip";
+import PageHeader from "../../ui/PageHeader";
 
 const ProductsPopperButton = ({ row, productsModal }) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -144,9 +145,7 @@ const SaleList = () => {
           </Alert>
         )}
 
-        <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-          <h1>Ventas</h1>
-        </Stack>
+        <PageHeader title="Ventas" />
 
         <Grid container spacing={2} sx={{ mb: 2 }}>
           <Grid item xs={12} md={3}>

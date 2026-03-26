@@ -212,17 +212,6 @@ export const reassignProducts = async (data) => {
 };
 
 /**
- * Get store products asynchronously
- * @returns {Promise<Object>} Async task response
- */
-export const getStoreProductsAsync = async () => {
-  const response = await httpClient.get(getApiUrl("async-store-product"), {
-    headers: getHeaders(),
-  });
-  return response;
-};
-
-/**
  * Get async task result
  * @param {string} id - Task ID
  * @returns {Promise<Object>} Task result response

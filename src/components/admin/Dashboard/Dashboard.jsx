@@ -221,7 +221,6 @@ const Dashboard = () => {
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-      {/* Header + Filtros */}
       <Box className="card" sx={{ mb: 0 }}>
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 1, mb: 2 }}>
           <Box>
@@ -232,9 +231,7 @@ const Dashboard = () => {
         <Filters {...{ metricType, setMetricType, year, setYear, month, setMonth }} />
       </Box>
 
-      {/* KPI Cards + Insights en un solo bloque */}
       <Grid container spacing={2}>
-        {/* KPIs */}
         <Grid item xs={6} md={3}>
           <Box className="card" sx={{ height: "100%", mb: 0 }}>
             <KPICard title="Total Ventas" value={kpis.totalSales.toLocaleString()} subtitle={periodLabel} icon={ShoppingCartIcon} index={0} />
@@ -256,7 +253,6 @@ const Dashboard = () => {
           </Box>
         </Grid>
 
-        {/* Insights — misma fila visual */}
         {insightPairs.map((pair, i) => (
           <Grid item xs={6} md={3} key={`insight-${i}`}>
             <Box className="card" sx={{
@@ -281,7 +277,6 @@ const Dashboard = () => {
         ))}
       </Grid>
 
-      {/* Gráfica principal */}
       <Box className="card">
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
           <Typography variant="h6" sx={{ fontWeight: 500, color: "text.primary" }}>
@@ -323,7 +318,6 @@ const Dashboard = () => {
         )}
       </Box>
 
-      {/* Gráficas secundarias */}
       <Grid container spacing={3}>
         <Grid item xs={12} md={6}>
           <Box className="card" sx={{ height: "100%" }}>

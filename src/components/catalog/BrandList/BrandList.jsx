@@ -9,7 +9,8 @@ import EditIcon from "@mui/icons-material/Edit";
 import CustomTooltip from "../../ui/Tooltip";
 import { useBrands } from "../../../hooks/useBrands";
 import { useModal } from "../../../hooks/useModal";
-import { Grid, Stack } from "@mui/material";
+import PageHeader from "../../ui/PageHeader";
+import { Grid } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 
@@ -42,12 +43,11 @@ const BrandList = () => {
       <BrandModal isOpen={brandModal.isOpen} brand={brandModal.data} onClose={brandModal.close} onUpdate={refetch} />
 
       <Grid item xs={12} className="card">
-        <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-          <h1>Marcas</h1>
+        <PageHeader title="Marcas">
           <CustomButton onClick={() => brandModal.open()} startIcon={<AddIcon />}>
             Nueva Marca
           </CustomButton>
-        </Stack>
+        </PageHeader>
 
         <Grid container spacing={2} alignItems="center" sx={{ mb: 2 }}>
           <Grid item xs={12} md={3}>

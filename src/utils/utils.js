@@ -1,6 +1,6 @@
 import * as XLSX from "xlsx";
-import Swal from "sweetalert2";
 import { getPrint } from "../api/printers";
+import { showAlert } from "./alerts";
 
 // --- Constantes de fechas ---
 export const MONTH_NAMES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
@@ -95,12 +95,6 @@ export const calculateTimeAgo = (creationDate) => {
     return `hace ${seconds} segundo(s)`;
   }
 };
-
-const showAlert = (icon, title, text = "", timer = 5000) => {
-  Swal.fire({ icon, title, text, timer });
-};
-
-
 
 export function getDateDifference(startDate, endDate) {
   let start = new Date(startDate);

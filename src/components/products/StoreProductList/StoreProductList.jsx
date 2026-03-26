@@ -18,6 +18,7 @@ import HistoryIcon from "@mui/icons-material/History";
 import SendIcon from "@mui/icons-material/Send";
 import CustomTooltip from "../../ui/Tooltip";
 import { UI_TEXT } from "../../../constants";
+import PageHeader from "../../ui/PageHeader";
 
 const StoreProductList = () => {
   const user = getUserData();

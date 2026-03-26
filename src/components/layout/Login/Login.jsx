@@ -63,7 +63,6 @@ function Login({ onLogin }) {
       backgroundPosition: 'center', position: 'fixed',
       top: 0, left: 0, right: 0, bottom: 0,
     }}>
-      {/* Overlay oscuro */}
       <Box sx={{
         position: 'absolute', inset: 0,
         background: 'linear-gradient(135deg, rgba(4,52,107,0.85) 0%, rgba(6,90,158,0.75) 100%)',
@@ -78,7 +77,6 @@ function Login({ onLogin }) {
         border: '1px solid rgba(255,255,255,0.1)',
         boxShadow: '0 24px 80px rgba(0,0,0,0.4)',
       }}>
-        {/* Header */}
         <Box sx={{ textAlign: 'center', pt: 5, pb: 2, px: 4 }}>
           <Box component="img" src={Logo} alt="SmartVenta" sx={{
             maxWidth: '160px', height: 'auto', mb: 3, borderRadius: 0,
@@ -94,7 +92,6 @@ function Login({ onLogin }) {
           </Typography>
         </Box>
 
-        {/* Form */}
         <Box sx={{ px: 4, pb: 5, pt: 2 }}>
           {alertData.shown && (
             <Alert severity="error" sx={{

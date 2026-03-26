@@ -5,8 +5,9 @@ import { getDepartments } from "../../../api/departments";
 import { reassignProducts } from "../../../api/products";
 import { showSuccess, showError } from "../../../utils/alerts";
 import CustomButton from "../../ui/Button/Button";
-import { Grid, Select, MenuItem, FormControl, InputLabel, Stack } from "@mui/material";
+import { Grid, Select, MenuItem, FormControl, InputLabel} from "@mui/material";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
+import PageHeader from "../../ui/PageHeader";
 
 const REASSIGN_TYPE = [
   { value: "brand", label: "Marca" },
@@ -68,9 +69,7 @@ const ProductReassign = () => {
     <Grid container>
       <Grid item xs={12} className="card">
         <CustomSpinner isLoading={loading} />
-        <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-          <h1>Reasignación de productos</h1>
-        </Stack>
+        <PageHeader title="Reasignación de productos" />
 
         <Grid container spacing={2}>
           <Grid item xs={12} md={3}>

@@ -16,10 +16,6 @@ export const showWarning = (title, text = "") => {
   showAlert("warning", title, text);
 };
 
-export const showInfo = (title, text = "") => {
-  showAlert("info", title, text);
-};
-
 export const showConfirm = async (title, text = "") => {
   const result = await Swal.fire({
     icon: "warning",

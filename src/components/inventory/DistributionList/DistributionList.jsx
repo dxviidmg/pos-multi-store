@@ -12,12 +12,13 @@ import {
   updateTranfer,
 } from "../../../api/transfers";
 import CustomTooltip from "../../ui/Tooltip";
-import { Grid, TextField, Stack } from "@mui/material";
+import { Grid, TextField} from "@mui/material";
 import ChecklistIcon from "@mui/icons-material/Checklist";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from "@mui/icons-material/Save";
 import SendIcon from "@mui/icons-material/Send";
+import PageHeader from "../../ui/PageHeader";
 
 const DistributionList = () => {
   const user = getUserData();
@@ -89,9 +90,7 @@ const DistributionList = () => {
       <CustomSpinner isLoading={loading} />
 
       <Grid item xs={12} className="card" sx={{ mb: '1.5rem' }}>
-        <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-          <h1>Distribuciones</h1>
-        </Stack>
+        <PageHeader title="Distribuciones" />
 
         <DataTable
           data={distributions}

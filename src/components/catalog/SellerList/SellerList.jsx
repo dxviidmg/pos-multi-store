@@ -9,7 +9,8 @@ import { useModal } from "../../../hooks/useModal";
 import { useUserManagement } from "../../../hooks/useUserManagement";
 import EditUserModal from "../../ui/UserModals/EditUserModal";
 import ChangePasswordModal from "../../ui/UserModals/ChangePasswordModal";
-import { Grid, TextField, Stack } from "@mui/material";
+import PageHeader from "../../ui/PageHeader";
+import { Grid, TextField } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import LockResetIcon from "@mui/icons-material/LockReset";
@@ -73,7 +74,6 @@ const SellerList = () => {
 
   return (
     <>
-      {/* 1. MODALS */}
       <SellerModal 
         isOpen={sellerModal.isOpen}
         seller={sellerModal.data}
@@ -99,18 +99,14 @@ const SellerList = () => {
         onToggleVisibility={togglePasswordVisibility}
       />
       
-      {/* 2. CONTENIDO PRINCIPAL */}
       <Grid container>
         <Grid item xs={12} className="card">
-          {/* 2.1 Header */}
-          <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-            <h1>Vendedores</h1>
+          <PageHeader title="Vendedores">
             <CustomButton onClick={() => sellerModal.open()} startIcon={<AddIcon />}>
               Nuevo Vendedor
             </CustomButton>
-          </Stack>
+          </PageHeader>
 
-          {/* 2.2 Filtros */}
           <Grid container spacing={2} sx={{ mb: 2 }}>
             <Grid item xs={12} sm={6} md={4}>
               <TextField
@@ -149,7 +145,6 @@ const SellerList = () => {
             </Grid>
           </Grid>
 
-          {/* 2.3 Tabla */}
           <DataTable
             progressPending={loading}
             data={sellers}
