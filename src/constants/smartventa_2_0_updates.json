@@ -12,7 +12,8 @@
           "Nuevo diseño de inicio de sesión",
           "Botón de ayuda en la barra superior que explica para qué sirve cada página (nuevo, barra superior)",
           "Botón de soporte por WhatsApp (nuevo, menú lateral)",
-          "Las notificaciones ahora llegan al instante (nuevo, barra superior)"
+          "Las notificaciones ahora llegan al instante (nuevo, barra superior)",
+          "Indicador de ventas duplicadas en la barra superior: muestra un contador y al dar clic ves el detalle por tienda (nuevo)"
         ]
       },
       {
@@ -31,7 +32,10 @@
         "items": [
           "Se ve más claro si una venta está bien o tiene problemas (íconos de palomita o error)",
           "Los productos de cada venta se ven al pasar el mouse encima, sin abrir nada",
-          "Puedes buscar ventas por fecha, número de venta o nombre de cliente"
+          "Puedes buscar ventas por fecha, número de venta o nombre de cliente",
+          "Puedes cancelar una venta completa indicando el motivo",
+          "Puedes hacer devoluciones parciales: ajustar cantidades o quitar productos de una venta",
+          "Filtros rápidos para ver ventas duplicadas, canceladas o con devolución"
         ]
       },
       {
@@ -47,6 +51,16 @@
           "Filtros para buscar por código, marca, departamento o stock máximo",
           "Se puede descargar el inventario a Excel",
           "Muestra qué porcentaje de productos está en cero"
+        ]
+      },
+      {
+        "section": "Importación",
+        "items": [
+          "Nuevo diseño en las páginas de importar productos, inventario y ventas",
+          "Pasos visuales que te guían en el proceso",
+          "Puedes arrastrar y soltar el archivo en vez de buscarlo",
+          "Después de validar ves un resumen de cuántas filas están bien y cuántas tienen error",
+          "Si hay errores, te dice que corrijas el archivo y lo vuelvas a subir"
         ]
       }
     ],
@@ -71,6 +85,21 @@
           "Gráfica de ticket promedio por día",
           "Gráfica de tendencia de ventas con filtros por año",
           "Se puede restringir el acceso al tablero por horario"
+        ]
+      },
+      {
+        "section": "Tablero de cancelaciones (nueva sección, menú lateral)",
+        "items": [
+          "Indicadores de ventas canceladas y con devolución",
+          "Gráficas de tendencia y distribución por tienda y tipo",
+          "Listado de motivos de cancelación y devolución"
+        ]
+      },
+      {
+        "section": "Tablero de marcas y productos (nueva sección, menú lateral)",
+        "items": [
+          "Top marcas y productos más y menos vendidos",
+          "Porcentaje de participación de cada marca y producto"
         ]
       },
       {
@@ -126,6 +155,12 @@
     ],
     "admin": [
       {
+        "section": "Perfil (nuevo, se accede dando clic en tu foto en la barra superior)",
+        "items": [
+          "Puedes ver tu información y cambiar tu contraseña"
+        ]
+      },
+      {
         "section": "Inventario",
         "items": [
           "Nuevo botón para solicitar un ajuste de stock en cualquier producto",
@@ -136,11 +171,24 @@
     ],
     "seller": [
       {
-        "section": "Inventario",
+        "section": "Perfil (nuevo, se accede dando clic en tu foto en la barra superior)",
         "items": [
+          "Puedes ver tu información y cambiar tu contraseña"
+        ]
+      },
+      {
+        "section": "Inventario (nuevo acceso)",
+        "items": [
+          "Ahora puedes consultar el inventario de tu tienda",
           "Nuevo botón para solicitar un ajuste de stock en cualquier producto",
           "Se abre una ventana donde ves el producto, el stock actual, y escribes la cantidad correcta",
           "La solicitud le llega al dueño para que la apruebe"
+        ]
+      },
+      {
+        "section": "Movimientos en caja (nuevo acceso)",
+        "items": [
+          "Ahora puedes ver los movimientos de caja de tu tienda"
         ]
       }
     ]
