@@ -64,6 +64,8 @@ const DepartmentList = () => {
 
         <DataTable
           progressPending={loading}
+          noDataComponent="Sin departamentos"
+          searcher={true}
           data={departments}
           setSelectedRows={setSelectedRows}
           columns={[

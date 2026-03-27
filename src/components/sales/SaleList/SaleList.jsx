@@ -224,12 +224,14 @@ const SaleList = () => {
         </Grid>
 
         <DataTable
+          progressPending={loading}
+          noDataComponent="Sin ventas"
+          searcher={true}
           data={quickFilter === "all" ? sales
             : quickFilter === "duplicated" ? sales.filter(s => salesDuplicated.includes(s.id))
             : quickFilter === "canceled" ? sales.filter(s => s.is_canceled)
             : sales.filter(s => s.has_return)
           }
-          pagination={true}
           columns={[
             { name: "#", selector: (row) => row.id, width: 70 },
             {

@@ -37,7 +37,7 @@ const changeProductPrice = (product_price, prices) => {
 
 
 const updateCartWithPrice = (cart, clientSelected) => {
-  return cart.map((item, index) => ({
+  return cart.map((item) => ({
     ...item,
     product_price: calculateProductPrice(item.quantity, item.product.prices, clientSelected)
   }));

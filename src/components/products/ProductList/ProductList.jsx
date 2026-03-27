@@ -209,6 +209,7 @@ const ProductList = () => {
             setSelectedRows={setSelectedRows}
             searcher={true}
             progressPending={loading}
+            noDataComponent="Sin productos"
             data={products}
             columns={[
               { name: "Código", selector: (row) => row.code },

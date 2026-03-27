@@ -93,8 +93,9 @@ const DistributionList = () => {
         <PageHeader title="Distribuciones" />
 
         <DataTable
+          progressPending={loading}
+          noDataComponent="Sin distribuciones"
           data={distributions}
-          pagination={true}
           columns={[
             { name: "#", selector: (row) => row.id },
             { name: "Fecha y hora", selector: (row) => getFormattedDateTime(row.created_at) },
@@ -122,8 +123,8 @@ const DistributionList = () => {
           </CustomButton>
 
           <DataTable
+            noDataComponent="Sin productos"
             data={selected.transfers || []}
-            pagination={true}
             columns={[
               { name: "Código", selector: (row) => row.product_code },
               { name: "Nombre", selector: (row) => row.product_description },

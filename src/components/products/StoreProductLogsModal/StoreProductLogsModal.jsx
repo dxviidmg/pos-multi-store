@@ -117,6 +117,7 @@ const StoreProductLogsModal = ({ isOpen, logs: logsData, onClose, onUpdate }) =>
         <Grid item xs={12} md={12}>
         <h1>Últimos movimientos</h1>
           <DataTable
+            noDataComponent="Sin movimientos"
             data={logs}
             columns={[
               {

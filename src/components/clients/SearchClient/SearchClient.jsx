@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import DataTable from "../../ui/DataTable/DataTable";
+import SimpleTable from "../../ui/SimpleTable/SimpleTable";
 import { getClients } from "../../../api/clients";
 import CustomButton from "../../ui/Button/Button";
 import { useDispatch, useSelector } from "react-redux";
@@ -80,41 +80,31 @@ const SearchClient = () => {
         sx={{ mb: query ? 0 : 1 }}
       />
       {query && (
-        <DataTable
+        <SimpleTable
           data={clients}
-          showNoDataComponent={false}
           columns={[
             {
               name: "Nombre",
               selector: (row) => row.full_name,
-              sortable: true,
             },
 
             {
               name: "Teléfono",
               selector: (row) => row.phone_number,
-              sortable: true,
             },
 
             {
               name: "Descuento",
               selector: (row) => row.discount_percentage + "%",
-              sortable: true,
             },
 
             {
               name: "Acciones",
-              selector: (row) => (
-                <div>
-                  <CustomButton onClick={() => handleSelectClient(row)} startIcon={<CheckCircleIcon />}>
-                    Seleccionar
-                  </CustomButton>
-                </div>
+              cell: (row) => (
+                <CustomButton onClick={() => handleSelectClient(row)} startIcon={<CheckCircleIcon />}>
+                  Seleccionar
+                </CustomButton>
               ),
-            },
-            {
-              name: "Atajo",
-              selector: (row, index) => <div>Ctrl + {index + 1}</div>,
             },
           ]}
         />

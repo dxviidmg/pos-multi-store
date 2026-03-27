@@ -71,6 +71,7 @@ const StockUpdateRequestList = () => {
       <Grid item xs={12} className="card">
         <PageHeader title="Solicitudes de ajustes" />
         <DataTable
+          progressPending={loading}
           noDataComponent="Sin solicitudes pendientes"
           data={requests}
           columns={[

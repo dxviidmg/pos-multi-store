@@ -619,7 +619,6 @@ const Cart = ({ searchInputRef }) => {
           noDataComponent="Sin productos"
           data={cart}
           columns={getColumns()}
-          pagination={true}
         />
       </div>
     </div>

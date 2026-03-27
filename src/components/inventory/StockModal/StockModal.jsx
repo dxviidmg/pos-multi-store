@@ -3,7 +3,7 @@ import { showSuccess } from "../../../utils/alerts";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import CustomModal from "../../ui/Modal/Modal";
-import DataTable from "../../ui/DataTable/DataTable";
+import SimpleTable from "../../ui/SimpleTable/SimpleTable";
 import CustomButton from "../../ui/Button/Button";
 import { createTransfer } from "../../../api/transfers";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
@@ -124,14 +124,14 @@ const StockModal = ({ isOpen, product, onClose }) => {
         </Grid>
       ) : (
         stockOtherStores.length > 0 && (
-          <DataTable
+          <SimpleTable
             data={stockOtherStores}
             columns={[
-              { name: "Tienda o almacén", selector: (row) => row.store_name, sortable: true },
-              { name: "Stock disponible", selector: (row) => row.available_stock, sortable: true },
+              { name: "Tienda o almacén", selector: (row) => row.store_name },
+              { name: "Stock disponible", selector: (row) => row.available_stock },
               {
                 name: "Cantidad a solicitar",
-                selector: (row) => (
+                cell: (row) => (
                   <TextField size="small" fullWidth type="number"
                     name="quantity"
                     min={1}

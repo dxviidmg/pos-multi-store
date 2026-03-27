@@ -42,6 +42,7 @@ const PriceLogsModal = ({ isOpen, product, onClose }) => {
         <Grid item xs={12} className="card">
           <CustomSpinner isLoading={loading} />
           <DataTable
+            noDataComponent="Sin cambios de precio"
             data={rows}
             columns={[
               { name: "Fecha", selector: (row) => getFormattedDateTime(row.date), minWidth: 150 },
