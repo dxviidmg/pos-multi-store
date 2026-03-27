@@ -1,60 +1,38 @@
-import React, { useEffect, useState } from "react";
-import { getTaskResult } from "../../../api/products";
+import React, { useEffect, useState, useCallback } from "react";
+import { getStores } from "../../../api/stores";
+import useTaskPolling from "../../../hooks/useTaskPolling";
+import CountdownTimer from "../../ui/CountdownTimer";
 import SimpleTable from "../../ui/SimpleTable/SimpleTable";
 import {
   Grid, FormControl, InputLabel, Select, MenuItem, Box, Typography,
   LinearProgress, Skeleton,
 } from "@mui/material";
-import { showError } from "../../../utils/alerts";
-import { MONTH_NAMES, getErrorMessage } from "../../../utils/utils";
+import { MONTH_NAMES } from "../../../utils/utils";
 import httpClient from "../../../api/httpClient";
 import { getApiUrl, getHeaders, buildUrlWithParams } from "../../../api/utils";
 import InboxIcon from "@mui/icons-material/Inbox";
 
 const ProductsDashboard = () => {
-  const [data, setData] = useState(null);
   const [year, setYear] = useState(new Date().getFullYear());
   const [month, setMonth] = useState(new Date().getMonth() + 1);
-  const [loading, setLoading] = useState(true);
-  const [progress, setProgress] = useState(0);
+  const [storeId, setStoreId] = useState("");
+  const [stores, setStores] = useState([]);
 
-  const fetchData = async () => {
-    setLoading(true);
-    setProgress(0);
-    try {
-      const url = buildUrlWithParams(getApiUrl("products-dashboard"), { year, month });
-      const response = await httpClient.get(url, { headers: getHeaders() });
-      const taskId = response.data.task;
-      const pollTask = async () => {
-        try {
-          const { data: taskData } = await getTaskResult(taskId);
-          if (taskData.meta?.current && taskData.meta?.total) setProgress((taskData.meta.current / taskData.meta.total) * 100);
-          if (taskData.status === "SUCCESS") {
-            setData(taskData.result);
-            setLoading(false);
-            setProgress(100);
-            clearInterval(intervalId);
-          } else if (taskData.status === "FAILURE") {
-            showError("Error", taskData.error?.message || "Error desconocido");
-            setLoading(false);
-            clearInterval(intervalId);
-          }
-        } catch (error) {
-          showError("Error", getErrorMessage(error));
-          setLoading(false);
-          clearInterval(intervalId);
-        }
-      };
-      let intervalId;
-      pollTask();
-      intervalId = setInterval(pollTask, 10000);
-    } catch (error) {
-      showError("Error al cargar el tablero", getErrorMessage(error));
-      setLoading(false);
-    }
-  };
+  useEffect(() => {
+    getStores().then((res) => setStores(res.data));
+  }, []);
 
-  useEffect(() => { fetchData(); }, [year, month]);
+  const startTask = useCallback(async () => {
+    const params = { year, month };
+    if (storeId) params.store_id = storeId;
+    const url = buildUrlWithParams(getApiUrl("products-dashboard"), params);
+    const response = await httpClient.get(url, { headers: getHeaders() });
+    return response.data.task;
+  }, [year, month, storeId]);
+
+  const { data, loading, progress, countdown, fetchData } = useTaskPolling(startTask);
+
+  useEffect(() => { fetchData(); }, [year, month, storeId]);
 
   const periodLabel = month === 0 ? "Todo el año" : `${MONTH_NAMES[month - 1]} ${year}`;
 
@@ -65,6 +43,7 @@ const ProductsDashboard = () => {
           <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>Marcas y productos</Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>Procesando datos...</Typography>
           <LinearProgress variant={progress > 0 ? "determinate" : "indeterminate"} value={progress} sx={{ height: 6, borderRadius: 3, mb: 1 }} />
+          <CountdownTimer seconds={countdown} />
         </Box>
         <Grid container spacing={2}>
           {[0,1,2].map(i => (
@@ -82,7 +61,7 @@ const ProductsDashboard = () => {
       <Box>
         <Box className="card">
           <Typography variant="h4" sx={{ fontWeight: 700, mb: 2 }}>Marcas y productos</Typography>
-          <Filters {...{ year, setYear, month, setMonth }} />
+          <Filters {...{ year, setYear, month, setMonth, storeId, setStoreId, stores }} />
         </Box>
         <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: 350, gap: 2, opacity: 0.7 }}>
           <InboxIcon sx={{ fontSize: 64, color: "text.secondary" }} />
@@ -103,7 +82,7 @@ const ProductsDashboard = () => {
             <Typography variant="body2" color="text.secondary">{periodLabel}</Typography>
           </Box>
         </Box>
-        <Filters {...{ year, setYear, month, setMonth }} />
+        <Filters {...{ year, setYear, month, setMonth, storeId, setStoreId, stores }} />
       </Box>
 
       <Grid container spacing={3}>
@@ -156,9 +135,20 @@ const ProductsDashboard = () => {
   );
 };
 
-const Filters = ({ year, setYear, month, setMonth }) => (
+const Filters = ({ year, setYear, month, setMonth, storeId, setStoreId, stores }) => (
   <Grid container spacing={2} alignItems="center">
-    <Grid item xs={12} sm={6}>
+    <Grid item xs={12} sm={4}>
+      <FormControl size="small" fullWidth>
+        <InputLabel>Tienda</InputLabel>
+        <Select value={storeId} label="Tienda" onChange={(e) => setStoreId(e.target.value)}>
+          <MenuItem value="">Todas</MenuItem>
+          {stores.map((s) => (
+            <MenuItem key={s.id} value={s.id}>{s.full_name}</MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+    </Grid>
+    <Grid item xs={12} sm={4}>
       <FormControl size="small" fullWidth>
         <InputLabel>Año</InputLabel>
         <Select value={year} label="Año" onChange={(e) => setYear(e.target.value)}>
@@ -168,7 +158,7 @@ const Filters = ({ year, setYear, month, setMonth }) => (
         </Select>
       </FormControl>
     </Grid>
-    <Grid item xs={12} sm={6}>
+    <Grid item xs={12} sm={4}>
       <FormControl size="small" fullWidth>
         <InputLabel>Mes</InputLabel>
         <Select value={month} label="Mes" onChange={(e) => setMonth(e.target.value)}>
