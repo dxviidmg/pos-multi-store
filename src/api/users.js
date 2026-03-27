@@ -15,7 +15,7 @@ export const updateUser = async (id, data) => {
   return response;
 };
 
-export const changePassword = async (id, data) => {
+export const changePassword = async (_id, data) => {
   const response = await httpClient.post(getApiUrl('user/change_password'), data, {
     headers: getHeaders(),
   });

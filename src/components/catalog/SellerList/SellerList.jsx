@@ -147,8 +147,9 @@ const SellerList = () => {
 
           <DataTable
             progressPending={loading}
+            noDataComponent="Sin vendedores"
+            searcher={true}
             data={sellers}
-            pagination={true}
             columns={[
               {
                 name: "Tienda",

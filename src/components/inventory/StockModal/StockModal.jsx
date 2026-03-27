@@ -3,7 +3,7 @@ import { showSuccess } from "../../../utils/alerts";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import CustomModal from "../../ui/Modal/Modal";
-import DataTable from "../../ui/DataTable/DataTable";
+import SimpleTable from "../../ui/SimpleTable/SimpleTable";
 import CustomButton from "../../ui/Button/Button";
 import { createTransfer } from "../../../api/transfers";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
@@ -124,24 +124,25 @@ const StockModal = ({ isOpen, product, onClose }) => {
         </Grid>
       ) : (
         stockOtherStores.length > 0 && (
-          <DataTable
+          <SimpleTable
+            noDataComponent="Sin stock en otras tiendas"
             data={stockOtherStores}
             columns={[
-              { name: "Tienda o almacén", selector: (row) => row.store_name, sortable: true },
-              { name: "Stock disponible", selector: (row) => row.available_stock, sortable: true },
+              { name: "Tienda o almacén", selector: (row) => row.store_name },
+              { name: "Stock disponible", selector: (row) => row.available_stock },
               {
-                name: "Cantidad a solicitar",
-                selector: (row) => (
+                name: "Cantidad",
+                width: 100,
+                cell: (row) => (
                   <TextField size="small" fullWidth type="number"
                     name="quantity"
                     min={1}
                     max={row.available_stock}
-                    placeholder="Cantidad a solicitar"
+                    placeholder="Cantidad"
                     onChange={(e) => handleQuantityChange(row.store_id, row.available_stock, e.target.value)}
                     value={requestedQuantities[row.store_id] || 0}
                   />
                 ),
-                sortable: true,
               },
               {
                 name: "Solicitar",
@@ -153,7 +154,6 @@ const StockModal = ({ isOpen, product, onClose }) => {
                     Solicitar
                   </CustomButton>
                 ),
-                sortable: true,
               },
             ]}
           />

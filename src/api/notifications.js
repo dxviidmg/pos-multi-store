@@ -14,3 +14,10 @@ export const getDuplicateSales = async () => {
   });
   return response;
 };
+
+export const getStockUpdateRequests = async () => {
+  const response = await httpClient.get(getApiUrl("stock-update-request"), {
+    headers: getHeaders(),
+  });
+  return response;
+};

@@ -25,7 +25,7 @@ const ClientList = () => {
     start_date: today,
   });
 
-  const { data: clients = [], refetch } = useClients(params);
+  const { data: clients = [], isLoading: loading, refetch } = useClients(params);
   const range = getDateDifference(params.start_date, params.end_date);
 
   const handleParams = (e) => {
@@ -97,6 +97,8 @@ const ClientList = () => {
         </Grid>
 
         <DataTable
+          progressPending={loading}
+          noDataComponent="Sin clientes"
           searcher={true}
           data={clients}
           columns={[

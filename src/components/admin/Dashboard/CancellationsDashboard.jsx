@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { getTaskResult } from "../../../api/products";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
+import useTaskPolling from "../../../hooks/useTaskPolling";
+import CountdownTimer from "../../ui/CountdownTimer";
 import LineChart from "./LineChart";
 import DoughnutChart from "./DoughnutChart";
 import KPICard from "./KPICard";
@@ -7,66 +8,33 @@ import {
   Grid, FormControl, InputLabel, Select, MenuItem, Box, Typography,
   LinearProgress, Skeleton,
 } from "@mui/material";
-import { showError } from "../../../utils/alerts";
+import { BarChart } from "@mui/x-charts/BarChart";
 import {
   MONTH_NAMES, MONTH_NAMES_SHORT, DAY_NAMES, CHART_COLORS,
-  formatCurrency, getErrorMessage, getTied,
+  getTied,
 } from "../../../utils/utils";
 import httpClient from "../../../api/httpClient";
 import { getApiUrl, getHeaders, buildUrlWithParams } from "../../../api/utils";
 import BlockIcon from "@mui/icons-material/Block";
 import UndoIcon from "@mui/icons-material/Undo";
-import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
-import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import InboxIcon from "@mui/icons-material/Inbox";
 
 const CancellationsDashboard = () => {
-  const [data, setData] = useState(null);
   const [metricType, setMetricType] = useState("count");
   const [year, setYear] = useState(new Date().getFullYear());
   const [month, setMonth] = useState(new Date().getMonth() + 1);
-  const [loading, setLoading] = useState(true);
-  const [progress, setProgress] = useState(0);
+  const [chartType, setChartType] = useState("line");
 
-  const fetchData = async () => {
-    setLoading(true);
-    setProgress(0);
-    try {
-      const url = buildUrlWithParams(getApiUrl("sales-dashboard-cancellations"), { year, month });
-      const response = await httpClient.get(url, { headers: getHeaders() });
-      const taskId = response.data.task;
-      const pollTask = async () => {
-        try {
-          const { data: taskData } = await getTaskResult(taskId);
-          if (taskData.meta?.current && taskData.meta?.total) setProgress((taskData.meta.current / taskData.meta.total) * 100);
-          if (taskData.status === "SUCCESS") {
-            setData(taskData.result);
-            setLoading(false);
-            setProgress(100);
-            clearInterval(intervalId);
-          } else if (taskData.status === "FAILURE") {
-            showError("Error", taskData.error?.message || "Error desconocido");
-            setLoading(false);
-            clearInterval(intervalId);
-          }
-        } catch (error) {
-          showError("Error", getErrorMessage(error));
-          setLoading(false);
-          clearInterval(intervalId);
-        }
-      };
-      let intervalId;
-      pollTask();
-      intervalId = setInterval(pollTask, 10000);
-    } catch (error) {
-      showError("Error al cargar el tablero", getErrorMessage(error));
-      setLoading(false);
-    }
-  };
+  const startTask = useCallback(async () => {
+    const url = buildUrlWithParams(getApiUrl("sales-dashboard-cancellations"), { year, month });
+    const response = await httpClient.get(url, { headers: getHeaders() });
+    return response.data.task;
+  }, [year, month]);
+
+  const { data, loading, progress, countdown, fetchData } = useTaskPolling(startTask);
 
   useEffect(() => { fetchData(); }, [year, month]);
 
@@ -112,6 +80,7 @@ const CancellationsDashboard = () => {
           <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>Ventas modificadas y/o canceladas</Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>Procesando datos...</Typography>
           <LinearProgress variant={progress > 0 ? "determinate" : "indeterminate"} value={progress} sx={{ height: 6, borderRadius: 3, mb: 1 }} />
+          <CountdownTimer seconds={countdown} />
         </Box>
         <Grid container spacing={2}>
           {[0,1,2,3].map(i => (
@@ -204,15 +173,36 @@ const CancellationsDashboard = () => {
       </Grid>
 
       <Box className="card">
-        <LineChart
-          title={month === 0 ? "Cancelaciones/devoluciones por mes" : "Cancelaciones/devoluciones por día"}
-          data={data}
-          metricType={metricType}
-          labels={month === 0 ? MONTH_NAMES_SHORT : daysLabels}
-          yText="Cantidad"
-          xText={month === 0 ? "Meses" : "Días"}
-          dataType={month === 0 ? "monthly" : "day_of_month"}
-        />
+        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
+          <Typography variant="h6" sx={{ fontWeight: 500 }}>
+            {month === 0 ? "Cancelaciones/devoluciones por mes" : "Cancelaciones/devoluciones por día"}
+          </Typography>
+          <FormControl size="small" sx={{ minWidth: 120 }}>
+            <Select value={chartType} onChange={(e) => setChartType(e.target.value)}>
+              <MenuItem value="line">Líneas</MenuItem>
+              <MenuItem value="bar">Barras</MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
+        {chartType === "line" ? (
+          <LineChart
+            title=""
+            data={data}
+            metricType={metricType}
+            labels={month === 0 ? MONTH_NAMES_SHORT : daysLabels}
+            yText="Cantidad"
+            xText={month === 0 ? "Meses" : "Días"}
+            dataType={month === 0 ? "monthly" : "day_of_month"}
+          />
+        ) : (
+          <CancellationsBarChart
+            data={data}
+            metricType={metricType}
+            labels={month === 0 ? MONTH_NAMES_SHORT : daysLabels}
+            dataType={month === 0 ? "monthly" : "day_of_month"}
+            daysInMonth={month !== 0 ? daysLabels.length : 12}
+          />
+        )}
       </Box>
 
       {hasMultipleStores && (
@@ -289,5 +279,43 @@ const Filters = ({ metricType, setMetricType, year, setYear, month, setMonth }) 
     </Grid>
   </Grid>
 );
+
+const processBarData = (result, dataType, metricType, daysInMonth) => {
+  if (!result?.sales?.length) return [];
+  const { stores, sales } = result;
+  const len = dataType === "monthly" ? 12 : daysInMonth;
+  const grouped = {};
+  stores.forEach((s) => { grouped[s.name] = Array(len).fill(0); });
+  sales.forEach((s) => {
+    if (!grouped[s.store_name]) return;
+    const d = new Date(s.created_at);
+    const idx = dataType === "monthly" ? d.getMonth() : d.getDate() - 1;
+    if (idx >= 0 && idx < len) grouped[s.store_name][idx] += metricType === "total" ? (s.total || 0) : 1;
+  });
+  return stores.map((store, i) => ({
+    data: grouped[store.name],
+    label: store.name,
+    color: CHART_COLORS[i % CHART_COLORS.length],
+  }));
+};
+
+const CancellationsBarChart = ({ data, metricType, labels, dataType, daysInMonth }) => {
+  const series = useMemo(() => processBarData(data, dataType, metricType, daysInMonth), [data, dataType, metricType, daysInMonth]);
+  if (!series.length) return null;
+  return (
+    <BarChart
+      xAxis={[{ data: labels, scaleType: "band", tickLabelStyle: { fontSize: 11, fill: "#64748b" } }]}
+      yAxis={[{ min: 0, tickLabelStyle: { fontSize: 11, fill: "#64748b" } }]}
+      series={series}
+      height={300}
+      margin={{ top: 50, bottom: 50, left: 70, right: 10 }}
+      borderRadius={4}
+      slotProps={{
+        legend: { direction: "row", position: { vertical: "top", horizontal: "middle" }, padding: 0 },
+      }}
+      grid={{ horizontal: true }}
+    />
+  );
+};
 
 export default CancellationsDashboard;

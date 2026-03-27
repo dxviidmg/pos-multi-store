@@ -144,6 +144,7 @@ const StoreProductList = () => {
           <DataTable
             searcher={true}
             progressPending={loading}
+            noDataComponent="Sin inventario"
             data={storeProducts}
             columns={[
               { name: "Código", selector: (row) => row.product.code },

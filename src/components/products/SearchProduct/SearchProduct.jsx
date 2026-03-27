@@ -1,7 +1,7 @@
 import { showSuccess, showError, showWarning } from "../../../utils/alerts";
 import React, { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import DataTable from "../../ui/DataTable/DataTable";
+import SimpleTable from "../../ui/SimpleTable/SimpleTable";
 import CustomButton from "../../ui/Button/Button";
 import CustomTooltip from "../../ui/Tooltip";
 import { getStoreProducts, getStockOtherStores } from "../../../api/products";
@@ -430,8 +430,8 @@ const SearchProduct = ({ searchInputRef }) => {
         {data.length > 0 && (
           <Grid item xs={12}>
             <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
-              <DataTable
-              showNoDataComponent={false}
+              <SimpleTable
+              noDataComponent="Sin resultados"
               data={data}
               columns={[
                 { name: "Código", selector: (row) => row.product.code },
