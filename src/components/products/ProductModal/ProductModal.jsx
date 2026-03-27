@@ -12,7 +12,7 @@ import {
 import { getStores } from "../../../api/stores";
 import noPhoto from "../../../assets/images/noPhoto.jpg";
 import { getDepartments } from "../../../api/departments";
-import DataTable from "../../ui/DataTable/DataTable";
+import SimpleTable from "../../ui/SimpleTable/SimpleTable";
 import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, Box, Checkbox, FormControlLabel } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import VisuallyHiddenInput from "../../ui/VisuallyHiddenInput";
@@ -298,7 +298,8 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
         {showStoreProducts && (
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <DataTable
+              <SimpleTable
+                noDataComponent="Sin stock"
                 data={storeProduct}
                 columns={[
                   {

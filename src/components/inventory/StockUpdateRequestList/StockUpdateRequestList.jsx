@@ -10,6 +10,7 @@ import httpClient from "../../../api/httpClient";
 import { getApiUrl, getHeaders } from "../../../api/utils";
 import { getFormattedDateTime } from "../../../utils/utils";
 import { showSuccess, showError } from "../../../utils/alerts";
+import { getStockUpdateRequests } from "../../../api/notifications";
 import Swal from "sweetalert2";
 import PageHeader from "../../ui/PageHeader";
 
@@ -19,7 +20,7 @@ const StockUpdateRequestList = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await httpClient.get(getApiUrl("stock-update-request"), { headers: getHeaders() });
+      const response = await getStockUpdateRequests();
       setRequests(response.data);
       setLoading(false);
     };
@@ -71,6 +72,7 @@ const StockUpdateRequestList = () => {
       <Grid item xs={12} className="card">
         <PageHeader title="Solicitudes de ajustes" />
         <DataTable
+          progressPending={loading}
           noDataComponent="Sin solicitudes pendientes"
           data={requests}
           columns={[

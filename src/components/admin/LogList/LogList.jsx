@@ -115,6 +115,8 @@ const LogList = () => {
           </Grid>
 
           <DataTable
+            progressPending={loading}
+            noDataComponent="Sin movimientos"
             data={logs}
             columns={[
               { name: "OK", selector: (row) => chooseIcon(row.is_consistent) },

@@ -49,6 +49,7 @@ import PageHelp from "../../ui/PageHelp/PageHelp";
 import NotificationsMenu from "../../ui/NotificationsMenu/NotificationsMenu";
 import PendingMenu from "../../ui/PendingMenu/PendingMenu";
 import DuplicateSalesMenu from "../../ui/DuplicateSalesMenu/DuplicateSalesMenu";
+import StockRequestMenu from "../../ui/StockRequestMenu/StockRequestMenu";
 
 const iconMap = {
   Vender: <ShoppingCartIcon />,
@@ -312,6 +313,7 @@ export default function MainLayout({ toggleTheme, themeMode }) {
             </Avatar>
           <PendingMenu />
           <DuplicateSalesMenu />
+          <StockRequestMenu />
           <NotificationsMenu />
           <PageHelp />
           <IconButton color="inherit" onClick={toggleTheme} sx={{ mr: 0.5 }}>

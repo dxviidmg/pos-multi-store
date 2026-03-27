@@ -64,6 +64,8 @@ const BrandList = () => {
 
         <DataTable
           progressPending={loading}
+          noDataComponent="Sin marcas"
+          searcher={true}
           data={brands}
           setSelectedRows={setSelectedRows}
           columns={[

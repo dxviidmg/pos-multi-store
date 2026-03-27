@@ -289,6 +289,7 @@ const ProductImport = () => {
       <Grid item xs={12} className="card" ref={fileTableRef}>
         <h1>Filas con error</h1>
         <SimpleTable
+          noDataComponent="Sin filas con error"
           data={products}
           columns={[
             ...productColumns,

@@ -1,20 +1,20 @@
-import React, { memo, useState, useEffect, useCallback } from "react";
+import React, { memo, useState, useEffect, useCallback, useMemo } from "react";
 import {
   IconButton, Badge, Popover, Box, Typography, List, ListItem,
   ListItemText,
 } from "@mui/material";
-import AssignmentIcon from "@mui/icons-material/Assignment";
-import InboxIcon from "@mui/icons-material/Inbox";
-import { getPendingMovements } from "../../../api/notifications";
+import TuneIcon from "@mui/icons-material/Tune";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import { getStockUpdateRequests } from "../../../api/notifications";
 
-const PendingMenu = memo(() => {
+const StockRequestMenu = memo(() => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [items, setItems] = useState([]);
   const [seen, setSeen] = useState(false);
 
   const fetchPending = useCallback(async () => {
     try {
-      const { data } = await getPendingMovements();
+      const { data } = await getStockUpdateRequests();
       setItems(data);
     } catch {}
   }, []);
@@ -26,13 +26,19 @@ const PendingMenu = memo(() => {
     return () => window.removeEventListener("store-changed", onStoreChange);
   }, [fetchPending]);
 
-  const count = items.reduce((sum, g) => sum + (g.messages?.length || 0), 0);
+  const grouped = useMemo(() => {
+    const map = {};
+    items.forEach((req) => {
+      map[req.store_name] = (map[req.store_name] || 0) + 1;
+    });
+    return Object.entries(map);
+  }, [items]);
 
   return (
     <>
       <IconButton color="inherit" onClick={(e) => { setAnchorEl(e.currentTarget); setSeen(true); fetchPending(); }}>
-        <Badge badgeContent={seen ? 0 : count} color="error" max={99}>
-          <AssignmentIcon />
+        <Badge badgeContent={seen ? 0 : items.length} color="error" max={99}>
+          <TuneIcon />
         </Badge>
       </IconButton>
       <Popover
@@ -44,26 +50,23 @@ const PendingMenu = memo(() => {
         slotProps={{ paper: { sx: { width: 360, maxHeight: 420, borderRadius: 3, overflow: "hidden" } } }}
       >
         <Box sx={{ px: 2.5, py: 1.5, borderBottom: 1, borderColor: "divider" }}>
-          <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>Movimientos pendientes</Typography>
+          <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>Solicitudes de ajuste</Typography>
         </Box>
         {items.length === 0 ? (
           <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", py: 4, gap: 1, opacity: 0.6 }}>
-            <InboxIcon sx={{ fontSize: 40 }} />
-            <Typography variant="body2">Sin pendientes</Typography>
+            <CheckCircleOutlineIcon sx={{ fontSize: 40 }} />
+            <Typography variant="body2">Sin solicitudes pendientes</Typography>
           </Box>
         ) : (
           <List dense sx={{ maxHeight: 340, overflow: "auto", py: 0 }}>
-            {items.map((group, i) => (
-              <ListItem key={i} sx={{ flexDirection: "column", alignItems: "flex-start", py: 1, borderBottom: '1px solid', borderColor: 'divider' }}>
+            {grouped.map(([store, count], i) => (
+              <ListItem key={i} sx={{ py: 1, borderBottom: '1px solid', borderColor: 'divider' }}>
                 <ListItemText
-                  primary={group.title}
+                  primary={store}
+                  secondary={`${count} solicitud(es)`}
                   primaryTypographyProps={{ fontSize: "0.8rem", fontWeight: 700 }}
+                  secondaryTypographyProps={{ fontSize: "0.75rem" }}
                 />
-                {(group.messages || []).map((msg, j) => (
-                  <Typography key={j} variant="body2" sx={{ fontSize: "0.75rem", color: "text.secondary", pl: 1 }}>
-                    • {msg}
-                  </Typography>
-                ))}
               </ListItem>
             ))}
           </List>
@@ -73,6 +76,6 @@ const PendingMenu = memo(() => {
   );
 });
 
-PendingMenu.displayName = "PendingMenu";
+StockRequestMenu.displayName = "StockRequestMenu";
 
-export default PendingMenu;
+export default StockRequestMenu;

@@ -95,6 +95,8 @@ const CashFlowList = () => {
         </Grid>
 
         <DataTable
+          progressPending={loading}
+          noDataComponent="Sin movimientos"
           data={cashFlow}
           searcher={true}
           columns={[

@@ -308,6 +308,7 @@ const Cart = ({ searchInputRef }) => {
     ...commonColumns2,
     {
       name: "Cantidad",
+      width: 100,
       selector: (row) => (
         <TextField size="small" type="number" sx={{ width: 80 }}
           value={row.quantity}
@@ -384,6 +385,7 @@ const Cart = ({ searchInputRef }) => {
     { name: "Stock total", selector: (row) => row.available_stock + row.reserved_stock },
     {
       name: "Cantidad",
+      width: 100,
       selector: (row) => (
         <TextField size="small" type="number" sx={{ width: 80 }}
           value={row.quantity}
@@ -421,6 +423,7 @@ const Cart = ({ searchInputRef }) => {
     ...commonColumns,
     {
       name: "Cantidad",
+      width: 100,
       selector: (row) => (
         <TextField size="small" type="number" sx={{ width: 80 }}
           value={row.quantity}
@@ -480,6 +483,7 @@ const Cart = ({ searchInputRef }) => {
     ...commonColumns,
     {
       name: "Cantidad",
+      width: 100,
       selector: (row) => (
         <TextField size="small" type="number" sx={{ width: 80 }}
           value={row.quantity}
@@ -619,7 +623,6 @@ const Cart = ({ searchInputRef }) => {
           noDataComponent="Sin productos"
           data={cart}
           columns={getColumns()}
-          pagination={true}
         />
       </div>
     </div>

@@ -93,7 +93,6 @@ const SaleList = () => {
     reservation_in_progress: false,
   });
   const [loading, setLoading] = useState(false);
-  const [salesDuplicated, setSalesDuplicated] = useState([]);
   const [showAllFields, setShowAllFields] = useState(false);
   const [quickFilter, setQuickFilter] = useState("all");
   const [searchBy, setSearchBy] = useState("date");
@@ -106,9 +105,6 @@ const SaleList = () => {
       setLoading(true);
       const salesResponse = await getSales(params);
       setSales(salesResponse.data);
-      setSalesDuplicated(
-        salesResponse.data.filter((sale) => sale.is_repeated).map((sale) => sale.id)
-      );
       setLoading(false);
     };
     fetchSalesData();
@@ -139,12 +135,6 @@ const SaleList = () => {
       <SaleModal isOpen={saleModal.isOpen} sale={saleModal.data} onClose={saleModal.close} onUpdate={handleUpdateSaleList} />
 
       <Grid className="card">
-        {salesDuplicated.length > 0 && (
-          <Alert severity="info" sx={{ mb: 2 }}>
-            Ids de ventas duplicadas: {salesDuplicated.join(", ")}
-          </Alert>
-        )}
-
         <PageHeader title="Ventas" />
 
         <Grid container spacing={2} sx={{ mb: 2 }}>
@@ -207,8 +197,8 @@ const SaleList = () => {
             </CustomButton>
           </Grid>
           <Grid item xs={6} md={3}>
-            <CustomButton fullWidth variant={quickFilter === "duplicated" ? "contained" : "outlined"} onClick={() => setQuickFilter("duplicated")} size="small">
-              Duplicadas ({salesDuplicated.length})
+            <CustomButton fullWidth variant={quickFilter === "duplicated" ? "contained" : "outlined"} onClick={() => setQuickFilter("duplicated")} size="small" color={sales.filter(s => s.is_repeated).length > 0 && quickFilter !== "duplicated" ? "error" : "primary"}>
+              Duplicadas ({sales.filter(s => s.is_repeated).length})
             </CustomButton>
           </Grid>
           <Grid item xs={6} md={3}>
@@ -224,18 +214,19 @@ const SaleList = () => {
         </Grid>
 
         <DataTable
+          progressPending={loading}
+          noDataComponent="Sin ventas"
+          searcher={true}
           data={quickFilter === "all" ? sales
-            : quickFilter === "duplicated" ? sales.filter(s => salesDuplicated.includes(s.id))
-            : quickFilter === "canceled" ? sales.filter(s => s.is_canceled)
+            : quickFilter === "duplicated" ? sales.filter(s => s.is_repeated)            : quickFilter === "canceled" ? sales.filter(s => s.is_canceled)
             : sales.filter(s => s.has_return)
           }
-          pagination={true}
           columns={[
             { name: "#", selector: (row) => row.id, width: 70 },
             {
               name: "Unica",
               selector: (row) =>
-                salesDuplicated.includes(row.id)
+                row.is_repeated
                   ? <ErrorIcon className="icon-danger" />
                   : <CheckCircleIcon className="icon-success" />,
               width: 70,
@@ -311,7 +302,6 @@ const SaleList = () => {
                           </CustomButton>
                         </CustomTooltip>
                       )}
-                      {row.is_repeated && <WarningIcon color="warning" />}
                     </>
                   )}
                 </>
