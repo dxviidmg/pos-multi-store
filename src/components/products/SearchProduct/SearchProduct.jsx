@@ -431,6 +431,7 @@ const SearchProduct = ({ searchInputRef }) => {
           <Grid item xs={12}>
             <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
               <SimpleTable
+              noDataComponent="Sin resultados"
               data={data}
               columns={[
                 { name: "Código", selector: (row) => row.product.code },

@@ -81,6 +81,7 @@ const SearchClient = () => {
       />
       {query && (
         <SimpleTable
+          noDataComponent="Sin clientes"
           data={clients}
           columns={[
             {

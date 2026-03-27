@@ -299,6 +299,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <SimpleTable
+                noDataComponent="Sin stock"
                 data={storeProduct}
                 columns={[
                   {

@@ -130,6 +130,7 @@ const DistributionList = () => {
               { name: "Nombre", selector: (row) => row.product_description },
               {
                 name: "Cantidad",
+                width: 100,
                 cell: (row) =>
                   editingRow === row.product_code ? (
                     <TextField

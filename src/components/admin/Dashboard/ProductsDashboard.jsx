@@ -111,6 +111,7 @@ const ProductsDashboard = () => {
           <Box className="card" sx={{ height: "100%" }}>
             <Typography variant="h6" sx={{ fontWeight: 500, mb: 2 }}>Marcas más vendidas</Typography>
             <SimpleTable
+              noDataComponent="Sin marcas"
               data={top_brands}
               columns={[
                 { name: "Marca", selector: (row) => row.name },
@@ -124,6 +125,7 @@ const ProductsDashboard = () => {
           <Box className="card" sx={{ height: "100%" }}>
             <Typography variant="h6" sx={{ fontWeight: 500, mb: 2 }}>Productos más vendidos</Typography>
             <SimpleTable
+              noDataComponent="Sin productos"
               data={top_products}
               columns={[
                 { name: "Código", selector: (row) => row.code },
@@ -138,6 +140,7 @@ const ProductsDashboard = () => {
           <Box className="card">
             <Typography variant="h6" sx={{ fontWeight: 500, mb: 2 }}>Productos menos vendidos</Typography>
             <SimpleTable
+              noDataComponent="Sin productos"
               data={worst_products}
               columns={[
                 { name: "Código", selector: (row) => row.code },
