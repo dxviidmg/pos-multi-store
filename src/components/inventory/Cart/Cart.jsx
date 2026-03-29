@@ -281,12 +281,7 @@ const Cart = ({ searchInputRef }) => {
       field: "name",
       selector: (row) => row.product.name,
       renderCell: (params) => (
-        <div style={{ 
-          whiteSpace: 'normal', 
-          wordWrap: 'break-word',
-          lineHeight: '1.3',
-          padding: '4px 0'
-        }}>
+        <div className="cell-wrap">
           {params.row.product.name}
         </div>
       ),
@@ -307,12 +302,7 @@ const Cart = ({ searchInputRef }) => {
       field: "name",
       selector: (row) => row.product.name,
       renderCell: (params) => (
-        <div style={{ 
-          whiteSpace: 'normal', 
-          wordWrap: 'break-word',
-          lineHeight: '1.3',
-          padding: '4px 0'
-        }}>
+        <div className="cell-wrap">
           {params.row.product.name}
         </div>
       ),
@@ -385,12 +375,7 @@ const Cart = ({ searchInputRef }) => {
       name: "Nombre",
       selector: (row) => row.product.name,
       renderCell: (params) => (
-        <div style={{ 
-          whiteSpace: 'normal', 
-          wordWrap: 'break-word',
-          lineHeight: '1.3',
-          padding: '4px 0'
-        }}>
+        <div className="cell-wrap">
           {params.row.product.name}
         </div>
       ),

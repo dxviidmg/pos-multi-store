@@ -122,7 +122,7 @@ const LineChart = ({ title, data, labels, xText, yText, dataType, metricType = '
       const average = avgData.map(sum => sum / processedData.length);
       return [
         ...processedData,
-        { data: average, label: 'Promedio', color: '#94a3b8', curve: 'linear', showMark: false },
+        { data: average, label: 'Promedio', color: 'text.secondary', curve: 'linear', showMark: false },
       ];
     }
     return processedData;
@@ -130,7 +130,7 @@ const LineChart = ({ title, data, labels, xText, yText, dataType, metricType = '
 
   return (
     <Box sx={{ width: '100%', height: '100%' }}>
-      <Typography variant="h6" sx={{ mb: 2, fontWeight: 500, color: '#1e293b' }}>
+      <Typography variant="h6" sx={{ mb: 2, fontWeight: 500, color: 'text.primary' }}>
         {title}
       </Typography>
       <MuiLineChart
@@ -138,13 +138,13 @@ const LineChart = ({ title, data, labels, xText, yText, dataType, metricType = '
           data: labels || [],
           scaleType: 'point',
           label: xText,
-          labelStyle: { fontSize: 12, fill: '#64748b' },
-          tickLabelStyle: { fontSize: 11, fill: '#64748b' },
+          labelStyle: { fontSize: 12, fill: 'text.secondary' },
+          tickLabelStyle: { fontSize: 11, fill: 'text.secondary' },
         }]}
         yAxis={[{ 
           min: 0,
-          labelStyle: { fontSize: 12, fill: '#64748b' },
-          tickLabelStyle: { fontSize: 11, fill: '#64748b' },
+          labelStyle: { fontSize: 12, fill: 'text.secondary' },
+          tickLabelStyle: { fontSize: 11, fill: 'text.secondary' },
         }]}
         series={series.map(s => ({
           ...s,
