@@ -119,17 +119,9 @@ Estas son las características que te interesan como dueño de tu negocio:
 
 Estas características son estándar en software moderno pero marcan la diferencia:
 
-### Rendimiento y Velocidad
+### Rendimiento
 
 - **Búsqueda ultrarrápida** — Respuesta en milisegundos, incluso con miles de productos
-- **Monitoreo de rendimiento** — El sistema mide y optimiza su velocidad automáticamente
-- **Caché inteligente** — Carga rápida de información frecuente sin sobrecargar el servidor
-
-### Escalabilidad
-
-- **Multi-tenant** — Arquitectura preparada para crecer sin perder rendimiento
-- **Procesamiento asíncrono** — Tareas pesadas se ejecutan sin afectar la experiencia del usuario
-- **Backend robusto** — Django con tareas asíncronas vía Celery para operaciones complejas
 
 ### Accesibilidad
 
@@ -139,9 +131,7 @@ Estas características son estándar en software moderno pero marcan la diferenc
 
 ### Mantenimiento
 
-- **Reinicio de servicios** — Herramientas para reiniciar componentes sin afectar operaciones
-- **Logs de actividad** — Registro de acciones para diagnóstico
-- **Exportación de datos** — Descarga reportes en Excel para análisis externo
+- **Exportación a Excel** — Descarga reportes en Excel para análisis externo
 
 ---
 
