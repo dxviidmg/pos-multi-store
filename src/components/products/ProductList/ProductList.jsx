@@ -225,7 +225,7 @@ const ProductList = () => {
                     : `$${row.unit_price}`
                 ),
               },
-              ...(user.role === "owner" ? [{
+              ...(user.role !== "seller" ? [{
                 name: "Acciones",
                 width: 180,
                 cell: (row) => (

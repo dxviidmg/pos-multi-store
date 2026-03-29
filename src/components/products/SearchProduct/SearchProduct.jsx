@@ -356,12 +356,6 @@ const SearchProduct = ({ searchInputRef }) => {
                 sx={{ mr: 4 }}
               />
             )}
-            <FormControlLabel 
-              value="traspaso" 
-              control={<Radio size="small" />} 
-              label="Confirmar traspaso (Ctrl+R)"
-              sx={{ mr: 4 }}
-            />
             {storeType !== "T" && (
               <FormControlLabel 
                 value="distribucion" 
@@ -370,6 +364,12 @@ const SearchProduct = ({ searchInputRef }) => {
                 sx={{ mr: 4 }}
               />
             )}
+            <FormControlLabel 
+              value="traspaso" 
+              control={<Radio size="small" />} 
+              label="Confirmar traspaso (Ctrl+R)"
+              sx={{ mr: 4 }}
+            />
             <FormControlLabel 
               value="agregar" 
               control={<Radio size="small" />} 
