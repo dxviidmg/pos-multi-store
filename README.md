@@ -88,6 +88,7 @@ Estas son las características que te interesan como dueño de tu negocio:
 - **Plantillas descargables** — Formato listo para llenar
 - **Validación previa** — El sistema revisa errores antes de importar
 - **Historial de precios** — Ve cómo ha cambiado el precio de cada producto
+- **Imágenes de productos** — Agrega fotos a cada producto para identificación visual
 
 ### 🔐 Roles y Permisos
 
