@@ -50,6 +50,7 @@ import PageHelp from "../../ui/PageHelp/PageHelp";
 import NotificationsMenu from "../../ui/NotificationsMenu/NotificationsMenu";
 import PendingMenu from "../../ui/PendingMenu/PendingMenu";
 import DuplicateSalesMenu from "../../ui/DuplicateSalesMenu/DuplicateSalesMenu";
+import StockRequestMenu from "../../ui/StockRequestMenu/StockRequestMenu";
 
 const iconMap = {
   Vender: <ShoppingCartIcon />,
@@ -313,6 +314,7 @@ export default function MainLayout({ toggleTheme, themeMode }) {
             </Avatar>
           <PendingMenu />
           <DuplicateSalesMenu />
+          <StockRequestMenu />
           <NotificationsMenu />
           <PageHelp />
           <IconButton color="inherit" onClick={toggleTheme} sx={{ mr: 0.5 }}>
@@ -445,8 +447,7 @@ export default function MainLayout({ toggleTheme, themeMode }) {
             rel="noopener noreferrer"
             sx={{
               borderRadius: 2, justifyContent: open ? "initial" : "center",
-              backgroundColor: "rgba(37, 211, 102, 0.15)", color: "#25D366",
-              "&:hover": { backgroundColor: "rgba(37, 211, 102, 0.3)" },
+              "&:hover": { backgroundColor: "rgba(37, 211, 102, 0.12)" },
             }}
           >
             <ListItemIcon sx={{ color: "#25D366", minWidth: open ? 38 : 0, justifyContent: "center" }}>

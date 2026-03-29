@@ -12,9 +12,8 @@ import {
 import { getStores } from "../../../api/stores";
 import noPhoto from "../../../assets/images/noPhoto.jpg";
 import { getDepartments } from "../../../api/departments";
-import DataTable from "../../ui/DataTable/DataTable";
+import SimpleTable from "../../ui/SimpleTable/SimpleTable";
 import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, Box, Checkbox, FormControlLabel } from "@mui/material";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import SaveIcon from "@mui/icons-material/Save";
 import VisuallyHiddenInput from "../../ui/VisuallyHiddenInput";
 
@@ -157,28 +156,24 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
         <Grid container spacing={2}>
           <Grid item xs={12} md={4}>
             <Box
-              component="img"
-              src={previewImage}
-              alt="Producto"
-              sx={{
-                width: '100%',
-                height: 'auto',
-                borderRadius: 2
-              }}
-            />
-            <Box sx={{ mt: 2 }}>
-              <CustomButton
-                component="label"
-                fullWidth
-                startIcon={<CloudUploadIcon />}
-              >
-                Seleccionar imagen
-                <VisuallyHiddenInput
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                />
-              </CustomButton>
+              component="label"
+              sx={{ display: 'block', cursor: 'pointer', '&:hover': { opacity: 0.8 }, transition: 'opacity 0.2s' }}
+            >
+              <Box
+                component="img"
+                src={previewImage}
+                alt="Producto"
+                sx={{
+                  width: '100%',
+                  height: 'auto',
+                  borderRadius: 2
+                }}
+              />
+              <VisuallyHiddenInput
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+              />
             </Box>
           </Grid>
 
@@ -292,7 +287,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
                   marginTop="10px"
                   startIcon={<SaveIcon />}
                 >
-                  {isLoading ? "Creando..." : formData.id ? "Actualizar" : "Crear"} producto
+                  {isLoading ? "Guardando..." : formData.id ? "Actualizar" : "Crear"}
                 </CustomButton>
               </Grid>
             </Grid>
@@ -303,7 +298,8 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
         {showStoreProducts && (
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <DataTable
+              <SimpleTable
+                noDataComponent="Sin stock"
                 data={storeProduct}
                 columns={[
                   {

@@ -128,7 +128,7 @@ const CashSummary = () => {
               <PaymentIcon color="primary" />
               <Typography variant="h6">Métodos de pago</Typography>
             </Stack>
-            <SimpleTable data={paymentMethodsSummary} columns={summaryColumns} />
+            <SimpleTable noDataComponent="Sin datos" data={paymentMethodsSummary} columns={summaryColumns} />
           </Grid>
 
           <Grid item xs={12} md={4}>
@@ -136,7 +136,7 @@ const CashSummary = () => {
               <AccountBalanceWalletIcon color="primary" />
               <Typography variant="h6">Flujo de caja</Typography>
             </Stack>
-            <SimpleTable data={cashFlowSummary} columns={summaryColumns} />
+            <SimpleTable noDataComponent="Sin datos" data={cashFlowSummary} columns={summaryColumns} />
           </Grid>
 
           <Grid item xs={12} md={4}>
@@ -144,7 +144,7 @@ const CashSummary = () => {
               <PointOfSaleIcon color="primary" />
               <Typography variant="h6">Total en caja</Typography>
             </Stack>
-            <SimpleTable data={totalSummary} columns={totalColumns} />
+            <SimpleTable noDataComponent="Sin datos" data={totalSummary} columns={totalColumns} />
           </Grid>
         </Grid>
       </Grid>

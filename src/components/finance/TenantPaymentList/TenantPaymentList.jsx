@@ -10,11 +10,13 @@ const formatDate = (dateStr) => {
 
 const TenantPaymentList = () => {
   const [payments, setPayments] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchPayments = async () => {
       const response = await getPayments();
       setPayments(response.data);
+      setLoading(false);
     };
     fetchPayments();
   }, []);
@@ -24,8 +26,9 @@ const TenantPaymentList = () => {
       <Grid item xs={12} className="card">
         <h1>Pagos del servicio</h1>
         <DataTable
+          progressPending={loading}
+          noDataComponent="Sin pagos"
           data={payments}
-          pagination={true}
           columns={[
             {
               name: "Vigencia",

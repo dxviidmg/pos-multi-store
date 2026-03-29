@@ -8,12 +8,8 @@ const DataTable = ({
   data,
   progressPending = false,
   noDataComponent = "Sin datos que mostrar",
-  showNoDataComponent = true,
   searcher = false,
-  pagination = true,
   setSelectedRows,
-  height,
-  autoHeight = false,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [paginationModel, setPaginationModel] = useState({
@@ -45,7 +41,7 @@ const DataTable = ({
 
         if (col.cell) {
           column.renderCell = (params) => (
-            <div style={{ display: 'flex', gap: '1px', padding: '0 1px', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
+            <div style={{ display: 'flex', gap: '2px', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
               {col.cell(params.row)}
             </div>
           );
@@ -77,13 +73,13 @@ const DataTable = ({
         </Box>
       )}
 
-      <Box sx={{ width: "100%", maxWidth: "100%", overflowX: "auto", height: height || 'auto' }}>
+      <Box sx={{ width: "100%", maxWidth: "100%", overflowX: "auto" }}>
         <DataGrid
           rows={rowsWithIds}
           columns={muiColumns}
           getRowId={(row) => row._id}
           loading={progressPending}
-          pagination={pagination}
+          pagination={true}
           paginationModel={paginationModel}
           onPaginationModelChange={setPaginationModel}
           pageSizeOptions={[10, 25, 50, 100]}
@@ -96,7 +92,7 @@ const DataTable = ({
           }}
           disableRowSelectionOnClick
           getRowHeight={() => 'auto'}
-          localeText={{ noRowsLabel: showNoDataComponent ? noDataComponent : "" }}
+          localeText={{ noRowsLabel: noDataComponent }}
           hideFooter={data.length <= 25}
           density="compact"
           sx={{
@@ -113,7 +109,7 @@ const DataTable = ({
               py: 0, px: '2px', fontSize: '0.8125rem',
               whiteSpace: 'normal !important', lineHeight: '1.3 !important',
               justifyContent: 'center', textAlign: 'center', gap: '2px',
-              '& .MuiButtonBase-root': { transform: 'scale(0.8)' },
+              '& .MuiButtonBase-root': { transform: 'scale(0.8)', minWidth: 0, px: 1 },
             },
             "& .MuiDataGrid-row": {
               minHeight: '32px !important',

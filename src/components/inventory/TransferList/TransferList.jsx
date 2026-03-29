@@ -30,6 +30,7 @@ const TransferList = () => {
         <PageHeader title="Traspasos Pendientes" />
 
         <DataTable
+          progressPending={isLoading}
           noDataComponent="Sin traspasos pendientes"
           data={transfers}
           columns={[

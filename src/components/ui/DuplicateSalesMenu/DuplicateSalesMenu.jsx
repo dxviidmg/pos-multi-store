@@ -26,7 +26,7 @@ const DuplicateSalesMenu = memo(() => {
     return () => window.removeEventListener("store-changed", onStoreChange);
   }, [fetchDuplicates]);
 
-  const count = items.reduce((sum, g) => sum + g.messages.length, 0);
+  const count = items.reduce((sum, g) => sum + (g.messages?.length || 0), 0);
 
   return (
     <>
@@ -59,7 +59,7 @@ const DuplicateSalesMenu = memo(() => {
                   primary={group.title}
                   primaryTypographyProps={{ fontSize: "0.8rem", fontWeight: 700 }}
                 />
-                {group.messages.map((msg, j) => (
+                {(group.messages || []).map((msg, j) => (
                   <Typography key={j} variant="body2" sx={{ fontSize: "0.75rem", color: "text.secondary", pl: 1 }}>
                     • {msg}
                   </Typography>

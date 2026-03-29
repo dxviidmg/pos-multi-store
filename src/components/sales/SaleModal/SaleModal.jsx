@@ -118,13 +118,15 @@ const SaleModal = ({ isOpen, sale, onClose, onUpdate }) => {
           <Grid item xs={12} md={12}>
             <h5>{totalCancel ? "Todos los productos serán devueltos" : "Selecciona los productos a devolver"}</h5>
             <SimpleTable
+              noDataComponent="Sin productos"
               data={formData.products_sale}
               columns={[
                 { name: "Descripción", selector: (row) => row.name },
                 { name: "Cantidad vendida", selector: (row) => row.quantity },
                 {
                   name: "Devolver",
-                  selector: (row) => (
+                  width: 100,
+                  cell: (row) => (
                     <TextField size="small" type="number"
                       inputProps={{ min: 0, max: row.quantity }}
                       value={quantitiesToCancel[row.id] || 0}

@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { getSalesDashboard } from "../../../api/sales";
-import { getTaskResult } from "../../../api/products";
+import useTaskPolling from "../../../hooks/useTaskPolling";
+import CountdownTimer from "../../ui/CountdownTimer";
 import LineChart from "./LineChart";
 import DoughnutChart from "./DoughnutChart";
 import SalesHeatmap from "./SalesHeatmap";
@@ -12,10 +13,9 @@ import {
   Grid, FormControl, InputLabel, Select, MenuItem, Box, Typography,
   LinearProgress, Skeleton,
 } from "@mui/material";
-import { showError } from "../../../utils/alerts";
 import {
   MONTH_NAMES, MONTH_NAMES_SHORT, DAY_NAMES, CHART_COLORS,
-  formatCurrency, getErrorMessage, getTied,
+  formatCurrency, getTied,
 } from "../../../utils/utils";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
@@ -28,53 +28,17 @@ import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 
 const Dashboard = () => {
-  const [dashboardData, setDashboardData] = useState(null);
   const [metricType, setMetricType] = useState("count");
   const [year, setYear] = useState(new Date().getFullYear());
   const [month, setMonth] = useState(new Date().getMonth() + 1);
-  const [loading, setLoading] = useState(true);
-  const [progress, setProgress] = useState(0);
   const [mainChartType, setMainChartType] = useState("line");
 
-  const fetchData = async () => {
-    setLoading(true);
-    setProgress(0);
-    try {
-      const response = await getSalesDashboard({ year, month });
-      const taskId = response.data.task;
-      const pollTask = async () => {
-        try {
-          const { data: taskData } = await getTaskResult(taskId);
-          const { result, status, meta } = taskData;
-          if (meta?.current && meta?.total) setProgress((meta.current / meta.total) * 100);
-          if (status === "SUCCESS") {
-            setDashboardData(result);
-            setLoading(false);
-            setProgress(100);
-            clearInterval(intervalId);
-          } else if (status === "FAILURE") {
-            showError("Error al cargar los datos del dashboard", taskData.error.message || "Error desconocido");
-            setLoading(false);
-            clearInterval(intervalId);
-          }
-        } catch (error) {
-          showError("Error al obtener los datos del dashboard", getErrorMessage(error));
-          setLoading(false);
-          clearInterval(intervalId);
-        }
-      };
-      let intervalId;
-      pollTask();
-      intervalId = setInterval(pollTask, 10000);
-    } catch (error) {
-      if (error.response?.data?.message?.includes('max requests limit exceeded')) {
-        showError("Límite de Redis Excedido", "Se ha alcanzado el límite de solicitudes de Redis. Por favor, contacta al administrador del sistema");
-      } else {
-        showError("Error al cargar el dashboard", getErrorMessage(error));
-      }
-      setLoading(false);
-    }
-  };
+  const startTask = useCallback(async () => {
+    const response = await getSalesDashboard({ year, month });
+    return response.data.task;
+  }, [year, month]);
+
+  const { data: dashboardData, loading, progress, countdown, fetchData } = useTaskPolling(startTask);
 
   useEffect(() => { fetchData(); }, [year, month]);
 
@@ -149,9 +113,10 @@ const Dashboard = () => {
             value={progress}
             sx={{ height: 6, borderRadius: 3, mb: 1 }}
           />
-          {progress > 0 && (
-            <Typography variant="caption" color="text.secondary">{Math.round(progress)}% completado</Typography>
-          )}
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            {progress > 0 && <Typography variant="caption" color="text.secondary">{Math.round(progress)}% completado</Typography>}
+            <CountdownTimer seconds={countdown} />
+          </Box>
         </Box>
         <Grid container spacing={2} sx={{ mb: 3 }}>
           {[0,1,2,3].map(i => (

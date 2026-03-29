@@ -881,6 +881,7 @@ const StoreList = () => {
           <Box sx={{ mb: 2 }}>
             <DataTable
               progressPending={loading}
+              noDataComponent="Sin tiendas"
               data={memoStores}
               columns={
                 params.store_type === "T" ? columnsStore : columnsStorages

@@ -37,7 +37,12 @@
 - `CustomModal` — Todos los modales usan este wrapper con estructura: `Grid container` con `padding: '1rem'` y `backgroundColor: 'rgba(4, 53, 107, 0.2)'`, dentro `Grid item xs={12} className="card"`.
 - `CustomButton` — Wrapper de MUI Button con `variant="contained"`, `size="small"` y `minWidth: 0`.
 - `CustomTooltip` — Wrapper de MUI Tooltip. Soporta prop `fullWidth`. Usar siempre en botones de solo ícono.
-- `DataTable` — Wrapper de MUI DataGrid. No soporta `omit` en columnas; usar spread condicional `...(condicion ? [columna] : [])` para ocultar columnas.
+- `DataTable` — Wrapper de MUI DataGrid. Para tablas con ordenamiento, búsqueda, paginación, selección o loading.
+- `SimpleTable` — Tabla HTML nativa. Para tablas de solo lectura sin interacción (modales, búsquedas, importaciones).
+- `PageHeader` — Título + botones alineados. Usar en vez de `Stack direction="row" justifyContent="space-between"` manual.
+- `DropZone` — Área de arrastrar y soltar archivos. Usar en páginas de importación.
+- `VisuallyHiddenInput` — Input oculto para file uploads. No duplicar en cada archivo.
+- `StatusChip` — Chip de estado Exitoso/Error. Usar en tablas de validación de importaciones.
 - `CustomSpinner` — Indicador de carga.
 - `AuditCard` — Card para tareas asíncronas con polling de progreso.
 
@@ -53,13 +58,18 @@
 
 - Hooks: `useModal()` para abrir/cerrar modales con datos. `useFetch`, `useFetchWithRetry`, `useCrudMutation` para datos del servidor.
 - API: usar `getApiUrl()` y `getHeaders()` de `api/utils.js`. Para query params usar `buildUrlWithParams()`.
-- Alertas: `showSuccess()`, `showError()`, `showWarning()` de `utils/alerts.js`. Para confirmaciones personalizadas usar Swal directo (el `showConfirm` genérico dice "Eliminar").
+- Alertas: `showSuccess()`, `showError()`, `showWarning()`, `showAlert()` de `utils/alerts.js`. Nunca usar `Swal.fire` directo. Para confirmaciones personalizadas usar `showConfirm()` o Swal directo solo si se necesita input/configuración especial.
 - Estado global: Redux solo para carritos (`multiCartReducer`). El resto es estado local o React Query.
 - Lazy loading: todas las rutas usan `lazyRetry()` + `Suspense` con auto-reload en `ChunkLoadError`.
 - Memoización: usar `memo()` en componentes puros, `useMemo` para cálculos costosos, `useCallback` para funciones estables.
 
-## Tablas (DataTable)
+## Tablas (DataTable y SimpleTable)
 
+- Siempre pasar `noDataComponent` con mensaje descriptivo en español.
+- Siempre pasar `progressPending` en DataTable cuando haya estado de carga disponible.
+- Columnas con inputs (TextField) deben tener `width: 100`.
+- No pasar props que ya son el default del componente.
+- Si un prop no lo usa ningún consumidor, eliminarlo del componente.
 - Botones de solo ícono con `CustomTooltip`.
 - Columnas de acciones con `width` fijo si hay 3+ botones (ej: `width: 180`).
 - Columnas condicionales por rol con spread: `...(user.role === "owner" ? [{...}] : [])`.
@@ -104,3 +114,18 @@
 - Commits descriptivos en inglés con prefijo convencional.
 - No commitear `.env` con valores reales (usar `.env.template`).
 - No commitear `console.log` ni variables sin usar.
+
+## Código limpio
+
+- No dejar imports, variables ni exports sin usar.
+- No dejar código comentado (bloques `{/* ... */}` con JSX muerto).
+- No duplicar styled components entre archivos — extraer a `components/ui/`.
+- No pasar props que ya son el default del componente receptor.
+- Si un prop/export no se usa en ningún archivo, eliminarlo.
+- Usar `try/catch/finally` en llamadas async para garantizar que loading se desactive.
+
+## README
+
+- En "Funcionalidades principales" usar lenguaje de usuario, nunca términos técnicos (no Stepper, WebSocket, badge, popover, drag & drop, etc.).
+- Mantener fecha de última actualización al hacer cambios.
+- Actualizar si los cambios afectan funcionalidades, stack o arquitectura documentados.
