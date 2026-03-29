@@ -1,6 +1,6 @@
 # SmartVenta — Sistema de Punto de Venta Multi-Tienda
 
-> Última actualización: 26 de marzo de 2026, 16:09 hrs
+> Última actualización: 29 de marzo de 2026, 09:26 hrs
 
 Sistema de punto de venta (POS) diseñado para negocios con múltiples sucursales. Permite gestionar ventas, inventario, traspasos y distribuciones desde una sola plataforma, con visibilidad en tiempo real de todas las tiendas y almacenes.
 
@@ -10,27 +10,28 @@ Negocios minoristas y mayoristas que operan con varias tiendas y/o almacenes, y 
 
 ## Funcionalidades principales
 
-- **Punto de venta rápido** — Búsqueda por código de barras o nombre, múltiples carritos simultáneos, precios unitarios y de mayoreo, impresión de tickets, y soporte para ventas, traspasos y distribuciones desde la misma pantalla. Atajos de teclado para cambiar tipo de búsqueda (Ctrl+Q/W), tipo de operación (Ctrl+E/R/T/Y/U), enfocar el buscador (Ctrl+B) y buscar con Enter en modo manual.
+- **Punto de venta rápido** — Búsqueda por código de barras o nombre, múltiples carritos simultáneos, precios unitarios y de mayoreo, impresión de tickets, y soporte para ventas, traspasos y distribuciones desde la misma pantalla. Atajos de teclado para cambiar tipo de búsqueda (Ctrl+Q/W), tipo de operación (Ctrl+E/R/T/Y/U), enfocar el buscador (Ctrl+B) y buscar con Enter en modo manual. En modo distribución: auto-focus en cantidad al escanear, Enter para volver al buscador.
 - **Gestión multi-tienda** — Administra tiendas y almacenes desde un panel central. Cambia entre sucursales sin cerrar sesión. Indicador de catálogo completo/incompleto por tienda.
-- **Inventario en tiempo real** — Consulta stock disponible en todas las tiendas, con alertas de stock insuficiente y reservas automáticas entre carritos. Acciones restringidas por rol (solo el dueño puede ajustar stock y editar productos).
+- **Inventario en tiempo real** — Consulta stock disponible en todas las tiendas, con alertas de stock insuficiente y reservas automáticas entre carritos. Acciones restringidas por rol (solo el dueño puede ajustar stock, editar productos y modificar precios).
 - **Traspasos y distribuciones** — Mueve mercancía entre almacenes y tiendas con trazabilidad completa. Confirma recepciones desde cada sucursal.
 - **Clientes y mensualidades** — Registro de clientes, historial de compras y gestión de pagos recurrentes. Creación de descuentos desde modal dedicado.
 - **Corte de caja** — Resumen diario de ventas por método de pago (efectivo, tarjeta, transferencia), con movimientos de caja detallados.
 - **Devoluciones y cancelaciones** — Cancelación total de ventas con motivo, devolución parcial de productos (ajusta cantidades o elimina productos de la venta), y registro del motivo en ambos casos. Filtros rápidos por ventas duplicadas, canceladas y con devolución.
-- **Tablero y auditoría** — Tablero de ventas con KPIs (mejor/peor tienda, día, hora pico), heatmap de ventas, ticket promedio por día, y gráficas de tendencia. Dos módulos de auditoría: transacciones (ventas duplicadas, registros inconsistentes, discrepancias de stock) y productos (códigos repetidos, costo en cero, precio mayoreo inconsistente, faltantes en tiendas, productos sin movimiento). Restricción de acceso al tablero por horario configurable.
-- **Tablero de cancelaciones** — Tablero dedicado a ventas canceladas y con devolución: KPIs, gráficas de tendencia, distribución por tienda y tipo, listado de motivos.
-- **Tablero de marcas y productos** — Top marcas y productos más/menos vendidos con porcentaje de participación.
-- **Historial de stock** — Registro detallado de todos los movimientos de inventario: ventas, traspasos, distribuciones, ajustes manuales. Útil para rastrear discrepancias y verificar que entradas y salidas coincidan.
-- **Notificaciones** — Notificaciones en tiempo real con reconexión automática. Soporte para traspasos, distribuciones, solicitudes de ajuste y apartados. Consulta inicial al cargar y al cambiar de tienda. Indicador de ventas duplicadas en la barra superior con contador y detalle por tienda.
-- **Ayuda contextual** — Botón de ayuda en el navbar que muestra una descripción de la página actual según la ruta.
-- **Solicitudes de ajuste de stock** — Los administradores y vendedores pueden solicitar ajustes de stock. El dueño aprueba o rechaza desde un panel dedicado.
-- **Historial de precios** — Registro de cambios de precios por producto, agrupado por fecha, accesible desde la lista de productos.
-- **Soporte por WhatsApp** — Botón en el sidebar que abre WhatsApp con mensaje prellenado (tenant y tienda).
-- **Importación masiva** — Carga productos, inventario y ventas desde archivos Excel. Flujo guiado con pasos visuales, arrastrar y soltar archivos, validación con resumen de errores y confirmación antes de importar.
-- **Roles y permisos** — Tres niveles de acceso: dueño, administrador y vendedor, cada uno con su vista y permisos específicos. Columnas y acciones se ocultan según el rol.
-- **Modo oscuro/claro** — Interfaz adaptable a la preferencia del usuario.
+- **Tableros** — Tablero de ventas con KPIs (mejor/peor tienda, día, hora pico), heatmap de ventas, ticket promedio por día, y gráficas de tendencia. Tablero de cancelaciones con indicadores de ventas canceladas y con devolución, gráficas de tendencia, distribución por tienda y tipo. Tablero de marcas y productos con top marcas y productos más/menos vendidos. Restricción de acceso al tablero por horario configurable.
+- **Auditoría** — Detecta ventas duplicadas, registros inconsistentes, discrepancias de stock, códigos repetidos, productos con costo en cero, precios de mayoreo inconsistentes, productos faltantes en tiendas y sin movimiento.
+- **Historial de stock** — Registro detallado de todos los movimientos de inventario: ventas, traspasos, distribuciones, ajustes manuales. Útil para rastrear discrepancias.
+- **Notificaciones en tiempo real** — Notificaciones instantáneas para traspasos, distribuciones, solicitudes de ajuste. Indicador de ventas duplicadas en la barra superior con contador y detalle por tienda.
+- **Solicitudes de ajuste de stock** — Los administradores y vendedores pueden solicitar ajustes. El dueño aprueba o rechaza desde un panel dedicado.
+- **Historial de precios** — Registro de cambios de precios por producto, agrupado por fecha.
+- **Importación masiva** — Carga productos, inventario y ventas desde archivos Excel. Flujo guiado con pasos visuales, arrastrar y soltar archivos, validación con resumen de errores.
+- **Roles y permisos** — Tres niveles de acceso: dueño, administrador y vendedor, cada uno con vista y permisos específicos.
 - **Impresión de tickets** — Integración con impresoras térmicas para tickets de venta.
-- **Monitoreo de rendimiento** — Registro en localStorage del tiempo de respuesta de búsquedas por código, agrupado por segundos, con detección de queries que superan el timeout.
+
+## Features extras y complementos
+
+- **Ayuda contextual** — Botón de ayuda en el navbar que muestra una descripción de la página actual según la ruta.
+- **Soporte por WhatsApp** — Botón en el sidebar que abre WhatsApp con mensaje prellenado (tenant y tienda).
+- **Modo oscuro/claro** — Interfaz adaptable a la preferencia del usuario.
 
 ## Stack técnico
 
@@ -175,3 +176,8 @@ transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);  /* Botones */
 transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);   /* Cards */
 transition: all 0.2s ease;                             /* Inputs */
 ```
+
+
+## Reglas de desarrollo
+
+- Lo relacionado a la pantalla `Registration` (registro público de negocios) no se va a añadir a futuras versiones. Es una funcionalidad estable y completa.

@@ -15,7 +15,9 @@
           "Las notificaciones ahora llegan al instante (nuevo, barra superior)",
           "Indicador de ventas duplicadas en la barra superior: muestra un contador y al dar clic ves el detalle por tienda (nuevo)"
         ]
-      },
+      }
+    ],
+    "store": [
       {
         "section": "Vender",
         "items": [
@@ -24,8 +26,7 @@
           "Al presionar Enter se busca automáticamente en modo manual",
           "El buscador se enfoca solo al entrar a la página y después de cada venta",
           "Puedes fijar la lista de resultados para que no se cierre al agregar un producto",
-          "Si un producto está en otro carrito, el sistema te avisa del stock disponible",
-          "En modo distribución: al escanear un producto, el cursor salta automáticamente al campo de cantidad. Presiona Enter para volver al buscador (nuevo)"
+          "Si un producto está en otro carrito, el sistema te avisa del stock disponible"
         ]
       },
       {
@@ -156,29 +157,32 @@
     ],
     "admin": [
       {
-        "section": "Perfil (nuevo, se accede dando clic en tu foto en la barra superior)",
+        "section": "Productos",
         "items": [
-          "Puedes ver tu información y cambiar tu contraseña"
+          "Botón para editar cada producto",
+          "Los precios están deshabilitados (solo el dueño puede modificarlos)",
+          "Botón para ver el stock del producto en todas las tiendas y almacenes"
         ]
       },
       {
-        "section": "Inventario",
+        "section": "Solicitudes de ajustes",
         "items": [
-          "Nuevo botón para solicitar un ajuste de stock en cualquier producto",
+          "Puedes solicitar un ajuste de stock en cualquier producto",
           "Se abre una ventana donde ves el producto, el stock actual, y escribes la cantidad correcta",
           "La solicitud le llega al dueño para que la apruebe"
+        ]
+      },
+      {
+        "section": "Perfil",
+        "items": [
+          "Puedes ver tu información y cambiar tu contraseña",
+          "Al cambiar la contraseña se cerrará la sesión en todos los dispositivos donde esté abierta"
         ]
       }
     ],
     "seller": [
       {
-        "section": "Perfil (nuevo, se accede dando clic en tu foto en la barra superior)",
-        "items": [
-          "Puedes ver tu información y cambiar tu contraseña"
-        ]
-      },
-      {
-        "section": "Inventario (nuevo acceso)",
+        "section": "Inventario",
         "items": [
           "Ahora puedes consultar el inventario de tu tienda",
           "Nuevo botón para solicitar un ajuste de stock en cualquier producto",
@@ -187,9 +191,62 @@
         ]
       },
       {
-        "section": "Movimientos en caja (nuevo acceso)",
+        "section": "Movimientos en caja",
         "items": [
           "Ahora puedes ver los movimientos de caja de tu tienda"
+        ]
+      },
+      {
+        "section": "Perfil",
+        "items": [
+          "Puedes ver tu información y cambiar tu contraseña",
+          "Al cambiar la contraseña se cerrará la sesión en todos los dispositivos donde esté abierta"
+        ]
+      }
+    ],
+    "warehouse": [
+      {
+        "section": "Diseño",
+        "items": [
+          "La aplicación tiene un diseño completamente nuevo: más moderno, limpio y fácil de usar",
+          "Nuevo menú lateral con indicador de en qué página estás",
+          "Modo oscuro y modo claro (se cambia desde la barra superior)",
+          "Botón de ayuda en la barra superior que explica para qué sirve cada página",
+          "Botón de soporte por WhatsApp (menú lateral)",
+          "Las notificaciones ahora llegan al instante (barra superior)"
+        ]
+      },
+      {
+        "section": "Distribuir",
+        "items": [
+          "Puedes tener varios carritos abiertos al mismo tiempo (pestañas)",
+          "Atajos de teclado más fáciles de recordar (Ctrl+Q, W, E, R, T, Y, U, B)",
+          "Al presionar Enter se busca automáticamente en modo manual",
+          "El buscador se enfoca solo al entrar a la página",
+          "Puedes fijar la lista de resultados para que no se cierre al agregar un producto",
+          "Al escanear un producto, el cursor salta automáticamente al campo de cantidad. Presiona Enter para volver al buscador (nuevo)"
+        ]
+      },
+      {
+        "section": "Inventario",
+        "items": [
+          "Filtros para buscar por código, marca, departamento o stock máximo",
+          "Se puede descargar el inventario a Excel",
+          "Muestra qué porcentaje de productos está en cero"
+        ]
+      },
+      {
+        "section": "Movimientos",
+        "items": [
+          "Distribuciones y traspasos con trazabilidad completa",
+          "Confirma recepciones desde el almacén"
+        ]
+      },
+      {
+        "section": "Perfil",
+        "items": [
+          "Puedes ver tu información y cambiar tu contraseña",
+          "Al cambiar la contraseña se cerrará la sesión en todos los dispositivos donde esté abierta"
         ]
       }
     ]

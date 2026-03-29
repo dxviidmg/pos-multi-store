@@ -22,6 +22,7 @@ import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
+import NewspaperIcon from "@mui/icons-material/Newspaper";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
@@ -145,6 +146,7 @@ export default function MainLayout({ toggleTheme, themeMode }) {
 
   const [open, setOpen] = React.useState(false);
   const [openMenus, setOpenMenus] = React.useState({});
+  const [showUpdates, setShowUpdates] = React.useState(false);
 
   const handleDrawerToggle = () => {
     setOpen(!open);
@@ -441,6 +443,18 @@ export default function MainLayout({ toggleTheme, themeMode }) {
         </List>
         <Box sx={{ mt: "auto", p: 1 }}>
           <ListItemButton
+            onClick={() => setShowUpdates(true)}
+            sx={{
+              borderRadius: 2, justifyContent: open ? "initial" : "center", mb: 1,
+              "&:hover": { backgroundColor: "rgba(167, 139, 250, 0.12)" },
+            }}
+          >
+            <ListItemIcon sx={{ color: "#a78bfa", minWidth: open ? 38 : 0, justifyContent: "center" }}>
+              <NewspaperIcon />
+            </ListItemIcon>
+            <ListItemText primary="Actualizaciones 2026" primaryTypographyProps={{ fontWeight: 600, fontSize: "0.8rem" }} sx={{ opacity: open ? 1 : 0 }} />
+          </ListItemButton>
+          <ListItemButton
             component="a"
             href={`https://api.whatsapp.com/send/?phone=${process.env.REACT_APP_WHATSAPP_NUMBER}&text=${encodeURIComponent(`Soporte SmartVenta\nTenant: ${user.tenant_name}\nTienda: ${user.store_name || "General"}`)}&type=phone_number&app_absent=0`}
             target="_blank"
@@ -460,7 +474,7 @@ export default function MainLayout({ toggleTheme, themeMode }) {
 
       <Box component="main" sx={{ flexGrow: 1, p: 3, overflow: "auto", maxWidth: "100%" }}>
         <DrawerHeader />
-        <UpdatesModal />
+        <UpdatesModal open={showUpdates} onClose={() => setShowUpdates(false)} />
         <Outlet />
       </Box>
     </Box>

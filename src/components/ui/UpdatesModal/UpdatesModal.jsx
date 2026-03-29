@@ -2,29 +2,30 @@ import React, { useState, useEffect } from "react";
 import CustomModal from "../../ui/Modal/Modal";
 import { Grid, Typography, Box, Chip } from "@mui/material";
 import { getUserData } from "../../../api/utils";
-import updates from "../../../constants/smartventa_2_0_updates.json";
+import updates from "../../../constants/smartventa_2026_updates.json";
 
-const UpdatesModal = () => {
-  const [open, setOpen] = useState(false);
+const UpdatesModal = ({ open, onClose }) => {
+  const [isOpen, setIsOpen] = useState(open !== undefined ? open : true);
   const user = getUserData();
-  const storageKey = `smartventa_updates_seen_2_0_${user?.username || ""}`;
 
   useEffect(() => {
-    if (!localStorage.getItem(storageKey)) setOpen(true);
-  }, [storageKey]);
+    if (open !== undefined) {
+      setIsOpen(open);
+    }
+  }, [open]);
 
   const handleClose = () => {
-    localStorage.setItem(storageKey, "true");
-    setOpen(false);
+    setIsOpen(false);
+    if (onClose) onClose();
   };
 
-  const role = user?.role || "seller";
+  const role = user?.store_type === "A" ? "warehouse" : (user?.store_type === "T" ? "store" : (user?.role || "seller"));
   const sections = [...updates.updates.all, ...(updates.updates[role] || [])];
 
-  if (!open) return null;
+  if (!isOpen) return null;
 
   return (
-    <CustomModal showOut={open} onClose={handleClose} title="🎉 Novedades SmartVenta 2.0">
+    <CustomModal showOut={isOpen} onClose={handleClose} title="🎉 Novedades SmartVenta 2026">
       <Grid container sx={{ padding: '1rem', backgroundColor: 'rgba(4, 53, 107, 0.2)' }}>
         <Grid item xs={12} className="card" sx={{ maxHeight: '60vh', overflow: 'auto' }}>
           {sections.map((s, i) => (
