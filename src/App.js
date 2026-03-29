@@ -41,6 +41,7 @@ const ProductsDashboard = lazyRetry(() => import("./components/admin/Dashboard/P
 const DistributionList = lazyRetry(() => import("./components/inventory/DistributionList/DistributionList"));
 const RestartService = lazyRetry(() => import("./components/admin/RestartService/RestartService"));
 const Profile = lazyRetry(() => import("./components/admin/Profile/Profile"));
+const Registration = lazyRetry(() => import("./components/clients/Registration/Registration"));
 
 function App({ toggleTheme, themeMode }) {
   useKeepAlive();
@@ -95,7 +96,10 @@ function App({ toggleTheme, themeMode }) {
             )}
           </Route>
         ) : (
+          <>
+          <Route path="/registrar-cliente/" element={<Suspense fallback={<LoadingFallback />}><Registration /></Suspense>} />
           <Route path="*" element={<Login onLogin={handleLogin} />} />
+          </>
         )}
       </Routes>
     </Router>

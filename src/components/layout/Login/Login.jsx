@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
 
 function Login({ onLogin }) {
   const navigate = useNavigate();
@@ -165,6 +166,19 @@ function Login({ onLogin }) {
               }}
             >
               Iniciar Sesión
+            </CustomButton>
+
+            <CustomButton onClick={() => navigate("/registrar-cliente")} fullWidth
+              sx={{
+                py: 1, mt: 1.5, borderRadius: 1, fontWeight: 600, fontSize: '0.85rem',
+                background: 'rgba(255,255,255,0.1)',
+                '&:hover': {
+                  background: 'rgba(255,255,255,0.2)',
+                },
+              }}
+              startIcon={<PersonAddIcon />}
+            >
+              Registrar nuevo cliente
             </CustomButton>
           </Stack>
         </Box>
