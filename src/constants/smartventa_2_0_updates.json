@@ -84,8 +84,7 @@
           "Indicadores principales: mejor y peor tienda, mejor día, hora con más ventas, ticket promedio",
           "Mapa de calor de ventas por hora y día de la semana",
           "Gráfica de ticket promedio por día",
-          "Gráfica de tendencia de ventas con filtros por año",
-          "Se puede restringir el acceso al tablero por horario"
+          "Gráfica de tendencia de ventas con filtros por año"
         ]
       },
       {
