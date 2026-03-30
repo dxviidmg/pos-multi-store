@@ -1,5 +1,5 @@
 import { logger } from "../../../utils/logger";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import SimpleTable from "../../ui/SimpleTable/SimpleTable";
 import {
@@ -37,6 +37,8 @@ const Cart = ({ searchInputRef }) => {
   const [selectedStore, setSelectedStore] = useState("");
   const [confirmedStore, setConfirmedStore] = useState("");
   const [loading, setLoading] = useState(false);
+  const lastQtyRef = useRef(null);
+  const prevCartLenRef = useRef(0);
   
   const { carts, activeCartId } = useSelector((state) => state.multiCartReducer);
   
@@ -62,6 +64,19 @@ const Cart = ({ searchInputRef }) => {
     }, 0);
     return productStock - reservedInOtherCarts;
   };
+
+  // Auto-focus cantidad del último producto agregado en distribución
+  useEffect(() => {
+    if (movementType === "distribucion" && cart.length > prevCartLenRef.current) {
+      setTimeout(() => {
+        if (lastQtyRef.current) {
+          lastQtyRef.current.focus();
+          lastQtyRef.current.select();
+        }
+      }, 50);
+    }
+    prevCartLenRef.current = cart.length;
+  }, [cart.length, movementType]);
 
   useEffect(() => {
     const handleShortcut = (event) => {
@@ -266,12 +281,7 @@ const Cart = ({ searchInputRef }) => {
       field: "name",
       selector: (row) => row.product.name,
       renderCell: (params) => (
-        <div style={{ 
-          whiteSpace: 'normal', 
-          wordWrap: 'break-word',
-          lineHeight: '1.3',
-          padding: '4px 0'
-        }}>
+        <div className="cell-wrap">
           {params.row.product.name}
         </div>
       ),
@@ -292,12 +302,7 @@ const Cart = ({ searchInputRef }) => {
       field: "name",
       selector: (row) => row.product.name,
       renderCell: (params) => (
-        <div style={{ 
-          whiteSpace: 'normal', 
-          wordWrap: 'break-word',
-          lineHeight: '1.3',
-          padding: '4px 0'
-        }}>
+        <div className="cell-wrap">
           {params.row.product.name}
         </div>
       ),
@@ -370,12 +375,7 @@ const Cart = ({ searchInputRef }) => {
       name: "Nombre",
       selector: (row) => row.product.name,
       renderCell: (params) => (
-        <div style={{ 
-          whiteSpace: 'normal', 
-          wordWrap: 'break-word',
-          lineHeight: '1.3',
-          padding: '4px 0'
-        }}>
+        <div className="cell-wrap">
           {params.row.product.name}
         </div>
       ),
@@ -424,12 +424,16 @@ const Cart = ({ searchInputRef }) => {
     {
       name: "Cantidad",
       width: 100,
-      selector: (row) => (
+      selector: (row, index) => (
         <TextField size="small" type="number" sx={{ width: 80 }}
+          inputRef={index === cart.length - 1 ? lastQtyRef : undefined}
           value={row.quantity}
           onChange={(e) => handleQuantityChangeToCart(e, row)}
           onKeyDown={(e) => {
-            if (e.key === "ArrowUp") {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              searchInputRef?.current?.focus();
+            } else if (e.key === "ArrowUp") {
               e.preventDefault();
               const newValue = row.quantity + 1;
               const availableStock = getAvailableStock(row.id, row.available_stock);
@@ -565,8 +569,14 @@ const Cart = ({ searchInputRef }) => {
                 <Grid item xs={12} md={3}>
                   <Select fullWidth size="small" value={selectedStore}
                     onChange={handleSelectChange}
+                    displayEmpty
+                    renderValue={(value) => {
+                      if (!value) return <span style={{ color: "#999" }}>Selecciona un destino</span>;
+                      const store = stores.find((s) => s.id === value);
+                      return store ? <b>{store.name} ({store.store_type_display})</b> : value;
+                    }}
                   >
-                    <MenuItem value="">Selecciona un destino</MenuItem>
+                    <MenuItem value="" disabled>Selecciona un destino</MenuItem>
                     {stores.map((store) => (
                       <MenuItem key={store.id} value={store.id}>
                         <b>{store.name} ({store.store_type_display})</b>
@@ -577,8 +587,14 @@ const Cart = ({ searchInputRef }) => {
                 <Grid item xs={12} md={3}>
                   <Select fullWidth size="small" value={confirmedStore}
                     onChange={handleSelectChange2}
+                    displayEmpty
+                    renderValue={(value) => {
+                      if (!value) return <span style={{ color: "#999" }}>Confirma el destino</span>;
+                      const store = stores.find((s) => s.id === value);
+                      return store ? `${store.name} (${store.store_type_display})` : value;
+                    }}
                   >
-                    <MenuItem value="">Confirma el destino</MenuItem>
+                    <MenuItem value="" disabled>Confirma el destino</MenuItem>
                     {stores.map((store) => (
                       <MenuItem key={store.id} value={store.id}>
                         {store.name} ({store.store_type_display})

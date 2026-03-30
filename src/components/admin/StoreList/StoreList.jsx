@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import DataTable from "../../ui/DataTable/DataTable";
 import { Alert, Typography, Chip } from "@mui/material";
 import CustomButton from "../../ui/Button/Button";
+import PageHeader from "../../ui/PageHeader";
 import { useNavigate } from "react-router-dom";
 import { formatCurrency } from "../../../utils/utils";
 import { getDateDifference, getFormattedDate } from "../../../utils/utils";
@@ -375,7 +376,7 @@ const StoreList = () => {
         {
           name: "Catálogo",
           cell: ({ has_all_products }) => (
-            <span style={{ fontSize: '13px', color: has_all_products ? '#16a34a' : '#dc2626', fontWeight: 600 }}>
+            <span className={has_all_products ? "text-success" : "text-danger"} style={{ fontSize: '13px', fontWeight: 600 }}>
               {has_all_products ? "Completo" : "Incompleto"}
             </span>
           ),
@@ -509,7 +510,7 @@ const StoreList = () => {
         {
           name: "Catálogo",
           cell: ({ has_all_products }) => (
-            <span style={{ fontSize: '13px', color: has_all_products ? '#16a34a' : '#dc2626', fontWeight: 600 }}>
+            <span className={has_all_products ? "text-success" : "text-danger"} style={{ fontSize: '13px', fontWeight: 600 }}>
               {has_all_products ? "Completo" : "Incompleto"}
             </span>
           ),
@@ -652,10 +653,9 @@ const StoreList = () => {
       <CustomSpinner isLoading={loading} />
       <Grid container>
         <Grid item xs={12} className="card">
-          <div className="flex-between" style={{ marginBottom: '1rem' }}>
-            <h1>{params.store_type === "T" ? "Tiendas" : "Almacenes"}</h1>
+          <PageHeader title={params.store_type === "T" ? "Tiendas" : "Almacenes"}>
             {tenantInfo.notices && tenantInfo.notices.length > 0 && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Box sx={{ display: 'flex', gap: 0.5 }}>
                 {tenantInfo.notices.map((notice, index) => (
                   <Chip 
                     key={index}
@@ -664,9 +664,9 @@ const StoreList = () => {
                     size="small"
                   />
                 ))}
-              </div>
+              </Box>
             )}
-          </div>
+          </PageHeader>
 
           <Grid container spacing={2} sx={{ mb: 1 }}>
               <Grid item xs={12} sm={6} md={3}>
@@ -723,7 +723,7 @@ const StoreList = () => {
               </Grid>
               <Grid item xs={12} md={8} style={{ textAlign: "center" }}>
                 {params.store_type === "T" && (
-                  <Box sx={{ mt: 1, fontSize: '0.75rem', color: '#666' }}>
+                  <Box sx={{ mt: 1, fontSize: '0.75rem', color: 'text.secondary' }}>
                     <span className="text-success">● Arriba del promedio</span>
                     {' | '}
                     <span className="status-dot--warning">● Promedio</span>

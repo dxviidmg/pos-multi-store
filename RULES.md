@@ -124,6 +124,15 @@
 - Si un prop/export no se usa en ningún archivo, eliminarlo.
 - Usar `try/catch/finally` en llamadas async para garantizar que loading se desactive.
 
+## Estilo visual y componentes
+
+- **Design tokens para colores**: Nunca usar valores hexadecimales hardcodeados. Usar tokens del tema: `text.primary`, `text.secondary`, `primary`, `accent`.
+- **Clases CSS utilitarias**: Extraer patrones de estilo inline repetidos (ej: ajuste de texto en celdas) a clases CSS en `App.css`.
+- **Componente PageHeader**: Usar siempre en lugar de layouts manuales con `<h1>` + botones. Envolver título y acciones en `<PageHeader title="...">`.
+- **Box de MUI para layouts**: Usar `Box` con `sx` en lugar de `style` inline para flex layouts. Ej: `<Box sx={{ display: 'flex', gap: 0.5 }}>`.
+- **Clases semánticas para estados**: Usar `text-success`, `text-danger`, `text-warning` en lugar de colores hardcodeados.
+- **Iconos de alerta**: Usar tokens del tema (`accent`) en lugar de valores hex.
+
 ## README
 
 - En "Funcionalidades principales" usar lenguaje de usuario, nunca términos técnicos (no Stepper, WebSocket, badge, popover, drag & drop, etc.).

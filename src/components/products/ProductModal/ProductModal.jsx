@@ -10,6 +10,7 @@ import {
   updateProduct,
 } from "../../../api/products";
 import { getStores } from "../../../api/stores";
+import { getUserData } from "../../../api/utils";
 import noPhoto from "../../../assets/images/noPhoto.jpg";
 import { getDepartments } from "../../../api/departments";
 import SimpleTable from "../../ui/SimpleTable/SimpleTable";
@@ -33,6 +34,8 @@ const INITIAL_FORM_DATA = {
 const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
   const productData = product?.product || product || {};
   const showStoreProducts = product?.showStoreProducts || false;
+  const user = getUserData();
+  const isOwner = user?.role === "owner";
 
   const [brands, setBrands] = useState([]);
   const [departments, setDepartments] = useState([]);
@@ -236,6 +239,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
                   placeholder="Costo"
                   name="cost"
                   onChange={handleDataChange}
+                  disabled={!isOwner}
                 />
               </Grid>
 
@@ -245,6 +249,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
                   placeholder="Precio unitario"
                   name="unit_price"
                   onChange={handleDataChange}
+                  disabled={!isOwner}
                 />
               </Grid>
 
@@ -254,6 +259,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
                   placeholder="Precio de mayoreo"
                   name="wholesale_price"
                   onChange={handleDataChange}
+                  disabled={!isOwner}
                 />
               </Grid>
 
@@ -263,6 +269,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
                   placeholder="Cantidad minima mayoreo"
                   name="min_wholesale_quantity"
                   onChange={handleDataChange}
+                  disabled={!isOwner}
                 />
               </Grid>
 
@@ -273,9 +280,10 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
                       checked={formData.wholesale_price_on_client_discount === true}
                       onChange={handleDataChange}
                       name="wholesale_price_on_client_discount"
+                      disabled={!isOwner}
                     />
                   }
-                  label="Precio de mayoreo en descuento de cliente registrado"
+                  label="Permitir precio de mayoreo para clientes registrados"
                 />
               </Grid>
 

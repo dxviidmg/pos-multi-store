@@ -34,8 +34,8 @@ const SimpleTable = ({ data, columns, noDataComponent }) => {
             data.map((row, rowIdx) => (
               <TableRow key={rowIdx}>
                 {columns.map((col, colIdx) => (
-                  <TableCell key={colIdx} sx={{ py: 0.5, fontSize: "0.8125rem" }} width={col.width}>
-                    {col.cell ? col.cell(row) : col.selector ? col.selector(row) : row[col.field]}
+                  <TableCell key={colIdx} sx={{ py: 0.5, px: '2px', fontSize: "0.8125rem", gap: '2px', '& .MuiButtonBase-root': { transform: 'scale(0.8)', minWidth: 0, px: 1 } }} width={col.width}>
+                    {col.cell ? col.cell(row, rowIdx) : col.selector ? col.selector(row, rowIdx) : row[col.field]}
                   </TableCell>
                 ))}
               </TableRow>
