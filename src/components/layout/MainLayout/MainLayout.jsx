@@ -137,7 +137,7 @@ const Drawer = styled(MuiDrawer, {
   };
 });
 
-export default function MainLayout({ toggleTheme, themeMode }) {
+export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
   const navigate = useNavigate();
   const location = useLocation();
   const user = getUserData();
@@ -147,6 +147,12 @@ export default function MainLayout({ toggleTheme, themeMode }) {
   const [open, setOpen] = React.useState(false);
   const [openMenus, setOpenMenus] = React.useState({});
   const [showUpdates, setShowUpdates] = React.useState(false);
+
+  React.useEffect(() => {
+    if (onLoginSuccess) {
+      setShowUpdates(true);
+    }
+  }, [onLoginSuccess]);
 
   const handleDrawerToggle = () => {
     setOpen(!open);
