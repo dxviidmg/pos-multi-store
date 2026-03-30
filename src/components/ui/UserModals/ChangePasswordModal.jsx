@@ -1,4 +1,4 @@
-import { Grid, TextField, IconButton, InputAdornment } from "@mui/material";
+import { Grid, TextField, IconButton, InputAdornment, Alert } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import CustomModal from "../Modal/Modal";
 import CustomButton from "../Button/Button";
@@ -9,6 +9,11 @@ const ChangePasswordModal = ({ open, onClose, passwordData, onChange, onSave, sh
       <Grid container sx={{ padding: '1rem', backgroundColor: 'rgba(4, 53, 107, 0.2)' }}>
         <Grid item xs={12} className="card">
           <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <Alert severity="warning" sx={{ fontSize: '0.8rem' }}>
+                Al cambiar la contraseña se cerrará la sesión en todos los dispositivos donde esté abierta.
+              </Alert>
+            </Grid>
             <Grid item xs={12}>
               <TextField
                 fullWidth

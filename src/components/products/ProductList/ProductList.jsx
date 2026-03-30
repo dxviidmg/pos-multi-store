@@ -76,7 +76,7 @@ const ProductList = () => {
       Nombre: name, Stock: stock, Costo: cost,
       "Precio unitario": unit_price, "Precio mayoreo": wholesale_price,
       "Cantidad mínima mayoreo": min_wholesale_quantity,
-      "Precio Mayoreo en descuento de clientes": wholesale_price_on_client_discount,
+      "Permitir mayoreo con descuento de cliente": wholesale_price_on_client_discount,
       Imagen: image,
     }));
     exportToExcel(data, "Productos");
@@ -225,7 +225,7 @@ const ProductList = () => {
                     : `$${row.unit_price}`
                 ),
               },
-              ...(user.role === "owner" ? [{
+              ...(user.role !== "seller" ? [{
                 name: "Acciones",
                 width: 180,
                 cell: (row) => (

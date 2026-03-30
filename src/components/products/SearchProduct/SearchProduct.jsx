@@ -3,10 +3,11 @@ import React, { useCallback, useEffect, useRef, useState, useMemo } from "react"
 import { useSelector, useDispatch } from "react-redux";
 import SimpleTable from "../../ui/SimpleTable/SimpleTable";
 import CustomButton from "../../ui/Button/Button";
+import PageHeader from "../../ui/PageHeader";
 import CustomTooltip from "../../ui/Tooltip";
 import { getStoreProducts, getStockOtherStores } from "../../../api/products";
 import { addToCart, updateMovementType, countStockOtherStores } from "../../../redux/cart/cartActions";
-import { Chip } from "@mui/material";
+import { Chip, Box } from "@mui/material";
 import StockModal from "../../inventory/StockModal/StockModal";
 import { useModal } from "../../../hooks/useModal";
 import { useFetchWithRetry } from "../../../hooks/useFetch";
@@ -309,23 +310,20 @@ const SearchProduct = ({ searchInputRef }) => {
     <>
       <StockModal isOpen={stockModal.isOpen} product={stockModal.data} onClose={stockModal.close} />
 
-      <div className="flex-between" style={{ marginBottom: '0.25rem', alignItems: 'center' }}>
-        <h1 style={{ margin: 0 }}>Consulta de productos</h1>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          {!isInputFocused && (
-            <Alert severity="warning" variant="filled" sx={{ py: 0 }}>
-              Enfoca el campo de búsqueda para agregar productos
-            </Alert>
-          )}
-          <CustomButton
-            disabled={!urlPrinter}
-            onClick={(e) => handlePrintTicket("test", {})}
-            startIcon={<PrintIcon fontSize="small" />}
-          >
-            Probar impresora
-          </CustomButton>
-        </div>
-      </div>
+      <PageHeader title="Consulta de productos">
+        {!isInputFocused && (
+          <Alert severity="warning" variant="filled" sx={{ py: 0 }}>
+            Enfoca el campo de búsqueda para agregar productos
+          </Alert>
+        )}
+        <CustomButton
+          disabled={!urlPrinter}
+          onClick={(e) => handlePrintTicket("test", {})}
+          startIcon={<PrintIcon fontSize="small" />}
+        >
+          Probar impresora
+        </CustomButton>
+      </PageHeader>
 
       <Grid container spacing={0} sx={{ mb: 0.5 }}>
         <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', mb: 0.25 }}>
@@ -356,12 +354,6 @@ const SearchProduct = ({ searchInputRef }) => {
                 sx={{ mr: 4 }}
               />
             )}
-            <FormControlLabel 
-              value="traspaso" 
-              control={<Radio size="small" />} 
-              label="Confirmar traspaso (Ctrl+R)"
-              sx={{ mr: 4 }}
-            />
             {storeType !== "T" && (
               <FormControlLabel 
                 value="distribucion" 
@@ -370,6 +362,12 @@ const SearchProduct = ({ searchInputRef }) => {
                 sx={{ mr: 4 }}
               />
             )}
+            <FormControlLabel 
+              value="traspaso" 
+              control={<Radio size="small" />} 
+              label="Confirmar traspaso (Ctrl+R)"
+              sx={{ mr: 4 }}
+            />
             <FormControlLabel 
               value="agregar" 
               control={<Radio size="small" />} 

@@ -20,6 +20,7 @@ import { CustomSpinner } from '../../ui/Spinner/Spinner';
 
 const Profile = () => {
   const user = getUserData();
+  const isOwner = user?.role === "owner";
   const [tenantData, setTenantData] = useState({
     name: '',
     short_name: '',
@@ -185,68 +186,70 @@ const Profile = () => {
         )}
 
         <Grid container spacing={3}>
-          <Grid item xs={12} md={6}>
-            <Box sx={{ mb: 3 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <Business sx={{ mr: 1 }} />
-                <Typography variant="h6" fontWeight={600}>
-                  Información del Negocio
-                </Typography>
-              </Box>
-              <Divider sx={{ mb: 2 }} />
-              
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Nombre del Negocio"
-                    name="name"
-                    value={tenantData.name}
-                    onChange={handleTenantChange}
-                    size="small"
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Nombre Corto"
-                    name="short_name"
-                    value={tenantData.short_name}
-                    size="small"
-                    disabled
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Fecha de Creación"
-                    name="created_at"
-                    value={tenantData.created_at ? new Date(tenantData.created_at).toLocaleDateString('es-MX') : ''}
-                    size="small"
-                    disabled
-                  />
-                </Grid>
+          {isOwner && (
+            <>
+              <Grid item xs={12} md={6}>
+                <Box sx={{ mb: 3 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                    <Business sx={{ mr: 1 }} />
+                    <Typography variant="h6" fontWeight={600}>
+                      Información del Negocio
+                    </Typography>
+                  </Box>
+                  <Divider sx={{ mb: 2 }} />
+                  
+                  <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Nombre del Negocio"
+                        name="name"
+                        value={tenantData.name}
+                        onChange={handleTenantChange}
+                        size="small"
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Nombre Corto"
+                        name="short_name"
+                        value={tenantData.short_name}
+                        size="small"
+                        disabled
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Fecha de Creación"
+                        name="created_at"
+                        value={tenantData.created_at ? new Date(tenantData.created_at).toLocaleDateString('es-MX') : ''}
+                        size="small"
+                        disabled
+                      />
+                    </Grid>
+                  </Grid>
+                </Box>
               </Grid>
-            </Box>
-          </Grid>
 
-          <Grid item xs={12} md={6}>
-            <Box sx={{ mb: 3 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <Settings sx={{ mr: 1 }} />
-                <Typography variant="h6" fontWeight={600}>
-                  Configuraciones
-                </Typography>
-              </Box>
-              <Divider sx={{ mb: 2 }} />
-              
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      name="displays_stock_in_storages"
-                      checked={settings.displays_stock_in_storages}
-                      onChange={handleSettingChange}
+              <Grid item xs={12} md={6}>
+                <Box sx={{ mb: 3 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                    <Settings sx={{ mr: 1 }} />
+                    <Typography variant="h6" fontWeight={600}>
+                      Configuraciones
+                    </Typography>
+                  </Box>
+                  <Divider sx={{ mb: 2 }} />
+                  
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          name="displays_stock_in_storages"
+                          checked={settings.displays_stock_in_storages}
+                          onChange={handleSettingChange}
                     />
                   }
                   label="Mostrar stock en almacenes"
@@ -264,6 +267,8 @@ const Profile = () => {
               Guardar Datos del Negocio
             </Button>
           </Grid>
+            </>
+          )}
 
           <Grid item xs={12} md={6}>
             <Box sx={{ mb: 3 }}>

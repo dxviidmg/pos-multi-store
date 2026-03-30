@@ -1,0 +1,258 @@
+{
+  "version": "2.0",
+  "date": "Marzo 2026",
+  "updates": {
+    "all": [
+      {
+        "section": "Diseño",
+        "items": [
+          "La aplicación tiene un diseño completamente nuevo: más moderno, limpio y fácil de usar",
+          "Nuevo menú lateral con indicador de en qué página estás",
+          "Modo oscuro y modo claro (se cambia desde la barra superior)",
+          "Nuevo diseño de inicio de sesión",
+          "Botón de ayuda en la barra superior que explica para qué sirve cada página (nuevo, barra superior)",
+          "Botón de soporte por WhatsApp (nuevo, menú lateral)",
+          "Las notificaciones ahora llegan al instante (nuevo, barra superior)",
+          "Indicador de ventas duplicadas en la barra superior: muestra un contador y al dar clic ves el detalle por tienda (nuevo)"
+        ]
+      }
+    ],
+    "store": [
+      {
+        "section": "Vender",
+        "items": [
+          "Puedes tener varios carritos abiertos al mismo tiempo (pestañas)",
+          "Atajos de teclado más fáciles de recordar (Ctrl+Q, W, E, R, T, Y, U, B)",
+          "Al presionar Enter se busca automáticamente en modo manual",
+          "El buscador se enfoca solo al entrar a la página y después de cada venta",
+          "Puedes fijar la lista de resultados para que no se cierre al agregar un producto",
+          "Si un producto está en otro carrito, el sistema te avisa del stock disponible"
+        ]
+      },
+      {
+        "section": "Ventas",
+        "items": [
+          "Se ve más claro si una venta está bien o tiene problemas (íconos de palomita o error)",
+          "Los productos de cada venta se ven al pasar el mouse encima, sin abrir nada",
+          "Puedes buscar ventas por fecha, número de venta o nombre de cliente",
+          "Puedes cancelar una venta completa indicando el motivo",
+          "Puedes hacer devoluciones parciales: ajustar cantidades o quitar productos de una venta",
+          "Filtros rápidos para ver ventas duplicadas, canceladas o con devolución"
+        ]
+      },
+      {
+        "section": "Cobrar",
+        "items": [
+          "Los métodos de pago se ven más ordenados",
+          "Los totales muestran el signo de pesos"
+        ]
+      },
+      {
+        "section": "Inventario",
+        "items": [
+          "Filtros para buscar por código, marca, departamento o stock máximo",
+          "Se puede descargar el inventario a Excel",
+          "Muestra qué porcentaje de productos está en cero"
+        ]
+      },
+      {
+        "section": "Importación",
+        "items": [
+          "Nuevo diseño en las páginas de importar productos, inventario y ventas",
+          "Pasos visuales que te guían en el proceso",
+          "Puedes arrastrar y soltar el archivo en vez de buscarlo",
+          "Después de validar ves un resumen de cuántas filas están bien y cuántas tienen error",
+          "Si hay errores, te dice que corrijas el archivo y lo vuelvas a subir"
+        ]
+      }
+    ],
+    "owner": [
+      {
+        "section": "Tiendas",
+        "items": [
+          "Botones de filtro rápido: Ventas, Pendientes, Administradores, Impresoras, Catálogo incompleto, Inversión",
+          "Se ve si cada tienda tiene todos los productos o le faltan",
+          "Se ve quién es el administrador de cada tienda, con botones para editar su usuario o cambiar su contraseña",
+          "Se ve la marca y modelo de la impresora de cada tienda",
+          "Se puede ver la inversión de cada tienda",
+          "Se puede vaciar el stock de una tienda (con confirmación)",
+          "Indicador de qué tiendas venden arriba o abajo del promedio"
+        ]
+      },
+      {
+        "section": "Tablero (antes se llamaba \"Dashboard\", menú lateral)",
+        "items": [
+          "Indicadores principales: mejor y peor tienda, mejor día, hora con más ventas, ticket promedio",
+          "Mapa de calor de ventas por hora y día de la semana",
+          "Gráfica de ticket promedio por día",
+          "Gráfica de tendencia de ventas con filtros por año"
+        ]
+      },
+      {
+        "section": "Tablero de cancelaciones (nueva sección, menú lateral)",
+        "items": [
+          "Indicadores de ventas canceladas y con devolución",
+          "Gráficas de tendencia y distribución por tienda y tipo",
+          "Listado de motivos de cancelación y devolución"
+        ]
+      },
+      {
+        "section": "Tablero de marcas y productos (nueva sección, menú lateral)",
+        "items": [
+          "Top marcas y productos más y menos vendidos",
+          "Porcentaje de participación de cada marca y producto"
+        ]
+      },
+      {
+        "section": "Auditoría (nueva sección, menú lateral)",
+        "items": [
+          "Auditoría de transacciones: detecta ventas duplicadas, registros inconsistentes y diferencias de stock",
+          "Auditoría de productos: detecta códigos repetidos, productos con costo en cero, precios de mayoreo inconsistentes, productos que faltan en tiendas y productos sin movimiento"
+        ]
+      },
+      {
+        "section": "Productos",
+        "items": [
+          "Botón para editar cada producto",
+          "Botón para ver el historial de cambios de precios, agrupado por fecha (nuevo)",
+          "Botón para ver el stock del producto en todas las tiendas y almacenes",
+          "Botón para eliminar productos seleccionados",
+          "Botón para formatear códigos a mayúsculas"
+        ]
+      },
+      {
+        "section": "Historial de stock (antes se llamaba \"Logs\", menú lateral)",
+        "items": [
+          "Registro de todos los movimientos de inventario por producto"
+        ]
+      },
+      {
+        "section": "Solicitudes de ajustes (nueva página, dentro de Productos en el menú lateral)",
+        "items": [
+          "Aquí llegan las solicitudes de ajuste de stock que envían los administradores y vendedores",
+          "Puedes aprobar o rechazar cada solicitud"
+        ]
+      },
+      {
+        "section": "Vendedores",
+        "items": [
+          "Botones para editar usuario y cambiar contraseña de cada vendedor",
+          "Filtro por rango de fechas"
+        ]
+      },
+      {
+        "section": "Mensualidades",
+        "items": [
+          "Las fechas se muestran de forma natural (\"24 de marzo de 2026\")",
+          "La tabla tiene paginación"
+        ]
+      },
+      {
+        "section": "Perfil del negocio (nueva página, se accede dando click en tu foto en la barra superior)",
+        "items": [
+          "Puedes editar la información de tu negocio y cambiar tu contraseña",
+          "Al cambiar la contraseña se cerrará la sesión en todos los dispositivos donde esté abierta (nuevo)"
+        ]
+      }
+    ],
+    "admin": [
+      {
+        "section": "Productos",
+        "items": [
+          "Botón para editar cada producto",
+          "Los precios están deshabilitados (solo el dueño puede modificarlos)",
+          "Botón para ver el stock del producto en todas las tiendas y almacenes"
+        ]
+      },
+      {
+        "section": "Solicitudes de ajustes",
+        "items": [
+          "Puedes solicitar un ajuste de stock en cualquier producto",
+          "Se abre una ventana donde ves el producto, el stock actual, y escribes la cantidad correcta",
+          "La solicitud le llega al dueño para que la apruebe"
+        ]
+      },
+      {
+        "section": "Perfil",
+        "items": [
+          "Puedes ver tu información y cambiar tu contraseña",
+          "Al cambiar la contraseña se cerrará la sesión en todos los dispositivos donde esté abierta"
+        ]
+      }
+    ],
+    "seller": [
+      {
+        "section": "Inventario",
+        "items": [
+          "Ahora puedes consultar el inventario de tu tienda",
+          "Nuevo botón para solicitar un ajuste de stock en cualquier producto",
+          "Se abre una ventana donde ves el producto, el stock actual, y escribes la cantidad correcta",
+          "La solicitud le llega al dueño para que la apruebe"
+        ]
+      },
+      {
+        "section": "Movimientos en caja",
+        "items": [
+          "Ahora puedes ver los movimientos de caja de tu tienda"
+        ]
+      },
+      {
+        "section": "Perfil",
+        "items": [
+          "Puedes ver tu información y cambiar tu contraseña",
+          "Al cambiar la contraseña se cerrará la sesión en todos los dispositivos donde esté abierta"
+        ]
+      }
+    ],
+    "warehouse": [
+      {
+        "section": "Diseño",
+        "items": [
+          "La aplicación tiene un diseño completamente nuevo: más moderno, limpio y fácil de usar",
+          "Nuevo menú lateral con indicador de en qué página estás",
+          "Modo oscuro y modo claro (se cambia desde la barra superior)",
+          "Botón de ayuda en la barra superior que explica para qué sirve cada página",
+          "Botón de soporte por WhatsApp (menú lateral)",
+          "Las notificaciones ahora llegan al instante (barra superior)"
+        ]
+      },
+      {
+        "section": "Distribuir",
+        "items": [
+          "Puedes tener varios carritos abiertos al mismo tiempo (pestañas)",
+          "Atajos de teclado más fáciles de recordar (Ctrl+Q, W, E, R, T, Y, U, B)",
+          "Al presionar Enter se busca automáticamente en modo manual",
+          "El buscador se enfoca solo al entrar a la página",
+          "Puedes fijar la lista de resultados para que no se cierre al agregar un producto",
+          "Al escanear un producto, el cursor salta automáticamente al campo de cantidad. Presiona Enter para volver al buscador (nuevo)"
+        ]
+      },
+      {
+        "section": "Inventario",
+        "items": [
+          "Filtros para buscar por código, marca, departamento o stock máximo",
+          "Se puede descargar el inventario a Excel",
+          "Muestra qué porcentaje de productos está en cero"
+        ]
+      },
+      {
+        "section": "Movimientos",
+        "items": [
+          "Distribuciones y traspasos con trazabilidad completa",
+          "Confirma recepciones desde el almacén"
+        ]
+      },
+      {
+        "section": "Perfil",
+        "items": [
+          "Puedes ver tu información y cambiar tu contraseña",
+          "Al cambiar la contraseña se cerrará la sesión en todos los dispositivos donde esté abierta"
+        ]
+      }
+    ]
+  },
+  "renamed": [
+    { "before": "Dashboard", "after": "Tablero" },
+    { "before": "Logs", "after": "Historial de stock" }
+  ]
+}

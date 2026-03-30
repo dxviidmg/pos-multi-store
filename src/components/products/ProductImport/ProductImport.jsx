@@ -42,7 +42,7 @@ const productColumns = [
   { name: "Precio unitario", selector: (row) => row.unit_price },
   { name: "Precio mayoreo", selector: (row) => row.wholesale_price },
   { name: "Cantidad mínima mayoreo", selector: (row) => row.min_wholesale_quantity },
-  { name: "Precio mayoreo en descuentos de clientes", selector: (row) => row.wholesale_price_on_client_discount },
+  { name: "Permitir mayoreo con descuento de cliente", selector: (row) => row.wholesale_price_on_client_discount },
 ];
 
 const ProductImport = () => {

@@ -100,7 +100,7 @@ function Login({ onLogin }) {
               backdropFilter: 'blur(10px)',
               color: 'white',
               border: '1px solid rgba(167,139,250,0.3)',
-              '& .MuiAlert-icon': { color: '#a78bfa' },
+              '& .MuiAlert-icon': { color: 'accent' },
             }}>
               {alertData.message}
             </Alert>
@@ -137,7 +137,7 @@ function Login({ onLogin }) {
                     <InputAdornment position="end">
                       <IconButton size="small"
                         onClick={() => setState(prev => ({ ...prev, showPassword: !prev.showPassword }))}
-                        sx={{ color: '#04346b' }}
+                        sx={{ color: 'primary' }}
                       >
                         {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
                       </IconButton>
