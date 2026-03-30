@@ -59,7 +59,7 @@ function App({ toggleTheme, themeMode }) {
     <Router>
       <Routes>
         {isLoggedIn ? (
-          <Route element={<MainLayout toggleTheme={toggleTheme} themeMode={themeMode} />}>
+          <Route element={<MainLayout toggleTheme={toggleTheme} themeMode={themeMode} onLoginSuccess={handleLogin} />}>
             <Route path="/tiendas/" element={<Suspense fallback={<LoadingFallback />}><StoreList /></Suspense>} />
             <Route path="/ventas/" element={<Suspense fallback={<LoadingFallback />}><SaleList /></Suspense>} />
             <Route path="/vender/" element={<Suspense fallback={<LoadingFallback />}><SaleCreate /></Suspense>} />

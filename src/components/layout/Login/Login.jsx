@@ -40,9 +40,9 @@ function Login({ onLogin }) {
       const response = await loginUser(state.formData);
       if (response.status === 200) {
         localStorage.setItem("user", JSON.stringify(response.data));
+        onLogin();
         if (response.data.role === "owner") navigate("/tiendas/");
         else navigate("/vender/");
-        onLogin();
       } else {
         showAlert("Usuario o contraseña incorrecta");
       }
