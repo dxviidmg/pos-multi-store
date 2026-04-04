@@ -14,12 +14,14 @@ import {
   ListItemText,
   Collapse,
   Avatar,
+  Menu,
+  MenuItem,
 } from "@mui/material";
 import MuiDrawer from "@mui/material/Drawer";
 import MuiAppBar from "@mui/material/AppBar";
-import MenuIcon from "@mui/icons-material/Menu";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
+import MenuIcon from "@mui/icons-material/Menu";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import NewspaperIcon from "@mui/icons-material/Newspaper";
@@ -147,12 +149,17 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
   const [open, setOpen] = React.useState(false);
   const [openMenus, setOpenMenus] = React.useState({});
   const [showUpdates, setShowUpdates] = React.useState(false);
+  const [anchorEl, setAnchorEl] = React.useState(null);
 
   React.useEffect(() => {
     if (onLoginSuccess) {
       setShowUpdates(true);
     }
   }, [onLoginSuccess]);
+
+  if (!user) {
+    return null;
+  }
 
   const handleDrawerToggle = () => {
     setOpen(!open);
@@ -179,7 +186,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
   const isActive = (href) => location.pathname === href;
 
   const currentHour = new Date().getHours();
-  const isDashboardRestricted = user.store_count > 1 && currentHour >= 10 && currentHour < 21;
+  const isDashboardRestricted = user && user.store_count > 1 && currentHour >= 10 && currentHour < 21;
 
   const linksByType = {
     T: [
@@ -307,35 +314,42 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
           <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 700, letterSpacing: "-0.01em" }}>
             {user.store_name ? `${user.tenant_name} - ${user.store_name}` : user.tenant_name}
           </Typography>
-          <Avatar
-              onClick={() => navigate("/perfil")}
-              sx={{
-                width: 34, height: 34,
-                bgcolor: `${accent}d9`,
-                color: "#fff",
-                fontSize: "0.85rem", fontWeight: 700, mr: 1, cursor: "pointer",
-                transition: "all 0.2s",
-                "&:hover": { transform: "scale(1.1)", bgcolor: accent },
-              }}
-            >
-              {(user.store_name || user.tenant_name || "U").charAt(0).toUpperCase()}
-            </Avatar>
+          {user.role === "owner" && user.store_id && (
+            <IconButton color="inherit" onClick={handleBack}>
+              <ArrowBackIcon />
+            </IconButton>
+          )}
           <PendingMenu />
           <DuplicateSalesMenu />
           <StockRequestMenu />
           <NotificationsMenu />
           <PageHelp />
-          <IconButton color="inherit" onClick={toggleTheme} sx={{ mr: 0.5 }}>
+          <IconButton color="inherit" onClick={toggleTheme} sx={{ mr: 1 }}>
             {themeMode === "dark" ? <Brightness7Icon /> : <Brightness4Icon />}
           </IconButton>
-          {user.role === "owner" && user.store_id && (
-            <IconButton color="inherit" onClick={handleBack} sx={{ mr: 0.5 }}>
-              <ArrowBackIcon />
-            </IconButton>
-          )}
-          <IconButton color="inherit" onClick={handleLogout}>
-            <LogoutIcon />
-          </IconButton>
+          <Avatar
+            onClick={(e) => setAnchorEl(e.currentTarget)}
+            sx={{
+              width: 34, height: 34,
+              bgcolor: `${accent}d9`,
+              color: "#fff",
+              fontSize: "0.85rem", fontWeight: 700, mr: 1, cursor: "pointer",
+              transition: "all 0.2s",
+              "&:hover": { transform: "scale(1.1)", bgcolor: accent },
+            }}
+          >
+            {(user?.store_name || user?.tenant_name || "U").charAt(0).toUpperCase()}
+          </Avatar>
+          <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
+            <MenuItem onClick={() => { setAnchorEl(null); navigate("/perfil"); }}>
+              <ListItemIcon><PersonSearchIcon fontSize="small" /></ListItemIcon>
+              Perfil
+            </MenuItem>
+            <MenuItem onClick={() => { setAnchorEl(null); navigate("/"); localStorage.removeItem("user"); }}>
+              <ListItemIcon><LogoutIcon fontSize="small" /></ListItemIcon>
+              Cerrar sesión
+            </MenuItem>
+          </Menu>
         </Toolbar>
       </AppBar>
 
