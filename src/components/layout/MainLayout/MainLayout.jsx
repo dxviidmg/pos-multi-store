@@ -157,7 +157,6 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
     }
   }, [onLoginSuccess]);
 
-  // Si no hay usuario, no renderizar nada (evita errores al cerrar sesión)
   if (!user) {
     return null;
   }
@@ -308,42 +307,38 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
       <CssBaseline />
 
       <AppBar position="fixed" open={open}>
-        <Toolbar sx={{ minHeight: "60px !important" }}>        
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1, mr: 1 }}>
-            <IconButton color="inherit" edge="start" onClick={handleDrawerToggle}>
-              <MenuIcon />
+        <Toolbar sx={{ minHeight: "60px !important" }}>
+          <IconButton color="inherit" edge="start" onClick={handleDrawerToggle} sx={{ mr: 2 }}>
+            <MenuIcon />
+          </IconButton>
+          <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 700, letterSpacing: "-0.01em" }}>
+            {user.store_name ? `${user.tenant_name} - ${user.store_name}` : user.tenant_name}
+          </Typography>
+          {user.role === "owner" && user.store_id && (
+            <IconButton color="inherit" onClick={handleBack}>
+              <ArrowBackIcon />
             </IconButton>
-            <Typography variant="h6" sx={{ fontWeight: 700, letterSpacing: "-0.01em" }}>
-              {user.store_name ? `${user.tenant_name} - ${user.store_name}` : user.tenant_name}
-            </Typography>
-          </Box>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, ml: "auto" }}>
-            {user.role === "owner" && user.store_id && (
-              <IconButton color="inherit" onClick={handleBack} sx={{ p: 0.5 }}>
-                <ArrowBackIcon />
-              </IconButton>
-            )}
-            <PendingMenu />
-            <DuplicateSalesMenu />
-            <StockRequestMenu />
-            <NotificationsMenu />
-            <PageHelp />
-            <IconButton color="inherit" onClick={toggleTheme} sx={{ mr: 0.5 }}>
-              {themeMode === "dark" ? <Brightness7Icon /> : <Brightness4Icon />}
-            </IconButton>
-            <Avatar
-              onClick={(e) => setAnchorEl(e.currentTarget)}
-              sx={{
-                width: 34, height: 34,
-                bgcolor: `${accent}d9`,
-                color: "#fff",
-                fontSize: "0.85rem", fontWeight: 700, mr: 1, cursor: "pointer",
-                transition: "all 0.2s",
+          )}
+          <PendingMenu />
+          <DuplicateSalesMenu />
+          <StockRequestMenu />
+          <NotificationsMenu />
+          <PageHelp />
+          <IconButton color="inherit" onClick={toggleTheme} sx={{ mr: 1 }}>
+            {themeMode === "dark" ? <Brightness7Icon /> : <Brightness4Icon />}
+          </IconButton>
+          <Avatar
+            onClick={(e) => setAnchorEl(e.currentTarget)}
+            sx={{
+              width: 34, height: 34,
+              bgcolor: `${accent}d9`,
+              color: "#fff",
+              fontSize: "0.85rem", fontWeight: 700, mr: 1, cursor: "pointer",
+              transition: "all 0.2s",
               "&:hover": { transform: "scale(1.1)", bgcolor: accent },
             }}
           >
             {(user?.store_name || user?.tenant_name || "U").charAt(0).toUpperCase()}
-            
           </Avatar>
           <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
             <MenuItem onClick={() => { setAnchorEl(null); navigate("/perfil"); }}>
@@ -355,7 +350,6 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
               Cerrar sesión
             </MenuItem>
           </Menu>
-          </Box>
         </Toolbar>
       </AppBar>
 
