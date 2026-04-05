@@ -173,7 +173,8 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
 
   const handleLogout = () => {
     localStorage.removeItem("user");
-    window.location.href = "/";
+    navigate("/", { replace: true });
+    window.location.reload();
   };
 
   const handleBack = () => {
@@ -345,7 +346,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
               <ListItemIcon><PersonSearchIcon fontSize="small" /></ListItemIcon>
               Perfil
             </MenuItem>
-            <MenuItem onClick={() => { setAnchorEl(null); navigate("/"); localStorage.removeItem("user"); }}>
+            <MenuItem onClick={() => { setAnchorEl(null); navigate("/", { replace: true }); localStorage.removeItem("user"); window.location.reload(); }}>
               <ListItemIcon><LogoutIcon fontSize="small" /></ListItemIcon>
               Cerrar sesión
             </MenuItem>
