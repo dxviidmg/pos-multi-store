@@ -171,10 +171,6 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
     setOpenMenus((prev) => ({ [label]: !prev[label] }));
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    window.location.href = "/";
-  };
 
   const handleBack = () => {
     const updatedUser = { ...user, store_type: "", store_name: "", store_id: null };
@@ -345,7 +341,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
               <ListItemIcon><PersonSearchIcon fontSize="small" /></ListItemIcon>
               Perfil
             </MenuItem>
-            <MenuItem onClick={() => { setAnchorEl(null); navigate("/"); localStorage.removeItem("user"); }}>
+            <MenuItem onClick={() => { setAnchorEl(null); navigate("/", { replace: true }); localStorage.removeItem("user"); window.location.reload(); }}>
               <ListItemIcon><LogoutIcon fontSize="small" /></ListItemIcon>
               Cerrar sesión
             </MenuItem>
