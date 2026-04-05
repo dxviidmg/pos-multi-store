@@ -171,11 +171,6 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
     setOpenMenus((prev) => ({ [label]: !prev[label] }));
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    navigate("/", { replace: true });
-    window.location.reload();
-  };
 
   const handleBack = () => {
     const updatedUser = { ...user, store_type: "", store_name: "", store_id: null };
