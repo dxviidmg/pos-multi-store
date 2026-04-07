@@ -110,3 +110,15 @@ export const deleteTranfer = async (data) => {
   });
   return response;
 };
+
+/**
+ * Delete distribution by ID
+ * @param {number|string} id - Distribution ID
+ * @returns {Promise<Object>} Deletion response
+ */
+export const deleteDistribution = async (id) => {
+  const response = await httpClient.delete(getApiUrl(`distribution/${id}`), {
+    headers: getHeaders(),
+  });
+  return response;
+};

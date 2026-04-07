@@ -24,6 +24,10 @@ const EVENT_CONFIG = {
   reservation_created: { icon: <ShoppingCartIcon fontSize="small" />, href: "/ventas/" },
 };
 
+let reconnectAttempts = 0;
+const maxReconnectAttempts = 5;
+let pollingInterval = null;
+
 const NotificationsMenu = memo(() => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [notifications, setNotifications] = useState([]);
@@ -54,8 +58,26 @@ const NotificationsMenu = memo(() => {
       setSeen(false);
     };
 
+    ws.onerror = () => {
+      reconnectAttempts++;
+      ws.close();
+    };
+
     ws.onclose = () => {
-      reconnectRef.current = setTimeout(connectWs, 5000);
+      if (reconnectAttempts < maxReconnectAttempts) {
+        const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 30000);
+        reconnectAttempts++;
+        reconnectRef.current = setTimeout(connectWs, delay);
+      } else {
+        // Fallback a polling cada 60s
+        if (!pollingInterval) {
+          pollingInterval = setInterval(() => {
+            fetch('/api/audit/notifications/')
+              .then(r => r.json())
+              .then(data => setNotifications(data));
+          }, 60000);
+        }
+      }
     };
   }, []);
 
@@ -66,6 +88,7 @@ const NotificationsMenu = memo(() => {
     return () => {
       if (wsRef.current) wsRef.current.close();
       if (reconnectRef.current) clearTimeout(reconnectRef.current);
+      if (pollingInterval) clearInterval(pollingInterval);
       window.removeEventListener("store-changed", onStoreChange);
     };
   }, [connectWs]);
