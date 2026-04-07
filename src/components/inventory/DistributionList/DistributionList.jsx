@@ -7,6 +7,7 @@ import { showSuccess, showError } from "../../../utils/alerts";
 import { getUserData } from "../../../api/utils";
 import {
   confirmDistribution,
+  deleteDistribution,
   deleteTranfer,
   getDistributions,
   updateTranfer,
@@ -85,6 +86,16 @@ const DistributionList = () => {
     }
   };
 
+  const handleDeleteDistribution = async (row) => {
+    const response = await deleteDistribution(row.id);
+    if (response.status === 204) {
+      setDistributions((prev) => prev.filter((d) => d.id !== row.id));
+      showSuccess("Distribución eliminada");
+    } else {
+      showError("Error al eliminar distribución");
+    }
+  };
+
   return (
     <>
       <CustomSpinner isLoading={loading} />
@@ -103,11 +114,20 @@ const DistributionList = () => {
             {
               name: "Acciones",
               cell: (row) => (
-                <CustomTooltip text="Ver productos">
-                  <CustomButton onClick={() => setSelected(row)}>
-                    <ChecklistIcon />
-                  </CustomButton>
-                </CustomTooltip>
+                <>
+                  <CustomTooltip text="Ver productos">
+                    <CustomButton onClick={() => setSelected(row)}>
+                      <ChecklistIcon />
+                    </CustomButton>
+                  </CustomTooltip>
+                  {user.role === "owner" && (
+                    <CustomTooltip text="Eliminar distribución">
+                      <CustomButton onClick={() => handleDeleteDistribution(row)}>
+                        <DeleteIcon />
+                      </CustomButton>
+                    </CustomTooltip>
+                  )}
+                </>
               ),
             },
           ]}
