@@ -16,6 +16,8 @@ import DownloadIcon from "@mui/icons-material/Download";
 import TuneIcon from "@mui/icons-material/Tune";
 import HistoryIcon from "@mui/icons-material/History";
 import SendIcon from "@mui/icons-material/Send";
+import { Link } from "react-router-dom";
+import NotificationImportantIcon from "@mui/icons-material/NotificationImportant";
 import CustomTooltip from "../../ui/Tooltip";
 import { UI_TEXT } from "../../../constants";
 import PageHeader from "../../ui/PageHeader";
@@ -87,6 +89,43 @@ const StoreProductList = () => {
           <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
             <h1>Inventario</h1>
           </Stack>
+
+          {(() => {
+            const isOwner = user.role === "owner";
+            const boxStyles = {
+              mb: 2,
+              p: 2,
+              bgcolor: "rgba(4, 53, 107, 0.08)",
+              borderRadius: 2,
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+            };
+            const content = isOwner ? (
+              <>
+                <strong>Mantente atento a las solicitudes de ajuste.</strong>{" "}
+                Revisa y aprueba las solicitudes de stock en{" "}
+                <Link to="/solicitudes-ajustes-stock/" style={{ color: "#04346b", fontWeight: 600 }}>
+                  Solicitudes de Ajuste
+                </Link>{" "}
+                para mantener el inventario actualizado.
+              </>
+            ) : (
+              <>
+                <strong>¿Ves un stock incorrecto?</strong>{" "}
+                Usa el icono <SendIcon sx={{ fontSize: 14, verticalAlign: "middle" }} /> en la columna Acciones para solicitar un ajuste de stock. 
+                El propietario revisará tu solicitud y la aprobará si es correcta. 
+                Se recomienda contactar al propietario para una pronta respuesta. 
+                Recuerda que tener el stock actualizado y corregido es un bien para todo el equipo.
+              </>
+            );
+            return (
+              <Box sx={boxStyles}>
+                <NotificationImportantIcon color="primary" />
+                <Box sx={{ fontSize: "0.875rem" }}>{content}</Box>
+              </Box>
+            );
+          })()}
 
           <Grid container spacing={2} sx={{ mb: 2 }}>
             <Grid item xs={12} md={3}>
