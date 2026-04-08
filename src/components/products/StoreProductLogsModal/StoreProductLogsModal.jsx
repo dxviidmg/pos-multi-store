@@ -27,7 +27,7 @@ const StoreProductLogsModal = ({ isOpen, logs: logsData, onClose, onUpdate }) =>
         try {
           const response = await getStoreProductLogs({
             "store-product-id": storeProduct.id
-        } );
+          });
           setLogs(response.data);
         } catch (error) {
           // Error silencioso - logs no críticos
@@ -39,7 +39,7 @@ const StoreProductLogsModal = ({ isOpen, logs: logsData, onClose, onUpdate }) =>
     };
 
     fetchStoreProductLogs();
-  }, [storeProduct]);
+  }, [storeProduct.id]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
