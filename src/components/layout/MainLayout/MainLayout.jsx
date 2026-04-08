@@ -214,6 +214,8 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
           { divider: true, hidden: user.role === "seller" },
           { label: "Importar Productos", href: "/importar-productos/", hidden: user.role === "seller" },
           { label: "Importar inventario", href: "/importar-inventario/", hidden: user.role === "seller" },
+          { divider: true },
+          { label: "Solicitudes de ajustes de stock", href: "/solicitudes-ajustes-stock/" },
         ],
       },
       {
@@ -245,6 +247,8 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
           { divider: true },
           { label: "Importar Productos", href: "/importar-productos/" },
           { label: "Importar inventario", href: "/importar-inventario/" },
+          { divider: true },
+          { label: "Solicitudes de ajustes de stock", href: "/solicitudes-ajustes-stock/" },
         ],
       },
       { label: "Historial de stock", href: "/historial-stock/" },
@@ -274,7 +278,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
           { divider: true },
           { label: "Importar Productos", href: "/importar-productos/" },
           { divider: true },
-          { label: "Solicitudes de ajustes", href: "/solicitudes-ajustes/" },
+          { label: "Solicitudes de ajustes de stock", href: "/solicitudes-ajustes-stock/" },
         ],
       },
       {
