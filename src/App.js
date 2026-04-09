@@ -2,7 +2,6 @@ import "./App.css";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { useState, useEffect, lazy, Suspense } from "react";
 import { getUserData } from "./api/utils";
-import useKeepAlive from "./api/keepAlive";
 import LoadingFallback from "./components/ui/LoadingFallback";
 
 // Componentes críticos (carga inmediata)
@@ -43,7 +42,6 @@ const RestartService = lazyRetry(() => import("./components/admin/RestartService
 const Profile = lazyRetry(() => import("./components/admin/Profile/Profile"));
 
 function App({ toggleTheme, themeMode }) {
-  useKeepAlive();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const user = getUserData();
 
