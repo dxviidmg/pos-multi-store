@@ -358,8 +358,8 @@ const StoreList = () => {
     let filtered;
     if (quickFilter === "all") {
       filtered = hasDepartment
-        ? allColumns.filter(col => ["Nombre", "Vendido", "Ventas realizadas", "Canceladas", "Ganancia", "Administrador", "Entrar"].includes(col.name))
-        : allColumns.filter(col => ["Nombre", "Efectivo", "Tarjeta", "Transferencia", "Caja", "Administrador", "Entrar"].includes(col.name));
+        ? allColumns.filter(col => ["Nombre", "Vendido", "Ventas realizadas", "Canceladas", "Ganancia", "Entrar"].includes(col.name))
+        : allColumns.filter(col => ["Nombre", "Efectivo", "Tarjeta", "Transferencia", "Caja", "Entrar"].includes(col.name));
     } else if (quickFilter === "sales") {
       filtered = allColumns.filter(col => ["Nombre", "Vendido", "Ventas realizadas", "Canceladas", "Ganancia", "Entrar"].includes(col.name));
     } else if (quickFilter === "investment") {
