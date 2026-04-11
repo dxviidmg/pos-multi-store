@@ -1,6 +1,6 @@
 {
-  "version": "2.0",
-  "date": "Marzo 2026",
+  "version": "2.1",
+  "date": "Abril 2026",
   "updates": {
     "all": [
       {
@@ -13,7 +13,8 @@
           "Botón de ayuda en la barra superior que explica para qué sirve cada página (nuevo, barra superior)",
           "Botón de soporte por WhatsApp (nuevo, menú lateral)",
           "Las notificaciones ahora llegan al instante (nuevo, barra superior)",
-          "Indicador de ventas duplicadas en la barra superior: muestra un contador y al dar clic ves el detalle por tienda (nuevo)"
+          "Indicador de ventas duplicadas en la barra superior: muestra un contador y al dar clic ves el detalle por tienda (nuevo)",
+          "Modal de actualizaciones al iniciar sesión y por botón (nuevo)"
         ]
       }
     ],
@@ -26,7 +27,8 @@
           "Al presionar Enter se busca automáticamente en modo manual",
           "El buscador se enfoca solo al entrar a la página y después de cada venta",
           "Puedes fijar la lista de resultados para que no se cierre al agregar un producto",
-          "Si un producto está en otro carrito, el sistema te avisa del stock disponible"
+          "Si un producto está en otro carrito, el sistema te avisa del stock disponible",
+          "Si no se encuentra un producto por código, puedes crearlo directamente con stock inicial (nuevo)"
         ]
       },
       {
@@ -117,7 +119,8 @@
           "Botón para ver el historial de cambios de precios, agrupado por fecha (nuevo)",
           "Botón para ver el stock del producto en todas las tiendas y almacenes",
           "Botón para eliminar productos seleccionados",
-          "Botón para formatear códigos a mayúsculas"
+          "Botón para formatear códigos a mayúsculas",
+          "Crear producto directamente desde la búsqueda con stock inicial (nuevo)"
         ]
       },
       {
@@ -130,14 +133,16 @@
         "section": "Solicitudes de ajustes (nueva página, dentro de Productos en el menú lateral)",
         "items": [
           "Aquí llegan las solicitudes de ajuste de stock que envían los administradores y vendedores",
-          "Puedes aprobar o rechazar cada solicitud"
+          "Puedes aprobar o rechazar cada solicitud",
+          "Banner con contador de solicitudes pendientes (nuevo)"
         ]
       },
       {
         "section": "Vendedores",
         "items": [
           "Botones para editar usuario y cambiar contraseña de cada vendedor",
-          "Filtro por rango de fechas"
+          "Filtro por rango de fechas",
+          "Modal mejorado para crear vendedores (nuevo)"
         ]
       },
       {
@@ -239,7 +244,8 @@
         "section": "Movimientos",
         "items": [
           "Distribuciones y traspasos con trazabilidad completa",
-          "Confirma recepciones desde el almacén"
+          "Confirma recepciones desde el almacén",
+          "Botón para eliminar distribuciones (nuevo)"
         ]
       },
       {

@@ -1,4 +1,5 @@
 import { showSuccess, showError, showWarning } from "../../../utils/alerts";
+import Swal from "sweetalert2";
 import React, { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import SimpleTable from "../../ui/SimpleTable/SimpleTable";
@@ -9,6 +10,7 @@ import { getStoreProducts, getStockOtherStores } from "../../../api/products";
 import { addToCart, updateMovementType, countStockOtherStores } from "../../../redux/cart/cartActions";
 import { Chip, Box } from "@mui/material";
 import StockModal from "../../inventory/StockModal/StockModal";
+import ProductModal from "../ProductModal/ProductModal";
 import { useModal } from "../../../hooks/useModal";
 import { useFetchWithRetry } from "../../../hooks/useFetch";
 import { getPrinterUrl, getUserData } from "../../../api/utils";
@@ -28,6 +30,7 @@ const SearchProduct = ({ searchInputRef }) => {
 
   const dispatch = useDispatch();
   const stockModal = useModal();
+  const productModal = useModal();
   const { refetch: fetchWithRetry } = useFetchWithRetry(
     (params, config) => getStoreProducts(params, config),
     { maxRetries: 1, timeout: 8000 }
@@ -116,7 +119,18 @@ const SearchProduct = ({ searchInputRef }) => {
         }
 
         if (fetchedData.length === 0) {
-          showError("Producto no encontrado", "No se pudo encontrar este producto mediante su código");
+          const confirm = await Swal.fire({
+            icon: "question",
+            title: "Producto no encontrado",
+            text: `No se encontró ningún producto con el código "${query}". ¿Desea crear uno nuevo con este código?`,
+            showCancelButton: true,
+            confirmButtonText: "Sí, crear producto",
+            cancelButtonText: "No, gracias",
+            confirmButtonColor: "#04346b",
+          });
+          if (confirm.isConfirmed) {
+            productModal.open({ code: query, createFromSearch: true });
+          }
         } else if (fetchedData.length === 1) {
           handleSingleProductFetch(fetchedData[0]);
         } else {
@@ -309,6 +323,14 @@ const SearchProduct = ({ searchInputRef }) => {
   return (
     <>
       <StockModal isOpen={stockModal.isOpen} product={stockModal.data} onClose={stockModal.close} />
+      <ProductModal isOpen={productModal.isOpen} product={productModal.data} onClose={productModal.close} onUpdate={(product) => {
+        // Obtener el store_product y agregar al carrito
+        getStoreProducts({ code: product.code }).then((response) => {
+          if (response.data.length > 0) {
+            handleAddToCartIfAvailable(response.data[0]);
+          }
+        });
+      }} />
 
       <PageHeader title="Consulta de productos">
         {!isInputFocused && (
