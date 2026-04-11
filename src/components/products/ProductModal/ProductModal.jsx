@@ -60,7 +60,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
           setStoreProduct(r.data.map((sp) => ({ ...sp, store_name: storeMap[sp.store] || `Tienda #${sp.store}` })));
         }
       } else {
-        setFormData(INITIAL_FORM_DATA);
+        setFormData({ ...INITIAL_FORM_DATA, code: productData.code || "" });
         setPreviewImage(noPhoto);
         setStoreProduct([]);
       }
