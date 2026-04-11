@@ -8,6 +8,7 @@ import {
   createProduct,
   getStoreProducts,
   updateProduct,
+  addProducts,
 } from "../../../api/products";
 import { getStores } from "../../../api/stores";
 import { getUserData } from "../../../api/utils";
@@ -34,12 +35,14 @@ const INITIAL_FORM_DATA = {
 const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
   const productData = product?.product || product || {};
   const showStoreProducts = product?.showStoreProducts || false;
+  const createFromSearch = product?.createFromSearch || false;
   const user = getUserData();
   const isOwner = user?.role === "owner";
 
   const [brands, setBrands] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
+  const [initialStock, setInitialStock] = useState("");
   const [, setSelectedImage] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
   const [storeProduct, setStoreProduct] = useState([]);
@@ -61,6 +64,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
         }
       } else {
         setFormData({ ...INITIAL_FORM_DATA, code: productData.code || "" });
+        setInitialStock(createFromSearch ? "1" : "");
         setPreviewImage(noPhoto);
         setStoreProduct([]);
       }
@@ -103,15 +107,33 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
   const handleProductSubmit = async (e) => {
     setIsLoading(true);
     const apiCall = formData.id ? updateProduct : createProduct;
-    const response = await apiCall(formData);
+    
+    // Filtrar department si es "0" o vacío
+    const cleanFormData = { ...formData };
+    if (cleanFormData.department === "0" || !cleanFormData.department) {
+      delete cleanFormData.department;
+    }
+    
+    const response = await apiCall(cleanFormData);
 
     if ([200, 201].includes(response.status)) {
+      if (createFromSearch && initialStock && parseInt(initialStock) > 0) {
+        // Obtener el store_product creado para agregar stock
+        const storeProducts = await getStoreProducts({ code: formData.code });
+        if (storeProducts.data.length > 0) {
+          const storeProduct = storeProducts.data[0];
+          await addProducts({
+            store_products: [{ id: storeProduct.id, quantity: parseInt(initialStock) }],
+          });
+        }
+      }
       onClose();
       onUpdate(response.data);
       setFormData(INITIAL_FORM_DATA);
+      setInitialStock("");
       setSelectedImage(null);
       setPreviewImage(null);
-      showSuccess(`Producto ${formData.id ? "actualizado" : "creado"}`);
+      showSuccess(`Producto ${formData.id ? "actualizado" : "creado"}${createFromSearch ? ` con stock de ${initialStock}` : ""}`);
     } else {
       let message = "Error desconocido. Por favor, contacte soporte.";
       if (response.response?.status === 400 && response.response.data?.code) {
@@ -273,6 +295,15 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
                 />
               </Grid>
 
+              {createFromSearch && (
+                <Grid item xs={12} md={12}>
+                  <TextField size="small" fullWidth label="Stock inicial" type="number"
+                    value={initialStock}
+                    placeholder="Stock"
+                    onChange={(e) => setInitialStock(e.target.value)}
+                  />
+                </Grid>
+              )}
               <Grid item xs={12} md={12}>
                 <FormControlLabel
                   control={
@@ -292,7 +323,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
                   fullWidth={true}
                   onClick={(e) => handleProductSubmit(e)}
                   disabled={isFormIncomplete() || isLoading}
-                  marginTop="10px"
+                  sx={{ marginTop: "10px" }}
                   startIcon={<SaveIcon />}
                 >
                   {isLoading ? "Guardando..." : formData.id ? "Actualizar" : "Crear"}

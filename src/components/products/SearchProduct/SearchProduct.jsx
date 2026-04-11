@@ -129,7 +129,7 @@ const SearchProduct = ({ searchInputRef }) => {
             confirmButtonColor: "#04346b",
           });
           if (confirm.isConfirmed) {
-            productModal.open({ code: query });
+            productModal.open({ code: query, createFromSearch: true });
           }
         } else if (fetchedData.length === 1) {
           handleSingleProductFetch(fetchedData[0]);
@@ -323,7 +323,14 @@ const SearchProduct = ({ searchInputRef }) => {
   return (
     <>
       <StockModal isOpen={stockModal.isOpen} product={stockModal.data} onClose={stockModal.close} />
-      <ProductModal isOpen={productModal.isOpen} product={productModal.data} onClose={productModal.close} onUpdate={() => {}} />
+      <ProductModal isOpen={productModal.isOpen} product={productModal.data} onClose={productModal.close} onUpdate={(product) => {
+        // Obtener el store_product y agregar al carrito
+        getStoreProducts({ code: product.code }).then((response) => {
+          if (response.data.length > 0) {
+            handleAddToCartIfAvailable(response.data[0]);
+          }
+        });
+      }} />
 
       <PageHeader title="Consulta de productos">
         {!isInputFocused && (
