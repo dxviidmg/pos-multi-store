@@ -54,7 +54,8 @@
         "items": [
           "Filtros para buscar por código, marca, departamento o stock máximo",
           "Se puede descargar el inventario a Excel",
-          "Muestra qué porcentaje de productos está en cero"
+          "Muestra qué porcentaje de productos está en cero",
+          "Desde el modal de Revisión de Stock puedes agregar stock directamente y se añade al carrito (nuevo)"
         ]
       },
       {

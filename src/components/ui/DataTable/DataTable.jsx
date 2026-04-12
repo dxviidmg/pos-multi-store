@@ -31,17 +31,38 @@ const DataTable = ({
   const muiColumns = useMemo(
     () =>
       columns.map((col, index) => {
+        const getCellAlignment = (row) => {
+          const value = col.selector ? col.selector(row) : row[col.field];
+          if (typeof value === 'string' && value.includes('$')) {
+            return 'right';
+          }
+          return 'center';
+        };
+
+        const isRightAligned = (row) => getCellAlignment(row) === 'right';
+
         const column = {
           field: col.field || `field_${index}`,
           headerName: col.name,
           ...(col.width ? { width: col.width } : { flex: 1 }),
           minWidth: col.minWidth || 0,
           sortable: col.sortable !== false,
+          headerAlign: 'center',
+          align: 'center',
         };
 
         if (col.cell) {
           column.renderCell = (params) => (
-            <div style={{ display: 'flex', gap: '2px', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
+            <div 
+              style={{ 
+                display: 'flex', 
+                gap: '2px', 
+                alignItems: 'center', 
+                justifyContent: getCellAlignment(params.row), 
+                width: '100%',
+                paddingRight: isRightAligned(params.row) ? '12px' : '2px'
+              }}
+            >
               {col.cell(params.row)}
             </div>
           );
