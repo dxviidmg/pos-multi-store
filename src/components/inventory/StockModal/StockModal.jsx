@@ -221,7 +221,7 @@ const StockModal = ({ isOpen, product, onClose }) => {
               </Divider>
               <Box sx={{ py: 2, px: 2 }}>
                 <Grid container spacing={2} alignItems="center">
-                  <Grid item xs={4}>
+                  <Grid item xs={6}>
                     <TextField
                       size="small"
                       fullWidth
@@ -232,7 +232,7 @@ const StockModal = ({ isOpen, product, onClose }) => {
                       inputProps={{ min: 1 }}
                     />
                   </Grid>
-                  <Grid item xs={4}>
+                  <Grid item xs={6}>
                     <CustomButton 
                       onClick={handleAddStock} 
                       disabled={isLoading || !initialStock || parseInt(initialStock) <= 0}
