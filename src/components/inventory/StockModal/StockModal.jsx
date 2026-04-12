@@ -140,6 +140,8 @@ const StockModal = ({ isOpen, product, onClose }) => {
 
   return (
    <>
+
+   
         <CustomSpinner isLoading={isLoading}></CustomSpinner>
        <CustomModal 
          showOut={isOpen} 
@@ -147,8 +149,9 @@ const StockModal = ({ isOpen, product, onClose }) => {
          title={`${storeProduct.product?.code} - ${storeProduct.product?.brand_name} ${storeProduct.product?.name}`}
          maxWidth="sm"
        >
-      <Grid container className="modal-content" sx={{ p: 2 }}>
-        {renderStockInfo()}
+        <Box sx={{ p: 2, bgcolor: "#FFFFFF"}}>
+          <Grid container>
+            {renderStockInfo()}
 
         {storeProduct.showImage ? (
           <Grid item xs={12} sx={{ textAlign: "center" }}>
@@ -247,7 +250,8 @@ const StockModal = ({ isOpen, product, onClose }) => {
 
       
 
-      </Grid>
+          </Grid>
+        </Box>
     </CustomModal>
     </> 
 
