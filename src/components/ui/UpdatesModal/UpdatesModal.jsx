@@ -16,6 +16,7 @@ const UpdatesModal = ({ open, onClose }) => {
 
   const handleClose = () => {
     setIsOpen(false);
+    localStorage.setItem("hasSeenUpdates", "true");
     if (onClose) onClose();
   };
 
