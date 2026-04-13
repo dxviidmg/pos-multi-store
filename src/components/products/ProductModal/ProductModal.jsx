@@ -37,7 +37,11 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
   const showStoreProducts = product?.showStoreProducts || false;
   const createFromSearch = product?.createFromSearch || false;
   const user = getUserData();
+
+  const isCreating = !productData?.id;
+
   const isOwner = user?.role === "owner";
+  const canEditPrices = createFromSearch || isCreating || isOwner;
 
   const [brands, setBrands] = useState([]);
   const [departments, setDepartments] = useState([]);
@@ -261,7 +265,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
                   placeholder="Costo"
                   name="cost"
                   onChange={handleDataChange}
-                  disabled={!isOwner}
+                  disabled={!canEditPrices}
                 />
               </Grid>
 
@@ -271,7 +275,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
                   placeholder="Precio unitario"
                   name="unit_price"
                   onChange={handleDataChange}
-                  disabled={!isOwner}
+                  disabled={!canEditPrices}
                 />
               </Grid>
 
@@ -281,7 +285,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
                   placeholder="Precio de mayoreo"
                   name="wholesale_price"
                   onChange={handleDataChange}
-                  disabled={!isOwner}
+                  disabled={!canEditPrices}
                 />
               </Grid>
 
@@ -291,7 +295,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
                   placeholder="Cantidad minima mayoreo"
                   name="min_wholesale_quantity"
                   onChange={handleDataChange}
-                  disabled={!isOwner}
+                  disabled={!canEditPrices}
                 />
               </Grid>
 
@@ -311,7 +315,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
                       checked={formData.wholesale_price_on_client_discount === true}
                       onChange={handleDataChange}
                       name="wholesale_price_on_client_discount"
-                      disabled={!isOwner}
+                      disabled={!canEditPrices}
                     />
                   }
                   label="Permitir precio de mayoreo para clientes registrados"
