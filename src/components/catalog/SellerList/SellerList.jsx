@@ -156,10 +156,6 @@ const SellerList = () => {
                 selector: (row) => row.store_detail?.name,
               },
               {
-                name: "Usuario",
-                selector: (row) => row.worker.username,
-              },
-              {
                 name: "Nombre",
                 selector: (row) =>
                   `${row.worker.first_name} ${row.worker.last_name}`,
