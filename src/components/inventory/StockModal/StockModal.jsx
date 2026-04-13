@@ -65,8 +65,8 @@ const StockModal = ({ isOpen, product, onClose }) => {
         store_products: [{ id: storeProduct.id, quantity }],
       });
       showSuccess(`Stock agregado: ${quantity} unidades`);
-      // Cambiar a tipo "agregar" y agregar al carrito con stock actualizado
-      dispatch(updateMovementType("agregar"));
+      // Asegurar que esté en tipo "venta" y agregar al carrito con stock actualizado
+      dispatch(updateMovementType("venta"));
       dispatch(addToCart({ 
         ...storeProduct, 
         quantity,
