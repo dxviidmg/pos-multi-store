@@ -153,7 +153,10 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
 
   React.useEffect(() => {
     if (onLoginSuccess) {
-      setShowUpdates(true);
+      const hasSeenUpdates = localStorage.getItem("hasSeenUpdates");
+      if (!hasSeenUpdates) {
+        setShowUpdates(true);
+      }
     }
   }, [onLoginSuccess]);
 
@@ -324,7 +327,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
           <StockRequestMenu />
           <NotificationsMenu />
           <PageHelp />
-          <IconButton color="inherit" onClick={toggleTheme} sx={{ mr: 1 }}>
+          <IconButton color="inherit" onClick={() => { localStorage.setItem("hasSeenUpdates", "true"); toggleTheme(); }} sx={{ mr: 1 }}>
             {themeMode === "dark" ? <Brightness7Icon /> : <Brightness4Icon />}
           </IconButton>
           <Avatar
