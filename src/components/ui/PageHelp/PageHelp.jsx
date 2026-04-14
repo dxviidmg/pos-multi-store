@@ -3,11 +3,13 @@ import { IconButton, Popover, Typography, Box } from "@mui/material";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import { useLocation } from "react-router-dom";
 import helpTexts from "../../../constants/helpTexts";
+import { useTheme } from "@mui/material/styles";
 
 const PageHelp = memo(() => {
   const { pathname } = useLocation();
   const help = helpTexts[pathname];
   const [anchorEl, setAnchorEl] = useState(null);
+  const theme = useTheme();
 
   if (!help) return null;
 
@@ -22,7 +24,7 @@ const PageHelp = memo(() => {
         onClose={() => setAnchorEl(null)}
         anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
         transformOrigin={{ vertical: "top", horizontal: "right" }}
-        slotProps={{ paper: { sx: { maxWidth: 400, borderRadius: 1.5, overflow: "hidden", bgcolor: "#DBE0E8" } } }}
+        slotProps={{ paper: { sx: { maxWidth: 400, borderRadius: 1.5, overflow: "hidden", bgcolor: theme.palette.mode === "dark" ? "background.default" : "#CCD2DE" } } }}
       >
         <Box sx={{ px: 2.5, py: 2 }}>
           <Typography variant="body1" color="text.primary" sx={{ lineHeight: 1.7 }}>
