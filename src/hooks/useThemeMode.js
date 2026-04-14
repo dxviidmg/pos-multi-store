@@ -8,7 +8,10 @@ export const useThemeMode = () => {
     document.documentElement.setAttribute('data-theme', mode);
   }, [mode]);
 
-  const toggleMode = () => setMode(prev => prev === 'light' ? 'dark' : 'light');
+  const toggleMode = () => {
+    localStorage.setItem('hasSeenUpdates', 'true');
+    setMode(prev => prev === 'light' ? 'dark' : 'light');
+  };
 
   return { mode, toggleMode };
 };
