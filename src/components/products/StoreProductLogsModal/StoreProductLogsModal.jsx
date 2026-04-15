@@ -10,7 +10,7 @@ import { chooseIcon } from "../../ui/Icons/Icons";
 import { Grid, TextField } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 
-const INITIAL_FORM_DATA = {};
+const INITIAL_FORM_DATA = { stock: "" };
 
 const StoreProductLogsModal = ({ isOpen, logs: logsData, onClose, onUpdate }) => {
   const storeProduct = logsData?.storeProduct || {};
@@ -18,6 +18,7 @@ const StoreProductLogsModal = ({ isOpen, logs: logsData, onClose, onUpdate }) =>
 
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
   const [logs, setLogs] = useState([]);
+  const [months, setMonths] = useState(1);
 
   useEffect(() => {
     const fetchStoreProductLogs = async () => {
@@ -26,7 +27,8 @@ const StoreProductLogsModal = ({ isOpen, logs: logsData, onClose, onUpdate }) =>
 
         try {
           const response = await getStoreProductLogs({
-            "store-product-id": storeProduct.id
+            "store-product-id": storeProduct.id,
+            months
           });
           setLogs(response.data);
         } catch (error) {
@@ -39,7 +41,7 @@ const StoreProductLogsModal = ({ isOpen, logs: logsData, onClose, onUpdate }) =>
     };
 
     fetchStoreProductLogs();
-  }, [storeProduct.id]);
+  }, [storeProduct.id, months]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -63,46 +65,25 @@ const StoreProductLogsModal = ({ isOpen, logs: logsData, onClose, onUpdate }) =>
     <CustomModal
       showOut={isOpen}
       onClose={onClose}
-      title={adjustStock ? "Ajuste de stock" : "Movimientos de stock"}
+      title={`${adjustStock ? "Ajustar cantidad" : "Historial de movimientos"} de ${formData.product?.code} - ${formData.product?.name}`}
     >
      <Grid container sx={{ padding: '1rem', backgroundColor: 'rgba(4, 53, 107, 0.2)' }}>
        <Grid item xs={12} className="card">
      <Grid container spacing={2}>
-        <Grid item xs={12} md={6}>
-          <TextField size="small" fullWidth label="Código" type="text"
-            value={formData.product?.code}
-            placeholder="Código"
-            disabled
-          />
-        </Grid>
 
+        {adjustStock && (
         <Grid item xs={12} md={6}>
-          <TextField size="small" fullWidth label="Marca" type="text"
-            value={formData.product?.brand_name}
-            placeholder="Marca"
-            disabled
-          />
-        </Grid>
-
-        <Grid item xs={12} md={6}>
-          <TextField size="small" fullWidth label="Nombre" type="text"
-            value={formData.product?.name}
-            placeholder="Nombre"
-            disabled
-          />
-        </Grid>
-        <Grid item xs={12} md={adjustStock ? 3 : 6}>
           <TextField size="small" fullWidth label="Cantidad" type="text"
             value={formData.stock}
             placeholder="Cantidad"
-            disabled={!adjustStock}
             name={"stock"}
             onChange={handleInputChange}
           />
         </Grid>
+        )}
 
         {adjustStock && (
-        <Grid item xs={12} md={3}>
+        <Grid item xs={12} md={6}>
           <CustomButton
             onClick={() => handleCreateAdjustStock()}
             fullWidth
@@ -115,7 +96,16 @@ const StoreProductLogsModal = ({ isOpen, logs: logsData, onClose, onUpdate }) =>
 
         {!adjustStock && (
         <Grid item xs={12} md={12}>
-        <h1>Últimos movimientos</h1>
+          <TextField
+            size="small"
+            label="Meses anteriores (iniciar desde cuantos meses atras)"
+            type="number"
+            value={months}
+            onChange={(e) => setMonths(Number(e.target.value))}
+            inputProps={{ min: 1, max: 12 }}
+            sx={{ width: '100%', mb: 2 }}
+          />
+          <h1>Últimos movimientos</h1>
           <DataTable
             noDataComponent="Sin movimientos"
             data={logs}
