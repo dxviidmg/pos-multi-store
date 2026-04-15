@@ -178,6 +178,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
   const handleBack = () => {
     const updatedUser = { ...user, store_type: "", store_name: "", store_id: null };
     localStorage.setItem("user", JSON.stringify(updatedUser));
+    console.log(user)
     window.dispatchEvent(new Event("store-changed"));
     navigate("/tiendas/", { replace: true });
   };
@@ -185,7 +186,12 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
   const isActive = (href) => location.pathname === href;
 
   const currentHour = new Date().getHours();
-  const isDashboardRestricted = user && user.store_count > 1 && currentHour >= 10 && currentHour < 21;
+  const isDashboardRestricted =
+  user?.tenant_short_name !== 'demo' &&
+  user &&
+  user.store_count > 1 &&
+  currentHour >= 10 &&
+  currentHour < 21;
 
   const linksByType = {
     T: [
