@@ -332,7 +332,7 @@ const SearchProduct = ({ searchInputRef }) => {
         });
       }} />
 
-      <PageHeader title="Consulta de productos">
+      <PageHeader title="Búsqueda de productos">
         {!isInputFocused && (
           <Alert severity="warning" variant="filled" sx={{ py: 0 }}>
             Enfoca el campo de búsqueda para agregar productos

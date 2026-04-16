@@ -10,7 +10,7 @@ import { addProducts } from "../../../api/products";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { getStockOtherStores } from "../../../api/products";
 import { addToCart, updateMovementType } from "../../../redux/cart/cartActions";
-import { Grid, TextField, Box, Typography, Alert, Chip, Divider } from "@mui/material";
+import { Grid, TextField, Box, Typography, Alert, Chip, Tabs, Tab } from "@mui/material";
 
 
 const StockModal = ({ isOpen, product, onClose }) => {
@@ -22,6 +22,7 @@ const StockModal = ({ isOpen, product, onClose }) => {
   const [isLoading, setIsLoading] = useState(false)
   const [stockOtherStores, setStockOtherStores] = useState([])
   const [initialStock, setInitialStock] = useState("1")
+  const [tabValue, setTabValue] = useState(0);
 
   // Calcular stock reservado en otros carritos
   const getReservedInOtherCarts = () => {
@@ -37,9 +38,8 @@ const StockModal = ({ isOpen, product, onClose }) => {
   const reservedInOtherCarts = getReservedInOtherCarts();
 
 
-  const handleQuantityChange = (rowId, max, value) => {
-    const quantity = Math.min(parseInt(value) || 0, max);
-    setRequestedQuantities((prev) => ({ ...prev, [rowId]: quantity }));
+  const handleTabChange = (event, newValue) => {
+    setTabValue(newValue);
   };
 
 
@@ -55,6 +55,11 @@ const StockModal = ({ isOpen, product, onClose }) => {
     }
   }, [storeProduct?.product?.code]);
 
+
+  const handleQuantityChange = (rowId, max, value) => {
+    const quantity = Math.min(parseInt(value) || 0, max);
+    setRequestedQuantities((prev) => ({ ...prev, [rowId]: quantity }));
+  };
 
   const handleAddStock = async () => {
     if (!initialStock || parseInt(initialStock) <= 0) return;
@@ -162,64 +167,70 @@ const StockModal = ({ isOpen, product, onClose }) => {
             />
           </Grid>
         ) : (
-          <>
-            {stockOtherStores.length > 0 && (
-              <Grid item xs={12}>
-                <Divider sx={{ my: 1 }}>
-                  <Chip label="Ver stock en otras tiendas y solicitar producto" size="small" />
-                </Divider>
-                <SimpleTable
-                  noDataComponent="Sin stock en otras tiendas"
-                  data={stockOtherStores}
-                  columns={[
-                    { name: "Tienda", selector: (row) => row.store_name },
-                    { 
-                      name: "Stock", 
-                      selector: (row) => (
-                        <Chip 
-                          label={row.available_stock} 
-                          color={row.available_stock > 0 ? "success" : "default"} 
-                          size="small" 
-                          variant="outlined"
-                        />
-                      )
-                    },
-                    {
-                      name: "Cantidad",
-                      width: 100,
-                      cell: (row) => (
-                        <TextField size="small" fullWidth type="number"
-                          name="quantity"
-                          min={1}
-                          max={row.available_stock}
-                          placeholder="Cant"
-                          onChange={(e) => handleQuantityChange(row.store_id, row.available_stock, e.target.value)}
-                          value={requestedQuantities[row.store_id] || ""}
-                        />
-                      ),
-                    },
-                    {
-                      name: "Acción",
-                      selector: (row) => (
-                        <CustomButton
-                          size="small"
-                          disabled={!requestedQuantities[row.store_id] || requestedQuantities[row.store_id] <= 0}
-                          onClick={() => handleCreateTransfer(row)}
-                        >
-                          Solicitar
-                        </CustomButton>
-                      ),
-                    },
-                  ]}
-                />
-              </Grid>
+          <Grid item xs={12}>
+            <Tabs value={tabValue} onChange={handleTabChange} variant="fullWidth" sx={{ mb: 2 }}>
+              <Tab label="Solicitar producto a otra tienda" />
+              <Tab label="Agregar y vender" />
+            </Tabs>
+
+            {tabValue === 0 && (
+              <Box>
+                {stockOtherStores.length > 0 ? (
+                  <SimpleTable
+                    noDataComponent="Sin stock en otras tiendas"
+                    data={stockOtherStores}
+                    columns={[
+                      { name: "Tienda", selector: (row) => row.store_name },
+                      { 
+                        name: "Stock", 
+                        selector: (row) => (
+                          <Chip 
+                            label={row.available_stock} 
+                            color={row.available_stock > 0 ? "success" : "default"} 
+                            size="small" 
+                            variant="outlined"
+                          />
+                        )
+                      },
+                      {
+                        name: "Cantidad",
+                        width: 100,
+                        cell: (row) => (
+                          <TextField size="small" fullWidth type="number"
+                            name="quantity"
+                            min={1}
+                            max={row.available_stock}
+                            placeholder="Cant"
+                            onChange={(e) => handleQuantityChange(row.store_id, row.available_stock, e.target.value)}
+                            value={requestedQuantities[row.store_id] || ""}
+                          />
+                        ),
+                      },
+                      {
+                        name: "Acción",
+                        selector: (row) => (
+                          <CustomButton
+                            size="small"
+                            disabled={!requestedQuantities[row.store_id] || requestedQuantities[row.store_id] <= 0}
+                            onClick={() => handleCreateTransfer(row)}
+                          >
+                            Solicitar
+                          </CustomButton>
+                        ),
+                      },
+                    ]}
+                  />
+                ) : (
+                  <Typography color="text.secondary" sx={{ py: 2 }}>Sin stock en otras tiendas</Typography>
+                )}
+              </Box>
             )}
 
-            <Grid item xs={12}>
-              <Divider sx={{ my: 1 }}>
-                <Chip label="Agrega stock aquí y se añadirá directamente al carrito." size="small" />
-              </Divider>
-              <Box sx={{ py: 2, px: 2 }}>
+            {tabValue === 1 && (
+              <Box sx={{ py: 2 }}>
+                <Alert severity="info" sx={{ mb: 2 }}>
+                  Ideal para productos físicos en tienda no registrados en el sistema, listos para vender.
+                </Alert>
                 <Grid container spacing={2} alignItems="center">
                   <Grid item xs={6}>
                     <TextField
@@ -243,14 +254,11 @@ const StockModal = ({ isOpen, product, onClose }) => {
                   </Grid>
                 </Grid>
               </Box>
-            </Grid>
-          </>
-
+            )}
+          </Grid>
         )}
 
-      
-
-          </Grid>
+      </Grid>
         </Box>
     </CustomModal>
     </> 
