@@ -10,7 +10,7 @@ import StockUpdateRequestModal from "../../inventory/StockUpdateRequestModal/Sto
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { getBrands } from "../../../api/brands";
 import { getDepartments } from "../../../api/departments";
-import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, Box, Stack } from "@mui/material";
+import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, Box, Stack, Alert } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import DownloadIcon from "@mui/icons-material/Download";
 import TuneIcon from "@mui/icons-material/Tune";
@@ -90,18 +90,13 @@ const StoreProductList = () => {
             <h1>Inventario</h1>
           </Stack>
 
-          {(() => {
-            const isOwner = user.role === "owner";
-            const boxStyles = {
-              mb: 2,
-              p: 2,
-              bgcolor: "rgba(4, 53, 107, 0.08)",
-              borderRadius: 2,
-              display: "flex",
-              alignItems: "center",
-              gap: 1,
-            };
-            const content = isOwner ? (
+          <Alert 
+            severity="info" 
+            variant="filled" 
+            sx={{ mb: 2, py: 1.5, borderRadius: 2 }}
+            icon={<NotificationImportantIcon fontSize="inherit" />}
+          >
+            {user.role === "owner" ? (
               <>
                 <strong>Mantente atento a las solicitudes de ajuste.</strong>{" "}
                 Revisa y aprueba las solicitudes de stock en{" "}
@@ -112,20 +107,14 @@ const StoreProductList = () => {
               </>
             ) : (
               <>
-                <strong>¿Ves un stock incorrecto?</strong>{" "}
-                Usa el icono <SendIcon sx={{ fontSize: 14, verticalAlign: "middle" }} /> en la columna Acciones para solicitar un ajuste de stock. 
+                <strong>¿Ves un stock incorrecto?</strong> Si hay productos no registrados, regístralos. Si hay más productos registrados de los que realmente hay,{" "}
+                usa el icono <SendIcon sx={{ fontSize: 14, verticalAlign: "middle" }} /> en la columna Acciones para solicitar un ajuste de stock. 
                 El propietario revisará tu solicitud y la aprobará si es correcta. 
                 Se recomienda contactar al propietario para una pronta respuesta. 
                 Recuerda que tener el stock actualizado y corregido es un bien para todo el equipo.
               </>
-            );
-            return (
-              <Box sx={boxStyles}>
-                <NotificationImportantIcon color="primary" />
-                <Box sx={{ fontSize: "0.875rem" }}>{content}</Box>
-              </Box>
-            );
-          })()}
+            )}
+          </Alert>
 
           <Grid container spacing={2} sx={{ mb: 2 }}>
             <Grid item xs={12} md={3}>
