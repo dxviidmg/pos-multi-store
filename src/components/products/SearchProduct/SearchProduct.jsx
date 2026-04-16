@@ -9,6 +9,7 @@ import CustomTooltip from "../../ui/Tooltip";
 import { getStoreProducts, getStockOtherStores } from "../../../api/products";
 import { addToCart, updateMovementType, countStockOtherStores } from "../../../redux/cart/cartActions";
 import { Chip, Box } from "@mui/material";
+import { Link as RouterLink } from "react-router-dom";
 import StockModal from "../../inventory/StockModal/StockModal";
 import ProductModal from "../ProductModal/ProductModal";
 import { useModal } from "../../../hooks/useModal";
@@ -16,13 +17,14 @@ import { useFetchWithRetry } from "../../../hooks/useFetch";
 import { getPrinterUrl, getUserData } from "../../../api/utils";
 import PrintIcon from "@mui/icons-material/Print";
 import { handlePrintTicket } from "../../../utils/utils";
-import { Grid, TextField, FormLabel, RadioGroup, FormControlLabel, Radio, Checkbox, InputAdornment, IconButton, CircularProgress, LinearProgress, Alert } from "@mui/material";
+import { Grid, TextField, FormLabel, RadioGroup, FormControlLabel, Radio, Checkbox, InputAdornment, IconButton, CircularProgress, LinearProgress, Alert, Link } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import PushPinIcon from "@mui/icons-material/PushPin";
 import PushPinOutlinedIcon from "@mui/icons-material/PushPinOutlined";
 import AddIcon from "@mui/icons-material/Add";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
+import NotificationImportantIcon from "@mui/icons-material/NotificationImportant";
 
 const SearchProduct = ({ searchInputRef }) => {
   const localRef = useRef(null);
@@ -67,6 +69,7 @@ const SearchProduct = ({ searchInputRef }) => {
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [searching, setSearching] = useState(false);
   const [keepListOpen, setKeepListOpen] = useState(false);
+  const [showStockAlert, setShowStockAlert] = useState(() => localStorage.getItem('stockAlertDismissed') !== 'true');
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -332,7 +335,23 @@ const SearchProduct = ({ searchInputRef }) => {
         });
       }} />
 
-      <PageHeader title="Consulta de productos">
+      {showStockAlert && (
+        <Alert 
+          severity="info" 
+          variant="filled" 
+          sx={{ 
+            mb: 1, 
+            py: 0,
+            fontWeight: 500,
+            '& .MuiAlert-icon': { fontSize: '1rem' }
+          }}
+          icon={<NotificationImportantIcon fontSize="inherit" />}
+          onClose={() => setShowStockAlert(false)}
+        >
+          <strong>¿Detectaste stock incorrecto?</strong> Ve a <RouterLink to="/inventario/" style={{ color: "#04346b", fontWeight: 600 }}>Inventario</RouterLink> y sigue las instrucciones para solicitar un ajuste
+        </Alert>
+      )}
+      <PageHeader title="Búsqueda de productos">
         {!isInputFocused && (
           <Alert severity="warning" variant="filled" sx={{ py: 0 }}>
             Enfoca el campo de búsqueda para agregar productos

@@ -256,7 +256,12 @@ const multiCartReducer = (state = initialState, action) => {
               item.product.prices,
               clientSelected
             );
-            return { ...item, quantity: action.payload.newQuantity, product_price };
+            return { 
+              ...item, 
+              quantity: action.payload.newQuantity, 
+              product_price,
+              available_stock: action.payload.product.available_stock || item.available_stock
+            };
           }
           return item;
         });
@@ -294,7 +299,12 @@ const multiCartReducer = (state = initialState, action) => {
             item.product.prices,
             clientSelected
           );
-          return { ...item, quantity: action.payload.newQuantity, product_price };
+          return { 
+            ...item, 
+            quantity: action.payload.newQuantity, 
+            product_price,
+            available_stock: action.payload.product.available_stock || item.available_stock
+          };
         }
         return item;
       });
