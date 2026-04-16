@@ -9,7 +9,7 @@ import { createTransfer } from "../../../api/transfers";
 import { addProducts } from "../../../api/products";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { getStockOtherStores } from "../../../api/products";
-import { addToCart, updateMovementType } from "../../../redux/cart/cartActions";
+import { addToCart, updateMovementType, updateQuantityInCart } from "../../../redux/cart/cartActions";
 import { Grid, TextField, Box, Typography, Alert, Chip, Tabs, Tab } from "@mui/material";
 
 
@@ -77,13 +77,27 @@ const StockModal = ({ isOpen, product, onClose }) => {
         store_products: [{ id: storeProduct.id, quantity }],
       });
       showSuccess(`Stock agregado: ${quantity} unidades`);
-      // Asegurar que esté en tipo "venta" y agregar al carrito con stock actualizado
       dispatch(updateMovementType("venta"));
-      dispatch(addToCart({ 
-        ...storeProduct, 
-        quantity,
-        available_stock: (storeProduct.available_stock || 0) + quantity 
-      }));
+      
+      const activeCart = carts.find(c => c.id === activeCartId);
+      const existingItem = activeCart?.cart.find(item => item.id === storeProduct.id);
+      
+      if (existingItem) {
+        // Si ya existe, actualizar cantidad y stock
+        const newQuantity = existingItem.quantity + quantity;
+        const updatedProduct = {
+          ...existingItem.product,
+          available_stock: (existingItem.available_stock || 0) + quantity
+        };
+        dispatch(updateQuantityInCart({ ...updatedProduct, id: storeProduct.id }, newQuantity));
+      } else {
+        // Si no existe, agregar al carrito
+        dispatch(addToCart({ 
+          ...storeProduct, 
+          quantity,
+          available_stock: quantity
+        }));
+      }
       setInitialStock("1");
       onClose();
     } catch (error) {
