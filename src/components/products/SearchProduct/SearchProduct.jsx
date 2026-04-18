@@ -6,7 +6,7 @@ import SimpleTable from "../../ui/SimpleTable/SimpleTable";
 import CustomButton from "../../ui/Button/Button";
 import PageHeader from "../../ui/PageHeader";
 import CustomTooltip from "../../ui/Tooltip";
-import { getStoreProducts, getStockOtherStores } from "../../../api/products";
+import { getStoreProducts, getStockOtherStores, getCreateProductsOnSale } from "../../../api/products";
 import { addToCart, updateMovementType, countStockOtherStores } from "../../../redux/cart/cartActions";
 import { Chip, Box } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
@@ -70,6 +70,19 @@ const SearchProduct = ({ searchInputRef }) => {
   const [searching, setSearching] = useState(false);
   const [keepListOpen, setKeepListOpen] = useState(false);
   const [showStockAlert, setShowStockAlert] = useState(() => localStorage.getItem('stockAlertDismissed') !== 'true');
+  const [createProductsOnSale, setCreateProductsOnSale] = useState(false);
+
+  useEffect(() => {
+    const checkCreateProductsOnSale = async () => {
+      try {
+        const response = await getCreateProductsOnSale();
+        setCreateProductsOnSale(response.data.create_products_on_sale || false);
+      } catch (err) {
+        console.error("Error checking create products on sale:", err);
+      }
+    };
+    checkCreateProductsOnSale();
+  }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -122,17 +135,21 @@ const SearchProduct = ({ searchInputRef }) => {
         }
 
         if (fetchedData.length === 0) {
-          const confirm = await Swal.fire({
-            icon: "question",
-            title: "Producto no encontrado",
-            text: `No se encontró ningún producto con el código "${query}". ¿Desea crear uno nuevo con este código?`,
-            showCancelButton: true,
-            confirmButtonText: "Sí, crear producto",
-            cancelButtonText: "No, gracias",
-            confirmButtonColor: "#04346b",
-          });
-          if (confirm.isConfirmed) {
-            productModal.open({ code: query, createFromSearch: true });
+          if (createProductsOnSale) {
+            const confirm = await Swal.fire({
+              icon: "question",
+              title: "Producto no encontrado",
+              text: `No se encontró ningún producto con el código "${query}". ¿Desea crear uno nuevo con este código?`,
+              showCancelButton: true,
+              confirmButtonText: "Sí, crear producto",
+              cancelButtonText: "No, gracias",
+              confirmButtonColor: "#04346b",
+            });
+            if (confirm.isConfirmed) {
+              productModal.open({ code: query, createFromSearch: true });
+            }
+          } else {
+            showError("Producto no encontrado", `No se encontró ningún producto con el código "${query}"`);
           }
         } else if (fetchedData.length === 1) {
           handleSingleProductFetch(fetchedData[0]);
