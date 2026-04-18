@@ -14,6 +14,12 @@ import { getUserData } from "../../../api/utils";
 
 const WS_BASE = process.env.REACT_APP_API_URL?.replace(/^http/, "ws");
 
+const isWithinAllowedHours = () => {
+  const now = new Date();
+  const hour = now.getHours();
+  return hour >= 8 && hour < 21;
+};
+
 const EVENT_CONFIG = {
   transfer_created: { icon: <SwapHorizIcon fontSize="small" />, href: "/traspasos/" },
   transfer_confirmed: { icon: <CheckCircleIcon fontSize="small" color="success" />, href: "/traspasos/" },
@@ -82,6 +88,8 @@ const NotificationsMenu = memo(() => {
   }, []);
 
   useEffect(() => {
+    if (!isWithinAllowedHours()) return;
+
     connectWs();
     const onStoreChange = () => connectWs();
     window.addEventListener("store-changed", onStoreChange);
