@@ -242,3 +242,14 @@ export const getProductPriceLogs = async (productId) => {
   });
   return response;
 };
+
+/**
+ * Check if products can be created on sale
+ * @returns {Promise<Object>} Configuration response with create_products_on_sale flag
+ */
+export const getCreateProductsOnSale = async () => {
+  const response = await httpClient.get(getApiUrl("create-products-on-sale"), {
+    headers: getHeaders(),
+  });
+  return response;
+};
