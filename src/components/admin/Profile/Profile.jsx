@@ -48,6 +48,7 @@ const Profile = () => {
 
   const [settings, setSettings] = useState({
     displays_stock_in_storages: false,
+    create_products_on_sale: false,
   });
 
   const [loading, setLoading] = useState(true);
@@ -73,6 +74,7 @@ const Profile = () => {
       });
       setSettings({
         displays_stock_in_storages: tenantInfo.displays_stock_in_storages || false,
+        create_products_on_sale: tenantInfo.create_products_on_sale || false,
       });
 
       const userInfo = results[1].data;
@@ -250,11 +252,21 @@ const Profile = () => {
                           name="displays_stock_in_storages"
                           checked={settings.displays_stock_in_storages}
                           onChange={handleSettingChange}
+                        />
+                      }
+                      label="Mostrar stock en almacenes"
                     />
-                  }
-                  label="Mostrar stock en almacenes"
-                />
-              </Box>
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          name="create_products_on_sale"
+                          checked={settings.create_products_on_sale}
+                          onChange={handleSettingChange}
+                        />
+                      }
+                      label="Permitir crear productos desde venta"
+                    />
+                  </Box>
             </Box>
 
             <Button
