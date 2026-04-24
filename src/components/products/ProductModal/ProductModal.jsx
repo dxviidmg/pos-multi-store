@@ -218,7 +218,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
                   <MenuItem value="0">Selecciona una marca</MenuItem>
                   {brands.map((brand) => (
                     <MenuItem key={brand.id} value={brand.id}>
-                      {brand.name}
+                      {brand.name} ({brand.product_count})
                     </MenuItem>
                   ))}
                 </Select>
@@ -235,7 +235,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
                   <MenuItem value="0">Selecciona un departamento</MenuItem>
                   {departments.map((department) => (
                     <MenuItem key={department.id} value={department.id}>
-                      {department.name}
+                      {department.name} ({department.product_count})
                     </MenuItem>
                   ))}
                 </Select>

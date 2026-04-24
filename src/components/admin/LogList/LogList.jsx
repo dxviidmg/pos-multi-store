@@ -91,7 +91,7 @@ const LogList = () => {
                 <Select value={params.brand_id || ""} onChange={handleDataChange} name="brand_id" label="Marca">
                   <MenuItem value="">Todas las marcas</MenuItem>
                   {brands.map((brand) => (
-                    <MenuItem key={brand.id} value={brand.id}>{brand.name}</MenuItem>
+                    <MenuItem key={brand.id} value={brand.id}>{brand.name} ({brand.product_count})</MenuItem>
                   ))}
                 </Select>
               </FormControl>
