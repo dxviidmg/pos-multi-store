@@ -227,6 +227,14 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
           { label: "Solicitudes de ajustes de stock", href: "/solicitudes-ajustes-stock/" },
         ],
       },
+
+      {
+        label: "Auditoria",
+        dropdown: [
+          { label: "Inventario a verificar", href: "/auditoria-inventario/", hidden: user.role === "seller" },
+        ],
+      },
+      
       {
         label: "Movimientos",
         dropdown: [
@@ -258,6 +266,12 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
           { label: "Importar inventario", href: "/importar-inventario/" },
           { divider: true },
           { label: "Solicitudes de ajustes de stock", href: "/solicitudes-ajustes-stock/" },
+        ],
+      },
+      {
+        label: "Auditoria",
+        dropdown: [
+          { label: "Inventario a verificar", href: "/auditoria-inventario/", hidden: user.role === "seller" },
         ],
       },
       { label: "Historial de stock", href: "/historial-stock/" },

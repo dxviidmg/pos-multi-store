@@ -794,7 +794,7 @@ const StoreList = () => {
                         <MenuItem value="0">Sin departamento</MenuItem>
                         {departments.map((departament) => (
                           <MenuItem key={departament.id} value={departament.id}>
-                            {departament.name}
+                            {departament.name} ({departament.product_count})
                           </MenuItem>
                         ))}
                       </Select>
