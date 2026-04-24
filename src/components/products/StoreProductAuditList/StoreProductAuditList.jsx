@@ -35,7 +35,10 @@ const StoreProductAuditList = () => {
 
   useEffect(() => {
     const fetchOptions = async () => {
-      const [brandsRes, deptsRes] = await Promise.all([getBrands(), getDepartments()]);
+      const [brandsRes, deptsRes] = await Promise.all([
+        getBrands({ audit: true }),
+        getDepartments({ audit: true })
+      ]);
       setBrands(brandsRes.data);
       setDepartments(deptsRes.data);
     };
