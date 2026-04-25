@@ -55,7 +55,18 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
   useEffect(() => {
     const fetchData = async () => {
       if (productData.id) {
-        setFormData(productData);
+        setFormData({
+          ...INITIAL_FORM_DATA,
+          ...productData,
+          brand: productData.brand || "",
+          department: productData.department || "",
+          code: productData.code || "",
+          name: productData.name || "",
+          cost: productData.cost || "",
+          unit_price: productData.unit_price || "",
+          wholesale_price: productData.wholesale_price || "",
+          min_wholesale_quantity: productData.min_wholesale_quantity || "",
+        });
         setPreviewImage(productData.image || noPhoto);
 
         if (showStoreProducts) {
