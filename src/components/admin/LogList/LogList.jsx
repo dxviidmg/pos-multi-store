@@ -18,6 +18,7 @@ const LogList = () => {
   const [brands, setBrands] = useState([]);
   const [stores, setStores] = useState([]);
   const [actions, setActions] = useState([]);
+  const [optionsLoaded, setOptionsLoaded] = useState(false);
   const [params, setParams] = useState({ date: today });
 
   useEffect(() => {
@@ -29,6 +30,7 @@ const LogList = () => {
       setBrands(brandsRes.data);
       setActions(actionsRes.data);
       setStores(storesRes.data);
+      setOptionsLoaded(true);
       setLoading(false);
     };
     fetchOptions();
@@ -88,8 +90,9 @@ const LogList = () => {
             <Grid item xs={12} md={3}>
               <FormControl fullWidth size="small">
                 <InputLabel>Marca</InputLabel>
-                <Select value={params.brand_id || ""} onChange={handleDataChange} name="brand_id" label="Marca">
+                <Select value={params.brand_id || ""} onChange={handleDataChange} name="brand_id" label="Marca" disabled={optionsLoaded && brands.length === 0}>
                   <MenuItem value="">Todas las marcas</MenuItem>
+                  {!optionsLoaded && <MenuItem disabled>Cargando...</MenuItem>}
                   {brands.map((brand) => (
                     <MenuItem key={brand.id} value={brand.id}>{brand.name} ({brand.product_count})</MenuItem>
                   ))}
