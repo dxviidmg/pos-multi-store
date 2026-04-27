@@ -32,6 +32,7 @@ const ProductList = () => {
   const [loading, setLoading] = useState(false);
   const [brands, setBrands] = useState([]);
   const [departments, setDepartments] = useState([]);
+  const [optionsLoaded, setOptionsLoaded] = useState(false);
   const [params, setParams] = useState({});
   const [selectedRows, setSelectedRows] = useState([]);
   const [outOfStockPercentage, setOutOfStockPercentage] = useState(0);
@@ -43,6 +44,7 @@ const ProductList = () => {
       const [brandsRes, deptsRes] = await Promise.all([getBrands(), getDepartments()]);
       setBrands(brandsRes.data);
       setDepartments(deptsRes.data);
+      setOptionsLoaded(true);
     };
     fetchOptions();
   }, []);
@@ -142,8 +144,9 @@ const ProductList = () => {
             <Grid item xs={12} md={3}>
               <FormControl fullWidth size="small">
                 <InputLabel>Marca</InputLabel>
-                <Select value={params.brand_id || ""} onChange={handleDataChange} name="brand_id" label="Marca">
+                <Select value={params.brand_id || ""} onChange={handleDataChange} name="brand_id" label="Marca" disabled={optionsLoaded && brands.length === 0}>
                   <MenuItem value="">Todas las marcas</MenuItem>
+                  {!optionsLoaded && <MenuItem disabled>Cargando...</MenuItem>}
                   {brands.map((brand) => (
                     <MenuItem key={brand.id} value={brand.id}>{brand.name} ({brand.product_count})</MenuItem>
                   ))}
@@ -154,9 +157,10 @@ const ProductList = () => {
               <Grid item xs={12} md={3}>
                 <FormControl fullWidth size="small">
                   <InputLabel>Departamento</InputLabel>
-                  <Select value={params.department_id || ""} onChange={handleDataChange} name="department_id" label="Departamento">
+                  <Select value={params.department_id || ""} onChange={handleDataChange} name="department_id" label="Departamento" disabled={optionsLoaded && departments.length === 0}>
                     <MenuItem value="">{UI_TEXT.ALL_DEPARTMENTS}</MenuItem>
                     <MenuItem value="0">Sin departamento</MenuItem>
+                    {!optionsLoaded && <MenuItem disabled>Cargando...</MenuItem>}
                     {departments.map((dept) => (
                       <MenuItem key={dept.id} value={dept.id}>{dept.name} ({dept.product_count})</MenuItem>
                     ))}

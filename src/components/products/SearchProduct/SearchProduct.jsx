@@ -8,7 +8,7 @@ import PageHeader from "../../ui/PageHeader";
 import CustomTooltip from "../../ui/Tooltip";
 import { getStoreProducts, getStockOtherStores, getCreateProductsOnSale } from "../../../api/products";
 import { addToCart, updateMovementType, countStockOtherStores } from "../../../redux/cart/cartActions";
-import { Chip, Box } from "@mui/material";
+import { Chip, Box, Snackbar, Alert as MuiAlert } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import StockModal from "../../inventory/StockModal/StockModal";
 import ProductModal from "../ProductModal/ProductModal";
@@ -71,6 +71,7 @@ const SearchProduct = ({ searchInputRef }) => {
   const [keepListOpen, setKeepListOpen] = useState(false);
   const [showStockAlert, setShowStockAlert] = useState(() => localStorage.getItem('stockAlertDismissed') !== 'true');
   const [createProductsOnSale, setCreateProductsOnSale] = useState(false);
+  const [stockVerificationSnackbar, setStockVerificationSnackbar] = useState({ open: false, productName: "", productCode: "" });
 
   useEffect(() => {
     const checkCreateProductsOnSale = async () => {
@@ -248,9 +249,15 @@ const SearchProduct = ({ searchInputRef }) => {
         currentQuantityInCart >= availableStock
       ) {
         handleOpenModal(cart[existingProductIndex]);
-      } else {
-        showWarning("Stock insuficiente", `Este producto ya está reservado en otros carritos. Stock disponible: ${availableStock}`);
       }
+    }
+
+    if (added && storeProduct.requires_stock_verification) {
+      setStockVerificationSnackbar({
+        open: true,
+        productName: storeProduct.product?.name || "Producto",
+        productCode: storeProduct.product?.code || ""
+      });
     }
 
     if (added && movementType === "distribucion") {
@@ -553,6 +560,22 @@ const SearchProduct = ({ searchInputRef }) => {
           </Grid>
         )}
       </Grid>
+
+      <Snackbar
+        open={stockVerificationSnackbar.open}
+        autoHideDuration={4000}
+        onClose={() => setStockVerificationSnackbar({ ...stockVerificationSnackbar, open: false })}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <MuiAlert
+          onClose={() => setStockVerificationSnackbar({ ...stockVerificationSnackbar, open: false })}
+          severity="success"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          El producto {stockVerificationSnackbar.productCode}: {stockVerificationSnackbar.productName} necesita verificación de stock
+        </MuiAlert>
+      </Snackbar>
     </>
   );
 };
