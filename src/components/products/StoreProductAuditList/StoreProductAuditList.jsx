@@ -22,7 +22,7 @@ import CustomTooltip from "../../ui/Tooltip";
 import { UI_TEXT } from "../../../constants";
 import PageHeader from "../../ui/PageHeader";
 
-const StoreProductList = () => {
+const StoreProductAuditList = () => {
   const user = getUserData();
   const logsModal = useModal();
   const requestModal = useModal();
@@ -31,12 +31,15 @@ const StoreProductList = () => {
   const [departments, setDepartments] = useState([]);
   const [optionsLoaded, setOptionsLoaded] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [params, setParams] = useState({ only_stock: true });
+  const [params, setParams] = useState({ only_stock: true, requires_stock_verification: true });
   const [outOfStockPercentage, setOutOfStockPercentage] = useState(0);
 
   useEffect(() => {
     const fetchOptions = async () => {
-      const [brandsRes, deptsRes] = await Promise.all([getBrands(), getDepartments()]);
+      const [brandsRes, deptsRes] = await Promise.all([
+        getBrands({ audit: true }),
+        getDepartments({ audit: true })
+      ]);
       setBrands(brandsRes.data);
       setDepartments(deptsRes.data);
       setOptionsLoaded(true);
@@ -58,7 +61,7 @@ const StoreProductList = () => {
     const data = storeProducts.map(({ product: { code, brand_name, name }, stock }) => ({
       Código: code, Marca: brand_name, Nombre: name, Stock: stock,
     }));
-    exportToExcel(data, "Reporte Inventario " + user.store_name);
+    exportToExcel(data, "Reporte Inventario a verificar " + user.store_name);
   };
 
   const handleUpdateStoreProductList = (updated) => {
@@ -89,7 +92,7 @@ const StoreProductList = () => {
       <Grid container>
         <Grid item xs={12} className="card">
           <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-            <h1>Inventario</h1>
+            <h1>Inventario a verificar</h1>
           </Stack>
 
           <Alert 
@@ -111,7 +114,7 @@ const StoreProductList = () => {
               <>
                 <strong>¿Ves un stock incorrecto?</strong> Si hay productos no registrados, regístralos. Si hay más productos registrados de los que realmente hay,{" "}
                 usa el icono <SendIcon sx={{ fontSize: 14, verticalAlign: "middle" }} /> en la columna Acciones para solicitar un ajuste de stock. 
-                El propietario revisará tu solicitud y la aprobará si es correcta. 
+                El propietario revisará tu solicitud y la aprobará si es correcto. 
                 Se recomienda contactar al propietario para una pronta respuesta. 
                 Recuerda que tener el stock actualizado y corregido es un bien para todo el equipo.
               </>
@@ -161,7 +164,7 @@ const StoreProductList = () => {
             </Grid>
             <Grid item xs={12} md={3}>
               <CustomButton fullWidth onClick={handleDownload} disabled={storeProducts.length === 0} startIcon={<DownloadIcon />}>
-                Descargar inventario
+                Descargar Inventario a verificar
               </CustomButton>
             </Grid>
             {storeProducts.length > 0 && (
@@ -176,7 +179,7 @@ const StoreProductList = () => {
           <DataTable
             searcher={true}
             progressPending={loading}
-            noDataComponent="Sin inventario"
+            noDataComponent="Sin productos"
             data={storeProducts}
             columns={[
               { name: "Código", selector: (row) => row.product.code },
@@ -218,4 +221,4 @@ const StoreProductList = () => {
   );
 };
 
-export default StoreProductList;
+export default StoreProductAuditList;

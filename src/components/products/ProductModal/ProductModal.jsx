@@ -45,6 +45,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
 
   const [brands, setBrands] = useState([]);
   const [departments, setDepartments] = useState([]);
+  const [optionsLoaded, setOptionsLoaded] = useState(false);
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
   const [initialStock, setInitialStock] = useState("");
   const [, setSelectedImage] = useState(null);
@@ -55,7 +56,18 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
   useEffect(() => {
     const fetchData = async () => {
       if (productData.id) {
-        setFormData(productData);
+        setFormData({
+          ...INITIAL_FORM_DATA,
+          ...productData,
+          brand: productData.brand || "",
+          department: productData.department || "",
+          code: productData.code || "",
+          name: productData.name || "",
+          cost: productData.cost || "",
+          unit_price: productData.unit_price || "",
+          wholesale_price: productData.wholesale_price || "",
+          min_wholesale_quantity: productData.min_wholesale_quantity || "",
+        });
         setPreviewImage(productData.image || noPhoto);
 
         if (showStoreProducts) {
@@ -78,6 +90,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
 
       const response2 = await getDepartments();
       setDepartments(response2.data);
+      setOptionsLoaded(true);
     };
 
     fetchData();
@@ -214,11 +227,13 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
               <Select fullWidth size="small" value={formData.brand}
                   onChange={handleDataChange}
                   name="brand"
-                 label="Marca">
+                 label="Marca"
+                 disabled={optionsLoaded && brands.length === 0}>
                   <MenuItem value="0">Selecciona una marca</MenuItem>
+                  {!optionsLoaded && <MenuItem disabled>Cargando...</MenuItem>}
                   {brands.map((brand) => (
                     <MenuItem key={brand.id} value={brand.id}>
-                      {brand.name}
+                      {brand.name} ({brand.product_count})
                     </MenuItem>
                   ))}
                 </Select>
@@ -231,11 +246,13 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
               <Select fullWidth size="small" value={formData.department}
                   onChange={handleDataChange}
                   name="department"
-                 label="Departamento">
+                 label="Departamento"
+                 disabled={optionsLoaded && departments.length === 0}>
                   <MenuItem value="0">Selecciona un departamento</MenuItem>
+                  {!optionsLoaded && <MenuItem disabled>Cargando...</MenuItem>}
                   {departments.map((department) => (
                     <MenuItem key={department.id} value={department.id}>
-                      {department.name}
+                      {department.name} ({department.product_count})
                     </MenuItem>
                   ))}
                 </Select>

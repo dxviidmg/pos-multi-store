@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useForm } from "../../../hooks/useForm";
 import CustomModal from "../../ui/Modal/Modal";
 import DataTable from "../../ui/DataTable/DataTable";
@@ -7,7 +7,7 @@ import { getFormattedDateTime } from "../../../utils/utils";
 import { showSuccess, showError } from "../../../utils/alerts";
 import CustomButton from "../../ui/Button/Button";
 import { chooseIcon } from "../../ui/Icons/Icons";
-import { Grid, TextField } from "@mui/material";
+import { Grid, TextField, LinearProgress } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 
 const INITIAL_FORM_DATA = { stock: "" };
@@ -19,11 +19,14 @@ const StoreProductLogsModal = ({ isOpen, logs: logsData, onClose, onUpdate }) =>
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
   const [logs, setLogs] = useState([]);
   const [months, setMonths] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const debounceTimer = useRef(null);
 
   useEffect(() => {
     const fetchStoreProductLogs = async () => {
       if (storeProduct.id) {
         setFormData(storeProduct);
+        setLoading(true);
 
         try {
           const response = await getStoreProductLogs({
@@ -33,6 +36,8 @@ const StoreProductLogsModal = ({ isOpen, logs: logsData, onClose, onUpdate }) =>
           setLogs(response.data);
         } catch (error) {
           // Error silencioso - logs no críticos
+        } finally {
+          setLoading(false);
         }
       } else {
         setFormData(INITIAL_FORM_DATA);
@@ -40,7 +45,12 @@ const StoreProductLogsModal = ({ isOpen, logs: logsData, onClose, onUpdate }) =>
       }
     };
 
-    fetchStoreProductLogs();
+    if (storeProduct.id) {
+      clearTimeout(debounceTimer.current);
+      debounceTimer.current = setTimeout(fetchStoreProductLogs, 500);
+    }
+
+    return () => clearTimeout(debounceTimer.current);
   }, [storeProduct.id, months]);
 
   const handleInputChange = (e) => {
@@ -96,6 +106,7 @@ const StoreProductLogsModal = ({ isOpen, logs: logsData, onClose, onUpdate }) =>
 
         {!adjustStock && (
         <Grid item xs={12} md={12}>
+          {loading && <LinearProgress sx={{ mb: 2, borderRadius: 1 }} />}
           <TextField
             size="small"
             label="Meses anteriores (iniciar desde cuantos meses atras)"

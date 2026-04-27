@@ -8,7 +8,7 @@ import PageHeader from "../../ui/PageHeader";
 import CustomTooltip from "../../ui/Tooltip";
 import { getStoreProducts, getStockOtherStores, getCreateProductsOnSale } from "../../../api/products";
 import { addToCart, updateMovementType, countStockOtherStores } from "../../../redux/cart/cartActions";
-import { Chip, Box } from "@mui/material";
+import { Chip, Box, Snackbar, Alert as MuiAlert } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import StockModal from "../../inventory/StockModal/StockModal";
 import ProductModal from "../ProductModal/ProductModal";
@@ -25,6 +25,11 @@ import AddIcon from "@mui/icons-material/Add";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import NotificationImportantIcon from "@mui/icons-material/NotificationImportant";
+import SearchOffIcon from "@mui/icons-material/SearchOff";
+import CenterFocusStrongIcon from "@mui/icons-material/CenterFocusStrong";
+import CenterFocusWeakIcon from "@mui/icons-material/CenterFocusWeak";
+import EditIcon from "@mui/icons-material/Edit";
+import EditOffIcon from "@mui/icons-material/EditOff";
 
 const SearchProduct = ({ searchInputRef }) => {
   const localRef = useRef(null);
@@ -71,6 +76,7 @@ const SearchProduct = ({ searchInputRef }) => {
   const [keepListOpen, setKeepListOpen] = useState(false);
   const [showStockAlert, setShowStockAlert] = useState(() => localStorage.getItem('stockAlertDismissed') !== 'true');
   const [createProductsOnSale, setCreateProductsOnSale] = useState(false);
+  const [stockVerificationSnackbar, setStockVerificationSnackbar] = useState({ open: false, productName: "", productCode: "" });
 
   useEffect(() => {
     const checkCreateProductsOnSale = async () => {
@@ -248,9 +254,15 @@ const SearchProduct = ({ searchInputRef }) => {
         currentQuantityInCart >= availableStock
       ) {
         handleOpenModal(cart[existingProductIndex]);
-      } else {
-        showWarning("Stock insuficiente", `Este producto ya está reservado en otros carritos. Stock disponible: ${availableStock}`);
       }
+    }
+
+    if (added && storeProduct.requires_stock_verification) {
+      setStockVerificationSnackbar({
+        open: true,
+        productName: storeProduct.product?.name || "Producto",
+        productCode: storeProduct.product?.code || ""
+      });
     }
 
     if (added && movementType === "distribucion") {
@@ -369,11 +381,6 @@ const SearchProduct = ({ searchInputRef }) => {
         </Alert>
       )}
       <PageHeader title="Búsqueda de productos">
-        {!isInputFocused && (
-          <Alert severity="warning" variant="filled" sx={{ py: 0 }}>
-            Enfoca el campo de búsqueda para agregar productos
-          </Alert>
-        )}
         <CustomButton
           disabled={!urlPrinter}
           onClick={(e) => handlePrintTicket("test", {})}
@@ -383,19 +390,19 @@ const SearchProduct = ({ searchInputRef }) => {
         </CustomButton>
       </PageHeader>
 
-      <Grid container spacing={0} sx={{ mb: 0.5 }}>
-        <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', mb: 0.25 }}>
+      <Grid container spacing={0} sx={{ mb: 0.5, mt: -1.5 }}>
+        <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
           <FormLabel sx={{ fontWeight: 600, mr: 1, fontSize: '0.875rem' }}>Tipo de búsqueda:</FormLabel>
           <RadioGroup row value={queryType} onChange={handleQueryTypeChange}>
             <FormControlLabel 
               value="code" 
-              control={<Radio size="small" />} 
+              control={<Radio size="small" sx={{ py: 0.5 }} />} 
               label="Por código de barras (Ctrl+Q)"
               sx={{ mr: 4 }}
             />
             <FormControlLabel 
               value="q" 
-              control={<Radio size="small" />} 
+              control={<Radio size="small" sx={{ py: 0.5 }} />} 
               label="Por marca o nombre (Ctrl+W)"
             />
           </RadioGroup>
@@ -407,7 +414,7 @@ const SearchProduct = ({ searchInputRef }) => {
             {storeType !== "A" && (
               <FormControlLabel 
                 value="venta" 
-                control={<Radio size="small" />} 
+                control={<Radio size="small" sx={{ py: 0.5 }} />} 
                 label="Venta (Ctrl+E)"
                 sx={{ mr: 4 }}
               />
@@ -415,14 +422,14 @@ const SearchProduct = ({ searchInputRef }) => {
             {storeType !== "T" && (
               <FormControlLabel 
                 value="distribucion" 
-                control={<Radio size="small" />} 
+                control={<Radio size="small" sx={{ py: 0.5 }} />} 
                 label="Distribucion (Ctrl+T)"
                 sx={{ mr: 4 }}
               />
             )}
             <FormControlLabel 
               value="traspaso" 
-              control={<Radio size="small" />} 
+              control={<Radio size="small" sx={{ py: 0.5 }} />} 
               label="Confirmar traspaso (Ctrl+R)"
               sx={{ mr: 4 }}
             />
@@ -453,16 +460,13 @@ const SearchProduct = ({ searchInputRef }) => {
               >
                 {keepListOpen ? <PushPinIcon fontSize="small" /> : <PushPinOutlinedIcon fontSize="small" />}
               </IconButton>
-              <IconButton size="small" onClick={handleSearchProduct} disabled={searching} sx={{ width: 36, height: 36, bgcolor: 'primary.main', color: 'white', borderRadius: 1, '&:hover': { bgcolor: 'primary.dark' } }}>
-                {searching ? <CircularProgress size={20} sx={{ color: 'white' }} /> : <SearchIcon />}
-              </IconButton>
             </>
           )}
           <TextField size="small" fullWidth
             inputRef={inputRef}
             type="text"
             value={queryType === "code" ? barcode : query}
-            placeholder="Buscar producto (Ctrl+B)"
+            placeholder={queryType === "code" ? "Buscar producto por código (Ctrl+B)" : "Buscar producto por nombre (Ctrl+B)"}
             onChange={
               queryType === "q"
                 ? handleQueryChange
@@ -472,7 +476,19 @@ const SearchProduct = ({ searchInputRef }) => {
             onFocus={() => setIsInputFocused(true)}
             onBlur={() => setIsInputFocused(false)}
             autoComplete="off"
+            InputProps={{
+              startAdornment: queryType === "q" ? (
+                <InputAdornment position="start">
+                  <IconButton size="small" onClick={handleSearchProduct} disabled={searching} sx={{ p: 0.5 }}>
+                    {searching ? <CircularProgress size={18} /> : <SearchIcon fontSize="small" />}
+                  </IconButton>
+                </InputAdornment>
+              ) : null
+            }}
           />
+          <IconButton size="small" sx={{ width: 36, height: 36, bgcolor: isInputFocused ? 'primary.main' : 'warning.main', color: 'white', borderRadius: 1, '&:hover': { bgcolor: isInputFocused ? 'primary.dark' : 'warning.dark' } }}>
+            {isInputFocused ? <EditIcon fontSize="small" /> : <EditOffIcon fontSize="small" />}
+          </IconButton>
           {queryType === "q" && data.length > 0 && (
             <Chip label={`${data.length} resultados`} color="primary" size="small" sx={{ height: 36 }} />
           )}
@@ -553,6 +569,22 @@ const SearchProduct = ({ searchInputRef }) => {
           </Grid>
         )}
       </Grid>
+
+      <Snackbar
+        open={stockVerificationSnackbar.open}
+        autoHideDuration={4000}
+        onClose={() => setStockVerificationSnackbar({ ...stockVerificationSnackbar, open: false })}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <MuiAlert
+          onClose={() => setStockVerificationSnackbar({ ...stockVerificationSnackbar, open: false })}
+          severity="success"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          El producto {stockVerificationSnackbar.productCode}: {stockVerificationSnackbar.productName} necesita verificación de stock
+        </MuiAlert>
+      </Snackbar>
     </>
   );
 };
