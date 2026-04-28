@@ -106,7 +106,9 @@ const Cart = ({ searchInputRef }) => {
       }
     };
     fetchData();
+  }, []);
 
+  useEffect(() => {
     // Si el tipo de tienda es "A", se establece el movimiento como "distribucion"
     if (store_type === STORE_TYPES.WAREHOUSE && movementType === MOVEMENT_TYPES.SALE) {
       dispatch(updateMovementType(MOVEMENT_TYPES.DISTRIBUTION));
