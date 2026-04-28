@@ -66,7 +66,7 @@ const SearchProduct = ({ searchInputRef }) => {
   
   // Usar hooks extraídos
   const { query, setQuery, data, setData, queryType, setQueryType, searching, fetchData } = useProductSearch();
-  const { handleAddToCartIfAvailable } = useCartActions(getAvailableStock, movementType, keepListOpen);
+  const { handleAddToCartIfAvailable } = useCartActions(getAvailableStock, movementType, keepListOpen, setData, setQuery);
 
   // Usar hook de atajos de teclado
   useKeyboardShortcuts(inputRef, dispatch);
@@ -117,7 +117,7 @@ const SearchProduct = ({ searchInputRef }) => {
     } else if (movementType === "checar") {
       showSuccess(storeProduct.product.name, "Precio unitario $" + storeProduct.product.prices.unit_price);
     } else {
-      const verification = handleAddToCartIfAvailable(storeProduct, setData, setQuery, stockModal);
+      const verification = handleAddToCartIfAvailable(storeProduct, stockModal);
       if (verification) {
         setStockVerificationSnackbar({
           open: true,

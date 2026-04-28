@@ -4,7 +4,7 @@ import { addToCart, countStockOtherStores } from "../redux/cart/cartActions";
 import { getStockOtherStores } from "../api/products";
 import { showWarning } from "../utils/alerts";
 
-export const useCartActions = (getAvailableStock, movementType, keepListOpen) => {
+export const useCartActions = (getAvailableStock, movementType, keepListOpen, setData, setQuery) => {
   const dispatch = useDispatch();
   // eslint-disable-next-line no-unused-vars
   const { carts, activeCartId } = useSelector((state) => state.multiCartReducer);
@@ -15,7 +15,7 @@ export const useCartActions = (getAvailableStock, movementType, keepListOpen) =>
     return activeCart?.cart || [];
   });
 
-  const handleAddToCartIfAvailable = useCallback((storeProduct, setData, setQuery, stockModal) => {
+  const handleAddToCartIfAvailable = useCallback((storeProduct, stockModal) => {
     const existingProductIndex = cart.findIndex(
       (item) => item.id === storeProduct.id
     );
@@ -80,7 +80,7 @@ export const useCartActions = (getAvailableStock, movementType, keepListOpen) =>
     }
 
     return null;
-  }, [cart, dispatch, movementType, getAvailableStock, keepListOpen]);
+  }, [cart, dispatch, movementType, getAvailableStock, keepListOpen, setData, setQuery]);
 
   return { handleAddToCartIfAvailable };
 };
