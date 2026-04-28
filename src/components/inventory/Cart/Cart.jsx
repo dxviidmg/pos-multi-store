@@ -15,7 +15,7 @@ import PaymentModal from "../../sales/PaymentModal/PaymentModal";
 import StockModal from "../StockModal/StockModal";
 import { getStores } from "../../../api/stores";
 import { confirmTransfers, createDistribution } from "../../../api/transfers";
-import { showAlert } from "../../../utils/alerts";
+import { showSuccess, showError } from "../../../utils/alerts";
 import { addProducts, getStockOtherStores } from "../../../api/products";
 import { getUserData } from "../../../api/utils";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
@@ -174,31 +174,27 @@ const Cart = ({ searchInputRef }) => {
 
 
   const handleTranserFromCart = async (cart) => {
-    if (loading) return; // Previene reenvío
-    setLoading(true)
+    if (loading) return;
+    setLoading(true);
 
     const data = { transfers: cart, destination_store: selectedStore };
     try {
       const response = await confirmTransfers(data);
       if (response.status === 200) {
         dispatch(cleanCart());
-        setLoading(false)
-        showAlert("success", "Traspaso confirmado");
+        setLoading(false);
+        showSuccess("Traspaso confirmado");
       } else if (response.status === 404) {
         dispatch(cleanCart());
-        setLoading(false)
-        showAlert("error", "Traspaso inexistente. Checa cantidad y/o destino");
+        setLoading(false);
+        showError("Traspaso inexistente", "Checa cantidad y/o destino");
       } else {
-        setLoading(false)
-        showAlert(
-          "error",
-          "Error desconocido",
-          "Por favor llame a soporte técnico"
-        );
+        setLoading(false);
+        showError("Error desconocido", "Por favor llame a soporte técnico");
       }
     } catch (error) {
-      setLoading(false)
-      showAlert("error", "Error en la solicitud", error.message);
+      setLoading(false);
+      showError("Error en la solicitud", error.message);
     }
   };
 
@@ -211,34 +207,26 @@ const Cart = ({ searchInputRef }) => {
       if (response.status === 201) {
         dispatch(cleanCart());
       setSelectedStore("")
-      setConfirmedStore("")
+      setConfirmedStore("");
       setTimeout(() => {
-        setLoading(false)
+        setLoading(false);
       }, 200);
-        showAlert("success", "Distribución creada");
+        showSuccess("Distribución creada");
       } else if (response.status === 404) {
-        setLoading(false)
-        showAlert(
-          "error",
-          "Distribución no encontrada",
-          "Algunos productos no coinciden con la distribución solicitada, ya sea en cantidad o en código."
-        );
+        setLoading(false);
+        showError("Distribución no encontrada", "Algunos productos no coinciden con la distribución solicitada, ya sea en cantidad o en código.");
       } else {
-        setLoading(false)
-        showAlert(
-          "error",
-          "Error desconocido",
-          "Por favor llame a soporte técnico"
-        );
+        setLoading(false);
+        showError("Error desconocido", "Por favor llame a soporte técnico");
       }
     } catch (error) {
-      setLoading(false)
-      showAlert("error", "Error en la solicitud", error.message);
+      setLoading(false);
+      showError("Error en la solicitud", error.message);
     }
   };
 
   const handleAddToStock = async (cart) => {
-    if (loading) return; // Previene reenvío
+    if (loading) return;
     setLoading(true);
 
     const products_to_add = cart.map(item => ({
@@ -253,17 +241,13 @@ const Cart = ({ searchInputRef }) => {
       if (response.status === 200) {
         dispatch(cleanCart());
         setLoading(false);
-        showAlert("success", "Producto añadido al inventario");
+        showSuccess("Producto añadido al inventario");
       } else {
         setLoading(false);
-        showAlert(
-          "error",
-          "Error en el inventario",
-          "No se pudo añadir el producto"
-        );
+        showError("Error en el inventario", "No se pudo añadir el producto");
       }
     } catch (error) {
-      showAlert("error", "Error en la solicitud", error.message);
+      showError("Error en la solicitud", error.message);
     }
   };
 
