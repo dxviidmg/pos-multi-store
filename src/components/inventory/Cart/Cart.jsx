@@ -173,7 +173,7 @@ const Cart = ({ searchInputRef }) => {
 
 
 
-  const handleTranserFromCart = async (cart) => {
+  const handleTransferFromCart = async (cart) => {
     if (loading) return;
     setLoading(true);
 
@@ -366,7 +366,7 @@ const Cart = ({ searchInputRef }) => {
                   <CustomButton
                     onClick={() =>
                       movementType === "traspaso"
-                        ? handleTranserFromCart(cart)
+                        ? handleTransferFromCart(cart)
                         : handleDistributionFromCart(cart)
                     }
                     disabled={!selectedStore || selectedStore !== confirmedStore}
