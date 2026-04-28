@@ -1,3 +1,4 @@
+import { logger } from "../../utils/logger";
 import {
   ADD_CLIENT_TO_CART,
   REMOVE_CLIENT_FROM_CART,
@@ -188,7 +189,7 @@ const multiCartReducer = (state = initialState, action) => {
       } else {
         // Verificar stock disponible para nuevo producto
         if (action.payload.quantity > availableStock) {
-          console.warn(`Stock insuficiente. Disponible: ${availableStock}, Intentando agregar: ${action.payload.quantity}`);
+          logger.warn(`Stock insuficiente. Disponible: ${availableStock}, Intentando agregar: ${action.payload.quantity}`);
           return state;
         }
         
@@ -290,7 +291,7 @@ const multiCartReducer = (state = initialState, action) => {
         : requestedQuantity;
       
       if (requestedQuantity > availableStock) {
-        console.warn(`Stock insuficiente. Disponible: ${availableStock}, Solicitado: ${requestedQuantity}`);
+        logger.warn(`Stock insuficiente. Disponible: ${availableStock}, Solicitado: ${requestedQuantity}`);
       }
       
       const updatedCart = activeCart.cart.map((item) => {

@@ -1,3 +1,4 @@
+import { logger } from "../utils/logger";
 import httpClient from "./httpClient";
 import { getApiUrl, buildUrlWithParams } from "./utils";
 
@@ -9,7 +10,7 @@ const timedRequest = async (axiosCall, meta = {}) => {
   } catch (error) {
     const end = performance.now();
     const duration = Math.round((end - start) / 1000);
-    console.log(`[FAIL] ${meta.name || "request"}: ${duration} s`);
+    logger.warn(`[FAIL] ${meta.name || "request"}: ${duration} s`);
     throw error;
   }
 };

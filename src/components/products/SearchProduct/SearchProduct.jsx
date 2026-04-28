@@ -1,4 +1,5 @@
 import { showSuccess, showError, showWarning } from "../../../utils/alerts";
+import { logger } from "../../../utils/logger";
 import Swal from "sweetalert2";
 import React, { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
@@ -91,7 +92,7 @@ const SearchProduct = ({ searchInputRef }) => {
         const response = await getCreateProductsOnSale();
         setCreateProductsOnSale(response.data.create_products_on_sale || false);
       } catch (err) {
-        console.error("Error checking create products on sale:", err);
+        logger.error("Error checking create products on sale:", err);
       }
     };
     checkCreateProductsOnSale();

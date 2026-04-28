@@ -178,7 +178,6 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
   const handleBack = () => {
     const updatedUser = { ...user, store_type: "", store_name: "", store_id: null };
     localStorage.setItem("user", JSON.stringify(updatedUser));
-    console.log(user)
     window.dispatchEvent(new Event("store-changed"));
     navigate("/tiendas/", { replace: true });
   };

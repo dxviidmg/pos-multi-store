@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { logger } from '../../../utils/logger';
 import {
   Box,
   Grid,
@@ -85,7 +86,7 @@ const Profile = () => {
         last_name: userInfo.last_name || '',
       });
     } catch (error) {
-      console.error('Fetch error:', error);
+      logger.error('Fetch error:', error);
       setMessage({ type: 'error', text: 'Error al cargar los datos' });
     } finally {
       setLoading(false);
@@ -124,7 +125,7 @@ const Profile = () => {
       await updateTenant(user.tenant_id, { ...tenantData, ...settings });
       setMessage({ type: 'success', text: 'Datos del negocio guardados correctamente' });
     } catch (error) {
-      console.error('Save error:', error);
+      logger.error('Save error:', error);
       setMessage({ type: 'error', text: 'Error al guardar los datos del negocio' });
     } finally {
       setSavingTenant(false);
@@ -139,7 +140,7 @@ const Profile = () => {
       await updateUser(user.user_id, userData);
       setMessage({ type: 'success', text: 'Datos del usuario guardados correctamente' });
     } catch (error) {
-      console.error('Save error:', error);
+      logger.error('Save error:', error);
       setMessage({ type: 'error', text: 'Error al guardar los datos del usuario' });
     } finally {
       setSavingUser(false);
