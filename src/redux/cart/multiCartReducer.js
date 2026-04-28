@@ -69,6 +69,15 @@ const getReservedStock = (carts, productId, excludeCartId = null) => {
   }, 0);
 };
 
+const updateActiveCart = (state, updates) => ({
+  ...state,
+  carts: state.carts.map(c => 
+    c.id === state.activeCartId 
+      ? { ...c, ...updates }
+      : c
+  )
+});
+
 const multiCartReducer = (state = initialState, action) => {
   const activeCart = state.carts.find(c => c.id === state.activeCartId);
   
@@ -105,26 +114,12 @@ const multiCartReducer = (state = initialState, action) => {
 
     case ADD_CLIENT_TO_CART: {
       const updatedCart = updateCartWithPrice(activeCart.cart, true);
-      return {
-        ...state,
-        carts: state.carts.map(c => 
-          c.id === state.activeCartId 
-            ? { ...c, client: action.payload, cart: updatedCart }
-            : c
-        )
-      };
+      return updateActiveCart(state, { client: action.payload, cart: updatedCart });
     }
 
     case REMOVE_CLIENT_FROM_CART: {
       const updatedCart = updateCartWithPrice(activeCart.cart, false);
-      return {
-        ...state,
-        carts: state.carts.map(c => 
-          c.id === state.activeCartId 
-            ? { ...c, client: {}, cart: updatedCart }
-            : c
-        )
-      };
+      return updateActiveCart(state, { client: {}, cart: updatedCart });
     }
 
     case ADD_TO_CART: {
@@ -154,14 +149,7 @@ const multiCartReducer = (state = initialState, action) => {
           updatedCart = [...activeCart.cart, { ...action.payload, product_price }];
         }
 
-        return {
-          ...state,
-          carts: state.carts.map(c => 
-            c.id === state.activeCartId 
-              ? { ...c, cart: updatedCart }
-              : c
-          )
-        };
+        return updateActiveCart(state, { cart: updatedCart });
       }
 
       // Calcular stock ya reservado en otros carritos
@@ -202,48 +190,20 @@ const multiCartReducer = (state = initialState, action) => {
         updatedCart = [...activeCart.cart, { ...action.payload, product_price }];
       }
 
-      return {
-        ...state,
-        carts: state.carts.map(c => 
-          c.id === state.activeCartId 
-            ? { ...c, cart: updatedCart }
-            : c
-        )
-      };
+      return updateActiveCart(state, { cart: updatedCart });
     }
 
     case REMOVE_FROM_CART: {
       const updatedCart = activeCart.cart.filter((item) => item.id !== action.payload);
-      return {
-        ...state,
-        carts: state.carts.map(c => 
-          c.id === state.activeCartId 
-            ? { ...c, cart: updatedCart }
-            : c
-        )
-      };
+      return updateActiveCart(state, { cart: updatedCart });
     }
 
     case CLEAN_CART: {
-      return {
-        ...state,
-        carts: state.carts.map(c => 
-          c.id === state.activeCartId 
-            ? { ...c, cart: [], client: {} }
-            : c
-        )
-      };
+      return updateActiveCart(state, { cart: [], client: {} });
     }
 
     case UPDATE_MOVEMENT_TYPE: {
-      return {
-        ...state,
-        carts: state.carts.map(c => 
-          c.id === state.activeCartId 
-            ? { ...c, movementType: action.payload }
-            : c
-        )
-      };
+      return updateActiveCart(state, { movementType: action.payload });
     }
 
     case UPDATE_QUANTITY_IN_CART: {
@@ -267,14 +227,7 @@ const multiCartReducer = (state = initialState, action) => {
           return item;
         });
 
-        return {
-          ...state,
-          carts: state.carts.map(c => 
-            c.id === state.activeCartId 
-              ? { ...c, cart: updatedCart }
-              : c
-          )
-        };
+        return updateActiveCart(state, { cart: updatedCart });
       }
 
       // Calcular stock reservado en otros carritos
@@ -312,14 +265,7 @@ const multiCartReducer = (state = initialState, action) => {
         return item;
       });
 
-      return {
-        ...state,
-        carts: state.carts.map(c => 
-          c.id === state.activeCartId 
-            ? { ...c, cart: updatedCart }
-            : c
-        )
-      };
+      return updateActiveCart(state, { cart: updatedCart });
     }
 
     case CHANGE_PRICE: {
@@ -335,14 +281,7 @@ const multiCartReducer = (state = initialState, action) => {
           : item
       );
 
-      return {
-        ...state,
-        carts: state.carts.map(c => 
-          c.id === state.activeCartId 
-            ? { ...c, cart: updatedCart }
-            : c
-        )
-      };
+      return updateActiveCart(state, { cart: updatedCart });
     }
 
     case COUNT_STOCK_OTHER_STORES: {
@@ -352,14 +291,7 @@ const multiCartReducer = (state = initialState, action) => {
           : item
       );
 
-      return {
-        ...state,
-        carts: state.carts.map(c => 
-          c.id === state.activeCartId 
-            ? { ...c, cart: updatedCart }
-            : c
-        )
-      };
+      return updateActiveCart(state, { cart: updatedCart });
     }
 
     default:
