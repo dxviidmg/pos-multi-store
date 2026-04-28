@@ -283,25 +283,27 @@ const multiCartReducer = (state = initialState, action) => {
         : (action.payload.product.available_stock || 0);
       const availableStock = productStock - reservedInOtherCarts;
       
-      // Limitar la cantidad al stock disponible
+      // Limitar la cantidad al stock disponible (sin mutar action.payload)
       const requestedQuantity = action.payload.newQuantity;
+      const clampedQuantity = requestedQuantity > availableStock 
+        ? Math.max(1, availableStock)
+        : requestedQuantity;
+      
       if (requestedQuantity > availableStock) {
         console.warn(`Stock insuficiente. Disponible: ${availableStock}, Solicitado: ${requestedQuantity}`);
-        // Permitir actualizar hasta el máximo disponible
-        action.payload.newQuantity = Math.max(1, availableStock);
       }
       
       const updatedCart = activeCart.cart.map((item) => {
         if (item.id === action.payload.product.id) {
           const clientSelected = aClientIsSelected(activeCart.client);
           const product_price = calculateProductPrice(
-            action.payload.newQuantity,
+            clampedQuantity,
             item.product.prices,
             clientSelected
           );
           return { 
             ...item, 
-            quantity: action.payload.newQuantity, 
+            quantity: clampedQuantity, 
             product_price,
             available_stock: action.payload.product.available_stock || item.available_stock
           };
