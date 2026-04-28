@@ -379,7 +379,7 @@ const SearchProduct = ({ searchInputRef }) => {
             sx={{ py: 0 }}
             onClose={() => setStockVerificationSnackbar({ ...stockVerificationSnackbar, open: false })}
           >
-            El producto {stockVerificationSnackbar.productCode}: {stockVerificationSnackbar.productName} necesita verificación de stock
+            El producto {stockVerificationSnackbar.productCode} necesita verificación de stock
           </Alert>
         )}
         <CustomButton
