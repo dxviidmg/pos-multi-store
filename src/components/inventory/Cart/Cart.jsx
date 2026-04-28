@@ -88,11 +88,11 @@ const Cart = ({ searchInputRef }) => {
     return () => window.removeEventListener("keydown", handleShortcut);
   }, [dispatch]);
 
-  const handleSelectChange = (event) => {
+  const handleDestinationStoreChange = (event) => {
     setSelectedStore(event.target.value);
   };
 
-  const handleSelectChange2 = (event) => {
+  const handleConfirmStoreChange = (event) => {
     setConfirmedStore(event.target.value);
   };
 
@@ -328,7 +328,7 @@ const Cart = ({ searchInputRef }) => {
                 <Grid item xs={12} md={3}><h3>Productos: {totalProducts}</h3></Grid>
                 <Grid item xs={12} md={3}>
                   <Select fullWidth size="small" value={selectedStore}
-                    onChange={handleSelectChange}
+                    onChange={handleDestinationStoreChange}
                     displayEmpty
                     renderValue={(value) => {
                       if (!value) return <span style={{ color: "#999" }}>Selecciona un destino</span>;
@@ -346,7 +346,7 @@ const Cart = ({ searchInputRef }) => {
                 </Grid>
                 <Grid item xs={12} md={3}>
                   <Select fullWidth size="small" value={confirmedStore}
-                    onChange={handleSelectChange2}
+                    onChange={handleConfirmStoreChange}
                     displayEmpty
                     renderValue={(value) => {
                       if (!value) return <span style={{ color: "#999" }}>Confirma el destino</span>;
