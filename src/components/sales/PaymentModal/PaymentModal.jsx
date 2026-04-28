@@ -12,7 +12,7 @@ import SearchClient from "../../clients/SearchClient/SearchClient";
 import ClientSelected from "../../clients/ClientSelected/ClientSelected";
 import SearchIcon from "@mui/icons-material/Search";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
-import { Grid, TextField, Radio, RadioGroup, FormControlLabel, Checkbox, FormLabel } from "@mui/material";
+import { Grid, TextField, Radio, RadioGroup, FormControlLabel, Checkbox, FormLabel, Alert } from "@mui/material";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import MoneyOffIcon from "@mui/icons-material/MoneyOff";
@@ -52,6 +52,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
   const [payment, setPayment] = useState(INITIAL_PAYMENT_STATE);
   const [referencePayment, setReferencePayment] = useState("");
   const [hideClient, setHideClient] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const [hideExchange, setHideExchange] = useState(true);
   const [saleExchange, setSaleExchange] = useState(INITIAL_SALE_EXCHANGE_STATE);
@@ -191,7 +192,8 @@ const PaymentModal = ({ isOpen, onClose }) => {
         movementType === "venta" &&
         (payment.paidWith === 0 || payment.change < 0)
       ) {
-        showError("Error al finalizar la venta", "Pago debe igual o mayor a la cantidad a cobrar");
+        setErrorMessage("Pago debe ser igual o mayor a la cantidad a cobrar");
+        setIsLoading(false);
         return;
       }
 
@@ -299,6 +301,13 @@ const PaymentModal = ({ isOpen, onClose }) => {
         title="Finalizar venta"
       >
         <Grid container sx={{ padding: '1rem', backgroundColor: 'rgba(4, 53, 107, 0.2)' }}>
+          {errorMessage && (
+            <Grid item xs={12} sx={{ marginBottom: '1rem' }}>
+              <Alert severity="error" onClose={() => setErrorMessage("")}>
+                {errorMessage}
+              </Alert>
+            </Grid>
+          )}
           <Grid item xs={12} className="card" sx={{ marginBottom: '1rem' }}>
             <Grid container spacing={2}>
               <Grid item xs={12} md={6}>
