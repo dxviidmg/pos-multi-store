@@ -220,34 +220,34 @@ He analizado extensivamente el código del proyecto, incluyendo:
 
 ### 🔴 Prioridad Alta (Bugs y anti-patrones)
 
-| # | Acción | Archivo | Impacto |
-|---|--------|---------|---------|
-| 1 | Corregir mutación directa de action.payload en UPDATE_QUANTITY_IN_CART | multiCartReducer.js | Bug potencial en Redux |
-| 2 | Eliminar doble fetch en handleQueryChange | SearchProduct.jsx | Búsquedas duplicadas |
-| 3 | Centralizar token en interceptor de httpClient | httpClient.js + apiFactory.js | Seguridad y mantenibilidad |
-| 4 | Limpiar imports no utilizados | SearchProduct.jsx | Build size |
+| # | Acción | Archivo | Impacto | Estado |
+|---|--------|---------|---------|--------|
+| ~~1~~ | ~~Corregir mutación directa de action.payload en UPDATE_QUANTITY_IN_CART~~ | ~~multiCartReducer.js~~ | ~~Bug potencial en Redux~~ | ✅ HECHO |
+| 2 | Eliminar doble fetch en handleQueryChange | SearchProduct.jsx | Búsquedas duplicadas | |
+| 3 | Centralizar token en interceptor de httpClient | httpClient.js + apiFactory.js | Seguridad y mantenibilidad | |
 
 ### 🟡 Prioridad Media (Mantenibilidad)
 
-| # | Acción | Archivo | Impacto |
-|---|--------|---------|---------|
-| 5 | Extraer hooks de SearchProduct (useProductSearch, useKeyboardShortcuts, useCartActions) | SearchProduct.jsx | Reducir de 580 a ~200 líneas |
-| 6 | Extraer getAvailableStock a hook compartido | SearchProduct.jsx + Cart.jsx | Eliminar duplicación |
-| 7 | Mover columnas del carrito a archivo separado | Cart.jsx → cartColumns.js | Reducir de 648 a ~400 líneas |
-| 8 | Migrar useQueries.js a usar createMutationHooks | useQueries.js | Eliminar código repetitivo |
-| 9 | Memoizar calculateKPIs con useMemo | Dashboard.jsx | Performance |
-| 10 | Extraer helper updateActiveCart en reducer | multiCartReducer.js | Reducir repetición |
-| 11 | Crear wrapper Lazy para Suspense en rutas | App.jsx | Reducir repetición |
+| # | Acción | Archivo | Impacto | Estado |
+|---|--------|---------|---------|--------|
+| 5 | Extraer hooks de SearchProduct (useProductSearch, useKeyboardShortcuts, useCartActions) | SearchProduct.jsx | Reducir de 580 a ~200 líneas | |
+| ~~6~~ | ~~Extraer getAvailableStock a hook compartido~~ | ~~SearchProduct.jsx + Cart.jsx~~ | ~~Eliminar duplicación~~ | ✅ HECHO |
+| 7 | Mover columnas del carrito a archivo separado | Cart.jsx → cartColumns.js | Reducir de 648 a ~400 líneas | |
+| 8 | Migrar useQueries.js a usar createMutationHooks | useQueries.js | Eliminar código repetitivo | |
+| 9 | Memoizar calculateKPIs con useMemo | Dashboard.jsx | Performance | |
+| 10 | Extraer helper updateActiveCart en reducer | multiCartReducer.js | Reducir repetición | |
+| 11 | Crear wrapper Lazy para Suspense en rutas | App.jsx | Reducir repetición | |
 
 ### 🟢 Prioridad Baja (Polish)
 
-| # | Acción | Archivo | Impacto |
-|---|--------|---------|---------|
-| 12 | Renombrar handleSelectChange/2 a nombres descriptivos | Cart.jsx | Legibilidad |
-| 13 | Corregir typo handleTranserFromCart → handleTransferFromCart | Cart.jsx | Legibilidad |
-| 14 | Estandarizar alertas a showError/showSuccess | Varios | Consistencia |
-| 15 | Reemplazar console.error/warn por logger | Varios | Consistencia |
-| 16 | Separar useEffect de stores del dispatch condicional | Cart.jsx | Correctitud |
+| # | Acción | Archivo | Impacto | Estado |
+|---|--------|---------|---------|--------|
+| 12 | Renombrar handleSelectChange/2 a nombres descriptivos | Cart.jsx | Legibilidad | |
+| 13 | Corregir typo handleTranserFromCart → handleTransferFromCart | Cart.jsx | Legibilidad | |
+| 14 | Estandarizar alertas a showError/showSuccess | Varios | Consistencia | |
+| 15 | Reemplazar console.error/warn por logger | Varios | Consistencia | |
+| 16 | Separar useEffect de stores del dispatch condicional | Cart.jsx | Correctitud | |
+| ~~4~~ | ~~Limpiar imports no utilizados~~ | ~~SearchProduct.jsx~~ | ~~Build size~~ | ✅ HECHO |
 
 ---
 
