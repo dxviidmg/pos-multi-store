@@ -57,7 +57,7 @@
 ## Patrones de código
 
 - Hooks: `useModal()` para abrir/cerrar modales con datos. `useFetch`, `useFetchWithRetry`, `useCrudMutation` para datos del servidor.
-- API: usar `getApiUrl()` y `getHeaders()` de `api/utils.js`. Para query params usar `buildUrlWithParams()`.
+- API: usar `getApiUrl()` de `api/utils.js`. Para query params usar `buildUrlWithParams()`. El token se agrega automáticamente en el interceptor de `httpClient`.
 - Alertas: `showSuccess()`, `showError()`, `showWarning()`, `showAlert()` de `utils/alerts.js`. Nunca usar `Swal.fire` directo. Para confirmaciones personalizadas usar `showConfirm()` o Swal directo solo si se necesita input/configuración especial.
 - Estado global: Redux solo para carritos (`multiCartReducer`). El resto es estado local o React Query.
 - Lazy loading: todas las rutas usan `lazyRetry()` + `Suspense` con auto-reload en `ChunkLoadError`.

@@ -1,5 +1,5 @@
 import httpClient from "./httpClient";
-import { getApiUrl, getHeaders, buildUrlWithParams } from "./utils";
+import { getApiUrl, buildUrlWithParams } from "./utils";
 
 /**
  * Creates a CRUD API service for a given resource
@@ -21,10 +21,7 @@ export const createApiService = (resource, options = {}) => {
       const url = params 
         ? buildUrlWithParams(getApiUrl(resource), params)
         : getApiUrl(resource);
-      const response = await httpClient.get(url, {
-        headers: getHeaders(),
-      });
-      return response;
+      return httpClient.get(url);
     },
 
     /**
@@ -33,10 +30,7 @@ export const createApiService = (resource, options = {}) => {
      * @returns {Promise<Object>} Item response
      */
     getById: async (id) => {
-      const response = await httpClient.get(getApiUrl(`${resource}/${id}`), {
-        headers: getHeaders(),
-      });
-      return response;
+      return httpClient.get(getApiUrl(`${resource}/${id}`));
     },
 
     /**
@@ -45,10 +39,7 @@ export const createApiService = (resource, options = {}) => {
      * @returns {Promise<Object>} Created item response
      */
     create: async (data) => {
-      const response = await httpClient.post(getApiUrl(resource), data, {
-        headers: getHeaders(),
-      });
-      return response;
+      return httpClient.post(getApiUrl(resource), data);
     },
 
     /**
@@ -57,10 +48,7 @@ export const createApiService = (resource, options = {}) => {
      * @returns {Promise<Object>} Updated item response
      */
     update: async (data) => {
-      const response = await httpClient.patch(getApiUrl(`${resource}/${data.id}`), data, {
-        headers: getHeaders(),
-      });
-      return response;
+      return httpClient.patch(getApiUrl(`${resource}/${data.id}`), data);
     },
 
     /**
@@ -69,10 +57,7 @@ export const createApiService = (resource, options = {}) => {
      * @returns {Promise<Object>} Deletion response
      */
     delete: async (id) => {
-      const response = await httpClient.delete(getApiUrl(`${resource}/${id}`), {
-        headers: getHeaders(),
-      });
-      return response;
+      return httpClient.delete(getApiUrl(`${resource}/${id}`));
     },
 
     /**
@@ -82,10 +67,7 @@ export const createApiService = (resource, options = {}) => {
      */
     deleteMany: async (data) => {
       const endpoint = pluralDelete || `${resource}/delete`;
-      const response = await httpClient.post(getApiUrl(endpoint), data, {
-        headers: getHeaders(),
-      });
-      return response;
+      return httpClient.post(getApiUrl(endpoint), data);
     },
   };
 };

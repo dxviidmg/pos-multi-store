@@ -1,5 +1,5 @@
 import httpClient from "./httpClient";
-import { getApiUrl, getHeaders, buildUrlWithParams } from "./utils";
+import { getApiUrl, buildUrlWithParams } from "./utils";
 
 /**
  * Create a new sale
@@ -7,10 +7,7 @@ import { getApiUrl, getHeaders, buildUrlWithParams } from "./utils";
  * @returns {Promise<Object>} Created sale response
  */
 export const createSale = async (data) => {
-  const response = await httpClient.post(getApiUrl("sale"), data, {
-    headers: getHeaders(),
-  });
-  return response;
+  return httpClient.post(getApiUrl("sale"), data);
 };
 
 /**
@@ -20,10 +17,7 @@ export const createSale = async (data) => {
  */
 export const getSales = async (params) => {
   const url = buildUrlWithParams(getApiUrl("sale"), params);
-  const response = await httpClient.get(url, {
-    headers: getHeaders(),
-  });
-  return response;
+  return httpClient.get(url);
 };
 
 /**
@@ -32,10 +26,7 @@ export const getSales = async (params) => {
  * @returns {Promise<Object>} Sale details
  */
 export const getSale = async (id) => {
-  const response = await httpClient.get(getApiUrl(`sale/${id}`), {
-    headers: getHeaders(),
-  });
-  return response;
+  return httpClient.get(getApiUrl(`sale/${id}`));
 };
 
 /**
@@ -45,10 +36,7 @@ export const getSale = async (id) => {
  */
 export const getCashSummary = async (date) => {
   const url = buildUrlWithParams(getApiUrl("cash/summary"), date ? { date } : null);
-  const response = await httpClient.get(url, {
-    headers: getHeaders(),
-  });
-  return response;
+  return httpClient.get(url);
 };
 
 /**
@@ -57,10 +45,7 @@ export const getCashSummary = async (date) => {
  * @returns {Promise<Object>} Validation results
  */
 export const importSalesValidation = async (data) => {
-  const response = await httpClient.post(getApiUrl("sales/import-validation"), data, {
-    headers: getHeaders(true),
-  });
-  return response;
+  return httpClient.post(getApiUrl("sales/import-validation"), data);
 };
 
 /**
@@ -69,10 +54,7 @@ export const importSalesValidation = async (data) => {
  * @returns {Promise<Object>} Import results
  */
 export const importSales = async (data) => {
-  const response = await httpClient.post(getApiUrl("sales/import"), data, {
-    headers: getHeaders(true),
-  });
-  return response;
+  return httpClient.post(getApiUrl("sales/import"), data);
 };
 
 /**
@@ -81,10 +63,7 @@ export const importSales = async (data) => {
  * @returns {Promise<Object>} Cancellation response
  */
 export const cancelSale = async (data) => {
-  const response = await httpClient.post(getApiUrl("sales/cancel"), data, {
-    headers: getHeaders(),
-  });
-  return response;
+  return httpClient.post(getApiUrl("sales/cancel"), data);
 };
 
 /**
@@ -93,10 +72,7 @@ export const cancelSale = async (data) => {
  * @returns {Promise<Object>} Updated sale response
  */
 export const updateSale = async (data) => {
-  const response = await httpClient.patch(getApiUrl(`sale/${data.id}`), data, {
-    headers: getHeaders(),
-  });
-  return response;
+  return httpClient.patch(getApiUrl(`sale/${data.id}`), data);
 };
 
 /**
@@ -106,8 +82,5 @@ export const updateSale = async (data) => {
  */
 export const getSalesDashboard = async (params) => {
   const url = buildUrlWithParams(getApiUrl("sales-dashboard"), params);
-  const response = await httpClient.get(url, {
-    headers: getHeaders(),
-  });
-  return response;
+  return httpClient.get(url);
 };

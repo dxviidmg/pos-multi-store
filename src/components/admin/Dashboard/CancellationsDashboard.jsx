@@ -14,7 +14,7 @@ import {
   getTied,
 } from "../../../utils/utils";
 import httpClient from "../../../api/httpClient";
-import { getApiUrl, getHeaders, buildUrlWithParams } from "../../../api/utils";
+import { getApiUrl, buildUrlWithParams } from "../../../api/utils";
 import BlockIcon from "@mui/icons-material/Block";
 import UndoIcon from "@mui/icons-material/Undo";
 import StorefrontIcon from "@mui/icons-material/Storefront";
@@ -30,7 +30,7 @@ const CancellationsDashboard = () => {
 
   const startTask = useCallback(async () => {
     const url = buildUrlWithParams(getApiUrl("sales-dashboard-cancellations"), { year, month });
-    const response = await httpClient.get(url, { headers: getHeaders() });
+    const response = await httpClient.get(url);
     return response.data.task;
   }, [year, month]);
 
