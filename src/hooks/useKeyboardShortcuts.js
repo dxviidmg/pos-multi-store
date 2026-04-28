@@ -1,7 +1,6 @@
 import { useEffect, useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { updateMovementType } from "../redux/cart/cartActions";
-// eslint-disable-next-line no-unused-vars
 
 export const useKeyboardShortcuts = (inputRef, dispatch) => {
   const handleShortcut = useCallback((event) => {

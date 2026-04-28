@@ -49,6 +49,7 @@ function App({ toggleTheme, themeMode }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const user = getUserData();
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (user) {
       setIsLoggedIn(true);
