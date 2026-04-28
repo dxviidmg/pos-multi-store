@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { getSalesDashboard } from "../../../api/sales";
 import useTaskPolling from "../../../hooks/useTaskPolling";
 import CountdownTimer from "../../ui/CountdownTimer";
@@ -42,60 +42,62 @@ const Dashboard = () => {
 
   useEffect(() => { fetchData(); }, [year, month]);
 
-  const calculateKPIs = () => {
-    if (!dashboardData?.sales?.length) return null;
-    const salesData = dashboardData.sales;
-    const totalSales = salesData.length;
-    const totalAmount = salesData.reduce((sum, s) => sum + (s.total || 0), 0);
-    const now = new Date();
-    const totalDaysInPeriod = month === 0 ? 365 : new Date(year, month, 0).getDate();
-    const isCurrentPeriod = month === 0 ? year === now.getFullYear() : (year === now.getFullYear() && month === now.getMonth() + 1);
-    const daysInPeriod = isCurrentPeriod ? (month === 0 ? Math.floor((now - new Date(year, 0, 1)) / 86400000) + 1 : now.getDate()) : totalDaysInPeriod;
-    const avgDaily = totalAmount / daysInPeriod;
+  const calculateKPIs = useMemo(() => {
+    return () => {
+      if (!dashboardData?.sales?.length) return null;
+      const salesData = dashboardData.sales;
+      const totalSales = salesData.length;
+      const totalAmount = salesData.reduce((sum, s) => sum + (s.total || 0), 0);
+      const now = new Date();
+      const totalDaysInPeriod = month === 0 ? 365 : new Date(year, month, 0).getDate();
+      const isCurrentPeriod = month === 0 ? year === now.getFullYear() : (year === now.getFullYear() && month === now.getMonth() + 1);
+      const daysInPeriod = isCurrentPeriod ? (month === 0 ? Math.floor((now - new Date(year, 0, 1)) / 86400000) + 1 : now.getDate()) : totalDaysInPeriod;
+      const avgDaily = totalAmount / daysInPeriod;
 
-    // Por tienda
-    const salesByStore = {};
-    if (dashboardData.stores) dashboardData.stores.forEach(s => { salesByStore[s.name] = 0; });
-    salesData.forEach(s => { const store = s.store_name || "Sin tienda"; salesByStore[store] = (salesByStore[store] || 0) + (s.total || 0); });
-    const storeEntries = Object.entries(salesByStore);
-    const bestStore = getTied(storeEntries, k => k, "best");
-    const worstStore = getTied(storeEntries, k => k, "worst");
+      // Por tienda
+      const salesByStore = {};
+      if (dashboardData.stores) dashboardData.stores.forEach(s => { salesByStore[s.name] = 0; });
+      salesData.forEach(s => { const store = s.store_name || "Sin tienda"; salesByStore[store] = (salesByStore[store] || 0) + (s.total || 0); });
+      const storeEntries = Object.entries(salesByStore);
+      const bestStore = getTied(storeEntries, k => k, "best");
+      const worstStore = getTied(storeEntries, k => k, "worst");
 
-    // Mejor/peor periodo
-    let bestPeriod = "N/A", worstPeriod = "N/A";
-    if (month === 0) {
-      const byMonth = {};
-      salesData.forEach(s => { const m = new Date(s.created_at).getMonth(); byMonth[m] = (byMonth[m] || 0) + 1; });
-      const entries = Object.entries(byMonth);
-      bestPeriod = getTied(entries, k => MONTH_NAMES[k] || "N/A", "best");
-      worstPeriod = getTied(entries, k => MONTH_NAMES[k] || "N/A", "worst");
-    } else {
-      const byDate = {};
-      salesData.forEach(s => { const d = new Date(s.created_at).getDate(); byDate[d] = (byDate[d] || 0) + 1; });
-      const entries = Object.entries(byDate);
-      bestPeriod = getTied(entries, k => `Día ${k}`, "best");
-      worstPeriod = getTied(entries, k => `Día ${k}`, "worst");
-    }
+      // Mejor/peor periodo
+      let bestPeriod = "N/A", worstPeriod = "N/A";
+      if (month === 0) {
+        const byMonth = {};
+        salesData.forEach(s => { const m = new Date(s.created_at).getMonth(); byMonth[m] = (byMonth[m] || 0) + 1; });
+        const entries = Object.entries(byMonth);
+        bestPeriod = getTied(entries, k => MONTH_NAMES[k] || "N/A", "best");
+        worstPeriod = getTied(entries, k => MONTH_NAMES[k] || "N/A", "worst");
+      } else {
+        const byDate = {};
+        salesData.forEach(s => { const d = new Date(s.created_at).getDate(); byDate[d] = (byDate[d] || 0) + 1; });
+        const entries = Object.entries(byDate);
+        bestPeriod = getTied(entries, k => `Día ${k}`, "best");
+        worstPeriod = getTied(entries, k => `Día ${k}`, "worst");
+      }
 
-    // Por día de semana
-    const byWeekday = {};
-    salesData.forEach(s => { const d = new Date(s.created_at).getDay(); byWeekday[d] = (byWeekday[d] || 0) + 1; });
-    const wdEntries = Object.entries(byWeekday);
-    const bestWeekday = getTied(wdEntries, k => DAY_NAMES[k], "best");
-    const worstWeekday = getTied(wdEntries, k => DAY_NAMES[k], "worst");
+      // Por día de semana
+      const byWeekday = {};
+      salesData.forEach(s => { const d = new Date(s.created_at).getDay(); byWeekday[d] = (byWeekday[d] || 0) + 1; });
+      const wdEntries = Object.entries(byWeekday);
+      const bestWeekday = getTied(wdEntries, k => DAY_NAMES[k], "best");
+      const worstWeekday = getTied(wdEntries, k => DAY_NAMES[k], "worst");
 
-    // Por hora
-    const byHour = {};
-    salesData.forEach(s => { const h = new Date(s.created_at).getHours(); byHour[h] = (byHour[h] || 0) + 1; });
-    const hourEntries = Object.entries(byHour);
-    const bestHour = getTied(hourEntries, k => `${k}:00`, "best");
-    const worstHour = getTied(hourEntries, k => `${k}:00`, "worst");
+      // Por hora
+      const byHour = {};
+      salesData.forEach(s => { const h = new Date(s.created_at).getHours(); byHour[h] = (byHour[h] || 0) + 1; });
+      const hourEntries = Object.entries(byHour);
+      const bestHour = getTied(hourEntries, k => `${k}:00`, "best");
+      const worstHour = getTied(hourEntries, k => `${k}:00`, "worst");
 
-    const storeCount = dashboardData.stores?.length || 1;
-    const avgPerStore = totalAmount / storeCount;
+      const storeCount = dashboardData.stores?.length || 1;
+      const avgPerStore = totalAmount / storeCount;
 
-    return { totalSales, totalAmount, avgDaily, avgPerStore, daysInPeriod, bestStore, worstStore, bestPeriod, worstPeriod, bestWeekday, worstWeekday, bestHour, worstHour };
-  };
+      return { totalSales, totalAmount, avgDaily, avgPerStore, daysInPeriod, bestStore, worstStore, bestPeriod, worstPeriod, bestWeekday, worstWeekday, bestHour, worstHour };
+    };
+  }, [dashboardData, month, year]);
 
   const kpis = calculateKPIs();
   const hasMultipleStores = dashboardData?.stores?.length > 1;
