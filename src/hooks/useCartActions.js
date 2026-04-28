@@ -6,6 +6,7 @@ import { showWarning } from "../utils/alerts";
 
 export const useCartActions = (getAvailableStock, movementType, keepListOpen) => {
   const dispatch = useDispatch();
+  // eslint-disable-next-line no-unused-vars
   const { carts, activeCartId } = useSelector((state) => state.multiCartReducer);
   
   const cart = useSelector((state) => {

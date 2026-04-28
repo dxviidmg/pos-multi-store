@@ -2,6 +2,7 @@ import { useCallback, useRef, useState } from "react";
 import { useFetchWithRetry } from "./useFetch";
 import { getStoreProducts } from "../api/products";
 import { showError } from "../utils/alerts";
+import Swal from "sweetalert2";
 
 export const useProductSearch = () => {
   const [query, setQuery] = useState("");
@@ -24,7 +25,7 @@ export const useProductSearch = () => {
   };
 
   const fetchData = useCallback(
-    async (handleSingleProductFetch) => {
+    async (handleSingleProductFetch, createProductsOnSale, productModal) => {
       if (!query || queryType === "q") {
         setData([]);
         return;
@@ -52,7 +53,22 @@ export const useProductSearch = () => {
         }
 
         if (fetchedData.length === 0) {
-          setData([]);
+          if (createProductsOnSale) {
+            const confirm = await Swal.fire({
+              icon: "question",
+              title: "Producto no encontrado",
+              text: `No se encontró ningún producto con el código "${query}". ¿Desea crear uno nuevo con este código?`,
+              showCancelButton: true,
+              confirmButtonText: "Sí, crear producto",
+              cancelButtonText: "No, gracias",
+              confirmButtonColor: "#04346b",
+            });
+            if (confirm.isConfirmed) {
+              productModal.open({ code: query, createFromSearch: true });
+            }
+          } else {
+            showError("Producto no encontrado", `No se encontró ningún producto con el código "${query}"`);
+          }
         } else if (fetchedData.length === 1) {
           handleSingleProductFetch(fetchedData[0]);
         } else {
@@ -75,7 +91,6 @@ export const useProductSearch = () => {
     queryType,
     setQueryType,
     searching,
-    setSearching,
     fetchData,
   };
 };
