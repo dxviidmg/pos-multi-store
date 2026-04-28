@@ -1,12 +1,14 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getBrands, createBrand, updateBrand } from '../api/brands';
-import { getDepartments, createDepartment, updateDepartment } from '../api/departments';
+import { useQuery } from '@tanstack/react-query';
+import { getBrands } from '../api/brands';
+import { getDepartments } from '../api/departments';
 import { getProducts } from '../api/products';
 import { getSellers } from '../api/sellers';
 import { getStores } from '../api/stores';
 import { getClients } from '../api/clients';
 import { getSales } from '../api/sales';
-import { getTransfers, deleteTransfer } from '../api/transfers';
+import { getTransfers } from '../api/transfers';
+import { createApiService } from '../api/apiFactory';
+import { createMutationHooks } from './useCrudMutation';
 
 // Brands
 export const useBrands = () => {
@@ -19,25 +21,8 @@ export const useBrands = () => {
   });
 };
 
-export const useCreateBrand = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: createBrand,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['brands'] });
-    }
-  });
-};
-
-export const useUpdateBrand = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: updateBrand,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['brands'] });
-    }
-  });
-};
+const brandApi = createApiService('brand');
+export const { useCreate: useCreateBrand, useUpdate: useUpdateBrand } = createMutationHooks('Marca', 'brands', brandApi);
 
 // Departments
 export const useDepartments = () => {
@@ -50,25 +35,8 @@ export const useDepartments = () => {
   });
 };
 
-export const useCreateDepartment = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: createDepartment,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['departments'] });
-    }
-  });
-};
-
-export const useUpdateDepartment = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: updateDepartment,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['departments'] });
-    }
-  });
-};
+const departmentApi = createApiService('department');
+export const { useCreate: useCreateDepartment, useUpdate: useUpdateDepartment } = createMutationHooks('Departamento', 'departments', departmentApi);
 
 // Products
 export const useProducts = (params = {}) => {
@@ -136,12 +104,5 @@ export const useTransfers = () => {
   });
 };
 
-export const useDeleteTransfer = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: deleteTransfer,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['transfers'] });
-    }
-  });
-};
+const transferApi = createApiService('transfer');
+export const { useDelete: useDeleteTransfer } = createMutationHooks('Traspaso', 'transfers', transferApi);
