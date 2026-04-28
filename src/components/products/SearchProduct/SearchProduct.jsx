@@ -310,7 +310,6 @@ const SearchProduct = ({ searchInputRef }) => {
 
   const handleQueryChange = (e) => {
     setQuery(e.target.value);
-    if (queryType === "q") fetchData();
   };
 
   const handleOpenModal = (storeProduct) => {
