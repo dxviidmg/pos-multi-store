@@ -303,7 +303,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
         <Grid container sx={{ padding: '1rem', backgroundColor: 'rgba(4, 53, 107, 0.2)' }}>
           {errorMessage && (
             <Grid item xs={12} sx={{ marginBottom: '1rem' }}>
-              <Alert severity="error" onClose={() => setErrorMessage("")}>
+              <Alert severity="error" variant="filled" onClose={() => setErrorMessage("")}>
                 {errorMessage}
               </Alert>
             </Grid>
