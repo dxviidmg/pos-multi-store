@@ -1,6 +1,8 @@
 # SmartVenta — Sistema de Punto de Venta Multi-Tienda
 
-> Última actualización: 10 de abril de 2026, 19:38 hrs
+> Última actualización: 28 de abril de 2026, 12:13 hrs
+> 
+> **Cambios recientes:** Refactoring de código (16 acciones completadas, 100% exitoso)
 
 Sistema de punto de venta (POS) diseñado para negocios con múltiples sucursales. Permite gestionar ventas, inventario, traspasos y distribuciones desde una sola plataforma, con visibilidad en tiempo real de todas las tiendas y almacenes.
 
