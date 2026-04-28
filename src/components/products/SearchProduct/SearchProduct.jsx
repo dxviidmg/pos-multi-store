@@ -74,9 +74,21 @@ const SearchProduct = ({ searchInputRef }) => {
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [searching, setSearching] = useState(false);
   const [keepListOpen, setKeepListOpen] = useState(false);
-  const [showStockAlert, setShowStockAlert] = useState(() => localStorage.getItem('stockAlertDismissed') !== 'true');
+  const [showStockAlert] = useState(() => localStorage.getItem('stockAlertDismissed') !== 'true');
   const [createProductsOnSale, setCreateProductsOnSale] = useState(false);
   const [stockVerificationSnackbar, setStockVerificationSnackbar] = useState({ open: false, productName: "", productCode: "" });
+
+  useEffect(() => {
+    if (showStockAlert) {
+      Swal.fire({
+        icon: 'info',
+        title: '¿Detectaste stock incorrecto?',
+        html: 'Ve a <a href="/inventario/" style="color: #04346b; font-weight: 600;">Inventario</a> y sigue las instrucciones para solicitar un ajuste',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#04346b',
+      });
+    }
+  }, []);
 
   useEffect(() => {
     const checkCreateProductsOnSale = async () => {
@@ -364,23 +376,17 @@ const SearchProduct = ({ searchInputRef }) => {
         });
       }} />
 
-      {showStockAlert && (
-        <Alert 
-          severity="info" 
-          variant="filled" 
-          sx={{ 
-            mb: 1, 
-            py: 0,
-            fontWeight: 500,
-            '& .MuiAlert-icon': { fontSize: '1rem' }
-          }}
-          icon={<NotificationImportantIcon fontSize="inherit" />}
-          onClose={() => setShowStockAlert(false)}
-        >
-          <strong>¿Detectaste stock incorrecto?</strong> Ve a <RouterLink to="/inventario/" style={{ color: "#04346b", fontWeight: 600 }}>Inventario</RouterLink> y sigue las instrucciones para solicitar un ajuste
-        </Alert>
-      )}
       <PageHeader title="Búsqueda de productos">
+        {stockVerificationSnackbar.open && (
+          <Alert 
+            severity="success" 
+            variant="filled" 
+            sx={{ py: 0 }}
+            onClose={() => setStockVerificationSnackbar({ ...stockVerificationSnackbar, open: false })}
+          >
+            El producto {stockVerificationSnackbar.productCode}: {stockVerificationSnackbar.productName} necesita verificación de stock
+          </Alert>
+        )}
         <CustomButton
           disabled={!urlPrinter}
           onClick={(e) => handlePrintTicket("test", {})}
@@ -570,21 +576,6 @@ const SearchProduct = ({ searchInputRef }) => {
         )}
       </Grid>
 
-      <Snackbar
-        open={stockVerificationSnackbar.open}
-        autoHideDuration={4000}
-        onClose={() => setStockVerificationSnackbar({ ...stockVerificationSnackbar, open: false })}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        <MuiAlert
-          onClose={() => setStockVerificationSnackbar({ ...stockVerificationSnackbar, open: false })}
-          severity="success"
-          variant="filled"
-          sx={{ width: "100%" }}
-        >
-          El producto {stockVerificationSnackbar.productCode}: {stockVerificationSnackbar.productName} necesita verificación de stock
-        </MuiAlert>
-      </Snackbar>
     </>
   );
 };

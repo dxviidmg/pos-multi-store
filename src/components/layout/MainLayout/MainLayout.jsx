@@ -224,25 +224,25 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
           { label: "Importar Productos", href: "/importar-productos/", hidden: user.role === "seller" },
           { label: "Importar inventario", href: "/importar-inventario/", hidden: user.role === "seller" },
           { divider: true },
-          { label: "Solicitudes de ajustes de stock", href: "/solicitudes-ajustes-stock/" },
+          { label: "Solicitudes de ajustes de stock", href: "/solicitudes-ajustes-stock/", hidden: user.role === "seller"},
         ],
       },
 
       {
         label: "Auditoria",
         dropdown: [
-          { label: "Inventario a verificar", href: "/auditoria-inventario/", hidden: user.role === "seller" },
+          { label: "Inventario a verificar", href: "/auditoria-inventario/" },
         ],
       },
       
       {
         label: "Movimientos",
         dropdown: [
-          { label: "Distribuciones", href: "/distribuciones/", hidden: user.role === "seller" },
+          { label: "Distribuciones", href: "/distribuciones/" },
           { label: "Traspasos", href: "/traspasos/" },
         ],
       },
-      { label: "Historial de stock", href: "/historial-stock/", hidden: user.role === "seller" },
+      { label: "Historial de stock", href: "/historial-stock/" },
     ],
     A: [
       { label: "Distribuir", href: "/distribuir/" },

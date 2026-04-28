@@ -164,7 +164,7 @@ const StoreProductAuditList = () => {
             </Grid>
             <Grid item xs={12} md={3}>
               <CustomButton fullWidth onClick={handleDownload} disabled={storeProducts.length === 0} startIcon={<DownloadIcon />}>
-                Descargar Inventario a verificar
+                Descargar Inventario
               </CustomButton>
             </Grid>
             {storeProducts.length > 0 && (
