@@ -62,14 +62,13 @@ const StockUpdateRequestModal = ({ isOpen, storeProduct, onClose }) => {
               <TextField size="small" fullWidth label="Cantidad correcta" type="number" value={requestedStock} onChange={(e) => setRequestedStock(e.target.value)} inputProps={{ min: 0 }} />
             </Grid>
             <Grid item xs={12} md={6}>
-              <CustomButton fullWidth onClick={handleSubmit} disabled={requestedStock === "" || loading} startIcon={<SendIcon />}>
-                {loading ? "Enviando..." : "Solicitar ajuste"}
-              </CustomButton>
-            </Grid>
-
-            <Grid item xs={12} md={6}>
               <CustomButton fullWidth onClick={handleSubmit2} disabled={requestedStock !== "" || loading} startIcon={<SendIcon />}>
                 {loading ? "Enviando..." : "La cantidad es correcta"}
+              </CustomButton>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <CustomButton fullWidth onClick={handleSubmit} disabled={requestedStock === "" || loading} startIcon={<SendIcon />}>
+                {loading ? "Enviando..." : "Solicitar ajuste"}
               </CustomButton>
             </Grid>
           </Grid>
