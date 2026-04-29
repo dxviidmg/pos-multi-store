@@ -102,7 +102,7 @@ const StockVerificationDashboard = () => {
         <Box className="card" sx={{ mb: 3 }}>
           <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>Verificación de Stock</Typography>
           <Typography variant="body2" color="text.secondary">
-            Sabemos que tus datos son críticos para tu negocio. Por eso en SmartVenta nos comprometemos a cuidar la integridad de tu inventario. Si detectamos duplicidades o inconsistencias, las identificamos y te ayudamos a resolverlas. Tu confianza es nuestro compromiso.
+            En SmartVenta sabemos que la precisión en tu operación diaria marca la diferencia. Aunque las inconsistencias o duplicidades en el stock no son frecuentes, cuando llegan a presentarse estamos atentos para detectarlas y ayudarte a resolverlas de forma rápida y confiable. Porque para nosotros, cuidar tus datos no es solo una función del sistema, es un compromiso con tu tranquilidad y la continuidad de tu negocio.
           </Typography>
         </Box>
         <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: 350, gap: 2, opacity: 0.7 }}>
@@ -118,7 +118,7 @@ const StockVerificationDashboard = () => {
       <Box className="card" sx={{ mb: 3 }}>
         <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>Verificación de Stock</Typography>
         <Typography variant="body2" color="text.secondary">
-          Sabemos que tus datos son críticos para tu negocio. Por eso en SmartVenta nos comprometemos a cuidar la integridad de tu inventario. Si detectamos duplicidades o inconsistencias, las identificamos y te ayudamos a resolverlas. Tu confianza es nuestro compromiso.
+        En SmartVenta sabemos que la precisión en tu operación diaria marca la diferencia. Aunque las inconsistencias o duplicidades en el stock no son frecuentes, cuando llegan a presentarse estamos atentos para detectarlas y ayudarte a resolverlas de forma rápida y confiable. Porque para nosotros, cuidar tus datos no es solo una función del sistema, es un compromiso con tu tranquilidad y la continuidad de tu negocio.
         </Typography>
       </Box>
 
@@ -180,7 +180,7 @@ const StockVerificationDashboard = () => {
           searcher={true}
           data={data?.store_products || []}
           columns={[
-            { name: "Código", selector: (row) => <Chip label={row.code} size="small" variant="outlined" />, width: 120 },
+            { name: "Código", selector: (row) => row.code },
             { name: "Producto", selector: (row) => row.product_name },
             { name: "Marca", selector: (row) => row.brand },
             { name: "Stock", selector: (row) => row.stock, width: 80 },
