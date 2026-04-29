@@ -7,7 +7,7 @@ import { Grid,  Chip } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import DeleteIcon from "@mui/icons-material/Delete";
 import httpClient from "../../../api/httpClient";
-import { getApiUrl, getHeaders, getUserData } from "../../../api/utils";
+import { getApiUrl, getUserData } from "../../../api/utils";
 import { getFormattedDateTime } from "../../../utils/utils";
 import { showSuccess, showError } from "../../../utils/alerts";
 import { getStockUpdateRequests } from "../../../api/notifications";
@@ -39,7 +39,7 @@ const StockUpdateRequestList = () => {
     });
     if (!isConfirmed) return;
     try {
-      await httpClient.post(getApiUrl(`stock-update-request/${row.id}/approve`), {}, { headers: getHeaders() });
+      await httpClient.post(getApiUrl(`stock-update-request/${row.id}/approve`), {});
       setRequests((prev) => prev.map((r) => r.id === row.id ? { ...r, applied: true } : r));
       showSuccess("Ajuste aplicado");
     } catch {
@@ -59,7 +59,7 @@ const StockUpdateRequestList = () => {
     });
     if (!isConfirmed) return;
     try {
-      await httpClient.delete(getApiUrl(`stock-update-request/${row.id}`), { headers: getHeaders() });
+      await httpClient.delete(getApiUrl(`stock-update-request/${row.id}`));
       setRequests((prev) => prev.filter((r) => r.id !== row.id));
       showSuccess("Solicitud eliminada");
     } catch {

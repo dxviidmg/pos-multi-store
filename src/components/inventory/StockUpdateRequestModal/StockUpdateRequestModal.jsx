@@ -5,7 +5,7 @@ import { Grid, TextField } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import { showSuccess, showError } from "../../../utils/alerts";
 import httpClient from "../../../api/httpClient";
-import { getApiUrl, getHeaders } from "../../../api/utils";
+import { getApiUrl } from "../../../api/utils";
 
 const StockUpdateRequestModal = ({ isOpen, storeProduct, onClose }) => {
   const [requestedStock, setRequestedStock] = useState("");
@@ -17,7 +17,7 @@ const StockUpdateRequestModal = ({ isOpen, storeProduct, onClose }) => {
       await httpClient.post(getApiUrl("stock-update-request"), {
         store_product: storeProduct.id,
         requested_stock: Number(requestedStock),
-      }, { headers: getHeaders() });
+      });
       showSuccess("Solicitud enviada");
       setRequestedStock("");
       onClose();
@@ -34,7 +34,7 @@ const StockUpdateRequestModal = ({ isOpen, storeProduct, onClose }) => {
     try {
       await httpClient.patch(getApiUrl(`store-product/${storeProduct.id}`), {
         requires_stock_verification: false,
-      }, { headers: getHeaders() });
+      });
       showSuccess("Stock verificado");
       onClose();
     } catch (err) {

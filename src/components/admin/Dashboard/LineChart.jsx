@@ -112,19 +112,6 @@ const LineChart = ({ title, data, labels, xText, yText, dataType, metricType = '
     if (!data) return [];
     const daysInMonth = labels?.length || 31;
     const processedData = processData(data, dataType, metricType, daysInMonth);
-
-    if (processedData.length > 1) {
-      const dataLength = processedData[0].data.length;
-      const avgData = Array(dataLength).fill(0);
-      processedData.forEach(store => {
-        store.data.forEach((value, index) => { avgData[index] += value; });
-      });
-      const average = avgData.map(sum => sum / processedData.length);
-      return [
-        ...processedData,
-        { data: average, label: 'Promedio', color: 'text.secondary', curve: 'linear', showMark: false },
-      ];
-    }
     return processedData;
   }, [data, dataType, metricType, labels]);
 
