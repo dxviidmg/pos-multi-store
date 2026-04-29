@@ -283,6 +283,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
         dropdown: [
           { label: "Ventas exitosas", href: "/tablero-ventas/" },
           { label: "Ventas ajustadas o canceladas", href: "/tablero-ventas-ajustadas-cancelaciones/" },
+          { label: "Verificación de stock", href: "/tablero-verificacion-stock/" },
           { label: "Marcas y productos", href: "/tablero-productos/" },
         ],
       },
