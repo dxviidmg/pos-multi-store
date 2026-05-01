@@ -13,7 +13,7 @@ const DataTable = ({
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [paginationModel, setPaginationModel] = useState({
-    pageSize: 25,
+    pageSize: 10,
     page: 0,
   });
 

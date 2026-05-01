@@ -15,18 +15,17 @@ import PaymentModal from "../../sales/PaymentModal/PaymentModal";
 import StockModal from "../StockModal/StockModal";
 import { getStores } from "../../../api/stores";
 import { confirmTransfers, createDistribution } from "../../../api/transfers";
-import { showAlert } from "../../../utils/alerts";
+import { showSuccess, showError } from "../../../utils/alerts";
 import { addProducts, getStockOtherStores } from "../../../api/products";
 import { getUserData } from "../../../api/utils";
-import DeleteIcon from "@mui/icons-material/Delete";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { useModal } from "../../../hooks/useModal";
-import { Grid, TextField, Checkbox, Select, MenuItem } from "@mui/material";
+import { Grid, Select, MenuItem } from "@mui/material";
 import PaymentIcon from "@mui/icons-material/Payment";
 import SendIcon from "@mui/icons-material/Send";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
-import CalculateIcon from "@mui/icons-material/Calculate";
 import { MOVEMENT_TYPES, STORE_TYPES } from "../../../constants";
+import { getSaleColumns, getTransferColumns, getDistributionColumns, getAddToStockColumns } from "./cartColumns";
 
 const Cart = ({ searchInputRef }) => {
   const store_type = getUserData().store_type;
@@ -78,6 +77,7 @@ const Cart = ({ searchInputRef }) => {
     prevCartLenRef.current = cart.length;
   }, [cart.length, movementType]);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     const handleShortcut = (event) => {
       if (event.ctrlKey && (event.key === "p" || event.key === "P")) {
@@ -89,11 +89,11 @@ const Cart = ({ searchInputRef }) => {
     return () => window.removeEventListener("keydown", handleShortcut);
   }, [dispatch]);
 
-  const handleSelectChange = (event) => {
+  const handleDestinationStoreChange = (event) => {
     setSelectedStore(event.target.value);
   };
 
-  const handleSelectChange2 = (event) => {
+  const handleConfirmStoreChange = (event) => {
     setConfirmedStore(event.target.value);
   };
 
@@ -107,7 +107,9 @@ const Cart = ({ searchInputRef }) => {
       }
     };
     fetchData();
+  }, []);
 
+  useEffect(() => {
     // Si el tipo de tienda es "A", se establece el movimiento como "distribucion"
     if (store_type === STORE_TYPES.WAREHOUSE && movementType === MOVEMENT_TYPES.SALE) {
       dispatch(updateMovementType(MOVEMENT_TYPES.DISTRIBUTION));
@@ -174,32 +176,28 @@ const Cart = ({ searchInputRef }) => {
 
 
 
-  const handleTranserFromCart = async (cart) => {
-    if (loading) return; // Previene reenvío
-    setLoading(true)
+  const handleTransferFromCart = async (cart) => {
+    if (loading) return;
+    setLoading(true);
 
     const data = { transfers: cart, destination_store: selectedStore };
     try {
       const response = await confirmTransfers(data);
       if (response.status === 200) {
         dispatch(cleanCart());
-        setLoading(false)
-        showAlert("success", "Traspaso confirmado");
+        setLoading(false);
+        showSuccess("Traspaso confirmado");
       } else if (response.status === 404) {
         dispatch(cleanCart());
-        setLoading(false)
-        showAlert("error", "Traspaso inexistente. Checa cantidad y/o destino");
+        setLoading(false);
+        showError("Traspaso inexistente", "Checa cantidad y/o destino");
       } else {
-        setLoading(false)
-        showAlert(
-          "error",
-          "Error desconocido",
-          "Por favor llame a soporte técnico"
-        );
+        setLoading(false);
+        showError("Error desconocido", "Por favor llame a soporte técnico");
       }
     } catch (error) {
-      setLoading(false)
-      showAlert("error", "Error en la solicitud", error.message);
+      setLoading(false);
+      showError("Error en la solicitud", error.message);
     }
   };
 
@@ -212,34 +210,26 @@ const Cart = ({ searchInputRef }) => {
       if (response.status === 201) {
         dispatch(cleanCart());
       setSelectedStore("")
-      setConfirmedStore("")
+      setConfirmedStore("");
       setTimeout(() => {
-        setLoading(false)
+        setLoading(false);
       }, 200);
-        showAlert("success", "Distribución creada");
+        showSuccess("Distribución creada");
       } else if (response.status === 404) {
-        setLoading(false)
-        showAlert(
-          "error",
-          "Distribución no encontrada",
-          "Algunos productos no coinciden con la distribución solicitada, ya sea en cantidad o en código."
-        );
+        setLoading(false);
+        showError("Distribución no encontrada", "Algunos productos no coinciden con la distribución solicitada, ya sea en cantidad o en código.");
       } else {
-        setLoading(false)
-        showAlert(
-          "error",
-          "Error desconocido",
-          "Por favor llame a soporte técnico"
-        );
+        setLoading(false);
+        showError("Error desconocido", "Por favor llame a soporte técnico");
       }
     } catch (error) {
-      setLoading(false)
-      showAlert("error", "Error en la solicitud", error.message);
+      setLoading(false);
+      showError("Error en la solicitud", error.message);
     }
   };
 
   const handleAddToStock = async (cart) => {
-    if (loading) return; // Previene reenvío
+    if (loading) return;
     setLoading(true);
 
     const products_to_add = cart.map(item => ({
@@ -254,17 +244,13 @@ const Cart = ({ searchInputRef }) => {
       if (response.status === 200) {
         dispatch(cleanCart());
         setLoading(false);
-        showAlert("success", "Producto añadido al inventario");
+        showSuccess("Producto añadido al inventario");
       } else {
         setLoading(false);
-        showAlert(
-          "error",
-          "Error en el inventario",
-          "No se pudo añadir el producto"
-        );
+        showError("Error en el inventario", "No se pudo añadir el producto");
       }
     } catch (error) {
-      showAlert("error", "Error en la solicitud", error.message);
+      showError("Error en la solicitud", error.message);
     }
   };
 
@@ -289,233 +275,14 @@ const Cart = ({ searchInputRef }) => {
     { name: "Stock", field: "stock", selector: (row) => row.available_stock },
   ];
 
-  const commonColumns2 = [
-    { name: "Código", field: "code", selector: (row) => row.product.code, width: 100 },
-    {
-      name: "Marca",
-      field: "brand",
-      selector: (row) => row.product.brand_name,
-      width: 100,
-    },
-    {
-      name: "Nombre",
-      field: "name",
-      selector: (row) => row.product.name,
-      renderCell: (params) => (
-        <div className="cell-wrap">
-          {params.row.product.name}
-        </div>
-      ),
-    },
-  ];
-
-  const saleColumns = [
-    ...commonColumns2,
-    {
-      name: "Cantidad",
-      width: 100,
-      selector: (row) => (
-        <TextField size="small" type="number" sx={{ width: 80 }}
-          value={row.quantity}
-          onChange={(e) => handleQuantityChangeToCart(e, row)}
-          onKeyDown={(e) => {
-            if (e.key === "ArrowUp") {
-              e.preventDefault();
-              const newValue = row.quantity + 1;
-              const availableStock = movementType === "agregar" ? Infinity : getAvailableStock(row.id, row.available_stock);
-              if (newValue <= availableStock) {
-                handleQuantityChangeToCart({ target: { value: newValue } }, row);
-              }
-            } else if (e.key === "ArrowDown") {
-              e.preventDefault();
-              const newValue = Math.max(1, row.quantity - 1);
-              handleQuantityChangeToCart({ target: { value: newValue } }, row);
-            }
-          }}
-          min="1"
-          max={row.available_stock}
-        />
-      ),
-    },
-    { name: "Stock", selector: (row) => row.available_stock },
-    { name: "Precio", selector: (row) => `$${row.product_price.toFixed(2)}` },
-    {
-      name: "Subtotal",
-      selector: (row) => `$${(row.product_price * row.quantity).toFixed(2)}`,
-    },
-    {
-      name: "Aplicar mayoreo",
-      selector: (row) => (
-        <Checkbox size="small"
-          type="switch"
-          id="custom-switch"
-          checked={row.product_price === row.product.prices.wholesale_price}
-          onClick={() => handleChangePrice(row)}
-          disabled={!row.product.prices.wholesale_price}
-        />
-      ),
-    },
-    {
-      name: "Borrar",
-      selector: (row) => (
-        <CustomButton onClick={() => handleRemoveFromCart(row)}>
-          <DeleteIcon />
-        </CustomButton>
-      ),
-    },
-  ];
-
-  const transferColumns = [
-    { name: "Código", selector: (row) => row.product.code },
-    {
-      name: "Marca",
-      selector: (row) => row.product.brand_name,
-    },
-    {
-      name: "Nombre",
-      selector: (row) => row.product.name,
-      renderCell: (params) => (
-        <div className="cell-wrap">
-          {params.row.product.name}
-        </div>
-      ),
-    },
-    { name: "Stock disponible", selector: (row) => row.available_stock },
-    { name: "Stock apartado", selector: (row) => row.reserved_stock },
-    { name: "Stock total", selector: (row) => row.available_stock + row.reserved_stock },
-    {
-      name: "Cantidad",
-      width: 100,
-      selector: (row) => (
-        <TextField size="small" type="number" sx={{ width: 80 }}
-          value={row.quantity}
-          onChange={(e) => handleQuantityChangeToCart(e, row)}
-          onKeyDown={(e) => {
-            if (e.key === "ArrowUp") {
-              e.preventDefault();
-              const newValue = row.quantity + 1;
-              const availableStock = getAvailableStock(row.id, row.available_stock);
-              if (newValue <= availableStock) {
-                handleQuantityChangeToCart({ target: { value: newValue } }, row);
-              }
-            } else if (e.key === "ArrowDown") {
-              e.preventDefault();
-              const newValue = Math.max(1, row.quantity - 1);
-              handleQuantityChangeToCart({ target: { value: newValue } }, row);
-            }
-          }}
-          min="1"
-          max={row.available_stock}
-        />
-      ),
-    },
-    {
-      name: "Borrar",
-      selector: (row) => (
-        <CustomButton onClick={() => handleRemoveFromCart(row)}>
-          <DeleteIcon />
-        </CustomButton>
-      ),
-    },
-  ];
-
-  const distributionColumns = [
-    ...commonColumns,
-    {
-      name: "Cantidad",
-      width: 100,
-      selector: (row, index) => (
-        <TextField size="small" type="number" sx={{ width: 80 }}
-          inputRef={index === cart.length - 1 ? lastQtyRef : undefined}
-          value={row.quantity}
-          onChange={(e) => handleQuantityChangeToCart(e, row)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              searchInputRef?.current?.focus();
-            } else if (e.key === "ArrowUp") {
-              e.preventDefault();
-              const newValue = row.quantity + 1;
-              const availableStock = getAvailableStock(row.id, row.available_stock);
-              if (newValue <= availableStock) {
-                handleQuantityChangeToCart({ target: { value: newValue } }, row);
-              }
-            } else if (e.key === "ArrowDown") {
-              e.preventDefault();
-              const newValue = Math.max(1, row.quantity - 1);
-              handleQuantityChangeToCart({ target: { value: newValue } }, row);
-            }
-          }}
-          min="1"
-          max={row.available_stock}
-        />
-      ),
-    },
-
-    {
-      name: "Stock General",
-      cell: (row) => (
-        <div>
-          {row.stockOtherStores && row.stockOtherStores.length > 0 ? (
-            <ul style={{ paddingLeft: "1rem", margin: "0.5rem 0 0 0" }}>
-              {row.stockOtherStores.map((s) => (
-                <li key={s.store_id}>
-                  {s.store_name}: {s.available_stock}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <CustomButton onClick={() => handleStockOtherStores(row)} startIcon={<CalculateIcon />}>
-              Contar
-            </CustomButton>
-          )}
-        </div>
-      ),
-    },
-
-    {
-      name: "Borrar",
-      selector: (row) => (
-        <CustomButton onClick={() => handleRemoveFromCart(row)}>
-          <DeleteIcon />
-        </CustomButton>
-      ),
-    },
-  ];
-
-  const addToStockColumns = [
-    ...commonColumns,
-    {
-      name: "Cantidad",
-      width: 100,
-      selector: (row) => (
-        <TextField size="small" type="number" sx={{ width: 80 }}
-          value={row.quantity}
-          onChange={(e) => handleQuantityChangeToCart(e, row)}
-          onKeyDown={(e) => {
-            if (e.key === "ArrowUp") {
-              e.preventDefault();
-              const newValue = row.quantity + 1;
-              handleQuantityChangeToCart({ target: { value: newValue } }, row);
-            } else if (e.key === "ArrowDown") {
-              e.preventDefault();
-              const newValue = Math.max(1, row.quantity - 1);
-              handleQuantityChangeToCart({ target: { value: newValue } }, row);
-            }
-          }}
-          min="1"
-        />
-      ),
-    },
-    {
-      name: "Borrar",
-      selector: (row) => (
-        <CustomButton onClick={() => handleRemoveFromCart(row)}>
-          <DeleteIcon />
-        </CustomButton>
-      ),
-    },
-  ];
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const saleColumns = useMemo(() => getSaleColumns(handleQuantityChangeToCart, handleRemoveFromCart, handleChangePrice, movementType, getAvailableStock), [movementType]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const transferColumns = useMemo(() => getTransferColumns(handleQuantityChangeToCart, handleRemoveFromCart, getAvailableStock), []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const distributionColumns = useMemo(() => getDistributionColumns(handleQuantityChangeToCart, handleRemoveFromCart, handleStockOtherStores, getAvailableStock, cart, searchInputRef, lastQtyRef), [cart]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const addToStockColumns = useMemo(() => getAddToStockColumns(handleQuantityChangeToCart, handleRemoveFromCart), []);
 
   const getColumns = () => {
     switch (movementType) {
@@ -568,7 +335,7 @@ const Cart = ({ searchInputRef }) => {
                 <Grid item xs={12} md={3}><h3>Productos: {totalProducts}</h3></Grid>
                 <Grid item xs={12} md={3}>
                   <Select fullWidth size="small" value={selectedStore}
-                    onChange={handleSelectChange}
+                    onChange={handleDestinationStoreChange}
                     displayEmpty
                     renderValue={(value) => {
                       if (!value) return <span style={{ color: "#999" }}>Selecciona un destino</span>;
@@ -586,7 +353,7 @@ const Cart = ({ searchInputRef }) => {
                 </Grid>
                 <Grid item xs={12} md={3}>
                   <Select fullWidth size="small" value={confirmedStore}
-                    onChange={handleSelectChange2}
+                    onChange={handleConfirmStoreChange}
                     displayEmpty
                     renderValue={(value) => {
                       if (!value) return <span style={{ color: "#999" }}>Confirma el destino</span>;
@@ -606,7 +373,7 @@ const Cart = ({ searchInputRef }) => {
                   <CustomButton
                     onClick={() =>
                       movementType === "traspaso"
-                        ? handleTranserFromCart(cart)
+                        ? handleTransferFromCart(cart)
                         : handleDistributionFromCart(cart)
                     }
                     disabled={!selectedStore || selectedStore !== confirmedStore}

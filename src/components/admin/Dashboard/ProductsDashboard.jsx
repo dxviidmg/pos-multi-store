@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { MONTH_NAMES } from "../../../utils/utils";
 import httpClient from "../../../api/httpClient";
-import { getApiUrl, getHeaders, buildUrlWithParams } from "../../../api/utils";
+import { getApiUrl, buildUrlWithParams } from "../../../api/utils";
 import InboxIcon from "@mui/icons-material/Inbox";
 
 const ProductsDashboard = () => {
@@ -26,12 +26,13 @@ const ProductsDashboard = () => {
     const params = { year, month };
     if (storeId) params.store_id = storeId;
     const url = buildUrlWithParams(getApiUrl("products-dashboard"), params);
-    const response = await httpClient.get(url, { headers: getHeaders() });
+    const response = await httpClient.get(url);
     return response.data.task;
   }, [year, month, storeId]);
 
   const { data, loading, progress, countdown, fetchData } = useTaskPolling(startTask);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { fetchData(); }, [year, month, storeId]);
 
   const periodLabel = month === 0 ? "Todo el año" : `${MONTH_NAMES[month - 1]} ${year}`;

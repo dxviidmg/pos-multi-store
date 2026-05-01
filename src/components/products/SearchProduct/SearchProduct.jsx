@@ -1,4 +1,5 @@
-import { showSuccess, showError, showWarning } from "../../../utils/alerts";
+import { showSuccess, showError } from "../../../utils/alerts";
+import { logger } from "../../../utils/logger";
 import Swal from "sweetalert2";
 import React, { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
@@ -6,13 +7,15 @@ import SimpleTable from "../../ui/SimpleTable/SimpleTable";
 import CustomButton from "../../ui/Button/Button";
 import PageHeader from "../../ui/PageHeader";
 import CustomTooltip from "../../ui/Tooltip";
-import { getStoreProducts, getStockOtherStores, getCreateProductsOnSale } from "../../../api/products";
-import { addToCart, updateMovementType, countStockOtherStores } from "../../../redux/cart/cartActions";
+import { getStoreProducts, getCreateProductsOnSale } from "../../../api/products";
+import { updateMovementType } from "../../../redux/cart/cartActions";
 import { Chip } from "@mui/material";
 import StockModal from "../../inventory/StockModal/StockModal";
 import ProductModal from "../ProductModal/ProductModal";
 import { useModal } from "../../../hooks/useModal";
-import { useFetchWithRetry } from "../../../hooks/useFetch";
+import { useKeyboardShortcuts } from "../../../hooks/useKeyboardShortcuts";
+import { useProductSearch } from "../../../hooks/useProductSearch";
+import { useCartActions } from "../../../hooks/useCartActions";
 import { getPrinterUrl, getUserData } from "../../../api/utils";
 import PrintIcon from "@mui/icons-material/Print";
 import { handlePrintTicket } from "../../../utils/utils";
@@ -33,17 +36,8 @@ const SearchProduct = ({ searchInputRef }) => {
   const dispatch = useDispatch();
   const stockModal = useModal();
   const productModal = useModal();
-  const { refetch: fetchWithRetry } = useFetchWithRetry(
-    (params, config) => getStoreProducts(params, config),
-    { maxRetries: 1, timeout: 8000 }
-  );
   
   const { carts, activeCartId } = useSelector((state) => state.multiCartReducer);
-  
-  const cart = useMemo(() => {
-    const activeCart = carts?.find(c => c.id === activeCartId) || carts?.[0];
-    return activeCart?.cart || [];
-  }, [carts, activeCartId]);
   
   const movementType = useMemo(() => {
     const activeCart = carts?.find(c => c.id === activeCartId) || carts?.[0];
@@ -62,16 +56,20 @@ const SearchProduct = ({ searchInputRef }) => {
 
   const storeType = getUserData().store_type;
   const urlPrinter = getPrinterUrl();
-  const [query, setQuery] = useState("");
-  const [data, setData] = useState([]);
-  const [queryType, setQueryType] = useState("code");
+  
   const [barcode, setBarcode] = useState("");
   const [isInputFocused, setIsInputFocused] = useState(false);
-  const [searching, setSearching] = useState(false);
   const [keepListOpen, setKeepListOpen] = useState(false);
   const [showStockAlert] = useState(() => localStorage.getItem('stockAlertDismissed') !== 'true');
   const [createProductsOnSale, setCreateProductsOnSale] = useState(false);
   const [stockVerificationSnackbar, setStockVerificationSnackbar] = useState({ open: false, productName: "", productCode: "" });
+  
+  // Usar hooks extraídos
+  const { query, setQuery, data, setData, queryType, setQueryType, searching, fetchData } = useProductSearch();
+  const { handleAddToCartIfAvailable } = useCartActions(getAvailableStock, movementType, keepListOpen, setData, setQuery);
+
+  // Usar hook de atajos de teclado
+  useKeyboardShortcuts(inputRef, dispatch);
 
   useEffect(() => {
     if (showStockAlert) {
@@ -83,6 +81,7 @@ const SearchProduct = ({ searchInputRef }) => {
         confirmButtonColor: '#04346b',
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -91,7 +90,7 @@ const SearchProduct = ({ searchInputRef }) => {
         const response = await getCreateProductsOnSale();
         setCreateProductsOnSale(response.data.create_products_on_sale || false);
       } catch (err) {
-        console.error("Error checking create products on sale:", err);
+        logger.error("Error checking create products on sale:", err);
       }
     };
     checkCreateProductsOnSale();
@@ -104,91 +103,9 @@ const SearchProduct = ({ searchInputRef }) => {
       }
     }, 300);
     return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const searchingRef = useRef(false);
-
-  const logSearchTiming = (ms, queryCode, productName) => {
-    const stats = JSON.parse(localStorage.getItem("search_timing_stats") || '{"tiempos":{},"mas_de_8s":[]}');
-    const bucket = ms <= 500 ? 0 : Math.ceil((ms - 500) / 1000);
-    stats.tiempos[bucket] = (stats.tiempos[bucket] || 0) + 1;
-    if (ms > 8000) stats.mas_de_8s.push(queryCode);
-    localStorage.setItem("search_timing_stats", JSON.stringify(stats));
-  };
-
-  const fetchData = useCallback(
-    async () => {
-      if (!query || queryType === "q") {
-        setData([]);
-        return;
-      }
-
-      if (searchingRef.current) return;
-      searchingRef.current = true;
-      setSearching(true);
-
-      const startTime = performance.now();
-
-      try {
-        const fetchedData = await fetchWithRetry({ [queryType]: query });
-        const elapsed = Math.round(performance.now() - startTime);
-
-        searchingRef.current = false;
-        setSearching(false);
-
-        const productName = fetchedData?.[0]?.product?.name || null;
-        logSearchTiming(elapsed, query, productName);
-
-        if (!fetchedData) {
-          
-
-          showError("Búsqueda tardada", "La búsqueda tardó demasiado. Reintentar o buscar de manera manual");
-
-          return;
-        }
-
-        if (fetchedData.length === 0) {
-          if (createProductsOnSale) {
-            const confirm = await Swal.fire({
-              icon: "question",
-              title: "Producto no encontrado",
-              text: `No se encontró ningún producto con el código "${query}". ¿Desea crear uno nuevo con este código?`,
-              showCancelButton: true,
-              confirmButtonText: "Sí, crear producto",
-              cancelButtonText: "No, gracias",
-              confirmButtonColor: "#04346b",
-            });
-            if (confirm.isConfirmed) {
-              productModal.open({ code: query, createFromSearch: true });
-            }
-          } else {
-            showError("Producto no encontrado", `No se encontró ningún producto con el código "${query}"`);
-          }
-        } else if (fetchedData.length === 1) {
-          handleSingleProductFetch(fetchedData[0]);
-        } else {
-          setData(fetchedData);
-        }
-      } catch (err) {
-        searchingRef.current = false;
-        if (err.name === "AbortError" || err.name === "CanceledError") return;
-        
-        setSearching(false);
-      }
-    },
-    [query, queryType, fetchWithRetry]
-  );
-
-  const handleSearchProduct = async () => {
-    setSearching(true);
-    const response = await getStoreProducts({ [queryType]: query });
-    const fetchedData = response.data;
-    setData(fetchedData);
-    setSearching(false);
-    if (fetchedData.length === 0) {
-      showError("Sin resultados", "No se encontraron productos con esa búsqueda");
-    }
-  };
   const handleSingleProductFetch = (storeProduct) => {
     if (movementType === "venta" && storeProduct.available_stock === 0) {
       handleOpenModal(storeProduct);
@@ -200,94 +117,39 @@ const SearchProduct = ({ searchInputRef }) => {
     } else if (movementType === "checar") {
       showSuccess(storeProduct.product.name, "Precio unitario $" + storeProduct.product.prices.unit_price);
     } else {
-      handleAddToCartIfAvailable(storeProduct);
+      const verification = handleAddToCartIfAvailable(storeProduct, stockModal);
+      if (verification) {
+        setStockVerificationSnackbar({
+          open: true,
+          productName: verification.productName,
+          productCode: verification.productCode
+        });
+      }
     }
     setQuery("");
   };
 
-  const fetchAndCountStock = async (storeProduct) => {
-    const response = await getStockOtherStores(storeProduct.id);
-    dispatch(countStockOtherStores(storeProduct, response.data));
-  };
-
-  const handleAddToCartIfAvailable = (storeProduct) => {
-    const existingProductIndex = cart.findIndex(
-      (item) => item.id === storeProduct.id
-    );
-    const currentQuantityInCart = existingProductIndex !== -1 ? cart[existingProductIndex].quantity : 0;
-    let added = false;
-
-    if (existingProductIndex === -1) {
-      if (movementType === "agregar") {
-        dispatch(addToCart({ ...storeProduct, quantity: 1 }));
-        added = true;
-      } else {
-        const stock =
-          movementType === "traspaso"
-            ? storeProduct.reserved_stock
-            : storeProduct.available_stock;
-        const availableStock = getAvailableStock(storeProduct.id, stock);
-        
-        if (availableStock >= 1) {
-          dispatch(addToCart({ ...storeProduct, quantity: 1 }));
-          added = true;
-          if (!keepListOpen) {
-            setData([]);
-            setQuery("");
-          }
-        } else {
-          showWarning("Stock insuficiente", `Este producto ya está reservado en otros carritos. Stock disponible: ${availableStock}`);
-        }
-      }
-    } else {
-      const stock =
-        movementType === "traspaso"
-          ? storeProduct.reserved_stock
-          : storeProduct.available_stock;
-      const availableStock = getAvailableStock(storeProduct.id, stock);
-
-      if (movementType === "agregar") {
-        dispatch(addToCart({ ...storeProduct, quantity: 1 }));
-        added = true;
-      } else if (currentQuantityInCart < availableStock) {
-        dispatch(addToCart({ ...storeProduct, quantity: 1 }));
-        added = true;
-        if (!keepListOpen) {
-          setData([]);
-          setQuery("");
-        }
-      } else if (
-        movementType === "venta" &&
-        currentQuantityInCart >= availableStock
-      ) {
-        handleOpenModal(cart[existingProductIndex]);
-      }
-    }
-
-    if (added && storeProduct.requires_stock_verification) {
-      setStockVerificationSnackbar({
-        open: true,
-        productName: storeProduct.product?.name || "Producto",
-        productCode: storeProduct.product?.code || ""
-      });
-    }
-
-    if (added && movementType === "distribucion") {
-      fetchAndCountStock(storeProduct);
+  const handleSearchProduct = async () => {
+    const response = await getStoreProducts({ [queryType]: query });
+    const fetchedData = response.data;
+    setData(fetchedData);
+    if (fetchedData.length === 0) {
+      showError("Sin resultados", "No se encontraron productos con esa búsqueda");
     }
   };
 
   useEffect(() => {
     if (queryType === "code" && query) {
-      fetchData();
+      fetchData(handleSingleProductFetch, createProductsOnSale, productModal);
     } else if (queryType === "q" && query) {
       const timer = setTimeout(() => {
-        fetchData();
+        fetchData(handleSingleProductFetch, createProductsOnSale, productModal);
       }, 300);
       return () => clearTimeout(timer);
     } else {
       setData([]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query, queryType]);
 
   const handleQueryTypeChange = (e) => {
@@ -310,54 +172,13 @@ const SearchProduct = ({ searchInputRef }) => {
 
   const handleQueryChange = (e) => {
     setQuery(e.target.value);
-    if (queryType === "q") fetchData();
   };
 
   const handleOpenModal = (storeProduct) => {
     stockModal.open(storeProduct);
   };
 
-  const handleShortcut = useCallback((event) => {
-    if (event.ctrlKey && (event.key === "q" || event.key === "Q")) {
-      event.preventDefault();
-      setQueryType("code");
-    }
-    if (event.ctrlKey && (event.key === "w" || event.key === "W")) {
-      event.preventDefault();
-      setQueryType("q");
-    }
-    if (event.ctrlKey && (event.key === "e" || event.key === "E")) {
-      event.preventDefault();
-      dispatch(updateMovementType("venta"));
-    }
-    if (event.ctrlKey && (event.key === "r" || event.key === "R")) {
-      event.preventDefault();
-      dispatch(updateMovementType("traspaso"));
-    }
-    if (event.ctrlKey && (event.key === "t" || event.key === "T")) {
-      event.preventDefault();
-      dispatch(updateMovementType("distribucion"));
-    }
-    if (event.ctrlKey && (event.key === "y" || event.key === "Y")) {
-      event.preventDefault();
-      dispatch(updateMovementType("agregar"));
-    }
-    if (event.ctrlKey && (event.key === "u" || event.key === "U")) {
-      event.preventDefault();
-      dispatch(updateMovementType("checar"));
-    }
-    if (event.ctrlKey && (event.key === "b" || event.key === "B")) {
-      event.preventDefault();
-      inputRef.current?.focus();
-    }
-  }, [dispatch]);
 
-  useEffect(() => {
-    window.addEventListener("keydown", handleShortcut);
-    return () => {
-      window.removeEventListener("keydown", handleShortcut);
-    };
-  }, [handleShortcut]);
 
   return (
     <>
