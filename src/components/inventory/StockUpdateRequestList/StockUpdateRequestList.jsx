@@ -79,6 +79,7 @@ const StockUpdateRequestList = () => {
           columns={[
             { name: "#", selector: (row) => row.id, width: 70 },
             ...(user.store_id === null ? [{ name: "Tienda", selector: (row) => row.store_name }] : []),
+            { name: "Código", selector: (row) => row.product_code },
             { name: "Producto", selector: (row) => row.product_name },
             { name: "Cantidad solicitada", selector: (row) => row.requested_stock },
             { name: "Solicitante", selector: (row) => row.requested_by_username },

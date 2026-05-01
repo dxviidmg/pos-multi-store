@@ -32,13 +32,14 @@ const StockUpdateRequestModal = ({ isOpen, storeProduct, onClose }) => {
   const handleSubmit2 = async () => {
     setLoading(true);
     try {
-      await httpClient.patch(getApiUrl(`store-product/${storeProduct.id}`), {
-        requires_stock_verification: false,
+      await httpClient.post(getApiUrl("stock-update-request"), {
+        store_product: storeProduct.id,
+        requested_stock: storeProduct.stock,
       });
-      showSuccess("Stock verificado");
+      showSuccess("Solicitud enviada");
       onClose();
     } catch (err) {
-      const msg = err.response?.data?.error || "No se pudo verificar el stock";
+      const msg = err.response?.data?.error || "No se pudo enviar la solicitud";
       showError("Error", msg);
     }
     setLoading(false);
@@ -62,7 +63,7 @@ const StockUpdateRequestModal = ({ isOpen, storeProduct, onClose }) => {
               <TextField size="small" fullWidth label="Cantidad correcta" type="number" value={requestedStock} onChange={(e) => setRequestedStock(e.target.value)} inputProps={{ min: 0 }} />
             </Grid>
             <Grid item xs={12} md={6}>
-              <CustomButton fullWidth onClick={handleSubmit2} disabled={requestedStock !== "" || loading} startIcon={<SendIcon />}>
+              <CustomButton fullWidth onClick={handleSubmit2} disabled={requestedStock !== "" ||loading} startIcon={<SendIcon />}>
                 {loading ? "Enviando..." : "La cantidad es correcta"}
               </CustomButton>
             </Grid>
