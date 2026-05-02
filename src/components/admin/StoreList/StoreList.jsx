@@ -86,7 +86,7 @@ const StoreList = () => {
       store_type,
       store_name: full_name || name,
       store_id: id,
-      store_printer: printer,
+      store_printer: printer?.id,
     });
 
     window.dispatchEvent(new Event("store-changed"));
