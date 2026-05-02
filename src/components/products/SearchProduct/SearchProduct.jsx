@@ -1,4 +1,4 @@
-import { showSuccess, showError } from "../../../utils/alerts";
+import { showSuccess, showError, showAlert } from "../../../utils/alerts";
 import { logger } from "../../../utils/logger";
 import Swal from "sweetalert2";
 import React, { useCallback, useEffect, useRef, useState, useMemo } from "react";
@@ -54,7 +54,9 @@ const SearchProduct = ({ searchInputRef }) => {
     return productStock - reservedInOtherCarts;
   }, [carts, activeCartId]);
 
-  const storeType = getUserData().store_type;
+  const userData = getUserData();
+  const storeType = userData.store_type;
+  const storePrinter = userData.store_printer;
   const urlPrinter = getPrinterUrl();
   
   const [barcode, setBarcode] = useState("");
@@ -204,11 +206,16 @@ const SearchProduct = ({ searchInputRef }) => {
           </Alert>
         )}
         <CustomButton
-          disabled={!urlPrinter}
-          onClick={(e) => handlePrintTicket("test", {})}
+          onClick={() => {
+            if (!storePrinter) {
+              showAlert("info", "Impresora no configurada", "Para configurar la impresora, contacte a soporte técnico.");
+            } else {
+              handlePrintTicket("test", {});
+            }
+          }}
           startIcon={<PrintIcon fontSize="small" />}
         >
-          Probar impresora
+          {storePrinter ? "Probar impresora" : "Configurar impresora"}
         </CustomButton>
       </PageHeader>
 
