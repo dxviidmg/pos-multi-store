@@ -51,9 +51,13 @@ export const useCartActions = (getAvailableStock, movementType, keepListOpen, se
           : storeProduct.available_stock;
       const availableStock = getAvailableStock(storeProduct.id, stock);
 
-      if (movementType === "agregar") {
+      if (movementType === "agregar" || movementType === "venta") {
         dispatch(addToCart({ ...storeProduct, quantity: 1 }));
         added = true;
+        if (!keepListOpen) {
+          setData([]);
+          setQuery("");
+        }
       } else if (currentQuantityInCart < availableStock) {
         dispatch(addToCart({ ...storeProduct, quantity: 1 }));
         added = true;
@@ -61,10 +65,7 @@ export const useCartActions = (getAvailableStock, movementType, keepListOpen, se
           setData([]);
           setQuery("");
         }
-      } else if (
-        movementType === "venta" &&
-        currentQuantityInCart >= availableStock
-      ) {
+      } else {
         stockModal.open(cart[existingProductIndex]);
       }
     }
