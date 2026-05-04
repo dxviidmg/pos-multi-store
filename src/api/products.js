@@ -45,6 +45,8 @@ export const getProducts = async (params) => {
  * @returns {Promise<Object>} Created product response
  */
 export const createProduct = async (data) => {
+  if (data.min_wholesale_quantity === "") data.min_wholesale_quantity = null;
+  if (data.wholesale_price === "") data.wholesale_price = null;
   return httpClient.post(getApiUrl("product"), data);
 };
 
@@ -57,6 +59,8 @@ export const updateProduct = async (data) => {
   if (typeof data.image === "string") {
     delete data.image;
   }
+  if (data.min_wholesale_quantity === "") data.min_wholesale_quantity = null;
+  if (data.wholesale_price === "") data.wholesale_price = null;
   return httpClient.patch(getApiUrl(`product/${data.id}`), data);
 };
 
