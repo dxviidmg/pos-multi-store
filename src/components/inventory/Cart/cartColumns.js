@@ -57,7 +57,7 @@ export const getSaleColumns = (handleQuantityChangeToCart, handleRemoveFromCart,
           if (e.key === "ArrowUp") {
             e.preventDefault();
             const newValue = row.quantity + 1;
-            const availableStock = movementType === "agregar" ? Infinity : getAvailableStock(row.id, row.available_stock);
+            const availableStock = (movementType === "agregar" || movementType === "venta") ? Infinity : getAvailableStock(row.id, row.available_stock);
             if (newValue <= availableStock) {
               handleQuantityChangeToCart({ target: { value: newValue } }, row);
             }
@@ -68,7 +68,6 @@ export const getSaleColumns = (handleQuantityChangeToCart, handleRemoveFromCart,
           }
         }}
         min="1"
-        max={row.available_stock}
       />
     ),
   },

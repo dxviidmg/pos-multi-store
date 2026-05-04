@@ -164,9 +164,9 @@ const multiCartReducer = (state = initialState, action) => {
         const currentQuantity = activeCart.cart[existingProductIndex].quantity;
         const newQuantity = currentQuantity + action.payload.quantity;
         
-        // Verificar que no exceda el stock disponible
-        if (newQuantity > availableStock) {
-          return state; // No agregar si excede el stock
+        // En ventas permitir exceder stock; en traspasos/distribuciones validar
+        if (activeCart.movementType !== "venta" && newQuantity > availableStock) {
+          return state;
         }
         
         updatedCart = activeCart.cart.map((item, index) =>
@@ -175,8 +175,8 @@ const multiCartReducer = (state = initialState, action) => {
             : item
         );
       } else {
-        // Verificar stock disponible para nuevo producto
-        if (action.payload.quantity > availableStock) {
+        // En ventas permitir exceder stock
+        if (activeCart.movementType !== "venta" && action.payload.quantity > availableStock) {
           logger.warn(`Stock insuficiente. Disponible: ${availableStock}, Intentando agregar: ${action.payload.quantity}`);
           return state;
         }
@@ -237,13 +237,13 @@ const multiCartReducer = (state = initialState, action) => {
         : (action.payload.product.available_stock || 0);
       const availableStock = productStock - reservedInOtherCarts;
       
-      // Limitar la cantidad al stock disponible (sin mutar action.payload)
+      // En ventas permitir exceder stock; en otros tipos, limitar
       const requestedQuantity = action.payload.newQuantity;
-      const clampedQuantity = requestedQuantity > availableStock 
-        ? Math.max(1, availableStock)
-        : requestedQuantity;
+      const clampedQuantity = (activeCart.movementType === "venta" || requestedQuantity <= availableStock)
+        ? requestedQuantity
+        : Math.max(1, availableStock);
       
-      if (requestedQuantity > availableStock) {
+      if (activeCart.movementType !== "venta" && requestedQuantity > availableStock) {
         logger.warn(`Stock insuficiente. Disponible: ${availableStock}, Solicitado: ${requestedQuantity}`);
       }
       
