@@ -68,6 +68,7 @@ export const getSaleColumns = (handleQuantityChangeToCart, handleRemoveFromCart,
           }
         }}
         min="1"
+        max={movementType === "agregar" ? undefined : row.available_stock}
       />
     ),
   },
