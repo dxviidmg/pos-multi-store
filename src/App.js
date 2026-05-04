@@ -67,6 +67,7 @@ function App({ toggleTheme, themeMode }) {
             <Route path="/tiendas/" element={<Lazy><StoreList /></Lazy>} />
             <Route path="/ventas/" element={<Lazy><SaleList /></Lazy>} />
             <Route path="/vender/" element={<Lazy><SaleCreate /></Lazy>} />
+            <Route path="/distribuir/" element={<Lazy><SaleCreate /></Lazy>} />
             <Route path="/importar-ventas/" element={<Lazy><SaleImport /></Lazy>} />
             <Route path="/corte-caja/" element={<Lazy><CashSummary /></Lazy>} />
             <Route path="/movimientos-caja/" element={<Lazy><CashFlowList /></Lazy>} />
