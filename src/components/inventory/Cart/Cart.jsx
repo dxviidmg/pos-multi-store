@@ -282,7 +282,7 @@ const Cart = ({ searchInputRef }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const distributionColumns = useMemo(() => getDistributionColumns(handleQuantityChangeToCart, handleRemoveFromCart, handleStockOtherStores, getAvailableStock, cart, searchInputRef, lastQtyRef), [cart]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const addToStockColumns = useMemo(() => getAddToStockColumns(handleQuantityChangeToCart, handleRemoveFromCart), []);
+  const addToStockColumns = useMemo(() => getAddToStockColumns(handleQuantityChangeToCart, handleRemoveFromCart), [movementType]);
 
   const getColumns = () => {
     switch (movementType) {
