@@ -199,15 +199,17 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
         label: "Ventas",
         dropdown: [
           { label: "Ventas", href: "/ventas/" },
-          { label: "Importar ventas", href: "/importar-ventas/", hidden: user.role === "seller" },
+          { label: "Importar ventas", href: "/importar-ventas/"},
         ],
+        hidden: user.role === "seller"
       },
       {
         label: "Caja",
         dropdown: [
-          { label: "Corte de caja", href: "/corte-caja/", hidden: user.role === "seller" },
+          { label: "Corte de caja", href: "/corte-caja/" },
           { label: "Movimientos en caja", href: "/movimientos-caja/" },
         ],
+        hidden: user.role === "seller"
       },
       { label: "Clientes", href: "/clientes/", hidden: user.role === "seller" },
       {
@@ -225,6 +227,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
           { divider: true },
           { label: "Solicitudes de ajustes de stock", href: "/solicitudes-ajustes-stock/", hidden: user.role === "seller"},
         ],
+        hidden: user.role === "seller"
       },
 
       {
@@ -232,16 +235,19 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
         dropdown: [
           { label: "Inventario a verificar", href: "/auditoria-inventario/" },
         ],
+        hidden: user.role === "seller",
       },
       
       {
         label: "Movimientos",
         dropdown: [
-          { label: "Distribuciones", href: "/distribuciones/" },
-          { label: "Traspasos", href: "/traspasos/" },
+          { label: "Distribuciones", href: "/distribuciones/", hidden: user.role === "seller" },
+          { label: "Traspasos", href: "/traspasos/", hidden: user.role === "seller" },
         ],
+        hidden: user.role === "seller",
       },
-      { label: "Historial de stock", href: "/historial-stock/" },
+      { label: "Traspasos", href: "/traspasos/", hidden: user.role !== "seller" },
+      { label: "Historial de stock", href: "/historial-stock/", hidden: user.role === "seller" },
     ],
     A: [
       { label: "Distribuir", href: "/distribuir/" },
@@ -273,7 +279,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
           { label: "Inventario a verificar", href: "/auditoria-inventario/", hidden: user.role === "seller" },
         ],
       },
-      { label: "Historial de stock", href: "/historial-stock/" },
+      { label: "Historial de stock", href: "/historial-stock/", hidden: user.role === "seller" },
     ],
     G: [
       {
@@ -342,10 +348,14 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
               <ArrowBackIcon />
             </IconButton>
           )}
-          <PendingMenu />
-          <DuplicateSalesMenu />
-          <StockRequestMenu />
-          <NotificationsMenu />
+                        <PendingMenu />
+          {user.role !== "seller" && (
+            <>
+              <DuplicateSalesMenu />
+              <StockRequestMenu />
+              <NotificationsMenu />
+            </>
+          )}
           <PageHelp />
           <IconButton color="inherit" onClick={toggleTheme} sx={{ mr: 1 }}>
             {themeMode === "dark" ? <Brightness7Icon /> : <Brightness4Icon />}
@@ -485,33 +495,37 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
           })}
         </List>
         <Box sx={{ mt: "auto", p: 1 }}>
-          <ListItemButton
-            onClick={() => setShowUpdates(true)}
-            sx={{
-              borderRadius: 2, justifyContent: open ? "initial" : "center", mb: 1,
-              "&:hover": { backgroundColor: "rgba(167, 139, 250, 0.12)" },
-            }}
-          >
-            <ListItemIcon sx={{ color: "#a78bfa", minWidth: open ? 38 : 0, justifyContent: "center" }}>
-              <NewspaperIcon />
-            </ListItemIcon>
-            <ListItemText primary="Actualizaciones 2026" primaryTypographyProps={{ fontWeight: 600, fontSize: "0.8rem" }} sx={{ opacity: open ? 1 : 0 }} />
-          </ListItemButton>
-          <ListItemButton
-            component="a"
-            href={`https://api.whatsapp.com/send/?phone=${process.env.REACT_APP_WHATSAPP_NUMBER}&text=${encodeURIComponent(`Soporte SmartVenta\nTenant: ${user.tenant_name}\nTienda: ${user.store_name || "General"}`)}&type=phone_number&app_absent=0`}
-            target="_blank"
-            rel="noopener noreferrer"
-            sx={{
-              borderRadius: 2, justifyContent: open ? "initial" : "center",
-              "&:hover": { backgroundColor: "rgba(37, 211, 102, 0.12)" },
-            }}
-          >
-            <ListItemIcon sx={{ color: "#25D366", minWidth: open ? 38 : 0, justifyContent: "center" }}>
-              <WhatsAppIcon />
-            </ListItemIcon>
-            <ListItemText primary="Soporte" primaryTypographyProps={{ fontWeight: 600, fontSize: "0.8rem" }} sx={{ opacity: open ? 1 : 0 }} />
-          </ListItemButton>
+          {user.role !== "seller" && (
+            <>
+              <ListItemButton
+                onClick={() => setShowUpdates(true)}
+                sx={{
+                  borderRadius: 2, justifyContent: open ? "initial" : "center", mb: 1,
+                  "&:hover": { backgroundColor: "rgba(167, 139, 250, 0.12)" },
+                }}
+              >
+                <ListItemIcon sx={{ color: "#a78bfa", minWidth: open ? 38 : 0, justifyContent: "center" }}>
+                  <NewspaperIcon />
+                </ListItemIcon>
+                <ListItemText primary="Actualizaciones 2026" primaryTypographyProps={{ fontWeight: 600, fontSize: "0.8rem" }} sx={{ opacity: open ? 1 : 0 }} />
+              </ListItemButton>
+              <ListItemButton
+                component="a"
+                href={`https://api.whatsapp.com/send/?phone=${process.env.REACT_APP_WHATSAPP_NUMBER}&text=${encodeURIComponent(`Soporte SmartVenta\nTenant: ${user.tenant_name}\nTienda: ${user.store_name || "General"}`)}&type=phone_number&app_absent=0`}
+                target="_blank"
+                rel="noopener noreferrer"
+                sx={{
+                  borderRadius: 2, justifyContent: open ? "initial" : "center",
+                  "&:hover": { backgroundColor: "rgba(37, 211, 102, 0.12)" },
+                }}
+              >
+                <ListItemIcon sx={{ color: "#25D366", minWidth: open ? 38 : 0, justifyContent: "center" }}>
+                  <WhatsAppIcon />
+                </ListItemIcon>
+                <ListItemText primary="Soporte" primaryTypographyProps={{ fontWeight: 600, fontSize: "0.8rem" }} sx={{ opacity: open ? 1 : 0 }} />
+              </ListItemButton>
+            </>
+          )}
         </Box>
       </Drawer>
 

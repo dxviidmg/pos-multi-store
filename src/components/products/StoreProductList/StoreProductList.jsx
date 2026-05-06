@@ -32,7 +32,7 @@ const StoreProductList = () => {
   const [optionsLoaded, setOptionsLoaded] = useState(false);
   const [loading, setLoading] = useState(false);
   const [params, setParams] = useState({ only_stock: true });
-  const [outOfStockPercentage, setOutOfStockPercentage] = useState(0);
+  const [showAlert, setShowAlert] = useState(true);
 
   useEffect(() => {
     const fetchOptions = async () => {
@@ -49,8 +49,6 @@ const StoreProductList = () => {
     const response = await getStoreProducts(params);
     const data = response.data;
     setStoreProducts(data);
-    const outOfStock = data.filter((p) => p.stock === 0).length;
-    setOutOfStockPercentage((outOfStock / data.length) * 100);
     setLoading(false);
   };
 
@@ -90,33 +88,29 @@ const StoreProductList = () => {
         <Grid item xs={12} className="card">
           <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
             <h1>Inventario</h1>
-          </Stack>
-
-          <Alert 
-            severity="info" 
-            variant="filled" 
-            sx={{ mb: 2, py: 1.5, borderRadius: 2 }}
-            icon={<NotificationImportantIcon fontSize="inherit" />}
-          >
-            {user.role === "owner" ? (
-              <>
-                <strong>Mantente atento a las solicitudes de ajuste.</strong>{" "}
-                Revisa y aprueba las solicitudes de stock en{" "}
-                <Link to="/solicitudes-ajustes-stock/" style={{ color: "#04346b", fontWeight: 600 }}>
-                  Solicitudes de Ajuste
-                </Link>{" "}
-                para mantener el inventario actualizado.
-              </>
-            ) : (
-              <>
-                <strong>¿Ves un stock incorrecto?</strong> Si hay productos no registrados, regístralos. Si hay más productos registrados de los que realmente hay,{" "}
-                usa el icono <SendIcon sx={{ fontSize: 14, verticalAlign: "middle" }} /> en la columna Acciones para solicitar un ajuste de stock. 
-                El propietario revisará tu solicitud y la aprobará si es correcta. 
-                Se recomienda contactar al propietario para una pronta respuesta. 
-                Recuerda que tener el stock actualizado y corregido es un bien para todo el equipo.
-              </>
+            {showAlert && (
+            <Alert 
+              severity="info" 
+              variant="filled" 
+              sx={{ py: 0, borderRadius: 2, flex: 1, ml: 2 }}
+              icon={<NotificationImportantIcon fontSize="inherit" />}
+              onClose={() => setShowAlert(false)}
+            >
+              {user.role === "owner" ? (
+                <>
+                  <strong>Revisa y aprueba las solicitudes de stock en{" "}
+                  <Link to="/solicitudes-ajustes-stock/" style={{ color: "#04346b", fontWeight: 600 }}>
+                    Solicitudes de Ajuste
+                  </Link>.</strong>
+                </>
+              ) : (
+                <>
+                  <strong>¿Ves un stock incorrecto?</strong> Usa el icono <SendIcon sx={{ fontSize: 14, verticalAlign: "middle" }} /> para solicitar un ajuste.
+                </>
+              )}
+            </Alert>
             )}
-          </Alert>
+          </Stack>
 
           <Grid container spacing={2} sx={{ mb: 2 }}>
             <Grid item xs={12} md={3}>
@@ -159,17 +153,12 @@ const StoreProductList = () => {
                 Buscar
               </CustomButton>
             </Grid>
+            {user.role !== "seller" && (
             <Grid item xs={12} md={3}>
               <CustomButton fullWidth onClick={handleDownload} disabled={storeProducts.length === 0} startIcon={<DownloadIcon />}>
                 Descargar inventario
               </CustomButton>
             </Grid>
-            {storeProducts.length > 0 && (
-              <Grid item xs={12} md={3}>
-                <Box sx={{ fontSize: '0.875rem', lineHeight: '40px' }}>
-                  {outOfStockPercentage.toFixed(0)}% de los productos está vacío
-                </Box>
-              </Grid>
             )}
           </Grid>
 
@@ -195,11 +184,13 @@ const StoreProductList = () => {
                         </CustomButton>
                       </CustomTooltip>
                     )}
+                    {user.role !== "seller" && (
                     <CustomTooltip text="Movimientos de stock">
                       <CustomButton onClick={() => logsModal.open({ storeProduct: row, adjustStock: false })}>
                         <HistoryIcon />
                       </CustomButton>
                     </CustomTooltip>
+                    )}
                     {user.role !== "owner" && (
                       <CustomTooltip text="Solicitar ajuste de stock">
                         <CustomButton onClick={() => requestModal.open(row)}>

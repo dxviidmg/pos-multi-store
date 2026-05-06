@@ -1,6 +1,5 @@
 import { showSuccess, showError, showAlert } from "../../../utils/alerts";
 import { logger } from "../../../utils/logger";
-import Swal from "sweetalert2";
 import React, { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import SimpleTable from "../../ui/SimpleTable/SimpleTable";
@@ -62,7 +61,6 @@ const SearchProduct = ({ searchInputRef }) => {
   const [barcode, setBarcode] = useState("");
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [keepListOpen, setKeepListOpen] = useState(false);
-  const [showStockAlert] = useState(() => localStorage.getItem('stockAlertDismissed') !== 'true');
   const [createProductsOnSale, setCreateProductsOnSale] = useState(false);
   const [stockVerificationSnackbar, setStockVerificationSnackbar] = useState({ open: false, productName: "", productCode: "" });
   
@@ -72,19 +70,6 @@ const SearchProduct = ({ searchInputRef }) => {
 
   // Usar hook de atajos de teclado
   useKeyboardShortcuts(inputRef, dispatch);
-
-  useEffect(() => {
-    if (showStockAlert) {
-      Swal.fire({
-        icon: 'info',
-        title: '¿Detectaste stock incorrecto?',
-        html: 'Ve a <a href="/inventario/" style="color: #04346b; font-weight: 600;">Inventario</a> y sigue las instrucciones para solicitar un ajuste',
-        confirmButtonText: 'Entendido',
-        confirmButtonColor: '#04346b',
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   useEffect(() => {
     const checkCreateProductsOnSale = async () => {
@@ -195,7 +180,7 @@ const SearchProduct = ({ searchInputRef }) => {
       }} />
 
       <PageHeader title="Búsqueda de productos">
-        {stockVerificationSnackbar.open && (
+        {stockVerificationSnackbar.open && userData.role !== "seller" && (
           <Alert 
             severity="success" 
             variant="filled" 
