@@ -5,10 +5,12 @@ import { getUserData } from "../../../api/utils";
 import { exportToExcel, getFormattedDate, formatTimeFromDate } from "../../../utils/utils";
 import { getCashSummary } from "../../../api/sales";
 import { getCashFlow } from "../../../api/cashflow";
+import { getDuplicateSales } from "../../../api/notifications";
+import { showAlert } from "../../../utils/alerts";
 import CashFlowModal from "../../finance/CashFlowModal/CashFlowModal";
 import { useModal } from "../../../hooks/useModal";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
-import { Grid, TextField, Box, Typography, Stack, Chip } from "@mui/material";
+import { Grid, TextField, Box, Typography, Stack } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
 import PaymentIcon from "@mui/icons-material/Payment";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
@@ -29,8 +31,6 @@ const CashSummary = () => {
   const [cashFlowSummary, setCashFlowSummary] = useState([]);
   const [totalSummary, setTotalSummary] = useState([]);
   const [loading, setLoading] = useState(false);
-
-  const isPartial = date === today;
 
   const processSummary = (data) => {
     setPaymentMethodsSummary(data.filter((c) => c.payment_method_data));
@@ -62,10 +62,24 @@ const CashSummary = () => {
     fetchSummary();
   }, [cashFlow, fetchSummary]);
 
+  useEffect(() => {
+    const fetchDuplicates = async () => {
+      try {
+        const { data } = await getDuplicateSales();
+        if (data && data.length > 0 && data[0].messages && data[0].messages.length > 0) {
+          const message = `${data[0].messages.join(", ")}\n\nPosiblemente no cuadren las cuentas por esas ventas duplicadas.`;
+          showAlert("Atención", message);
+        }
+      } catch (err) {
+        console.error("Error fetching duplicate sales:", err);
+      }
+    };
+    fetchDuplicates();
+  }, []);
+
   const handleExport = () => {
-    const dateFile = `${date}${isPartial ? " " + formatTimeFromDate() : ""}`;
-    const type = isPartial ? "parcial " : "total ";
-    exportToExcel(cashSummary, `Corte de caja ${type}${getUserData().store_name} ${dateFile}`, false);
+    const dateFile = `${date}`;
+    exportToExcel(cashSummary, `Corte de caja ${getUserData().store_name} ${dateFile}`, false);
   };
 
   const handleUpdateCashFlowList = (updated) => {
@@ -97,14 +111,7 @@ const CashSummary = () => {
 
       <Grid item xs={12} className="card">
         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
-          <Stack direction="row" spacing={2} alignItems="center">
-            <Typography variant="h4" component="h1">Corte de caja</Typography>
-            <Chip
-              label={isPartial ? "Parcial" : "Total"}
-              color={isPartial ? "warning" : "success"}
-              size="small"
-            />
-          </Stack>
+          <Typography variant="h4" component="h1">Corte de caja</Typography>
           <CustomButton onClick={handleExport} startIcon={<DownloadIcon />}>
             Descargar corte
           </CustomButton>
