@@ -63,12 +63,7 @@ const StoreProductAuditList = () => {
   };
 
   const handleUpdateStoreProductList = (updated) => {
-    setStoreProducts((prev) => {
-      const exists = prev.some((item) => item.id === updated.id);
-      return exists
-        ? prev.map((item) => (item.id === updated.id ? updated : item))
-        : [...prev, updated];
-    });
+    setStoreProducts((prev) => prev.filter((item) => item.id !== updated.id));
   };
 
   const handleDataChange = (e) => {
