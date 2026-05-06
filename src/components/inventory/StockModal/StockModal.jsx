@@ -52,14 +52,19 @@ const StockModal = ({ isOpen, product, onClose }) => {
   
   useEffect(() => {
     const fetchData = async () => {
-      const response = await getStockOtherStores(storeProduct.id);
-      setStockOtherStores(response.data);
+      setIsLoading(true);
+      try {
+        const response = await getStockOtherStores(storeProduct.id);
+        setStockOtherStores(response.data);
+      } finally {
+        setIsLoading(false);
+      }
     };
   
-    if (storeProduct?.product?.code) {
+    if (isOpen && storeProduct?.product?.code) {
       fetchData();
     }
-  }, [storeProduct?.product?.code]);
+  }, [isOpen, storeProduct?.product?.code]);
 
 
   const handleQuantityChange = (rowId, max, value) => {
@@ -144,9 +149,6 @@ const StockModal = ({ isOpen, product, onClose }) => {
       if (!storeProduct.onlyRead) {
         return (
           <Box sx={{ mb: 2, width: "100%" }}>
-            <Alert severity="warning" sx={{ mb: 1, width: "100%" }}>
-              Has alcanzado el límite de este producto en esta tienda
-            </Alert>
             {reservedInOtherCarts > 0 && (
               <Chip 
                 icon={<span>⚠️</span>} 
@@ -174,6 +176,7 @@ const StockModal = ({ isOpen, product, onClose }) => {
          title={`${storeProduct.product?.code} - ${storeProduct.product?.brand_name} ${storeProduct.product?.name}`}
          maxWidth="sm"
        >
+        <CustomSpinner isLoading={isLoading} />
         <Box sx={{ p: 2, bgcolor: "#FFFFFF"}}>
           <Grid container>
             {renderStockInfo()}
