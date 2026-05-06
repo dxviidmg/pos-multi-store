@@ -37,11 +37,17 @@ const StockModal = ({ isOpen, product, onClose }) => {
   
   const reservedInOtherCarts = getReservedInOtherCarts();
 
-  const totalStockOtherStores = stockOtherStores.reduce((sum, s) => sum + (s.available_stock || 0), 0);
+  const storesWithStock = stockOtherStores.filter(s => (s.available_stock || 0) > 0).length;
 
   useEffect(() => {
-    setTabValue(totalStockOtherStores > 0 ? 0 : 1);
-  }, [totalStockOtherStores]);
+    if (storesWithStock > 0) {
+      setTabValue(0);
+    } else if (stockOtherStores.length > 0) {
+      setTabValue(0);
+    } else {
+      setTabValue(1);
+    }
+  }, [storesWithStock, stockOtherStores.length]);
 
 
   const handleTabChange = (event, newValue) => {
@@ -138,14 +144,6 @@ const StockModal = ({ isOpen, product, onClose }) => {
   };
 
   const renderStockInfo = () => {
-    if (!storeProduct.showImage) {
-      if (storeProduct.available_stock === 0) {
-        return (
-          <Alert severity="error" sx={{ mb: 1, width: "100%" }}>
-            Producto no disponible en esta tienda
-          </Alert>
-        );
-      }
       if (!storeProduct.onlyRead) {
         return (
           <Box sx={{ mb: 2, width: "100%" }}>
@@ -160,7 +158,6 @@ const StockModal = ({ isOpen, product, onClose }) => {
             )}
           </Box>
         );
-      }
     }
     return null;
   };
@@ -193,15 +190,14 @@ const StockModal = ({ isOpen, product, onClose }) => {
           <Grid item xs={12}>
             <Tabs value={tabValue} onChange={handleTabChange} variant="fullWidth" sx={{ mb: 2 }}>
               <Tab 
-                label="Solicitar producto a otra tienda" 
-                disabled={totalStockOtherStores === 0}
+                label="Solicitar producto a otra tienda"
               />
               <Tab label="Agregar y vender" />
             </Tabs>
 
             {tabValue === 0 && (
               <Box>
-                {stockOtherStores.length > 0 ? (
+                {storesWithStock > 0 ? (
                   <SimpleTable
                     noDataComponent="Sin acceso a otras tiendas"
                     data={stockOtherStores}
@@ -247,7 +243,9 @@ const StockModal = ({ isOpen, product, onClose }) => {
                     ]}
                   />
                 ) : (
-                  <Typography color="text.secondary" sx={{ py: 2 }}>Sin stock en otras tiendas</Typography>
+                  <Alert severity="warning" sx={{ py: 2 }}>
+                    No hay stock disponible en ninguna otra tienda
+                  </Alert>
                 )}
               </Box>
             )}
