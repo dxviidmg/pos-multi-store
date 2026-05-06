@@ -75,7 +75,7 @@ const StoreProductLogsModal = ({ isOpen, logs: logsData, onClose, onUpdate }) =>
     <CustomModal
       showOut={isOpen}
       onClose={onClose}
-      title={`${adjustStock ? "Ajustar cantidad" : "Historial de movimientos"} de ${formData.product?.code} - ${formData.product?.name}`}
+      title={`${adjustStock ? (String(formData.stock) === String(storeProduct.stock) ? "Confirmar cantidad" : "Modificar cantidad") : "Historial de movimientos"} de ${formData.product?.code} - ${formData.product?.name}`}
     >
      <Grid container sx={{ padding: '1rem', backgroundColor: 'rgba(4, 53, 107, 0.2)' }}>
        <Grid item xs={12} className="card">
@@ -99,7 +99,7 @@ const StoreProductLogsModal = ({ isOpen, logs: logsData, onClose, onUpdate }) =>
             fullWidth
             startIcon={<SaveIcon />}
           >
-            Ajustar
+            {String(formData.stock) === String(storeProduct.stock) ? "Confirmar" : "Modificar"}
           </CustomButton>
         </Grid>
         )}
