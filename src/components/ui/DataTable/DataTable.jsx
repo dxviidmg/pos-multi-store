@@ -114,7 +114,7 @@ const DataTable = ({
           disableRowSelectionOnClick
           getRowHeight={() => 'auto'}
           localeText={{ noRowsLabel: noDataComponent }}
-          hideFooter={data.length <= 25}
+          hideFooter={data.length <=  10}
           density="compact"
           sx={{
             "& .MuiDataGrid-columnHeaders": {
