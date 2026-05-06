@@ -35,7 +35,6 @@ const ProductList = () => {
   const [optionsLoaded, setOptionsLoaded] = useState(false);
   const [params, setParams] = useState({});
   const [selectedRows, setSelectedRows] = useState([]);
-  const [outOfStockPercentage, setOutOfStockPercentage] = useState(0);
   const productModal = useModal();
   const priceLogsModal = useModal();
 
@@ -54,8 +53,6 @@ const ProductList = () => {
     const response = await getProducts(params);
     const data = response.data;
     setProducts(data);
-    const outOfStock = data.filter((p) => p.stock === 0).length;
-    setOutOfStockPercentage((outOfStock / data.length) * 100);
     setLoading(false);
   };
 
@@ -200,13 +197,6 @@ const ProductList = () => {
                 </CustomButton>
               </CustomTooltip>
             </Grid>
-            {products.length > 0 && (
-              <Grid item xs={12} md={3}>
-                <Box sx={{ fontSize: '0.875rem' }}>
-                  {outOfStockPercentage.toFixed(0)}% de los productos está vacío
-                </Box>
-              </Grid>
-            )}
           </Grid>
 
           <DataTable
