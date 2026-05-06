@@ -28,7 +28,9 @@ import NewspaperIcon from "@mui/icons-material/Newspaper";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import UpdatesModal from "../../ui/UpdatesModal/UpdatesModal";
+import { cleanCart } from "../../../redux/cart/cartActions";
 import { getUserData } from "../../../api/utils";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
@@ -143,6 +145,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
   const navigate = useNavigate();
   const location = useLocation();
   const user = getUserData();
+  const dispatch = useDispatch();
 
   const accent = '#a78bfa';
 
@@ -176,6 +179,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
 
 
   const handleBack = () => {
+    dispatch(cleanCart());
     const updatedUser = { ...user, store_type: "", store_name: "", store_id: null };
     localStorage.setItem("user", JSON.stringify(updatedUser));
     window.dispatchEvent(new Event("store-changed"));
