@@ -51,7 +51,7 @@ export const useCartActions = (getAvailableStock, movementType, keepListOpen, se
           : storeProduct.available_stock;
       const availableStock = getAvailableStock(storeProduct.id, stock);
 
-      if (movementType === "agregar" || movementType === "venta") {
+      if (movementType === "agregar") {
         dispatch(addToCart({ ...storeProduct, quantity: 1 }));
         added = true;
         if (!keepListOpen) {

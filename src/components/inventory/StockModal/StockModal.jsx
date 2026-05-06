@@ -37,12 +37,11 @@ const StockModal = ({ isOpen, product, onClose }) => {
   
   const reservedInOtherCarts = getReservedInOtherCarts();
 
-  // Si no hay stock en otras tiendas, seleccionar tab de agregar y vender
+  const totalStockOtherStores = stockOtherStores.reduce((sum, s) => sum + (s.available_stock || 0), 0);
+
   useEffect(() => {
-    if (stockOtherStores.length === 0) {
-      setTabValue(1);
-    }
-  }, [stockOtherStores]);
+    setTabValue(totalStockOtherStores > 0 ? 0 : 1);
+  }, [totalStockOtherStores]);
 
 
   const handleTabChange = (event, newValue) => {
@@ -192,7 +191,7 @@ const StockModal = ({ isOpen, product, onClose }) => {
             <Tabs value={tabValue} onChange={handleTabChange} variant="fullWidth" sx={{ mb: 2 }}>
               <Tab 
                 label="Solicitar producto a otra tienda" 
-                disabled={stockOtherStores.length === 0}
+                disabled={totalStockOtherStores === 0}
               />
               <Tab label="Agregar y vender" />
             </Tabs>
