@@ -37,11 +37,17 @@ const StockModal = ({ isOpen, product, onClose }) => {
   
   const reservedInOtherCarts = getReservedInOtherCarts();
 
-  const totalStockOtherStores = stockOtherStores.reduce((sum, s) => sum + (s.available_stock || 0), 0);
+  const storesWithStock = stockOtherStores.filter(s => (s.available_stock || 0) > 0).length;
 
   useEffect(() => {
-    setTabValue(totalStockOtherStores > 0 ? 0 : 1);
-  }, [totalStockOtherStores]);
+    if (storesWithStock > 0) {
+      setTabValue(0);
+    } else if (stockOtherStores.length > 0) {
+      setTabValue(0);
+    } else {
+      setTabValue(1);
+    }
+  }, [storesWithStock, stockOtherStores.length]);
 
 
   const handleTabChange = (event, newValue) => {
@@ -52,14 +58,19 @@ const StockModal = ({ isOpen, product, onClose }) => {
   
   useEffect(() => {
     const fetchData = async () => {
-      const response = await getStockOtherStores(storeProduct.id);
-      setStockOtherStores(response.data);
+      setIsLoading(true);
+      try {
+        const response = await getStockOtherStores(storeProduct.id);
+        setStockOtherStores(response.data);
+      } finally {
+        setIsLoading(false);
+      }
     };
   
-    if (storeProduct?.product?.code) {
+    if (isOpen && storeProduct?.product?.code) {
       fetchData();
     }
-  }, [storeProduct?.product?.code]);
+  }, [isOpen, storeProduct?.product?.code]);
 
 
   const handleQuantityChange = (rowId, max, value) => {
@@ -133,20 +144,9 @@ const StockModal = ({ isOpen, product, onClose }) => {
   };
 
   const renderStockInfo = () => {
-    if (!storeProduct.showImage) {
-      if (storeProduct.available_stock === 0) {
-        return (
-          <Alert severity="error" sx={{ mb: 1, width: "100%" }}>
-            Producto no disponible en esta tienda
-          </Alert>
-        );
-      }
       if (!storeProduct.onlyRead) {
         return (
           <Box sx={{ mb: 2, width: "100%" }}>
-            <Alert severity="warning" sx={{ mb: 1, width: "100%" }}>
-              Has alcanzado el límite de este producto en esta tienda
-            </Alert>
             {reservedInOtherCarts > 0 && (
               <Chip 
                 icon={<span>⚠️</span>} 
@@ -158,7 +158,6 @@ const StockModal = ({ isOpen, product, onClose }) => {
             )}
           </Box>
         );
-      }
     }
     return null;
   };
@@ -174,6 +173,7 @@ const StockModal = ({ isOpen, product, onClose }) => {
          title={`${storeProduct.product?.code} - ${storeProduct.product?.brand_name} ${storeProduct.product?.name}`}
          maxWidth="sm"
        >
+        <CustomSpinner isLoading={isLoading} />
         <Box sx={{ p: 2, bgcolor: "#FFFFFF"}}>
           <Grid container>
             {renderStockInfo()}
@@ -190,15 +190,14 @@ const StockModal = ({ isOpen, product, onClose }) => {
           <Grid item xs={12}>
             <Tabs value={tabValue} onChange={handleTabChange} variant="fullWidth" sx={{ mb: 2 }}>
               <Tab 
-                label="Solicitar producto a otra tienda" 
-                disabled={totalStockOtherStores === 0}
+                label="Solicitar producto a otra tienda"
               />
               <Tab label="Agregar y vender" />
             </Tabs>
 
             {tabValue === 0 && (
               <Box>
-                {stockOtherStores.length > 0 ? (
+                {storesWithStock > 0 ? (
                   <SimpleTable
                     noDataComponent="Sin acceso a otras tiendas"
                     data={stockOtherStores}
@@ -244,7 +243,9 @@ const StockModal = ({ isOpen, product, onClose }) => {
                     ]}
                   />
                 ) : (
-                  <Typography color="text.secondary" sx={{ py: 2 }}>Sin stock en otras tiendas</Typography>
+                  <Alert severity="warning" sx={{ py: 2 }}>
+                    No hay stock disponible en ninguna otra tienda
+                  </Alert>
                 )}
               </Box>
             )}

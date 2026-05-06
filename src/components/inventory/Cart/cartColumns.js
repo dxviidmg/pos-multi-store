@@ -190,7 +190,7 @@ export const getDistributionColumns = (handleQuantityChangeToCart, handleRemoveF
     name: "Stock General",
     cell: (row) => (
       <div>
-        {row.stockOtherStores && row.stockOtherStores.length > 0 ? (
+        {row.stockOtherStores && row.stockOtherStores.length > 0 && (
           <ul style={{ paddingLeft: "1rem", margin: "0.5rem 0 0 0" }}>
             {row.stockOtherStores.map((s) => (
               <li key={s.store_id}>
@@ -198,10 +198,6 @@ export const getDistributionColumns = (handleQuantityChangeToCart, handleRemoveF
               </li>
             ))}
           </ul>
-        ) : (
-          <CustomButton onClick={() => handleStockOtherStores(row)} startIcon={<CalculateIcon />}>
-            Contar
-          </CustomButton>
         )}
       </div>
     ),
