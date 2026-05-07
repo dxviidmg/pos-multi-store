@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import DataTable from "../../ui/DataTable/DataTable";
-import { calculateTimeAgo } from "../../../utils/utils";
+import { calculateTimeAgo, formatTimeFromDate } from "../../../utils/utils";
 import CustomButton from "../../ui/Button/Button";
 import { showSuccess, showError } from "../../../utils/alerts";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
@@ -41,9 +41,9 @@ const TransferList = () => {
     { value: "applied", label: "Aplicados" },
   ];
 
-  const periodicidadText = status === "applied" 
-    ? "Solo hoy" 
-    : "Sin restricción de fechas";
+  const filterDescription = status === "applied" 
+    ? "Solo traspasos de hoy" 
+    : "Sin filtro de fecha";
 
   return (
     <>
@@ -66,9 +66,9 @@ const TransferList = () => {
           <Grid item xs={12} md={3}>
             <TextField
               fullWidth
-              label="Periodicidad"
+              label="Filtro de fecha"
               name="name"
-              value={periodicidadText}
+              value={filterDescription}
               size="small"
               InputProps={{ readOnly: true }}
               disabled
@@ -87,15 +87,18 @@ const TransferList = () => {
             { name: "Nombre", selector: (row) => row.product_description },
             { name: "Cantidad", selector: (row) => row.quantity },
             { name: "Descripción", selector: (row) => row.description },
-            { name: "Antigüedad", selector: (row) => row.created_at ? calculateTimeAgo(row.created_at) : "N/A" },
-            {
+            { name: "Creado hace", selector: (row) => row.created_at ? calculateTimeAgo(row.created_at) : "N/A" },
+            ...(status === "applied" ? [{
+              name: "Hora de confirmación", selector: (row) => formatTimeFromDate(row.transfer_datetime)
+            }] : []),
+            ...(status === "pending" ? [{
               name: "Acciones",
               cell: (row) => (
                 <CustomButton onClick={() => handleDelete(row)} disabled={row.description.includes("prov")}>
                   <DeleteIcon />
                 </CustomButton>
               ),
-            },
+            }] : []),
           ]}
         />
       </Grid>
