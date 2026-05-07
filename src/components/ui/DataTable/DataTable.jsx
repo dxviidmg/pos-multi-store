@@ -1,6 +1,6 @@
 import React, { memo, useState, useMemo } from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import { Box, TextField } from "@mui/material";
+import { Box, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
 import { colors } from "../../../theme/colors";
 
 const DataTable = ({
@@ -95,6 +95,28 @@ const DataTable = ({
       )}
 
       <Box sx={{ width: "100%", maxWidth: "100%", overflowX: "auto" }}>
+        {data.length === 0 && !progressPending ? (
+          <TableContainer component={Paper}>
+            <Table size="small">
+              <TableHead>
+                <TableRow sx={{ backgroundColor: colors.primary }}>
+                  {columns.map((col, i) => (
+                    <TableCell key={i} sx={{ fontWeight: "bold", color: colors.text.white, py: 0.5, fontSize: "0.8125rem", textAlign: "center" }}>
+                      {col.name}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                <TableRow>
+                  <TableCell colSpan={columns.length} align="center" sx={{ py: 0.5, fontSize: "0.8125rem" }}>
+                    {noDataComponent}
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </TableContainer>
+        ) : (
         <DataGrid
           rows={rowsWithIds}
           columns={muiColumns}
@@ -114,7 +136,7 @@ const DataTable = ({
           disableRowSelectionOnClick
           getRowHeight={() => 'auto'}
           localeText={{ noRowsLabel: noDataComponent }}
-          hideFooter={data.length <=  10}
+          hideFooter={data.length <= 10}
           density="compact"
           sx={{
             "& .MuiDataGrid-columnHeaders": {
@@ -138,6 +160,7 @@ const DataTable = ({
             },
           }}
         />
+        )}
       </Box>
     </Box>
   );
