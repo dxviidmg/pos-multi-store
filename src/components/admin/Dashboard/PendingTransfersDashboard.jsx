@@ -32,7 +32,7 @@ const PendingTransfersDashboard = () => {
   const calculateKPIs = () => {
     if (!data?.transfers?.length) return null;
     const transfers = data.transfers;
-    const total = data.total || 0;
+    const total = transfers.length;
     const totalStores = data.stores?.length || 0;
     const avgPerStore = totalStores > 0 ? Math.round(total / totalStores) : 0;
 
