@@ -12,10 +12,11 @@ export const createTransfer = async (data) => {
 
 /**
  * Get all transfers
+ * @param {Object} params - Query parameters (e.g., { status: 'pending' })
  * @returns {Promise<Object>} Transfers list response
  */
-export const getTransfers = async () => {
-  return httpClient.get(getApiUrl("transfer"));
+export const getTransfers = async (params = {}) => {
+  return httpClient.get(getApiUrl("transfer"), { params });
 };
 
 /**

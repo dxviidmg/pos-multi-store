@@ -94,11 +94,11 @@ export const useSales = () => {
 };
 
 // Transfers
-export const useTransfers = () => {
+export const useTransfers = (params = {}) => {
   return useQuery({
-    queryKey: ['transfers'],
+    queryKey: ['transfers', params],
     queryFn: async () => {
-      const response = await getTransfers();
+      const response = await getTransfers(params);
       return response.data;
     }
   });
