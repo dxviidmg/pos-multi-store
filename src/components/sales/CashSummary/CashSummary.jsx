@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import SimpleTable from "../../ui/SimpleTable/SimpleTable";
 import CustomButton from "../../ui/Button/Button";
 import { getUserData } from "../../../api/utils";
-import { exportToExcel, getFormattedDate, formatTimeFromDate } from "../../../utils/utils";
+import { exportToExcel, getFormattedDate } from "../../../utils/utils";
 import { getCashSummary } from "../../../api/sales";
 import { getCashFlow } from "../../../api/cashflow";
 import { getDuplicateSales } from "../../../api/notifications";

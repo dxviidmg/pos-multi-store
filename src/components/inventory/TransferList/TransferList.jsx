@@ -8,7 +8,6 @@ import { useTransfers, useDeleteTransfer } from "../../../hooks/useTransfers";
 import { Grid, MenuItem, FormControl, InputLabel, Select, TextField } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import PageHeader from "../../ui/PageHeader";
-import { getUserData } from "../../../api/utils";
 
 
 
@@ -17,7 +16,6 @@ const TransferList = () => {
   const params = { status };
   const { data: transfers = [], isLoading, refetch } = useTransfers(params);
   const deleteTransferMutation = useDeleteTransfer();
-  const user = getUserData();
 
   useEffect(() => {
     refetch();

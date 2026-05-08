@@ -11,7 +11,7 @@ import { addProducts } from "../../../api/products";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { getStockOtherStores } from "../../../api/products";
 import { addToCart, updateMovementType, updateQuantityInCart } from "../../../redux/cart/cartActions";
-import { Grid, TextField, Box, Typography, Alert, Chip, Tabs, Tab } from "@mui/material";
+import { Grid, TextField, Box, Alert, Chip, Tabs, Tab } from "@mui/material";
 
 
 const StockModal = ({ isOpen, product, onClose }) => {

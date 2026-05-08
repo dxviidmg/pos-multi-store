@@ -2,7 +2,6 @@ import React from "react";
 import { TextField, Checkbox } from "@mui/material";
 import CustomButton from "../../ui/Button/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
-import CalculateIcon from "@mui/icons-material/Calculate";
 
 const commonColumns = [
   { name: "Código", field: "code", selector: (row) => row.product.code },

@@ -17,7 +17,7 @@ import { useKeyboardShortcuts } from "../../../hooks/useKeyboardShortcuts";
 import { useProductSearch } from "../../../hooks/useProductSearch";
 import { useCartActions } from "../../../hooks/useCartActions";
 import { useAvailableStock } from "../../../hooks/useAvailableStock";
-import { getPrinterUrl, getUserData } from "../../../api/utils";
+import { getUserData } from "../../../api/utils";
 import PrintIcon from "@mui/icons-material/Print";
 import { handlePrintTicket } from "../../../utils/utils";
 import { Grid, TextField, FormLabel, RadioGroup, FormControlLabel, Radio, InputAdornment, IconButton, CircularProgress, LinearProgress, Alert } from "@mui/material";
@@ -44,7 +44,6 @@ const SearchProduct = ({ searchInputRef }) => {
   const userData = getUserData();
   const storeType = userData.store_type;
   const storePrinter = userData.store_printer;
-  const urlPrinter = getPrinterUrl();
   
   const [barcode, setBarcode] = useState("");
   const [isInputFocused, setIsInputFocused] = useState(false);

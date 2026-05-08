@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, { useEffect, useCallback, useMemo } from "react";
 import useTaskPolling from "../../../hooks/useTaskPolling";
 import CountdownTimer from "../../ui/CountdownTimer";
 import DataTable from "../../ui/DataTable/DataTable";
@@ -44,7 +44,6 @@ const PendingTransfersDashboard = () => {
   };
 
   const kpis = calculateKPIs();
-  const periodLabel = "Traspasos pendientes";
 
   const handleDownload = () => {
     const exportData = data?.transfers?.map(t => ({
