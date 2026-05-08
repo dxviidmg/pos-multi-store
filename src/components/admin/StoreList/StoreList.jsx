@@ -7,7 +7,8 @@ import { useNavigate } from "react-router-dom";
 import { formatCurrency } from "../../../utils/utils";
 import { getDateDifference, getFormattedDate } from "../../../utils/utils";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
-import { getStorage, setStorage } from "../../../utils/storage";
+import { setStorage } from "../../../utils/storage";
+import { getUserData } from "../../../api/utils";
 import { useStores } from "../../../hooks/useStores";
 import { useTenantInfo } from "../../../hooks/useTenantInfo";
 import { useDepartments } from "../../../hooks/useDepartments";
@@ -27,7 +28,7 @@ const getCashValueTotal = (value) => formatCurrency(value || 0);
 const StoreList = () => {
   const navigate = useNavigate();
   const today = getFormattedDate();
-  const user = getStorage("user");
+  const user = getUserData();
 
   const [storeInvestments, setStoreInvestments] = useState({});
   const [quickFilter, setQuickFilter] = useState("all");
@@ -75,9 +76,9 @@ const StoreList = () => {
   };
 
   const handleSelectStore = async ({ store_type, full_name, name, id, printer }) => {
-    const user = getStorage("user");
+    const currentUser = getUserData();
     setStorage("user", {
-      ...user,
+      ...currentUser,
       store_type,
       store_name: full_name || name,
       store_id: id,
