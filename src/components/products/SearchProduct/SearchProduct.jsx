@@ -1,7 +1,8 @@
 import { showSuccess, showError, showAlert } from "../../../utils/alerts";
 import { logger } from "../../../utils/logger";
-import React, { useEffect, useRef, useState, useMemo } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { selectMovementType } from "../../../redux/cart/selectors";
 import SimpleTable from "../../ui/SimpleTable/SimpleTable";
 import CustomButton from "../../ui/Button/Button";
 import PageHeader from "../../ui/PageHeader";
@@ -37,13 +38,8 @@ const SearchProduct = ({ searchInputRef }) => {
   const stockModal = useModal();
   const productModal = useModal();
   
-  const { carts, activeCartId } = useSelector((state) => state.multiCartReducer);
   const { getAvailableStock } = useAvailableStock();
-  
-  const movementType = useMemo(() => {
-    const activeCart = carts?.find(c => c.id === activeCartId) || carts?.[0];
-    return activeCart?.movementType || "venta";
-  }, [carts, activeCartId]);
+  const movementType = useSelector(selectMovementType);
   
   const userData = getUserData();
   const storeType = userData.store_type;

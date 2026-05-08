@@ -1,6 +1,7 @@
 import { logger } from "../../../utils/logger";
 import React, { useMemo, useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { selectCart, selectMovementType, selectClient } from "../../../redux/cart/selectors";
 import CustomModal from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
 import { cleanCart, removeClientfromCart } from "../../../redux/cart/cartActions";
@@ -33,22 +34,9 @@ const INITIAL_SALE_EXCHANGE_STATE = { refunded: 0, payment: 0 };
 const PaymentModal = ({ isOpen, onClose }) => {
   const dispatch = useDispatch();
   const inputPaymentRef = useRef(null);
-  const cart = useSelector((state) => {
-    const { carts, activeCartId } = state.multiCartReducer;
-    const activeCart = carts?.find(c => c.id === activeCartId) || carts?.[0];
-    return activeCart?.cart || [];
-  });
-  const movementType = useSelector((state) => {
-    const { carts, activeCartId } = state.multiCartReducer;
-    const activeCart = carts?.find(c => c.id === activeCartId) || carts?.[0];
-    return activeCart?.movementType || "venta";
-  });
-
-  const client = useSelector((state) => {
-    const { carts, activeCartId } = state.multiCartReducer;
-    const activeCart = carts?.find(c => c.id === activeCartId) || carts?.[0];
-    return activeCart?.client || {};
-  });
+  const cart = useSelector(selectCart);
+  const movementType = useSelector(selectMovementType);
+  const client = useSelector(selectClient);
   const [payment, setPayment] = useState(INITIAL_PAYMENT_STATE);
   const [referencePayment, setReferencePayment] = useState("");
   const [hideClient, setHideClient] = useState(true);

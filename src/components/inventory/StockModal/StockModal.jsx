@@ -2,6 +2,7 @@ import { logger } from "../../../utils/logger";
 import { showSuccess } from "../../../utils/alerts";
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { selectCarts, selectActiveCartId } from "../../../redux/cart/selectors";
 import CustomModal from "../../ui/Modal/Modal";
 import SimpleTable from "../../ui/SimpleTable/SimpleTable";
 import CustomButton from "../../ui/Button/Button";
@@ -15,7 +16,8 @@ import { Grid, TextField, Box, Typography, Alert, Chip, Tabs, Tab } from "@mui/m
 
 const StockModal = ({ isOpen, product, onClose }) => {
   const storeProduct = product || {};
-  const { carts, activeCartId } = useSelector((state) => state.multiCartReducer);
+  const carts = useSelector(selectCarts);
+  const activeCartId = useSelector(selectActiveCartId);
   const dispatch = useDispatch();
 
   const [requestedQuantities, setRequestedQuantities] = useState({});
@@ -146,15 +148,11 @@ const StockModal = ({ isOpen, product, onClose }) => {
   const renderStockInfo = () => {
       if (!storeProduct.onlyRead) {
         return (
-          <Box sx={{ mb: 2, width: "100%" }}>
+          <Box sx={{ mb: 0, width: "100%" }}>
             {reservedInOtherCarts > 0 && (
-              <Chip 
-                icon={<span>⚠️</span>} 
-                label={`${reservedInOtherCarts} unidades reservadas en otros carritos`} 
-                color="warning" 
-                variant="outlined" 
-                size="small" 
-              />
+              <Alert severity="warning" variant="filled" sx={{ my: 0 }}>
+                {`${reservedInOtherCarts} unidad${reservedInOtherCarts > 1 ? 'es' : ''} apartada${reservedInOtherCarts > 1 ? 's' : ''} en otro carrito`}
+              </Alert>
             )}
           </Box>
         );
@@ -251,9 +249,9 @@ const StockModal = ({ isOpen, product, onClose }) => {
             )}
 
             {tabValue === 1 && (
-              <Box sx={{ py: 2 }}>
-                <Alert severity="info" sx={{ mb: 2 }}>
-                  Ideal para productos físicos en tienda no registrados en el sistema, listos para vender.
+              <Box sx={{ pt: 0, pb: 2 }}>
+                <Alert severity="info" variant="filled" sx={{ mb: 2 }} >
+                  Para productos que existen físicamente en tienda pero su stock en sistema está en cero.
                 </Alert>
                 <Grid container spacing={2} alignItems="center">
                   <Grid item xs={6}>

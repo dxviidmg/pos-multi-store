@@ -1,6 +1,7 @@
 import { logger } from "../../../utils/logger";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { selectCart, selectMovementType } from "../../../redux/cart/selectors";
 import SimpleTable from "../../ui/SimpleTable/SimpleTable";
 import {
   cleanCart,
@@ -42,18 +43,8 @@ const Cart = ({ searchInputRef }) => {
   
   const { getAvailableStock } = useAvailableStock();
   
-  // Usar multiCartReducer en lugar de cartReducer
-  const cart = useSelector((state) => {
-    const { carts, activeCartId } = state.multiCartReducer;
-    const activeCart = carts?.find(c => c.id === activeCartId) || carts?.[0];
-    return activeCart?.cart || [];
-  });
-  
-  const movementType = useSelector((state) => {
-    const { carts, activeCartId } = state.multiCartReducer;
-    const activeCart = carts?.find(c => c.id === activeCartId) || carts?.[0];
-    return activeCart?.movementType || "venta";
-  });
+  const cart = useSelector(selectCart);
+  const movementType = useSelector(selectMovementType);
 
   // Auto-focus cantidad del último producto agregado en distribución
   useEffect(() => {
