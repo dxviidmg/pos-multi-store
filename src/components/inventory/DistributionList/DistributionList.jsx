@@ -8,9 +8,9 @@ import { getUserData } from "../../../api/utils";
 import {
   confirmDistribution,
   deleteDistribution,
-  deleteTranfer,
+  deleteTransfer,
   getDistributions,
-  updateTranfer,
+  updateTransfer,
 } from "../../../api/transfers";
 import CustomTooltip from "../../ui/Tooltip";
 import { Grid, TextField} from "@mui/material";
@@ -60,7 +60,7 @@ const DistributionList = () => {
   };
 
   const handleSaveClick = async (row) => {
-    const response = await updateTranfer({ ...row, quantity: editedQuantity });
+    const response = await updateTransfer({ ...row, quantity: editedQuantity });
     if (response.status === 200) {
       setSelected((prev) => ({
         ...prev,
@@ -75,7 +75,7 @@ const DistributionList = () => {
   };
 
   const handleDeleteTransfer = async (row) => {
-    const response = await deleteTranfer(row);
+    const response = await deleteTransfer(row);
     if (response.status === 204) {
       setSelected((prev) => ({
         ...prev,
