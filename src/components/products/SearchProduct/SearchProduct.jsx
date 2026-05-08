@@ -1,6 +1,6 @@
 import { showSuccess, showError, showAlert } from "../../../utils/alerts";
 import { logger } from "../../../utils/logger";
-import React, { useCallback, useEffect, useRef, useState, useMemo } from "react";
+import React, { useEffect, useRef, useState, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import SimpleTable from "../../ui/SimpleTable/SimpleTable";
 import CustomButton from "../../ui/Button/Button";
@@ -15,6 +15,7 @@ import { useModal } from "../../../hooks/useModal";
 import { useKeyboardShortcuts } from "../../../hooks/useKeyboardShortcuts";
 import { useProductSearch } from "../../../hooks/useProductSearch";
 import { useCartActions } from "../../../hooks/useCartActions";
+import { useAvailableStock } from "../../../hooks/useAvailableStock";
 import { getPrinterUrl, getUserData } from "../../../api/utils";
 import PrintIcon from "@mui/icons-material/Print";
 import { handlePrintTicket } from "../../../utils/utils";
@@ -37,22 +38,13 @@ const SearchProduct = ({ searchInputRef }) => {
   const productModal = useModal();
   
   const { carts, activeCartId } = useSelector((state) => state.multiCartReducer);
+  const { getAvailableStock } = useAvailableStock();
   
   const movementType = useMemo(() => {
     const activeCart = carts?.find(c => c.id === activeCartId) || carts?.[0];
     return activeCart?.movementType || "venta";
   }, [carts, activeCartId]);
   
-  // Calcular stock disponible considerando todos los carritos
-  const getAvailableStock = useCallback((productId, productStock) => {
-    const reservedInOtherCarts = carts.reduce((total, cart) => {
-      if (cart.id === activeCartId) return total;
-      const item = cart.cart.find(item => item.id === productId);
-      return total + (item ? item.quantity : 0);
-    }, 0);
-    return productStock - reservedInOtherCarts;
-  }, [carts, activeCartId]);
-
   const userData = getUserData();
   const storeType = userData.store_type;
   const storePrinter = userData.store_printer;

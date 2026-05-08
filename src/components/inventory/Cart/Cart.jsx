@@ -20,6 +20,7 @@ import { addProducts, getStockOtherStores } from "../../../api/products";
 import { getUserData } from "../../../api/utils";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { useModal } from "../../../hooks/useModal";
+import { useAvailableStock } from "../../../hooks/useAvailableStock";
 import { Grid, Select, MenuItem } from "@mui/material";
 import PaymentIcon from "@mui/icons-material/Payment";
 import SendIcon from "@mui/icons-material/Send";
@@ -39,7 +40,7 @@ const Cart = ({ searchInputRef }) => {
   const lastQtyRef = useRef(null);
   const prevCartLenRef = useRef(0);
   
-  const { carts, activeCartId } = useSelector((state) => state.multiCartReducer);
+  const { getAvailableStock } = useAvailableStock();
   
   // Usar multiCartReducer en lugar de cartReducer
   const cart = useSelector((state) => {
@@ -53,16 +54,6 @@ const Cart = ({ searchInputRef }) => {
     const activeCart = carts?.find(c => c.id === activeCartId) || carts?.[0];
     return activeCart?.movementType || "venta";
   });
-  
-  // Calcular stock disponible considerando todos los carritos
-  const getAvailableStock = (productId, productStock) => {
-    const reservedInOtherCarts = carts.reduce((total, cart) => {
-      if (cart.id === activeCartId) return total;
-      const item = cart.cart.find(item => item.id === productId);
-      return total + (item ? item.quantity : 0);
-    }, 0);
-    return productStock - reservedInOtherCarts;
-  };
 
   // Auto-focus cantidad del último producto agregado en distribución
   useEffect(() => {
