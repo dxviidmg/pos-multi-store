@@ -8,25 +8,6 @@ export const getUserData = () => {
 };
 
 /**
- * Build request headers with authentication
- * @param {boolean} isMultipart - Whether request is multipart/form-data
- * @returns {Object} Headers object
- */
-export const getHeaders = (isMultipart = false) => {
-  const user = getUserData();
-  if (!user) {
-    throw new Error('User not authenticated');
-  }
-  
-  const headers = {
-    "Content-Type": isMultipart ? "multipart/form-data" : "application/json",
-    "Authorization": `Token ${user.token}`,
-  };
-  if (user.store_id) headers["store-id"] = user.store_id;
-  return headers;
-};
-
-/**
  * Build API URL for endpoint
  * @param {string} endpoint - API endpoint path
  * @param {boolean} end_slash - Whether to add trailing slash
