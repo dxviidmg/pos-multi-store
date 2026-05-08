@@ -93,7 +93,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
     };
 
     fetchData();
-  }, [product, showStoreProducts]);
+  }, [product, showStoreProducts, createFromSearch]);
 
 
   const handleDataChange = (e) => {

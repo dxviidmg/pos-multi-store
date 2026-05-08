@@ -74,21 +74,23 @@ const PaymentModal = ({ isOpen, onClose }) => {
     return { total, totalDiscount };
   }, [cart, client]);
 
+  const handleCreateSaleRef = useRef(null);
+
   useEffect(() => {
     const handleShortcut = (event) => {
       if (event.ctrlKey && event.key === "g") {
         event.preventDefault();
-        handleCreateSale();
+        handleCreateSaleRef.current?.();
       }
       if (event.ctrlKey && event.key === "h") {
         event.preventDefault();
-        handleCreateSale(true);
+        handleCreateSaleRef.current?.(true);
       }
     };
   
     window.addEventListener("keydown", handleShortcut);
     return () => window.removeEventListener("keydown", handleShortcut);
-  }, [payment]); // 👈 SOLO UNA VEZ
+  }, []);
 
 
   useEffect(() => {
@@ -233,6 +235,8 @@ const PaymentModal = ({ isOpen, onClose }) => {
       setIsLoading(false);
     }
   };
+
+  handleCreateSaleRef.current = handleCreateSale;
 
   const handlePaidWithChange = (e) => {
     let value = Number(e.target.value);

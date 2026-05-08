@@ -32,6 +32,7 @@ const ProductsDashboard = () => {
 
   const { data, loading, progress, countdown, fetchData } = useTaskPolling(startTask);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { fetchData(); }, [year, month, storeId]);
 
   const periodLabel = month === 0 ? "Todo el año" : `${MONTH_NAMES[month - 1]} ${year}`;

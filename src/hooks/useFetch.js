@@ -73,6 +73,7 @@ export const useFetch = (fetchFn, options = {}) => {
     if (enabled) {
       fetchData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 
   return { data, loading, error, refetch: fetchData };
