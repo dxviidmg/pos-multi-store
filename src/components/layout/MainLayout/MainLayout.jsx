@@ -289,13 +289,12 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
     G: [
       {
         label: "Tableros",
-        disabled: isDashboardRestricted,
-        disabledMessage: "Disponible antes de las 10 AM y despues de las 9 PM",
         dropdown: [
-          { label: "Ventas exitosas", href: "/tablero-ventas/" },
+          { label: "Ventas exitosas", href: "/tablero-ventas/", disabled: isDashboardRestricted, disabledMessage: "Antes de 10 AM o después de 9 PM" },
           { label: "Ventas ajustadas o canceladas", href: "/tablero-ventas-ajustadas-cancelaciones/" },
           { label: "Verificación de stock", href: "/tablero-verificacion-stock/" },
           { label: "Marcas y productos", href: "/tablero-productos/" },
+          { label: "Transpasos pendientes", href: "/tablero-traspasos-pendientes/" },
         ],
       },
       { label: "Tiendas", href: "/tiendas/" },
@@ -448,19 +447,21 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
                     <List component="div" disablePadding>
                       {item.dropdown.map((sub, i) =>
                         sub.divider || sub.hidden ? null : (
-                          <ListItemButton key={i} onClick={() => navigate(sub.href)}
+                          <ListItemButton key={i} onClick={() => !sub.disabled && navigate(sub.href)} disabled={sub.disabled}
                             sx={{
                               pl: 6.5, py: 0.6, borderRadius: "8px", my: 0.2, mx: 0.5,
                               ...(isActive(sub.href) ? activeSx : {}),
-                              "&:hover": { backgroundColor: "rgba(255,255,255,0.06)" },
+                              "&:hover": { backgroundColor: sub.disabled ? "transparent" : "rgba(255,255,255,0.06)" },
                             }}
                           >
                             <ListItemText primary={sub.label}
+                              secondary={sub.disabled && open ? sub.disabledMessage : null}
                               primaryTypographyProps={{
                                 fontSize: "0.75rem",
-                                color: isActive(sub.href) ? accent : "rgba(255,255,255,0.75)",
+                                color: sub.disabled ? "rgba(255,255,255,0.3)" : isActive(sub.href) ? accent : "rgba(255,255,255,0.75)",
                                 fontWeight: isActive(sub.href) ? 600 : 400,
                               }}
+                              secondaryTypographyProps={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.4)" }}
                             />
                           </ListItemButton>
                         )

@@ -36,21 +36,13 @@ const StockVerificationDashboard = () => {
   const calculateKPIs = () => {
     if (!data?.store_products?.length) return null;
     const products = data.store_products;
-    const total = data.total || 0;
+    const total = products.length;
+    const totalStores = data.stores?.length || 0;
     const totalStoreProducts = data.total_store_products || 0;
-    const percentage = totalStoreProducts > 0 ? ((total / totalStoreProducts) * 100).toFixed(1) : 0;
+    const avgPerStore = totalStores > 0 ? Math.round(total / totalStores) : 0;
+    const coverage = totalStoreProducts > 0 ? ((total / totalStoreProducts) * 100).toFixed(1) : 0;
 
-    const byStore = {};
-    if (data.stores) data.stores.forEach(s => { byStore[s.name] = 0; });
-    products.forEach(p => { byStore[p.store_name] = (byStore[p.store_name] || 0) + 1; });
-    const storeEntries = Object.entries(byStore).filter(([, v]) => v > 0);
-    const avgPerStore = storeEntries.length > 0 ? Math.round(total / storeEntries.length) : 0;
- 
-    const byBrand = {};
-    products.forEach(p => { byBrand[p.brand] = (byBrand[p.brand] || 0) + 1; });
-    const topBrand = Object.entries(byBrand).sort((a, b) => b[1] - a[1])[0]?.[0] || "N/A";
-
-    return { total, totalStoreProducts, percentage, avgPerStore, topBrand };
+    return { total, totalStoreProducts, avgPerStore, coverage };
   };
 
   const kpis = calculateKPIs();
@@ -138,7 +130,7 @@ const StockVerificationDashboard = () => {
             <InventoryIcon sx={{ fontSize: 32, color: "info.main" }} />
             <Box>
               <Typography variant="body2" color="text.secondary">Total de productos</Typography>
-              <Typography variant="h5" sx={{ fontWeight: 700 }}>{kpis.totalStoreProducts}</Typography>
+              <Typography variant="h5" sx={{ fontWeight: 700 }}>{kpis.totalStoreProducts.toLocaleString()}</Typography>
             </Box>
           </Box>
         </Grid>
@@ -148,21 +140,30 @@ const StockVerificationDashboard = () => {
             <StorefrontIcon sx={{ fontSize: 32, color: "primary.main" }} />
             <Box>
               <Typography variant="body2" color="text.secondary">Cobertura</Typography>
-              <Typography variant="h5" sx={{ fontWeight: 700 }}>{kpis.percentage}%</Typography>
+              <Typography variant="h5" sx={{ fontWeight: 700 }}>{kpis.coverage}%</Typography>
             </Box>
           </Box>
         </Grid>
 
         <Grid item xs={12} sm={6} md={3}>
           <Box className="card" sx={{ height: "100%", mb: 0, display: "flex", alignItems: "center", gap: 2 }}>
-            <Box sx={{ fontSize: 32, color: "success.main" }}>📦</Box>
+            <InventoryIcon sx={{ fontSize: 32, color: "success.main" }} />
             <Box>
               <Typography variant="body2" color="text.secondary">Promedio por tienda</Typography>
               <Typography variant="h5" sx={{ fontWeight: 700 }}>{kpis.avgPerStore}</Typography>
-              {kpis.avgPerStore === '>1' && (
-                <Typography variant="caption" color="text.secondary">menos de 1 producto por tienda</Typography>
-              )}
             </Box>
+          </Box>
+        </Grid>
+      </Grid>
+
+      <Grid container spacing={3} sx={{ mb: 3 }}>
+        <Grid item xs={12} md={12}>
+          <Box className="card" sx={{ height: "100%" }}>
+            {chartData && <DoughnutChart 
+              title="Productos a verificar por tienda" 
+              data={chartData} 
+              dataType="store" 
+            />}
           </Box>
         </Grid>
       </Grid>
@@ -188,18 +189,6 @@ const StockVerificationDashboard = () => {
           ]}
         />
       </Box>
-
-      <Grid container spacing={3} sx={{ mt: 0 }}>
-        <Grid item xs={12} md={12}>
-          <Box className="card" sx={{ height: "100%" }}>
-            {chartData && <DoughnutChart 
-              title="Productos a verificar por tienda" 
-              data={chartData} 
-              dataType="store" 
-            />}
-          </Box>
-        </Grid>
-      </Grid>
     </Box>
   );
 };
