@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { useState, useEffect, lazy, Suspense } from "react";
+import { useState, lazy, Suspense } from "react";
 import { getUserData } from "./api/utils";
 import LoadingFallback from "./components/ui/LoadingFallback";
 import GlobalStyles from "./theme/GlobalStyles";
@@ -48,15 +48,8 @@ const RestartService = lazyRetry(() => import("./components/admin/RestartService
 const Profile = lazyRetry(() => import("./components/admin/Profile/Profile"));
 
 function App({ toggleTheme, themeMode }) {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const user = getUserData();
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    if (user) {
-      setIsLoggedIn(true);
-    }
-  }, []);
+  const [isLoggedIn, setIsLoggedIn] = useState(!!user);
 
   const handleLogin = () => setIsLoggedIn(true);
 
