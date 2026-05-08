@@ -1,16 +1,13 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, { useEffect, useCallback, useMemo } from "react";
 import useTaskPolling from "../../../hooks/useTaskPolling";
 import CountdownTimer from "../../ui/CountdownTimer";
 import DataTable from "../../ui/DataTable/DataTable";
 import CustomButton from "../../ui/Button/Button";
 import DoughnutChart from "./DoughnutChart";
-import {
-  Grid, FormControl, InputLabel, Select, MenuItem, Box, Typography,
-  LinearProgress, Skeleton, Chip,
-} from "@mui/material";
-import { MONTH_NAMES, exportToExcel } from "../../../utils/utils";
+import { Grid, Box, Typography, LinearProgress, Skeleton } from "@mui/material";
+import { exportToExcel } from "../../../utils/utils";
 import httpClient from "../../../api/httpClient";
-import { getApiUrl, buildUrlWithParams } from "../../../api/utils";
+import { getApiUrl } from "../../../api/utils";
 import WarningIcon from "@mui/icons-material/Warning";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import InventoryIcon from "@mui/icons-material/Inventory";
@@ -18,20 +15,15 @@ import DownloadIcon from "@mui/icons-material/Download";
 import InboxIcon from "@mui/icons-material/Inbox";
 
 const StockVerificationDashboard = () => {
-  const [year, setYear] = useState(new Date().getFullYear());
-  const [month, setMonth] = useState(new Date().getMonth() + 1);
-
   const startTask = useCallback(async () => {
-    const url = buildUrlWithParams(getApiUrl("stock-verification-dashboard"), { year, month });
-    console.log("Stock Verification URL:", url.toString());
+    const url = getApiUrl("stock-verification-dashboard");
     const response = await httpClient.get(url);
     return response.data.task;
-  }, [year, month]);
+  }, []);
 
   const { data, loading, progress, countdown, fetchData } = useTaskPolling(startTask);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { fetchData(); }, [year, month]);
+  useEffect(() => { fetchData(); }, [fetchData]);
 
   const calculateKPIs = () => {
     if (!data?.store_products?.length) return null;
@@ -46,7 +38,6 @@ const StockVerificationDashboard = () => {
   };
 
   const kpis = calculateKPIs();
-  const periodLabel = month === 0 ? "Todo el año" : `${MONTH_NAMES[month - 1]} ${year}`;
 
   const handleDownload = () => {
     const exportData = data?.store_products?.map(p => ({
@@ -56,7 +47,7 @@ const StockVerificationDashboard = () => {
       Stock: p.stock,
       Tienda: p.store_name,
     })) || [];
-    exportToExcel(exportData, `Inventario a verificar ${periodLabel}`);
+    exportToExcel(exportData, 'Inventario a verificar');
   };
 
   const chartData = useMemo(() => {

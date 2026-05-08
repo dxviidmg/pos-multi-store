@@ -4,11 +4,10 @@ import { calculateTimeAgo, formatTimeFromDate } from "../../../utils/utils";
 import CustomButton from "../../ui/Button/Button";
 import { showSuccess, showError } from "../../../utils/alerts";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
-import { useTransfers, useDeleteTransfer } from "../../../hooks/useQueries";
+import { useTransfers, useDeleteTransfer } from "../../../hooks/useTransfers";
 import { Grid, MenuItem, FormControl, InputLabel, Select, TextField } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import PageHeader from "../../ui/PageHeader";
-import { getUserData } from "../../../api/utils";
 
 
 
@@ -17,7 +16,6 @@ const TransferList = () => {
   const params = { status };
   const { data: transfers = [], isLoading, refetch } = useTransfers(params);
   const deleteTransferMutation = useDeleteTransfer();
-  const user = getUserData();
 
   useEffect(() => {
     refetch();

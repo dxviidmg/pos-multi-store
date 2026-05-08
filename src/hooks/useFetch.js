@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { logger } from '../utils/logger';
 
 /**
@@ -21,6 +21,7 @@ export const useFetch = (fetchFn, options = {}) => {
     enabled = true,
   } = options;
 
+  const initialDataRef = useRef(initialData);
   const [data, setData] = useState(initialData);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -60,13 +61,13 @@ export const useFetch = (fetchFn, options = {}) => {
             logger.error(`❌ Máximo de reintentos alcanzado (${maxRetries})`);
           }
           setError(err);
-          setData(initialData);
+          setData(initialDataRef.current);
           setLoading(false);
-          return initialData;
+          return initialDataRef.current;
         }
       }
     }
-  }, [fetchFn, initialData, maxRetries, timeout]);
+  }, [fetchFn, maxRetries, timeout]);
 
   useEffect(() => {
     if (enabled) {

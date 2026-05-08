@@ -38,15 +38,6 @@ export const confirmDistribution = async (data) => {
 };
 
 /**
- * Delete transfer by ID
- * @param {number|string} id - Transfer ID
- * @returns {Promise<Object>} Deletion response
- */
-export const deleteTransfer = async (id) => {
-  return httpClient.delete(getApiUrl(`transfer/${id}`));
-};
-
-/**
  * Create new distribution
  * @param {Object} data - Distribution data
  * @returns {Promise<Object>} Created distribution response
@@ -68,7 +59,7 @@ export const getDistributions = async () => {
  * @param {Object} data - Transfer data with ID
  * @returns {Promise<Object>} Updated transfer response
  */
-export const updateTranfer = async (data) => {
+export const updateTransfer = async (data) => {
   return httpClient.patch(getApiUrl(`transfer/${data.id}`), data);
 };
 
@@ -77,7 +68,7 @@ export const updateTranfer = async (data) => {
  * @param {Object} data - Transfer data with ID
  * @returns {Promise<Object>} Deletion response
  */
-export const deleteTranfer = async (data) => {
+export const deleteTransfer = async (data) => {
   return httpClient.delete(getApiUrl(`transfer/${data.id}`));
 };
 

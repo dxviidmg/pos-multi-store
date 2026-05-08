@@ -3,6 +3,12 @@ import { DataGrid } from "@mui/x-data-grid";
 import { Box, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
 import { colors } from "../../../theme/colors";
 
+const searchInObject = (obj, search) => {
+  if (typeof obj === "string") return obj.toLowerCase().includes(search.toLowerCase());
+  if (typeof obj === "object" && obj !== null) return Object.values(obj).some((v) => searchInObject(v, search));
+  return false;
+};
+
 const DataTable = ({
   columns,
   data,
@@ -16,12 +22,6 @@ const DataTable = ({
     pageSize: 10,
     page: 0,
   });
-
-  const searchInObject = (obj, search) => {
-    if (typeof obj === "string") return obj.toLowerCase().includes(search.toLowerCase());
-    if (typeof obj === "object" && obj !== null) return Object.values(obj).some((v) => searchInObject(v, search));
-    return false;
-  };
 
   const filteredData = useMemo(
     () => data.filter((item) => searchInObject(item, searchTerm)),

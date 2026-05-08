@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useForm } from "../../../hooks/useForm";
 import CustomModal from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
 import { getBrands } from "../../../api/brands";
@@ -94,7 +93,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
     };
 
     fetchData();
-  }, [product, showStoreProducts]);
+  }, [product, showStoreProducts, createFromSearch]);
 
 
   const handleDataChange = (e) => {
