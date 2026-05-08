@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { useState, lazy, Suspense } from "react";
 import { getUserData } from "./api/utils";
 import LoadingFallback from "./components/ui/LoadingFallback";
+import ErrorBoundary from "./components/ui/ErrorBoundary";
 import GlobalStyles from "./theme/GlobalStyles";
 
 // Componentes críticos (carga inmediata)
@@ -12,7 +13,7 @@ const lazyRetry = (importFn) =>
   lazy(() => importFn().catch(() => { window.location.reload(); return new Promise(() => {}); }));
 
 // Wrapper para Suspense
-const Lazy = ({ children }) => <Suspense fallback={<LoadingFallback />}>{children}</Suspense>;
+const Lazy = ({ children }) => <ErrorBoundary><Suspense fallback={<LoadingFallback />}>{children}</Suspense></ErrorBoundary>;
 
 // Lazy loading para rutas
 const SaleCreate = lazyRetry(() => import("./components/sales/SaleCreate/SaleCreate"));
