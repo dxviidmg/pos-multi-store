@@ -7,7 +7,7 @@ import DoughnutChart from "./DoughnutChart";
 import { Grid, Box, Typography, LinearProgress, Skeleton } from "@mui/material";
 import { exportToExcel } from "../../../utils/utils";
 import httpClient from "../../../api/httpClient";
-import { getApiUrl, buildUrlWithParams } from "../../../api/utils";
+import { getApiUrl } from "../../../api/utils";
 import WarningIcon from "@mui/icons-material/Warning";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import InventoryIcon from "@mui/icons-material/Inventory";
@@ -16,16 +16,14 @@ import InboxIcon from "@mui/icons-material/Inbox";
 
 const StockVerificationDashboard = () => {
   const startTask = useCallback(async () => {
-    const url = buildUrlWithParams(getApiUrl("stock-verification-dashboard"), {});
-    console.log("Stock Verification URL:", url.toString());
+    const url = getApiUrl("stock-verification-dashboard");
     const response = await httpClient.get(url);
     return response.data.task;
   }, []);
 
   const { data, loading, progress, countdown, fetchData } = useTaskPolling(startTask);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { fetchData(); }, []);
+  useEffect(() => { fetchData(); }, [fetchData]);
 
   const calculateKPIs = () => {
     if (!data?.store_products?.length) return null;

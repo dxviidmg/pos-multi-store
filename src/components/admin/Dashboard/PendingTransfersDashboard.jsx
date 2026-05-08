@@ -20,7 +20,6 @@ import InboxIcon from "@mui/icons-material/Inbox";
 const PendingTransfersDashboard = () => {
   const startTask = useCallback(async () => {
     const url = getApiUrl("pending-transfers-dashboard");
-    console.log("Pending Transfers URL:", url.toString());
     const response = await httpClient.get(url);
     return response.data.task;
   }, []);
@@ -63,6 +62,28 @@ const PendingTransfersDashboard = () => {
         store_name: t.destination_store,
       })),
     };
+  }, [data]);
+
+  const barChartSeries = useMemo(() => {
+    if (!data?.transfers || !data?.stores) return [];
+    const today = new Date().toDateString();
+    const byStore = {};
+    data.stores.forEach(s => { byStore[s.name] = { Hoy: 0, Anteriores: 0 }; });
+    data.transfers.forEach(t => {
+      const store = t.destination_store;
+      if (byStore[store]) {
+        if (new Date(t.created_at).toDateString() === today) {
+          byStore[store].Hoy += 1;
+        } else {
+          byStore[store].Anteriores += 1;
+        }
+      }
+    });
+    const storeNames = data.stores.map(s => s.name);
+    return [
+      { data: storeNames.map(s => byStore[s]?.Hoy || 0), label: "Hoy", color: "#4caf50" },
+      { data: storeNames.map(s => byStore[s]?.Anteriores || 0), label: "Anteriores", color: "#f44336" }
+    ];
   }, [data]);
 
   if (loading) {
@@ -146,26 +167,7 @@ const PendingTransfersDashboard = () => {
                 tickLabelStyle: { fontSize: 11, fill: "#64748b" }
               }]}
               yAxis={[{ tickLabelStyle: { fontSize: 11, fill: "#64748b" } }]}
-              series={(() => {
-                const today = new Date().toDateString();
-                const byStore = {};
-                data?.stores?.forEach(s => { byStore[s.name] = { Hoy: 0, Anteriores: 0 }; });
-                data?.transfers?.forEach(t => {
-                  const store = t.destination_store;
-                  if (byStore[store]) {
-                    if (new Date(t.created_at).toDateString() === today) {
-                      byStore[store].Hoy += 1;
-                    } else {
-                      byStore[store].Anteriores += 1;
-                    }
-                  }
-                });
-                const storeNames = data?.stores?.map(s => s.name) || [];
-                return [
-                  { data: storeNames.map(s => byStore[s]?.Hoy || 0), label: "Hoy", color: "#4caf50" },
-                  { data: storeNames.map(s => byStore[s]?.Anteriores || 0), label: "Anteriores", color: "#f44336" }
-                ];
-              })()}
+              series={barChartSeries}
               height={300}
               margin={{ top: 50, bottom: 40, left: 70, right: 10 }}
               borderRadius={4}
