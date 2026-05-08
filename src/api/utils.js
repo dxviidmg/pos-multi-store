@@ -1,10 +1,17 @@
 /**
- * Get user data from localStorage
+ * Get user data from localStorage (cached)
  * @returns {Object|null} User object with token and store_id
  */
+let _userCache = null;
+let _userRaw = null;
+
 export const getUserData = () => {
-  const user = localStorage.getItem("user");
-  return user ? JSON.parse(user) : null;
+  const raw = localStorage.getItem("user");
+  if (raw !== _userRaw) {
+    _userRaw = raw;
+    _userCache = raw ? JSON.parse(raw) : null;
+  }
+  return _userCache;
 };
 
 /**
