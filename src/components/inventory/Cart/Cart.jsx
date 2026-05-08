@@ -59,7 +59,6 @@ const Cart = ({ searchInputRef }) => {
     prevCartLenRef.current = cart.length;
   }, [cart.length, movementType]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     const handleShortcut = (event) => {
       if (event.ctrlKey && (event.key === "p" || event.key === "P")) {
@@ -257,13 +256,9 @@ const Cart = ({ searchInputRef }) => {
     { name: "Stock", field: "stock", selector: (row) => row.available_stock },
   ];
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const saleColumns = useMemo(() => getSaleColumns(handleQuantityChangeToCart, handleRemoveFromCart, handleChangePrice, movementType, getAvailableStock), [movementType]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const transferColumns = useMemo(() => getTransferColumns(handleQuantityChangeToCart, handleRemoveFromCart, getAvailableStock), []);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const distributionColumns = useMemo(() => getDistributionColumns(handleQuantityChangeToCart, handleRemoveFromCart, handleStockOtherStores, getAvailableStock, cart, searchInputRef, lastQtyRef), [cart]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const addToStockColumns = useMemo(() => getAddToStockColumns(handleQuantityChangeToCart, handleRemoveFromCart), [movementType]);
 
   const getColumns = () => {

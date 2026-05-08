@@ -36,7 +36,6 @@ const CancellationsDashboard = () => {
 
   const { data, loading, progress, countdown, fetchData } = useTaskPolling(startTask);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { fetchData(); }, [year, month]);
 
   const calculateKPIs = () => {

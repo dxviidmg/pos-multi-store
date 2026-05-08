@@ -74,7 +74,6 @@ const PaymentModal = ({ isOpen, onClose }) => {
     return { total, totalDiscount };
   }, [cart, client]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     const handleShortcut = (event) => {
       if (event.ctrlKey && event.key === "g") {
