@@ -1,9 +1,9 @@
+import "./App.css";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { useState, lazy, Suspense } from "react";
 import { getUserData } from "./api/utils";
 import LoadingFallback from "./components/ui/LoadingFallback";
 import ErrorBoundary from "./components/ui/ErrorBoundary";
-import GlobalStyles from "./theme/GlobalStyles";
 
 // Componentes críticos (carga inmediata)
 import Login from "./components/layout/Login/Login";
@@ -55,9 +55,7 @@ function App({ toggleTheme, themeMode }) {
   const handleLogin = () => setIsLoggedIn(true);
 
   return (
-    <>
-      <GlobalStyles />
-      <Router>
+    <Router>
       <Routes>
         {isLoggedIn ? (
           <Route element={<MainLayout toggleTheme={toggleTheme} themeMode={themeMode} onLoginSuccess={handleLogin} />}>
@@ -104,7 +102,6 @@ function App({ toggleTheme, themeMode }) {
         )}
       </Routes>
     </Router>
-    </>
   );
   
 }
