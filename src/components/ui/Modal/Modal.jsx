@@ -2,7 +2,6 @@ import { memo } from 'react';
 import Modal from '@mui/material/Modal';
 import { Box, IconButton, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import './Modal.css';
 
 const style = {
   position: 'absolute',
@@ -19,11 +18,20 @@ const style = {
   border: '1px solid #e8ecf1',
 };
 
+const headerStyle = {
+  background: 'linear-gradient(135deg, #04346b 0%, #065a9e 100%)',
+  color: 'white',
+  p: 2,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+};
+
 function CustomModal({ showOut, onClose, title, children }) {
   return (
     <Modal open={showOut} onClose={onClose}>
       <Box sx={style}>
-        <Box className="modal__header" sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box sx={headerStyle}>
           <Typography variant="h6" sx={{ flexGrow: 1, textAlign: 'center', fontWeight: 600 }}>
             {title}
           </Typography>
