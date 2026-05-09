@@ -423,6 +423,8 @@ const PaymentModal = ({ isOpen, onClose }) => {
                     size="small"
                     label="Referencia de pago"
                     type="text"
+                    color={referencePayment === "" ? "error" : "primary"}
+                    focused={referencePayment === ""}
                     value={referencePayment}
                     onChange={(e) => setReferencePayment(e.target.value)}
                     InputLabelProps={{ shrink: true }}
@@ -432,6 +434,13 @@ const PaymentModal = ({ isOpen, onClose }) => {
                         from: { opacity: 0, transform: 'translateX(-8px)' },
                         to: { opacity: 1, transform: 'translateX(0)' },
                       },
+                      ...(referencePayment === "" && {
+                        '& .MuiOutlinedInput-root': {
+                          '& fieldset': { borderColor: 'rgba(0,0,0,0.23)' },
+                          '&:hover fieldset': { borderColor: 'rgba(0,0,0,0.87)' },
+                          '&.Mui-focused fieldset': { borderColor: 'rgba(0,0,0,0.23)' },
+                        },
+                      }),
                     }}
                   />
                 ) : (
@@ -512,8 +521,8 @@ const PaymentModal = ({ isOpen, onClose }) => {
                 {paymentMethods.type === "checkbox" && (
                   <>
                     <FormLabel>Montos:</FormLabel>
-                    {["EF", "TA", "TR"].map((method) => (
-                      <div key={method}>
+                    {["EF", "TA", "TR"].map((method, index) => (
+                      <div key={method} style={{ marginTop: index === 0 ? 6 : 0 }}>
                         {paymentMethods.methods[method] > 0 ? (
                           <TextField
                             size="small"
@@ -524,7 +533,8 @@ const PaymentModal = ({ isOpen, onClose }) => {
                               handlePaymentValueChange(method, e.target.value)
                             }
                             sx={{
-                              mb: 1,
+                              mb: 0.5,
+                              '& .MuiInputBase-root': { height: 30 },
                               animation: 'fadeIn 0.3s ease',
                               '@keyframes fadeIn': {
                                 from: { opacity: 0, transform: 'translateX(-8px)' },
@@ -533,7 +543,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
                             }}
                           />
                         ) : (
-                          <div style={{ height: 20, marginBottom: 4 }} />
+                          <div style={{ height: 30, marginBottom: 4 }} />
                         )}
                       </div>
                     ))}
