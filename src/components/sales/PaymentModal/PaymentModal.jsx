@@ -1,6 +1,7 @@
 import { logger } from "../../../utils/logger";
 import React, { useMemo, useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { selectCart, selectMovementType, selectClient } from "../../../redux/cart/selectors";
 import CustomModal from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
 import { cleanCart, removeClientfromCart } from "../../../redux/cart/cartActions";
@@ -33,22 +34,9 @@ const INITIAL_SALE_EXCHANGE_STATE = { refunded: 0, payment: 0 };
 const PaymentModal = ({ isOpen, onClose }) => {
   const dispatch = useDispatch();
   const inputPaymentRef = useRef(null);
-  const cart = useSelector((state) => {
-    const { carts, activeCartId } = state.multiCartReducer;
-    const activeCart = carts?.find(c => c.id === activeCartId) || carts?.[0];
-    return activeCart?.cart || [];
-  });
-  const movementType = useSelector((state) => {
-    const { carts, activeCartId } = state.multiCartReducer;
-    const activeCart = carts?.find(c => c.id === activeCartId) || carts?.[0];
-    return activeCart?.movementType || "venta";
-  });
-
-  const client = useSelector((state) => {
-    const { carts, activeCartId } = state.multiCartReducer;
-    const activeCart = carts?.find(c => c.id === activeCartId) || carts?.[0];
-    return activeCart?.client || {};
-  });
+  const cart = useSelector(selectCart);
+  const movementType = useSelector(selectMovementType);
+  const client = useSelector(selectClient);
   const [payment, setPayment] = useState(INITIAL_PAYMENT_STATE);
   const [referencePayment, setReferencePayment] = useState("");
   const [hideClient, setHideClient] = useState(true);
@@ -86,22 +74,23 @@ const PaymentModal = ({ isOpen, onClose }) => {
     return { total, totalDiscount };
   }, [cart, client]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const handleCreateSaleRef = useRef(null);
+
   useEffect(() => {
     const handleShortcut = (event) => {
       if (event.ctrlKey && event.key === "g") {
         event.preventDefault();
-        handleCreateSale();
+        handleCreateSaleRef.current?.();
       }
       if (event.ctrlKey && event.key === "h") {
         event.preventDefault();
-        handleCreateSale(true);
+        handleCreateSaleRef.current?.(true);
       }
     };
   
     window.addEventListener("keydown", handleShortcut);
     return () => window.removeEventListener("keydown", handleShortcut);
-  }, [payment]); // 👈 SOLO UNA VEZ
+  }, []);
 
 
   useEffect(() => {
@@ -140,7 +129,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
           ? { [value]: totalDiscount }
           : {
               ...paymentMethods.methods,
-              [value]: paymentMethods.methods[value] ? 0 : totalDiscount,
+              [value]: paymentMethods.methods[value] ? 0 : 0.01,
             };
 
       if (!("EF" in updatedMethods)) {
@@ -246,6 +235,8 @@ const PaymentModal = ({ isOpen, onClose }) => {
       setIsLoading(false);
     }
   };
+
+  handleCreateSaleRef.current = handleCreateSale;
 
   const handlePaidWithChange = (e) => {
     let value = Number(e.target.value);
@@ -430,11 +421,27 @@ const PaymentModal = ({ isOpen, onClose }) => {
                   <TextField
                     fullWidth
                     size="small"
-                    label="Referencia"
+                    label="Referencia de pago"
                     type="text"
+                    color={referencePayment === "" ? "error" : "primary"}
+                    focused={referencePayment === ""}
                     value={referencePayment}
                     onChange={(e) => setReferencePayment(e.target.value)}
                     InputLabelProps={{ shrink: true }}
+                    sx={{
+                      animation: 'fadeIn 0.3s ease',
+                      '@keyframes fadeIn': {
+                        from: { opacity: 0, transform: 'translateX(-8px)' },
+                        to: { opacity: 1, transform: 'translateX(0)' },
+                      },
+                      ...(referencePayment === "" && {
+                        '& .MuiOutlinedInput-root': {
+                          '& fieldset': { borderColor: 'rgba(0,0,0,0.23)' },
+                          '&:hover fieldset': { borderColor: 'rgba(0,0,0,0.87)' },
+                          '&.Mui-focused fieldset': { borderColor: 'rgba(0,0,0,0.23)' },
+                        },
+                      }),
+                    }}
                   />
                 ) : (
                   <TextField
@@ -488,6 +495,10 @@ const PaymentModal = ({ isOpen, onClose }) => {
                               (movementType === "apartado" && method === "EF") ||
                               paymentMethods.methods[method] > 0
                             }
+                            disabled={
+                              (method === "TR" && paymentMethods.methods.TA > 0) ||
+                              (method === "TA" && paymentMethods.methods.TR > 0)
+                            }
                             onChange={handleChangePayments}
                             value={method}
                             name="paymentMethod"
@@ -507,24 +518,37 @@ const PaymentModal = ({ isOpen, onClose }) => {
               </Grid>
 
               <Grid item xs={12} md={3}>
-                <FormLabel>Montos:</FormLabel>
-                {["EF", "TA", "TR"].map((method) => (
-                  <div key={method}>
-                    {paymentMethods.type === "checkbox" &&
-                      paymentMethods.methods[method] > 0 && (
-                        <TextField
-                          size="small"
-                          type="number"
-                          placeholder="$"
-                          fullWidth
-                          onChange={(e) =>
-                            handlePaymentValueChange(method, e.target.value)
-                          }
-                          sx={{ mb: 1 }}
-                        />
-                      )}
-                  </div>
-                ))}
+                {paymentMethods.type === "checkbox" && (
+                  <>
+                    <FormLabel>Montos:</FormLabel>
+                    {["EF", "TA", "TR"].map((method, index) => (
+                      <div key={method} style={{ marginTop: index === 0 ? 6 : 0 }}>
+                        {paymentMethods.methods[method] > 0 ? (
+                          <TextField
+                            size="small"
+                            type="number"
+                            placeholder="$"
+                            fullWidth
+                            onChange={(e) =>
+                              handlePaymentValueChange(method, e.target.value)
+                            }
+                            sx={{
+                              mb: 0.5,
+                              '& .MuiInputBase-root': { height: 30 },
+                              animation: 'fadeIn 0.3s ease',
+                              '@keyframes fadeIn': {
+                                from: { opacity: 0, transform: 'translateX(-8px)' },
+                                to: { opacity: 1, transform: 'translateX(0)' },
+                              },
+                            }}
+                          />
+                        ) : (
+                          <div style={{ height: 30, marginBottom: 4 }} />
+                        )}
+                      </div>
+                    ))}
+                  </>
+                )}
               </Grid>
 
               <Grid item xs={12} md={3}>

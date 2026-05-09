@@ -1,6 +1,7 @@
 import { logger } from "../../../utils/logger";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { selectCart, selectMovementType } from "../../../redux/cart/selectors";
 import SimpleTable from "../../ui/SimpleTable/SimpleTable";
 import {
   cleanCart,
@@ -15,11 +16,12 @@ import PaymentModal from "../../sales/PaymentModal/PaymentModal";
 import StockModal from "../StockModal/StockModal";
 import { getStores } from "../../../api/stores";
 import { confirmTransfers, createDistribution } from "../../../api/transfers";
-import { showSuccess, showError } from "../../../utils/alerts";
+import { showSuccess, showError, showWarning } from "../../../utils/alerts";
 import { addProducts, getStockOtherStores } from "../../../api/products";
 import { getUserData } from "../../../api/utils";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { useModal } from "../../../hooks/useModal";
+import { useAvailableStock } from "../../../hooks/useAvailableStock";
 import { Grid, Select, MenuItem } from "@mui/material";
 import PaymentIcon from "@mui/icons-material/Payment";
 import SendIcon from "@mui/icons-material/Send";
@@ -39,30 +41,10 @@ const Cart = ({ searchInputRef }) => {
   const lastQtyRef = useRef(null);
   const prevCartLenRef = useRef(0);
   
-  const { carts, activeCartId } = useSelector((state) => state.multiCartReducer);
+  const { getAvailableStock } = useAvailableStock();
   
-  // Usar multiCartReducer en lugar de cartReducer
-  const cart = useSelector((state) => {
-    const { carts, activeCartId } = state.multiCartReducer;
-    const activeCart = carts?.find(c => c.id === activeCartId) || carts?.[0];
-    return activeCart?.cart || [];
-  });
-  
-  const movementType = useSelector((state) => {
-    const { carts, activeCartId } = state.multiCartReducer;
-    const activeCart = carts?.find(c => c.id === activeCartId) || carts?.[0];
-    return activeCart?.movementType || "venta";
-  });
-  
-  // Calcular stock disponible considerando todos los carritos
-  const getAvailableStock = (productId, productStock) => {
-    const reservedInOtherCarts = carts.reduce((total, cart) => {
-      if (cart.id === activeCartId) return total;
-      const item = cart.cart.find(item => item.id === productId);
-      return total + (item ? item.quantity : 0);
-    }, 0);
-    return productStock - reservedInOtherCarts;
-  };
+  const cart = useSelector(selectCart);
+  const movementType = useSelector(selectMovementType);
 
   // Auto-focus cantidad del último producto agregado en distribución
   useEffect(() => {
@@ -87,6 +69,7 @@ const Cart = ({ searchInputRef }) => {
     };
     window.addEventListener("keydown", handleShortcut);
     return () => window.removeEventListener("keydown", handleShortcut);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);
 
   const handleDestinationStoreChange = (event) => {
@@ -159,7 +142,7 @@ const Cart = ({ searchInputRef }) => {
     const availableStock = movementType === "agregar" ? Infinity : getAvailableStock(product.id, stockLimit);
     
     if (newQuantity > availableStock) {
-      stockModal.open(product);
+      showWarning("Stock no disponible", `"${product.product?.name || product.name}" está reservado en otros carritos`);
       return;
     }
     
@@ -275,8 +258,12 @@ const Cart = ({ searchInputRef }) => {
     { name: "Stock", field: "stock", selector: (row) => row.available_stock },
   ];
 
+  const handleStockWarning = (row) => {
+    showWarning("Stock no disponible", `"${row.product.name}" está reservado en otros carritos`);
+  };
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const saleColumns = useMemo(() => getSaleColumns(handleQuantityChangeToCart, handleRemoveFromCart, handleChangePrice, movementType, getAvailableStock), [movementType]);
+  const saleColumns = useMemo(() => getSaleColumns(handleQuantityChangeToCart, handleRemoveFromCart, handleChangePrice, movementType, getAvailableStock, handleStockWarning), [movementType, getAvailableStock]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const transferColumns = useMemo(() => getTransferColumns(handleQuantityChangeToCart, handleRemoveFromCart, getAvailableStock), []);
   // eslint-disable-next-line react-hooks/exhaustive-deps

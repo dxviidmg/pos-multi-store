@@ -1,19 +1,13 @@
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { selectCart } from "../redux/cart/selectors";
 import { addToCart, countStockOtherStores } from "../redux/cart/cartActions";
 import { getStockOtherStores } from "../api/products";
 import { showWarning } from "../utils/alerts";
 
 export const useCartActions = (getAvailableStock, movementType, keepListOpen, setData, setQuery) => {
   const dispatch = useDispatch();
-  // eslint-disable-next-line no-unused-vars
-  const { carts, activeCartId } = useSelector((state) => state.multiCartReducer);
-  
-  const cart = useSelector((state) => {
-    const { carts, activeCartId } = state.multiCartReducer;
-    const activeCart = carts?.find(c => c.id === activeCartId) || carts?.[0];
-    return activeCart?.cart || [];
-  });
+  const cart = useSelector(selectCart);
 
   const handleAddToCartIfAvailable = useCallback((storeProduct, stockModal) => {
     const existingProductIndex = cart.findIndex(

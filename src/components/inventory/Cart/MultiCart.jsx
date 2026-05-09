@@ -1,5 +1,6 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { selectMovementType } from "../../../redux/cart/selectors";
 import { Tabs, Tab, IconButton, Box } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
@@ -9,12 +10,7 @@ import { createNewCart, switchCart, closeCart } from "../../../redux/cart/multiC
 const MultiCart = ({ searchInputRef }) => {
   const dispatch = useDispatch();
   const { carts, activeCartId } = useSelector((state) => state.multiCartReducer);
-  
-  const movementType = useSelector((state) => {
-    const { carts, activeCartId } = state.multiCartReducer;
-    const activeCart = carts?.find(c => c.id === activeCartId) || carts?.[0];
-    return activeCart?.movementType || "venta";
-  });
+  const movementType = useSelector(selectMovementType);
 
   const handleTabChange = (event, newValue) => {
     if (newValue === "add") {

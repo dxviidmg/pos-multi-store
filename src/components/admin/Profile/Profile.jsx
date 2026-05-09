@@ -58,9 +58,9 @@ const Profile = () => {
   const [savingPassword, setSavingPassword] = useState(false);
   const [message, setMessage] = useState(null);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     fetchData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchData = async () => {

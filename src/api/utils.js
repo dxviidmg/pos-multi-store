@@ -1,29 +1,17 @@
 /**
- * Get user data from localStorage
+ * Get user data from localStorage (cached)
  * @returns {Object|null} User object with token and store_id
  */
-export const getUserData = () => {
-  const user = localStorage.getItem("user");
-  return user ? JSON.parse(user) : null;
-};
+let _userCache = null;
+let _userRaw = null;
 
-/**
- * Build request headers with authentication
- * @param {boolean} isMultipart - Whether request is multipart/form-data
- * @returns {Object} Headers object
- */
-export const getHeaders = (isMultipart = false) => {
-  const user = getUserData();
-  if (!user) {
-    throw new Error('User not authenticated');
+export const getUserData = () => {
+  const raw = localStorage.getItem("user");
+  if (raw !== _userRaw) {
+    _userRaw = raw;
+    _userCache = raw ? JSON.parse(raw) : null;
   }
-  
-  const headers = {
-    "Content-Type": isMultipart ? "multipart/form-data" : "application/json",
-    "Authorization": `Token ${user.token}`,
-  };
-  if (user.store_id) headers["store-id"] = user.store_id;
-  return headers;
+  return _userCache;
 };
 
 /**
