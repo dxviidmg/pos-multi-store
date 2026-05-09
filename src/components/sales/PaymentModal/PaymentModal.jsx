@@ -421,11 +421,18 @@ const PaymentModal = ({ isOpen, onClose }) => {
                   <TextField
                     fullWidth
                     size="small"
-                    label="Referencia de la transacción"
+                    label="Referencia de pago"
                     type="text"
                     value={referencePayment}
                     onChange={(e) => setReferencePayment(e.target.value)}
                     InputLabelProps={{ shrink: true }}
+                    sx={{
+                      animation: 'fadeIn 0.3s ease',
+                      '@keyframes fadeIn': {
+                        from: { opacity: 0, transform: 'translateX(-8px)' },
+                        to: { opacity: 1, transform: 'translateX(0)' },
+                      },
+                    }}
                   />
                 ) : (
                   <TextField
@@ -516,7 +523,14 @@ const PaymentModal = ({ isOpen, onClose }) => {
                             onChange={(e) =>
                               handlePaymentValueChange(method, e.target.value)
                             }
-                            sx={{ mb: 1 }}
+                            sx={{
+                              mb: 1,
+                              animation: 'fadeIn 0.3s ease',
+                              '@keyframes fadeIn': {
+                                from: { opacity: 0, transform: 'translateX(-8px)' },
+                                to: { opacity: 1, transform: 'translateX(0)' },
+                              },
+                            }}
                           />
                         ) : (
                           <div style={{ height: 20, marginBottom: 4 }} />
