@@ -129,7 +129,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
           ? { [value]: totalDiscount }
           : {
               ...paymentMethods.methods,
-              [value]: paymentMethods.methods[value] ? 0 : totalDiscount,
+              [value]: paymentMethods.methods[value] ? 0 : 0.01,
             };
 
       if (!("EF" in updatedMethods)) {
@@ -421,7 +421,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
                   <TextField
                     fullWidth
                     size="small"
-                    label="Referencia"
+                    label="Referencia de la transacción"
                     type="text"
                     value={referencePayment}
                     onChange={(e) => setReferencePayment(e.target.value)}
@@ -479,6 +479,10 @@ const PaymentModal = ({ isOpen, onClose }) => {
                               (movementType === "apartado" && method === "EF") ||
                               paymentMethods.methods[method] > 0
                             }
+                            disabled={
+                              (method === "TR" && paymentMethods.methods.TA > 0) ||
+                              (method === "TA" && paymentMethods.methods.TR > 0)
+                            }
                             onChange={handleChangePayments}
                             value={method}
                             name="paymentMethod"
@@ -498,24 +502,29 @@ const PaymentModal = ({ isOpen, onClose }) => {
               </Grid>
 
               <Grid item xs={12} md={3}>
-                <FormLabel>Montos:</FormLabel>
-                {["EF", "TA", "TR"].map((method) => (
-                  <div key={method}>
-                    {paymentMethods.type === "checkbox" &&
-                      paymentMethods.methods[method] > 0 && (
-                        <TextField
-                          size="small"
-                          type="number"
-                          placeholder="$"
-                          fullWidth
-                          onChange={(e) =>
-                            handlePaymentValueChange(method, e.target.value)
-                          }
-                          sx={{ mb: 1 }}
-                        />
-                      )}
-                  </div>
-                ))}
+                {paymentMethods.type === "checkbox" && (
+                  <>
+                    <FormLabel>Montos:</FormLabel>
+                    {["EF", "TA", "TR"].map((method) => (
+                      <div key={method}>
+                        {paymentMethods.methods[method] > 0 ? (
+                          <TextField
+                            size="small"
+                            type="number"
+                            placeholder="$"
+                            fullWidth
+                            onChange={(e) =>
+                              handlePaymentValueChange(method, e.target.value)
+                            }
+                            sx={{ mb: 1 }}
+                          />
+                        ) : (
+                          <div style={{ height: 20, marginBottom: 4 }} />
+                        )}
+                      </div>
+                    ))}
+                  </>
+                )}
               </Grid>
 
               <Grid item xs={12} md={3}>
