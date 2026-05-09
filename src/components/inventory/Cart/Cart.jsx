@@ -16,7 +16,7 @@ import PaymentModal from "../../sales/PaymentModal/PaymentModal";
 import StockModal from "../StockModal/StockModal";
 import { getStores } from "../../../api/stores";
 import { confirmTransfers, createDistribution } from "../../../api/transfers";
-import { showSuccess, showError } from "../../../utils/alerts";
+import { showSuccess, showError, showWarning } from "../../../utils/alerts";
 import { addProducts, getStockOtherStores } from "../../../api/products";
 import { getUserData } from "../../../api/utils";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
@@ -142,7 +142,7 @@ const Cart = ({ searchInputRef }) => {
     const availableStock = movementType === "agregar" ? Infinity : getAvailableStock(product.id, stockLimit);
     
     if (newQuantity > availableStock) {
-      stockModal.open(product);
+      showWarning("Stock no disponible", `"${product.product?.name || product.name}" está reservado en otros carritos`);
       return;
     }
     
@@ -258,8 +258,12 @@ const Cart = ({ searchInputRef }) => {
     { name: "Stock", field: "stock", selector: (row) => row.available_stock },
   ];
 
+  const handleStockWarning = (row) => {
+    showWarning("Stock no disponible", `"${row.product.name}" está reservado en otros carritos`);
+  };
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const saleColumns = useMemo(() => getSaleColumns(handleQuantityChangeToCart, handleRemoveFromCart, handleChangePrice, movementType, getAvailableStock), [movementType]);
+  const saleColumns = useMemo(() => getSaleColumns(handleQuantityChangeToCart, handleRemoveFromCart, handleChangePrice, movementType, getAvailableStock, handleStockWarning), [movementType, getAvailableStock]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const transferColumns = useMemo(() => getTransferColumns(handleQuantityChangeToCart, handleRemoveFromCart, getAvailableStock), []);
   // eslint-disable-next-line react-hooks/exhaustive-deps
