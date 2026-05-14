@@ -321,7 +321,14 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
           { label: "Transacciones", href: "/auditoria-transacciones/" },
         ],
       },
-      { label: "Mensualidades", href: "/pagos/" },
+
+      {
+        label: "Facturación",
+        dropdown: [
+          { label: "Mi Plan Actual", href: "/mi-plan-actual/" },
+          { label: "Historial de pagos", href: "/pagos/" },
+        ],
+      },
       { label: "Servicios", href: "/servicios/" },
       { label: "Sincronizar", href: "/sincronizar/" },
     ],
