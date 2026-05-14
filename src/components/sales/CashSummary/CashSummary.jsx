@@ -7,7 +7,7 @@ import { getCashSummary } from "../../../api/sales";
 import { getCashFlow } from "../../../api/cashflow";
 import { getDuplicateSales } from "../../../api/notifications";
 import { showAlert } from "../../../utils/alerts";
-import CashFlowModal from "../../finance/CashFlowModal/CashFlowModal";
+import CashFlowModal from "../../cashflow/CashFlowModal/CashFlowModal";
 import { useModal } from "../../../hooks/useModal";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { Grid, TextField, Box, Typography, Stack } from "@mui/material";
