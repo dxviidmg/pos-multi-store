@@ -80,17 +80,13 @@ const PaymentModal = ({ isOpen, onClose }) => {
     const handleShortcut = (event) => {
       if (event.ctrlKey && event.key === "g") {
         event.preventDefault();
-        handleCreateSaleRef.current?.();
-      }
-      if (event.ctrlKey && event.key === "h") {
-        event.preventDefault();
-        handleCreateSaleRef.current?.(true);
+        handleCreateSaleRef.current?.(!!printer);
       }
     };
   
     window.addEventListener("keydown", handleShortcut);
     return () => window.removeEventListener("keydown", handleShortcut);
-  }, []);
+  }, [printer]);
 
 
   useEffect(() => {
@@ -460,7 +456,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
 
           <Grid item xs={12} className="card">
             <Grid container spacing={2}>
-              <Grid item xs={12} md={3}>
+              <Grid item xs={12} md={paymentMethods.type === "checkbox" ? 3 : 4}>
                 <FormLabel>Tipo de pago:</FormLabel>
                 <RadioGroup
                   value={paymentMethods.type}
@@ -472,22 +468,20 @@ const PaymentModal = ({ isOpen, onClose }) => {
                 </RadioGroup>
               </Grid>
 
-              <Grid item xs={12} md={3}>
+              <Grid item xs={12} md={paymentMethods.type === "checkbox" ? 3 : 4}>
                 <FormLabel>Medios de pago:</FormLabel>
-                <div>
+                <RadioGroup
+                  value={Object.entries(paymentMethods.methods).find(([, v]) => v === totalDiscount)?.[0] || ""}
+                  onChange={handleChangePayments}
+                  name="paymentMethod"
+                >
                   {["EF", "TA", "TR"].map((method) => (
                     <FormControlLabel
                       key={method}
-                      sx={{ display: 'block' }}
+                      value={method}
                       control={
                         paymentMethods.type === "radio" ? (
-                          <Radio
-                            size="small"
-                            checked={paymentMethods.methods[method] === totalDiscount}
-                            onChange={handleChangePayments}
-                            value={method}
-                            name="paymentMethod"
-                          />
+                          <Radio size="small" />
                         ) : (
                           <Checkbox
                             size="small"
@@ -514,64 +508,40 @@ const PaymentModal = ({ isOpen, onClose }) => {
                       }
                     />
                   ))}
-                </div>
+                </RadioGroup>
               </Grid>
 
-              <Grid item xs={12} md={3}>
-                {paymentMethods.type === "checkbox" && (
-                  <>
-                    <FormLabel>Montos:</FormLabel>
-                    {["EF", "TA", "TR"].map((method, index) => (
-                      <div key={method} style={{ marginTop: index === 0 ? 6 : 0 }}>
-                        {paymentMethods.methods[method] > 0 ? (
-                          <TextField
-                            size="small"
-                            type="number"
-                            placeholder="$"
-                            fullWidth
-                            onChange={(e) =>
-                              handlePaymentValueChange(method, e.target.value)
-                            }
-                            sx={{
-                              mb: 0.5,
-                              '& .MuiInputBase-root': { height: 30 },
-                              animation: 'fadeIn 0.3s ease',
-                              '@keyframes fadeIn': {
-                                from: { opacity: 0, transform: 'translateX(-8px)' },
-                                to: { opacity: 1, transform: 'translateX(0)' },
-                              },
-                            }}
-                          />
-                        ) : (
-                          <div style={{ height: 30, marginBottom: 4 }} />
-                        )}
-                      </div>
-                    ))}
-                  </>
-                )}
-              </Grid>
+              {paymentMethods.type === "checkbox" && (
+                <Grid item xs={12} md={2}>
+                  <FormLabel>Cantidades:</FormLabel>
+                  <RadioGroup>
+                  {["EF", "TA", "TR"].map((method, index) => (
+                      <TextField
+                        key={method}
+                        size="small"
+                        type="number"
+                        placeholder={method === "EF" ? "Efectivo" : method === "TA" ? "Tarjeta" : "Transferencia"}
+                        fullWidth
+                        disabled={!paymentMethods.methods[method]}
+                        onChange={(e) => handlePaymentValueChange(method, e.target.value)}
+                        sx={{ mt: 1, '& .MuiInputBase-root': { height: 28 }, '& .MuiInputBase-input': { padding: '4px 8px', textAlign: 'center' }, visibility: paymentMethods.methods[method] > 0 ? 'visible' : 'hidden' }}
+                      />
+                  ))}
+                  </RadioGroup>
+                </Grid>
+              )}
 
-              <Grid item xs={12} md={3}>
+              <Grid item xs={12} md={4}>
+                <FormLabel>Con impresión de ticket</FormLabel>
                 <CustomButton
                   disabled={handleDisableButton()}
-                  fullWidth={true}
-                  onClick={(e) => handleCreateSale()}
+                  fullWidth
+                  onClick={() => handleCreateSale(!!printer)}
                   startIcon={<MoneyOffIcon />}
-                  sx={{ mb: 2 }}
                 >
-                  Cobrar sin ticket
-                  (Ctrl + G)
+                  Cobrar (Ctrl + G)
                 </CustomButton>
-
-                <CustomButton
-                  disabled={handleDisableButton()}
-                  fullWidth={true}
-                  onClick={(e) => handleCreateSale(true)}
-                  startIcon={<ReceiptIcon />}
-                >
-                  Cobrar con ticket
-                  (Ctrl + H)
-                </CustomButton>
+                
               </Grid>
             </Grid>
           </Grid>
