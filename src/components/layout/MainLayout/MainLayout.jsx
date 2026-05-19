@@ -251,6 +251,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
         hidden: user.role === "seller",
       },
       { label: "Ventas", href: "/ventas/", hidden: user.role !== "seller" },
+      { label: "Movimientos en caja", href: "/movimientos-caja/", hidden: user.role !== "seller" },
       { label: "Traspasos", href: "/traspasos/", hidden: user.role !== "seller" },
       { label: "Historial de stock", href: "/historial-stock/", hidden: user.role === "seller" },
     ],
