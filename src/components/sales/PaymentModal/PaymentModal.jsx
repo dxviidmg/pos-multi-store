@@ -512,7 +512,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
               </Grid>
 
               {paymentMethods.type === "checkbox" && (
-                <Grid item xs={12} md={2}>
+                <Grid item xs={12} md={3}>
                   <FormLabel>Cantidades:</FormLabel>
                   <RadioGroup>
                   {["EF", "TA", "TR"].map((method, index) => (
@@ -531,7 +531,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
                 </Grid>
               )}
 
-              <Grid item xs={12} md={4}>
+              <Grid item xs={12} md={paymentMethods.type === "checkbox" ? 3 : 4}>
                 <FormLabel sx={{ display: 'block', textAlign: 'center' }}>{printer ? 'Con impresión de ticket' : 'Sin impresión de ticket'}</FormLabel>
                 <CustomButton
                   disabled={handleDisableButton()}
@@ -540,7 +540,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
                   startIcon={<MoneyOffIcon />}
                   sx={{ mt: 1 }}
                 >
-                  Cobrar (Ctrl + G)
+                  Cobrar<br />(Ctrl + G)
                 </CustomButton>
                 
               </Grid>
