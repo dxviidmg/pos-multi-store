@@ -9,11 +9,12 @@ import { createSale, getSale } from "../../../api/sales";
 import { showSuccess, showError } from "../../../utils/alerts";
 import { getUserData } from "../../../api/utils";
 import { handlePrintTicket } from "../../../utils/utils";
+import { testPrinterConnection } from "../../../api/printers";
 import SearchClient from "../../clients/SearchClient/SearchClient";
 import ClientSelected from "../../clients/ClientSelected/ClientSelected";
 import SearchIcon from "@mui/icons-material/Search";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
-import { Grid, TextField, Radio, RadioGroup, FormControlLabel, Checkbox, FormLabel, Alert } from "@mui/material";
+import { Grid, TextField, Radio, RadioGroup, FormControlLabel, Checkbox, FormLabel, Alert, Chip } from "@mui/material";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import MoneyOffIcon from "@mui/icons-material/MoneyOff";
@@ -53,14 +54,32 @@ const PaymentModal = ({ isOpen, onClose }) => {
 
   const [isLoading, setIsLoading] = useState(false);
   const isSubmittingRef = useRef(false);
+  const [printerConnected, setPrinterConnected] = useState(null);
+  const [printerError, setPrinterError] = useState(null);
 
   useEffect(() => {
     if (isOpen) {
       setTimeout(() => {
         inputPaymentRef.current?.focus();
       }, 100);
+
+      // Test printer connection if printer exists
+      if (printer) {
+        testPrinterConnection()
+          .then((result) => {
+            setPrinterConnected(result.connected);
+            setPrinterError(result.error || null);
+          })
+          .catch(() => {
+            setPrinterConnected(false);
+            setPrinterError("Error de conexión");
+          });
+      } else {
+        setPrinterConnected(null);
+        setPrinterError(null);
+      }
     }
-  }, [isOpen]);
+  }, [isOpen, printer]);
 
   const { total, totalDiscount } = useMemo(() => {
     const total = roundUpCustom(
@@ -542,7 +561,15 @@ const PaymentModal = ({ isOpen, onClose }) => {
                 >
                   Cobrar<br />(Ctrl + G)
                 </CustomButton>
-                
+                {printer && (
+                  <Chip
+                    label={printerError || (printerConnected ? "Impresora conectada" : "Impresora desconectada")}
+                    color={printerConnected ? "success" : "error"}
+                    variant="filled"
+                    size="small"
+                    sx={{ mt: 1, width: '100%' }}
+                  />
+                )}
               </Grid>
             </Grid>
           </Grid>
