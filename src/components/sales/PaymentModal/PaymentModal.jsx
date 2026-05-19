@@ -532,12 +532,13 @@ const PaymentModal = ({ isOpen, onClose }) => {
               )}
 
               <Grid item xs={12} md={4}>
-                <FormLabel>Con impresión de ticket</FormLabel>
+                <FormLabel sx={{ display: 'block', textAlign: 'center' }}>{printer ? 'Con impresión de ticket' : 'Sin impresión de ticket'}</FormLabel>
                 <CustomButton
                   disabled={handleDisableButton()}
                   fullWidth
                   onClick={() => handleCreateSale(!!printer)}
                   startIcon={<MoneyOffIcon />}
+                  sx={{ mt: 1 }}
                 >
                   Cobrar (Ctrl + G)
                 </CustomButton>
