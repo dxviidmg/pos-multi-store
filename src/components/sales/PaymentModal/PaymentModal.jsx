@@ -99,13 +99,15 @@ const PaymentModal = ({ isOpen, onClose }) => {
     const handleShortcut = (event) => {
       if (event.ctrlKey && event.key === "g") {
         event.preventDefault();
-        handleCreateSaleRef.current?.(!!printer);
+        if (isOpen && (movementType === "venta" || movementType === "apartado")) {
+          handleCreateSaleRef.current?.(!!printer);
+        }
       }
     };
   
     window.addEventListener("keydown", handleShortcut);
     return () => window.removeEventListener("keydown", handleShortcut);
-  }, [printer]);
+  }, [printer, isOpen, movementType]);
 
 
   useEffect(() => {
