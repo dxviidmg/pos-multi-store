@@ -18,7 +18,7 @@ import { Grid, TextField, Radio, RadioGroup, FormControlLabel, Checkbox, FormLab
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import MoneyOffIcon from "@mui/icons-material/MoneyOff";
-import ReceiptIcon from "@mui/icons-material/Receipt";
+
 
 function roundUpCustom(value) {
   const intPart = Math.floor(value); // Parte entera
