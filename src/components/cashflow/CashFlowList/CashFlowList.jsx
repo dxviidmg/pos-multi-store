@@ -3,6 +3,7 @@ import DataTable from "../../ui/DataTable/DataTable";
 import CustomButton from "../../ui/Button/Button";
 import { getFormattedDate, formatTimeFromDate } from "../../../utils/utils";
 import { getCashFlow } from "../../../api/cashflow";
+import { getUserData } from "../../../api/utils";
 import CashFlowModal from "../CashFlowModal/CashFlowModal";
 import { useModal } from "../../../hooks/useModal";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
@@ -16,6 +17,8 @@ const CashFlowList = () => {
   const [loading, setLoading] = useState(false);
   const [params, setParams] = useState({ start_date: today, end_date: today });
   const cashFlowModal = useModal();
+  const user = getUserData();
+  const isSeller = user?.role === "seller";
 
   useEffect(() => {
     const fetchData = async () => {
@@ -78,6 +81,7 @@ const CashFlowList = () => {
               name="start_date"
               onChange={handleParamsChange}
               inputProps={{ max: today }}
+              disabled={isSeller}
             />
           </Grid>
           <Grid item xs={12} md={4}>
@@ -90,6 +94,7 @@ const CashFlowList = () => {
               name="end_date"
               onChange={handleParamsChange}
               inputProps={{ max: today }}
+              disabled={isSeller}
             />
           </Grid>
         </Grid>

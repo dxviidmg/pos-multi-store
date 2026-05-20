@@ -14,6 +14,16 @@ import InventoryIcon from "@mui/icons-material/Inventory";
 import DownloadIcon from "@mui/icons-material/Download";
 import InboxIcon from "@mui/icons-material/Inbox";
 
+const DESCRIPTION = "En SmartVenta sabemos que la precisión en tu operación diaria marca la diferencia. Aunque las inconsistencias o duplicidades en el stock no son frecuentes, cuando llegan a presentarse estamos atentos para detectarlas y ayudarte a resolverlas de forma rápida y confiable. Porque para nosotros, cuidar tus datos no es solo una función del sistema, es un compromiso con tu tranquilidad y la continuidad de tu negocio.";
+
+const COLUMNS = [
+  { name: "Código", selector: (row) => row.Código },
+  { name: "Producto", selector: (row) => row.Producto },
+  { name: "Marca", selector: (row) => row.Marca },
+  { name: "Stock", selector: (row) => row.Stock, width: 80 },
+  { name: "Tienda", selector: (row) => row.Tienda },
+];
+
 const StockVerificationDashboard = () => {
   const startTask = useCallback(async () => {
     const url = getApiUrl("stock-verification-dashboard");
@@ -25,39 +35,35 @@ const StockVerificationDashboard = () => {
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
-  const calculateKPIs = () => {
+  const products = useMemo(() => data?.store_products?.map(p => ({
+    Código: p.code,
+    Producto: p.product_name,
+    Marca: p.brand,
+    Stock: p.stock,
+    Tienda: p.store_name,
+  })), [data]);
+
+  const kpis = useMemo(() => {
     if (!data?.store_products?.length) return null;
-    const products = data.store_products;
-    const total = products.length;
+    const total = data.store_products.length;
     const totalStores = data.stores?.length || 0;
     const totalStoreProducts = data.total_store_products || 0;
-    const avgPerStore = totalStores > 0 ? Math.round(total / totalStores) : 0;
-    const coverage = totalStoreProducts > 0 ? ((total / totalStoreProducts) * 100).toFixed(1) : 0;
-
-    return { total, totalStoreProducts, avgPerStore, coverage };
-  };
-
-  const kpis = calculateKPIs();
-
-  const handleDownload = () => {
-    const exportData = data?.store_products?.map(p => ({
-      Código: p.code,
-      Producto: p.product_name,
-      Marca: p.brand,
-      Stock: p.stock,
-      Tienda: p.store_name,
-    })) || [];
-    exportToExcel(exportData, 'Inventario a verificar');
-  };
+    return {
+      total,
+      totalStoreProducts,
+      avgPerStore: totalStores > 0 ? Math.round(total / totalStores) : 0,
+      coverage: totalStoreProducts > 0 ? ((total / totalStoreProducts) * 100).toFixed(1) : 0,
+    };
+  }, [data]);
 
   const chartData = useMemo(() => {
     if (!data?.store_products) return null;
-    return {
-      sales: data.store_products.map(p => ({
-        store_name: p.store_name,
-      })),
-    };
+    return { sales: data.store_products.map(p => ({ store_name: p.store_name })) };
   }, [data]);
+
+  const handleDownload = useCallback(() => {
+    exportToExcel(products, "Inventario a verificar");
+  }, [products]);
 
   if (loading) {
     return (
@@ -84,9 +90,7 @@ const StockVerificationDashboard = () => {
       <Box>
         <Box className="card" sx={{ mb: 3 }}>
           <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>Verificación de Stock</Typography>
-          <Typography variant="body2" color="text.secondary">
-            En SmartVenta sabemos que la precisión en tu operación diaria marca la diferencia. Aunque las inconsistencias o duplicidades en el stock no son frecuentes, cuando llegan a presentarse estamos atentos para detectarlas y ayudarte a resolverlas de forma rápida y confiable. Porque para nosotros, cuidar tus datos no es solo una función del sistema, es un compromiso con tu tranquilidad y la continuidad de tu negocio.
-          </Typography>
+          <Typography variant="body2" color="text.secondary">{DESCRIPTION}</Typography>
         </Box>
         <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: 350, gap: 2, opacity: 0.7 }}>
           <InboxIcon sx={{ fontSize: 64, color: "text.secondary" }} />
@@ -100,9 +104,7 @@ const StockVerificationDashboard = () => {
     <Box>
       <Box className="card" sx={{ mb: 3 }}>
         <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>Verificación de Stock</Typography>
-        <Typography variant="body2" color="text.secondary">
-        En SmartVenta sabemos que la precisión en tu operación diaria marca la diferencia. Aunque las inconsistencias o duplicidades en el stock no son frecuentes, cuando llegan a presentarse estamos atentos para detectarlas y ayudarte a resolverlas de forma rápida y confiable. Porque para nosotros, cuidar tus datos no es solo una función del sistema, es un compromiso con tu tranquilidad y la continuidad de tu negocio.
-        </Typography>
+        <Typography variant="body2" color="text.secondary">{DESCRIPTION}</Typography>
       </Box>
 
       <Grid container spacing={3} sx={{ mb: 3 }}>
@@ -115,7 +117,6 @@ const StockVerificationDashboard = () => {
             </Box>
           </Box>
         </Grid>
-
         <Grid item xs={12} sm={6} md={3}>
           <Box className="card" sx={{ height: "100%", mb: 0, display: "flex", alignItems: "center", gap: 2 }}>
             <InventoryIcon sx={{ fontSize: 32, color: "info.main" }} />
@@ -125,7 +126,6 @@ const StockVerificationDashboard = () => {
             </Box>
           </Box>
         </Grid>
-
         <Grid item xs={12} sm={6} md={3}>
           <Box className="card" sx={{ height: "100%", mb: 0, display: "flex", alignItems: "center", gap: 2 }}>
             <StorefrontIcon sx={{ fontSize: 32, color: "primary.main" }} />
@@ -135,7 +135,6 @@ const StockVerificationDashboard = () => {
             </Box>
           </Box>
         </Grid>
-
         <Grid item xs={12} sm={6} md={3}>
           <Box className="card" sx={{ height: "100%", mb: 0, display: "flex", alignItems: "center", gap: 2 }}>
             <InventoryIcon sx={{ fontSize: 32, color: "success.main" }} />
@@ -148,13 +147,9 @@ const StockVerificationDashboard = () => {
       </Grid>
 
       <Grid container spacing={3} sx={{ mb: 3 }}>
-        <Grid item xs={12} md={12}>
+        <Grid item xs={12}>
           <Box className="card" sx={{ height: "100%" }}>
-            {chartData && <DoughnutChart 
-              title="Productos a verificar por tienda" 
-              data={chartData} 
-              dataType="store" 
-            />}
+            {chartData && <DoughnutChart title="Productos a verificar por tienda" data={chartData} dataType="store" />}
           </Box>
         </Grid>
       </Grid>
@@ -162,7 +157,7 @@ const StockVerificationDashboard = () => {
       <Box className="card" sx={{ mb: 0 }}>
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
           <Typography variant="h6" sx={{ fontWeight: 600 }}>Productos a Verificar</Typography>
-          <CustomButton onClick={handleDownload} disabled={!data?.store_products?.length} startIcon={<DownloadIcon />} size="small">
+          <CustomButton onClick={handleDownload} disabled={!products?.length} startIcon={<DownloadIcon />} size="small">
             Descargar
           </CustomButton>
         </Box>
@@ -170,14 +165,8 @@ const StockVerificationDashboard = () => {
           progressPending={loading}
           noDataComponent="Sin productos a verificar"
           searcher={true}
-          data={data?.store_products || []}
-          columns={[
-            { name: "Código", selector: (row) => row.code },
-            { name: "Producto", selector: (row) => row.product_name },
-            { name: "Marca", selector: (row) => row.brand },
-            { name: "Stock", selector: (row) => row.stock, width: 80 },
-            { name: "Tienda", selector: (row) => row.store_name },
-          ]}
+          data={products || []}
+          columns={COLUMNS}
         />
       </Box>
     </Box>

@@ -64,13 +64,15 @@ const Cart = ({ searchInputRef }) => {
     const handleShortcut = (event) => {
       if (event.ctrlKey && (event.key === "p" || event.key === "P")) {
         event.preventDefault();
-        paymentModal.open();
+        if (movementType === "venta" || movementType === "apartado") {
+          paymentModal.open();
+        }
       }
     };
     window.addEventListener("keydown", handleShortcut);
     return () => window.removeEventListener("keydown", handleShortcut);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch]);
+  }, [movementType]);
 
   const handleDestinationStoreChange = (event) => {
     setSelectedStore(event.target.value);
