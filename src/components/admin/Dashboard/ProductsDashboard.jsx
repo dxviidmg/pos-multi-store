@@ -12,6 +12,19 @@ import httpClient from "../../../api/httpClient";
 import { getApiUrl, buildUrlWithParams } from "../../../api/utils";
 import InboxIcon from "@mui/icons-material/Inbox";
 
+const TOP_BRANDS_COLUMNS = [
+  { name: "Marca", selector: (row) => row.name },
+  { name: "Productos", selector: (row) => row.product_count },
+  { name: "% de ventas", selector: (row) => `${row.percentage}%` },
+];
+
+const TOP_PRODUCTS_COLUMNS = [
+  { name: "Código", selector: (row) => row.code },
+  { name: "Nombre", selector: (row) => row.name },
+  { name: "Marca", selector: (row) => row.brand_name },
+  { name: "% de ventas", selector: (row) => `${row.percentage}%` },
+];
+
 const ProductsDashboard = () => {
   const [year, setYear] = useState(new Date().getFullYear());
   const [month, setMonth] = useState(new Date().getMonth() + 1);
@@ -93,11 +106,7 @@ const ProductsDashboard = () => {
             <SimpleTable
               noDataComponent="Sin marcas"
               data={top_brands}
-              columns={[
-                { name: "Marca", selector: (row) => row.name },
-                { name: "Productos", selector: (row) => row.product_count },
-                { name: "% de ventas", selector: (row) => `${row.percentage}%` },
-              ]}
+              columns={TOP_BRANDS_COLUMNS}
             />
           </Box>
         </Grid>
@@ -107,12 +116,7 @@ const ProductsDashboard = () => {
             <SimpleTable
               noDataComponent="Sin productos"
               data={top_products}
-              columns={[
-                { name: "Código", selector: (row) => row.code },
-                { name: "Nombre", selector: (row) => row.name },
-                { name: "Marca", selector: (row) => row.brand_name },
-                { name: "% de ventas", selector: (row) => `${row.percentage}%` },
-              ]}
+              columns={TOP_PRODUCTS_COLUMNS}
             />
           </Box>
         </Grid>
@@ -122,12 +126,7 @@ const ProductsDashboard = () => {
             <SimpleTable
               noDataComponent="Sin productos"
               data={worst_products}
-              columns={[
-                { name: "Código", selector: (row) => row.code },
-                { name: "Nombre", selector: (row) => row.name },
-                { name: "Marca", selector: (row) => row.brand_name },
-                { name: "% de ventas", selector: (row) => `${row.percentage}%` },
-              ]}
+              columns={TOP_PRODUCTS_COLUMNS}
             />
           </Box>
         </Grid>
