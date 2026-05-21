@@ -167,7 +167,7 @@ const SearchProduct = ({ searchInputRef }) => {
       }} />
 
       <PageHeader title="Búsqueda de productos">
-        {stockVerificationSnackbar.open && userData.role !== "seller" && (
+        {stockVerificationSnackbar.open && userData.role !== "seller" && (storeType === "T" || storeType === "A") && (
           <Alert 
             severity="success" 
             variant="filled" 
