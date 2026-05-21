@@ -211,17 +211,21 @@ export const getDistributionColumns = (handleQuantityChangeToCart, handleRemoveF
   },
 ];
 
-export const getAddToStockColumns = (handleQuantityChangeToCart, handleRemoveFromCart) => [
+export const getAddToStockColumns = (handleQuantityChangeToCart, handleRemoveFromCart, cart, searchInputRef, lastQtyRef) => [
   ...commonColumns,
   {
     name: "Cantidad",
     width: 100,
-    selector: (row) => (
+    selector: (row, index) => (
       <TextField size="small" type="number" sx={{ width: 80 }}
+        inputRef={index === cart.length - 1 ? lastQtyRef : undefined}
         value={row.quantity}
         onChange={(e) => handleQuantityChangeToCart(e, row)}
         onKeyDown={(e) => {
-          if (e.key === "ArrowUp") {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            searchInputRef?.current?.focus();
+          } else if (e.key === "ArrowUp") {
             e.preventDefault();
             const newValue = row.quantity + 1;
             handleQuantityChangeToCart({ target: { value: newValue } }, row);
