@@ -46,9 +46,9 @@ const Cart = ({ searchInputRef }) => {
   const cart = useSelector(selectCart);
   const movementType = useSelector(selectMovementType);
 
-  // Auto-focus cantidad del último producto agregado en distribución
+  // Auto-focus cantidad del último producto agregado en distribución o agregar inventario
   useEffect(() => {
-    if (movementType === "distribucion" && cart.length > prevCartLenRef.current) {
+    if ((movementType === "distribucion" || movementType === "agregar") && cart.length > prevCartLenRef.current) {
       setTimeout(() => {
         if (lastQtyRef.current) {
           lastQtyRef.current.focus();
@@ -271,7 +271,7 @@ const Cart = ({ searchInputRef }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const distributionColumns = useMemo(() => getDistributionColumns(handleQuantityChangeToCart, handleRemoveFromCart, handleStockOtherStores, getAvailableStock, cart, searchInputRef, lastQtyRef), [cart]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const addToStockColumns = useMemo(() => getAddToStockColumns(handleQuantityChangeToCart, handleRemoveFromCart), [movementType]);
+  const addToStockColumns = useMemo(() => getAddToStockColumns(handleQuantityChangeToCart, handleRemoveFromCart, cart, searchInputRef, lastQtyRef), [cart]);
 
   const getColumns = () => {
     switch (movementType) {

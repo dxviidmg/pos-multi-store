@@ -64,14 +64,14 @@ export const useCartActions = (getAvailableStock, movementType, keepListOpen, se
       }
     }
 
-    if (added && storeProduct.requires_stock_verification) {
-      return { productName: storeProduct.product?.name || "Producto", productCode: storeProduct.product?.code || "" };
-    }
-
     if (added && movementType === "distribucion") {
       getStockOtherStores(storeProduct.id).then((response) => {
         dispatch(countStockOtherStores(storeProduct, response.data));
       });
+    }
+
+    if (added && storeProduct.requires_stock_verification) {
+      return { productName: storeProduct.product?.name || "Producto", productCode: storeProduct.product?.code || "" };
     }
 
     return null;

@@ -86,7 +86,8 @@ const StoreList = () => {
     });
 
     window.dispatchEvent(new Event("store-changed"));
-    navigate("/vender/", { replace: true });
+    const route = store_type === "A" ? "/distribuir/" : "/vender/";
+    navigate(route, { replace: true });
   };
 
   const handleShowInvestment = () => {
