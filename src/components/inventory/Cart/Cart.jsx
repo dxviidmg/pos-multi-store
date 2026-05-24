@@ -45,6 +45,7 @@ const Cart = ({ searchInputRef }) => {
   
   const cart = useSelector(selectCart);
   const movementType = useSelector(selectMovementType);
+  const { carts } = useSelector((state) => state.multiCartReducer);
 
   // Auto-focus cantidad del último producto agregado en distribución o agregar inventario
   useEffect(() => {
@@ -143,7 +144,7 @@ const Cart = ({ searchInputRef }) => {
     // Verificar stock disponible considerando otros carritos
     const availableStock = movementType === "agregar" ? Infinity : getAvailableStock(product.id, stockLimit);
     
-    if (newQuantity > availableStock) {
+    if (Object.keys(carts).length > 1 && newQuantity > availableStock) {
       showWarning("Stock no disponible", `"${product.product?.name || product.name}" está reservado en otros carritos`);
       return;
     }
