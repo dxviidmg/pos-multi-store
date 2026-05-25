@@ -44,8 +44,9 @@ const PriceLogsList = () => {
 
   const handleDownload = () => {
     const data = rows.map((row) => {
-      const obj = { Código: row.product_code, Marca: row.brand_name, Producto: row.product_name, Fecha: getFormattedDateTime(row.date), Usuario: row.user };
+      const obj = { Código: row.product_code, Marca: row.brand_name, Producto: row.product_name, Fecha: getFormattedDateTime(row.date) };
       fields.forEach(([field, display]) => { obj[display] = row[field] || "-"; });
+      obj["Usuario"] = row.user;
       return obj;
     });
     exportToExcel(data, "Historial cambio de precios");
