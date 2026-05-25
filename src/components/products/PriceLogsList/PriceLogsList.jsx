@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import DataTable from "../../ui/DataTable/DataTable";
 import { useQuery } from "@tanstack/react-query";
 import { getFormattedDateTime, exportToExcel } from "../../../utils/utils";
@@ -17,10 +17,14 @@ const fetchPriceLogs = async (months) => {
 const PriceLogsList = () => {
   const [months, setMonths] = useState(1);
 
-  const { data: logs = [], isLoading } = useQuery({
+  const { data: logs = [], isLoading, refetch } = useQuery({
     queryKey: ["price-logs-all", months],
     queryFn: () => fetchPriceLogs(months),
   });
+
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
 
   const rows = useMemo(() => {
     const map = {};
