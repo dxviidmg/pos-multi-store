@@ -1,11 +1,13 @@
 import React, { useMemo, useState } from "react";
 import DataTable from "../../ui/DataTable/DataTable";
 import { useQuery } from "@tanstack/react-query";
-import { getFormattedDateTime } from "../../../utils/utils";
+import { getFormattedDateTime, exportToExcel } from "../../../utils/utils";
 import PageHeader from "../../ui/PageHeader";
 import { Grid, TextField } from "@mui/material";
 import httpClient from "../../../api/httpClient";
 import { getApiUrl } from "../../../api/utils";
+import CustomButton from "../../ui/Button/Button";
+import DownloadIcon from "@mui/icons-material/Download";
 
 const fetchPriceLogs = async (months) => {
   const res = await httpClient.get(getApiUrl("product-price-logs"), { params: { months } });
@@ -36,9 +38,22 @@ const PriceLogsList = () => {
     return Object.entries(seen);
   }, [logs]);
 
+  const handleDownload = () => {
+    const data = rows.map((row) => {
+      const obj = { Código: row.product_code, Producto: row.product_name, Fecha: getFormattedDateTime(row.date), Usuario: row.user };
+      fields.forEach(([field, display]) => { obj[display] = row[field] || "-"; });
+      return obj;
+    });
+    exportToExcel(data, "Historial cambio de precios");
+  };
+
   return (
     <Grid item xs={12} className="card">
-      <PageHeader title="Historial de cambio de precios" />
+      <PageHeader title="Historial de cambio de precios">
+        <CustomButton onClick={handleDownload} startIcon={<DownloadIcon />} disabled={rows.length === 0}>
+          Descargar
+        </CustomButton>
+      </PageHeader>
       <TextField
         size="small"
         label="Meses anteriores (iniciar desde cuantos meses atras)"
