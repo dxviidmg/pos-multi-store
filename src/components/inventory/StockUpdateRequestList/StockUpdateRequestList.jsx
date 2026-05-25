@@ -71,7 +71,7 @@ const StockUpdateRequestList = () => {
     <>
       <CustomSpinner isLoading={loading} />
       <Grid item xs={12} className="card">
-        <PageHeader title={"Solicitudes de ajustes " + (user.store_id === null ? "(todas las tiendas)": "(Solo esta tienda)")}  />
+        <PageHeader title={"Solicitudes de ajustes de stock" + (user.store_id === null ? "(todas las tiendas)": "(Solo esta tienda)")}  />
         <DataTable
           progressPending={loading}
           noDataComponent="Sin solicitudes pendientes"
