@@ -26,7 +26,7 @@ const PriceLogsList = () => {
     const map = {};
     logs.forEach((log) => {
       const key = `${log.product}-${log.created_at.slice(0, 16)}`;
-      if (!map[key]) map[key] = { id: key, date: log.created_at, user: log.user_username, product_code: log.product_code, product_name: log.product_name };
+      if (!map[key]) map[key] = { id: key, date: log.created_at, user: log.user_username, product_code: log.product_code, brand_name: log.brand_name, product_name: log.product_name };
       map[key][log.field] = `${log.previous_value} → ${log.new_value}`;
     });
     return Object.values(map);
@@ -40,7 +40,7 @@ const PriceLogsList = () => {
 
   const handleDownload = () => {
     const data = rows.map((row) => {
-      const obj = { Código: row.product_code, Producto: row.product_name, Fecha: getFormattedDateTime(row.date), Usuario: row.user };
+      const obj = { Código: row.product_code, Marca: row.brand_name, Producto: row.product_name, Fecha: getFormattedDateTime(row.date), Usuario: row.user };
       fields.forEach(([field, display]) => { obj[display] = row[field] || "-"; });
       return obj;
     });
@@ -70,6 +70,7 @@ const PriceLogsList = () => {
         data={rows}
         columns={[
           { name: "Código", selector: (row) => row.product_code, sortable: true },
+          { name: "Marca", selector: (row) => row.brand_name, sortable: true },
           { name: "Producto", selector: (row) => row.product_name, sortable: true },
           { name: "Fecha", selector: (row) => getFormattedDateTime(row.date), sortable: true, minWidth: 150 },
           ...fields.map(([field, display]) => ({
