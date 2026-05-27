@@ -35,7 +35,7 @@ export const testPrinterConnection = async () => {
     return { connected: false, error: response.data?.error || "Error de impresora" };
   } catch (error) {
     if (error.code === "ECONNABORTED" || error.code === "ERR_NETWORK" || !error.response) {
-      return { connected: false, error: "Servidor de impresora no iniciado" };
+      return { connected: false, error: "Iniciar servidor de impresora" };
     }
     if (error.response?.status === 503) {
       return { connected: false, error: error.response.data?.error || "Impresora no disponible" };
