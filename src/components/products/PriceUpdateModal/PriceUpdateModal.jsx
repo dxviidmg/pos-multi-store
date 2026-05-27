@@ -80,7 +80,7 @@ const PriceUpdateModal = ({ isOpen, onClose, selectedProducts, onSuccess }) => {
         {!hasSamePrices ? (
           <Grid item xs={12}>
             <Alert severity="warning" variant="filled">
-              Los productos seleccionados tienen precios diferentes. No es posible realizar un cambio masivo.
+              Los productos seleccionados no comparten el mismo costo, precio unitario, precio de mayoreo o cantidad mínima de mayoreo. La actualización masiva solo está disponible cuando todos estos valores coinciden.
             </Alert>
           </Grid>
         ) : (

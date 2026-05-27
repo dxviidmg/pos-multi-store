@@ -210,7 +210,7 @@ const ProductList = () => {
                 disabled={selectedRows.length < 2 || user.role !== "owner"}
                 startIcon={<PriceChangeIcon />}
               >
-                Actualización de precios
+                Actualización masiva de costos y precios
               </CustomButton>
             </Grid>
           </Grid>
