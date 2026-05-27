@@ -22,7 +22,9 @@ import DownloadIcon from "@mui/icons-material/Download";
 import DeleteIcon from "@mui/icons-material/Delete";
 import TextFormatIcon from "@mui/icons-material/TextFormat";
 import HistoryIcon from "@mui/icons-material/History";
+import PriceChangeIcon from "@mui/icons-material/PriceChange";
 import PriceLogsModal from "../PriceLogsModal/PriceLogsModal";
+import PriceUpdateModal from "../PriceUpdateModal/PriceUpdateModal";
 
 const ProductList = () => {
   const user = getUserData();
@@ -35,6 +37,7 @@ const ProductList = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const productModal = useModal();
   const priceLogsModal = useModal();
+  const priceUpdateModal = useModal();
 
   useEffect(() => {
     const fetchOptions = async () => {
@@ -104,6 +107,10 @@ const ProductList = () => {
     }
   };
 
+  const handleUpdatePrices = () => {
+    priceUpdateModal.open();
+  };
+
   const handleUpperCodeProducts = async () => {
     const response = await upperCodeProducts();
     if (response.status === 200) {
@@ -119,6 +126,7 @@ const ProductList = () => {
       <CustomSpinner isLoading={loading} />
       <ProductModal isOpen={productModal.isOpen} product={productModal.data} onClose={productModal.close} onUpdate={handleUpdateProductList} />
       <PriceLogsModal isOpen={priceLogsModal.isOpen} product={priceLogsModal.data} onClose={priceLogsModal.close} />
+      <PriceUpdateModal isOpen={priceUpdateModal.isOpen} onClose={priceUpdateModal.close} selectedProducts={selectedRows} onSuccess={fetchProducts} />
 
       <Grid container>
         <Grid item xs={12} className="card">
@@ -194,6 +202,16 @@ const ProductList = () => {
                   Formatear códigos
                 </CustomButton>
               </CustomTooltip>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <CustomButton
+                fullWidth
+                onClick={handleUpdatePrices}
+                disabled={selectedRows.length < 2 || user.role !== "owner"}
+                startIcon={<PriceChangeIcon />}
+              >
+                Actualización de precios
+              </CustomButton>
             </Grid>
           </Grid>
 
