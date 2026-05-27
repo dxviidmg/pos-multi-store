@@ -178,6 +178,7 @@ const SearchProduct = ({ searchInputRef }) => {
           </Alert>
         )}
         <CustomButton
+          fullWidth
           onClick={() => {
             if (!storePrinter) {
               showAlert("info", "Impresora no configurada", "Para configurar la impresora, contacte a soporte técnico.");
@@ -224,7 +225,7 @@ const SearchProduct = ({ searchInputRef }) => {
               <FormControlLabel 
                 value="distribucion" 
                 control={<Radio size="small" sx={{ py: 0.5 }} />} 
-                label="Distribucion (Ctrl+T)"
+                label="Distribución (Ctrl+T)"
                 sx={{ mr: 4 }}
               />
             )}

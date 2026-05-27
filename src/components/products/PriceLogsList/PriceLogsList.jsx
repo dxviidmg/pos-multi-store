@@ -61,7 +61,7 @@ const PriceLogsList = () => {
       </PageHeader>
       <TextField
         size="small"
-        label="Meses anteriores (iniciar desde cuantos meses atras)"
+        label="Meses anteriores (iniciar desde cuántos meses atrás)"
         type="number"
         value={months}
         onChange={(e) => setMonths(Number(e.target.value))}

@@ -317,7 +317,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
               <Grid item xs={12} md={6}>
                 <TextField size="small" fullWidth label="Cantidad mínima de mayoreo" type="number"
                   value={formData.min_wholesale_quantity}
-                  placeholder="Cantidad minima de mayoreo"
+                  placeholder="Cantidad mínima de mayoreo"
                   name="min_wholesale_quantity"
                   onChange={handleDataChange}
                   disabled={!canEditPrices}
