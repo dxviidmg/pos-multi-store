@@ -102,7 +102,7 @@ const SellerList = () => {
       <Grid container>
         <Grid item xs={12} className="card">
           <PageHeader title="Vendedores">
-            <CustomButton onClick={() => sellerModal.open()} startIcon={<AddIcon />}>
+            <CustomButton fullWidth onClick={() => sellerModal.open()} startIcon={<AddIcon />}>
               Nuevo Vendedor
             </CustomButton>
           </PageHeader>

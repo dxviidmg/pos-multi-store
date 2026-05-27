@@ -1,10 +1,16 @@
-import { Stack } from "@mui/material";
+import { Grid } from "@mui/material";
 
-const PageHeader = ({ title, children }) => (
-  <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-    <h1>{title}</h1>
-    {children && <Stack direction="row" spacing={1}>{children}</Stack>}
-  </Stack>
+const PageHeader = ({ title, children, childrenMd = 3 }) => (
+  <Grid container alignItems="center" sx={{ mb: 2 }}>
+    <Grid item xs>
+      <h1>{title}</h1>
+    </Grid>
+    {children && (
+      <Grid item xs={12} md={childrenMd}>
+        {children}
+      </Grid>
+    )}
+  </Grid>
 );
 
 export default PageHeader;

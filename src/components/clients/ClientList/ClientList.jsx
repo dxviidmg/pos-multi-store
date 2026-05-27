@@ -49,11 +49,11 @@ const ClientList = () => {
       <Grid item xs={12} className="card">
         <PageHeader title="Clientes">
           {getUserData().role === "owner" && (
-            <CustomButton onClick={() => discountModal.open()} startIcon={<DiscountIcon />}>
+            <CustomButton fullWidth onClick={() => discountModal.open()} startIcon={<DiscountIcon />}>
               Crear descuento
             </CustomButton>
           )}
-          <CustomButton onClick={() => clientModal.open()} startIcon={<AddIcon />}>
+          <CustomButton fullWidth onClick={() => clientModal.open()} startIcon={<AddIcon />}>
             Nuevo Cliente
           </CustomButton>
         </PageHeader>
