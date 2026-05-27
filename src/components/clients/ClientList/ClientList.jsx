@@ -47,15 +47,21 @@ const ClientList = () => {
       />
       
       <Grid item xs={12} className="card">
-        <PageHeader title="Clientes">
-          {getUserData().role === "owner" && (
-            <CustomButton onClick={() => discountModal.open()} startIcon={<DiscountIcon />}>
-              Crear descuento
-            </CustomButton>
-          )}
-          <CustomButton onClick={() => clientModal.open()} startIcon={<AddIcon />}>
-            Nuevo Cliente
-          </CustomButton>
+        <PageHeader title="Clientes" childrenMd={6}>
+          <Grid container spacing={2}>
+            {getUserData().role === "owner" && (
+              <Grid item xs={12} md={6}>
+                <CustomButton fullWidth onClick={() => discountModal.open()} startIcon={<DiscountIcon />}>
+                  Crear descuento
+                </CustomButton>
+              </Grid>
+            )}
+            <Grid item xs={12} md={6}>
+              <CustomButton fullWidth onClick={() => clientModal.open()} startIcon={<AddIcon />}>
+                Nuevo Cliente
+              </CustomButton>
+            </Grid>
+          </Grid>
         </PageHeader>
 
         <Grid container spacing={2} sx={{ mb: 2 }}>

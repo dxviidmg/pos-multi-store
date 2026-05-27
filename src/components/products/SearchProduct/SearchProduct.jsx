@@ -18,7 +18,9 @@ import { useProductSearch } from "../../../hooks/useProductSearch";
 import { useCartActions } from "../../../hooks/useCartActions";
 import { useAvailableStock } from "../../../hooks/useAvailableStock";
 import { getUserData } from "../../../api/utils";
-import PrintIcon from "@mui/icons-material/Print";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CancelIcon from "@mui/icons-material/Cancel";
+import { testPrinterConnection } from "../../../api/printers";
 import { handlePrintTicket } from "../../../utils/utils";
 import { Grid, TextField, FormLabel, RadioGroup, FormControlLabel, Radio, InputAdornment, IconButton, CircularProgress, LinearProgress, Alert } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
@@ -44,6 +46,8 @@ const SearchProduct = ({ searchInputRef }) => {
   const userData = getUserData();
   const storeType = userData.store_type;
   const storePrinter = userData.store_printer;
+
+  const [printerConnected, setPrinterConnected] = useState(null);
   
   const [barcode, setBarcode] = useState("");
   const [isInputFocused, setIsInputFocused] = useState(false);
@@ -57,6 +61,12 @@ const SearchProduct = ({ searchInputRef }) => {
 
   // Usar hook de atajos de teclado
   useKeyboardShortcuts(inputRef, dispatch);
+
+  useEffect(() => {
+    if (storePrinter) {
+      testPrinterConnection().then((result) => setPrinterConnected(result.connected)).catch(() => setPrinterConnected(false));
+    }
+  }, [storePrinter]);
 
   useEffect(() => {
     const checkCreateProductsOnSale = async () => {
@@ -178,16 +188,23 @@ const SearchProduct = ({ searchInputRef }) => {
           </Alert>
         )}
         <CustomButton
-          onClick={() => {
+          fullWidth
+          onClick={async () => {
             if (!storePrinter) {
-              showAlert("info", "Impresora no configurada", "Para configurar la impresora, contacte a soporte técnico.");
+              showAlert("info", "Impresora no configurada", "Para configurar la impresora, contacte a soporte técnico. Recomendamos la Epson TM-88V.");
             } else {
               handlePrintTicket("test", {});
             }
           }}
-          startIcon={<PrintIcon fontSize="small" />}
+          startIcon={printerConnected ? <CheckCircleIcon fontSize="small" sx={{ color: 'success.main' }} /> : <CancelIcon fontSize="small" sx={{ color: 'error.main' }} />}
+          color={printerConnected ? "success" : undefined}
         >
-          {storePrinter ? "Probar impresora" : "Configurar impresora"}
+          {!storePrinter ? "Configurar impresora" : printerConnected ? (
+            <>
+              <span className="default-text">Impresora conectada</span>
+              <span className="hover-text">Imprimir prueba</span>
+            </>
+          ) : "Impresora desconectada"}
         </CustomButton>
       </PageHeader>
 
@@ -224,7 +241,7 @@ const SearchProduct = ({ searchInputRef }) => {
               <FormControlLabel 
                 value="distribucion" 
                 control={<Radio size="small" sx={{ py: 0.5 }} />} 
-                label="Distribucion (Ctrl+T)"
+                label="Distribución (Ctrl+T)"
                 sx={{ mr: 4 }}
               />
             )}

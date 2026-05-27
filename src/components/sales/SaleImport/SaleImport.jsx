@@ -115,7 +115,7 @@ const SaleImport = () => {
 
       <Grid item xs={12} className="card" sx={{ mb: '1.5rem' }}>
         <PageHeader title="Importar ventas">
-          <CustomButton href={URL_TEMPLATE} startIcon={<DownloadIcon />}>Descargar plantilla</CustomButton>
+          <CustomButton fullWidth href={URL_TEMPLATE} startIcon={<DownloadIcon />}>Descargar plantilla</CustomButton>
         </PageHeader>
 
         <Stepper activeStep={activeStep} alternativeLabel sx={{ mb: 3,

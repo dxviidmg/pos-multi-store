@@ -55,13 +55,13 @@ const PriceLogsList = () => {
   return (
     <Grid item xs={12} className="card">
       <PageHeader title="Historial de cambio de precios">
-        <CustomButton onClick={handleDownload} startIcon={<DownloadIcon />} disabled={rows.length === 0}>
+        <CustomButton fullWidth onClick={handleDownload} startIcon={<DownloadIcon />} disabled={rows.length === 0}>
           Descargar
         </CustomButton>
       </PageHeader>
       <TextField
         size="small"
-        label="Meses anteriores (iniciar desde cuantos meses atras)"
+        label="Meses anteriores (iniciar desde cuántos meses atrás)"
         type="number"
         value={months}
         onChange={(e) => setMonths(Number(e.target.value))}
