@@ -184,6 +184,9 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
     return !areRequiredFieldsComplete || !areOptionalFieldsConsistent;
   };
 
+  const isCostHigher = formData.cost !== "" && formData.unit_price !== "" && Number(formData.cost) >= Number(formData.unit_price);
+  const isWholesaleHigher = formData.wholesale_price !== "" && formData.unit_price !== "" && Number(formData.wholesale_price) >= Number(formData.unit_price);
+
   return (
     <CustomModal
       showOut={isOpen}
@@ -275,56 +278,55 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
                 />
               </Grid>
 
-              <Grid item xs={12} md={3}>
+              <Grid item xs={12} md={6}>
                 <TextField size="small" fullWidth label="Costo" type="number"
                   value={formData.cost}
                   placeholder="Costo"
                   name="cost"
                   onChange={handleDataChange}
                   disabled={!canEditPrices}
+                  error={isCostHigher}
+                  helperText={isCostHigher ? "Debe ser menor al precio unitario" : ""}
                 />
               </Grid>
 
-              <Grid item xs={12} md={3}>
-                <TextField size="small" fullWidth label="P. unitario" type="number"
+              <Grid item xs={12} md={6}>
+                <TextField size="small" fullWidth label="Precio unitario" type="number"
                   value={formData.unit_price}
                   placeholder="Precio unitario"
                   name="unit_price"
                   onChange={handleDataChange}
                   disabled={!canEditPrices}
+                  error={isCostHigher}
+                  helperText={isCostHigher ? "Debe ser mayor al costo" : ""}
                 />
               </Grid>
 
-              <Grid item xs={12} md={3}>
-                <TextField size="small" fullWidth label="P. mayoreo" type="number"
+              <Grid item xs={12} md={6}>
+                <TextField size="small" fullWidth label="Precio mayoreo" type="number"
                   value={formData.wholesale_price}
                   placeholder="Precio de mayoreo"
                   name="wholesale_price"
                   onChange={handleDataChange}
                   disabled={!canEditPrices}
+                  error={isWholesaleHigher || (formData.wholesale_price !== "" && formData.min_wholesale_quantity === "")}
+                  helperText={isWholesaleHigher ? "Debe ser menor al precio unitario" : (formData.wholesale_price !== "" && formData.min_wholesale_quantity === "") ? "Requiere cantidad mínima mayoreo" : ""}
                 />
               </Grid>
 
-              <Grid item xs={12} md={3}>
-                <TextField size="small" fullWidth label="Min. mayoreo" type="number"
+              <Grid item xs={12} md={6}>
+                <TextField size="small" fullWidth label="Cantidad mínima de mayoreo" type="number"
                   value={formData.min_wholesale_quantity}
-                  placeholder="Cantidad minima mayoreo"
+                  placeholder="Cantidad mínima de mayoreo"
                   name="min_wholesale_quantity"
                   onChange={handleDataChange}
                   disabled={!canEditPrices}
+                  error={formData.min_wholesale_quantity !== "" && formData.wholesale_price === ""}
+                  helperText={(formData.min_wholesale_quantity !== "" && formData.wholesale_price === "") ? "Requiere precio mayoreo" : ""}
                 />
               </Grid>
 
-              {createFromSearch && (
-                <Grid item xs={12} md={12}>
-                  <TextField size="small" fullWidth label="Stock inicial" type="number"
-                    value={initialStock}
-                    placeholder="Stock"
-                    onChange={(e) => setInitialStock(e.target.value)}
-                  />
-                </Grid>
-              )}
-              <Grid item xs={12} md={12}>
+              <Grid item xs={12} sx={{ mt: -1.5 }}>
                 <FormControlLabel
                   control={
                     <Checkbox size="small"
@@ -338,12 +340,21 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
                 />
               </Grid>
 
-              <Grid item xs={12}>
+              {createFromSearch && (
+                <Grid item xs={12}>
+                  <TextField size="small" fullWidth label="Stock inicial" type="number"
+                    value={initialStock}
+                    placeholder="Stock"
+                    onChange={(e) => setInitialStock(e.target.value)}
+                  />
+                </Grid>
+              )}
+
+              <Grid item xs={12} sx={{ mt: -1.5 }}>
                 <CustomButton
                   fullWidth={true}
                   onClick={(e) => handleProductSubmit(e)}
-                  disabled={isFormIncomplete() || isLoading}
-                  sx={{ marginTop: "10px" }}
+                  disabled={isFormIncomplete() || isCostHigher || isWholesaleHigher || isLoading}
                   startIcon={<SaveIcon />}
                 >
                   {isLoading ? "Guardando..." : formData.id ? "Actualizar" : "Crear"}

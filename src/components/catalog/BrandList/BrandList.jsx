@@ -44,7 +44,7 @@ const BrandList = () => {
 
       <Grid item xs={12} className="card">
         <PageHeader title="Marcas">
-          <CustomButton onClick={() => brandModal.open()} startIcon={<AddIcon />}>
+          <CustomButton fullWidth onClick={() => brandModal.open()} startIcon={<AddIcon />}>
             Nueva Marca
           </CustomButton>
         </PageHeader>

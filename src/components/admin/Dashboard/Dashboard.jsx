@@ -205,7 +205,7 @@ const Dashboard = () => {
         </Grid>
         <Grid item xs={6} md={3}>
           <Box className="card" sx={{ height: "100%", mb: 0 }}>
-            <KPICard title="Monto Total" value={formatCurrency(kpis.totalAmount)} subtitle="Ingresos del periodo" icon={AttachMoneyIcon} index={1} />
+            <KPICard title="Monto Total" value={formatCurrency(kpis.totalAmount)} subtitle="Ingresos del período" icon={AttachMoneyIcon} index={1} />
           </Box>
         </Grid>
         <Grid item xs={6} md={3}>

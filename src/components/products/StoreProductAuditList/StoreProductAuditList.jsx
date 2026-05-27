@@ -10,7 +10,7 @@ import StockUpdateRequestModal from "../../inventory/StockUpdateRequestModal/Sto
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { getBrands } from "../../../api/brands";
 import { getDepartments } from "../../../api/departments";
-import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, Stack, Alert } from "@mui/material";
+import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, Alert } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import DownloadIcon from "@mui/icons-material/Download";
 import TuneIcon from "@mui/icons-material/Tune";
@@ -18,6 +18,7 @@ import HistoryIcon from "@mui/icons-material/History";
 import SendIcon from "@mui/icons-material/Send";
 import { Link } from "react-router-dom";
 import NotificationImportantIcon from "@mui/icons-material/NotificationImportant";
+import PageHeader from "../../ui/PageHeader";
 import CustomTooltip from "../../ui/Tooltip";
 import { UI_TEXT } from "../../../constants";
 
@@ -84,13 +85,12 @@ const StoreProductAuditList = () => {
 
       <Grid container>
         <Grid item xs={12} className="card">
-          <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-            <h1>Inventario a verificar</h1>
+          <PageHeader title="Inventario a verificar" childrenMd={8}>
             {showAlert && (
             <Alert 
               severity="info" 
               variant="filled" 
-              sx={{ py: 0, borderRadius: 2, flex: 1, ml: 2 }}
+              sx={{ py: 0, borderRadius: 2 }}
               icon={<NotificationImportantIcon fontSize="inherit" />}
               onClose={() => setShowAlert(false)}
             >
@@ -108,7 +108,7 @@ const StoreProductAuditList = () => {
               )}
             </Alert>
             )}
-          </Stack>
+          </PageHeader>
 
           <Grid container spacing={2} sx={{ mb: 2 }}>
             <Grid item xs={12} md={3}>

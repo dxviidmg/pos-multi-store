@@ -7,8 +7,9 @@ import { getUserData } from "../../../api/utils";
 import CashFlowModal from "../CashFlowModal/CashFlowModal";
 import { useModal } from "../../../hooks/useModal";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
-import { Grid, TextField, Stack } from "@mui/material";
+import { Grid, TextField } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
+import PageHeader from "../../ui/PageHeader";
 
 const today = getFormattedDate();
 
@@ -55,20 +56,15 @@ const CashFlowList = () => {
       />
 
       <Grid item xs={12} className="card">
-        <Stack
-          direction="row"
-          justifyContent="space-between"
-          alignItems="center"
-          sx={{ mb: 2 }}
-        >
-          <h1>Movimientos en caja</h1>
+        <PageHeader title="Movimientos en caja">
           <CustomButton
+            fullWidth
             onClick={() => cashFlowModal.open()}
             startIcon={<AddCircleIcon />}
           >
             Crear movimiento
           </CustomButton>
-        </Stack>
+        </PageHeader>
 
         <Grid container spacing={2} sx={{ mb: 2 }}>
           <Grid item xs={12} md={4}>

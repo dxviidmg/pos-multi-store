@@ -7,8 +7,9 @@ import { getBrands } from "../../../api/brands";
 import { getStores } from "../../../api/stores";
 import CustomButton from "../../ui/Button/Button";
 import { chooseIcon } from "../../ui/Icons/Icons";
-import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, Stack } from "@mui/material";
+import { Grid, TextField, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
+import PageHeader from "../../ui/PageHeader";
 
 const LogList = () => {
   const today = getFormattedDate();
@@ -64,9 +65,7 @@ const LogList = () => {
 
       <Grid container>
         <Grid item xs={12} className="card">
-          <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-            <h1>Historial de stock</h1>
-          </Stack>
+          <PageHeader title="Historial de stock" />
 
           <Grid container spacing={2} sx={{ mb: 2 }}>
             <Grid item xs={12} md={3}>
