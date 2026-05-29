@@ -44,7 +44,7 @@ const DepartmentList = () => {
 
       <Grid item xs={12} className="card">
         <PageHeader title="Departamentos">
-          <CustomButton onClick={() => departmentModal.open()} startIcon={<AddIcon />}>
+          <CustomButton fullWidth onClick={() => departmentModal.open()} startIcon={<AddIcon />}>
             Nuevo Departamento
           </CustomButton>
         </PageHeader>

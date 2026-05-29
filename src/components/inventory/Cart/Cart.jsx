@@ -45,10 +45,11 @@ const Cart = ({ searchInputRef }) => {
   
   const cart = useSelector(selectCart);
   const movementType = useSelector(selectMovementType);
+  const { carts } = useSelector((state) => state.multiCartReducer);
 
-  // Auto-focus cantidad del último producto agregado en distribución
+  // Auto-focus cantidad del último producto agregado en distribución o agregar inventario
   useEffect(() => {
-    if (movementType === "distribucion" && cart.length > prevCartLenRef.current) {
+    if ((movementType === "distribucion" || movementType === "agregar") && cart.length > prevCartLenRef.current) {
       setTimeout(() => {
         if (lastQtyRef.current) {
           lastQtyRef.current.focus();
@@ -64,13 +65,15 @@ const Cart = ({ searchInputRef }) => {
     const handleShortcut = (event) => {
       if (event.ctrlKey && (event.key === "p" || event.key === "P")) {
         event.preventDefault();
-        paymentModal.open();
+        if (movementType === "venta" || movementType === "apartado") {
+          paymentModal.open();
+        }
       }
     };
     window.addEventListener("keydown", handleShortcut);
     return () => window.removeEventListener("keydown", handleShortcut);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch]);
+  }, [movementType]);
 
   const handleDestinationStoreChange = (event) => {
     setSelectedStore(event.target.value);
@@ -141,7 +144,7 @@ const Cart = ({ searchInputRef }) => {
     // Verificar stock disponible considerando otros carritos
     const availableStock = movementType === "agregar" ? Infinity : getAvailableStock(product.id, stockLimit);
     
-    if (newQuantity > availableStock) {
+    if (Object.keys(carts).length > 1 && newQuantity > availableStock) {
       showWarning("Stock no disponible", `"${product.product?.name || product.name}" está reservado en otros carritos`);
       return;
     }
@@ -269,7 +272,7 @@ const Cart = ({ searchInputRef }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const distributionColumns = useMemo(() => getDistributionColumns(handleQuantityChangeToCart, handleRemoveFromCart, handleStockOtherStores, getAvailableStock, cart, searchInputRef, lastQtyRef), [cart]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const addToStockColumns = useMemo(() => getAddToStockColumns(handleQuantityChangeToCart, handleRemoveFromCart), [movementType]);
+  const addToStockColumns = useMemo(() => getAddToStockColumns(handleQuantityChangeToCart, handleRemoveFromCart, cart, searchInputRef, lastQtyRef), [cart]);
 
   const getColumns = () => {
     switch (movementType) {

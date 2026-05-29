@@ -29,7 +29,6 @@ import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import UpdatesModal from "../../ui/UpdatesModal/UpdatesModal";
 import { cleanCart } from "../../../redux/cart/cartActions";
 import { getUserData } from "../../../api/utils";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
@@ -151,17 +150,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
 
   const [open, setOpen] = React.useState(false);
   const [openMenus, setOpenMenus] = React.useState({});
-  const [showUpdates, setShowUpdates] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
-
-  React.useEffect(() => {
-    if (onLoginSuccess) {
-      const hasSeenUpdates = localStorage.getItem("hasSeenUpdates");
-      if (!hasSeenUpdates) {
-        setShowUpdates(true);
-      }
-    }
-  }, [onLoginSuccess]);
 
   if (!user) {
     return null;
@@ -230,6 +219,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
           { label: "Importar inventario", href: "/importar-inventario/", hidden: user.role === "seller" },
           { divider: true },
           { label: "Solicitudes de ajustes de stock", href: "/solicitudes-ajustes-stock/", hidden: user.role === "seller"},
+          { label: "Historial de cambio de precios", href: "/historial-precios/", hidden: user.role === "seller" },
         ],
         hidden: user.role === "seller"
       },
@@ -251,6 +241,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
         hidden: user.role === "seller",
       },
       { label: "Ventas", href: "/ventas/", hidden: user.role !== "seller" },
+      { label: "Movimientos en caja", href: "/movimientos-caja/", hidden: user.role !== "seller" },
       { label: "Traspasos", href: "/traspasos/", hidden: user.role !== "seller" },
       { label: "Historial de stock", href: "/historial-stock/", hidden: user.role === "seller" },
     ],
@@ -276,6 +267,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
           { label: "Importar inventario", href: "/importar-inventario/" },
           { divider: true },
           { label: "Solicitudes de ajustes de stock", href: "/solicitudes-ajustes-stock/" },
+          { label: "Historial de cambio de precios", href: "/historial-precios/" },
         ],
       },
       {
@@ -312,6 +304,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
           { label: "Importar Productos", href: "/importar-productos/" },
           { divider: true },
           { label: "Solicitudes de ajustes de stock", href: "/solicitudes-ajustes-stock/" },
+          { label: "Historial de cambio de precios", href: "/historial-precios/" },
         ],
       },
       {
@@ -511,18 +504,6 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
           {user.role !== "seller" && (
             <>
               <ListItemButton
-                onClick={() => setShowUpdates(true)}
-                sx={{
-                  borderRadius: 2, justifyContent: open ? "initial" : "center", mb: 1,
-                  "&:hover": { backgroundColor: "rgba(167, 139, 250, 0.12)" },
-                }}
-              >
-                <ListItemIcon sx={{ color: "#a78bfa", minWidth: open ? 38 : 0, justifyContent: "center" }}>
-                  <NewspaperIcon />
-                </ListItemIcon>
-                <ListItemText primary="Actualizaciones 2026" primaryTypographyProps={{ fontWeight: 600, fontSize: "0.8rem" }} sx={{ opacity: open ? 1 : 0 }} />
-              </ListItemButton>
-              <ListItemButton
                 component="a"
                 href={`https://api.whatsapp.com/send/?phone=${process.env.REACT_APP_WHATSAPP_NUMBER}&text=${encodeURIComponent(`Soporte SmartVenta\nTenant: ${user.tenant_name}\nTienda: ${user.store_name || "General"}`)}&type=phone_number&app_absent=0`}
                 target="_blank"
@@ -544,7 +525,6 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
 
       <Box component="main" sx={{ flexGrow: 1, p: 3, overflow: "auto", maxWidth: "100%" }}>
         <DrawerHeader />
-        <UpdatesModal open={showUpdates} onClose={() => setShowUpdates(false)} />
         <Outlet />
       </Box>
     </Box>

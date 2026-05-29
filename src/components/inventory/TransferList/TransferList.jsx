@@ -92,7 +92,7 @@ const TransferList = () => {
             ...(status === "pending" ? [{
               name: "Acciones",
               cell: (row) => (
-                <CustomButton onClick={() => handleDelete(row)} disabled={row.description.includes("prov")}>
+                <CustomButton onClick={() => handleDelete(row)} disabled={row.description.includes("enviar")}>
                   <DeleteIcon />
                 </CustomButton>
               ),

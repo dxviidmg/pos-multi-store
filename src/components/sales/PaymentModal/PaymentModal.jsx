@@ -9,15 +9,16 @@ import { createSale, getSale } from "../../../api/sales";
 import { showSuccess, showError } from "../../../utils/alerts";
 import { getUserData } from "../../../api/utils";
 import { handlePrintTicket } from "../../../utils/utils";
+import { testPrinterConnection } from "../../../api/printers";
 import SearchClient from "../../clients/SearchClient/SearchClient";
 import ClientSelected from "../../clients/ClientSelected/ClientSelected";
 import SearchIcon from "@mui/icons-material/Search";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
-import { Grid, TextField, Radio, RadioGroup, FormControlLabel, Checkbox, FormLabel, Alert } from "@mui/material";
+import { Grid, TextField, Radio, RadioGroup, FormControlLabel, Checkbox, FormLabel, Alert, Chip } from "@mui/material";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import MoneyOffIcon from "@mui/icons-material/MoneyOff";
-import ReceiptIcon from "@mui/icons-material/Receipt";
+
 
 function roundUpCustom(value) {
   const intPart = Math.floor(value); // Parte entera
@@ -53,14 +54,32 @@ const PaymentModal = ({ isOpen, onClose }) => {
 
   const [isLoading, setIsLoading] = useState(false);
   const isSubmittingRef = useRef(false);
+  const [printerConnected, setPrinterConnected] = useState(null);
+  const [printerError, setPrinterError] = useState(null);
 
   useEffect(() => {
     if (isOpen) {
       setTimeout(() => {
         inputPaymentRef.current?.focus();
       }, 100);
+
+      // Test printer connection if printer exists
+      if (printer) {
+        testPrinterConnection()
+          .then((result) => {
+            setPrinterConnected(result.connected);
+            setPrinterError(result.error || null);
+          })
+          .catch(() => {
+            setPrinterConnected(false);
+            setPrinterError("Error de conexión");
+          });
+      } else {
+        setPrinterConnected(null);
+        setPrinterError(null);
+      }
     }
-  }, [isOpen]);
+  }, [isOpen, printer]);
 
   const { total, totalDiscount } = useMemo(() => {
     const total = roundUpCustom(
@@ -80,17 +99,15 @@ const PaymentModal = ({ isOpen, onClose }) => {
     const handleShortcut = (event) => {
       if (event.ctrlKey && event.key === "g") {
         event.preventDefault();
-        handleCreateSaleRef.current?.();
-      }
-      if (event.ctrlKey && event.key === "h") {
-        event.preventDefault();
-        handleCreateSaleRef.current?.(true);
+        if (isOpen && (movementType === "venta" || movementType === "apartado")) {
+          handleCreateSaleRef.current?.(!!printer);
+        }
       }
     };
   
     window.addEventListener("keydown", handleShortcut);
     return () => window.removeEventListener("keydown", handleShortcut);
-  }, []);
+  }, [printer, isOpen, movementType]);
 
 
   useEffect(() => {
@@ -460,7 +477,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
 
           <Grid item xs={12} className="card">
             <Grid container spacing={2}>
-              <Grid item xs={12} md={3}>
+              <Grid item xs={12} md={paymentMethods.type === "checkbox" ? 3 : 4}>
                 <FormLabel>Tipo de pago:</FormLabel>
                 <RadioGroup
                   value={paymentMethods.type}
@@ -472,22 +489,20 @@ const PaymentModal = ({ isOpen, onClose }) => {
                 </RadioGroup>
               </Grid>
 
-              <Grid item xs={12} md={3}>
+              <Grid item xs={12} md={paymentMethods.type === "checkbox" ? 3 : 4}>
                 <FormLabel>Medios de pago:</FormLabel>
-                <div>
+                <RadioGroup
+                  value={Object.entries(paymentMethods.methods).find(([, v]) => v === totalDiscount)?.[0] || ""}
+                  onChange={handleChangePayments}
+                  name="paymentMethod"
+                >
                   {["EF", "TA", "TR"].map((method) => (
                     <FormControlLabel
                       key={method}
-                      sx={{ display: 'block' }}
+                      value={method}
                       control={
                         paymentMethods.type === "radio" ? (
-                          <Radio
-                            size="small"
-                            checked={paymentMethods.methods[method] === totalDiscount}
-                            onChange={handleChangePayments}
-                            value={method}
-                            name="paymentMethod"
-                          />
+                          <Radio size="small" />
                         ) : (
                           <Checkbox
                             size="small"
@@ -514,64 +529,49 @@ const PaymentModal = ({ isOpen, onClose }) => {
                       }
                     />
                   ))}
-                </div>
+                </RadioGroup>
               </Grid>
 
-              <Grid item xs={12} md={3}>
-                {paymentMethods.type === "checkbox" && (
-                  <>
-                    <FormLabel>Montos:</FormLabel>
-                    {["EF", "TA", "TR"].map((method, index) => (
-                      <div key={method} style={{ marginTop: index === 0 ? 6 : 0 }}>
-                        {paymentMethods.methods[method] > 0 ? (
-                          <TextField
-                            size="small"
-                            type="number"
-                            placeholder="$"
-                            fullWidth
-                            onChange={(e) =>
-                              handlePaymentValueChange(method, e.target.value)
-                            }
-                            sx={{
-                              mb: 0.5,
-                              '& .MuiInputBase-root': { height: 30 },
-                              animation: 'fadeIn 0.3s ease',
-                              '@keyframes fadeIn': {
-                                from: { opacity: 0, transform: 'translateX(-8px)' },
-                                to: { opacity: 1, transform: 'translateX(0)' },
-                              },
-                            }}
-                          />
-                        ) : (
-                          <div style={{ height: 30, marginBottom: 4 }} />
-                        )}
-                      </div>
-                    ))}
-                  </>
-                )}
-              </Grid>
+              {paymentMethods.type === "checkbox" && (
+                <Grid item xs={12} md={3}>
+                  <FormLabel>Cantidades:</FormLabel>
+                  <RadioGroup>
+                  {["EF", "TA", "TR"].map((method, index) => (
+                      <TextField
+                        key={method}
+                        size="small"
+                        type="number"
+                        placeholder={method === "EF" ? "Efectivo" : method === "TA" ? "Tarjeta" : "Transferencia"}
+                        fullWidth
+                        disabled={!paymentMethods.methods[method]}
+                        onChange={(e) => handlePaymentValueChange(method, e.target.value)}
+                        sx={{ mt: 1, '& .MuiInputBase-root': { height: 28 }, '& .MuiInputBase-input': { padding: '4px 8px', textAlign: 'center' }, visibility: paymentMethods.methods[method] > 0 ? 'visible' : 'hidden' }}
+                      />
+                  ))}
+                  </RadioGroup>
+                </Grid>
+              )}
 
-              <Grid item xs={12} md={3}>
+              <Grid item xs={12} md={paymentMethods.type === "checkbox" ? 3 : 4}>
+                <FormLabel sx={{ display: 'block', textAlign: 'center' }}>{printer ? 'Con impresión de ticket' : 'Sin impresión de ticket'}</FormLabel>
                 <CustomButton
                   disabled={handleDisableButton()}
-                  fullWidth={true}
-                  onClick={(e) => handleCreateSale()}
+                  fullWidth
+                  onClick={() => handleCreateSale(!!printer)}
                   startIcon={<MoneyOffIcon />}
-                  sx={{ mb: 2 }}
+                  sx={{ mt: 1 }}
                 >
-                  Cobrar sin ticket
-                  (Ctrl + G)
+                  Cobrar<br />(Ctrl + G)
                 </CustomButton>
-
-                <CustomButton
-                  disabled={handleDisableButton()}
-                  fullWidth={true}
-                  onClick={(e) => handleCreateSale(true)}
-                  startIcon={<ReceiptIcon />}
-                >
-                  Cobrar con ticket
-                  (Ctrl + H)
-                </CustomButton>
+                {printer && (
+                  <Chip
+                    label={printerError || (printerConnected ? "Impresora conectada" : "Impresora desconectada")}
+                    color={printerConnected ? "success" : "error"}
+                    variant="filled"
+                    size="small"
+                    sx={{ mt: 1, width: '100%' }}
+                  />
+                )}
               </Grid>
             </Grid>
           </Grid>

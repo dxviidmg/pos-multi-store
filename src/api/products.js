@@ -128,6 +128,15 @@ export const deleteProducts = async (data) => {
 };
 
 /**
+ * Update prices for multiple products
+ * @param {Array} data - Array of product IDs to update prices
+ * @returns {Promise<Object>} Update prices response
+ */
+export const updatePricesProducts = async (data) => {
+  return httpClient.post(getApiUrl("products/update-prices"), data);
+};
+
+/**
  * Convert product codes to uppercase
  * @param {Object} data - Product data
  * @returns {Promise<Object>} Update response

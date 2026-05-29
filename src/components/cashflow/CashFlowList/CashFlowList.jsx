@@ -3,11 +3,13 @@ import DataTable from "../../ui/DataTable/DataTable";
 import CustomButton from "../../ui/Button/Button";
 import { getFormattedDate, formatTimeFromDate } from "../../../utils/utils";
 import { getCashFlow } from "../../../api/cashflow";
+import { getUserData } from "../../../api/utils";
 import CashFlowModal from "../CashFlowModal/CashFlowModal";
 import { useModal } from "../../../hooks/useModal";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
-import { Grid, TextField, Stack } from "@mui/material";
+import { Grid, TextField } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
+import PageHeader from "../../ui/PageHeader";
 
 const today = getFormattedDate();
 
@@ -16,6 +18,8 @@ const CashFlowList = () => {
   const [loading, setLoading] = useState(false);
   const [params, setParams] = useState({ start_date: today, end_date: today });
   const cashFlowModal = useModal();
+  const user = getUserData();
+  const isSeller = user?.role === "seller";
 
   useEffect(() => {
     const fetchData = async () => {
@@ -52,20 +56,15 @@ const CashFlowList = () => {
       />
 
       <Grid item xs={12} className="card">
-        <Stack
-          direction="row"
-          justifyContent="space-between"
-          alignItems="center"
-          sx={{ mb: 2 }}
-        >
-          <h1>Movimientos en caja</h1>
+        <PageHeader title="Movimientos en caja">
           <CustomButton
+            fullWidth
             onClick={() => cashFlowModal.open()}
             startIcon={<AddCircleIcon />}
           >
             Crear movimiento
           </CustomButton>
-        </Stack>
+        </PageHeader>
 
         <Grid container spacing={2} sx={{ mb: 2 }}>
           <Grid item xs={12} md={4}>
@@ -78,6 +77,7 @@ const CashFlowList = () => {
               name="start_date"
               onChange={handleParamsChange}
               inputProps={{ max: today }}
+              disabled={isSeller}
             />
           </Grid>
           <Grid item xs={12} md={4}>
@@ -90,6 +90,7 @@ const CashFlowList = () => {
               name="end_date"
               onChange={handleParamsChange}
               inputProps={{ max: today }}
+              disabled={isSeller}
             />
           </Grid>
         </Grid>

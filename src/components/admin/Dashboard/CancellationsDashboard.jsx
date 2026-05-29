@@ -39,7 +39,7 @@ const CancellationsDashboard = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { fetchData(); }, [year, month]);
 
-  const calculateKPIs = () => {
+  const kpis = useMemo(() => {
     if (!data?.sales?.length) return null;
     const sales = data.sales;
     const canceled = sales.filter(s => s.is_canceled);
@@ -47,38 +47,41 @@ const CancellationsDashboard = () => {
     const totalLost = sales.reduce((sum, s) => sum + (s.total || 0), 0);
     const totalValidSales = data.total_sales || 0;
     const percentage = totalValidSales > 0 ? ((sales.length / (totalValidSales + sales.length)) * 100).toFixed(1) : 0;
+    const val = (s) => metricType === "total" ? (s.total || 0) : 1;
 
     const byStore = {};
     if (data.stores) data.stores.forEach(s => { byStore[s.name] = 0; });
-    sales.forEach(s => { byStore[s.store_name] = (byStore[s.store_name] || 0) + 1; });
+    sales.forEach(s => { byStore[s.store_name] = (byStore[s.store_name] || 0) + val(s); });
     const storeEntries = Object.entries(byStore).filter(([, v]) => v > 0);
     const worstStore = storeEntries.length ? getTied(storeEntries, k => k, "best") : "N/A";
 
     const byWeekday = {};
-    sales.forEach(s => { const d = new Date(s.created_at).getDay(); byWeekday[d] = (byWeekday[d] || 0) + 1; });
+    sales.forEach(s => { const d = new Date(s.created_at).getDay(); byWeekday[d] = (byWeekday[d] || 0) + val(s); });
     const worstWeekday = getTied(Object.entries(byWeekday), k => DAY_NAMES[k], "best");
 
     const byHour = {};
-    sales.forEach(s => { const h = new Date(s.created_at).getHours(); byHour[h] = (byHour[h] || 0) + 1; });
+    sales.forEach(s => { const h = new Date(s.created_at).getHours(); byHour[h] = (byHour[h] || 0) + val(s); });
     const worstHour = getTied(Object.entries(byHour), k => `${k}:00`, "best");
 
     return { totalCanceled: canceled.length, totalReturned: returned.length, totalLost, total: sales.length, totalValidSales, percentage, worstStore, worstWeekday, worstHour };
-  };
+  }, [data, metricType]);
 
-  const kpis = calculateKPIs();
   const periodLabel = month === 0 ? "Todo el año" : `${MONTH_NAMES[month - 1]} ${year}`;
   const hasMultipleStores = data?.stores?.length > 1;
 
-  const typeChartData = data ? {
-    sales: data.sales.map(s => ({ ...s, store_name: s.is_canceled ? "Cancelada" : "Devolución" })),
-    stores: [{ name: "Cancelada" }, { name: "Devolución" }],
-  } : null;
+  const typeChartData = useMemo(() => {
+    if (!data?.sales) return null;
+    return {
+      sales: data.sales.map(s => ({ ...s, store_name: s.is_canceled ? "Cancelada" : "Devolución" })),
+      stores: [{ name: "Cancelada" }, { name: "Devolución" }],
+    };
+  }, [data]);
 
   if (loading) {
     return (
       <Box>
         <Box className="card" sx={{ mb: 3 }}>
-          <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>Ventas modificadas y/o canceladas</Typography>
+          <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>Ventas ajustadas o canceladas</Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>Procesando datos...</Typography>
           <LinearProgress variant={progress > 0 ? "determinate" : "indeterminate"} value={progress} sx={{ height: 6, borderRadius: 3, mb: 1 }} />
           <CountdownTimer seconds={countdown} />
@@ -98,7 +101,7 @@ const CancellationsDashboard = () => {
     return (
       <Box>
         <Box className="card">
-          <Typography variant="h4" sx={{ fontWeight: 700, mb: 2 }}>Ventas modificadas y/o canceladas</Typography>
+          <Typography variant="h4" sx={{ fontWeight: 700, mb: 2 }}>Ventas ajustadas o canceladas</Typography>
           <Filters {...{ metricType, setMetricType, year, setYear, month, setMonth }} />
         </Box>
         <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: 350, gap: 2, opacity: 0.7 }}>
@@ -118,7 +121,7 @@ const CancellationsDashboard = () => {
       <Box className="card" sx={{ mb: 0 }}>
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 1, mb: 2 }}>
           <Box>
-            <Typography variant="h4" sx={{ fontWeight: 700 }}>Ventas modificadas y/o canceladas</Typography>
+            <Typography variant="h4" sx={{ fontWeight: 700 }}>Ventas ajustadas o canceladas</Typography>
             <Typography variant="body2" color="text.secondary">{periodLabel}</Typography>
           </Box>
         </Box>
