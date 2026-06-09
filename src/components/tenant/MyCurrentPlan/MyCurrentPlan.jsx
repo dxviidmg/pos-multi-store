@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getCurrentPlan } from "../../../api/plans";
+import { getCurrentPlan, getPlanEquivalent } from "../../../api/plans";
 import SubscriptionModal from "../SubscriptionModal/SubscriptionModal";
 import { useModal } from "../../../hooks/useModal";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
@@ -10,21 +10,30 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 const MyCurrentPlan = () => {
   const [plan, setPlan] = useState(null);
   const [planLoading, setPlanLoading] = useState(true);
+  const [equivalent, setEquivalent] = useState(null);
   const subscriptionModal = useModal();
 
   useEffect(() => {
-    const fetchPlan = async () => {
+    const fetchData = async () => {
       const res = await getCurrentPlan();
       if (res.status === 200) {
         setPlan(res.data);
+        if (res.data?.plan?.stores) {
+          const eqRes = await getPlanEquivalent(res.data.plan.stores).catch(() => null);
+          if (eqRes?.status === 200) setEquivalent(eqRes.data);
+        }
       }
       setPlanLoading(false);
     };
-    fetchPlan();
+    fetchData();
   }, []);
 
   const handleUpdateSubscriptionList = (updated) => {
     setPlan(updated);
+  };
+
+  const handleChangePlan = () => {
+    console.log("Cambiar plan", equivalent);
   };
 
   return (
@@ -46,11 +55,11 @@ const MyCurrentPlan = () => {
         >
           <h1>Mi Plan Actual</h1>
           <CustomButton
-            onClick={() => subscriptionModal.open()}
+            onClick={handleChangePlan}
             startIcon={<AddCircleIcon />}
-            disabled
+            disabled={!equivalent}
           >
-            Cambiar plan
+            Domiciliar
           </CustomButton>
         </Stack>
 
@@ -67,7 +76,7 @@ const MyCurrentPlan = () => {
                     Plan Actual: {plan.plan.name}
                   </Typography>
                   <Grid container spacing={3}>
-                    <Grid item xs={12} sm={6} md={3}>
+                    <Grid item xs={12} sm={6} md={4}>
                       <Typography variant="body2" color="textSecondary">
                         Precio
                       </Typography>
@@ -75,19 +84,14 @@ const MyCurrentPlan = () => {
                         ${plan.plan.price} MXN/mes
                       </Typography>
                     </Grid>
-                    <Grid item xs={12} sm={6} md={3}>
+                    <Grid item xs={12} sm={6} md={4}>
                       <Typography variant="body2" color="textSecondary">
                         Sucursales
                       </Typography>
                       <Typography variant="body1">{plan.plan.stores}</Typography>
                     </Grid>
-                    <Grid item xs={12} sm={6} md={3}>
-                      <Typography variant="body2" color="textSecondary">
-                        Almacenes
-                      </Typography>
-                      <Typography variant="body1">{plan.plan.storages}</Typography>
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={3}>
+
+                    <Grid item xs={12} sm={6} md={4}>
                       <Typography variant="body2" color="textSecondary">
                         Facturación
                       </Typography>
