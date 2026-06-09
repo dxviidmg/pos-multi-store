@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getCurrentPlan } from "../../../api/plans";
-import { createMercadoPagoPreference } from "../../../api/mercadopago";
 import SubscriptionModal from "../SubscriptionModal/SubscriptionModal";
 import { useModal } from "../../../hooks/useModal";
-import { useMercadoPago } from "../../../hooks/useMercadoPago";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { Grid, Stack, Card, CardContent, Typography } from "@mui/material";
 import CustomButton from "../../ui/Button/Button";
@@ -12,9 +10,7 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 const MyCurrentPlan = () => {
   const [plan, setPlan] = useState(null);
   const [planLoading, setPlanLoading] = useState(true);
-  const [mpLoading, setMpLoading] = useState(false);
   const subscriptionModal = useModal();
-  const { initMercadoPago, openCheckout } = useMercadoPago();
 
   useEffect(() => {
     const fetchPlan = async () => {
@@ -25,33 +21,15 @@ const MyCurrentPlan = () => {
       setPlanLoading(false);
     };
     fetchPlan();
-    initMercadoPago();
-  }, [initMercadoPago]);
+  }, []);
 
   const handleUpdateSubscriptionList = (updated) => {
     setPlan(updated);
   };
 
-  const handleMercadoPagoCheckout = async () => {
-    setMpLoading(true);
-    try {
-      const response = await createMercadoPagoPreference(plan.plan.id);
-      if (response.status === 201 && response.data.preference_id) {
-        openCheckout(response.data.preference_id);
-      } else {
-        alert('Error al crear la preferencia de pago. Intenta nuevamente.');
-      }
-    } catch (error) {
-      console.error('Error al procesar pago:', error);
-      alert('Error al procesar el pago. Intenta nuevamente.');
-    } finally {
-      setMpLoading(false);
-    }
-  };
-
   return (
     <>
-      <CustomSpinner isLoading={planLoading || mpLoading} />
+      <CustomSpinner isLoading={planLoading} />
       <SubscriptionModal
         isOpen={subscriptionModal.isOpen}
         subscription={subscriptionModal.data}
@@ -68,10 +46,9 @@ const MyCurrentPlan = () => {
         >
           <h1>Mi Plan Actual</h1>
           <CustomButton
-            onClick={handleMercadoPagoCheckout}
+            onClick={() => subscriptionModal.open()}
             startIcon={<AddCircleIcon />}
-            disabled={mpLoading}
-            loading={mpLoading}
+            disabled
           >
             Cambiar plan
           </CustomButton>
