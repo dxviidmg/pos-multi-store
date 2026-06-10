@@ -85,7 +85,7 @@ const MyCurrentPlan = () => {
       <Grid item xs={12} className="card">
         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
           <h1>Mi Plan Actual</h1>
-          {plan?.plan?.billing_type === "subscription" ? (
+          {plan?.plan?.billing_type === "S" ? (
             <Chip icon={<CheckCircleIcon />} label="Domiciliación activada" color="success" variant="outlined" />
           ) : equivalent ? (
             <Button
