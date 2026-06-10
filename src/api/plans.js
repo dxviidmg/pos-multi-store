@@ -5,5 +5,5 @@ export const getCurrentPlan = async () => {
   return httpClient.get(getApiUrl("current-plan"));
 };
 
-export const getPlanEquivalent = async (stores) =>
-  httpClient.get(getApiUrl(`plan-equivalent/${stores}`));
+export const getPlanEquivalent = async (id) =>
+  httpClient.get(getApiUrl(`plan-equivalent`));
