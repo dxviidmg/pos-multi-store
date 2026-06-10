@@ -6,8 +6,9 @@ import { useModal } from "../../../hooks/useModal";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import CustomModal from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
-import { Grid, Stack, Card, CardContent, Typography, Alert, Box } from "@mui/material";
+import { Grid, Stack, Card, CardContent, Typography, Alert, Box, Snackbar, Chip, Button } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 const MyCurrentPlan = () => {
   const [plan, setPlan] = useState(null);
@@ -15,6 +16,7 @@ const MyCurrentPlan = () => {
   const [equivalent, setEquivalent] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState(null);
+  const [successAlert, setSuccessAlert] = useState(false);
   const paymentModal = useModal();
   const { createCardForm, unmountCardForm } = useMercadoPago();
 
@@ -48,7 +50,11 @@ const MyCurrentPlan = () => {
               payer_email: email,
             });
             if (res.status === 201 || res.status === 200) {
-              setResult({ success: true, message: "¡Suscripción activada exitosamente!" });
+              unmountCardForm();
+              paymentModal.close();
+              setPlan((prev) => ({ ...prev, plan: equivalent, has_plan: true }));
+              setEquivalent(null);
+              setSuccessAlert(true);
             } else {
               setResult({ success: false, message: "Error al crear la suscripción." });
             }
@@ -64,7 +70,7 @@ const MyCurrentPlan = () => {
         },
       });
     }, 100);
-  }, [equivalent, plan, paymentModal, createCardForm]);
+  }, [equivalent, plan, paymentModal, createCardForm, unmountCardForm]);
 
   const handleClosePayment = () => {
     unmountCardForm();
@@ -79,13 +85,20 @@ const MyCurrentPlan = () => {
       <Grid item xs={12} className="card">
         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
           <h1>Mi Plan Actual</h1>
-          <CustomButton
-            onClick={handleOpenPayment}
-            startIcon={<AddCircleIcon />}
-            disabled={!equivalent}
-          >
-            Domiciliar
-          </CustomButton>
+          {plan?.plan?.billing_type === "subscription" ? (
+            <Chip icon={<CheckCircleIcon />} label="Domiciliación activada" color="success" variant="outlined" />
+          ) : equivalent ? (
+            <Button
+              onClick={handleOpenPayment}
+              startIcon={<AddCircleIcon />}
+              variant="contained"
+              color="success"
+              size="small"
+              sx={{ background: '#2e7d32 !important', '&:hover': { background: '#1b5e20 !important' } }}
+            >
+              Domiciliar (Ahorra ${plan.plan.price - equivalent.price} MXN/mes)
+            </Button>
+          ) : null}
         </Stack>
 
         {!planLoading && !plan?.has_plan ? (
@@ -136,6 +149,10 @@ const MyCurrentPlan = () => {
           <div id="mp-bricks-container" />
         </Box>
       </CustomModal>
+
+      <Snackbar open={successAlert} autoHideDuration={4000} onClose={() => setSuccessAlert(false)} anchorOrigin={{ vertical: "top", horizontal: "center" }}>
+        <Alert severity="success" onClose={() => setSuccessAlert(false)}>¡Suscripción activada exitosamente!</Alert>
+      </Snackbar>
     </>
   );
 };
