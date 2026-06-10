@@ -1,56 +1,90 @@
-import React, { useEffect, useState } from "react";
-import { getCurrentPlan } from "../../../api/plans";
-import SubscriptionModal from "../SubscriptionModal/SubscriptionModal";
+import React, { useEffect, useState, useCallback } from "react";
+import { getCurrentPlan, getPlanEquivalent } from "../../../api/plans";
+import { createSubscription } from "../../../api/subscriptions";
+import { useMercadoPago } from "../../../hooks/useMercadoPago";
 import { useModal } from "../../../hooks/useModal";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
-import { Grid, Stack, Card, CardContent, Typography } from "@mui/material";
+import CustomModal from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
+import { Grid, Stack, Card, CardContent, Typography, Alert, Box } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 
 const MyCurrentPlan = () => {
   const [plan, setPlan] = useState(null);
   const [planLoading, setPlanLoading] = useState(true);
-  const subscriptionModal = useModal();
+  const [equivalent, setEquivalent] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [result, setResult] = useState(null);
+  const paymentModal = useModal();
+  const { createCardForm, unmountCardForm } = useMercadoPago();
 
   useEffect(() => {
-    const fetchPlan = async () => {
+    const fetchData = async () => {
       const res = await getCurrentPlan();
       if (res.status === 200) {
         setPlan(res.data);
+        if (res.data?.plan?.stores) {
+          const eqRes = await getPlanEquivalent(res.data.plan.id).catch(() => null);
+          if (eqRes?.status === 200) setEquivalent(eqRes.data);
+        }
       }
       setPlanLoading(false);
     };
-    fetchPlan();
+    fetchData();
   }, []);
 
-  const handleUpdateSubscriptionList = (updated) => {
-    setPlan(updated);
+  const handleOpenPayment = useCallback(() => {
+    setResult(null);
+    paymentModal.open();
+    setTimeout(() => {
+      createCardForm({
+        amount: equivalent?.price || plan?.plan?.price,
+        onSubmit: async ({ token, email }) => {
+          setSubmitting(true);
+          try {
+            const res = await createSubscription({
+              plan_id: equivalent?.id || plan.plan.id,
+              card_token_id: token,
+              payer_email: email,
+            });
+            if (res.status === 201 || res.status === 200) {
+              setResult({ success: true, message: "¡Suscripción activada exitosamente!" });
+            } else {
+              setResult({ success: false, message: "Error al crear la suscripción." });
+            }
+          } catch (err) {
+            const msg = err.response?.data?.detail || err.response?.data?.error || "Error al procesar la suscripción.";
+            setResult({ success: false, message: msg });
+          } finally {
+            setSubmitting(false);
+          }
+        },
+        onError: () => {
+          setResult({ success: false, message: "Error en el formulario de pago." });
+        },
+      });
+    }, 100);
+  }, [equivalent, plan, paymentModal, createCardForm]);
+
+  const handleClosePayment = () => {
+    unmountCardForm();
+    setResult(null);
+    paymentModal.close();
   };
 
   return (
     <>
-      <CustomSpinner isLoading={planLoading} />
-      <SubscriptionModal
-        isOpen={subscriptionModal.isOpen}
-        subscription={subscriptionModal.data}
-        onClose={subscriptionModal.close}
-        onUpdate={handleUpdateSubscriptionList}
-      />
+      <CustomSpinner isLoading={planLoading || submitting} />
 
       <Grid item xs={12} className="card">
-        <Stack
-          direction="row"
-          justifyContent="space-between"
-          alignItems="center"
-          sx={{ mb: 3 }}
-        >
+        <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
           <h1>Mi Plan Actual</h1>
           <CustomButton
-            onClick={() => subscriptionModal.open()}
+            onClick={handleOpenPayment}
             startIcon={<AddCircleIcon />}
-            disabled
+            disabled={!equivalent}
           >
-            Cambiar plan
+            Domiciliar
           </CustomButton>
         </Stack>
 
@@ -67,33 +101,17 @@ const MyCurrentPlan = () => {
                     Plan Actual: {plan.plan.name}
                   </Typography>
                   <Grid container spacing={3}>
-                    <Grid item xs={12} sm={6} md={3}>
-                      <Typography variant="body2" color="textSecondary">
-                        Precio
-                      </Typography>
-                      <Typography variant="body1">
-                        ${plan.plan.price} MXN/mes
-                      </Typography>
+                    <Grid item xs={12} sm={6} md={4}>
+                      <Typography variant="body2" color="textSecondary">Precio</Typography>
+                      <Typography variant="body1">${plan.plan.price} MXN/mes</Typography>
                     </Grid>
-                    <Grid item xs={12} sm={6} md={3}>
-                      <Typography variant="body2" color="textSecondary">
-                        Sucursales
-                      </Typography>
+                    <Grid item xs={12} sm={6} md={4}>
+                      <Typography variant="body2" color="textSecondary">Sucursales</Typography>
                       <Typography variant="body1">{plan.plan.stores}</Typography>
                     </Grid>
-                    <Grid item xs={12} sm={6} md={3}>
-                      <Typography variant="body2" color="textSecondary">
-                        Almacenes
-                      </Typography>
-                      <Typography variant="body1">{plan.plan.storages}</Typography>
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={3}>
-                      <Typography variant="body2" color="textSecondary">
-                        Facturación
-                      </Typography>
-                      <Typography variant="body1">
-                        {plan.plan.billing_type_display}
-                      </Typography>
+                    <Grid item xs={12} sm={6} md={4}>
+                      <Typography variant="body2" color="textSecondary">Facturación</Typography>
+                      <Typography variant="body1">{plan.plan.billing_type_display}</Typography>
                     </Grid>
                   </Grid>
                 </CardContent>
@@ -102,6 +120,22 @@ const MyCurrentPlan = () => {
           </>
         )}
       </Grid>
+
+      <CustomModal showOut={paymentModal.isOpen} onClose={handleClosePayment} title="Domiciliar pago recurrente">
+        <Box sx={{ p: 3 }}>
+          {result && (
+            <Alert severity={result.success ? "success" : "error"} sx={{ mb: 2 }}>
+              {result.message}
+            </Alert>
+          )}
+          {equivalent && !result?.success && (
+            <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
+              Se activará cobro recurrente de <strong>${equivalent.price} MXN/mes</strong>
+            </Typography>
+          )}
+          <div id="mp-bricks-container" />
+        </Box>
+      </CustomModal>
     </>
   );
 };
