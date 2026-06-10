@@ -6,7 +6,8 @@ import { useModal } from "../../../hooks/useModal";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import CustomModal from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
-import { Grid, Stack, Card, CardContent, Typography, Alert, Box, Snackbar, Chip, Button } from "@mui/material";
+import { Grid, Stack, Card, CardContent, Typography, Box, Chip, Button } from "@mui/material";
+import { showSuccess } from "../../../utils/alerts";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
@@ -16,7 +17,7 @@ const MyCurrentPlan = () => {
   const [equivalent, setEquivalent] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState(null);
-  const [successAlert, setSuccessAlert] = useState(false);
+
   const paymentModal = useModal();
   const { createCardForm, unmountCardForm } = useMercadoPago();
 
@@ -54,7 +55,7 @@ const MyCurrentPlan = () => {
               paymentModal.close();
               setPlan((prev) => ({ ...prev, plan: equivalent, has_plan: true }));
               setEquivalent(null);
-              setSuccessAlert(true);
+              showSuccess("¡Suscripción activada exitosamente!");
             } else {
               setResult({ success: false, message: "Error al crear la suscripción." });
             }
@@ -149,10 +150,6 @@ const MyCurrentPlan = () => {
           <div id="mp-bricks-container" />
         </Box>
       </CustomModal>
-
-      <Snackbar open={successAlert} autoHideDuration={4000} onClose={() => setSuccessAlert(false)} anchorOrigin={{ vertical: "top", horizontal: "center" }}>
-        <Alert severity="success" onClose={() => setSuccessAlert(false)}>¡Suscripción activada exitosamente!</Alert>
-      </Snackbar>
     </>
   );
 };
