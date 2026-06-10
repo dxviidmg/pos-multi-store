@@ -86,7 +86,7 @@ const MyCurrentPlan = () => {
         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
           <h1>Mi Plan Actual</h1>
           {plan?.plan?.billing_type === "S" ? (
-            <Chip icon={<CheckCircleIcon />} label="Domiciliación activada" color="success" variant="outlined" />
+            <Chip icon={<CheckCircleIcon />} label="Domiciliación activada" color="success" variant="filled" />
           ) : equivalent ? (
             <Button
               onClick={handleOpenPayment}
