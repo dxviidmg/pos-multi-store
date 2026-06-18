@@ -47,7 +47,7 @@ const MyCurrentPlan = () => {
           try {
             const res = await createSubscription({
               plan_id: equivalent?.id || plan.plan.id,
-              card_token_id: token,
+              card_token: token,
               payer_email: email,
             });
             if (res.status === 201 || res.status === 200) {
