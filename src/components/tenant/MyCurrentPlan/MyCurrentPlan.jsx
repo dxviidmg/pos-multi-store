@@ -6,7 +6,7 @@ import { useModal } from "../../../hooks/useModal";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import CustomModal from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
-import { Grid, Stack, Card, CardContent, Typography, Box, Chip, Button } from "@mui/material";
+import { Grid, Stack, Card, CardContent, Typography, Box, Chip, Button, Alert } from "@mui/material";
 import { showSuccess } from "../../../utils/alerts";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
@@ -47,7 +47,7 @@ const MyCurrentPlan = () => {
           try {
             const res = await createSubscription({
               plan_id: equivalent?.id || plan.plan.id,
-              card_token_id: token,
+              card_token: token,
               payer_email: email,
             });
             if (res.status === 201 || res.status === 200) {
