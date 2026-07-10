@@ -75,7 +75,7 @@ const PriceUpdateModal = ({ isOpen, onClose, selectedProducts, onSuccess }) => {
   const isCostHigher = formData.cost !== "" && formData.unit_price !== "" && Number(formData.cost) >= Number(formData.unit_price);
 
   return (
-    <CustomModal showOut={isOpen} onClose={onClose} title={`Actualización de precios (${selectedProducts.length} productos)`}>
+    <CustomModal showOut={isOpen} onClose={onClose} title={`Actualización masiva de costos y precios (${selectedProducts.length} productos)`}>
       <Grid container spacing={2} sx={{ p: 2 }}>
         {!hasSamePrices ? (
           <Grid item xs={12}>

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import DataTable from "../../ui/DataTable/DataTable";
 import { Typography, Chip } from "@mui/material";
 import CustomButton from "../../ui/Button/Button";
@@ -21,6 +21,11 @@ import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { UI_TEXT } from "../../../constants";
 import Swal from "sweetalert2";
 import { getStoreColumns, getStorageColumns, getTotalColumns, filterColumns, filterStorageColumns, filterTotalColumns } from "./StoreList.columns";
+import CustomModal from "../../ui/Modal/Modal";
+import { useModal } from "../../../hooks/useModal";
+import { createMercadoPagoPreference } from "../../../api/mercadopago";
+import { showError } from "../../../utils/alerts";
+import mercadoPagoLogo from "../../../assets/mercadopago-logo.svg";
 
 const getCashValueTotal = (value) => formatCurrency(value || 0);
 
@@ -58,6 +63,28 @@ const StoreList = () => {
   const { data: storesData, isLoading: loadingStores } = useStores(params);
   const { data: tenantInfo = {}, isLoading: loadingTenant } = useTenantInfo();
   const { data: departments = [] } = useDepartments();
+
+  const mpModal = useModal();
+  const [mpLoading, setMpLoading] = useState(false);
+
+  useEffect(() => {
+    if (tenantInfo.show_mp_modal) mpModal.open();
+  }, [tenantInfo.show_mp_modal]);
+
+  const handleMpPayment = async () => {
+    setMpLoading(true);
+    try {
+      const res = await createMercadoPagoPreference();
+      if (res.data?.init_point) {
+        window.open(res.data.init_point, "_blank");
+        mpModal.close();
+      }
+    } catch {
+      showError("Error", "No se pudo crear el enlace de pago");
+    } finally {
+      setMpLoading(false);
+    }
+  };
 
   const stores = storesData?.stores || [];
   
@@ -490,6 +517,18 @@ const StoreList = () => {
         showPasswords={showPasswords}
         onToggleVisibility={togglePasswordVisibility}
       />
+
+      <CustomModal showOut={mpModal.isOpen} onClose={mpModal.close} title="Pago de servicio">
+        <Box sx={{ p: 3, textAlign: 'center' }}>
+          <Box component="img" src={mercadoPagoLogo} alt="Mercado Pago" sx={{ height: 40, mb: 2 }} />
+          <Typography variant="body1" sx={{ mb: 3 }}>
+            Tu suscripción está próxima a vencer o ya venció. Realiza tu pago para continuar usando el sistema.
+          </Typography>
+          <CustomButton onClick={handleMpPayment} disabled={mpLoading}>
+            {mpLoading ? "Generando enlace..." : "Pagar con Mercado Pago"}
+          </CustomButton>
+        </Box>
+      </CustomModal>
     </>
   );
 };
