@@ -28,7 +28,13 @@ export const useMercadoPago = () => {
       callbacks: {
         onReady: () => {},
         onSubmit: (cardFormData) => {
-          if (onSubmit) onSubmit({ token: cardFormData.token, email: cardFormData.payer.email });
+          if (onSubmit) onSubmit({
+            token: cardFormData.token,
+            email: cardFormData.payer.email,
+            payment_method_id: cardFormData.payment_method_id,
+            issuer_id: cardFormData.issuer_id,
+            installments: cardFormData.installments,
+          });
         },
         onError: (error) => {
           console.error('Brick error:', error);
