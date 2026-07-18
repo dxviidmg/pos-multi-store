@@ -1,8 +1,10 @@
 import React, { useState, useMemo, useEffect } from "react";
 import CustomModal from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
+import SimpleTable from "../../ui/SimpleTable/SimpleTable";
 import { Grid, TextField, Alert } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
+import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { updatePricesProducts } from "../../../api/products";
 import { showSuccess, showError } from "../../../utils/alerts";
 
@@ -14,6 +16,7 @@ const PriceUpdateModal = ({ isOpen, onClose, selectedProducts, onSuccess }) => {
     min_wholesale_quantity: "",
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [confirmedDifferentPrices, setConfirmedDifferentPrices] = useState(false);
 
   const hasSamePrices = useMemo(() => {
     if (selectedProducts.length < 2) return true;
@@ -27,6 +30,8 @@ const PriceUpdateModal = ({ isOpen, onClose, selectedProducts, onSuccess }) => {
     );
   }, [selectedProducts]);
 
+  const showForm = hasSamePrices || confirmedDifferentPrices;
+
   useEffect(() => {
     if (hasSamePrices && selectedProducts.length > 0) {
       const first = selectedProducts[0];
@@ -36,8 +41,16 @@ const PriceUpdateModal = ({ isOpen, onClose, selectedProducts, onSuccess }) => {
         wholesale_price: first.wholesale_price || "",
         min_wholesale_quantity: first.min_wholesale_quantity || "",
       });
+    } else {
+      setFormData({ cost: "", unit_price: "", wholesale_price: "", min_wholesale_quantity: "" });
     }
   }, [selectedProducts, hasSamePrices]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setConfirmedDifferentPrices(false);
+    }
+  }, [isOpen]);
 
   const handleDataChange = (e) => {
     const { name, value } = e.target;
@@ -58,6 +71,7 @@ const PriceUpdateModal = ({ isOpen, onClose, selectedProducts, onSuccess }) => {
     if (response.status === 200) {
       showSuccess("Precios actualizados");
       setFormData({ cost: "", unit_price: "", wholesale_price: "", min_wholesale_quantity: "" });
+      setConfirmedDifferentPrices(false);
       onClose();
       onSuccess();
     } else {
@@ -77,13 +91,38 @@ const PriceUpdateModal = ({ isOpen, onClose, selectedProducts, onSuccess }) => {
   return (
     <CustomModal showOut={isOpen} onClose={onClose} title={`Actualización masiva de costos y precios (${selectedProducts.length} productos)`}>
       <Grid container spacing={2} sx={{ p: 2 }}>
-        {!hasSamePrices ? (
-          <Grid item xs={12}>
-            <Alert severity="warning" variant="filled">
-              Los productos seleccionados no comparten el mismo costo, precio unitario, precio de mayoreo o cantidad mínima de mayoreo. La actualización masiva solo está disponible cuando todos estos valores coinciden.
-            </Alert>
-          </Grid>
-        ) : (
+        {!hasSamePrices && !confirmedDifferentPrices ? (
+          <>
+            <Grid item xs={12}>
+              <Alert severity="warning" variant="filled">
+                Los productos seleccionados no comparten el mismo costo, precio unitario, precio de mayoreo o cantidad mínima de mayoreo. Los campos se mostrarán vacíos y solo se actualizarán los valores que llenes.
+              </Alert>
+            </Grid>
+            <Grid item xs={12}>
+              <SimpleTable
+                data={selectedProducts}
+                columns={[
+                  { name: "Código", selector: (row) => row.code || "" },
+                  { name: "Producto", selector: (row) => row.name },
+                  { name: "Costo", selector: (row) => row.cost ? `$${row.cost}` : "" },
+                  { name: "Unitario", selector: (row) => row.unit_price ? `$${row.unit_price}` : "" },
+                  { name: "Mayoreo", selector: (row) => row.wholesale_price ? `$${row.wholesale_price}` : "" },
+                  { name: "Cant. mín.", selector: (row) => row.min_wholesale_quantity || "" },
+                ]}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <CustomButton
+                fullWidth
+                onClick={() => setConfirmedDifferentPrices(true)}
+                startIcon={<WarningAmberIcon />}
+                color="warning"
+              >
+                Continuar con la actualización masiva
+              </CustomButton>
+            </Grid>
+          </>
+        ) : showForm ? (
           <>
             <Grid item xs={12} md={6}>
               <TextField size="small" fullWidth label="Costo" type="number"
@@ -123,7 +162,7 @@ const PriceUpdateModal = ({ isOpen, onClose, selectedProducts, onSuccess }) => {
               </CustomButton>
             </Grid>
           </>
-        )}
+        ) : null}
       </Grid>
     </CustomModal>
   );
