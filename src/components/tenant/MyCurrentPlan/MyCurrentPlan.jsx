@@ -42,13 +42,16 @@ const MyCurrentPlan = () => {
     setTimeout(() => {
       createCardForm({
         amount: equivalent?.price || plan?.plan?.price,
-        onSubmit: async ({ token, email }) => {
+        onSubmit: async ({ token, email, payment_method_id, issuer_id, installments }) => {
           setSubmitting(true);
           try {
             const res = await createSubscription({
               plan_id: equivalent?.id || plan.plan.id,
               card_token: token,
               payer_email: email,
+              payment_method_id,
+              issuer_id,
+              installments,
             });
             if (res.status === 201 || res.status === 200) {
               unmountCardForm();
