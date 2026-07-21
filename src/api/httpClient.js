@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { logger } from '../utils/logger';
+import { getUserData } from './utils';
 
 const httpClient = axios.create({
   timeout: 60000,
@@ -8,6 +9,13 @@ const httpClient = axios.create({
 // Request interceptor
 httpClient.interceptors.request.use(
   (config) => {
+    const user = getUserData();
+    if (user?.token) {
+      config.headers.Authorization = `Token ${user.token}`;
+    }
+    if (user?.store_id) {
+      config.headers['store-id'] = user.store_id;
+    }
     logger.info(`[API] ${config.method?.toUpperCase()} ${config.url}`);
     return config;
   },

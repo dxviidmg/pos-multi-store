@@ -10,17 +10,15 @@ import {
 import { useModal } from "../../../hooks/useModal";
 import SaleModal from "../SaleModal/SaleModal";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
-import CancelIcon from "@mui/icons-material/Cancel";
 import PrintIcon from "@mui/icons-material/Print";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import BlockIcon from "@mui/icons-material/Block";
-import WarningIcon from "@mui/icons-material/Warning";
 import UndoIcon from "@mui/icons-material/Undo";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ErrorIcon from "@mui/icons-material/Error";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import { Alert, Popper, Paper, Grid, TextField, Select, MenuItem, FormControl, InputLabel, Box} from "@mui/material";
+import { Popper, Paper, Grid, TextField, Select, MenuItem, FormControl, InputLabel, Box} from "@mui/material";
 import { getUserData } from "../../../api/utils";
 import PaymentEditModal from "../PaymentEditModal/PaymentEditModal";
 import CustomTooltip from "../../ui/Tooltip";

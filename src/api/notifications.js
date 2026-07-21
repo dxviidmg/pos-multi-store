@@ -1,23 +1,14 @@
 import httpClient from "./httpClient";
-import { getApiUrl, getHeaders } from "./utils";
+import { getApiUrl } from "./utils";
 
 export const getPendingMovements = async () => {
-  const response = await httpClient.get(getApiUrl("pending-movements"), {
-    headers: getHeaders(),
-  });
-  return response;
+  return httpClient.get(getApiUrl("pending-movements"));
 };
 
 export const getDuplicateSales = async () => {
-  const response = await httpClient.get(getApiUrl("duplicate-sales"), {
-    headers: getHeaders(),
-  });
-  return response;
+  return httpClient.get(getApiUrl("duplicate-sales"));
 };
 
 export const getStockUpdateRequests = async () => {
-  const response = await httpClient.get(getApiUrl("stock-update-request"), {
-    headers: getHeaders(),
-  });
-  return response;
+  return httpClient.get(getApiUrl("stock-update-request"));
 };

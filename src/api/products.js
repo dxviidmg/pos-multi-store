@@ -1,5 +1,6 @@
+import { logger } from "../utils/logger";
 import httpClient from "./httpClient";
-import { getApiUrl, getHeaders, buildUrlWithParams } from "./utils";
+import { getApiUrl, buildUrlWithParams } from "./utils";
 
 const timedRequest = async (axiosCall, meta = {}) => {
   const start = performance.now();
@@ -9,7 +10,7 @@ const timedRequest = async (axiosCall, meta = {}) => {
   } catch (error) {
     const end = performance.now();
     const duration = Math.round((end - start) / 1000);
-    console.log(`[FAIL] ${meta.name || "request"}: ${duration} s`);
+    logger.warn(`[FAIL] ${meta.name || "request"}: ${duration} s`);
     throw error;
   }
 };
@@ -23,7 +24,7 @@ const timedRequest = async (axiosCall, meta = {}) => {
 export const getStoreProducts = async (params, config = {}) => {
   const url = buildUrlWithParams(getApiUrl("store-product"), params);
   return timedRequest(
-    () => httpClient.get(url, { headers: getHeaders(), ...config }),
+    () => httpClient.get(url, config),
     { name: "getStoreProducts" }
   );
 };
@@ -35,10 +36,7 @@ export const getStoreProducts = async (params, config = {}) => {
  */
 export const getProducts = async (params) => {
   const url = buildUrlWithParams(getApiUrl("product"), params);
-  const response = await httpClient.get(url, {
-    headers: getHeaders(),
-  });
-  return response;
+  return httpClient.get(url);
 };
 
 /**
@@ -47,10 +45,9 @@ export const getProducts = async (params) => {
  * @returns {Promise<Object>} Created product response
  */
 export const createProduct = async (data) => {
-  const response = await httpClient.post(getApiUrl("product"), data, {
-    headers: getHeaders(true),
-  });
-  return response;
+  if (data.min_wholesale_quantity === "") data.min_wholesale_quantity = null;
+  if (data.wholesale_price === "") data.wholesale_price = null;
+  return httpClient.post(getApiUrl("product"), data);
 };
 
 /**
@@ -62,10 +59,9 @@ export const updateProduct = async (data) => {
   if (typeof data.image === "string") {
     delete data.image;
   }
-  const response = await httpClient.patch(getApiUrl(`product/${data.id}`), data, {
-    headers: getHeaders(true),
-  });
-  return response;
+  if (data.min_wholesale_quantity === "") data.min_wholesale_quantity = null;
+  if (data.wholesale_price === "") data.wholesale_price = null;
+  return httpClient.patch(getApiUrl(`product/${data.id}`), data);
 };
 
 /**
@@ -74,10 +70,7 @@ export const updateProduct = async (data) => {
  * @returns {Promise<Object>} Add products response
  */
 export const addProducts = async (data) => {
-  const response = await httpClient.post(getApiUrl("products/add"), data, {
-    headers: getHeaders(),
-  });
-  return response;
+  return httpClient.post(getApiUrl("products/add"), data);
 };
 
 /**
@@ -87,10 +80,7 @@ export const addProducts = async (data) => {
  */
 export const getStoreProductLogs = async (params) => {
   const url = buildUrlWithParams(getApiUrl("store-product-logs"), params);
-  const response = await httpClient.get(url, {
-    headers: getHeaders(),
-  });
-  return response;
+  return httpClient.get(url);
 };
 
 /**
@@ -98,10 +88,7 @@ export const getStoreProductLogs = async (params) => {
  * @returns {Promise<Object>} Log choices response
  */
 export const getStoreProductLogsChoices = async () => {
-  const response = await httpClient.get(getApiUrl("store-product-logs/choices"), {
-    headers: getHeaders(),
-  });
-  return response;
+  return httpClient.get(getApiUrl("store-product-logs/choices"));
 };
 
 /**
@@ -110,10 +97,7 @@ export const getStoreProductLogsChoices = async () => {
  * @returns {Promise<Object>} Updated store product response
  */
 export const updateStoreProduct = async (data) => {
-  const response = await httpClient.patch(getApiUrl(`store-product/${data.id}`), data, {
-    headers: getHeaders(),
-  });
-  return response;
+  return httpClient.patch(getApiUrl(`store-product/${data.id}`), data);
 };
 
 /**
@@ -122,10 +106,7 @@ export const updateStoreProduct = async (data) => {
  * @returns {Promise<Object>} Validation results
  */
 export const importProductsValidation = async (data) => {
-  const response = await httpClient.post(getApiUrl("products/import-validation"), data, {
-    headers: getHeaders(true),
-  });
-  return response;
+  return httpClient.post(getApiUrl("products/import-validation"), data);
 };
 
 /**
@@ -134,10 +115,7 @@ export const importProductsValidation = async (data) => {
  * @returns {Promise<Object>} Import results
  */
 export const importProducts = async (data) => {
-  const response = await httpClient.post(getApiUrl("products/import"), data, {
-    headers: getHeaders(true),
-  });
-  return response;
+  return httpClient.post(getApiUrl("products/import"), data);
 };
 
 /**
@@ -146,10 +124,16 @@ export const importProducts = async (data) => {
  * @returns {Promise<Object>} Deletion response
  */
 export const deleteProducts = async (data) => {
-  const response = await httpClient.post(getApiUrl("products/delete"), data, {
-    headers: getHeaders(),
-  });
-  return response;
+  return httpClient.post(getApiUrl("products/delete"), data);
+};
+
+/**
+ * Update prices for multiple products
+ * @param {Array} data - Array of product IDs to update prices
+ * @returns {Promise<Object>} Update prices response
+ */
+export const updatePricesProducts = async (data) => {
+  return httpClient.post(getApiUrl("products/update-prices"), data);
 };
 
 /**
@@ -158,10 +142,7 @@ export const deleteProducts = async (data) => {
  * @returns {Promise<Object>} Update response
  */
 export const upperCodeProducts = async (data) => {
-  const response = await httpClient.post(getApiUrl("products/upper-code"), data, {
-    headers: getHeaders(),
-  });
-  return response;
+  return httpClient.post(getApiUrl("products/upper-code"), data);
 };
 
 /**
@@ -170,10 +151,7 @@ export const upperCodeProducts = async (data) => {
  * @returns {Promise<Object>} Validation results
  */
 export const importStoreProductsValidation = async (data) => {
-  const response = await httpClient.post(getApiUrl("store-products/import-validation"), data, {
-    headers: getHeaders(true),
-  });
-  return response;
+  return httpClient.post(getApiUrl("store-products/import-validation"), data);
 };
 
 /**
@@ -182,10 +160,7 @@ export const importStoreProductsValidation = async (data) => {
  * @returns {Promise<Object>} Import results
  */
 export const importStoreProducts = async (data) => {
-  const response = await httpClient.post(getApiUrl("store-products/import"), data, {
-    headers: getHeaders(true),
-  });
-  return response;
+  return httpClient.post(getApiUrl("store-products/import"), data);
 };
 
 /**
@@ -193,10 +168,7 @@ export const importStoreProducts = async (data) => {
  * @returns {Promise<Object>} Configuration response
  */
 export const getImportCanIncludeQuantity = async () => {
-  const response = await httpClient.get(getApiUrl("store-products/import/can-include-quantity"), {
-    headers: getHeaders(true),
-  });
-  return response;
+  return httpClient.get(getApiUrl("store-products/import/can-include-quantity"));
 };
 
 /**
@@ -205,10 +177,7 @@ export const getImportCanIncludeQuantity = async () => {
  * @returns {Promise<Object>} Reassignment response
  */
 export const reassignProducts = async (data) => {
-  const response = await httpClient.post(getApiUrl("products/reassign"), data, {
-    headers: getHeaders(),
-  });
-  return response;
+  return httpClient.post(getApiUrl("products/reassign"), data);
 };
 
 /**
@@ -217,10 +186,7 @@ export const reassignProducts = async (data) => {
  * @returns {Promise<Object>} Task result response
  */
 export const getTaskResult = async (id) => {
-  const response = await httpClient.get(getApiUrl(`task-result/${id}`), {
-    headers: getHeaders(),
-  });
-  return response;
+  return httpClient.get(getApiUrl(`task-result/${id}`));
 };
 
 /**
@@ -229,16 +195,18 @@ export const getTaskResult = async (id) => {
  * @returns {Promise<Object>} Stock information response
  */
 export const getStockOtherStores = async (storeProductId) => {
-  const response = await httpClient.get(getApiUrl(`products/stock-other-stores/?store-product=${storeProductId}`, false), {
-    headers: getHeaders(),
-  });
-  return response;
+  return httpClient.get(getApiUrl(`products/stock-other-stores/?store-product=${storeProductId}`, false));
 };
 
 export const getProductPriceLogs = async (productId) => {
   const url = buildUrlWithParams(getApiUrl("product-price-logs"), { product_id: productId });
-  const response = await httpClient.get(url, {
-    headers: getHeaders(),
-  });
-  return response;
+  return httpClient.get(url);
+};
+
+/**
+ * Check if products can be created on sale
+ * @returns {Promise<Object>} Configuration response with create_products_on_sale flag
+ */
+export const getCreateProductsOnSale = async () => {
+  return httpClient.get(getApiUrl("create-products-on-sale"));
 };

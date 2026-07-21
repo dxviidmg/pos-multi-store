@@ -1,23 +1,14 @@
 import httpClient from "./httpClient";
-import { getApiUrl, getHeaders } from "./utils";
+import { getApiUrl } from "./utils";
 
 export const getUser = async (id) => {
-  const response = await httpClient.get(getApiUrl(`user/${id}`), {
-    headers: getHeaders(),
-  });
-  return response;
+  return httpClient.get(getApiUrl(`user/${id}`));
 };
 
 export const updateUser = async (id, data) => {
-  const response = await httpClient.patch(getApiUrl(`user/${id}`), data, {
-    headers: getHeaders(),
-  });
-  return response;
+  return httpClient.patch(getApiUrl(`user/${id}`), data);
 };
 
 export const changePassword = async (_id, data) => {
-  const response = await httpClient.post(getApiUrl('user/change_password'), data, {
-    headers: getHeaders(),
-  });
-  return response;
+  return httpClient.post(getApiUrl('user/change_password'), data);
 };

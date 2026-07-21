@@ -7,7 +7,7 @@ import { Grid,  Chip } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import DeleteIcon from "@mui/icons-material/Delete";
 import httpClient from "../../../api/httpClient";
-import { getApiUrl, getHeaders } from "../../../api/utils";
+import { getApiUrl, getUserData } from "../../../api/utils";
 import { getFormattedDateTime } from "../../../utils/utils";
 import { showSuccess, showError } from "../../../utils/alerts";
 import { getStockUpdateRequests } from "../../../api/notifications";
@@ -15,6 +15,7 @@ import Swal from "sweetalert2";
 import PageHeader from "../../ui/PageHeader";
 
 const StockUpdateRequestList = () => {
+  const user = getUserData();
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -38,7 +39,7 @@ const StockUpdateRequestList = () => {
     });
     if (!isConfirmed) return;
     try {
-      await httpClient.post(getApiUrl(`stock-update-request/${row.id}/approve`), {}, { headers: getHeaders() });
+      await httpClient.post(getApiUrl(`stock-update-request/${row.id}/approve`), {});
       setRequests((prev) => prev.map((r) => r.id === row.id ? { ...r, applied: true } : r));
       showSuccess("Ajuste aplicado");
     } catch {
@@ -58,7 +59,7 @@ const StockUpdateRequestList = () => {
     });
     if (!isConfirmed) return;
     try {
-      await httpClient.delete(getApiUrl(`stock-update-request/${row.id}`), { headers: getHeaders() });
+      await httpClient.delete(getApiUrl(`stock-update-request/${row.id}`));
       setRequests((prev) => prev.filter((r) => r.id !== row.id));
       showSuccess("Solicitud eliminada");
     } catch {
@@ -70,14 +71,15 @@ const StockUpdateRequestList = () => {
     <>
       <CustomSpinner isLoading={loading} />
       <Grid item xs={12} className="card">
-        <PageHeader title="Solicitudes de ajustes" />
+        <PageHeader title={"Solicitudes de ajustes de stock" + (user.store_id === null ? "(todas las tiendas)": "(Solo esta tienda)")}  />
         <DataTable
           progressPending={loading}
           noDataComponent="Sin solicitudes pendientes"
           data={requests}
           columns={[
             { name: "#", selector: (row) => row.id, width: 70 },
-            { name: "Tienda", selector: (row) => row.store_name },
+            ...(user.store_id === null ? [{ name: "Tienda", selector: (row) => row.store_name }] : []),
+            { name: "Código", selector: (row) => row.product_code },
             { name: "Producto", selector: (row) => row.product_name },
             { name: "Cantidad solicitada", selector: (row) => row.requested_stock },
             { name: "Solicitante", selector: (row) => row.requested_by_username },
@@ -93,11 +95,13 @@ const StockUpdateRequestList = () => {
               name: "Acciones",
               cell: (row) => !row.applied ? (
                 <>
+                {user.role === "owner" &&
                   <CustomTooltip text="Confirmar ajuste">
                     <CustomButton onClick={() => handleApply(row)}>
                       <CheckCircleIcon />
                     </CustomButton>
                   </CustomTooltip>
+                  }
                   <CustomTooltip text="Borrar solicitud">
                     <CustomButton onClick={() => handleDelete(row)}>
                       <DeleteIcon />

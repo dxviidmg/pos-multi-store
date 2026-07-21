@@ -112,25 +112,12 @@ const LineChart = ({ title, data, labels, xText, yText, dataType, metricType = '
     if (!data) return [];
     const daysInMonth = labels?.length || 31;
     const processedData = processData(data, dataType, metricType, daysInMonth);
-
-    if (processedData.length > 1) {
-      const dataLength = processedData[0].data.length;
-      const avgData = Array(dataLength).fill(0);
-      processedData.forEach(store => {
-        store.data.forEach((value, index) => { avgData[index] += value; });
-      });
-      const average = avgData.map(sum => sum / processedData.length);
-      return [
-        ...processedData,
-        { data: average, label: 'Promedio', color: '#94a3b8', curve: 'linear', showMark: false },
-      ];
-    }
     return processedData;
   }, [data, dataType, metricType, labels]);
 
   return (
     <Box sx={{ width: '100%', height: '100%' }}>
-      <Typography variant="h6" sx={{ mb: 2, fontWeight: 500, color: '#1e293b' }}>
+      <Typography variant="h6" sx={{ mb: 2, fontWeight: 500, color: 'text.primary' }}>
         {title}
       </Typography>
       <MuiLineChart
@@ -138,13 +125,13 @@ const LineChart = ({ title, data, labels, xText, yText, dataType, metricType = '
           data: labels || [],
           scaleType: 'point',
           label: xText,
-          labelStyle: { fontSize: 12, fill: '#64748b' },
-          tickLabelStyle: { fontSize: 11, fill: '#64748b' },
+          labelStyle: { fontSize: 12, fill: 'text.secondary' },
+          tickLabelStyle: { fontSize: 11, fill: 'text.secondary' },
         }]}
         yAxis={[{ 
           min: 0,
-          labelStyle: { fontSize: 12, fill: '#64748b' },
-          tickLabelStyle: { fontSize: 11, fill: '#64748b' },
+          labelStyle: { fontSize: 12, fill: 'text.secondary' },
+          tickLabelStyle: { fontSize: 11, fill: 'text.secondary' },
         }]}
         series={series.map(s => ({
           ...s,

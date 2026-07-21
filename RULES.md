@@ -57,7 +57,7 @@
 ## Patrones de código
 
 - Hooks: `useModal()` para abrir/cerrar modales con datos. `useFetch`, `useFetchWithRetry`, `useCrudMutation` para datos del servidor.
-- API: usar `getApiUrl()` y `getHeaders()` de `api/utils.js`. Para query params usar `buildUrlWithParams()`.
+- API: usar `getApiUrl()` de `api/utils.js`. Para query params usar `buildUrlWithParams()`. El token se agrega automáticamente en el interceptor de `httpClient`.
 - Alertas: `showSuccess()`, `showError()`, `showWarning()`, `showAlert()` de `utils/alerts.js`. Nunca usar `Swal.fire` directo. Para confirmaciones personalizadas usar `showConfirm()` o Swal directo solo si se necesita input/configuración especial.
 - Estado global: Redux solo para carritos (`multiCartReducer`). El resto es estado local o React Query.
 - Lazy loading: todas las rutas usan `lazyRetry()` + `Suspense` con auto-reload en `ChunkLoadError`.
@@ -123,6 +123,15 @@
 - No pasar props que ya son el default del componente receptor.
 - Si un prop/export no se usa en ningún archivo, eliminarlo.
 - Usar `try/catch/finally` en llamadas async para garantizar que loading se desactive.
+
+## Estilo visual y componentes
+
+- **Design tokens para colores**: Nunca usar valores hexadecimales hardcodeados. Usar tokens del tema: `text.primary`, `text.secondary`, `primary`, `accent`.
+- **Clases CSS utilitarias**: Extraer patrones de estilo inline repetidos (ej: ajuste de texto en celdas) a clases CSS en `App.css`.
+- **Componente PageHeader**: Usar siempre en lugar de layouts manuales con `<h1>` + botones. Envolver título y acciones en `<PageHeader title="...">`.
+- **Box de MUI para layouts**: Usar `Box` con `sx` en lugar de `style` inline para flex layouts. Ej: `<Box sx={{ display: 'flex', gap: 0.5 }}>`.
+- **Clases semánticas para estados**: Usar `text-success`, `text-danger`, `text-warning` en lugar de colores hardcodeados.
+- **Iconos de alerta**: Usar tokens del tema (`accent`) en lugar de valores hex.
 
 ## README
 

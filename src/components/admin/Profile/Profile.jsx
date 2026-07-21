@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { logger } from '../../../utils/logger';
 import {
   Box,
   Grid,
@@ -20,6 +21,7 @@ import { CustomSpinner } from '../../ui/Spinner/Spinner';
 
 const Profile = () => {
   const user = getUserData();
+  const isOwner = user?.role === "owner";
   const [tenantData, setTenantData] = useState({
     name: '',
     short_name: '',
@@ -47,6 +49,7 @@ const Profile = () => {
 
   const [settings, setSettings] = useState({
     displays_stock_in_storages: false,
+    create_products_on_sale: false,
   });
 
   const [loading, setLoading] = useState(true);
@@ -57,6 +60,7 @@ const Profile = () => {
 
   useEffect(() => {
     fetchData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchData = async () => {
@@ -72,6 +76,7 @@ const Profile = () => {
       });
       setSettings({
         displays_stock_in_storages: tenantInfo.displays_stock_in_storages || false,
+        create_products_on_sale: tenantInfo.create_products_on_sale || false,
       });
 
       const userInfo = results[1].data;
@@ -82,7 +87,7 @@ const Profile = () => {
         last_name: userInfo.last_name || '',
       });
     } catch (error) {
-      console.error('Fetch error:', error);
+      logger.error('Fetch error:', error);
       setMessage({ type: 'error', text: 'Error al cargar los datos' });
     } finally {
       setLoading(false);
@@ -121,7 +126,7 @@ const Profile = () => {
       await updateTenant(user.tenant_id, { ...tenantData, ...settings });
       setMessage({ type: 'success', text: 'Datos del negocio guardados correctamente' });
     } catch (error) {
-      console.error('Save error:', error);
+      logger.error('Save error:', error);
       setMessage({ type: 'error', text: 'Error al guardar los datos del negocio' });
     } finally {
       setSavingTenant(false);
@@ -136,7 +141,7 @@ const Profile = () => {
       await updateUser(user.user_id, userData);
       setMessage({ type: 'success', text: 'Datos del usuario guardados correctamente' });
     } catch (error) {
-      console.error('Save error:', error);
+      logger.error('Save error:', error);
       setMessage({ type: 'error', text: 'Error al guardar los datos del usuario' });
     } finally {
       setSavingUser(false);
@@ -185,73 +190,85 @@ const Profile = () => {
         )}
 
         <Grid container spacing={3}>
-          <Grid item xs={12} md={6}>
-            <Box sx={{ mb: 3 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <Business sx={{ mr: 1 }} />
-                <Typography variant="h6" fontWeight={600}>
-                  Información del Negocio
-                </Typography>
-              </Box>
-              <Divider sx={{ mb: 2 }} />
-              
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Nombre del Negocio"
-                    name="name"
-                    value={tenantData.name}
-                    onChange={handleTenantChange}
-                    size="small"
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Nombre Corto"
-                    name="short_name"
-                    value={tenantData.short_name}
-                    size="small"
-                    disabled
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Fecha de Creación"
-                    name="created_at"
-                    value={tenantData.created_at ? new Date(tenantData.created_at).toLocaleDateString('es-MX') : ''}
-                    size="small"
-                    disabled
-                  />
-                </Grid>
+          {isOwner && (
+            <>
+              <Grid item xs={12} md={6}>
+                <Box sx={{ mb: 3 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                    <Business sx={{ mr: 1 }} />
+                    <Typography variant="h6" fontWeight={600}>
+                      Información del Negocio
+                    </Typography>
+                  </Box>
+                  <Divider sx={{ mb: 2 }} />
+                  
+                  <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Nombre del Negocio"
+                        name="name"
+                        value={tenantData.name}
+                        onChange={handleTenantChange}
+                        size="small"
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Nombre Corto"
+                        name="short_name"
+                        value={tenantData.short_name}
+                        size="small"
+                        disabled
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Fecha de Creación"
+                        name="created_at"
+                        value={tenantData.created_at ? new Date(tenantData.created_at).toLocaleDateString('es-MX') : ''}
+                        size="small"
+                        disabled
+                      />
+                    </Grid>
+                  </Grid>
+                </Box>
               </Grid>
-            </Box>
-          </Grid>
 
-          <Grid item xs={12} md={6}>
-            <Box sx={{ mb: 3 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <Settings sx={{ mr: 1 }} />
-                <Typography variant="h6" fontWeight={600}>
-                  Configuraciones
-                </Typography>
-              </Box>
-              <Divider sx={{ mb: 2 }} />
-              
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      name="displays_stock_in_storages"
-                      checked={settings.displays_stock_in_storages}
-                      onChange={handleSettingChange}
+              <Grid item xs={12} md={6}>
+                <Box sx={{ mb: 3 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                    <Settings sx={{ mr: 1 }} />
+                    <Typography variant="h6" fontWeight={600}>
+                      Configuraciones
+                    </Typography>
+                  </Box>
+                  <Divider sx={{ mb: 2 }} />
+                  
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          name="displays_stock_in_storages"
+                          checked={settings.displays_stock_in_storages}
+                          onChange={handleSettingChange}
+                        />
+                      }
+                      label="Mostrar stock en almacenes"
                     />
-                  }
-                  label="Mostrar stock en almacenes"
-                />
-              </Box>
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          name="create_products_on_sale"
+                          checked={settings.create_products_on_sale}
+                          onChange={handleSettingChange}
+                        />
+                      }
+                      label="Permitir crear productos desde venta"
+                    />
+                  </Box>
             </Box>
 
             <Button
@@ -264,6 +281,8 @@ const Profile = () => {
               Guardar Datos del Negocio
             </Button>
           </Grid>
+            </>
+          )}
 
           <Grid item xs={12} md={6}>
             <Box sx={{ mb: 3 }}>

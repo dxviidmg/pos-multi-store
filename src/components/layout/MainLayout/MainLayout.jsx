@@ -14,17 +14,22 @@ import {
   ListItemText,
   Collapse,
   Avatar,
+  Menu,
+  MenuItem,
 } from "@mui/material";
 import MuiDrawer from "@mui/material/Drawer";
 import MuiAppBar from "@mui/material/AppBar";
-import MenuIcon from "@mui/icons-material/Menu";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
+import MenuIcon from "@mui/icons-material/Menu";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
+import NewspaperIcon from "@mui/icons-material/Newspaper";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { cleanCart } from "../../../redux/cart/cartActions";
 import { getUserData } from "../../../api/utils";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
@@ -135,15 +140,21 @@ const Drawer = styled(MuiDrawer, {
   };
 });
 
-export default function MainLayout({ toggleTheme, themeMode }) {
+export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
   const navigate = useNavigate();
   const location = useLocation();
   const user = getUserData();
+  const dispatch = useDispatch();
 
   const accent = '#a78bfa';
 
   const [open, setOpen] = React.useState(false);
   const [openMenus, setOpenMenus] = React.useState({});
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  if (!user) {
+    return null;
+  }
 
   const handleDrawerToggle = () => {
     setOpen(!open);
@@ -155,12 +166,9 @@ export default function MainLayout({ toggleTheme, themeMode }) {
     setOpenMenus((prev) => ({ [label]: !prev[label] }));
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    window.location.href = "/";
-  };
 
   const handleBack = () => {
+    dispatch(cleanCart());
     const updatedUser = { ...user, store_type: "", store_name: "", store_id: null };
     localStorage.setItem("user", JSON.stringify(updatedUser));
     window.dispatchEvent(new Event("store-changed"));
@@ -170,7 +178,12 @@ export default function MainLayout({ toggleTheme, themeMode }) {
   const isActive = (href) => location.pathname === href;
 
   const currentHour = new Date().getHours();
-  const isDashboardRestricted = user.store_count > 1 && currentHour >= 10 && currentHour < 21;
+  const isDashboardRestricted =
+  user?.tenant_short_name !== 'demo' &&
+  user &&
+  user.store_count > 1 &&
+  currentHour >= 10 &&
+  currentHour < 21;
 
   const linksByType = {
     T: [
@@ -179,15 +192,17 @@ export default function MainLayout({ toggleTheme, themeMode }) {
         label: "Ventas",
         dropdown: [
           { label: "Ventas", href: "/ventas/" },
-          { label: "Importar ventas", href: "/importar-ventas/", hidden: user.role === "seller" },
+          { label: "Importar ventas", href: "/importar-ventas/"},
         ],
+        hidden: user.role === "seller"
       },
       {
         label: "Caja",
         dropdown: [
-          { label: "Corte de caja", href: "/corte-caja/", hidden: user.role === "seller" },
+          { label: "Corte de caja", href: "/corte-caja/" },
           { label: "Movimientos en caja", href: "/movimientos-caja/" },
         ],
+        hidden: user.role === "seller"
       },
       { label: "Clientes", href: "/clientes/", hidden: user.role === "seller" },
       {
@@ -202,15 +217,32 @@ export default function MainLayout({ toggleTheme, themeMode }) {
           { divider: true, hidden: user.role === "seller" },
           { label: "Importar Productos", href: "/importar-productos/", hidden: user.role === "seller" },
           { label: "Importar inventario", href: "/importar-inventario/", hidden: user.role === "seller" },
+          { divider: true },
+          { label: "Solicitudes de ajustes de stock", href: "/solicitudes-ajustes-stock/", hidden: user.role === "seller"},
+          { label: "Historial de cambio de precios", href: "/historial-precios/", hidden: user.role === "seller" },
         ],
+        hidden: user.role === "seller"
       },
+
+      {
+        label: "Auditoria",
+        dropdown: [
+          { label: "Inventario a verificar", href: "/auditoria-inventario/" },
+        ],
+        hidden: user.role === "seller",
+      },
+      
       {
         label: "Movimientos",
         dropdown: [
           { label: "Distribuciones", href: "/distribuciones/", hidden: user.role === "seller" },
-          { label: "Traspasos", href: "/traspasos/" },
+          { label: "Traspasos", href: "/traspasos/", hidden: user.role === "seller" },
         ],
+        hidden: user.role === "seller",
       },
+      { label: "Ventas", href: "/ventas/", hidden: user.role !== "seller" },
+      { label: "Movimientos en caja", href: "/movimientos-caja/", hidden: user.role !== "seller" },
+      { label: "Traspasos", href: "/traspasos/", hidden: user.role !== "seller" },
       { label: "Historial de stock", href: "/historial-stock/", hidden: user.role === "seller" },
     ],
     A: [
@@ -233,19 +265,28 @@ export default function MainLayout({ toggleTheme, themeMode }) {
           { divider: true },
           { label: "Importar Productos", href: "/importar-productos/" },
           { label: "Importar inventario", href: "/importar-inventario/" },
+          { divider: true },
+          { label: "Solicitudes de ajustes de stock", href: "/solicitudes-ajustes-stock/" },
+          { label: "Historial de cambio de precios", href: "/historial-precios/" },
         ],
       },
-      { label: "Historial de stock", href: "/historial-stock/" },
+      {
+        label: "Auditoria",
+        dropdown: [
+          { label: "Inventario a verificar", href: "/auditoria-inventario/", hidden: user.role === "seller" },
+        ],
+      },
+      { label: "Historial de stock", href: "/historial-stock/", hidden: user.role === "seller" },
     ],
     G: [
       {
         label: "Tableros",
-        disabled: isDashboardRestricted,
-        disabledMessage: "Disponible antes de las 10 AM y despues de las 9 PM",
         dropdown: [
-          { label: "Ventas exitosas", href: "/tablero-ventas/" },
+          { label: "Ventas exitosas", href: "/tablero-ventas/", disabled: isDashboardRestricted, disabledMessage: "Antes de 10 AM o después de 9 PM" },
           { label: "Ventas ajustadas o canceladas", href: "/tablero-ventas-ajustadas-cancelaciones/" },
+          { label: "Verificación de stock", href: "/tablero-verificacion-stock/" },
           { label: "Marcas y productos", href: "/tablero-productos/" },
+          { label: "Transpasos pendientes", href: "/tablero-traspasos-pendientes/" },
         ],
       },
       { label: "Tiendas", href: "/tiendas/" },
@@ -262,7 +303,8 @@ export default function MainLayout({ toggleTheme, themeMode }) {
           { divider: true },
           { label: "Importar Productos", href: "/importar-productos/" },
           { divider: true },
-          { label: "Solicitudes de ajustes", href: "/solicitudes-ajustes/" },
+          { label: "Solicitudes de ajustes de stock", href: "/solicitudes-ajustes-stock/" },
+          { label: "Historial de cambio de precios", href: "/historial-precios/" },
         ],
       },
       {
@@ -272,7 +314,14 @@ export default function MainLayout({ toggleTheme, themeMode }) {
           { label: "Transacciones", href: "/auditoria-transacciones/" },
         ],
       },
-      { label: "Mensualidades", href: "/pagos/" },
+
+      {
+        label: "Facturación",
+        dropdown: [
+          { label: "Mi Plan Actual", href: "/mi-plan-actual/" },
+          { label: "Historial de pagos", href: "/pagos/" },
+        ],
+      },
       { label: "Servicios", href: "/servicios/" },
       { label: "Sincronizar", href: "/sincronizar/" },
     ],
@@ -298,35 +347,46 @@ export default function MainLayout({ toggleTheme, themeMode }) {
           <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 700, letterSpacing: "-0.01em" }}>
             {user.store_name ? `${user.tenant_name} - ${user.store_name}` : user.tenant_name}
           </Typography>
-          <Avatar
-              onClick={() => navigate("/perfil")}
-              sx={{
-                width: 34, height: 34,
-                bgcolor: `${accent}d9`,
-                color: "#fff",
-                fontSize: "0.85rem", fontWeight: 700, mr: 1, cursor: "pointer",
-                transition: "all 0.2s",
-                "&:hover": { transform: "scale(1.1)", bgcolor: accent },
-              }}
-            >
-              {(user.store_name || user.tenant_name || "U").charAt(0).toUpperCase()}
-            </Avatar>
-          <PendingMenu />
-          <DuplicateSalesMenu />
-          <StockRequestMenu />
-          <NotificationsMenu />
-          <PageHelp />
-          <IconButton color="inherit" onClick={toggleTheme} sx={{ mr: 0.5 }}>
-            {themeMode === "dark" ? <Brightness7Icon /> : <Brightness4Icon />}
-          </IconButton>
           {user.role === "owner" && user.store_id && (
-            <IconButton color="inherit" onClick={handleBack} sx={{ mr: 0.5 }}>
+            <IconButton color="inherit" onClick={handleBack}>
               <ArrowBackIcon />
             </IconButton>
           )}
-          <IconButton color="inherit" onClick={handleLogout}>
-            <LogoutIcon />
+                        <PendingMenu />
+          {user.role !== "seller" && (
+            <>
+              <DuplicateSalesMenu />
+              <StockRequestMenu />
+              <NotificationsMenu />
+            </>
+          )}
+          <PageHelp />
+          <IconButton color="inherit" onClick={toggleTheme} sx={{ mr: 1 }}>
+            {themeMode === "dark" ? <Brightness7Icon /> : <Brightness4Icon />}
           </IconButton>
+          <Avatar
+            onClick={(e) => setAnchorEl(e.currentTarget)}
+            sx={{
+              width: 34, height: 34,
+              bgcolor: `${accent}d9`,
+              color: "#fff",
+              fontSize: "0.85rem", fontWeight: 700, mr: 1, cursor: "pointer",
+              transition: "all 0.2s",
+              "&:hover": { transform: "scale(1.1)", bgcolor: accent },
+            }}
+          >
+            {(user?.store_name || user?.tenant_name || "U").charAt(0).toUpperCase()}
+          </Avatar>
+          <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
+            <MenuItem onClick={() => { setAnchorEl(null); navigate("/perfil"); }}>
+              <ListItemIcon><PersonSearchIcon fontSize="small" /></ListItemIcon>
+              Perfil
+            </MenuItem>
+            <MenuItem onClick={() => { setAnchorEl(null); navigate("/", { replace: true }); localStorage.removeItem("user"); window.location.reload(); }}>
+              <ListItemIcon><LogoutIcon fontSize="small" /></ListItemIcon>
+              Cerrar sesión
+            </MenuItem>
+          </Menu>
         </Toolbar>
       </AppBar>
 
@@ -387,19 +447,21 @@ export default function MainLayout({ toggleTheme, themeMode }) {
                     <List component="div" disablePadding>
                       {item.dropdown.map((sub, i) =>
                         sub.divider || sub.hidden ? null : (
-                          <ListItemButton key={i} onClick={() => navigate(sub.href)}
+                          <ListItemButton key={i} onClick={() => !sub.disabled && navigate(sub.href)} disabled={sub.disabled}
                             sx={{
                               pl: 6.5, py: 0.6, borderRadius: "8px", my: 0.2, mx: 0.5,
                               ...(isActive(sub.href) ? activeSx : {}),
-                              "&:hover": { backgroundColor: "rgba(255,255,255,0.06)" },
+                              "&:hover": { backgroundColor: sub.disabled ? "transparent" : "rgba(255,255,255,0.06)" },
                             }}
                           >
                             <ListItemText primary={sub.label}
+                              secondary={sub.disabled && open ? sub.disabledMessage : null}
                               primaryTypographyProps={{
                                 fontSize: "0.75rem",
-                                color: isActive(sub.href) ? accent : "rgba(255,255,255,0.75)",
+                                color: sub.disabled ? "rgba(255,255,255,0.3)" : isActive(sub.href) ? accent : "rgba(255,255,255,0.75)",
                                 fontWeight: isActive(sub.href) ? 600 : 400,
                               }}
+                              secondaryTypographyProps={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.4)" }}
                             />
                           </ListItemButton>
                         )
@@ -439,21 +501,25 @@ export default function MainLayout({ toggleTheme, themeMode }) {
           })}
         </List>
         <Box sx={{ mt: "auto", p: 1 }}>
-          <ListItemButton
-            component="a"
-            href={`https://api.whatsapp.com/send/?phone=${process.env.REACT_APP_WHATSAPP_NUMBER}&text=${encodeURIComponent(`Soporte SmartVenta\nTenant: ${user.tenant_name}\nTienda: ${user.store_name || "General"}`)}&type=phone_number&app_absent=0`}
-            target="_blank"
-            rel="noopener noreferrer"
-            sx={{
-              borderRadius: 2, justifyContent: open ? "initial" : "center",
-              "&:hover": { backgroundColor: "rgba(37, 211, 102, 0.12)" },
-            }}
-          >
-            <ListItemIcon sx={{ color: "#25D366", minWidth: open ? 38 : 0, justifyContent: "center" }}>
-              <WhatsAppIcon />
-            </ListItemIcon>
-            <ListItemText primary="Soporte" primaryTypographyProps={{ fontWeight: 600, fontSize: "0.8rem" }} sx={{ opacity: open ? 1 : 0 }} />
-          </ListItemButton>
+          {user.role !== "seller" && (
+            <>
+              <ListItemButton
+                component="a"
+                href={`https://api.whatsapp.com/send/?phone=${process.env.REACT_APP_WHATSAPP_NUMBER}&text=${encodeURIComponent(`Soporte SmartVenta\nTenant: ${user.tenant_name}\nTienda: ${user.store_name || "General"}`)}&type=phone_number&app_absent=0`}
+                target="_blank"
+                rel="noopener noreferrer"
+                sx={{
+                  borderRadius: 2, justifyContent: open ? "initial" : "center",
+                  "&:hover": { backgroundColor: "rgba(37, 211, 102, 0.12)" },
+                }}
+              >
+                <ListItemIcon sx={{ color: "#25D366", minWidth: open ? 38 : 0, justifyContent: "center" }}>
+                  <WhatsAppIcon />
+                </ListItemIcon>
+                <ListItemText primary="Soporte" primaryTypographyProps={{ fontWeight: 600, fontSize: "0.8rem" }} sx={{ opacity: open ? 1 : 0 }} />
+              </ListItemButton>
+            </>
+          )}
         </Box>
       </Drawer>
 

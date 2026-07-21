@@ -42,7 +42,7 @@ const productColumns = [
   { name: "Precio unitario", selector: (row) => row.unit_price },
   { name: "Precio mayoreo", selector: (row) => row.wholesale_price },
   { name: "Cantidad mínima mayoreo", selector: (row) => row.min_wholesale_quantity },
-  { name: "Precio mayoreo en descuentos de clientes", selector: (row) => row.wholesale_price_on_client_discount },
+  { name: "Permitir mayoreo con descuento de cliente", selector: (row) => row.wholesale_price_on_client_discount },
 ];
 
 const ProductImport = () => {
@@ -169,7 +169,7 @@ const ProductImport = () => {
 
       <Grid item xs={12} className="card" sx={{ mb: '1.5rem' }}>
         <PageHeader title="Importación de productos">
-          <CustomButton href={URL_TEMPLATE} startIcon={<DownloadIcon />}>Descargar plantilla</CustomButton>
+          <CustomButton fullWidth href={URL_TEMPLATE} startIcon={<DownloadIcon />}>Descargar plantilla</CustomButton>
         </PageHeader>
 
         <Stepper activeStep={activeStep} alternativeLabel sx={{ mb: 3,

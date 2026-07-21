@@ -1,7 +1,13 @@
 import React, { memo, useState, useMemo } from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import { Box, TextField } from "@mui/material";
+import { Box, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
 import { colors } from "../../../theme/colors";
+
+const searchInObject = (obj, search) => {
+  if (typeof obj === "string") return obj.toLowerCase().includes(search.toLowerCase());
+  if (typeof obj === "object" && obj !== null) return Object.values(obj).some((v) => searchInObject(v, search));
+  return false;
+};
 
 const DataTable = ({
   columns,
@@ -13,15 +19,9 @@ const DataTable = ({
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [paginationModel, setPaginationModel] = useState({
-    pageSize: 25,
+    pageSize: 10,
     page: 0,
   });
-
-  const searchInObject = (obj, search) => {
-    if (typeof obj === "string") return obj.toLowerCase().includes(search.toLowerCase());
-    if (typeof obj === "object" && obj !== null) return Object.values(obj).some((v) => searchInObject(v, search));
-    return false;
-  };
 
   const filteredData = useMemo(
     () => data.filter((item) => searchInObject(item, searchTerm)),
@@ -31,17 +31,38 @@ const DataTable = ({
   const muiColumns = useMemo(
     () =>
       columns.map((col, index) => {
+        const getCellAlignment = (row) => {
+          const value = col.selector ? col.selector(row) : row[col.field];
+          if (typeof value === 'string' && value.includes('$')) {
+            return 'right';
+          }
+          return 'center';
+        };
+
+        const isRightAligned = (row) => getCellAlignment(row) === 'right';
+
         const column = {
           field: col.field || `field_${index}`,
           headerName: col.name,
           ...(col.width ? { width: col.width } : { flex: 1 }),
           minWidth: col.minWidth || 0,
           sortable: col.sortable !== false,
+          headerAlign: 'center',
+          align: 'center',
         };
 
         if (col.cell) {
           column.renderCell = (params) => (
-            <div style={{ display: 'flex', gap: '1px', padding: '0 1px', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
+            <div 
+              style={{ 
+                display: 'flex', 
+                gap: '2px', 
+                alignItems: 'center', 
+                justifyContent: getCellAlignment(params.row), 
+                width: '100%',
+                paddingRight: isRightAligned(params.row) ? '12px' : '2px'
+              }}
+            >
               {col.cell(params.row)}
             </div>
           );
@@ -74,6 +95,28 @@ const DataTable = ({
       )}
 
       <Box sx={{ width: "100%", maxWidth: "100%", overflowX: "auto" }}>
+        {data.length === 0 && !progressPending ? (
+          <TableContainer component={Paper}>
+            <Table size="small">
+              <TableHead>
+                <TableRow sx={{ backgroundColor: colors.primary }}>
+                  {columns.map((col, i) => (
+                    <TableCell key={i} sx={{ fontWeight: "bold", color: colors.text.white, py: 0.5, fontSize: "0.8125rem", textAlign: "center" }}>
+                      {col.name}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                <TableRow>
+                  <TableCell colSpan={columns.length} align="center" sx={{ py: 0.5, fontSize: "0.8125rem" }}>
+                    {noDataComponent}
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </TableContainer>
+        ) : (
         <DataGrid
           rows={rowsWithIds}
           columns={muiColumns}
@@ -93,7 +136,7 @@ const DataTable = ({
           disableRowSelectionOnClick
           getRowHeight={() => 'auto'}
           localeText={{ noRowsLabel: noDataComponent }}
-          hideFooter={data.length <= 25}
+          hideFooter={data.length <= 10}
           density="compact"
           sx={{
             "& .MuiDataGrid-columnHeaders": {
@@ -109,7 +152,7 @@ const DataTable = ({
               py: 0, px: '2px', fontSize: '0.8125rem',
               whiteSpace: 'normal !important', lineHeight: '1.3 !important',
               justifyContent: 'center', textAlign: 'center', gap: '2px',
-              '& .MuiButtonBase-root': { transform: 'scale(0.8)' },
+              '& .MuiButtonBase-root': { transform: 'scale(0.8)', minWidth: 0, px: 1 },
             },
             "& .MuiDataGrid-row": {
               minHeight: '32px !important',
@@ -117,6 +160,7 @@ const DataTable = ({
             },
           }}
         />
+        )}
       </Box>
     </Box>
   );

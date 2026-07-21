@@ -14,15 +14,25 @@ import { getUserData } from "../../../api/utils";
 
 const WS_BASE = process.env.REACT_APP_API_URL?.replace(/^http/, "ws");
 
+const isWithinAllowedHours = () => {
+  const now = new Date();
+  const hour = now.getHours();
+  return hour >= 8 && hour < 21;
+};
+
 const EVENT_CONFIG = {
   transfer_created: { icon: <SwapHorizIcon fontSize="small" />, href: "/traspasos/" },
   transfer_confirmed: { icon: <CheckCircleIcon fontSize="small" color="success" />, href: "/traspasos/" },
   distribution_created: { icon: <LocalShippingIcon fontSize="small" />, href: "/distribuciones/" },
   distribution_confirmed: { icon: <CheckCircleIcon fontSize="small" color="success" />, href: "/distribuciones/" },
-  stock_request_created: { icon: <SendIcon fontSize="small" />, href: "/solicitudes-ajustes/" },
-  stock_request_approved: { icon: <CheckCircleIcon fontSize="small" color="success" />, href: "/solicitudes-ajustes/" },
+  stock_request_created: { icon: <SendIcon fontSize="small" />, href: "/solicitudes-ajustes-stock/" },
+  stock_request_approved: { icon: <CheckCircleIcon fontSize="small" color="success" />, href: "/solicitudes-ajustes-stock/" },
   reservation_created: { icon: <ShoppingCartIcon fontSize="small" />, href: "/ventas/" },
 };
+
+let reconnectAttempts = 0;
+const maxReconnectAttempts = 5;
+let pollingInterval = null;
 
 const NotificationsMenu = memo(() => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -54,18 +64,39 @@ const NotificationsMenu = memo(() => {
       setSeen(false);
     };
 
+    ws.onerror = () => {
+      reconnectAttempts++;
+      ws.close();
+    };
+
     ws.onclose = () => {
-      reconnectRef.current = setTimeout(connectWs, 5000);
+      if (reconnectAttempts < maxReconnectAttempts) {
+        const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 30000);
+        reconnectAttempts++;
+        reconnectRef.current = setTimeout(connectWs, delay);
+      } else {
+        // Fallback a polling cada 60s
+        if (!pollingInterval) {
+          pollingInterval = setInterval(() => {
+            fetch('/api/audit/notifications/')
+              .then(r => r.json())
+              .then(data => setNotifications(data));
+          }, 60000);
+        }
+      }
     };
   }, []);
 
   useEffect(() => {
+    if (!isWithinAllowedHours()) return;
+
     connectWs();
     const onStoreChange = () => connectWs();
     window.addEventListener("store-changed", onStoreChange);
     return () => {
       if (wsRef.current) wsRef.current.close();
       if (reconnectRef.current) clearTimeout(reconnectRef.current);
+      if (pollingInterval) clearInterval(pollingInterval);
       window.removeEventListener("store-changed", onStoreChange);
     };
   }, [connectWs]);

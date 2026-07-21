@@ -13,9 +13,7 @@ import { showSuccess, showError, showConfirm } from "../../../utils/alerts";
 import CustomTooltip from "../../ui/Tooltip";
 import { UI_TEXT } from "../../../constants";
 import PageHeader from "../../ui/PageHeader";
-import {
-  Grid, TextField, Select, MenuItem, FormControl, InputLabel, Box,
-} from "@mui/material";
+import { Grid, TextField, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import EditIcon from "@mui/icons-material/Edit";
 import ChecklistIcon from "@mui/icons-material/Checklist";
@@ -24,7 +22,9 @@ import DownloadIcon from "@mui/icons-material/Download";
 import DeleteIcon from "@mui/icons-material/Delete";
 import TextFormatIcon from "@mui/icons-material/TextFormat";
 import HistoryIcon from "@mui/icons-material/History";
+import PriceChangeIcon from "@mui/icons-material/PriceChange";
 import PriceLogsModal from "../PriceLogsModal/PriceLogsModal";
+import PriceUpdateModal from "../PriceUpdateModal/PriceUpdateModal";
 
 const ProductList = () => {
   const user = getUserData();
@@ -32,17 +32,19 @@ const ProductList = () => {
   const [loading, setLoading] = useState(false);
   const [brands, setBrands] = useState([]);
   const [departments, setDepartments] = useState([]);
+  const [optionsLoaded, setOptionsLoaded] = useState(false);
   const [params, setParams] = useState({});
   const [selectedRows, setSelectedRows] = useState([]);
-  const [outOfStockPercentage, setOutOfStockPercentage] = useState(0);
   const productModal = useModal();
   const priceLogsModal = useModal();
+  const priceUpdateModal = useModal();
 
   useEffect(() => {
     const fetchOptions = async () => {
       const [brandsRes, deptsRes] = await Promise.all([getBrands(), getDepartments()]);
       setBrands(brandsRes.data);
       setDepartments(deptsRes.data);
+      setOptionsLoaded(true);
     };
     fetchOptions();
   }, []);
@@ -52,8 +54,6 @@ const ProductList = () => {
     const response = await getProducts(params);
     const data = response.data;
     setProducts(data);
-    const outOfStock = data.filter((p) => p.stock === 0).length;
-    setOutOfStockPercentage((outOfStock / data.length) * 100);
     setLoading(false);
   };
 
@@ -76,7 +76,7 @@ const ProductList = () => {
       Nombre: name, Stock: stock, Costo: cost,
       "Precio unitario": unit_price, "Precio mayoreo": wholesale_price,
       "Cantidad mínima mayoreo": min_wholesale_quantity,
-      "Precio Mayoreo en descuento de clientes": wholesale_price_on_client_discount,
+      "Permitir mayoreo con descuento de cliente": wholesale_price_on_client_discount,
       Imagen: image,
     }));
     exportToExcel(data, "Productos");
@@ -107,6 +107,10 @@ const ProductList = () => {
     }
   };
 
+  const handleUpdatePrices = () => {
+    priceUpdateModal.open();
+  };
+
   const handleUpperCodeProducts = async () => {
     const response = await upperCodeProducts();
     if (response.status === 200) {
@@ -122,11 +126,12 @@ const ProductList = () => {
       <CustomSpinner isLoading={loading} />
       <ProductModal isOpen={productModal.isOpen} product={productModal.data} onClose={productModal.close} onUpdate={handleUpdateProductList} />
       <PriceLogsModal isOpen={priceLogsModal.isOpen} product={priceLogsModal.data} onClose={priceLogsModal.close} />
+      <PriceUpdateModal isOpen={priceUpdateModal.isOpen} onClose={priceUpdateModal.close} selectedProducts={selectedRows} onSuccess={fetchProducts} />
 
       <Grid container>
         <Grid item xs={12} className="card">
           <PageHeader title="Productos">
-            <CustomButton onClick={() => productModal.open({ product: null, showStoreProducts: false })} startIcon={<AddIcon />}>
+            <CustomButton fullWidth onClick={() => productModal.open({ product: null, showStoreProducts: false })} startIcon={<AddIcon />}>
               Nuevo Producto
             </CustomButton>
           </PageHeader>
@@ -142,8 +147,9 @@ const ProductList = () => {
             <Grid item xs={12} md={3}>
               <FormControl fullWidth size="small">
                 <InputLabel>Marca</InputLabel>
-                <Select value={params.brand_id || ""} onChange={handleDataChange} name="brand_id" label="Marca">
+                <Select value={params.brand_id || ""} onChange={handleDataChange} name="brand_id" label="Marca" disabled={optionsLoaded && brands.length === 0}>
                   <MenuItem value="">Todas las marcas</MenuItem>
+                  {!optionsLoaded && <MenuItem disabled>Cargando...</MenuItem>}
                   {brands.map((brand) => (
                     <MenuItem key={brand.id} value={brand.id}>{brand.name} ({brand.product_count})</MenuItem>
                   ))}
@@ -154,9 +160,10 @@ const ProductList = () => {
               <Grid item xs={12} md={3}>
                 <FormControl fullWidth size="small">
                   <InputLabel>Departamento</InputLabel>
-                  <Select value={params.department_id || ""} onChange={handleDataChange} name="department_id" label="Departamento">
+                  <Select value={params.department_id || ""} onChange={handleDataChange} name="department_id" label="Departamento" disabled={optionsLoaded && departments.length === 0}>
                     <MenuItem value="">{UI_TEXT.ALL_DEPARTMENTS}</MenuItem>
                     <MenuItem value="0">Sin departamento</MenuItem>
+                    {!optionsLoaded && <MenuItem disabled>Cargando...</MenuItem>}
                     {departments.map((dept) => (
                       <MenuItem key={dept.id} value={dept.id}>{dept.name} ({dept.product_count})</MenuItem>
                     ))}
@@ -196,13 +203,16 @@ const ProductList = () => {
                 </CustomButton>
               </CustomTooltip>
             </Grid>
-            {products.length > 0 && (
-              <Grid item xs={12} md={3}>
-                <Box sx={{ fontSize: '0.875rem' }}>
-                  {outOfStockPercentage.toFixed(0)}% de los productos está vacío
-                </Box>
-              </Grid>
-            )}
+            <Grid item xs={12} md={6}>
+              <CustomButton
+                fullWidth
+                onClick={handleUpdatePrices}
+                disabled={selectedRows.length < 2 || user.role !== "owner"}
+                startIcon={<PriceChangeIcon />}
+              >
+                Actualización masiva de costos y precios
+              </CustomButton>
+            </Grid>
           </Grid>
 
           <DataTable
@@ -225,7 +235,7 @@ const ProductList = () => {
                     : `$${row.unit_price}`
                 ),
               },
-              ...(user.role === "owner" ? [{
+              ...(user.role !== "seller" ? [{
                 name: "Acciones",
                 width: 180,
                 cell: (row) => (

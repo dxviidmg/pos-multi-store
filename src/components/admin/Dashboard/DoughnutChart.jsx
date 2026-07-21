@@ -57,7 +57,7 @@ const DoughnutChart = ({ title, data, dataType, metricType = 'count' }) => {
 
   return (
     <Box sx={{ width: '100%', height: '100%' }}>
-      <Typography variant="h6" sx={{ mb: 2, fontWeight: 500, color: '#1e293b' }}>
+      <Typography variant="h6" sx={{ mb: 2, fontWeight: 500, color: 'text.primary' }}>
         {title}
       </Typography>
       <PieChart
@@ -85,7 +85,7 @@ const DoughnutChart = ({ title, data, dataType, metricType = 'count' }) => {
             itemGap: 10,
             labelStyle: {
               fontSize: 13,
-              fill: '#475569',
+              fill: 'text.secondary',
             },
           },
         }}

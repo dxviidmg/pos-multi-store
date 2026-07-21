@@ -10,15 +10,17 @@ import StockUpdateRequestModal from "../../inventory/StockUpdateRequestModal/Sto
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { getBrands } from "../../../api/brands";
 import { getDepartments } from "../../../api/departments";
-import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, Box, Stack } from "@mui/material";
+import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, Alert } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import DownloadIcon from "@mui/icons-material/Download";
 import TuneIcon from "@mui/icons-material/Tune";
 import HistoryIcon from "@mui/icons-material/History";
 import SendIcon from "@mui/icons-material/Send";
+import { Link } from "react-router-dom";
+import NotificationImportantIcon from "@mui/icons-material/NotificationImportant";
+import PageHeader from "../../ui/PageHeader";
 import CustomTooltip from "../../ui/Tooltip";
 import { UI_TEXT } from "../../../constants";
-import PageHeader from "../../ui/PageHeader";
 
 const StoreProductList = () => {
   const user = getUserData();
@@ -27,15 +29,17 @@ const StoreProductList = () => {
   const [storeProducts, setStoreProducts] = useState([]);
   const [brands, setBrands] = useState([]);
   const [departments, setDepartments] = useState([]);
+  const [optionsLoaded, setOptionsLoaded] = useState(false);
   const [loading, setLoading] = useState(false);
   const [params, setParams] = useState({ only_stock: true });
-  const [outOfStockPercentage, setOutOfStockPercentage] = useState(0);
+  const [showAlert, setShowAlert] = useState(true);
 
   useEffect(() => {
     const fetchOptions = async () => {
       const [brandsRes, deptsRes] = await Promise.all([getBrands(), getDepartments()]);
       setBrands(brandsRes.data);
       setDepartments(deptsRes.data);
+      setOptionsLoaded(true);
     };
     fetchOptions();
   }, []);
@@ -45,8 +49,6 @@ const StoreProductList = () => {
     const response = await getStoreProducts(params);
     const data = response.data;
     setStoreProducts(data);
-    const outOfStock = data.filter((p) => p.stock === 0).length;
-    setOutOfStockPercentage((outOfStock / data.length) * 100);
     setLoading(false);
   };
 
@@ -84,9 +86,30 @@ const StoreProductList = () => {
 
       <Grid container>
         <Grid item xs={12} className="card">
-          <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-            <h1>Inventario</h1>
-          </Stack>
+          <PageHeader title="Inventario" childrenMd={8}>
+            {showAlert && (
+            <Alert 
+              severity="info" 
+              variant="filled" 
+              sx={{ py: 0, borderRadius: 2 }}
+              icon={<NotificationImportantIcon fontSize="inherit" />}
+              onClose={() => setShowAlert(false)}
+            >
+              {user.role === "owner" ? (
+                <>
+                  <strong>Revisa y aprueba las solicitudes de stock en{" "}
+                  <Link to="/solicitudes-ajustes-stock/" style={{ color: "#04346b", fontWeight: 600 }}>
+                    Solicitudes de Ajuste
+                  </Link>.</strong>
+                </>
+              ) : (
+                <>
+                  <strong>¿Ves un stock incorrecto?</strong> Usa el icono <SendIcon sx={{ fontSize: 14, verticalAlign: "middle" }} /> para solicitar un ajuste.
+                </>
+              )}
+            </Alert>
+            )}
+          </PageHeader>
 
           <Grid container spacing={2} sx={{ mb: 2 }}>
             <Grid item xs={12} md={3}>
@@ -98,10 +121,11 @@ const StoreProductList = () => {
             <Grid item xs={12} md={3}>
               <FormControl fullWidth size="small">
                 <InputLabel>Marca</InputLabel>
-                <Select value={params.brand_id || ""} onChange={handleDataChange} name="brand_id" label="Marca">
+                <Select value={params.brand_id || ""} onChange={handleDataChange} name="brand_id" label="Marca" disabled={optionsLoaded && brands.length === 0}>
                   <MenuItem value="">Todas las marcas</MenuItem>
+                  {!optionsLoaded && <MenuItem disabled>Cargando...</MenuItem>}
                   {brands.map((brand) => (
-                    <MenuItem key={brand.id} value={brand.id}>{brand.name}</MenuItem>
+                    <MenuItem key={brand.id} value={brand.id}>{brand.name} ({brand.product_count})</MenuItem>
                   ))}
                 </Select>
               </FormControl>
@@ -109,10 +133,11 @@ const StoreProductList = () => {
             <Grid item xs={12} md={3}>
               <FormControl fullWidth size="small">
                 <InputLabel>Departamento</InputLabel>
-                <Select value={params.department_id || ""} onChange={handleDataChange} name="department_id" label="Departamento">
+                <Select value={params.department_id || ""} onChange={handleDataChange} name="department_id" label="Departamento" disabled={optionsLoaded && departments.length === 0}>
                   <MenuItem value="">{UI_TEXT.ALL_DEPARTMENTS}</MenuItem>
+                  {!optionsLoaded && <MenuItem disabled>Cargando...</MenuItem>}
                   {departments.map((dept) => (
-                    <MenuItem key={dept.id} value={dept.id}>{dept.name}</MenuItem>
+                    <MenuItem key={dept.id} value={dept.id}>{dept.name} ({dept.product_count})</MenuItem>
                   ))}
                 </Select>
               </FormControl>
@@ -127,17 +152,12 @@ const StoreProductList = () => {
                 Buscar
               </CustomButton>
             </Grid>
+            {user.role !== "seller" && (
             <Grid item xs={12} md={3}>
               <CustomButton fullWidth onClick={handleDownload} disabled={storeProducts.length === 0} startIcon={<DownloadIcon />}>
                 Descargar inventario
               </CustomButton>
             </Grid>
-            {storeProducts.length > 0 && (
-              <Grid item xs={12} md={3}>
-                <Box sx={{ fontSize: '0.875rem', lineHeight: '40px' }}>
-                  {outOfStockPercentage.toFixed(0)}% de los productos está vacío
-                </Box>
-              </Grid>
             )}
           </Grid>
 
@@ -163,11 +183,13 @@ const StoreProductList = () => {
                         </CustomButton>
                       </CustomTooltip>
                     )}
+                    {user.role !== "seller" && (
                     <CustomTooltip text="Movimientos de stock">
                       <CustomButton onClick={() => logsModal.open({ storeProduct: row, adjustStock: false })}>
                         <HistoryIcon />
                       </CustomButton>
                     </CustomTooltip>
+                    )}
                     {user.role !== "owner" && (
                       <CustomTooltip text="Solicitar ajuste de stock">
                         <CustomButton onClick={() => requestModal.open(row)}>

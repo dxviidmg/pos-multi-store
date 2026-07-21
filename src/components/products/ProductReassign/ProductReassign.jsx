@@ -86,8 +86,9 @@ const ProductReassign = () => {
           <Grid item xs={12} md={3}>
             <FormControl fullWidth size="small">
               <InputLabel>Origen</InputLabel>
-              <Select value={params.origin_id} onChange={handleDataChange} name="origin_id" label="Origen">
+              <Select value={params.origin_id} onChange={handleDataChange} name="origin_id" label="Origen" disabled={!loading && params.reassign_type && options.length === 0}>
                 <MenuItem value="">Origen</MenuItem>
+                {loading && <MenuItem disabled>Cargando...</MenuItem>}
                 {options.map((opt) => (
                   <MenuItem key={opt.id} value={opt.id}>{opt.name} ({opt.product_count})</MenuItem>
                 ))}
@@ -97,8 +98,9 @@ const ProductReassign = () => {
           <Grid item xs={12} md={3}>
             <FormControl fullWidth size="small">
               <InputLabel>Destino</InputLabel>
-              <Select value={params.destination_id} onChange={handleDataChange} name="destination_id" label="Destino">
+              <Select value={params.destination_id} onChange={handleDataChange} name="destination_id" label="Destino" disabled={!loading && params.reassign_type && options.length === 0}>
                 <MenuItem value="">Destino</MenuItem>
+                {loading && <MenuItem disabled>Cargando...</MenuItem>}
                 {options.map((opt) => (
                   <MenuItem key={opt.id} value={opt.id}>{opt.name} ({opt.product_count})</MenuItem>
                 ))}

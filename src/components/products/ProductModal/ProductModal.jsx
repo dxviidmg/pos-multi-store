@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useForm } from "../../../hooks/useForm";
 import CustomModal from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
 import { getBrands } from "../../../api/brands";
@@ -8,8 +7,10 @@ import {
   createProduct,
   getStoreProducts,
   updateProduct,
+  addProducts,
 } from "../../../api/products";
 import { getStores } from "../../../api/stores";
+import { getUserData } from "../../../api/utils";
 import noPhoto from "../../../assets/images/noPhoto.jpg";
 import { getDepartments } from "../../../api/departments";
 import SimpleTable from "../../ui/SimpleTable/SimpleTable";
@@ -33,10 +34,19 @@ const INITIAL_FORM_DATA = {
 const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
   const productData = product?.product || product || {};
   const showStoreProducts = product?.showStoreProducts || false;
+  const createFromSearch = product?.createFromSearch || false;
+  const user = getUserData();
+
+  const isCreating = !productData?.id;
+
+  const isOwner = user?.role === "owner";
+  const canEditPrices = createFromSearch || isCreating || isOwner;
 
   const [brands, setBrands] = useState([]);
   const [departments, setDepartments] = useState([]);
+  const [optionsLoaded, setOptionsLoaded] = useState(false);
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
+  const [initialStock, setInitialStock] = useState("");
   const [, setSelectedImage] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
   const [storeProduct, setStoreProduct] = useState([]);
@@ -45,7 +55,18 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
   useEffect(() => {
     const fetchData = async () => {
       if (productData.id) {
-        setFormData(productData);
+        setFormData({
+          ...INITIAL_FORM_DATA,
+          ...productData,
+          brand: productData.brand || "",
+          department: productData.department || "",
+          code: productData.code || "",
+          name: productData.name || "",
+          cost: productData.cost || "",
+          unit_price: productData.unit_price || "",
+          wholesale_price: productData.wholesale_price || "",
+          min_wholesale_quantity: productData.min_wholesale_quantity || "",
+        });
         setPreviewImage(productData.image || noPhoto);
 
         if (showStoreProducts) {
@@ -57,7 +78,8 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
           setStoreProduct(r.data.map((sp) => ({ ...sp, store_name: storeMap[sp.store] || `Tienda #${sp.store}` })));
         }
       } else {
-        setFormData(INITIAL_FORM_DATA);
+        setFormData({ ...INITIAL_FORM_DATA, code: productData.code || "" });
+        setInitialStock(createFromSearch ? "1" : "");
         setPreviewImage(noPhoto);
         setStoreProduct([]);
       }
@@ -67,10 +89,11 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
 
       const response2 = await getDepartments();
       setDepartments(response2.data);
+      setOptionsLoaded(true);
     };
 
     fetchData();
-  }, [product, showStoreProducts]);
+  }, [product, showStoreProducts, createFromSearch]);
 
 
   const handleDataChange = (e) => {
@@ -100,15 +123,33 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
   const handleProductSubmit = async (e) => {
     setIsLoading(true);
     const apiCall = formData.id ? updateProduct : createProduct;
-    const response = await apiCall(formData);
+    
+    // Filtrar department si es "0" o vacío
+    const cleanFormData = { ...formData };
+    if (cleanFormData.department === "0" || !cleanFormData.department) {
+      delete cleanFormData.department;
+    }
+    
+    const response = await apiCall(cleanFormData);
 
     if ([200, 201].includes(response.status)) {
+      if (createFromSearch && initialStock && parseInt(initialStock) > 0) {
+        // Obtener el store_product creado para agregar stock
+        const storeProducts = await getStoreProducts({ code: formData.code });
+        if (storeProducts.data.length > 0) {
+          const storeProduct = storeProducts.data[0];
+          await addProducts({
+            store_products: [{ id: storeProduct.id, quantity: parseInt(initialStock) }],
+          });
+        }
+      }
       onClose();
       onUpdate(response.data);
       setFormData(INITIAL_FORM_DATA);
+      setInitialStock("");
       setSelectedImage(null);
       setPreviewImage(null);
-      showSuccess(`Producto ${formData.id ? "actualizado" : "creado"}`);
+      showSuccess(`Producto ${formData.id ? "actualizado" : "creado"}${createFromSearch ? ` con stock de ${initialStock}` : ""}`);
     } else {
       let message = "Error desconocido. Por favor, contacte soporte.";
       if (response.response?.status === 400 && response.response.data?.code) {
@@ -142,6 +183,9 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
 
     return !areRequiredFieldsComplete || !areOptionalFieldsConsistent;
   };
+
+  const isCostHigher = formData.cost !== "" && formData.unit_price !== "" && Number(formData.cost) >= Number(formData.unit_price);
+  const isWholesaleHigher = formData.wholesale_price !== "" && formData.unit_price !== "" && Number(formData.wholesale_price) >= Number(formData.unit_price);
 
   return (
     <CustomModal
@@ -185,11 +229,13 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
               <Select fullWidth size="small" value={formData.brand}
                   onChange={handleDataChange}
                   name="brand"
-                 label="Marca">
+                 label="Marca"
+                 disabled={optionsLoaded && brands.length === 0}>
                   <MenuItem value="0">Selecciona una marca</MenuItem>
+                  {!optionsLoaded && <MenuItem disabled>Cargando...</MenuItem>}
                   {brands.map((brand) => (
                     <MenuItem key={brand.id} value={brand.id}>
-                      {brand.name}
+                      {brand.name} ({brand.product_count})
                     </MenuItem>
                   ))}
                 </Select>
@@ -202,11 +248,13 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
               <Select fullWidth size="small" value={formData.department}
                   onChange={handleDataChange}
                   name="department"
-                 label="Departamento">
+                 label="Departamento"
+                 disabled={optionsLoaded && departments.length === 0}>
                   <MenuItem value="0">Selecciona un departamento</MenuItem>
+                  {!optionsLoaded && <MenuItem disabled>Cargando...</MenuItem>}
                   {departments.map((department) => (
                     <MenuItem key={department.id} value={department.id}>
-                      {department.name}
+                      {department.name} ({department.product_count})
                     </MenuItem>
                   ))}
                 </Select>
@@ -230,61 +278,83 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
                 />
               </Grid>
 
-              <Grid item xs={12} md={3}>
+              <Grid item xs={12} md={6}>
                 <TextField size="small" fullWidth label="Costo" type="number"
                   value={formData.cost}
                   placeholder="Costo"
                   name="cost"
                   onChange={handleDataChange}
+                  disabled={!canEditPrices}
+                  error={isCostHigher}
+                  helperText={isCostHigher ? "Debe ser menor al precio unitario" : ""}
                 />
               </Grid>
 
-              <Grid item xs={12} md={3}>
-                <TextField size="small" fullWidth label="P. unitario" type="number"
+              <Grid item xs={12} md={6}>
+                <TextField size="small" fullWidth label="Precio unitario" type="number"
                   value={formData.unit_price}
                   placeholder="Precio unitario"
                   name="unit_price"
                   onChange={handleDataChange}
+                  disabled={!canEditPrices}
+                  error={isCostHigher}
+                  helperText={isCostHigher ? "Debe ser mayor al costo" : ""}
                 />
               </Grid>
 
-              <Grid item xs={12} md={3}>
-                <TextField size="small" fullWidth label="P. mayoreo" type="number"
+              <Grid item xs={12} md={6}>
+                <TextField size="small" fullWidth label="Precio mayoreo" type="number"
                   value={formData.wholesale_price}
                   placeholder="Precio de mayoreo"
                   name="wholesale_price"
                   onChange={handleDataChange}
+                  disabled={!canEditPrices}
+                  error={isWholesaleHigher || (formData.wholesale_price !== "" && formData.min_wholesale_quantity === "")}
+                  helperText={isWholesaleHigher ? "Debe ser menor al precio unitario" : (formData.wholesale_price !== "" && formData.min_wholesale_quantity === "") ? "Requiere cantidad mínima mayoreo" : ""}
                 />
               </Grid>
 
-              <Grid item xs={12} md={3}>
-                <TextField size="small" fullWidth label="Min. mayoreo" type="number"
+              <Grid item xs={12} md={6}>
+                <TextField size="small" fullWidth label="Cantidad mínima de mayoreo" type="number"
                   value={formData.min_wholesale_quantity}
-                  placeholder="Cantidad minima mayoreo"
+                  placeholder="Cantidad mínima de mayoreo"
                   name="min_wholesale_quantity"
                   onChange={handleDataChange}
+                  disabled={!canEditPrices}
+                  error={formData.min_wholesale_quantity !== "" && formData.wholesale_price === ""}
+                  helperText={(formData.min_wholesale_quantity !== "" && formData.wholesale_price === "") ? "Requiere precio mayoreo" : ""}
                 />
               </Grid>
 
-              <Grid item xs={12} md={12}>
+              <Grid item xs={12} sx={{ mt: -1.5 }}>
                 <FormControlLabel
                   control={
                     <Checkbox size="small"
                       checked={formData.wholesale_price_on_client_discount === true}
                       onChange={handleDataChange}
                       name="wholesale_price_on_client_discount"
+                      disabled={!canEditPrices}
                     />
                   }
-                  label="Precio de mayoreo en descuento de cliente registrado"
+                  label="Permitir precio de mayoreo para clientes registrados"
                 />
               </Grid>
 
-              <Grid item xs={12}>
+              {createFromSearch && (
+                <Grid item xs={12}>
+                  <TextField size="small" fullWidth label="Stock inicial" type="number"
+                    value={initialStock}
+                    placeholder="Stock"
+                    onChange={(e) => setInitialStock(e.target.value)}
+                  />
+                </Grid>
+              )}
+
+              <Grid item xs={12} sx={{ mt: -1.5 }}>
                 <CustomButton
                   fullWidth={true}
                   onClick={(e) => handleProductSubmit(e)}
-                  disabled={isFormIncomplete() || isLoading}
-                  marginTop="10px"
+                  disabled={isFormIncomplete() || isCostHigher || isWholesaleHigher || isLoading}
                   startIcon={<SaveIcon />}
                 >
                   {isLoading ? "Guardando..." : formData.id ? "Actualizar" : "Crear"}

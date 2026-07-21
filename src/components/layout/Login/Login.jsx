@@ -41,9 +41,9 @@ function Login({ onLogin }) {
       const response = await loginUser(state.formData);
       if (response.status === 200) {
         localStorage.setItem("user", JSON.stringify(response.data));
+        onLogin();
         if (response.data.role === "owner") navigate("/tiendas/");
         else navigate("/vender/");
-        onLogin();
       } else {
         showAlert("Usuario o contraseña incorrecta");
       }
@@ -101,7 +101,7 @@ function Login({ onLogin }) {
               backdropFilter: 'blur(10px)',
               color: 'white',
               border: '1px solid rgba(167,139,250,0.3)',
-              '& .MuiAlert-icon': { color: '#a78bfa' },
+              '& .MuiAlert-icon': { color: 'accent' },
             }}>
               {alertData.message}
             </Alert>
@@ -138,7 +138,7 @@ function Login({ onLogin }) {
                     <InputAdornment position="end">
                       <IconButton size="small"
                         onClick={() => setState(prev => ({ ...prev, showPassword: !prev.showPassword }))}
-                        sx={{ color: '#04346b' }}
+                        sx={{ color: 'primary' }}
                       >
                         {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
                       </IconButton>

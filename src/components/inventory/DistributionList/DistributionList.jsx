@@ -7,9 +7,10 @@ import { showSuccess, showError } from "../../../utils/alerts";
 import { getUserData } from "../../../api/utils";
 import {
   confirmDistribution,
-  deleteTranfer,
+  deleteDistribution,
+  deleteTransfer,
   getDistributions,
-  updateTranfer,
+  updateTransfer,
 } from "../../../api/transfers";
 import CustomTooltip from "../../ui/Tooltip";
 import { Grid, TextField} from "@mui/material";
@@ -59,7 +60,7 @@ const DistributionList = () => {
   };
 
   const handleSaveClick = async (row) => {
-    const response = await updateTranfer({ ...row, quantity: editedQuantity });
+    const response = await updateTransfer({ ...row, quantity: editedQuantity });
     if (response.status === 200) {
       setSelected((prev) => ({
         ...prev,
@@ -74,7 +75,7 @@ const DistributionList = () => {
   };
 
   const handleDeleteTransfer = async (row) => {
-    const response = await deleteTranfer(row);
+    const response = await deleteTransfer(row);
     if (response.status === 204) {
       setSelected((prev) => ({
         ...prev,
@@ -82,6 +83,16 @@ const DistributionList = () => {
       }));
     } else {
       showError("Error al eliminar producto");
+    }
+  };
+
+  const handleDeleteDistribution = async (row) => {
+    const response = await deleteDistribution(row.id);
+    if (response.status === 204) {
+      setDistributions((prev) => prev.filter((d) => d.id !== row.id));
+      showSuccess("Distribución eliminada");
+    } else {
+      showError("Error al eliminar distribución");
     }
   };
 
@@ -103,11 +114,20 @@ const DistributionList = () => {
             {
               name: "Acciones",
               cell: (row) => (
-                <CustomTooltip text="Ver productos">
-                  <CustomButton onClick={() => setSelected(row)}>
-                    <ChecklistIcon />
-                  </CustomButton>
-                </CustomTooltip>
+                <>
+                  <CustomTooltip text="Ver productos">
+                    <CustomButton onClick={() => setSelected(row)}>
+                      <ChecklistIcon />
+                    </CustomButton>
+                  </CustomTooltip>
+                  {user.role === "owner" && (
+                    <CustomTooltip text="Eliminar distribución">
+                      <CustomButton onClick={() => handleDeleteDistribution(row)}>
+                        <DeleteIcon />
+                      </CustomButton>
+                    </CustomTooltip>
+                  )}
+                </>
               ),
             },
           ]}

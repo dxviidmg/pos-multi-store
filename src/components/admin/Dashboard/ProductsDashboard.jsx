@@ -9,8 +9,21 @@ import {
 } from "@mui/material";
 import { MONTH_NAMES } from "../../../utils/utils";
 import httpClient from "../../../api/httpClient";
-import { getApiUrl, getHeaders, buildUrlWithParams } from "../../../api/utils";
+import { getApiUrl, buildUrlWithParams } from "../../../api/utils";
 import InboxIcon from "@mui/icons-material/Inbox";
+
+const TOP_BRANDS_COLUMNS = [
+  { name: "Marca", selector: (row) => row.name },
+  { name: "Productos", selector: (row) => row.product_count },
+  { name: "% de ventas", selector: (row) => `${row.percentage}%` },
+];
+
+const TOP_PRODUCTS_COLUMNS = [
+  { name: "Código", selector: (row) => row.code },
+  { name: "Nombre", selector: (row) => row.name },
+  { name: "Marca", selector: (row) => row.brand_name },
+  { name: "% de ventas", selector: (row) => `${row.percentage}%` },
+];
 
 const ProductsDashboard = () => {
   const [year, setYear] = useState(new Date().getFullYear());
@@ -26,12 +39,13 @@ const ProductsDashboard = () => {
     const params = { year, month };
     if (storeId) params.store_id = storeId;
     const url = buildUrlWithParams(getApiUrl("products-dashboard"), params);
-    const response = await httpClient.get(url, { headers: getHeaders() });
+    const response = await httpClient.get(url);
     return response.data.task;
   }, [year, month, storeId]);
 
   const { data, loading, progress, countdown, fetchData } = useTaskPolling(startTask);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { fetchData(); }, [year, month, storeId]);
 
   const periodLabel = month === 0 ? "Todo el año" : `${MONTH_NAMES[month - 1]} ${year}`;
@@ -92,11 +106,7 @@ const ProductsDashboard = () => {
             <SimpleTable
               noDataComponent="Sin marcas"
               data={top_brands}
-              columns={[
-                { name: "Marca", selector: (row) => row.name },
-                { name: "Productos", selector: (row) => row.product_count },
-                { name: "% de ventas", selector: (row) => `${row.percentage}%` },
-              ]}
+              columns={TOP_BRANDS_COLUMNS}
             />
           </Box>
         </Grid>
@@ -106,12 +116,7 @@ const ProductsDashboard = () => {
             <SimpleTable
               noDataComponent="Sin productos"
               data={top_products}
-              columns={[
-                { name: "Código", selector: (row) => row.code },
-                { name: "Nombre", selector: (row) => row.name },
-                { name: "Marca", selector: (row) => row.brand_name },
-                { name: "% de ventas", selector: (row) => `${row.percentage}%` },
-              ]}
+              columns={TOP_PRODUCTS_COLUMNS}
             />
           </Box>
         </Grid>
@@ -121,12 +126,7 @@ const ProductsDashboard = () => {
             <SimpleTable
               noDataComponent="Sin productos"
               data={worst_products}
-              columns={[
-                { name: "Código", selector: (row) => row.code },
-                { name: "Nombre", selector: (row) => row.name },
-                { name: "Marca", selector: (row) => row.brand_name },
-                { name: "% de ventas", selector: (row) => `${row.percentage}%` },
-              ]}
+              columns={TOP_PRODUCTS_COLUMNS}
             />
           </Box>
         </Grid>

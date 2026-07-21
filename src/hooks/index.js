@@ -17,7 +17,7 @@ export { useCreateProduct, useUpdateProduct } from './useProductMutations';
 export { useCancelSale } from './useSaleMutations';
 
 // React Query hooks
-export * from './useQueries';
+export * from './useTransfers';
 
 // Custom hooks
 export { useFetch, useFetchList, useFetchWithRetry } from './useFetch';

@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { useForm } from "../../../hooks/useForm";
+import React, { useEffect, useState, useRef } from "react";
 import CustomModal from "../../ui/Modal/Modal";
 import DataTable from "../../ui/DataTable/DataTable";
 import { getStoreProductLogs, updateStoreProduct } from "../../../api/products";
@@ -7,10 +6,10 @@ import { getFormattedDateTime } from "../../../utils/utils";
 import { showSuccess, showError } from "../../../utils/alerts";
 import CustomButton from "../../ui/Button/Button";
 import { chooseIcon } from "../../ui/Icons/Icons";
-import { Grid, TextField } from "@mui/material";
+import { Grid, TextField, LinearProgress } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 
-const INITIAL_FORM_DATA = {};
+const INITIAL_FORM_DATA = { stock: "" };
 
 const StoreProductLogsModal = ({ isOpen, logs: logsData, onClose, onUpdate }) => {
   const storeProduct = logsData?.storeProduct || {};
@@ -18,19 +17,26 @@ const StoreProductLogsModal = ({ isOpen, logs: logsData, onClose, onUpdate }) =>
 
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
   const [logs, setLogs] = useState([]);
+  const [months, setMonths] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const debounceTimer = useRef(null);
 
   useEffect(() => {
     const fetchStoreProductLogs = async () => {
       if (storeProduct.id) {
         setFormData(storeProduct);
+        setLoading(true);
 
         try {
           const response = await getStoreProductLogs({
-            "store-product-id": storeProduct.id
-        } );
+            "store-product-id": storeProduct.id,
+            months
+          });
           setLogs(response.data);
         } catch (error) {
           // Error silencioso - logs no críticos
+        } finally {
+          setLoading(false);
         }
       } else {
         setFormData(INITIAL_FORM_DATA);
@@ -38,8 +44,13 @@ const StoreProductLogsModal = ({ isOpen, logs: logsData, onClose, onUpdate }) =>
       }
     };
 
-    fetchStoreProductLogs();
-  }, [storeProduct]);
+    if (storeProduct.id) {
+      clearTimeout(debounceTimer.current);
+      debounceTimer.current = setTimeout(fetchStoreProductLogs, 500);
+    }
+
+    return () => clearTimeout(debounceTimer.current);
+  }, [storeProduct.id, months]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -63,59 +74,48 @@ const StoreProductLogsModal = ({ isOpen, logs: logsData, onClose, onUpdate }) =>
     <CustomModal
       showOut={isOpen}
       onClose={onClose}
-      title={adjustStock ? "Ajuste de stock" : "Movimientos de stock"}
+      title={`${adjustStock ? (String(formData.stock) === String(storeProduct.stock) ? "Confirmar cantidad" : "Modificar cantidad") : "Historial de movimientos"} de ${formData.product?.code} - ${formData.product?.name}`}
     >
      <Grid container sx={{ padding: '1rem', backgroundColor: 'rgba(4, 53, 107, 0.2)' }}>
        <Grid item xs={12} className="card">
      <Grid container spacing={2}>
-        <Grid item xs={12} md={6}>
-          <TextField size="small" fullWidth label="Código" type="text"
-            value={formData.product?.code}
-            placeholder="Código"
-            disabled
-          />
-        </Grid>
 
+        {adjustStock && (
         <Grid item xs={12} md={6}>
-          <TextField size="small" fullWidth label="Marca" type="text"
-            value={formData.product?.brand_name}
-            placeholder="Marca"
-            disabled
-          />
-        </Grid>
-
-        <Grid item xs={12} md={6}>
-          <TextField size="small" fullWidth label="Nombre" type="text"
-            value={formData.product?.name}
-            placeholder="Nombre"
-            disabled
-          />
-        </Grid>
-        <Grid item xs={12} md={adjustStock ? 3 : 6}>
           <TextField size="small" fullWidth label="Cantidad" type="text"
             value={formData.stock}
             placeholder="Cantidad"
-            disabled={!adjustStock}
             name={"stock"}
             onChange={handleInputChange}
           />
         </Grid>
+        )}
 
         {adjustStock && (
-        <Grid item xs={12} md={3}>
+        <Grid item xs={12} md={6}>
           <CustomButton
             onClick={() => handleCreateAdjustStock()}
             fullWidth
             startIcon={<SaveIcon />}
           >
-            Ajustar
+            {String(formData.stock) === String(storeProduct.stock) ? "Confirmar" : "Modificar"}
           </CustomButton>
         </Grid>
         )}
 
         {!adjustStock && (
         <Grid item xs={12} md={12}>
-        <h1>Últimos movimientos</h1>
+          {loading && <LinearProgress sx={{ mb: 2, borderRadius: 1 }} />}
+          <TextField
+            size="small"
+            label="Meses anteriores (iniciar desde cuántos meses atrás)"
+            type="number"
+            value={months}
+            onChange={(e) => setMonths(Number(e.target.value))}
+            inputProps={{ min: 1, max: 12 }}
+            sx={{ width: '100%', mb: 2 }}
+          />
+          <h1>Últimos movimientos</h1>
           <DataTable
             noDataComponent="Sin movimientos"
             data={logs}

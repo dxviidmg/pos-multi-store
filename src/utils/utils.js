@@ -9,7 +9,7 @@ export const DAY_NAMES = ["Domingo","Lunes","Martes","Miércoles","Jueves","Vier
 export const DAY_NAMES_SHORT = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
 
 // --- Paleta de colores para gráficas ---
-export const CHART_COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444'];
+export const CHART_COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', '#ec4899', '#06b6d4'];
 
 // --- Formateo de moneda ---
 export const formatCurrency = (value, decimals = 2) =>
@@ -128,11 +128,13 @@ export function getDateDifference(startDate, endDate) {
 
 
 export const handlePrintTicket = async (endpoint, data) => {
-  const response2 = await getPrint(endpoint, data);
-
-  showAlert(
-    response2.status === 200 ? "success" : "error",
-    response2.status === 200 ? "Imprimiendo" : "Error de impresión",
-    response2.code === "ERR_NETWORK" ? "Servidor no encontrado" : ""
-  );
+  try {
+    const response2 = await getPrint(endpoint, data);
+    showAlert(
+      response2.status === 200 ? "success" : "error",
+      response2.status === 200 ? "Imprimiendo" : "Error de impresión",
+    );
+  } catch (error) {
+    showAlert("warning", "No se pudo conectar a la impresora", "Verifique que la impresora esté encendida, conectada y que el servidor de impresión esté funcionando.");
+  }
 };
