@@ -49,6 +49,7 @@ const PriceLogsList = lazyRetry(() => import("./components/products/PriceLogsLis
 const DistributionList = lazyRetry(() => import("./components/inventory/DistributionList/DistributionList"));
 const RestartService = lazyRetry(() => import("./components/admin/RestartService/RestartService"));
 const Profile = lazyRetry(() => import("./components/admin/Profile/Profile"));
+const Registration = lazyRetry(() => import("./components/clients/Registration/Registration"));
 
 function App({ toggleTheme, themeMode }) {
   const user = getUserData();
@@ -102,7 +103,10 @@ function App({ toggleTheme, themeMode }) {
             )}
           </Route>
         ) : (
+          <>
+          <Route path="/registrarme/" element={<Suspense fallback={<LoadingFallback />}><Registration /></Suspense>} />
           <Route path="*" element={<Login onLogin={handleLogin} />} />
+          </>
         )}
       </Routes>
     </Router>
