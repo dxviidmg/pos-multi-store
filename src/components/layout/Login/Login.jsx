@@ -168,7 +168,7 @@ function Login({ onLogin }) {
               Iniciar Sesión
             </CustomButton>
 
-            <CustomButton onClick={() => navigate("/registrar-cliente")} fullWidth
+            <CustomButton onClick={() => navigate("/registrarme")} fullWidth
               sx={{
                 py: 1, mt: 1.5, borderRadius: 1, fontWeight: 600, fontSize: '0.85rem',
                 background: 'rgba(255,255,255,0.1)',

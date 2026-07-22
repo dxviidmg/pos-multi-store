@@ -104,7 +104,7 @@ function App({ toggleTheme, themeMode }) {
           </Route>
         ) : (
           <>
-          <Route path="/registrar-cliente/" element={<Suspense fallback={<LoadingFallback />}><Registration /></Suspense>} />
+          <Route path="/registrarme/" element={<Suspense fallback={<LoadingFallback />}><Registration /></Suspense>} />
           <Route path="*" element={<Login onLogin={handleLogin} />} />
           </>
         )}
