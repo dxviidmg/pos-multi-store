@@ -16,6 +16,13 @@ export const checkTenantExists = async (short_name) => {
   return response.data;
 };
 
+export const getAvailablePlans = async () => {
+  const response = await httpClient.get(getApiUrl("plans"), {
+    headers: tenantHeaders,
+  });
+  return response.data;
+};
+
 export const createTenant = async (data) => {
   const response = await httpClient.post(getApiUrl("create-tenant"), data, {
     headers: tenantHeaders,
@@ -23,7 +30,4 @@ export const createTenant = async (data) => {
   return response;
 };
 
-export const registerClient = async (data) => {
-  const response = await httpClient.post(getApiUrl("client"), data);
-  return response;
-};
+

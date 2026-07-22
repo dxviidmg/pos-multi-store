@@ -1,5 +1,5 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { registerClient, createTenant } from "../api/registration";
+import { useMutation } from "@tanstack/react-query";
+import { createTenant } from "../api/registration";
 import { showSuccess, showError } from "../utils/alerts";
 
 const registrationErrorParser = (error) => {
@@ -35,24 +35,6 @@ export const useCreateTenant = (options = {}) => {
     mutationFn: createTenant,
     onSuccess: (data, variables, context) => {
       showSuccess("¡Registro exitoso!", "Tu negocio ha sido creado correctamente.");
-      options?.onSuccess?.(data, variables, context);
-    },
-    onError: (error, variables, context) => {
-      const message = registrationErrorParser(error);
-      showError("Error", message);
-      options?.onError?.(error, variables, context, message);
-    },
-  });
-};
-
-export const useRegisterClient = (options = {}) => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: registerClient,
-    onSuccess: (data, variables, context) => {
-      queryClient.invalidateQueries({ queryKey: ["clients"] });
-      showSuccess("¡Registro exitoso!", "Cliente registrado correctamente.");
       options?.onSuccess?.(data, variables, context);
     },
     onError: (error, variables, context) => {
