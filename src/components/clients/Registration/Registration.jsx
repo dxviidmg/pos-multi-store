@@ -183,7 +183,7 @@ const Registration = () => {
 
         <Paper elevation={0} sx={{
           position: "relative", zIndex: 1,
-          width: "100%", maxWidth: 420, mx: 2,
+          width: "100%", maxWidth: 600, mx: 2,
           borderRadius: 1, overflow: "hidden",
           background: "rgba(4,52,107,0.95)",
           backdropFilter: "blur(24px)",
@@ -308,10 +308,13 @@ const Registration = () => {
                           fullWidth size="small"
                           name="short_name"
                           value={formData.short_name}
-                          onChange={handleChange}
+                          onChange={(e) => {
+                            const val = e.target.value.replace(/\s/g, "");
+                            setFormData((prev) => ({ ...prev, short_name: val }));
+                          }}
                           required
                           placeholder="Ej: mitienda"
-                          inputProps={{ maxLength: 5, style: { letterSpacing: "0.5px" } }}
+                          inputProps={{ maxLength: 10, style: { letterSpacing: "0.5px" } }}
                           InputProps={{
                             endAdornment: formData.short_name.trim() && (
                               <InputAdornment position="end" sx={{ mr: 0.5 }}>
@@ -367,10 +370,24 @@ const Registration = () => {
                           }}
                         />
 
-                        {/* Help text */}
-                        <Typography sx={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.5)", mt: 0.75 }}>
-                          Máximo 5 caracteres. Identificador único de tu negocio.
+                        {/* Help text — only visible when typing */}
+                        {formData.short_name.trim() && (
+                        <>
+                        <Typography sx={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.5)", mt: 0.75, lineHeight: 1.6 }}>
+                          Código único de tu negocio para generar usuarios. Máx. 10 caracteres, solo letras y números. Se convierte a mayúsculas. <strong style={{ color: "rgba(255,255,255,0.7)" }}>No se puede cambiar después.</strong>
                         </Typography>
+                        <Typography sx={{ fontSize: "0.68rem", color: "rgba(255,255,255,0.4)", mt: 0.5, lineHeight: 1.5 }}>
+                          Ej: "Papelería Don Juan" podría ser{" "}
+                          <span style={{ fontFamily: "monospace", color: "rgba(255,255,255,0.6)" }}>pdj</span>,{" "}
+                          <span style={{ fontFamily: "monospace", color: "rgba(255,255,255,0.6)" }}>pdonjuan</span>,{" "}
+                          <span style={{ fontFamily: "monospace", color: "rgba(255,255,255,0.6)" }}>donjuan</span>,{" "}
+                          <span style={{ fontFamily: "monospace", color: "rgba(255,255,255,0.6)" }}>djpape</span> — no hay un formato obligatorio, elige algo único y significativo para ti.
+                        </Typography>
+                        <Typography sx={{ fontSize: "0.68rem", color: "rgba(255,255,255,0.4)", mt: 0.25, lineHeight: 1.5 }}>
+                          Tus usuarios se crearán así: <span style={{ fontFamily: "monospace", color: "rgba(255,255,255,0.6)" }}>{formData.short_name.trim().toLowerCase()}.propietario</span>, <span style={{ fontFamily: "monospace", color: "rgba(255,255,255,0.6)" }}>{formData.short_name.trim().toLowerCase()}.tienda.centro</span>
+                        </Typography>
+                        </>
+                        )}
 
                         {/* Status message — fixed height to prevent layout shift */}
                         <Box sx={{ minHeight: 24, mt: 0.75, display: "flex", alignItems: "center" }}>
@@ -407,17 +424,13 @@ const Registration = () => {
                         </Box>
 
                         {/* Suggestions when taken */}
+                        {shortNameStatus === "taken" && (
                         <Box sx={{
-                          minHeight: 28,
                           mt: 0.5,
                           display: "flex",
                           alignItems: "center",
                           gap: 0.75,
                           flexWrap: "wrap",
-                          opacity: shortNameStatus === "taken" ? 1 : 0,
-                          transform: shortNameStatus === "taken" ? "translateY(0)" : "translateY(-4px)",
-                          transition: "all 0.25s ease",
-                          pointerEvents: shortNameStatus === "taken" ? "auto" : "none",
                         }}>
                           <Typography sx={{ fontSize: "0.68rem", color: "rgba(255,255,255,0.5)" }}>
                             Prueba con:
@@ -451,6 +464,7 @@ const Registration = () => {
                             </Box>
                           ))}
                         </Box>
+                        )}
                       </Box>
 
                       <CustomButton
@@ -459,7 +473,7 @@ const Registration = () => {
                         fullWidth
                         endIcon={<ArrowForwardIcon sx={{ fontSize: "18px !important" }} />}
                         sx={{
-                          mt: 1.5,
+                          mt: 0.5,
                           py: 1.3,
                           borderRadius: 1,
                           fontSize: "0.9rem",
