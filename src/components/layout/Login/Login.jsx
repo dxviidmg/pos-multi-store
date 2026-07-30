@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
 
 function Login({ onLogin }) {
   const navigate = useNavigate();
@@ -82,11 +83,6 @@ function Login({ onLogin }) {
             maxWidth: '160px', height: 'auto', mb: 3, borderRadius: 0,
             boxShadow: '0 12px 40px rgba(0,0,0,0.3)',
           }} />
-          <Typography variant="h4" sx={{
-            fontWeight: 800, color: 'white', mb: 0.5, letterSpacing: '-0.02em',
-          }}>
-            Bienvenido
-          </Typography>
           <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem' }}>
             Ingrese sus credenciales para continuar
           </Typography>
@@ -165,6 +161,19 @@ function Login({ onLogin }) {
               }}
             >
               Iniciar Sesión
+            </CustomButton>
+
+            <CustomButton onClick={() => navigate("/registrarme")} fullWidth
+              sx={{
+                py: 1, mt: 1.5, borderRadius: 1, fontWeight: 600, fontSize: '0.85rem',
+                background: 'rgba(255,255,255,0.1)',
+                '&:hover': {
+                  background: 'rgba(255,255,255,0.2)',
+                },
+              }}
+              startIcon={<PersonAddIcon />}
+            >
+              Registrar nuevo cliente
             </CustomButton>
           </Stack>
         </Box>
