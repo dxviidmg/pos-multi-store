@@ -33,6 +33,7 @@ const LogList = lazyRetry(() => import("./components/admin/LogList/LogList"));
 const CashFlowList = lazyRetry(() => import("./components/cashflow/CashFlowList/CashFlowList"));
 const TenantPaymentList = lazyRetry(() => import("./components/tenant/TenantPaymentList/TenantPaymentList"));
 const MyCurrentPlan = lazyRetry(() => import("./components/tenant/MyCurrentPlan/MyCurrentPlan"));
+const SubscriptionList = lazyRetry(() => import("./components/tenant/SubscriptionList/SubscriptionList"));
 const SellerList = lazyRetry(() => import("./components/catalog/SellerList/SellerList"));
 const DepartmentList = lazyRetry(() => import("./components/catalog/DepartmentList/DepartmentList"));
 const StoreProductImport = lazyRetry(() => import("./components/products/StoreProductImport/StoreProductImport"));
@@ -81,6 +82,7 @@ function App({ toggleTheme, themeMode }) {
             <Route path="/departamentos/" element={<Lazy><DepartmentList /></Lazy>} />
             <Route path="/historial-stock/" element={<Lazy><LogList /></Lazy>} />
             <Route path="/pagos/" element={<Lazy><TenantPaymentList /></Lazy>} />
+            <Route path="/suscripciones/" element={<Lazy><SubscriptionList /></Lazy>} />
             <Route path="/mi-plan-actual/" element={<Lazy><MyCurrentPlan /></Lazy>} />
             <Route path="/vendedores/" element={<Lazy><SellerList /></Lazy>} />
             <Route path="/servicios/" element={<Lazy><ServiceList /></Lazy>} />
