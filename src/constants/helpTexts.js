@@ -91,6 +91,10 @@ const helpTexts = {
     title: "Pagos del servicio",
     text: "Historial de pagos de tu suscripción a SmartVenta. Consulta vigencia, meses pagados y montos.",
   },
+  "/suscripciones/": {
+    title: "Suscripciones",
+    text: "Consulta las suscripciones activas de tu negocio. Ve el estado, monto, método de pago y fecha de creación de cada suscripción.",
+  },
   "/servicios/": {
     title: "Servicios adicionales",
     text: "Conoce los servicios extra disponibles para tu negocio: tiendas adicionales, impresoras, integraciones y más.",
