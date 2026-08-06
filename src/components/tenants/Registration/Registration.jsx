@@ -99,11 +99,14 @@ const Registration = () => {
     return () => clearTimeout(debounceRef.current);
   }, [formData.short_name]);
 
+  const [ownerUsername, setOwnerUsername] = useState("");
+
   const createTenantMutation = useCreateTenant({
-    onSuccess: () => {
+    onSuccess: (data) => {
       unmountCardForm();
       setShowPayment(false);
       setPaymentSubmitting(false);
+      setOwnerUsername(data?.username || "");
       setFormData(INITIAL_FORM_DATA);
       setRegistered(true);
     },
@@ -204,9 +207,27 @@ const Registration = () => {
                 <Typography sx={{ fontSize: "1.25rem", fontWeight: 700, color: "#fff", mb: 0.5 }}>
                   ¡Listo!
                 </Typography>
-                <Typography sx={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.7)", mb: 2.5, lineHeight: 1.6 }}>
+                <Typography sx={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.7)", mb: 1, lineHeight: 1.6 }}>
                   Tu negocio ha sido registrado.<br />Ya puedes iniciar sesión.
                 </Typography>
+                {ownerUsername && (
+                  <Box sx={{
+                    mb: 2.5, px: 2, py: 1.5,
+                    borderRadius: 1,
+                    bgcolor: "rgba(255,255,255,0.08)",
+                    border: "1px solid rgba(255,255,255,0.15)",
+                  }}>
+                    <Typography sx={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.5)", mb: 0.75 }}>
+                      Usuario y contraseña predeterminados:
+                    </Typography>
+                    <Typography sx={{ fontSize: "1rem", fontWeight: 700, color: "#a78bfa", fontFamily: "monospace", letterSpacing: "0.5px" }}>
+                      {ownerUsername}
+                    </Typography>
+                    <Typography sx={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.45)", mt: 0.75, lineHeight: 1.5 }}>
+                      Usa este mismo valor como usuario y contraseña para tu primer inicio de sesión.
+                    </Typography>
+                  </Box>
+                )}
                 <CustomButton
                   onClick={() => navigate("/login")}
                   fullWidth
@@ -293,9 +314,13 @@ const Registration = () => {
                           fullWidth size="small"
                           name="name"
                           value={formData.name}
-                          onChange={handleChange}
+                          onChange={(e) => {
+                            const capitalized = e.target.value
+                              .replace(/\b\w/g, (c) => c.toUpperCase());
+                            setFormData((prev) => ({ ...prev, name: capitalized }));
+                          }}
                           required
-                          placeholder="Ej: Mi Tienda de Ropa"
+                          placeholder="Ej: Refraccionaria Ramirez"
                           sx={inputSx}
                         />
                       </Box>
@@ -309,7 +334,7 @@ const Registration = () => {
                           name="short_name"
                           value={formData.short_name}
                           onChange={(e) => {
-                            const val = e.target.value.replace(/\s/g, "");
+                            const val = e.target.value.replace(/\s/g, "").toLowerCase();
                             setFormData((prev) => ({ ...prev, short_name: val }));
                           }}
                           required

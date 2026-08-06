@@ -320,6 +320,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
         dropdown: [
           { label: "Mi Plan Actual", href: "/mi-plan-actual/" },
           { label: "Historial de pagos", href: "/pagos/" },
+          { label: "Suscripciones", href: "/suscripciones/" },
         ],
       },
       { label: "Servicios", href: "/servicios/" },
