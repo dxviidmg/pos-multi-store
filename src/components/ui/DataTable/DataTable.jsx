@@ -28,9 +28,14 @@ const DataTable = ({
     [data, searchTerm]
   );
 
+  const visibleColumns = useMemo(
+    () => columns.filter((col) => !col.omit),
+    [columns]
+  );
+
   const muiColumns = useMemo(
     () =>
-      columns.map((col, index) => {
+      visibleColumns.map((col, index) => {
         const getCellAlignment = (row) => {
           const value = col.selector ? col.selector(row) : row[col.field];
           if (typeof value === 'string' && value.includes('$')) {
@@ -100,7 +105,7 @@ const DataTable = ({
             <Table size="small">
               <TableHead>
                 <TableRow sx={{ backgroundColor: colors.primary }}>
-                  {columns.map((col, i) => (
+                  {visibleColumns.map((col, i) => (
                     <TableCell key={i} sx={{ fontWeight: "bold", color: colors.text.white, py: 0.5, fontSize: "0.8125rem", textAlign: "center" }}>
                       {col.name}
                     </TableCell>
@@ -109,7 +114,7 @@ const DataTable = ({
               </TableHead>
               <TableBody>
                 <TableRow>
-                  <TableCell colSpan={columns.length} align="center" sx={{ py: 0.5, fontSize: "0.8125rem" }}>
+                  <TableCell colSpan={visibleColumns.length} align="center" sx={{ py: 0.5, fontSize: "0.8125rem" }}>
                     {noDataComponent}
                   </TableCell>
                 </TableRow>
