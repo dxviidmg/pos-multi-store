@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import DataTable from "../../ui/DataTable/DataTable";
 import { getSubscriptions } from "../../../api/subscriptions";
-import { Grid } from "@mui/material";
-import StatusChip from "../../ui/StatusChip";
+import { Grid, Chip } from "@mui/material";
 
 const statusMap = {
   active: { label: "Activa", color: "success" },
@@ -57,20 +56,20 @@ const SubscriptionList = () => {
             {
               name: "Monto",
               selector: (row) => `$${row.amount}`,
-              width: "120px",
+              width: 120,
             },
             {
               name: "Método de pago",
               selector: (row) => row.payment_method_id,
-              width: "160px",
+              width: 160,
             },
             {
               name: "Estado",
               cell: (row) => {
                 const status = statusMap[row.status] || { label: row.status, color: "default" };
-                return <StatusChip label={status.label} color={status.color} />;
+                return <Chip size="small" label={status.label} color={status.color} variant="outlined" />;
               },
-              width: "140px",
+              width: 140,
             },
             {
               name: "Fecha de creación",
