@@ -10,6 +10,9 @@ import { Grid, Stack, Card, CardContent, Typography, Box, Chip, Button, Alert } 
 import { showSuccess } from "../../../utils/alerts";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import httpClient from "../../../api/httpClient";
+import { getApiUrl } from "../../../api/utils";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 
 const MyCurrentPlan = () => {
   const [plan, setPlan] = useState(null);
@@ -17,6 +20,7 @@ const MyCurrentPlan = () => {
   const [equivalent, setEquivalent] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState(null);
+  const [tenantDates, setTenantDates] = useState(null);
 
   const paymentModal = useModal();
   const { createCardForm, unmountCardForm } = useMercadoPago();
@@ -34,6 +38,18 @@ const MyCurrentPlan = () => {
       setPlanLoading(false);
     };
     fetchData();
+  }, []);
+
+  useEffect(() => {
+    const fetchDates = async () => {
+      try {
+        const res = await httpClient.get(getApiUrl("tenant-dates"));
+        if (res.status === 200) setTenantDates(res.data);
+      } catch (err) {
+        console.error("Error fetching tenant dates:", err);
+      }
+    };
+    fetchDates();
   }, []);
 
   const handleOpenPayment = useCallback(() => {
@@ -136,6 +152,46 @@ const MyCurrentPlan = () => {
             )}
           </>
         )}
+      </Grid>
+
+      <Grid item xs={12} className="card" sx={{ mt: 3 }}>
+        <Card>
+          <CardContent>
+            <Typography variant="h6" sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+              <CalendarTodayIcon fontSize="small" /> Fechas del Negocio
+            </Typography>
+            {tenantDates ? (
+              <Grid container spacing={3}>
+                <Grid item xs={12} sm={6} md={4}>
+                  <Typography variant="body2" color="textSecondary">Fecha de creación</Typography>
+                  <Typography variant="body1">
+                    {tenantDates.tenant_created_at
+                      ? new Date(tenantDates.tenant_created_at).toLocaleDateString("es-MX", { year: "numeric", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit" })
+                      : "—"}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} sm={6} md={4}>
+                  <Typography variant="body2" color="textSecondary">Suscripción activa desde</Typography>
+                  <Typography variant="body1">
+                    {tenantDates.active_subscription_date
+                      ? new Date(tenantDates.active_subscription_date).toLocaleDateString("es-MX", { year: "numeric", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit" })
+                      : "—"}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} sm={6} md={4}>
+                  <Typography variant="body2" color="textSecondary">Primer pago</Typography>
+                  <Typography variant="body1">
+                    {tenantDates.first_payment_date
+                      ? new Date(tenantDates.first_payment_date).toLocaleDateString("es-MX", { year: "numeric", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit" })
+                      : "—"}
+                  </Typography>
+                </Grid>
+              </Grid>
+            ) : (
+              <Typography variant="body2" color="textSecondary">Cargando fechas...</Typography>
+            )}
+          </CardContent>
+        </Card>
       </Grid>
 
       <CustomModal showOut={paymentModal.isOpen} onClose={handleClosePayment} title="Domiciliar pago recurrente">
