@@ -10,6 +10,7 @@ import {
   CHANGE_PRICE,
   COUNT_STOCK_OTHER_STORES
 } from "./cartActions";
+import { MOVEMENT_TYPES } from "../../constants";
 
 // Nuevas acciones para multi-cart
 export const CREATE_NEW_CART = "CREATE_NEW_CART";
@@ -24,7 +25,7 @@ const createEmptyCart = (id) => ({
   id,
   cart: [],
   client: {},
-  movementType: "venta",
+  movementType: MOVEMENT_TYPES.SALE,
   createdAt: Date.now()
 });
 
@@ -128,7 +129,7 @@ const multiCartReducer = (state = initialState, action) => {
       );
 
       // Si es "agregar", no validar stock
-      if (activeCart.movementType === "agregar") {
+      if (activeCart.movementType === MOVEMENT_TYPES.ADD_STOCK) {
         let updatedCart;
         if (existingProductIndex !== -1) {
           const currentQuantity = activeCart.cart[existingProductIndex].quantity;
@@ -154,7 +155,7 @@ const multiCartReducer = (state = initialState, action) => {
 
       // Calcular stock ya reservado en otros carritos
       const reservedInOtherCarts = getReservedStock(state.carts, action.payload.id, state.activeCartId);
-      const productStock = activeCart.movementType === "traspaso" 
+      const productStock = activeCart.movementType === MOVEMENT_TYPES.TRANSFER 
         ? (action.payload.reserved_stock || 0)
         : (action.payload.available_stock || 0);
       const availableStock = productStock - reservedInOtherCarts;
@@ -165,7 +166,7 @@ const multiCartReducer = (state = initialState, action) => {
         const newQuantity = currentQuantity + action.payload.quantity;
         
         // En ventas permitir exceder stock; en traspasos/distribuciones validar
-        if (activeCart.movementType !== "venta" && newQuantity > availableStock) {
+        if (activeCart.movementType !== MOVEMENT_TYPES.SALE && newQuantity > availableStock) {
           return state;
         }
         
@@ -176,7 +177,7 @@ const multiCartReducer = (state = initialState, action) => {
         );
       } else {
         // En ventas permitir exceder stock
-        if (activeCart.movementType !== "venta" && action.payload.quantity > availableStock) {
+        if (activeCart.movementType !== MOVEMENT_TYPES.SALE && action.payload.quantity > availableStock) {
           logger.warn(`Stock insuficiente. Disponible: ${availableStock}, Intentando agregar: ${action.payload.quantity}`);
           return state;
         }
@@ -208,7 +209,7 @@ const multiCartReducer = (state = initialState, action) => {
 
     case UPDATE_QUANTITY_IN_CART: {
       // Si es "agregar", no validar stock
-      if (activeCart.movementType === "agregar") {
+      if (activeCart.movementType === MOVEMENT_TYPES.ADD_STOCK) {
         const updatedCart = activeCart.cart.map((item) => {
           if (item.id === action.payload.product.id) {
             const clientSelected = aClientIsSelected(activeCart.client);
@@ -232,18 +233,18 @@ const multiCartReducer = (state = initialState, action) => {
 
       // Calcular stock reservado en otros carritos
       const reservedInOtherCarts = getReservedStock(state.carts, action.payload.product.id, state.activeCartId);
-      const productStock = activeCart.movementType === "traspaso" 
+      const productStock = activeCart.movementType === MOVEMENT_TYPES.TRANSFER 
         ? (action.payload.product.reserved_stock || 0)
         : (action.payload.product.available_stock || 0);
       const availableStock = productStock - reservedInOtherCarts;
       
       // En ventas permitir exceder stock; en otros tipos, limitar
       const requestedQuantity = action.payload.newQuantity;
-      const clampedQuantity = (activeCart.movementType === "venta" || requestedQuantity <= availableStock)
+      const clampedQuantity = (activeCart.movementType === MOVEMENT_TYPES.SALE || requestedQuantity <= availableStock)
         ? requestedQuantity
         : Math.max(1, availableStock);
       
-      if (activeCart.movementType !== "venta" && requestedQuantity > availableStock) {
+      if (activeCart.movementType !== MOVEMENT_TYPES.SALE && requestedQuantity > availableStock) {
         logger.warn(`Stock insuficiente. Disponible: ${availableStock}, Solicitado: ${requestedQuantity}`);
       }
       

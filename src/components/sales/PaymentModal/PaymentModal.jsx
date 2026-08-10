@@ -18,6 +18,7 @@ import { Grid, TextField, Radio, RadioGroup, FormControlLabel, Checkbox, FormLab
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import MoneyOffIcon from "@mui/icons-material/MoneyOff";
+import { MOVEMENT_TYPES } from "../../../constants";
 
 
 function roundUpCustom(value) {
@@ -100,7 +101,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
     const handleShortcut = (event) => {
       if (event.ctrlKey && event.key === "g") {
         event.preventDefault();
-        if (isOpen && (movementType === "venta" || movementType === "apartado")) {
+        if (isOpen && (movementType === MOVEMENT_TYPES.SALE || movementType === MOVEMENT_TYPES.RESERVATION)) {
           handleCreateSaleRef.current?.(!!printer);
         }
       }
@@ -112,7 +113,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
 
 
   useEffect(() => {
-    if (movementType === "apartado") {
+    if (movementType === MOVEMENT_TYPES.RESERVATION) {
       setPaymentMethods({
         type: "radio", // Por defecto, "Único".
         methods: { EF: 0, TA: 0, TR: 0 }, // Efectivo seleccionado.
@@ -196,7 +197,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
     try {
       logger.log(payment)
       if (
-        movementType === "venta" &&
+        movementType === MOVEMENT_TYPES.SALE &&
         (payment.paidWith === 0 || payment.change < 0)
       ) {
         setErrorMessage("Pago debe ser igual o mayor a la cantidad a cobrar");
@@ -221,7 +222,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
         payments: paymentList,
         reference_payment: referencePayment,
         sale_exchange: saleExchange,
-        reservation_in_progress: movementType === "apartado",
+        reservation_in_progress: movementType === MOVEMENT_TYPES.RESERVATION,
       };
 
       const response = await createSale(data);
@@ -270,7 +271,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
       change: value + saleExchange.refunded - totalDiscount,
     });
   }
-    if (movementType === "apartado") {
+    if (movementType === MOVEMENT_TYPES.RESERVATION) {
       setPaymentMethods({
         type: "radio",
         methods: { EF: value, TA: 0, TR: 0 },
@@ -287,7 +288,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
   };
 
   const handleDisableButton = () => {
-    if (movementType === "apartado") {
+    if (movementType === MOVEMENT_TYPES.RESERVATION) {
       return false;
     }
     return (
@@ -508,7 +509,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
                           <Checkbox
                             size="small"
                             checked={
-                              (movementType === "apartado" && method === "EF") ||
+                              (movementType === MOVEMENT_TYPES.RESERVATION && method === "EF") ||
                               paymentMethods.methods[method] > 0
                             }
                             disabled={
