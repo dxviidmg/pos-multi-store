@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import CustomModal from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
 import { getBrands } from "../../../api/brands";
@@ -48,10 +48,12 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
   const [optionsLoaded, setOptionsLoaded] = useState(false);
   const { values: formData, handleChange: handleDataChange, setValues: setFormData, setValue: setFormValue } = useForm(INITIAL_FORM_DATA);
   const [initialStock, setInitialStock] = useState("");
-  const [, setSelectedImage] = useState(null);
+
   const [previewImage, setPreviewImage] = useState(null);
   const [storeProduct, setStoreProduct] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [codeExists, setCodeExists] = useState(false);
+  const codeDebounceRef = useRef(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -96,12 +98,31 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
     fetchData();
   }, [product, showStoreProducts, createFromSearch]);
 
+  // Validar si el código ya existe (solo al crear)
+  useEffect(() => {
+    if (!isCreating || !formData.code) {
+      setCodeExists(false);
+      return;
+    }
+
+    clearTimeout(codeDebounceRef.current);
+    codeDebounceRef.current = setTimeout(async () => {
+      try {
+        const response = await getStoreProducts({ code: formData.code, all_stores: "Y" });
+        setCodeExists(response.data.length > 0);
+      } catch {
+        setCodeExists(false);
+      }
+    }, 500);
+
+    return () => clearTimeout(codeDebounceRef.current);
+  }, [formData.code, isCreating]);
+
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       setFormValue("image", file);
-      setSelectedImage(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewImage(reader.result);
@@ -120,37 +141,31 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
       delete cleanFormData.department;
     }
     
-    const response = await apiCall(cleanFormData);
+    try {
+      const response = await apiCall(cleanFormData);
 
-    if ([200, 201].includes(response.status)) {
-      if (createFromSearch && initialStock && parseInt(initialStock) > 0) {
-        // Obtener el store_product creado para agregar stock
-        const storeProducts = await getStoreProducts({ code: formData.code });
-        if (storeProducts.data.length > 0) {
-          const storeProduct = storeProducts.data[0];
-          await addProducts({
-            store_products: [{ id: storeProduct.id, quantity: parseInt(initialStock) }],
-          });
+      if ([200, 201].includes(response.status)) {
+        if (createFromSearch && initialStock && parseInt(initialStock) > 0) {
+          const storeProducts = await getStoreProducts({ code: formData.code });
+          if (storeProducts.data.length > 0) {
+            const sp = storeProducts.data[0];
+            await addProducts({
+              store_products: [{ id: sp.id, quantity: parseInt(initialStock) }],
+            });
+          }
         }
+        onClose();
+        onUpdate(response.data);
+        setFormData(INITIAL_FORM_DATA);
+        setInitialStock("");
+        setPreviewImage(null);
+        showSuccess(`Producto ${formData.id ? "actualizado" : "creado"}${createFromSearch ? ` con stock de ${initialStock}` : ""}`);
       }
-      onClose();
-      onUpdate(response.data);
-      setFormData(INITIAL_FORM_DATA);
-      setInitialStock("");
-      setSelectedImage(null);
-      setPreviewImage(null);
-      showSuccess(`Producto ${formData.id ? "actualizado" : "creado"}${createFromSearch ? ` con stock de ${initialStock}` : ""}`);
-    } else {
-      let message = "Error desconocido. Por favor, contacte soporte.";
-      if (response.response?.status === 400 && response.response.data?.code) {
-        const codeError = response.response.data.code[0];
-        if (codeError === "product with this code already exists.") {
-          message = "El código ya existe.";
-        }
-      }
-      showError(`Error al ${formData.id ? "actualizar" : "crear"} producto`, message);
+    } catch (error) {
+      showError(`Error al ${formData.id ? "actualizar" : "crear"} producto`);
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   const isFormIncomplete = () => {
@@ -257,6 +272,8 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
                   placeholder="Código"
                   name="code"
                   onChange={handleDataChange}
+                  error={codeExists}
+                  helperText={codeExists ? "El código ya existe" : ""}
                 />
               </Grid>
               <Grid item xs={12} md={6}>
@@ -344,7 +361,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
                 <CustomButton
                   fullWidth={true}
                   onClick={(e) => handleProductSubmit(e)}
-                  disabled={isFormIncomplete() || isCostHigher || isWholesaleHigher || isLoading}
+                  disabled={isFormIncomplete() || isCostHigher || isWholesaleHigher || isLoading || codeExists}
                   startIcon={<SaveIcon />}
                 >
                   {isLoading ? "Guardando..." : formData.id ? "Actualizar" : "Crear"}
