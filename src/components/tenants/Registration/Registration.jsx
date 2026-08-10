@@ -208,7 +208,9 @@ const Registration = () => {
                   ¡Listo!
                 </Typography>
                 <Typography sx={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.7)", mb: 1, lineHeight: 1.6 }}>
-                  Tu negocio ha sido registrado.<br />Ya puedes iniciar sesión.
+                  Tu negocio ha sido registrado.<br />
+                  Tu pago se procesa en un máximo de 24 horas.<br />
+                  Por el momento, ya puedes iniciar sesión.
                 </Typography>
                 {ownerUsername && (
                   <Box sx={{
