@@ -82,8 +82,7 @@ const SearchProduct = ({ searchInputRef }) => {
       }
     }, 300);
     return () => clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [inputRef]);
 
   const handleSingleProductFetch = (storeProduct) => {
     if (movementType === MOVEMENT_TYPES.SALE && storeProduct.available_stock === 0) {

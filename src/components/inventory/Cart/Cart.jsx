@@ -61,7 +61,6 @@ const Cart = ({ searchInputRef }) => {
     prevCartLenRef.current = cart.length;
   }, [cart.length, movementType]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     const handleShortcut = (event) => {
       if (event.ctrlKey && (event.key === "p" || event.key === "P")) {
@@ -73,8 +72,7 @@ const Cart = ({ searchInputRef }) => {
     };
     window.addEventListener("keydown", handleShortcut);
     return () => window.removeEventListener("keydown", handleShortcut);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [movementType]);
+  }, [movementType, paymentModal]);
 
   const handleDestinationStoreChange = (event) => {
     setSelectedStore(event.target.value);
