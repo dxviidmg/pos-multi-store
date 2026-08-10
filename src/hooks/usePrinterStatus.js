@@ -33,7 +33,7 @@ export const usePrinterStatus = (printer, options = {}) => {
   };
 
   useEffect(() => {
-    if (testOnMount) {
+    if (testOnMount && (triggerDep === undefined || triggerDep)) {
       retest();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

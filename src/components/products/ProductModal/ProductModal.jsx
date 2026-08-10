@@ -11,6 +11,7 @@ import {
 } from "../../../api/products";
 import { getStores } from "../../../api/stores";
 import { useUser } from "../../../context/UserContext";
+import { useForm } from "../../../hooks/useForm";
 import noPhoto from "../../../assets/images/noPhoto.jpg";
 import { getDepartments } from "../../../api/departments";
 import SimpleTable from "../../ui/SimpleTable/SimpleTable";
@@ -45,7 +46,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
   const [brands, setBrands] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [optionsLoaded, setOptionsLoaded] = useState(false);
-  const [formData, setFormData] = useState(INITIAL_FORM_DATA);
+  const { values: formData, handleChange: handleDataChange, setValues: setFormData, setValue: setFormValue } = useForm(INITIAL_FORM_DATA);
   const [initialStock, setInitialStock] = useState("");
   const [, setSelectedImage] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
@@ -96,21 +97,10 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
   }, [product, showStoreProducts, createFromSearch]);
 
 
-  const handleDataChange = (e) => {
-    const { name, value, checked, type } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
-
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setFormData((prevData) => ({
-        ...prevData,
-        image: file,
-      }));
+      setFormValue("image", file);
       setSelectedImage(file);
       const reader = new FileReader();
       reader.onloadend = () => {
