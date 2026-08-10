@@ -20,7 +20,7 @@ import { useAvailableStock } from "../../../hooks/useAvailableStock";
 import { useUser } from "../../../context/UserContext";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
-import { testPrinterConnection } from "../../../api/printers";
+import { usePrinterStatus } from "../../../hooks/usePrinterStatus";
 import { handlePrintTicket } from "../../../utils/utils";
 import { Grid, TextField, FormLabel, RadioGroup, FormControlLabel, Radio, InputAdornment, IconButton, CircularProgress, LinearProgress, Alert } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
@@ -48,7 +48,7 @@ const SearchProduct = ({ searchInputRef }) => {
   const storeType = user?.store_type;
   const storePrinter = user?.store_printer;
 
-  const [printerConnected, setPrinterConnected] = useState(null);
+  const { connected: printerConnected } = usePrinterStatus(storePrinter);
   
   const [barcode, setBarcode] = useState("");
   const [isInputFocused, setIsInputFocused] = useState(false);
@@ -62,12 +62,6 @@ const SearchProduct = ({ searchInputRef }) => {
 
   // Usar hook de atajos de teclado
   useKeyboardShortcuts(inputRef, dispatch);
-
-  useEffect(() => {
-    if (storePrinter) {
-      testPrinterConnection().then((result) => setPrinterConnected(result.connected)).catch(() => setPrinterConnected(false));
-    }
-  }, [storePrinter]);
 
   useEffect(() => {
     const checkCreateProductsOnSale = async () => {

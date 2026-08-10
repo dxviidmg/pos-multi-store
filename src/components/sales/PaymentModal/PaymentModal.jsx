@@ -9,7 +9,7 @@ import { createSale, getSale } from "../../../api/sales";
 import { showSuccess, showError } from "../../../utils/alerts";
 import { useUser } from "../../../context/UserContext";
 import { handlePrintTicket } from "../../../utils/utils";
-import { testPrinterConnection } from "../../../api/printers";
+import { usePrinterStatus } from "../../../hooks/usePrinterStatus";
 import SearchClient from "../../clients/SearchClient/SearchClient";
 import ClientSelected from "../../clients/ClientSelected/ClientSelected";
 import SearchIcon from "@mui/icons-material/Search";
@@ -56,32 +56,15 @@ const PaymentModal = ({ isOpen, onClose }) => {
 
   const [isLoading, setIsLoading] = useState(false);
   const isSubmittingRef = useRef(false);
-  const [printerConnected, setPrinterConnected] = useState(null);
-  const [printerError, setPrinterError] = useState(null);
+  const { connected: printerConnected, error: printerError } = usePrinterStatus(printer, { triggerDep: isOpen });
 
   useEffect(() => {
     if (isOpen) {
       setTimeout(() => {
         inputPaymentRef.current?.focus();
       }, 100);
-
-      // Test printer connection if printer exists
-      if (printer) {
-        testPrinterConnection()
-          .then((result) => {
-            setPrinterConnected(result.connected);
-            setPrinterError(result.error || null);
-          })
-          .catch(() => {
-            setPrinterConnected(false);
-            setPrinterError("Error de conexión");
-          });
-      } else {
-        setPrinterConnected(null);
-        setPrinterError(null);
-      }
     }
-  }, [isOpen, printer]);
+  }, [isOpen]);
 
   const { total, totalDiscount } = useMemo(() => {
     const total = roundUpCustom(
