@@ -8,7 +8,7 @@ import { exportToExcel } from "../../../utils/utils";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { getBrands } from "../../../api/brands";
 import { getDepartments } from "../../../api/departments";
-import { getUserData } from "../../../api/utils";
+import { useUser } from "../../../context/UserContext";
 import { showSuccess, showError, showConfirm } from "../../../utils/alerts";
 import CustomTooltip from "../../ui/Tooltip";
 import { UI_TEXT } from "../../../constants";
@@ -27,7 +27,7 @@ import PriceLogsModal from "../PriceLogsModal/PriceLogsModal";
 import PriceUpdateModal from "../PriceUpdateModal/PriceUpdateModal";
 
 const ProductList = () => {
-  const user = getUserData();
+  const { user } = useUser();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [brands, setBrands] = useState([]);

@@ -18,7 +18,7 @@ import { getStores } from "../../../api/stores";
 import { confirmTransfers, createDistribution } from "../../../api/transfers";
 import { showSuccess, showError, showWarning } from "../../../utils/alerts";
 import { addProducts, getStockOtherStores } from "../../../api/products";
-import { getUserData } from "../../../api/utils";
+import { useUser } from "../../../context/UserContext";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { useModal } from "../../../hooks/useModal";
 import { useAvailableStock } from "../../../hooks/useAvailableStock";
@@ -30,7 +30,8 @@ import { MOVEMENT_TYPES, STORE_TYPES } from "../../../constants";
 import { getSaleColumns, getTransferColumns, getDistributionColumns, getAddToStockColumns } from "./cartColumns";
 
 const Cart = ({ searchInputRef }) => {
-  const store_type = getUserData().store_type;
+  const { user } = useUser();
+  const store_type = user?.store_type;
   const dispatch = useDispatch();
   const stockModal = useModal();
   const paymentModal = useModal();

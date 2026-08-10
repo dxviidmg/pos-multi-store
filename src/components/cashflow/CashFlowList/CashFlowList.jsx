@@ -3,7 +3,7 @@ import DataTable from "../../ui/DataTable/DataTable";
 import CustomButton from "../../ui/Button/Button";
 import { getFormattedDate, formatTimeFromDate } from "../../../utils/utils";
 import { getCashFlow } from "../../../api/cashflow";
-import { getUserData } from "../../../api/utils";
+import { useUser } from "../../../context/UserContext";
 import CashFlowModal from "../CashFlowModal/CashFlowModal";
 import { useModal } from "../../../hooks/useModal";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
@@ -18,7 +18,7 @@ const CashFlowList = () => {
   const [loading, setLoading] = useState(false);
   const [params, setParams] = useState({ start_date: today, end_date: today });
   const cashFlowModal = useModal();
-  const user = getUserData();
+  const { user } = useUser();
   const isSeller = user?.role === "seller";
 
   useEffect(() => {

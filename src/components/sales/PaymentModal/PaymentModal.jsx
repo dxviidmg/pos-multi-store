@@ -7,7 +7,7 @@ import CustomButton from "../../ui/Button/Button";
 import { cleanCart, removeClientfromCart } from "../../../redux/cart/cartActions";
 import { createSale, getSale } from "../../../api/sales";
 import { showSuccess, showError } from "../../../utils/alerts";
-import { getUserData } from "../../../api/utils";
+import { useUser } from "../../../context/UserContext";
 import { handlePrintTicket } from "../../../utils/utils";
 import { testPrinterConnection } from "../../../api/printers";
 import SearchClient from "../../clients/SearchClient/SearchClient";
@@ -38,6 +38,8 @@ const PaymentModal = ({ isOpen, onClose }) => {
   const cart = useSelector(selectCart);
   const movementType = useSelector(selectMovementType);
   const client = useSelector(selectClient);
+  const { user } = useUser();
+  const printer = user?.store_printer;
   const [payment, setPayment] = useState(INITIAL_PAYMENT_STATE);
   const [referencePayment, setReferencePayment] = useState("");
   const [hideClient, setHideClient] = useState(true);
@@ -50,7 +52,6 @@ const PaymentModal = ({ isOpen, onClose }) => {
     type: "radio", // Tipo de pago inicial.
     methods: { EF: 0, TA: 0, TR: 0 }, // Valores iniciales de los métodos de pago.
   });
-  const printer = getUserData().store_printer;
 
   const [isLoading, setIsLoading] = useState(false);
   const isSubmittingRef = useRef(false);

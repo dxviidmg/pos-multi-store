@@ -10,7 +10,7 @@ import {
   addProducts,
 } from "../../../api/products";
 import { getStores } from "../../../api/stores";
-import { getUserData } from "../../../api/utils";
+import { useUser } from "../../../context/UserContext";
 import noPhoto from "../../../assets/images/noPhoto.jpg";
 import { getDepartments } from "../../../api/departments";
 import SimpleTable from "../../ui/SimpleTable/SimpleTable";
@@ -35,7 +35,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
   const productData = product?.product || product || {};
   const showStoreProducts = product?.showStoreProducts || false;
   const createFromSearch = product?.createFromSearch || false;
-  const user = getUserData();
+  const { user } = useUser();
 
   const isCreating = !productData?.id;
 

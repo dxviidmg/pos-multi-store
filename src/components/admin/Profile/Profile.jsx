@@ -14,13 +14,13 @@ import {
   InputAdornment,
 } from '@mui/material';
 import { Save, Business, Settings, Person, Lock, Visibility, VisibilityOff } from '@mui/icons-material';
-import { getUserData } from '../../../api/utils';
+import { useUser } from "../../../context/UserContext";
 import { getTenant, updateTenant } from '../../../api/tenants';
 import { getUser, updateUser, changePassword } from '../../../api/users';
 import { CustomSpinner } from '../../ui/Spinner/Spinner';
 
 const Profile = () => {
-  const user = getUserData();
+  const { user } = useUser();
   const isOwner = user?.role === "owner";
   const [tenantData, setTenantData] = useState({
     name: '',

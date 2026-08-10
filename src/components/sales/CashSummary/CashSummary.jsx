@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import SimpleTable from "../../ui/SimpleTable/SimpleTable";
 import CustomButton from "../../ui/Button/Button";
-import { getUserData } from "../../../api/utils";
+import { useUser } from "../../../context/UserContext";
 import { exportToExcel, getFormattedDate } from "../../../utils/utils";
 import { getCashSummary } from "../../../api/sales";
 import { getCashFlow } from "../../../api/cashflow";
@@ -22,6 +22,7 @@ const summaryColumns = [
 ];
 
 const CashSummary = () => {
+  const { user } = useUser();
   const cashFlowModal = useModal();
   const [cashSummary, setCashSummary] = useState([]);
   const [paymentMethodsSummary, setPaymentMethodsSummary] = useState([]);
@@ -79,7 +80,7 @@ const CashSummary = () => {
 
   const handleExport = () => {
     const dateFile = `${date}`;
-    exportToExcel(cashSummary, `Corte de caja ${getUserData().store_name} ${dateFile}`, false);
+    exportToExcel(cashSummary, `Corte de caja ${user?.store_name} ${dateFile}`, false);
   };
 
   const handleUpdateCashFlowList = (updated) => {

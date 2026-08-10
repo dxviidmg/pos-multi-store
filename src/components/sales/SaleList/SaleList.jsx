@@ -19,7 +19,7 @@ import ErrorIcon from "@mui/icons-material/Error";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { Popper, Paper, Grid, TextField, Select, MenuItem, FormControl, InputLabel, Box} from "@mui/material";
-import { getUserData } from "../../../api/utils";
+import { useUser } from "../../../context/UserContext";
 import PaymentEditModal from "../PaymentEditModal/PaymentEditModal";
 import CustomTooltip from "../../ui/Tooltip";
 import PageHeader from "../../ui/PageHeader";
@@ -82,7 +82,7 @@ const SEARCH_BY_OPTIONS = [
 ];
 
 const SaleList = () => {
-  const user = getUserData();
+  const { user } = useUser();
   const printer = user.store_printer;
   const [sales, setSales] = useState([]);
   const today = getFormattedDate();

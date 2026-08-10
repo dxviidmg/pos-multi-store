@@ -7,8 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { formatCurrency } from "../../../utils/utils";
 import { getDateDifference, getFormattedDate } from "../../../utils/utils";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
-import { setStorage } from "../../../utils/storage";
-import { getUserData } from "../../../api/utils";
+import { useUser } from "../../../context/UserContext";
 import { useStores } from "../../../hooks/useStores";
 import { useTenantInfo } from "../../../hooks/useTenantInfo";
 import { useDepartments } from "../../../hooks/useDepartments";
@@ -33,7 +32,7 @@ const getCashValueTotal = (value) => formatCurrency(value || 0);
 const StoreList = () => {
   const navigate = useNavigate();
   const today = getFormattedDate();
-  const user = getUserData();
+  const { user, updateUser } = useUser();
 
   const [storeInvestments, setStoreInvestments] = useState({});
   const [quickFilter, setQuickFilter] = useState("all");
@@ -103,14 +102,13 @@ const StoreList = () => {
   };
 
   const handleSelectStore = async ({ store_type, full_name, name, id, printer }) => {
-    const currentUser = getUserData();
-    setStorage("user", {
-      ...currentUser,
+    const updatedData = {
       store_type,
       store_name: full_name || name,
       store_id: id,
       store_printer: printer?.id,
-    });
+    };
+    updateUser(updatedData);
 
     window.dispatchEvent(new Event("store-changed"));
     const route = store_type === "A" ? "/distribuir/" : "/vender/";

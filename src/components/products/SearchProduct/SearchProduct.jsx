@@ -17,7 +17,7 @@ import { useKeyboardShortcuts } from "../../../hooks/useKeyboardShortcuts";
 import { useProductSearch } from "../../../hooks/useProductSearch";
 import { useCartActions } from "../../../hooks/useCartActions";
 import { useAvailableStock } from "../../../hooks/useAvailableStock";
-import { getUserData } from "../../../api/utils";
+import { useUser } from "../../../context/UserContext";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { testPrinterConnection } from "../../../api/printers";
@@ -43,9 +43,9 @@ const SearchProduct = ({ searchInputRef }) => {
   const { getAvailableStock } = useAvailableStock();
   const movementType = useSelector(selectMovementType);
   
-  const userData = getUserData();
-  const storeType = userData.store_type;
-  const storePrinter = userData.store_printer;
+  const { user } = useUser();
+  const storeType = user?.store_type;
+  const storePrinter = user?.store_printer;
 
   const [printerConnected, setPrinterConnected] = useState(null);
   
@@ -177,7 +177,7 @@ const SearchProduct = ({ searchInputRef }) => {
       }} />
 
       <PageHeader title="Búsqueda de productos">
-        {stockVerificationSnackbar.open && userData.role !== "seller" && (storeType === "T" || storeType === "A") && (
+        {stockVerificationSnackbar.open && user?.role !== "seller" && (storeType === "T" || storeType === "A") && (
           <Alert 
             severity="success" 
             variant="filled" 

@@ -4,7 +4,7 @@ import CustomButton from "../../ui/Button/Button";
 import { updateSale } from "../../../api/sales";
 import { showSuccess, showError } from "../../../utils/alerts";
 import { handlePrintTicket } from "../../../utils/utils";
-import { getUserData } from "../../../api/utils";
+import { useUser } from "../../../context/UserContext";
 import { Grid, TextField, Checkbox, FormLabel, Box } from "@mui/material";
 import PaymentIcon from "@mui/icons-material/Payment";
 
@@ -12,6 +12,7 @@ const INITIAL_PAYMENT_STATE = { paidWith: 0, change: 0 };
 
 const PaymentEditModal = ({ isOpen, sale, onClose, onUpdate }) => {
   const inputPaymentRef = useRef(null);
+  const { user } = useUser();
   const reservation = sale || {};
 
   const [action, setAction] = useState("Liquidar");
@@ -20,7 +21,7 @@ const PaymentEditModal = ({ isOpen, sale, onClose, onUpdate }) => {
   const [paymentMethod, setPaymentMethod] = useState("EF");
   const remaining = reservation.total - reservation.paid;
 
-  const printer = getUserData().store_printer;
+  const printer = user?.store_printer;
 
   useEffect(() => {
     if (isOpen) {

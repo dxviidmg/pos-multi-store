@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import DataTable from "../../ui/DataTable/DataTable";
 import { getStoreProducts } from "../../../api/products";
 import CustomButton from "../../ui/Button/Button";
-import { getUserData } from "../../../api/utils";
+import { useUser } from "../../../context/UserContext";
 import { exportToExcel } from "../../../utils/utils";
 import { useModal } from "../../../hooks/useModal";
 import StoreProductLogsModal from "../StoreProductLogsModal/StoreProductLogsModal";
@@ -23,7 +23,7 @@ import CustomTooltip from "../../ui/Tooltip";
 import { UI_TEXT } from "../../../constants";
 
 const StoreProductList = () => {
-  const user = getUserData();
+  const { user } = useUser();
   const logsModal = useModal();
   const requestModal = useModal();
   const [storeProducts, setStoreProducts] = useState([]);

@@ -1,7 +1,7 @@
 import "./App.css";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { useState, lazy, Suspense } from "react";
-import { getUserData } from "./api/utils";
+import { lazy, Suspense } from "react";
+import { useUser } from "./context/UserContext";
 import LoadingFallback from "./components/ui/LoadingFallback";
 import ErrorBoundary from "./components/ui/ErrorBoundary";
 
@@ -53,10 +53,10 @@ const Profile = lazyRetry(() => import("./components/admin/Profile/Profile"));
 const Registration = lazyRetry(() => import("./components/tenants/Registration/Registration"));
 
 function App({ toggleTheme, themeMode }) {
-  const user = getUserData();
-  const [isLoggedIn, setIsLoggedIn] = useState(!!user);
+  const { user } = useUser();
+  const isLoggedIn = !!user;
 
-  const handleLogin = () => setIsLoggedIn(true);
+  const handleLogin = () => {};
 
   return (
     <Router>

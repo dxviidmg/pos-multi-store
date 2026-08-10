@@ -5,7 +5,7 @@ import { deleteDepartments } from "../../../api/departments";
 import { showSuccess, showError, showConfirm } from "../../../utils/alerts";
 import { useModal } from "../../../hooks/useModal";
 import DepartmentModal from "../DepartmentModal/DepartmentModal";
-import { getUserData } from "../../../api/utils";
+import { useUser } from "../../../context/UserContext";
 import EditIcon from "@mui/icons-material/Edit";
 import CustomTooltip from "../../ui/Tooltip";
 import { useDepartments } from "../../../hooks/useDepartments";
@@ -15,7 +15,7 @@ import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 const DepartmentList = () => {
-  const user = getUserData();
+  const { user } = useUser();
   const [selectedRows, setSelectedRows] = useState([]);
   const departmentModal = useModal();
   const { data: departments = [], isLoading: loading, refetch } = useDepartments();

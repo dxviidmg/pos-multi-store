@@ -4,7 +4,7 @@ import CustomButton from "../../ui/Button/Button";
 import { getFormattedDateTime } from "../../../utils/utils";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { showSuccess, showError } from "../../../utils/alerts";
-import { getUserData } from "../../../api/utils";
+import { useUser } from "../../../context/UserContext";
 import {
   confirmDistribution,
   deleteDistribution,
@@ -22,7 +22,7 @@ import SendIcon from "@mui/icons-material/Send";
 import PageHeader from "../../ui/PageHeader";
 
 const DistributionList = () => {
-  const user = getUserData();
+  const { user } = useUser();
   const [distributions, setDistributions] = useState([]);
   const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(false);
