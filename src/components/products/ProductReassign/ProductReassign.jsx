@@ -4,6 +4,7 @@ import { getBrands } from "../../../api/brands";
 import { getDepartments } from "../../../api/departments";
 import { reassignProducts } from "../../../api/products";
 import { showSuccess, showError } from "../../../utils/alerts";
+import { useForm } from "../../../hooks/useForm";
 import CustomButton from "../../ui/Button/Button";
 import { Grid, Select, MenuItem, FormControl, InputLabel} from "@mui/material";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
@@ -29,7 +30,7 @@ const INITIAL_FORM_DATA = {
 const ProductReassign = () => {
   const [loading, setLoading] = useState(false);
   const [options, setOptions] = useState([]);
-  const [params, setParams] = useState(INITIAL_FORM_DATA);
+  const { values: params, handleChange: handleDataChange, reset } = useForm(INITIAL_FORM_DATA);
 
   useEffect(() => {
     const fetchOptions = async () => {
@@ -51,16 +52,11 @@ const ProductReassign = () => {
   const handleReassignProducts = async () => {
     const response = await reassignProducts(params);
     if (response.status === 200) {
-      setParams(INITIAL_FORM_DATA);
+      reset();
       showSuccess("Productos reasignados");
     } else {
       showError("Error al reasignar productos");
     }
-  };
-
-  const handleDataChange = (e) => {
-    const { name, value } = e.target;
-    setParams((prev) => ({ ...prev, [name]: value }));
   };
 
   const isFormIncomplete = Object.values(params).some((v) => v === "") || params.origin_id === params.destination_id;

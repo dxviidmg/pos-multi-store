@@ -18,7 +18,7 @@ import { getStores } from "../../../api/stores";
 import { confirmTransfers, createDistribution } from "../../../api/transfers";
 import { showSuccess, showError, showWarning } from "../../../utils/alerts";
 import { addProducts, getStockOtherStores } from "../../../api/products";
-import { getUserData } from "../../../api/utils";
+import { useUser } from "../../../context/UserContext";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { useModal } from "../../../hooks/useModal";
 import { useAvailableStock } from "../../../hooks/useAvailableStock";
@@ -30,7 +30,8 @@ import { MOVEMENT_TYPES, STORE_TYPES } from "../../../constants";
 import { getSaleColumns, getTransferColumns, getDistributionColumns, getAddToStockColumns } from "./cartColumns";
 
 const Cart = ({ searchInputRef }) => {
-  const store_type = getUserData().store_type;
+  const { user } = useUser();
+  const store_type = user?.store_type;
   const dispatch = useDispatch();
   const stockModal = useModal();
   const paymentModal = useModal();
@@ -49,7 +50,7 @@ const Cart = ({ searchInputRef }) => {
 
   // Auto-focus cantidad del último producto agregado en distribución o agregar inventario
   useEffect(() => {
-    if ((movementType === "distribucion" || movementType === "agregar") && cart.length > prevCartLenRef.current) {
+    if ((movementType === MOVEMENT_TYPES.DISTRIBUTION || movementType === MOVEMENT_TYPES.ADD_STOCK) && cart.length > prevCartLenRef.current) {
       setTimeout(() => {
         if (lastQtyRef.current) {
           lastQtyRef.current.focus();
@@ -60,20 +61,18 @@ const Cart = ({ searchInputRef }) => {
     prevCartLenRef.current = cart.length;
   }, [cart.length, movementType]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     const handleShortcut = (event) => {
       if (event.ctrlKey && (event.key === "p" || event.key === "P")) {
         event.preventDefault();
-        if (movementType === "venta" || movementType === "apartado") {
+        if (movementType === MOVEMENT_TYPES.SALE || movementType === MOVEMENT_TYPES.RESERVATION) {
           paymentModal.open();
         }
       }
     };
     window.addEventListener("keydown", handleShortcut);
     return () => window.removeEventListener("keydown", handleShortcut);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [movementType]);
+  }, [movementType, paymentModal]);
 
   const handleDestinationStoreChange = (event) => {
     setSelectedStore(event.target.value);
@@ -135,14 +134,14 @@ const Cart = ({ searchInputRef }) => {
   
     // --- Control de límites según movimiento ---
     const stockLimit =
-      movementType === "traspaso"
+      movementType === MOVEMENT_TYPES.TRANSFER
         ? product.stock
-        : movementType === "venta"
+        : movementType === MOVEMENT_TYPES.SALE
         ? product.available_stock
         : Infinity;
   
     // Verificar stock disponible considerando otros carritos
-    const availableStock = movementType === "agregar" ? Infinity : getAvailableStock(product.id, stockLimit);
+    const availableStock = movementType === MOVEMENT_TYPES.ADD_STOCK ? Infinity : getAvailableStock(product.id, stockLimit);
     
     if (Object.keys(carts).length > 1 && newQuantity > availableStock) {
       showWarning("Stock no disponible", `"${product.product?.name || product.name}" está reservado en otros carritos`);
@@ -152,7 +151,7 @@ const Cart = ({ searchInputRef }) => {
     const quantity = Math.min(newQuantity, availableStock);
   
     // --- Mostrar modal si se excede el stock (excepto agregar) ---
-    if (movementType !== "agregar" && newQuantity > product.available_stock) {
+    if (movementType !== MOVEMENT_TYPES.ADD_STOCK && newQuantity > product.available_stock) {
       stockModal.open(product);
     }
   
@@ -302,7 +301,7 @@ const Cart = ({ searchInputRef }) => {
       <div>
         {cart.length !== 0 && (
           <Grid container spacing={1} sx={{ mb: 1, alignItems: 'center' }}>
-            {(movementType === "venta" || movementType === "apartado") && (
+            {(movementType === MOVEMENT_TYPES.SALE || movementType === MOVEMENT_TYPES.RESERVATION) && (
               <>
                 <Grid item xs={12} md={4}>
                   <h3>Productos: {totalProducts}</h3>
@@ -319,8 +318,8 @@ const Cart = ({ searchInputRef }) => {
               </>
             )}
 
-            {(movementType === "traspaso" ||
-              movementType === "distribucion") && (
+            {(movementType === MOVEMENT_TYPES.TRANSFER ||
+              movementType === MOVEMENT_TYPES.DISTRIBUTION) && (
               <>
                 <Grid item xs={12} md={3}><h3>Productos: {totalProducts}</h3></Grid>
                 <Grid item xs={12} md={3}>
@@ -362,7 +361,7 @@ const Cart = ({ searchInputRef }) => {
                 <Grid item xs={12} md={3}>
                   <CustomButton
                     onClick={() =>
-                      movementType === "traspaso"
+                      movementType === MOVEMENT_TYPES.TRANSFER
                         ? handleTransferFromCart(cart)
                         : handleDistributionFromCart(cart)
                     }
@@ -370,13 +369,13 @@ const Cart = ({ searchInputRef }) => {
                     fullWidth
                     startIcon={<SendIcon />}
                   >
-                    {movementType === "traspaso" ? "Transferir" : "Distribuir"}
+                    {movementType === MOVEMENT_TYPES.TRANSFER ? "Transferir" : "Distribuir"}
                   </CustomButton>
                 </Grid>
               </>
             )}
 
-            {movementType === "agregar" && (
+            {movementType === MOVEMENT_TYPES.ADD_STOCK && (
               <>
                 <Grid item xs={12} md={9}></Grid>
                 <Grid item xs={12} md={3}>

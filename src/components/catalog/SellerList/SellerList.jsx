@@ -14,12 +14,12 @@ import { Grid, TextField } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import LockResetIcon from "@mui/icons-material/LockReset";
-import { getUserData } from "../../../api/utils";
+import { useUser } from "../../../context/UserContext";
 import CustomTooltip from "../../ui/Tooltip";
 
 const SellerList = () => {
   const today = getFormattedDate();
-  const user = getUserData();
+  const { user } = useUser();
   const sellerModal = useModal();
   const [sellers, setSellers] = useState([]);
   const [loading, setLoading] = useState(false);

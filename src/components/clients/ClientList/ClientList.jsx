@@ -4,7 +4,7 @@ import CustomButton from "../../ui/Button/Button";
 import ClientModal from "../ClientModal/ClientModal";
 import DiscountModal from "../DiscountModal/DiscountModal";
 import EditIcon from "@mui/icons-material/Edit";
-import { getUserData } from "../../../api/utils";
+import { useUser } from "../../../context/UserContext";
 import { getDateDifference, getFormattedDate } from "../../../utils/utils";
 import CustomTooltip from "../../ui/Tooltip";
 import { useClients } from "../../../hooks/useClients";
@@ -16,6 +16,7 @@ import AddIcon from "@mui/icons-material/Add";
 import DiscountIcon from "@mui/icons-material/Discount";
 
 const ClientList = () => {
+  const { user } = useUser();
   const today = getFormattedDate();
   const clientModal = useModal();
   const discountModal = useModal();
@@ -49,7 +50,7 @@ const ClientList = () => {
       <Grid item xs={12} className="card">
         <PageHeader title="Clientes" childrenMd={6}>
           <Grid container spacing={2}>
-            {getUserData().role === "owner" && (
+            {user?.role === "owner" && (
               <Grid item xs={12} md={6}>
                 <CustomButton fullWidth onClick={() => discountModal.open()} startIcon={<DiscountIcon />}>
                   Crear descuento

@@ -2,6 +2,7 @@ import React from "react";
 import { TextField, Checkbox } from "@mui/material";
 import CustomButton from "../../ui/Button/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { MOVEMENT_TYPES } from "../../../constants";
 
 const commonColumns = [
   { name: "Código", field: "code", selector: (row) => row.product.code },
@@ -56,7 +57,7 @@ export const getSaleColumns = (handleQuantityChangeToCart, handleRemoveFromCart,
           if (e.key === "ArrowUp") {
             e.preventDefault();
             const newValue = row.quantity + 1;
-            const availableStock = (movementType === "agregar" || movementType === "venta") ? Infinity : getAvailableStock(row.id, row.available_stock);
+            const availableStock = (movementType === MOVEMENT_TYPES.ADD_STOCK || movementType === MOVEMENT_TYPES.SALE) ? Infinity : getAvailableStock(row.id, row.available_stock);
             if (newValue <= availableStock) {
               handleQuantityChangeToCart({ target: { value: newValue } }, row);
             }
@@ -67,7 +68,7 @@ export const getSaleColumns = (handleQuantityChangeToCart, handleRemoveFromCart,
           }
         }}
         min="1"
-        max={movementType === "agregar" ? undefined : row.available_stock}
+        max={movementType === MOVEMENT_TYPES.ADD_STOCK ? undefined : row.available_stock}
       />
     ),
   },

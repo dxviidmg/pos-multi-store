@@ -4,20 +4,24 @@ import { useSelector, useDispatch } from "react-redux";
 import { selectCart, selectMovementType, selectClient } from "../../../redux/cart/selectors";
 import CustomModal from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
-import { cleanCart, removeClientfromCart } from "../../../redux/cart/cartActions";
+import { cleanCart, removeClientfromCart, addClientToCart } from "../../../redux/cart/cartActions";
 import { createSale, getSale } from "../../../api/sales";
 import { showSuccess, showError } from "../../../utils/alerts";
-import { getUserData } from "../../../api/utils";
+import { useUser } from "../../../context/UserContext";
 import { handlePrintTicket } from "../../../utils/utils";
-import { testPrinterConnection } from "../../../api/printers";
+import { usePrinterStatus } from "../../../hooks/usePrinterStatus";
 import SearchClient from "../../clients/SearchClient/SearchClient";
-import ClientSelected from "../../clients/ClientSelected/ClientSelected";
+import ClientModal from "../../clients/ClientModal/ClientModal";
 import SearchIcon from "@mui/icons-material/Search";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
-import { Grid, TextField, Radio, RadioGroup, FormControlLabel, Checkbox, FormLabel, Alert, Chip } from "@mui/material";
+import { Grid, TextField, Radio, RadioGroup, FormControlLabel, Checkbox, FormLabel, Alert, Chip, Box } from "@mui/material";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import MoneyOffIcon from "@mui/icons-material/MoneyOff";
+import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
+import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
+import { MOVEMENT_TYPES } from "../../../constants";
+import { useModal } from "../../../hooks/useModal";
 
 
 function roundUpCustom(value) {
@@ -38,10 +42,13 @@ const PaymentModal = ({ isOpen, onClose }) => {
   const cart = useSelector(selectCart);
   const movementType = useSelector(selectMovementType);
   const client = useSelector(selectClient);
+  const { user } = useUser();
+  const printer = user?.store_printer;
   const [payment, setPayment] = useState(INITIAL_PAYMENT_STATE);
   const [referencePayment, setReferencePayment] = useState("");
   const [hideClient, setHideClient] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+  const clientModal = useModal();
 
   const [hideExchange, setHideExchange] = useState(true);
   const [saleExchange, setSaleExchange] = useState(INITIAL_SALE_EXCHANGE_STATE);
@@ -50,36 +57,21 @@ const PaymentModal = ({ isOpen, onClose }) => {
     type: "radio", // Tipo de pago inicial.
     methods: { EF: 0, TA: 0, TR: 0 }, // Valores iniciales de los métodos de pago.
   });
-  const printer = getUserData().store_printer;
 
   const [isLoading, setIsLoading] = useState(false);
   const isSubmittingRef = useRef(false);
-  const [printerConnected, setPrinterConnected] = useState(null);
-  const [printerError, setPrinterError] = useState(null);
+  const { connected: printerConnected, error: printerError } = usePrinterStatus(printer, { triggerDep: isOpen });
 
   useEffect(() => {
     if (isOpen) {
       setTimeout(() => {
         inputPaymentRef.current?.focus();
       }, 100);
-
-      // Test printer connection if printer exists
-      if (printer) {
-        testPrinterConnection()
-          .then((result) => {
-            setPrinterConnected(result.connected);
-            setPrinterError(result.error || null);
-          })
-          .catch(() => {
-            setPrinterConnected(false);
-            setPrinterError("Error de conexión");
-          });
-      } else {
-        setPrinterConnected(null);
-        setPrinterError(null);
+      if (movementType === MOVEMENT_TYPES.RESERVATION) {
+        setHideClient(false);
       }
     }
-  }, [isOpen, printer]);
+  }, [isOpen, movementType]);
 
   const { total, totalDiscount } = useMemo(() => {
     const total = roundUpCustom(
@@ -99,7 +91,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
     const handleShortcut = (event) => {
       if (event.ctrlKey && event.key === "g") {
         event.preventDefault();
-        if (isOpen && (movementType === "venta" || movementType === "apartado")) {
+        if (isOpen && (movementType === MOVEMENT_TYPES.SALE || movementType === MOVEMENT_TYPES.RESERVATION)) {
           handleCreateSaleRef.current?.(!!printer);
         }
       }
@@ -109,12 +101,23 @@ const PaymentModal = ({ isOpen, onClose }) => {
     return () => window.removeEventListener("keydown", handleShortcut);
   }, [printer, isOpen, movementType]);
 
+  useEffect(() => {
+    const handleRemoveClient = (event) => {
+      if (event.ctrlKey && (event.key === "o" || event.key === "O")) {
+        event.preventDefault();
+        dispatch(removeClientfromCart());
+      }
+    };
+    window.addEventListener("keydown", handleRemoveClient);
+    return () => window.removeEventListener("keydown", handleRemoveClient);
+  }, [dispatch]);
+
 
   useEffect(() => {
-    if (movementType === "apartado") {
+    if (movementType === MOVEMENT_TYPES.RESERVATION) {
       setPaymentMethods({
-        type: "radio", // Por defecto, "Único".
-        methods: { EF: 0, TA: 0, TR: 0 }, // Efectivo seleccionado.
+        type: "radio",
+        methods: { EF: payment.paidWith || 1, TA: 0, TR: 0 },
       });
     } else {
       setPaymentMethods({
@@ -195,7 +198,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
     try {
       logger.log(payment)
       if (
-        movementType === "venta" &&
+        movementType === MOVEMENT_TYPES.SALE &&
         (payment.paidWith === 0 || payment.change < 0)
       ) {
         setErrorMessage("Pago debe ser igual o mayor a la cantidad a cobrar");
@@ -220,7 +223,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
         payments: paymentList,
         reference_payment: referencePayment,
         sale_exchange: saleExchange,
-        reservation_in_progress: movementType === "apartado",
+        reservation_in_progress: movementType === MOVEMENT_TYPES.RESERVATION,
       };
 
       const response = await createSale(data);
@@ -241,7 +244,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
         setHideClient(true);
         setSaleExchange(INITIAL_SALE_EXCHANGE_STATE);
 
-        showSuccess("Venta exitosa. Folio " + response.data.id, "", 3000);
+        showSuccess(movementType === MOVEMENT_TYPES.RESERVATION ? "Apartado registrado. Folio " + response.data.id : "Venta exitosa. Folio " + response.data.id, "", 3000);
       } else {
         throw new Error("Sale error");
       }
@@ -264,15 +267,21 @@ const PaymentModal = ({ isOpen, onClose }) => {
         change: 0,
       });
   } else {
+    // En apartado, máximo total - 1 (redondeado hacia abajo)
+    if (movementType === MOVEMENT_TYPES.RESERVATION) {
+      const maxReservation = Math.floor(totalDiscount) - 1;
+      value = Math.min(value, maxReservation);
+    }
     setPayment({
       paidWith: value,
       change: value + saleExchange.refunded - totalDiscount,
     });
   }
-    if (movementType === "apartado") {
+    if (movementType === MOVEMENT_TYPES.RESERVATION) {
+      const currentMethod = Object.entries(paymentMethods.methods).find(([, v]) => v > 0)?.[0] || "EF";
       setPaymentMethods({
         type: "radio",
-        methods: { EF: value, TA: 0, TR: 0 },
+        methods: { EF: 0, TA: 0, TR: 0, [currentMethod]: value || 1 },
       });
     }
   };
@@ -286,8 +295,8 @@ const PaymentModal = ({ isOpen, onClose }) => {
   };
 
   const handleDisableButton = () => {
-    if (movementType === "apartado") {
-      return false;
+    if (movementType === MOVEMENT_TYPES.RESERVATION) {
+      return payment.paidWith < 1 || Object.values(paymentMethods.methods).every((amount) => amount === 0) || !client;
     }
     return (
       (paymentMethods.type === "checkbox" &&
@@ -306,9 +315,16 @@ const PaymentModal = ({ isOpen, onClose }) => {
       <CustomModal 
         showOut={isOpen} 
         onClose={onClose}
-        title="Finalizar venta"
+        title={movementType === MOVEMENT_TYPES.RESERVATION ? "Registrar apartado" : "Finalizar venta"}
       >
         <Grid container sx={{ padding: '1rem', backgroundColor: 'rgba(4, 53, 107, 0.2)' }}>
+          {movementType === MOVEMENT_TYPES.RESERVATION && (
+            <Grid item xs={12} sx={{ marginBottom: '1rem' }}>
+              <Alert severity="info" variant="filled">
+                El cliente paga un anticipo. El resto se liquida después.
+              </Alert>
+            </Grid>
+          )}
           {errorMessage && (
             <Grid item xs={12} sx={{ marginBottom: '1rem' }}>
               <Alert severity="error" variant="filled" onClose={() => setErrorMessage("")}>
@@ -316,6 +332,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
               </Alert>
             </Grid>
           )}
+          {movementType !== MOVEMENT_TYPES.RESERVATION && (
           <Grid item xs={12} className="card" sx={{ marginBottom: '1rem' }}>
             <Grid container spacing={2}>
               <Grid item xs={12} md={6}>
@@ -339,10 +356,81 @@ const PaymentModal = ({ isOpen, onClose }) => {
               </Grid>
             </Grid>
           </Grid>
+          )}
 
-          <Grid item xs={12} className="card" hidden={hideClient} sx={{ marginBottom: '1.5rem' }}>
-            <SearchClient />
-            <ClientSelected />
+          <Grid item xs={12} className="card" hidden={movementType === MOVEMENT_TYPES.RESERVATION ? false : hideClient} sx={{ marginBottom: '1.5rem' }}>
+            {/* Encabezado */}
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <PersonAddIcon sx={{ color: 'primary.main', fontSize: '1.4rem' }} />
+                <Box component="h2" sx={{ m: 0, fontSize: '1.1rem', fontWeight: 600 }}>Seleccionar cliente</Box>
+              </Box>
+              {!client?.id && (
+                <Chip 
+                  label="Sin cliente seleccionado" 
+                  size="small" 
+                  variant="outlined"
+                  sx={{ fontSize: '0.75rem', opacity: 0.7 }}
+                />
+              )}
+            </Box>
+
+            {/* Búsqueda + Crear cliente */}
+            <Grid container spacing={1.5} sx={{ mb: 2 }}>
+              <Grid item xs={12} md={9}>
+                <SearchClient />
+              </Grid>
+              <Grid item xs={12} md={3} sx={{ display: 'flex', alignItems: 'flex-end', pb: '9px' }}>
+                <CustomButton
+                  fullWidth
+                  onClick={() => clientModal.open()}
+                  startIcon={<PersonAddAltIcon />}
+                >
+                  Crear cliente
+                </CustomButton>
+              </Grid>
+            </Grid>
+
+            {/* Info del cliente seleccionado */}
+            {client?.id && (
+              <Box sx={{ 
+                p: 1.5, 
+                borderRadius: 2, 
+                backgroundColor: 'rgba(4, 53, 107, 0.04)', 
+                border: '1px solid',
+                borderColor: 'divider'
+              }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
+                  <Box component="span" sx={{ fontSize: '0.8rem', fontWeight: 600, color: 'text.secondary', textTransform: 'uppercase', letterSpacing: '0.03em' }}>
+                    Cliente seleccionado
+                  </Box>
+                </Box>
+                <Grid container spacing={2} sx={{ alignItems: 'center' }}>
+                  <Grid item xs={12} md={3}>
+                    <TextField size="small" fullWidth label="Nombre" value={client.full_name || ""} disabled />
+                  </Grid>
+                  <Grid item xs={12} md={3}>
+                    <TextField size="small" fullWidth label="Teléfono" value={client.phone_number || ""} disabled />
+                  </Grid>
+                  <Grid item xs={12} md={3}>
+                    <TextField size="small" fullWidth label="Descuento" value={client.discount_percentage != null ? `${client.discount_percentage}%` : ""} disabled />
+                  </Grid>
+                  <Grid item xs={12} md={3}>
+                    <CustomButton 
+                      fullWidth 
+                      onClick={() => dispatch(removeClientfromCart())} 
+                      startIcon={<PersonRemoveIcon />}
+                      color="inherit"
+                      sx={{ opacity: 0.8, '&:hover': { opacity: 1 } }}
+                    >
+                      Borrar (Ctrl+O)
+                    </CustomButton>
+                  </Grid>
+                </Grid>
+              </Box>
+            )}
+
+            <ClientModal isOpen={clientModal.isOpen} client={null} onClose={clientModal.close} onUpdate={(newClient) => { if (newClient) dispatch(addClientToCart(newClient)); }} />
           </Grid>
 
           <Grid item xs={12} className="card" hidden={hideExchange} sx={{ marginBottom: '1.5rem' }}>
@@ -485,14 +573,20 @@ const PaymentModal = ({ isOpen, onClose }) => {
                   name="paymentType"
                 >
                   <FormControlLabel value="radio" control={<Radio size="small" />} label="Único" />
-                  <FormControlLabel value="checkbox" control={<Radio size="small" />} label="Mixto" />
+                  {movementType !== MOVEMENT_TYPES.RESERVATION && (
+                    <FormControlLabel value="checkbox" control={<Radio size="small" />} label="Mixto" />
+                  )}
                 </RadioGroup>
               </Grid>
 
               <Grid item xs={12} md={paymentMethods.type === "checkbox" ? 3 : 4}>
                 <FormLabel>Medios de pago:</FormLabel>
                 <RadioGroup
-                  value={Object.entries(paymentMethods.methods).find(([, v]) => v === totalDiscount)?.[0] || ""}
+                  value={
+                    movementType === MOVEMENT_TYPES.RESERVATION
+                      ? Object.entries(paymentMethods.methods).find(([, v]) => v > 0)?.[0] || "EF"
+                      : Object.entries(paymentMethods.methods).find(([, v]) => v === totalDiscount)?.[0] || ""
+                  }
                   onChange={handleChangePayments}
                   name="paymentMethod"
                 >
@@ -507,7 +601,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
                           <Checkbox
                             size="small"
                             checked={
-                              (movementType === "apartado" && method === "EF") ||
+                              (movementType === MOVEMENT_TYPES.RESERVATION && method === "EF") ||
                               paymentMethods.methods[method] > 0
                             }
                             disabled={
@@ -561,7 +655,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
                   startIcon={<MoneyOffIcon />}
                   sx={{ mt: 1 }}
                 >
-                  Cobrar<br />(Ctrl + G)
+                  {movementType === MOVEMENT_TYPES.RESERVATION ? "Apartar" : "Cobrar"}<br />(Ctrl + G)
                 </CustomButton>
                 {printer && (
                   <Chip

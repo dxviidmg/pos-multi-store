@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import SimpleTable from "../../ui/SimpleTable/SimpleTable";
 import CustomButton from "../../ui/Button/Button";
-import { getUserData } from "../../../api/utils";
+import { useUser } from "../../../context/UserContext";
 import { exportToExcel, getFormattedDate } from "../../../utils/utils";
 import { getCashSummary } from "../../../api/sales";
 import { getCashFlow } from "../../../api/cashflow";
@@ -15,6 +15,7 @@ import DownloadIcon from "@mui/icons-material/Download";
 import PaymentIcon from "@mui/icons-material/Payment";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
+import ReceiptIcon from "@mui/icons-material/Receipt";
 
 const summaryColumns = [
   { name: "Tipo", selector: (row) => row.name },
@@ -22,18 +23,21 @@ const summaryColumns = [
 ];
 
 const CashSummary = () => {
+  const { user } = useUser();
   const cashFlowModal = useModal();
   const [cashSummary, setCashSummary] = useState([]);
   const [paymentMethodsSummary, setPaymentMethodsSummary] = useState([]);
+  const [salesSummary, setSalesSummary] = useState([]);
+  const [cashFlowSummary, setCashFlowSummary] = useState([]);
+  const [totalSummary, setTotalSummary] = useState([]);
   const today = getFormattedDate();
   const [date, setDate] = useState(today);
   const [cashFlow, setCashFlow] = useState([]);
-  const [cashFlowSummary, setCashFlowSummary] = useState([]);
-  const [totalSummary, setTotalSummary] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const processSummary = (data) => {
     setPaymentMethodsSummary(data.filter((c) => c.payment_method_data));
+    setSalesSummary(data.filter((c) => c.sales_data));
     setCashFlowSummary(data.filter((c) => c.cashflow_data));
     setTotalSummary(data.filter((c) => c.total_data));
     setCashSummary(data);
@@ -79,7 +83,7 @@ const CashSummary = () => {
 
   const handleExport = () => {
     const dateFile = `${date}`;
-    exportToExcel(cashSummary, `Corte de caja ${getUserData().store_name} ${dateFile}`, false);
+    exportToExcel(cashSummary, `Corte de caja ${user?.store_name} ${dateFile}`, false);
   };
 
   const handleUpdateCashFlowList = (updated) => {
@@ -95,7 +99,10 @@ const CashSummary = () => {
     { name: "Tipo", selector: (row) => row.name },
     {
       name: "Cantidad",
-      selector: (row) => row.name === "Ventas canceladas" ? row.amount : "$" + row.amount,
+      selector: (row) => {
+        const noPrefix = ["Número de ventas", "Ventas canceladas", "Distribuciones pendientes", "Traspasos pendientes"];
+        return noPrefix.includes(row.name) ? row.amount : "$" + row.amount;
+      },
     },
   ];
 
@@ -140,16 +147,24 @@ const CashSummary = () => {
 
           <Grid item xs={12} md={4}>
             <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
+              <ReceiptIcon color="primary" />
+              <Typography variant="h6">Ventas y apartados</Typography>
+            </Stack>
+            <SimpleTable noDataComponent="Sin datos" data={salesSummary} columns={summaryColumns} />
+          </Grid>
+
+          <Grid item xs={12} md={4}>
+            <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
               <AccountBalanceWalletIcon color="primary" />
               <Typography variant="h6">Flujo de caja</Typography>
             </Stack>
             <SimpleTable noDataComponent="Sin datos" data={cashFlowSummary} columns={summaryColumns} />
           </Grid>
 
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12}>
             <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
               <PointOfSaleIcon color="primary" />
-              <Typography variant="h6">Total en caja</Typography>
+              <Typography variant="h6">Resumen general</Typography>
             </Stack>
             <SimpleTable noDataComponent="Sin datos" data={totalSummary} columns={totalColumns} />
           </Grid>

@@ -2,15 +2,13 @@ import React, { useEffect, useRef, useState } from "react";
 import SimpleTable from "../../ui/SimpleTable/SimpleTable";
 import { getClients } from "../../../api/clients";
 import CustomButton from "../../ui/Button/Button";
-import { useDispatch, useSelector } from "react-redux";
-import { Chip } from "@mui/material";
+import { useDispatch } from "react-redux";
 import { addClientToCart } from "../../../redux/cart/cartActions";
 import { showError } from "../../../utils/alerts";
 import { TextField } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 const SearchClient = () => {
-  const client = useSelector((state) => state.cartReducer.client);
   const [query, setQuery] = useState("");
   const [clients, setClients] = useState([]);
   const dispatch = useDispatch();
@@ -37,7 +35,7 @@ const SearchClient = () => {
   };
 
   const handleShortcut = (event) => {
-    if (event.ctrlKey && (event.key === "i" || event.key === "I")) {
+    if (event.ctrlKey && (event.key === "j" || event.key === "J")) {
       event.preventDefault();
       inputRefClient.current?.focus();
     }
@@ -65,18 +63,11 @@ const SearchClient = () => {
 
   return (
     <>
-<div className="flex-between" style={{ marginBottom: '0.5rem' }}>
-  <h2>Seleccionar cliente</h2>
-  {Object.keys(client).length === 0 && (
-    <Chip label="Aviso: No hay cliente seleccionado" color="success" size="small" />
-  )}
-</div>
-
       <TextField size="small" fullWidth ref={inputRefClient}
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Nombre y/o número (Ctrl+I)"
+        placeholder="Nombre y/o número (Ctrl+J)"
         sx={{ mb: query ? 0 : 1 }}
       />
       {query && (

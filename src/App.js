@@ -1,7 +1,7 @@
 import "./App.css";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { useState, lazy, Suspense } from "react";
-import { getUserData } from "./api/utils";
+import { lazy, Suspense } from "react";
+import { useUser } from "./context/UserContext";
 import LoadingFallback from "./components/ui/LoadingFallback";
 import ErrorBoundary from "./components/ui/ErrorBoundary";
 
@@ -28,6 +28,7 @@ const StoreProductList = lazyRetry(() => import("./components/products/StoreProd
 const ProductAuditList = lazyRetry(() => import("./components/products/StoreProductAuditList/StoreProductAuditList"));
 const StoreList = lazyRetry(() => import("./components/admin/StoreList/StoreList"));
 const ProductImport = lazyRetry(() => import("./components/products/ProductImport/ProductImport"));
+const ReservationList = lazyRetry(() => import("./components/sales/ReservationList/ReservationList"));
 const CashSummary = lazyRetry(() => import("./components/sales/CashSummary/CashSummary"));
 const LogList = lazyRetry(() => import("./components/admin/LogList/LogList"));
 const CashFlowList = lazyRetry(() => import("./components/cashflow/CashFlowList/CashFlowList"));
@@ -50,13 +51,13 @@ const PriceLogsList = lazyRetry(() => import("./components/products/PriceLogsLis
 const DistributionList = lazyRetry(() => import("./components/inventory/DistributionList/DistributionList"));
 const RestartService = lazyRetry(() => import("./components/admin/RestartService/RestartService"));
 const Profile = lazyRetry(() => import("./components/admin/Profile/Profile"));
-const Registration = lazyRetry(() => import("./components/tenants/Registration/Registration"));
+const Registration = lazyRetry(() => import("./components/tenant/Registration/Registration"));
 
 function App({ toggleTheme, themeMode }) {
-  const user = getUserData();
-  const [isLoggedIn, setIsLoggedIn] = useState(!!user);
+  const { user } = useUser();
+  const isLoggedIn = !!user;
 
-  const handleLogin = () => setIsLoggedIn(true);
+  const handleLogin = () => {};
 
   return (
     <Router>
@@ -65,6 +66,7 @@ function App({ toggleTheme, themeMode }) {
           <Route element={<MainLayout toggleTheme={toggleTheme} themeMode={themeMode} onLoginSuccess={handleLogin} />}>
             <Route path="/tiendas/" element={<Lazy><StoreList /></Lazy>} />
             <Route path="/ventas/" element={<Lazy><SaleList /></Lazy>} />
+            <Route path="/apartados/" element={<Lazy><ReservationList /></Lazy>} />
             <Route path="/vender/" element={<Lazy><SaleCreate /></Lazy>} />
             <Route path="/distribuir/" element={<Lazy><SaleCreate /></Lazy>} />
             <Route path="/importar-ventas/" element={<Lazy><SaleImport /></Lazy>} />

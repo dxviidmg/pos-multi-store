@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { loginUser } from "../../../api/login";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "../../../context/UserContext";
 import CustomButton from "../../ui/Button/Button";
 import Logo from "../../../assets/images/logo.jpg";
 import BgImage from "../../../assets/images/bg.webp";
@@ -15,6 +16,7 @@ import PersonAddIcon from "@mui/icons-material/PersonAdd";
 
 function Login({ onLogin }) {
   const navigate = useNavigate();
+  const { login } = useUser();
   const [state, setState] = useState({
     formData: { username: "", password: "" },
     alertData: { shown: false, message: "" },
@@ -40,8 +42,7 @@ function Login({ onLogin }) {
     try {
       const response = await loginUser(state.formData);
       if (response.status === 200) {
-        localStorage.setItem("user", JSON.stringify(response.data));
-        onLogin();
+        login(response.data);
         if (response.data.role === "owner") navigate("/tiendas/");
         else navigate("/vender/");
       } else {

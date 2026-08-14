@@ -14,13 +14,13 @@ import {
   InputAdornment,
 } from '@mui/material';
 import { Save, Business, Settings, Person, Lock, Visibility, VisibilityOff } from '@mui/icons-material';
-import { getUserData } from '../../../api/utils';
+import { useUser } from "../../../context/UserContext";
 import { getTenant, updateTenant } from '../../../api/tenants';
 import { getUser, updateUser, changePassword } from '../../../api/users';
 import { CustomSpinner } from '../../ui/Spinner/Spinner';
 
 const Profile = () => {
-  const user = getUserData();
+  const { user } = useUser();
   const isOwner = user?.role === "owner";
   const [tenantData, setTenantData] = useState({
     name: '',
@@ -59,40 +59,38 @@ const Profile = () => {
   const [message, setMessage] = useState(null);
 
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const promises = [getTenant(user.tenant_id), getUser(user.user_id)];
+        const results = await Promise.all(promises);
+        
+        const tenantInfo = results[0].data;
+        setTenantData({
+          name: tenantInfo.name || '',
+          short_name: tenantInfo.short_name || '',
+          created_at: tenantInfo.created_at || '',
+        });
+        setSettings({
+          displays_stock_in_storages: tenantInfo.displays_stock_in_storages || false,
+          create_products_on_sale: tenantInfo.create_products_on_sale || false,
+        });
+
+        const userInfo = results[1].data;
+        setUserData({
+          username: userInfo.username || '',
+          email: userInfo.email || '',
+          first_name: userInfo.first_name || '',
+          last_name: userInfo.last_name || '',
+        });
+      } catch (error) {
+        logger.error('Fetch error:', error);
+        setMessage({ type: 'error', text: 'Error al cargar los datos' });
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const fetchData = async () => {
-    try {
-      const promises = [getTenant(user.tenant_id), getUser(user.user_id)];
-      const results = await Promise.all(promises);
-      
-      const tenantInfo = results[0].data;
-      setTenantData({
-        name: tenantInfo.name || '',
-        short_name: tenantInfo.short_name || '',
-        created_at: tenantInfo.created_at || '',
-      });
-      setSettings({
-        displays_stock_in_storages: tenantInfo.displays_stock_in_storages || false,
-        create_products_on_sale: tenantInfo.create_products_on_sale || false,
-      });
-
-      const userInfo = results[1].data;
-      setUserData({
-        username: userInfo.username || '',
-        email: userInfo.email || '',
-        first_name: userInfo.first_name || '',
-        last_name: userInfo.last_name || '',
-      });
-    } catch (error) {
-      logger.error('Fetch error:', error);
-      setMessage({ type: 'error', text: 'Error al cargar los datos' });
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [user.tenant_id, user.user_id]);
 
   const handleTenantChange = (e) => {
     const { name, value } = e.target;

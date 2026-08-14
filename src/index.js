@@ -8,6 +8,7 @@ import store from './store';
 import App from './App';
 import { getTheme } from './theme';
 import { useThemeMode } from './hooks/useThemeMode';
+import { UserProvider } from './context/UserContext';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -26,10 +27,12 @@ const AppWrapper = () => {
   return (
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <App toggleTheme={toggleMode} themeMode={mode} />
-        </ThemeProvider>
+        <UserProvider>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <App toggleTheme={toggleMode} themeMode={mode} />
+          </ThemeProvider>
+        </UserProvider>
       </QueryClientProvider>
     </Provider>
   );

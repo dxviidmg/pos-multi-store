@@ -71,24 +71,20 @@ const ProductsPopperButton = ({ row, productsModal }) => {
   );
 };
 
-const TYPE_OPTIONS = [
-  { value: false, label: "Ventas" },
-];
-
 const SEARCH_BY_OPTIONS = [
   { value: "date", label: "Fecha" },
   { value: "sale_id", label: "Id" },
   { value: "client", label: "Cliente" },
 ];
 
-const SaleList = () => {
+const ReservationList = () => {
   const { user } = useUser();
   const printer = user.store_printer;
   const [sales, setSales] = useState([]);
   const today = getFormattedDate();
   const [params, setParams] = useState({
     date: today,
-    reservation_in_progress: false,
+    reservation_in_progress: "true",
   });
   const [loading, setLoading] = useState(false);
   const [showAllFields, setShowAllFields] = useState(false);
@@ -118,6 +114,10 @@ const SaleList = () => {
       setParams((prev) => ({ ...prev }));
       return;
     }
+    if (updated.delete) {
+      setSales((prev) => prev.filter((item) => item.id !== updated.id));
+      return;
+    }
     setSales((prev) => {
       const exists = prev.some((item) => item.id === updated.id);
       return exists
@@ -133,20 +133,9 @@ const SaleList = () => {
       <SaleModal isOpen={saleModal.isOpen} sale={saleModal.data} onClose={saleModal.close} onUpdate={handleUpdateSaleList} />
 
       <Grid className="card">
-        <PageHeader title="Ventas" />
+        <PageHeader title="Apartados" />
 
         <Grid container spacing={2} sx={{ mb: 2 }}>
-          <Grid item xs={12} md={3}>
-            <FormControl fullWidth size="small">
-              <InputLabel>Tipo</InputLabel>
-              <Select value={params.reservation_in_progress} onChange={handleDataChange} name="reservation_in_progress" label="Tipo">
-                {TYPE_OPTIONS.map((opt) => (
-                  <MenuItem key={String(opt.value)} value={opt.value}>{opt.label}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
-
           <Grid item xs={12} md={3}>
             <FormControl fullWidth size="small">
               <InputLabel>Búsqueda por</InputLabel>
@@ -191,17 +180,12 @@ const SaleList = () => {
         <Grid container spacing={2} sx={{ mb: 1 }}>
           <Grid item xs={6} md={3}>
             <CustomButton fullWidth variant={quickFilter === "all" ? "contained" : "outlined"} onClick={() => setQuickFilter("all")} size="small">
-              Todas ({sales.length})
-            </CustomButton>
-          </Grid>
-          <Grid item xs={6} md={3}>
-            <CustomButton fullWidth variant={quickFilter === "duplicated" ? "contained" : "outlined"} onClick={() => setQuickFilter("duplicated")} size="small" color={sales.filter(s => s.is_repeated).length > 0 && quickFilter !== "duplicated" ? "error" : "primary"}>
-              Duplicadas ({sales.filter(s => s.is_repeated).length})
+              Todos ({sales.length})
             </CustomButton>
           </Grid>
           <Grid item xs={6} md={3}>
             <CustomButton fullWidth variant={quickFilter === "canceled" ? "contained" : "outlined"} onClick={() => setQuickFilter("canceled")} size="small">
-              Canceladas ({sales.filter(s => s.is_canceled).length})
+              Cancelados ({sales.filter(s => s.is_canceled).length})
             </CustomButton>
           </Grid>
           <Grid item xs={6} md={3}>
@@ -213,25 +197,15 @@ const SaleList = () => {
 
         <DataTable
           progressPending={loading}
-          noDataComponent="Sin ventas"
+          noDataComponent="Sin apartados"
           searcher={true}
           data={quickFilter === "all" ? sales
-            : quickFilter === "duplicated" ? sales.filter(s => s.is_repeated)            : quickFilter === "canceled" ? sales.filter(s => s.is_canceled)
+            : quickFilter === "canceled" ? sales.filter(s => s.is_canceled)
             : sales.filter(s => s.has_return)
           }
           columns={[
             { name: "#", selector: (row) => row.id, width: 70 },
-            {
-              name: "Unica",
-              selector: (row) =>
-                row.is_repeated
-                  ? <ErrorIcon className="icon-danger" />
-                  : <CheckCircleIcon className="icon-success" />,
-              width: 70,
-            },
-            ...(showAllFields
-              ? [{ name: "Cliente", selector: (row) => row.client?.full_name }]
-              : []),
+            { name: "Cliente", selector: (row) => row.client?.full_name },
             {
               name: "Fecha y hora",
               selector: (row) => getFormattedDateTime(row.created_at),
@@ -241,14 +215,10 @@ const SaleList = () => {
               name: "Productos",
               selector: (row) => <ProductsPopperButton row={row} productsModal={productsModal} />,
             },
-            { name: "Número de productos", selector: (row) => row.products_sale?.reduce((sum, p) => sum + p.quantity, 0) || 0, width: 80 },
-            { name: "Total", selector: (row) => `$${row.total}`, width: 80, omit: user.role === "seller" },
-            ...(params.reservation_in_progress === "true"
-              ? [
-                  { name: "Pagado", selector: (row) => "$" + row.paid, width: 80 },
-                  { name: "Falta", selector: (row) => "$" + (row.total - row.paid), width: 80 },
-                ]
-              : []),
+            { name: "Cant.", selector: (row) => row.products_sale?.reduce((sum, p) => sum + p.quantity, 0) || 0, width: 80 },
+            { name: "Total", selector: (row) => `$${row.total}`, width: 80 },
+            { name: "Pagado", selector: (row) => "$" + row.paid, width: 80 },
+            { name: "Falta", selector: (row) => "$" + (row.total - row.paid), width: 80 },
             { name: "Métodos de pago", selector: (row) => row.payments_methods.join(", ") },
             ...(showAllFields
               ? [
@@ -286,13 +256,11 @@ const SaleList = () => {
                           </CustomButton>
                         </CustomTooltip>
                       )}
-                      {params.reservation_in_progress === "true" && (
-                        <CustomTooltip text="Editar pago">
-                          <CustomButton onClick={() => paymentEditModal.open(row)}>
-                            <AttachMoneyIcon />
-                          </CustomButton>
-                        </CustomTooltip>
-                      )}
+                      <CustomTooltip text="Cobrar abono">
+                        <CustomButton onClick={() => paymentEditModal.open(row)}>
+                          <AttachMoneyIcon />
+                        </CustomButton>
+                      </CustomTooltip>
                       {row.is_cancelable && (
                         <CustomTooltip text="Devolución">
                           <CustomButton onClick={() => saleModal.open(row)}>
@@ -312,4 +280,4 @@ const SaleList = () => {
   );
 };
 
-export default SaleList;
+export default ReservationList;

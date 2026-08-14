@@ -12,6 +12,7 @@ import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { getStockOtherStores } from "../../../api/products";
 import { addToCart, updateMovementType, updateQuantityInCart } from "../../../redux/cart/cartActions";
 import { Grid, TextField, Box, Alert, Chip, Tabs, Tab } from "@mui/material";
+import { MOVEMENT_TYPES } from "../../../constants";
 
 
 const StockModal = ({ isOpen, product, onClose }) => {
@@ -89,7 +90,7 @@ const StockModal = ({ isOpen, product, onClose }) => {
         store_products: [{ id: storeProduct.id, quantity }],
       });
       showSuccess(`Stock agregado: ${quantity} unidades`);
-      dispatch(updateMovementType("venta"));
+      dispatch(updateMovementType(MOVEMENT_TYPES.SALE));
       
       const activeCart = carts.find(c => c.id === activeCartId);
       const existingItem = activeCart?.cart.find(item => item.id === storeProduct.id);

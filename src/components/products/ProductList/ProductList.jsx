@@ -8,12 +8,11 @@ import { exportToExcel } from "../../../utils/utils";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { getBrands } from "../../../api/brands";
 import { getDepartments } from "../../../api/departments";
-import { getUserData } from "../../../api/utils";
+import { useUser } from "../../../context/UserContext";
 import { showSuccess, showError, showConfirm } from "../../../utils/alerts";
 import CustomTooltip from "../../ui/Tooltip";
-import { UI_TEXT } from "../../../constants";
 import PageHeader from "../../ui/PageHeader";
-import { Grid, TextField, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
+import { Grid, TextField, Autocomplete } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import EditIcon from "@mui/icons-material/Edit";
 import ChecklistIcon from "@mui/icons-material/Checklist";
@@ -27,7 +26,7 @@ import PriceLogsModal from "../PriceLogsModal/PriceLogsModal";
 import PriceUpdateModal from "../PriceUpdateModal/PriceUpdateModal";
 
 const ProductList = () => {
-  const user = getUserData();
+  const { user } = useUser();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [brands, setBrands] = useState([]);
@@ -145,30 +144,41 @@ const ProductList = () => {
               />
             </Grid>
             <Grid item xs={12} md={3}>
-              <FormControl fullWidth size="small">
-                <InputLabel>Marca</InputLabel>
-                <Select value={params.brand_id || ""} onChange={handleDataChange} name="brand_id" label="Marca" disabled={optionsLoaded && brands.length === 0}>
-                  <MenuItem value="">Todas las marcas</MenuItem>
-                  {!optionsLoaded && <MenuItem disabled>Cargando...</MenuItem>}
-                  {brands.map((brand) => (
-                    <MenuItem key={brand.id} value={brand.id}>{brand.name} ({brand.product_count})</MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+              <Autocomplete
+                size="small"
+                options={brands}
+                getOptionLabel={(option) => `${option.name} (${option.product_count})`}
+                value={brands.find((b) => b.id === params.brand_id) || null}
+                onChange={(_, newValue) => {
+                  setParams((prev) => ({ ...prev, brand_id: newValue?.id || "" }));
+                }}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
+                disabled={optionsLoaded && brands.length === 0}
+                renderInput={(inputProps) => (
+                  <TextField {...inputProps} label="Marca" />
+                )}
+              />
             </Grid>
             {departments.length > 0 && (
               <Grid item xs={12} md={3}>
-                <FormControl fullWidth size="small">
-                  <InputLabel>Departamento</InputLabel>
-                  <Select value={params.department_id || ""} onChange={handleDataChange} name="department_id" label="Departamento" disabled={optionsLoaded && departments.length === 0}>
-                    <MenuItem value="">{UI_TEXT.ALL_DEPARTMENTS}</MenuItem>
-                    <MenuItem value="0">Sin departamento</MenuItem>
-                    {!optionsLoaded && <MenuItem disabled>Cargando...</MenuItem>}
-                    {departments.map((dept) => (
-                      <MenuItem key={dept.id} value={dept.id}>{dept.name} ({dept.product_count})</MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
+                <Autocomplete
+                  size="small"
+                  options={[{ id: "0", name: "Sin departamento", product_count: 0 }, ...departments]}
+                  getOptionLabel={(option) => option.id === "0" ? option.name : `${option.name} (${option.product_count})`}
+                  value={
+                    params.department_id === "0"
+                      ? { id: "0", name: "Sin departamento", product_count: 0 }
+                      : departments.find((d) => d.id === params.department_id) || null
+                  }
+                  onChange={(_, newValue) => {
+                    setParams((prev) => ({ ...prev, department_id: newValue?.id || "" }));
+                  }}
+                  isOptionEqualToValue={(option, value) => option.id === value.id}
+                  disabled={optionsLoaded && departments.length === 0}
+                  renderInput={(inputProps) => (
+                    <TextField {...inputProps} label="Departamento" />
+                  )}
+                />
               </Grid>
             )}
             <Grid item xs={12} md={3}>

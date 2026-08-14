@@ -10,7 +10,7 @@ import SendIcon from "@mui/icons-material/Send";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import InboxIcon from "@mui/icons-material/Inbox";
-import { getUserData } from "../../../api/utils";
+import { useUser } from "../../../context/UserContext";
 
 const WS_BASE = process.env.REACT_APP_API_URL?.replace(/^http/, "ws");
 
@@ -40,9 +40,9 @@ const NotificationsMenu = memo(() => {
   const [seen, setSeen] = useState(true);
   const wsRef = useRef(null);
   const reconnectRef = useRef(null);
+  const { user } = useUser();
 
   const connectWs = useCallback(() => {
-    const user = getUserData();
     if (!user?.token || !WS_BASE) return;
 
     if (wsRef.current) wsRef.current.close();

@@ -7,7 +7,7 @@ import { getBrands } from "../../../api/brands";
 import { getStores } from "../../../api/stores";
 import CustomButton from "../../ui/Button/Button";
 import { chooseIcon } from "../../ui/Icons/Icons";
-import { Grid, TextField, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
+import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, Autocomplete } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
 import PageHeader from "../../ui/PageHeader";
 
@@ -86,16 +86,20 @@ const LogList = () => {
               </FormControl>
             </Grid>
             <Grid item xs={12} md={3}>
-              <FormControl fullWidth size="small">
-                <InputLabel>Marca</InputLabel>
-                <Select value={params.brand_id || ""} onChange={handleDataChange} name="brand_id" label="Marca" disabled={optionsLoaded && brands.length === 0}>
-                  <MenuItem value="">Todas las marcas</MenuItem>
-                  {!optionsLoaded && <MenuItem disabled>Cargando...</MenuItem>}
-                  {brands.map((brand) => (
-                    <MenuItem key={brand.id} value={brand.id}>{brand.name} ({brand.product_count})</MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+              <Autocomplete
+                size="small"
+                options={brands}
+                getOptionLabel={(option) => `${option.name} (${option.product_count})`}
+                value={brands.find((b) => b.id === params.brand_id) || null}
+                onChange={(_, newValue) => {
+                  setParams((prev) => ({ ...prev, brand_id: newValue?.id || "" }));
+                }}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
+                disabled={optionsLoaded && brands.length === 0}
+                renderInput={(inputProps) => (
+                  <TextField {...inputProps} label="Marca" />
+                )}
+              />
             </Grid>
             <Grid item xs={12} md={3}>
               <FormControl fullWidth size="small">

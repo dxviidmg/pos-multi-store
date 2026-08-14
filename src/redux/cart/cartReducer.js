@@ -9,11 +9,12 @@ import {
   CHANGE_PRICE,
   COUNT_STOCK_OTHER_STORES
 } from "./cartActions";
+import { MOVEMENT_TYPES } from "../../constants";
 
 const initialState = {
   cart: [],
   client: {},
-  movementType: "venta"
+  movementType: MOVEMENT_TYPES.SALE
 };
 
 const aClientIsSelected = (client) => Object.keys(client).length > 0;
@@ -74,15 +75,15 @@ const cartReducer = (state = initialState, action) => {
       
       const getStockTemp = (movementType) => {
         switch (movementType) {
-          case "distribucion":
+          case MOVEMENT_TYPES.DISTRIBUTION:
             return stock;
-          case "agregar":
+          case MOVEMENT_TYPES.ADD_STOCK:
             return available_stock;
-          case "venta":
+          case MOVEMENT_TYPES.SALE:
             return available_stock;
-          case "traspaso":
+          case MOVEMENT_TYPES.TRANSFER:
             return reserved_stock;
-          case "apartado":
+          case MOVEMENT_TYPES.RESERVATION:
             return available_stock;              
         }
       };
@@ -95,7 +96,7 @@ const cartReducer = (state = initialState, action) => {
         // Actualizar producto existente
         const updatedCart = state.cart.map((item, index) => {
           if (index === existingProductIndex) {
-            const updatedQuantity = state.movementType === "agregar" 
+            const updatedQuantity = state.movementType === MOVEMENT_TYPES.ADD_STOCK 
               ? item.quantity + 1 
               : Math.min(item.quantity + 1, stockTemp);
             
