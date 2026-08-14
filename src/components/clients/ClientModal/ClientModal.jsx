@@ -38,9 +38,9 @@ const ClientModal = ({ isOpen, client, onClose, onUpdate }) => {
     const mutation = values.id ? updateMutation : createMutation;
     
     mutation.mutate(values, {
-      onSuccess: () => {
+      onSuccess: (data) => {
         onClose();
-        onUpdate();
+        onUpdate(data?.data || data);
         reset();
       },
     });

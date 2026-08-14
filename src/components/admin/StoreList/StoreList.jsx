@@ -86,7 +86,7 @@ const StoreList = () => {
   };
 
   const stores = storesData?.stores || [];
-  
+
   const totals = storesData?.totals || {};
   const loading = loadingStores || loadingTenant;
   const range = getDateDifference(params.start_date, params.end_date);
@@ -180,7 +180,7 @@ const StoreList = () => {
   const averageSales = useMemo(() => {
     if (stores.length === 0) return 0;
     const totalSales = stores.reduce((sum, store) => 
-      sum + (store.cash_summary?.total_payment || 0), 0
+      sum + (store.cash_summary?.total_day || 0), 0
     );
     return totalSales / stores.length;
   }, [stores]);
@@ -258,7 +258,7 @@ const StoreList = () => {
               <Grid item xs={12} sm={6} md={3}>
                 <Box sx={{ bgcolor: 'var(--color-primary)', p: 1, borderRadius: 1, textAlign: 'center' }}>
                   <Typography variant="caption" sx={{ color: '#fff', fontWeight: 600 }}>Monto Total</Typography>
-                  <Typography variant="h5" sx={{ color: '#fff', fontWeight: 700 }}>{getCashValueTotal(totals.total_payment)}</Typography>
+                  <Typography variant="h5" sx={{ color: '#fff', fontWeight: 700 }}>{getCashValueTotal(totals.total_day)}</Typography>
                 </Box>
               </Grid>
               <Grid item xs={12} sm={6} md={3}>
@@ -485,9 +485,12 @@ const StoreList = () => {
                     paymentCash: totals.EF,
                     paymentCard: totals.TA,
                     paymentTransfer: totals.TR,
-                    totalPayment: totals.total_payment,
+                    totalDay: totals.total_day,
+                    totalSold: totals.total_sold,
+                    totalReserved: totals.total_reserved,
                     cash: totals.cash,
                     totalSales: `${totals.total_sales || 0}`,
+                    reservationsCreated: `${totals.reservations_created || 0}`,
                     canceledSales: totals.canceled_sales,
                   },
                 ]}

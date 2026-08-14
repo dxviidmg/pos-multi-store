@@ -28,6 +28,7 @@ const StoreProductList = lazyRetry(() => import("./components/products/StoreProd
 const ProductAuditList = lazyRetry(() => import("./components/products/StoreProductAuditList/StoreProductAuditList"));
 const StoreList = lazyRetry(() => import("./components/admin/StoreList/StoreList"));
 const ProductImport = lazyRetry(() => import("./components/products/ProductImport/ProductImport"));
+const ReservationList = lazyRetry(() => import("./components/sales/ReservationList/ReservationList"));
 const CashSummary = lazyRetry(() => import("./components/sales/CashSummary/CashSummary"));
 const LogList = lazyRetry(() => import("./components/admin/LogList/LogList"));
 const CashFlowList = lazyRetry(() => import("./components/cashflow/CashFlowList/CashFlowList"));
@@ -65,6 +66,7 @@ function App({ toggleTheme, themeMode }) {
           <Route element={<MainLayout toggleTheme={toggleTheme} themeMode={themeMode} onLoginSuccess={handleLogin} />}>
             <Route path="/tiendas/" element={<Lazy><StoreList /></Lazy>} />
             <Route path="/ventas/" element={<Lazy><SaleList /></Lazy>} />
+            <Route path="/apartados/" element={<Lazy><ReservationList /></Lazy>} />
             <Route path="/vender/" element={<Lazy><SaleCreate /></Lazy>} />
             <Route path="/distribuir/" element={<Lazy><SaleCreate /></Lazy>} />
             <Route path="/importar-ventas/" element={<Lazy><SaleImport /></Lazy>} />

@@ -170,7 +170,7 @@ const SearchProduct = ({ searchInputRef }) => {
         });
       }} />
 
-      <PageHeader title="Búsqueda de productos">
+      <PageHeader title="Vender">
         {stockVerificationSnackbar.open && user?.role !== "seller" && (storeType === "T" || storeType === "A") && (
           <Alert 
             severity="success" 
@@ -257,6 +257,14 @@ const SearchProduct = ({ searchInputRef }) => {
               label="Checar precio (Ctrl+U)"
               sx={{ mr: 4 }}
             />
+            {storeType !== "A" && (
+              <FormControlLabel 
+                value={MOVEMENT_TYPES.RESERVATION} 
+                control={<Radio size="small" sx={{ py: 0.5 }} />} 
+                label="Apartado (Ctrl+I)"
+                sx={{ mr: 4 }}
+              />
+            )}
           </RadioGroup>
         </Grid>
       </Grid>

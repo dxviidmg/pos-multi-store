@@ -25,7 +25,7 @@ export const getStoreColumns = ({ user, averageSales, storeInvestments, handleSe
   {
     name: "Nombre",
     cell: ({ name, id, cash_summary }) => {
-      const vendido = cash_summary?.total_payment || 0;
+      const vendido = cash_summary?.total_day || 0;
       const isAboveAverage = vendido > averageSales;
       const isBelowAverage = vendido < averageSales * 0.8;
       return (
@@ -82,12 +82,27 @@ export const getStoreColumns = ({ user, averageSales, storeInvestments, handleSe
   {
     name: "Vendido",
     style: alignTdStyles,
-    selector: ({ cash_summary }) => getCashValue(cash_summary, "total_payment"),
+    selector: ({ cash_summary }) => getCashValue(cash_summary, "total_sold"),
+  },
+  {
+    name: "Apartado",
+    style: alignTdStyles,
+    selector: ({ cash_summary }) => getCashValue(cash_summary, "total_reserved"),
+  },
+  {
+    name: "Total del día",
+    style: alignTdStyles,
+    selector: ({ cash_summary }) => getCashValue(cash_summary, "total_day"),
   },
   {
     name: "Ventas realizadas",
     style: alignTdStyles,
     selector: ({ cash_summary }) => cash_summary?.total_sales?.toLocaleString() || "0",
+  },
+  {
+    name: "Apartados realizados",
+    style: alignTdStyles,
+    selector: ({ cash_summary }) => cash_summary?.reservations_created?.toLocaleString() || "0",
   },
   {
     name: "Canceladas",
@@ -273,12 +288,27 @@ export const getTotalColumns = ({ user, hasDepartment }) => [
   {
     name: "Vendido",
     style: alignTdStyles,
-    selector: ({ totalPayment }) => getCashValueTotal(totalPayment),
+    selector: ({ totalSold }) => getCashValueTotal(totalSold),
+  },
+  {
+    name: "Apartado",
+    style: alignTdStyles,
+    selector: ({ totalReserved }) => getCashValueTotal(totalReserved),
+  },
+  {
+    name: "Total del día",
+    style: alignTdStyles,
+    selector: ({ totalDay }) => getCashValueTotal(totalDay),
   },
   {
     name: "Ventas realizadas",
     style: alignTdStyles,
     selector: ({ totalSales }) => totalSales,
+  },
+  {
+    name: "Apartados realizados",
+    style: alignTdStyles,
+    selector: ({ reservationsCreated }) => reservationsCreated,
   },
   {
     name: "Canceladas",
@@ -322,11 +352,11 @@ export const getTotalColumns = ({ user, hasDepartment }) => [
 export const filterColumns = (allColumns, quickFilter, hasDepartment) => {
   if (quickFilter === "all") {
     return hasDepartment
-      ? allColumns.filter(col => ["Nombre", "Vendido", "Ventas realizadas", "Canceladas", "Ganancia", "Entrar"].includes(col.name))
+      ? allColumns.filter(col => ["Nombre", "Vendido", "Apartado", "Total del día", "Ventas realizadas", "Apartados realizados", "Canceladas", "Ganancia", "Entrar"].includes(col.name))
       : allColumns.filter(col => ["Nombre", "Efectivo", "Tarjeta", "Transferencia", "Caja", "Entrar"].includes(col.name));
   }
   if (quickFilter === "sales") {
-    return allColumns.filter(col => ["Nombre", "Vendido", "Ventas realizadas", "Canceladas", "Ganancia", "Entrar"].includes(col.name));
+    return allColumns.filter(col => ["Nombre", "Vendido", "Apartado", "Total del día", "Ventas realizadas", "Apartados realizados", "Canceladas", "Ganancia", "Entrar"].includes(col.name));
   }
   if (quickFilter === "investment") {
     return allColumns.filter(col => ["Nombre", "Obtener (Inversión)", "Inversión", "Entrar"].includes(col.name));
@@ -396,11 +426,11 @@ export const filterStorageColumns = (allColumns, quickFilter) => {
 export const filterTotalColumns = (allColumns, quickFilter, hasDepartment) => {
   if (quickFilter === "all") {
     return hasDepartment
-      ? allColumns.filter(col => ["Nombre", "Vendido", "Ventas realizadas", "Canceladas", "Ganancia", "Entrar"].includes(col.name))
+      ? allColumns.filter(col => ["Nombre", "Vendido", "Apartado", "Total del día", "Ventas realizadas", "Apartados realizados", "Canceladas", "Ganancia", "Entrar"].includes(col.name))
       : allColumns.filter(col => ["Nombre", "Efectivo", "Tarjeta", "Transferencia", "Caja", "Entrar"].includes(col.name));
   }
   if (quickFilter === "sales") {
-    return allColumns.filter(col => ["Nombre", "Vendido", "Ventas realizadas", "Canceladas", "Ganancia", "Entrar"].includes(col.name));
+    return allColumns.filter(col => ["Nombre", "Vendido", "Apartado", "Total del día", "Ventas realizadas", "Apartados realizados", "Canceladas", "Ganancia", "Entrar"].includes(col.name));
   }
   if (quickFilter === "investment") {
     return allColumns.filter(col => ["Nombre", "Obtener (Inversión)", "Inversión", "Entrar"].includes(col.name));

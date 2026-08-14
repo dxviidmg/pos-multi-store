@@ -191,6 +191,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
         label: "Ventas",
         dropdown: [
           { label: "Ventas", href: "/ventas/" },
+          { label: "Apartados", href: "/apartados/" },
           { label: "Importar ventas", href: "/importar-ventas/"},
         ],
         hidden: user.role === "seller"
@@ -240,6 +241,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
         hidden: user.role === "seller",
       },
       { label: "Ventas", href: "/ventas/", hidden: user.role !== "seller" },
+      { label: "Apartados", href: "/apartados/", hidden: user.role !== "seller" },
       { label: "Movimientos en caja", href: "/movimientos-caja/", hidden: user.role !== "seller" },
       { label: "Traspasos", href: "/traspasos/", hidden: user.role !== "seller" },
       { label: "Historial de stock", href: "/historial-stock/", hidden: user.role === "seller" },

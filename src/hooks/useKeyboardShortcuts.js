@@ -32,6 +32,10 @@ export const useKeyboardShortcuts = (inputRef, dispatch) => {
       event.preventDefault();
       dispatch(updateMovementType(MOVEMENT_TYPES.CHECK_STOCK));
     }
+    if (event.ctrlKey && (event.key === "i" || event.key === "I")) {
+      event.preventDefault();
+      dispatch(updateMovementType(MOVEMENT_TYPES.RESERVATION));
+    }
     if (event.ctrlKey && (event.key === "b" || event.key === "B")) {
       event.preventDefault();
       inputRef?.current?.focus();
