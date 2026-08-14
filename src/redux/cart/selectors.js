@@ -1,4 +1,5 @@
 import { createSelector } from "reselect";
+import { MOVEMENT_TYPES } from "../../constants";
 
 const selectMultiCart = (state) => state.multiCartReducer;
 
@@ -12,5 +13,5 @@ const selectActiveCart = createSelector(
 );
 
 export const selectCart = createSelector(selectActiveCart, (ac) => ac?.cart || []);
-export const selectMovementType = createSelector(selectActiveCart, (ac) => ac?.movementType || "venta");
+export const selectMovementType = createSelector(selectActiveCart, (ac) => ac?.movementType || MOVEMENT_TYPES.SALE);
 export const selectClient = createSelector(selectActiveCart, (ac) => ac?.client || {});

@@ -4,13 +4,13 @@ import CustomButton from "../../ui/Button/Button";
 import { showSuccess } from "../../../utils/alerts";
 import { updateProduct } from "../../../api/products";
 import { getStores } from "../../../api/stores";
-import { getUserData } from "../../../api/utils";
+import { useUser } from "../../../context/UserContext";
 import { createSeller } from "../../../api/sellers";
 import { Grid, TextField, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 
 const SellerModal = ({ isOpen, seller, onClose, onUpdate }) => {
-  const user = getUserData();
+  const { user } = useUser();
   const short_name = user.tenant_short_name;
   const INITIAL_FORM_DATA = useMemo(() => ({
     role: "V",

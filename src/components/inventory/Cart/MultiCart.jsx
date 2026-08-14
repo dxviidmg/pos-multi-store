@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectMovementType } from "../../../redux/cart/selectors";
 import { Tabs, Tab, IconButton, Box } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import { MOVEMENT_TYPES } from "../../../constants";
 import CloseIcon from "@mui/icons-material/Close";
 import Cart from "./Cart";
 import { createNewCart, switchCart, closeCart } from "../../../redux/cart/multiCartReducer";
@@ -14,7 +15,7 @@ const MultiCart = ({ searchInputRef }) => {
 
   const handleTabChange = (event, newValue) => {
     if (newValue === "add") {
-      if (movementType === "venta") {
+      if (movementType === MOVEMENT_TYPES.SALE) {
         dispatch(createNewCart());
       }
     } else {
@@ -73,7 +74,7 @@ const MultiCart = ({ searchInputRef }) => {
           value="add"
           icon={<AddIcon />}
           sx={{ minWidth: 50 }}
-          disabled={movementType !== "venta"}
+          disabled={movementType !== MOVEMENT_TYPES.SALE}
         />
       </Tabs>
       

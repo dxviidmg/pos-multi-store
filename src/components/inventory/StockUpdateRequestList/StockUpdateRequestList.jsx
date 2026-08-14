@@ -7,7 +7,8 @@ import { Grid,  Chip } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import DeleteIcon from "@mui/icons-material/Delete";
 import httpClient from "../../../api/httpClient";
-import { getApiUrl, getUserData } from "../../../api/utils";
+import { getApiUrl } from "../../../api/utils";
+import { useUser } from "../../../context/UserContext";
 import { getFormattedDateTime } from "../../../utils/utils";
 import { showSuccess, showError } from "../../../utils/alerts";
 import { getStockUpdateRequests } from "../../../api/notifications";
@@ -15,7 +16,7 @@ import Swal from "sweetalert2";
 import PageHeader from "../../ui/PageHeader";
 
 const StockUpdateRequestList = () => {
-  const user = getUserData();
+  const { user } = useUser();
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
 

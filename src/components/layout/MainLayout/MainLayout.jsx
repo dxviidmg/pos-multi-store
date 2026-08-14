@@ -30,7 +30,7 @@ import Brightness7Icon from "@mui/icons-material/Brightness7";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { cleanCart } from "../../../redux/cart/cartActions";
-import { getUserData } from "../../../api/utils";
+import { useUser } from "../../../context/UserContext";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
@@ -143,7 +143,7 @@ const Drawer = styled(MuiDrawer, {
 export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const user = getUserData();
+  const { user, logout, updateUser } = useUser();
   const dispatch = useDispatch();
 
   const accent = '#a78bfa';
@@ -169,8 +169,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
 
   const handleBack = () => {
     dispatch(cleanCart());
-    const updatedUser = { ...user, store_type: "", store_name: "", store_id: null };
-    localStorage.setItem("user", JSON.stringify(updatedUser));
+    updateUser({ store_type: "", store_name: "", store_id: null });
     window.dispatchEvent(new Event("store-changed"));
     navigate("/tiendas/", { replace: true });
   };
@@ -192,6 +191,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
         label: "Ventas",
         dropdown: [
           { label: "Ventas", href: "/ventas/" },
+          { label: "Apartados", href: "/apartados/" },
           { label: "Importar ventas", href: "/importar-ventas/"},
         ],
         hidden: user.role === "seller"
@@ -241,6 +241,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
         hidden: user.role === "seller",
       },
       { label: "Ventas", href: "/ventas/", hidden: user.role !== "seller" },
+      { label: "Apartados", href: "/apartados/", hidden: user.role !== "seller" },
       { label: "Movimientos en caja", href: "/movimientos-caja/", hidden: user.role !== "seller" },
       { label: "Traspasos", href: "/traspasos/", hidden: user.role !== "seller" },
       { label: "Historial de stock", href: "/historial-stock/", hidden: user.role === "seller" },
@@ -383,7 +384,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
               <ListItemIcon><PersonSearchIcon fontSize="small" /></ListItemIcon>
               Perfil
             </MenuItem>
-            <MenuItem onClick={() => { setAnchorEl(null); navigate("/", { replace: true }); localStorage.removeItem("user"); window.location.reload(); }}>
+            <MenuItem onClick={() => { setAnchorEl(null); navigate("/", { replace: true }); logout(); window.location.reload(); }}>
               <ListItemIcon><LogoutIcon fontSize="small" /></ListItemIcon>
               Cerrar sesión
             </MenuItem>

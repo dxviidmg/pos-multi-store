@@ -4,7 +4,7 @@ import CustomButton from "../../ui/Button/Button";
 import { deleteBrands } from "../../../api/brands";
 import BrandModal from "../BrandModal/BrandModal";
 import { showSuccess, showError, showConfirm } from "../../../utils/alerts";
-import { getUserData } from "../../../api/utils";
+import { useUser } from "../../../context/UserContext";
 import EditIcon from "@mui/icons-material/Edit";
 import CustomTooltip from "../../ui/Tooltip";
 import { useBrands } from "../../../hooks/useBrands";
@@ -15,7 +15,7 @@ import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 const BrandList = () => {
-  const user = getUserData();
+  const { user } = useUser();
   const [selectedRows, setSelectedRows] = useState([]);
   const brandModal = useModal();
   const { data: brands = [], isLoading: loading, refetch } = useBrands();

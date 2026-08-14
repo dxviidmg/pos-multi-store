@@ -17,10 +17,10 @@ import { useKeyboardShortcuts } from "../../../hooks/useKeyboardShortcuts";
 import { useProductSearch } from "../../../hooks/useProductSearch";
 import { useCartActions } from "../../../hooks/useCartActions";
 import { useAvailableStock } from "../../../hooks/useAvailableStock";
-import { getUserData } from "../../../api/utils";
+import { useUser } from "../../../context/UserContext";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
-import { testPrinterConnection } from "../../../api/printers";
+import { usePrinterStatus } from "../../../hooks/usePrinterStatus";
 import { handlePrintTicket } from "../../../utils/utils";
 import { Grid, TextField, FormLabel, RadioGroup, FormControlLabel, Radio, InputAdornment, IconButton, CircularProgress, LinearProgress, Alert } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
@@ -31,6 +31,7 @@ import InventoryIcon from "@mui/icons-material/Inventory";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import EditIcon from "@mui/icons-material/Edit";
 import EditOffIcon from "@mui/icons-material/EditOff";
+import { MOVEMENT_TYPES } from "../../../constants";
 
 const SearchProduct = ({ searchInputRef }) => {
   const localRef = useRef(null);
@@ -43,11 +44,11 @@ const SearchProduct = ({ searchInputRef }) => {
   const { getAvailableStock } = useAvailableStock();
   const movementType = useSelector(selectMovementType);
   
-  const userData = getUserData();
-  const storeType = userData.store_type;
-  const storePrinter = userData.store_printer;
+  const { user } = useUser();
+  const storeType = user?.store_type;
+  const storePrinter = user?.store_printer;
 
-  const [printerConnected, setPrinterConnected] = useState(null);
+  const { connected: printerConnected } = usePrinterStatus(storePrinter);
   
   const [barcode, setBarcode] = useState("");
   const [isInputFocused, setIsInputFocused] = useState(false);
@@ -61,12 +62,6 @@ const SearchProduct = ({ searchInputRef }) => {
 
   // Usar hook de atajos de teclado
   useKeyboardShortcuts(inputRef, dispatch);
-
-  useEffect(() => {
-    if (storePrinter) {
-      testPrinterConnection().then((result) => setPrinterConnected(result.connected)).catch(() => setPrinterConnected(false));
-    }
-  }, [storePrinter]);
 
   useEffect(() => {
     const checkCreateProductsOnSale = async () => {
@@ -87,18 +82,17 @@ const SearchProduct = ({ searchInputRef }) => {
       }
     }, 300);
     return () => clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [inputRef]);
 
   const handleSingleProductFetch = (storeProduct) => {
-    if (movementType === "venta" && storeProduct.available_stock === 0) {
+    if (movementType === MOVEMENT_TYPES.SALE && storeProduct.available_stock === 0) {
       handleOpenModal(storeProduct);
     } else if (
-      movementType === "traspaso" &&
+      movementType === MOVEMENT_TYPES.TRANSFER &&
       storeProduct.reserved_stock === 0
     ) {
       showError("Este producto no está relacionado a algún traspaso");
-    } else if (movementType === "checar") {
+    } else if (movementType === MOVEMENT_TYPES.CHECK_STOCK) {
       showSuccess(storeProduct.product.name, "Precio unitario $" + storeProduct.product.prices.unit_price);
     } else {
       const verification = handleAddToCartIfAvailable(storeProduct, stockModal);
@@ -176,8 +170,8 @@ const SearchProduct = ({ searchInputRef }) => {
         });
       }} />
 
-      <PageHeader title="Búsqueda de productos">
-        {stockVerificationSnackbar.open && userData.role !== "seller" && (storeType === "T" || storeType === "A") && (
+      <PageHeader title="Vender">
+        {stockVerificationSnackbar.open && user?.role !== "seller" && (storeType === "T" || storeType === "A") && (
           <Alert 
             severity="success" 
             variant="filled" 
@@ -231,7 +225,7 @@ const SearchProduct = ({ searchInputRef }) => {
           <RadioGroup row value={movementType} onChange={handleMovementTypeChange}>
             {storeType !== "A" && (
               <FormControlLabel 
-                value="venta" 
+                value={MOVEMENT_TYPES.SALE} 
                 control={<Radio size="small" sx={{ py: 0.5 }} />} 
                 label="Venta (Ctrl+E)"
                 sx={{ mr: 4 }}
@@ -239,30 +233,38 @@ const SearchProduct = ({ searchInputRef }) => {
             )}
             {storeType !== "T" && (
               <FormControlLabel 
-                value="distribucion" 
+                value={MOVEMENT_TYPES.DISTRIBUTION} 
                 control={<Radio size="small" sx={{ py: 0.5 }} />} 
                 label="Distribución (Ctrl+T)"
                 sx={{ mr: 4 }}
               />
             )}
             <FormControlLabel 
-              value="traspaso" 
+              value={MOVEMENT_TYPES.TRANSFER} 
               control={<Radio size="small" sx={{ py: 0.5 }} />} 
               label="Confirmar traspaso (Ctrl+R)"
               sx={{ mr: 4 }}
             />
             <FormControlLabel 
-              value="agregar" 
+              value={MOVEMENT_TYPES.ADD_STOCK} 
               control={<Radio size="small" />} 
               label="Agregar a inventario (Ctrl+Y)"
               sx={{ mr: 4 }}
             />
             <FormControlLabel 
-              value="checar" 
+              value={MOVEMENT_TYPES.CHECK_STOCK} 
               control={<Radio size="small" />} 
               label="Checar precio (Ctrl+U)"
               sx={{ mr: 4 }}
             />
+            {storeType !== "A" && (
+              <FormControlLabel 
+                value={MOVEMENT_TYPES.RESERVATION} 
+                control={<Radio size="small" sx={{ py: 0.5 }} />} 
+                label="Apartado (Ctrl+I)"
+                sx={{ mr: 4 }}
+              />
+            )}
           </RadioGroup>
         </Grid>
       </Grid>
@@ -351,7 +353,7 @@ const SearchProduct = ({ searchInputRef }) => {
                         <CustomButton
                           onClick={() => handleAddToCartIfAvailable(row)}
                           disabled={
-                            movementType === "venta" && row.available_stock === 0
+                            movementType === MOVEMENT_TYPES.SALE && row.available_stock === 0
                           }
                         >
                           <AddIcon />

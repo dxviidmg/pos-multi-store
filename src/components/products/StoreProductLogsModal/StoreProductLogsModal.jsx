@@ -4,6 +4,7 @@ import DataTable from "../../ui/DataTable/DataTable";
 import { getStoreProductLogs, updateStoreProduct } from "../../../api/products";
 import { getFormattedDateTime } from "../../../utils/utils";
 import { showSuccess, showError } from "../../../utils/alerts";
+import { useForm } from "../../../hooks/useForm";
 import CustomButton from "../../ui/Button/Button";
 import { chooseIcon } from "../../ui/Icons/Icons";
 import { Grid, TextField, LinearProgress } from "@mui/material";
@@ -15,7 +16,7 @@ const StoreProductLogsModal = ({ isOpen, logs: logsData, onClose, onUpdate }) =>
   const storeProduct = logsData?.storeProduct || {};
   const adjustStock = logsData?.adjustStock || false;
 
-  const [formData, setFormData] = useState(INITIAL_FORM_DATA);
+  const { values: formData, handleChange: handleInputChange, setValues: setFormData, reset: resetForm } = useForm(INITIAL_FORM_DATA);
   const [logs, setLogs] = useState([]);
   const [months, setMonths] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -39,7 +40,7 @@ const StoreProductLogsModal = ({ isOpen, logs: logsData, onClose, onUpdate }) =>
           setLoading(false);
         }
       } else {
-        setFormData(INITIAL_FORM_DATA);
+        resetForm();
         setLogs([]);
       }
     };
@@ -52,16 +53,12 @@ const StoreProductLogsModal = ({ isOpen, logs: logsData, onClose, onUpdate }) =>
     return () => clearTimeout(debounceTimer.current);
   }, [storeProduct.id, months]);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
-  };
 
   const handleCreateAdjustStock = async () => {
     const response = await updateStoreProduct(formData);
 
     if (response.status === 200) {
-      setFormData(INITIAL_FORM_DATA);
+      resetForm();
       onClose();
       onUpdate(response.data);
       showSuccess("Ajuste exitoso");

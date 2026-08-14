@@ -4,7 +4,14 @@ export const MOVEMENT_TYPES = {
   TRANSFER: 'traspaso',
   DISTRIBUTION: 'distribucion',
   RESERVATION: 'apartado',
-  ADD_STOCK: 'agregar'
+  ADD_STOCK: 'agregar',
+  CHECK_STOCK: 'checar',
+};
+
+// Tipos de búsqueda (usados en SearchProduct queryType)
+export const QUERY_TYPES = {
+  CODE: 'code',
+  NAME: 'q',
 };
 
 // Tipos de tienda

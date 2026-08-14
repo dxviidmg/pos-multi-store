@@ -16,6 +16,11 @@ import StorefrontIcon from "@mui/icons-material/Storefront";
 import Logo from "../../../assets/images/logo.jpg";
 import BgImage from "../../../assets/images/bg.webp";
 import { checkTenantExists, getAvailablePlans } from "../../../api/registration";
+import {
+  inputSx, pageContainerSx, overlayGradientSx, formPaperSx,
+  successIconSx, labelSx, stepIndicatorSx, stepCountSx,
+  progressBarSx, primaryButtonSx, secondaryButtonSx, planCardSx,
+} from "./Registration.styles";
 
 const INITIAL_FORM_DATA = {
   name: "",
@@ -28,20 +33,6 @@ const INITIAL_FORM_DATA = {
 
 const TOTAL_STEPS = 3;
 const STEP_LABELS = ["Negocio", "Propietario", "Plan"];
-
-const inputSx = {
-  "& .MuiOutlinedInput-root": {
-    borderRadius: 1,
-    fontSize: "0.9rem",
-    backgroundColor: "rgba(255,255,255,0.95)",
-    "& fieldset": { borderColor: "transparent" },
-    "&:hover fieldset": { borderColor: "rgba(255,255,255,0.4)" },
-    "&.Mui-focused fieldset": {
-      borderColor: "#a78bfa",
-      boxShadow: "0 0 0 3px rgba(167,139,250,0.15)",
-    },
-  },
-};
 
 const Registration = () => {
   const navigate = useNavigate();
@@ -167,48 +158,25 @@ const Registration = () => {
 
   return (
       <Box sx={{
-        minHeight: "100vh",
-        height: "100vh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
+        ...pageContainerSx,
         backgroundImage: `url(${BgImage})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        position: "fixed",
-        top: 0, left: 0, right: 0, bottom: 0,
       }}>
-        <Box sx={{
-          position: "absolute", inset: 0,
-          background: "linear-gradient(135deg, rgba(4,52,107,0.85) 0%, rgba(6,90,158,0.75) 100%)",
-          backdropFilter: "blur(2px)",
-        }} />
+        <Box sx={overlayGradientSx} />
 
-        <Paper elevation={0} sx={{
-          position: "relative", zIndex: 1,
-          width: "100%", maxWidth: 600, mx: 2,
-          borderRadius: 1, overflow: "hidden",
-          background: "rgba(4,52,107,0.95)",
-          backdropFilter: "blur(24px)",
-          border: "1px solid rgba(255,255,255,0.1)",
-          boxShadow: "0 24px 80px rgba(0,0,0,0.4)",
-        }}>
+        <Paper elevation={0} sx={formPaperSx}>
             {registered ? (
               // ─── Success state ─────────────────────────────────────
               <Box sx={{ px: 4, py: 4, textAlign: "center" }}>
-                <Box sx={{
-                  width: 48, height: 48, borderRadius: "50%",
-                  bgcolor: "rgba(16,185,129,0.15)",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  mx: "auto", mb: 2,
-                }}>
+                <Box sx={successIconSx}>
                   <CheckCircleIcon sx={{ fontSize: 24, color: "#34d399" }} />
                 </Box>
                 <Typography sx={{ fontSize: "1.25rem", fontWeight: 700, color: "#fff", mb: 0.5 }}>
                   ¡Listo!
                 </Typography>
                 <Typography sx={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.7)", mb: 1, lineHeight: 1.6 }}>
-                  Tu negocio ha sido registrado.<br />Ya puedes iniciar sesión.
+                  Tu negocio ha sido registrado.<br />
+                  Tu pago se procesa en un máximo de 24 horas.<br />
+                  Por el momento, ya puedes iniciar sesión.
                 </Typography>
                 {ownerUsername && (
                   <Box sx={{
@@ -279,26 +247,17 @@ const Registration = () => {
                 {/* Progress */}
                 <Box sx={{ px: 4, pt: 2 }}>
                   <Box sx={{ display: "flex", justifyContent: "space-between", mb: 0.5 }}>
-                    <Typography sx={{ fontSize: "0.75rem", fontWeight: 600, color: "rgba(255,255,255,0.85)" }}>
+                    <Typography sx={stepIndicatorSx}>
                       Paso {activeStep + 1} de {TOTAL_STEPS}
                     </Typography>
-                    <Typography sx={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.5)" }}>
+                    <Typography sx={stepCountSx}>
                       {STEP_LABELS[activeStep]}
                     </Typography>
                   </Box>
                   <LinearProgress
                     variant="determinate"
                     value={((activeStep + 1) / TOTAL_STEPS) * 100}
-                    sx={{
-                      height: 3,
-                      borderRadius: 2,
-                      bgcolor: "rgba(255,255,255,0.1)",
-                      "& .MuiLinearProgress-bar": {
-                        borderRadius: 2,
-                        background: "linear-gradient(90deg, #a78bfa, #7c5cbf)",
-                        transition: "transform 0.4s cubic-bezier(0.4,0,0.2,1)",
-                      },
-                    }}
+                    sx={progressBarSx}
                   />
                 </Box>
 
@@ -307,7 +266,7 @@ const Registration = () => {
                   {activeStep === 0 && (
                     <Box>
                       <Box sx={{ mb: 2 }}>
-                        <Typography sx={{ fontSize: "0.8rem", fontWeight: 600, color: "rgba(255,255,255,0.85)", mb: 0.5 }}>
+                        <Typography sx={labelSx}>
                           Nombre del negocio
                         </Typography>
                         <TextField
@@ -326,7 +285,7 @@ const Registration = () => {
                       </Box>
 
                       <Box sx={{ mb: 1 }}>
-                        <Typography sx={{ fontSize: "0.8rem", fontWeight: 600, color: "rgba(255,255,255,0.85)", mb: 0.5 }}>
+                        <Typography sx={labelSx}>
                           Identificador corto
                         </Typography>
                         <TextField
@@ -525,7 +484,7 @@ const Registration = () => {
                     <Box>
                       <Grid container spacing={2}>
                         <Grid item xs={6}>
-                          <Typography sx={{ fontSize: "0.8rem", fontWeight: 600, color: "rgba(255,255,255,0.85)", mb: 0.75 }}>
+                          <Typography sx={labelSx}>
                             Nombre *
                           </Typography>
                           <TextField
@@ -540,7 +499,7 @@ const Registration = () => {
                           />
                         </Grid>
                         <Grid item xs={6}>
-                          <Typography sx={{ fontSize: "0.8rem", fontWeight: 600, color: "rgba(255,255,255,0.85)", mb: 0.75 }}>
+                          <Typography sx={labelSx}>
                             Apellidos
                           </Typography>
                           <TextField
@@ -553,7 +512,7 @@ const Registration = () => {
                           />
                         </Grid>
                         <Grid item xs={12}>
-                          <Typography sx={{ fontSize: "0.8rem", fontWeight: 600, color: "rgba(255,255,255,0.85)", mb: 0.75 }}>
+                          <Typography sx={labelSx}>
                             Correo electrónico *
                           </Typography>
                           <TextField
@@ -568,7 +527,7 @@ const Registration = () => {
                           />
                         </Grid>
                         <Grid item xs={12}>
-                          <Typography sx={{ fontSize: "0.8rem", fontWeight: 600, color: "rgba(255,255,255,0.85)", mb: 0.75 }}>
+                          <Typography sx={labelSx}>
                             Teléfono *
                           </Typography>
                           <TextField
