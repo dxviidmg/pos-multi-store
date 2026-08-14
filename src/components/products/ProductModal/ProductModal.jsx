@@ -15,7 +15,7 @@ import { useForm } from "../../../hooks/useForm";
 import noPhoto from "../../../assets/images/noPhoto.jpg";
 import { getDepartments } from "../../../api/departments";
 import SimpleTable from "../../ui/SimpleTable/SimpleTable";
-import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, Box, Checkbox, FormControlLabel } from "@mui/material";
+import { Grid, TextField, Box, Checkbox, FormControlLabel, Autocomplete } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import VisuallyHiddenInput from "../../ui/VisuallyHiddenInput";
 
@@ -229,41 +229,37 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
           <Grid item xs={12} md={8}>
             <Grid container spacing={2}>
               <Grid item xs={12} md={6}>
-                <FormControl fullWidth size="small">
-              <InputLabel>Marca</InputLabel>
-              <Select fullWidth size="small" value={formData.brand}
-                  onChange={handleDataChange}
-                  name="brand"
-                 label="Marca"
-                 disabled={optionsLoaded && brands.length === 0}>
-                  <MenuItem value="0">Selecciona una marca</MenuItem>
-                  {!optionsLoaded && <MenuItem disabled>Cargando...</MenuItem>}
-                  {brands.map((brand) => (
-                    <MenuItem key={brand.id} value={brand.id}>
-                      {brand.name} ({brand.product_count})
-                    </MenuItem>
-                  ))}
-                </Select>
-            </FormControl>
+                <Autocomplete
+                  size="small"
+                  options={brands}
+                  getOptionLabel={(option) => `${option.name} (${option.product_count})`}
+                  value={brands.find((b) => b.id === formData.brand) || null}
+                  onChange={(_, newValue) => {
+                    setFormData((prev) => ({ ...prev, brand: newValue?.id || "" }));
+                  }}
+                  isOptionEqualToValue={(option, value) => option.id === value.id}
+                  disabled={optionsLoaded && brands.length === 0}
+                  renderInput={(inputProps) => (
+                    <TextField {...inputProps} label="Marca" />
+                  )}
+                />
               </Grid>
 
               <Grid item xs={12} md={6}>
-                <FormControl fullWidth size="small">
-              <InputLabel>Departamento</InputLabel>
-              <Select fullWidth size="small" value={formData.department}
-                  onChange={handleDataChange}
-                  name="department"
-                 label="Departamento"
-                 disabled={optionsLoaded && departments.length === 0}>
-                  <MenuItem value="0">Selecciona un departamento</MenuItem>
-                  {!optionsLoaded && <MenuItem disabled>Cargando...</MenuItem>}
-                  {departments.map((department) => (
-                    <MenuItem key={department.id} value={department.id}>
-                      {department.name} ({department.product_count})
-                    </MenuItem>
-                  ))}
-                </Select>
-            </FormControl>
+                <Autocomplete
+                  size="small"
+                  options={departments}
+                  getOptionLabel={(option) => `${option.name} (${option.product_count})`}
+                  value={departments.find((d) => d.id === formData.department) || null}
+                  onChange={(_, newValue) => {
+                    setFormData((prev) => ({ ...prev, department: newValue?.id || "" }));
+                  }}
+                  isOptionEqualToValue={(option, value) => option.id === value.id}
+                  disabled={optionsLoaded && departments.length === 0}
+                  renderInput={(inputProps) => (
+                    <TextField {...inputProps} label="Departamento" />
+                  )}
+                />
               </Grid>
 
               <Grid item xs={12} md={6}>
