@@ -210,6 +210,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
         dropdown: [
           { label: "Productos", href: "/productos/", hidden: user.role === "seller" },
           { label: "Inventario", href: "/inventario/" },
+          { label: "Conversiones", href: "/conversiones/", hidden: user.role === "seller" },
           { divider: true, hidden: user.role === "seller" },
           { label: "Marcas", href: "/marcas/", hidden: user.role === "seller" },
           { label: "Departamentos", href: "/departamentos/", hidden: user.role === "seller" },
