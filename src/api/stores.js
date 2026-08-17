@@ -5,6 +5,7 @@ import { getApiUrl, buildUrlWithParams } from "./utils";
 const storeService = createApiService("store");
 
 export const getStores = storeService.getAll;
+export const createStore = storeService.create;
 
 export const getStoresCashSummary = async (params) => {
   const url = buildUrlWithParams(getApiUrl("stores-cash-summary"), params);
@@ -14,6 +15,14 @@ export const getStoresCashSummary = async (params) => {
 export const getInvestment = async (storeId = null) => {
   const url = storeId ? `store/${storeId}/investment` : "investment";
   return httpClient.get(getApiUrl(url));
+};
+
+/**
+ * Check if the tenant can create more stores
+ * @returns {Promise<Object>} { can_create: boolean, remaining: number }
+ */
+export const canCreateStore = async () => {
+  return httpClient.get(getApiUrl("can-create-store"));
 };
 
 /**

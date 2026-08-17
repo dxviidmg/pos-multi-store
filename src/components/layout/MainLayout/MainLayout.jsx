@@ -525,7 +525,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
         </Box>
       </Drawer>
 
-      <Box component="main" sx={{ flexGrow: 1, p: 3, overflow: "auto", maxWidth: "100%" }}>
+      <Box component="main" sx={{ flexGrow: 1, p: { xs: 1.5, sm: 2, md: 3 }, minWidth: 0, overflowY: "auto" }}>
         <DrawerHeader />
         <Outlet />
       </Box>

@@ -30,7 +30,7 @@ p {
   box-shadow: var(--shadow-sm);
   color: var(--color-text);
   margin-bottom: 1.5rem;
-  overflow-x: auto;
+  min-width: 0;
   padding: var(--spacing-md);
   transition: all var(--transition-base);
   animation: fadeIn 0.35s ease;
