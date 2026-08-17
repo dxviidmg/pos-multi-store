@@ -22,6 +22,7 @@ export * from './printers';
 export * from './login';
 export * from './restart';
 export * from './registration';
+export * from './conversions';
 
 // Utilities
 export * from './utils';
