@@ -286,7 +286,19 @@ const Registration = () => {
 
                       <Box sx={{ mb: 1 }}>
                         <Typography sx={labelSx}>
-                          Identificador corto
+                          Clave de tu negocio
+                        </Typography>
+                        <Typography sx={{ fontSize: "0.72rem", color: "rgba(255,255,255,0.55)", mb: 1, lineHeight: 1.6 }}>
+                          Es un código corto y único que usaremos para crear tus usuarios. Por ejemplo, si tu negocio es "Refaccionaria Ramírez", tu clave podría ser{" "}
+                          <span style={{ fontFamily: "monospace", color: "rgba(255,255,255,0.75)" }}>ramirez</span>,{" "}
+                          <span style={{ fontFamily: "monospace", color: "rgba(255,255,255,0.75)" }}>refram</span>,{" "}
+                          <span style={{ fontFamily: "monospace", color: "rgba(255,255,255,0.75)" }}>rr</span> o{" "}
+                          <span style={{ fontFamily: "monospace", color: "rgba(255,255,255,0.75)" }}>rramirez</span>
+                          {" "}— algo simbólico, fácil de recordar y relacionado al nombre de tu negocio. Tus usuarios se crearán así:{" "}
+                          <span style={{ fontFamily: "monospace", color: "rgba(255,255,255,0.75)" }}>ramirez.dueño</span>,{" "}
+                          <span style={{ fontFamily: "monospace", color: "rgba(255,255,255,0.75)" }}>ramirez.vendedor1</span>, etc.
+                          <br />
+                          <strong style={{ color: "rgba(255,255,255,0.7)" }}>No se puede cambiar después.</strong>
                         </Typography>
                         <TextField
                           fullWidth size="small"
@@ -297,7 +309,7 @@ const Registration = () => {
                             setFormData((prev) => ({ ...prev, short_name: val }));
                           }}
                           required
-                          placeholder="Ej: mitienda"
+                          placeholder="Ej: mitienda, donjuan, pdj"
                           inputProps={{ maxLength: 10, style: { letterSpacing: "0.5px" } }}
                           InputProps={{
                             endAdornment: formData.short_name.trim() && (
@@ -353,25 +365,6 @@ const Registration = () => {
                             },
                           }}
                         />
-
-                        {/* Help text — only visible when typing */}
-                        {formData.short_name.trim() && (
-                        <>
-                        <Typography sx={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.5)", mt: 0.75, lineHeight: 1.6 }}>
-                          Código único de tu negocio para generar usuarios. Máx. 10 caracteres, solo letras y números. Se convierte a mayúsculas. <strong style={{ color: "rgba(255,255,255,0.7)" }}>No se puede cambiar después.</strong>
-                        </Typography>
-                        <Typography sx={{ fontSize: "0.68rem", color: "rgba(255,255,255,0.4)", mt: 0.5, lineHeight: 1.5 }}>
-                          Ej: "Papelería Don Juan" podría ser{" "}
-                          <span style={{ fontFamily: "monospace", color: "rgba(255,255,255,0.6)" }}>pdj</span>,{" "}
-                          <span style={{ fontFamily: "monospace", color: "rgba(255,255,255,0.6)" }}>pdonjuan</span>,{" "}
-                          <span style={{ fontFamily: "monospace", color: "rgba(255,255,255,0.6)" }}>donjuan</span>,{" "}
-                          <span style={{ fontFamily: "monospace", color: "rgba(255,255,255,0.6)" }}>djpape</span> — no hay un formato obligatorio, elige algo único y significativo para ti.
-                        </Typography>
-                        <Typography sx={{ fontSize: "0.68rem", color: "rgba(255,255,255,0.4)", mt: 0.25, lineHeight: 1.5 }}>
-                          Tus usuarios se crearán así: <span style={{ fontFamily: "monospace", color: "rgba(255,255,255,0.6)" }}>{formData.short_name.trim().toLowerCase()}.propietario</span>, <span style={{ fontFamily: "monospace", color: "rgba(255,255,255,0.6)" }}>{formData.short_name.trim().toLowerCase()}.tienda.centro</span>
-                        </Typography>
-                        </>
-                        )}
 
                         {/* Status message — fixed height to prevent layout shift */}
                         <Box sx={{ minHeight: 24, mt: 0.75, display: "flex", alignItems: "center" }}>
