@@ -1,6 +1,6 @@
 # SmartVenta — Sistema de Punto de Venta Multi-Tienda
 
-> Última actualización: 29 de mayo de 2026, 10:07 hrs
+> Última actualización: 17 de agosto de 2026, 16:17 hrs
 > 
 
 Sistema de punto de venta (POS) diseñado para negocios con múltiples sucursales. Permite gestionar ventas, inventario, traspasos y distribuciones desde una sola plataforma, con visibilidad en tiempo real de todas las tiendas y almacenes.
@@ -24,7 +24,7 @@ Estas son las características que te interesan como dueño de tu negocio:
 - **Múltiples carritos simultáneos** — Atiende a varios clientes al mismo tiempo sin perder información
 - **Precios dinámicos** — Precio unitario y precio mayoreo automático según cantidad
 - **Una pantalla para todo** — Ventas, traspasos y distribuciones desde la misma interfaz
-- **Atajos de teclado** — Ctrl+Q/W para buscar, Ctrl+E/R/T/Y/U para tipo de operación, Ctrl+B para enfocar búsqueda
+- **Atajos de teclado** — Ctrl+Q/W para buscar, Ctrl+E/R/T/Y/U/I para tipo de operación, Ctrl+B para enfocar búsqueda, Ctrl+J para seleccionar cliente
 - **Impresión de tickets** — Compatible con impresoras térmicas estándar
 - **Indicador de impresora** — Ícono visual verde/rojo que muestra si la impresora está conectada o desconectada
 
@@ -33,6 +33,8 @@ Estas son las características que te interesan como dueño de tu negocio:
 - **Panel centralizado** — Administra todas tus tiendas y almacenes desde un solo lugar
 - **Cambio instantáneo** — Pasa de una tienda a otra sin cerrar sesión
 - **Indicador de catálogo** — Sabes qué tiendas tienen el catálogo completo y cuáles les faltan productos
+- **Límite por plan** — El sistema valida automáticamente cuántas tiendas puedes crear según tu plan
+- **Crear tienda rápido** — Botón siempre visible para agregar tiendas o almacenes
 
 ### 📦 Inventario en Tiempo Real
 
@@ -50,6 +52,14 @@ Estas son las características que te interesan como dueño de tu negocio:
 - **Dashboard de pendientes** — Panel con traspasos pendientes separados por hoy y anteriores
 - **Filtros por estado** — Filtra traspasos por pendientes o aplicados con actualización automática
 
+### 🔄 Conversiones de Producto
+
+- **Desempaque automático** — Convierte un producto en otro con un clic (ej: 1 Costal → 10 Kg)
+- **Configuración única** — Define la equivalencia una sola vez por par de productos
+- **Múltiples unidades** — Soporta Pieza, Kilogramo, Costal, Litro, Metro, Rollo y Caja
+- **Trazabilidad** — Cada conversión queda registrada en la bitácora de stock
+- **Acceso rápido** — Botón "Desempacar" directamente desde la tabla de conversiones
+
 ### 👥 Gestión de Clientes
 
 - **Registro completo** — Historial de compras por cliente
@@ -62,6 +72,13 @@ Estas son las características que te interesan como dueño de tu negocio:
 - **Movimientos detallados** — Registra entradas y salidas de dinero
 - **Exportación a Excel** — Descarga tu corte de caja con un clic
 - **Corte parcial y total** — Consulta el estado actual o el cierre del día
+
+### 📋 Sistema de Apartados
+
+- **Apartados desde el POS** — Separa productos para un cliente sin cobrar el total
+- **Reserva de stock** — Los productos apartados se descuentan del inventario disponible
+- **Listado de apartados** — Consulta todos los apartados activos y su estado
+- **Seguimiento por cliente** — Vincula apartados a clientes para control personalizado
 
 ### 🔄 Devoluciones y Cancelaciones
 

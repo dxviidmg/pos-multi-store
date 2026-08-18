@@ -62,7 +62,9 @@ export const getStoreColumns = ({ user, averageSales, storeInvestments, handleSe
   },
   {
     name: "Impresora",
-    cell: ({ printer }) => printer ? `${printer.brand} ${printer.model}` : "-",
+    cell: ({ printer }) => printer
+      ? <span>{printer.brand} {printer.model}</span>
+      : <span style={{ color: '#9e9e9e', fontStyle: 'italic' }}>Sin impresora configurada</span>,
   },
   {
     name: "Efectivo",

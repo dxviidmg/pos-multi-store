@@ -91,6 +91,7 @@ const ReservationList = () => {
   const [quickFilter, setQuickFilter] = useState("all");
   const [searchBy, setSearchBy] = useState("date");
   const saleModal = useModal();
+  const cancelModal = useModal();
   const paymentEditModal = useModal();
   const productsModal = useModal();
 
@@ -180,17 +181,12 @@ const ReservationList = () => {
         <Grid container spacing={2} sx={{ mb: 1 }}>
           <Grid item xs={6} md={3}>
             <CustomButton fullWidth variant={quickFilter === "all" ? "contained" : "outlined"} onClick={() => setQuickFilter("all")} size="small">
-              Todos ({sales.length})
+              Activos ({sales.filter(s => !s.is_canceled).length})
             </CustomButton>
           </Grid>
           <Grid item xs={6} md={3}>
             <CustomButton fullWidth variant={quickFilter === "canceled" ? "contained" : "outlined"} onClick={() => setQuickFilter("canceled")} size="small">
               Cancelados ({sales.filter(s => s.is_canceled).length})
-            </CustomButton>
-          </Grid>
-          <Grid item xs={6} md={3}>
-            <CustomButton fullWidth variant={quickFilter === "returned" ? "contained" : "outlined"} onClick={() => setQuickFilter("returned")} size="small">
-              Con devolución ({sales.filter(s => s.has_return).length})
             </CustomButton>
           </Grid>
         </Grid>
@@ -199,9 +195,8 @@ const ReservationList = () => {
           progressPending={loading}
           noDataComponent="Sin apartados"
           searcher={true}
-          data={quickFilter === "all" ? sales
-            : quickFilter === "canceled" ? sales.filter(s => s.is_canceled)
-            : sales.filter(s => s.has_return)
+          data={quickFilter === "all" ? sales.filter(s => !s.is_canceled)
+            : sales.filter(s => s.is_canceled)
           }
           columns={[
             { name: "#", selector: (row) => row.id, width: 70 },
@@ -261,13 +256,11 @@ const ReservationList = () => {
                           <AttachMoneyIcon />
                         </CustomButton>
                       </CustomTooltip>
-                      {row.is_cancelable && (
-                        <CustomTooltip text="Devolución">
-                          <CustomButton onClick={() => saleModal.open(row)}>
-                            <UndoIcon />
-                          </CustomButton>
-                        </CustomTooltip>
-                      )}
+                      <CustomTooltip text="Cancelar apartado">
+                        <CustomButton onClick={() => saleModal.open(row)}>
+                          <BlockIcon />
+                        </CustomButton>
+                      </CustomTooltip>
                     </>
                   )}
                 </>

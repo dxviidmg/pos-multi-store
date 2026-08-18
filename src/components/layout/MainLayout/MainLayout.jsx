@@ -210,6 +210,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
         dropdown: [
           { label: "Productos", href: "/productos/", hidden: user.role === "seller" },
           { label: "Inventario", href: "/inventario/" },
+          { label: "Conversiones", href: "/conversiones/", hidden: user.role === "seller" },
           { divider: true, hidden: user.role === "seller" },
           { label: "Marcas", href: "/marcas/", hidden: user.role === "seller" },
           { label: "Departamentos", href: "/departamentos/", hidden: user.role === "seller" },
@@ -525,7 +526,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
         </Box>
       </Drawer>
 
-      <Box component="main" sx={{ flexGrow: 1, p: 3, overflow: "auto", maxWidth: "100%" }}>
+      <Box component="main" sx={{ flexGrow: 1, p: { xs: 1.5, sm: 2, md: 3 }, minWidth: 0, overflowY: "auto" }}>
         <DrawerHeader />
         <Outlet />
       </Box>
