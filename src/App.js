@@ -49,6 +49,7 @@ const PendingTransfersDashboard = lazyRetry(() => import("./components/admin/Das
 const ProductsDashboard = lazyRetry(() => import("./components/admin/Dashboard/ProductsDashboard"));
 const PriceLogsList = lazyRetry(() => import("./components/products/PriceLogsList/PriceLogsList"));
 const DistributionList = lazyRetry(() => import("./components/inventory/DistributionList/DistributionList"));
+const ConversionList = lazyRetry(() => import("./components/inventory/ConversionList/ConversionList"));
 const RestartService = lazyRetry(() => import("./components/admin/RestartService/RestartService"));
 const Profile = lazyRetry(() => import("./components/admin/Profile/Profile"));
 const Registration = lazyRetry(() => import("./components/tenant/Registration/Registration"));
@@ -73,6 +74,7 @@ function App({ toggleTheme, themeMode }) {
             <Route path="/corte-caja/" element={<Lazy><CashSummary /></Lazy>} />
             <Route path="/movimientos-caja/" element={<Lazy><CashFlowList /></Lazy>} />
             <Route path="/distribuciones/" element={<Lazy><DistributionList /></Lazy>} />
+            <Route path="/conversiones/" element={<Lazy><ConversionList /></Lazy>} />
             <Route path="/traspasos/" element={<Lazy><TransferList /></Lazy>} />
             <Route path="/solicitudes-ajustes-stock/" element={<Lazy><StockUpdateRequestList /></Lazy>} />
             <Route path="/historial-precios/" element={<Lazy><PriceLogsList /></Lazy>} />

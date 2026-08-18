@@ -1,12 +1,12 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useCallback, useMemo, useState } from "react";
 import DataTable from "../../ui/DataTable/DataTable";
-import { Typography, Chip } from "@mui/material";
+import { Typography, Chip, Grid, FormControlLabel, Checkbox, Box, TextField, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import CustomButton from "../../ui/Button/Button";
 import PageHeader from "../../ui/PageHeader";
 import { useNavigate } from "react-router-dom";
-import { formatCurrency } from "../../../utils/utils";
-import { getDateDifference, getFormattedDate } from "../../../utils/utils";
+import { formatCurrency, getDateDifference, getFormattedDate } from "../../../utils/utils";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import AddBusinessIcon from "@mui/icons-material/AddBusiness";
 import { useUser } from "../../../context/UserContext";
 import { useStores } from "../../../hooks/useStores";
 import { useTenantInfo } from "../../../hooks/useTenantInfo";
@@ -15,13 +15,14 @@ import { getInvestment, resetStoreStock } from "../../../api/stores";
 import { useUserManagement } from "../../../hooks/useUserManagement";
 import EditUserModal from "../../ui/UserModals/EditUserModal";
 import ChangePasswordModal from "../../ui/UserModals/ChangePasswordModal";
-import { Grid, FormControlLabel, Checkbox, Box, TextField, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { UI_TEXT } from "../../../constants";
 import Swal from "sweetalert2";
 import { getStoreColumns, getStorageColumns, getTotalColumns, filterColumns, filterStorageColumns, filterTotalColumns } from "./StoreList.columns";
 import CustomModal from "../../ui/Modal/Modal";
+import CreateStoreModal from "./CreateStoreModal";
 import { useModal } from "../../../hooks/useModal";
+import { useCanCreateStore } from "../../../hooks/useCanCreateStore";
 import { createMercadoPagoPreference } from "../../../api/mercadopago";
 import { showError } from "../../../utils/alerts";
 import mercadoPagoLogo from "../../../assets/mercadopago-logo.svg";
@@ -64,7 +65,9 @@ const StoreList = () => {
   const { data: departments = [] } = useDepartments();
 
   const mpModal = useModal();
+  const createStoreModal = useModal();
   const [mpLoading, setMpLoading] = useState(false);
+  const { data: canCreateData, refetch: refetchCanCreate } = useCanCreateStore();
 
   useEffect(() => {
     if (tenantInfo.show_mp_modal) mpModal.open();
@@ -101,7 +104,7 @@ const StoreList = () => {
     setParams((prev) => ({ ...prev, store_type: e.target.value }));
   };
 
-  const handleSelectStore = async ({ store_type, full_name, name, id, printer }) => {
+  const handleSelectStore = useCallback(({ store_type, full_name, name, id, printer }) => {
     const updatedData = {
       store_type,
       store_name: full_name || name,
@@ -113,26 +116,25 @@ const StoreList = () => {
     window.dispatchEvent(new Event("store-changed"));
     const route = store_type === "A" ? "/distribuir/" : "/vender/";
     navigate(route, { replace: true });
-  };
+  }, [updateUser, navigate]);
 
-  const handleShowInvestment = () => {
+  const handleShowInvestment = useCallback(() => {
     setQuickFilter("investment");
-  };
+  }, []);
 
-  const handleShowInvestmentForStore = async (storeId) => {
-    // Si ya tiene la inversión cargada, no hacer nada
+  const handleShowInvestmentForStore = useCallback(async (storeId) => {
     if (storeInvestments[storeId] !== undefined) return;
     
     try {
       const response = await getInvestment(storeId);
       setStoreInvestments(prev => ({
         ...prev,
-        [storeId]: response.data // response.data es directamente el número
+        [storeId]: response.data
       }));
     } catch (error) {
       // Error loading investment
     }
-  };
+  }, [storeInvestments]);
 
   const handleResetStore = async (storeId, storeName) => {
     const result = await Swal.fire({
@@ -200,7 +202,7 @@ const StoreList = () => {
       );
     }
     if (quickFilter === "printer") {
-      return stores.filter(store => store.printer);
+      return stores;
     }
     return stores;
   }, [stores, quickFilter]);
@@ -225,21 +227,32 @@ const StoreList = () => {
   return (
     <>
       <CustomSpinner isLoading={loading} />
-      <Grid container>
-        <Grid item xs={12} className="card">
-          <PageHeader title={params.store_type === "T" ? "Tiendas" : "Almacenes"}>
-            {tenantInfo.notices && tenantInfo.notices.length > 0 && (
-              <Box sx={{ display: 'flex', gap: 0.5 }}>
-                {tenantInfo.notices.map((notice, index) => (
-                  <Chip 
-                    key={index}
-                    label={notice.notice}
-                    color={notice.variant === 'error' ? 'error' : notice.variant === 'warning' ? 'warning' : 'success'}
-                    size="small"
-                  />
-                ))}
-              </Box>
-            )}
+      <Box className="card">
+          <PageHeader title={params.store_type === "T" ? "Tiendas" : "Almacenes"} childrenMd={6}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
+              {tenantInfo.notices && tenantInfo.notices.length > 0 && (
+                <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'nowrap' }}>
+                  {tenantInfo.notices.map((notice, index) => (
+                    <Chip 
+                      key={index}
+                      label={notice.notice}
+                      color={notice.variant === 'error' ? 'error' : notice.variant === 'warning' ? 'warning' : 'success'}
+                      size="small"
+                    />
+                  ))}
+                </Box>
+              )}
+              <CustomButton
+                size="small"
+                variant="contained"
+                onClick={() => createStoreModal.open()}
+                startIcon={<AddBusinessIcon />}
+                disabled={canCreateData && !canCreateData.can_create}
+                title={canCreateData && !canCreateData.can_create ? "Has alcanzado el límite de tiendas de tu plan" : ""}
+              >
+                Crear tienda
+              </CustomButton>
+            </Box>
           </PageHeader>
 
           <Grid container spacing={2} sx={{ mb: 1 }}>
@@ -455,7 +468,29 @@ const StoreList = () => {
           <Box sx={{ mb: 2 }}>
             <DataTable
               progressPending={loading}
-              noDataComponent="Sin tiendas"
+              noDataComponent={
+                <Box sx={{ py: 6, textAlign: 'center' }}>
+                  <CustomButton
+                    onClick={() => createStoreModal.open()}
+                    disabled={canCreateData && !canCreateData.can_create}
+                    startIcon={<AddBusinessIcon />}
+                    sx={{
+                      px: 4,
+                      py: 1.2,
+                      fontSize: '1rem',
+                      background: 'linear-gradient(135deg, #04346b 0%, #065a9e 100%)',
+                      boxShadow: '0 4px 20px rgba(4, 53, 107, 0.3)',
+                      '&:hover': {
+                        boxShadow: '0 6px 24px rgba(4, 53, 107, 0.4)',
+                        transform: 'translateY(-1px)',
+                      },
+                      transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+                    }}
+                  >
+                    Crear mi primera tienda
+                  </CustomButton>
+                </Box>
+              }
               data={memoStores}
               columns={
                 params.store_type === "T" ? columnsStore : columnsStorages
@@ -498,8 +533,7 @@ const StoreList = () => {
               />
             </Box>
           )}
-        </Grid>
-      </Grid>
+        </Box>
 
       <EditUserModal
         open={editUserModal.open}
@@ -530,6 +564,15 @@ const StoreList = () => {
           </CustomButton>
         </Box>
       </CustomModal>
+
+      <CreateStoreModal
+        isOpen={createStoreModal.isOpen}
+        onClose={createStoreModal.close}
+        onCreated={() => {
+          refetchCanCreate();
+          window.location.reload();
+        }}
+      />
     </>
   );
 };
