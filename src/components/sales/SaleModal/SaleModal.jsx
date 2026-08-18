@@ -3,7 +3,7 @@ import CustomModal from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
 import SimpleTable from "../../ui/SimpleTable/SimpleTable";
 import { useCancelSale } from "../../../hooks/useSaleMutations";
-import { Grid, TextField, Checkbox, FormControlLabel } from "@mui/material";
+import { Grid, TextField, Checkbox, FormControlLabel, Typography } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
 const INITIAL_FORM_DATA = {
@@ -17,11 +17,22 @@ const SaleModal = ({ isOpen, sale, onClose, onUpdate }) => {
   const [reason, setReason] = useState("");
   const cancelMutation = useCancelSale();
 
+  const isReservation = formData.sale_type === "A";
+
   useEffect(() => {
     setFormData(sale?.id ? sale : INITIAL_FORM_DATA);
     setQuantitiesToCancel({});
-    setTotalCancel(false);
     setReason("");
+
+    // Si es apartado, siempre es cancelación total
+    if (sale?.sale_type === "A") {
+      setTotalCancel(true);
+      const all = {};
+      sale.products_sale?.forEach((p) => { all[p.id] = p.quantity; });
+      setQuantitiesToCancel(all);
+    } else {
+      setTotalCancel(false);
+    }
   }, [sale]);
 
   const handleQuantityChange = (rowId, max, value) => {
@@ -68,11 +79,20 @@ const SaleModal = ({ isOpen, sale, onClose, onUpdate }) => {
     });
   };
 
+  const cashBack = isReservation
+    ? (Number(formData.paid) || 0)
+    : null;
+
+  const getTitle = () => {
+    if (isReservation) return "Cancelar apartado";
+    return totalCancel ? "Cancelar venta" : "Devolver productos";
+  };
+
   return (
     <CustomModal
       showOut={isOpen}
       onClose={onClose}
-      title={totalCancel ? "Cancelar venta" : "Devolver productos"}
+      title={getTitle()}
     >
       <Grid container sx={{ padding: '1rem', backgroundColor: 'rgba(4, 53, 107, 0.2)' }}>
         <Grid item xs={12} className="card">
@@ -98,32 +118,42 @@ const SaleModal = ({ isOpen, sale, onClose, onUpdate }) => {
               disabled
             />
           </Grid>
-          <Grid item xs={12} md={4}>
-            <FormControlLabel
-              control={
-                <Checkbox size="small"
-                  checked={totalCancel}
-                  onChange={handleCheck}
-                />
-              }
-              label="Cancelar venta completa"
-            />
-          </Grid>
+
+          {isReservation ? (
+            <Grid item xs={12} md={4}>
+              <Typography variant="body2" sx={{ fontWeight: 600, mt: 1 }}>
+                Devolver al cliente: <span style={{ color: "#04346b", fontSize: "1.1rem" }}>${cashBack?.toFixed(2)}</span>
+              </Typography>
+            </Grid>
+          ) : (
+            <Grid item xs={12} md={4}>
+              <FormControlLabel
+                control={
+                  <Checkbox size="small"
+                    checked={totalCancel}
+                    onChange={handleCheck}
+                  />
+                }
+                label="Cancelar venta completa"
+              />
+            </Grid>
+          )}
+
           <Grid item xs={12} md={5}>
-            <TextField size="small" fullWidth label={totalCancel ? "Motivo de cancelación" : "Motivo de devolución"} type="text"
+            <TextField size="small" fullWidth label={isReservation ? "Motivo de cancelación" : totalCancel ? "Motivo de cancelación" : "Motivo de devolución"} type="text"
               value={reason}
               onChange={(e) => setReason(e.target.value)}
             />
           </Grid>
           <Grid item xs={12} md={12}>
-            <h5>{totalCancel ? "Todos los productos serán devueltos" : "Selecciona los productos a devolver"}</h5>
+            <h5>{isReservation ? "Productos del apartado" : totalCancel ? "Todos los productos serán devueltos" : "Selecciona los productos a devolver"}</h5>
             <SimpleTable
               noDataComponent="Sin productos"
               data={formData.products_sale}
               columns={[
                 { name: "Descripción", selector: (row) => row.name },
-                { name: "Cantidad vendida", selector: (row) => row.quantity },
-                {
+                { name: "Cantidad", selector: (row) => row.quantity },
+                ...(!isReservation ? [{
                   name: "Devolver",
                   width: 100,
                   cell: (row) => (
@@ -134,7 +164,7 @@ const SaleModal = ({ isOpen, sale, onClose, onUpdate }) => {
                       onChange={(e) => handleQuantityChange(row.id, row.quantity, e.target.value)}
                     />
                   ),
-                },
+                }] : []),
                 { name: "Precio unitario", selector: (row) => `$${row.price}` },
                 { name: "Importe", selector: (row) => `$${row.price * row.quantity}` },
               ]}
@@ -149,7 +179,7 @@ const SaleModal = ({ isOpen, sale, onClose, onUpdate }) => {
               disabled={disabledButton()}
               startIcon={<ShoppingCartIcon />}
             >
-              {totalCancel ? "Cancelar venta" : "Devolver productos"}
+              {isReservation ? "Cancelar apartado" : totalCancel ? "Cancelar venta" : "Devolver productos"}
             </CustomButton>
           </Grid>
         </Grid>
