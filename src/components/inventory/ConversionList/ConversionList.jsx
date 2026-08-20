@@ -104,7 +104,7 @@ const ConversionList = () => {
         </CustomButton>
       ),
     }] : []),
-    {
+    ...(user.role === "owner" ? [{
       name: "Acciones",
       width: 120,
       cell: (row) => (
@@ -121,7 +121,7 @@ const ConversionList = () => {
           </CustomTooltip>
         </Box>
       ),
-    },
+    }] : []),
   ];
 
   return (

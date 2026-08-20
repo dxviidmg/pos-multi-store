@@ -43,7 +43,7 @@ const Registration = () => {
   const debounceRef = useRef(null);
 
   useEffect(() => {
-    document.body.style.overflow = 'hidden';
+    document.body.style.overflow = 'auto';
     return () => { document.body.style.overflow = 'unset'; };
   }, []);
 
