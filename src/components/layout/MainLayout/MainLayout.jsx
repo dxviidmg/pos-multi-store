@@ -298,6 +298,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
         label: "Productos",
         dropdown: [
           { label: "Productos", href: "/productos/" },
+          { label: "Conversiones", href: "/conversiones/" },
           { divider: true },
           { label: "Marcas", href: "/marcas/" },
           { label: "Departamentos", href: "/departamentos/" },

@@ -14,8 +14,11 @@ import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import UnarchiveIcon from "@mui/icons-material/Unarchive";
 import CustomTooltip from "../../ui/Tooltip";
 import Swal from "sweetalert2";
+import { useUser } from "../../../context/UserContext";
 
 const ConversionList = () => {
+  const { user } = useUser();
+  const isStore = user.store_type === "T";
   const { data: conversions = [], isLoading } = useConversions();
   const deleteMutation = useDeleteConversion();
   const applyMutation = useApplyConversion();
@@ -86,7 +89,7 @@ const ConversionList = () => {
       selector: (row) => row.target_unit_display,
       width: 120,
     },
-    {
+    ...(isStore ? [{
       name: "Desempacar",
       width: 130,
       cell: (row) => (
@@ -100,8 +103,8 @@ const ConversionList = () => {
           Aplicar
         </CustomButton>
       ),
-    },
-    {
+    }] : []),
+    ...(user.role === "owner" ? [{
       name: "Acciones",
       width: 120,
       cell: (row) => (
@@ -118,7 +121,7 @@ const ConversionList = () => {
           </CustomTooltip>
         </Box>
       ),
-    },
+    }] : []),
   ];
 
   return (

@@ -14,26 +14,30 @@ export const inputSx = {
 
 export const pageContainerSx = {
   minHeight: "100vh",
-  height: "100vh",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
   backgroundSize: "cover",
   backgroundPosition: "center",
-  position: "fixed",
-  top: 0, left: 0, right: 0, bottom: 0,
+  backgroundAttachment: "fixed",
+  position: "relative",
+  overflowY: "auto",
+  py: 4,
 };
 
 export const overlayGradientSx = {
-  position: "absolute", inset: 0,
+  position: "fixed", inset: 0,
   background: "linear-gradient(135deg, rgba(4,52,107,0.85) 0%, rgba(6,90,158,0.75) 100%)",
   backdropFilter: "blur(2px)",
+  zIndex: 0,
 };
 
 export const formPaperSx = {
   position: "relative", zIndex: 1,
   width: "100%", maxWidth: 600, mx: 2,
-  borderRadius: 1, overflow: "hidden",
+  maxHeight: "90vh",
+  overflowY: "auto",
+  borderRadius: 1, overflow: "hidden auto",
   background: "rgba(4,52,107,0.95)",
   backdropFilter: "blur(24px)",
   border: "1px solid rgba(255,255,255,0.1)",

@@ -16,11 +16,11 @@ import {
 import SaveIcon from "@mui/icons-material/Save";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import { useConversionUnits, useCreateConversion, useUpdateConversion } from "../../../hooks/useConversions";
-import { getStoreProducts } from "../../../api/products";
+import { getProducts } from "../../../api/products";
 
 const INITIAL_FORM = {
-  source_store_product: null,
-  target_store_product: null,
+  source_product: null,
+  target_product: null,
   factor: "",
   source_unit: "",
   target_unit: "",
@@ -46,14 +46,14 @@ const ConversionModal = ({ isOpen, onClose, conversion }) => {
   useEffect(() => {
     if (conversion) {
       setFormData({
-        source_store_product: conversion.source_store_product,
-        target_store_product: conversion.target_store_product,
+        source_product: conversion.source_product,
+        target_product: conversion.target_product,
         factor: conversion.factor,
         source_unit: conversion.source_unit,
         target_unit: conversion.target_unit,
       });
-      setSelectedSource({ id: conversion.source_store_product, label: conversion.source_product_name });
-      setSelectedTarget({ id: conversion.target_store_product, label: conversion.target_product_name });
+      setSelectedSource({ id: conversion.source_product, label: conversion.source_product_name });
+      setSelectedTarget({ id: conversion.target_product, label: conversion.target_product_name });
     } else {
       setFormData(INITIAL_FORM);
       setSelectedSource(null);
@@ -70,12 +70,12 @@ const ConversionModal = ({ isOpen, onClose, conversion }) => {
     const timer = setTimeout(async () => {
       setSourceLoading(true);
       try {
-        const res = await getStoreProducts({ name: sourceSearch });
+        const res = await getProducts({ name: sourceSearch });
         const products = res.data || res;
         setSourceOptions(
           (Array.isArray(products) ? products : []).map((p) => ({
             id: p.id,
-            label: p.product?.name || p.name || `Producto ${p.id}`,
+            label: p.name || `Producto ${p.id}`,
           }))
         );
       } catch {
@@ -95,12 +95,12 @@ const ConversionModal = ({ isOpen, onClose, conversion }) => {
     const timer = setTimeout(async () => {
       setTargetLoading(true);
       try {
-        const res = await getStoreProducts({ name: targetSearch });
+        const res = await getProducts({ name: targetSearch });
         const products = res.data || res;
         setTargetOptions(
           (Array.isArray(products) ? products : []).map((p) => ({
             id: p.id,
-            label: p.product?.name || p.name || `Producto ${p.id}`,
+            label: p.name || `Producto ${p.id}`,
           }))
         );
       } catch {
@@ -113,8 +113,8 @@ const ConversionModal = ({ isOpen, onClose, conversion }) => {
 
   const handleSubmit = () => {
     const payload = {
-      source_store_product: formData.source_store_product,
-      target_store_product: formData.target_store_product,
+      source_product: formData.source_product,
+      target_product: formData.target_product,
       factor: Number(formData.factor),
       source_unit: formData.source_unit,
       target_unit: formData.target_unit,
@@ -128,8 +128,8 @@ const ConversionModal = ({ isOpen, onClose, conversion }) => {
   };
 
   const isFormIncomplete =
-    !formData.source_store_product ||
-    !formData.target_store_product ||
+    !formData.source_product ||
+    !formData.target_product ||
     !formData.factor ||
     !formData.source_unit ||
     !formData.target_unit;
@@ -157,7 +157,7 @@ const ConversionModal = ({ isOpen, onClose, conversion }) => {
               value={selectedSource}
               onChange={(_, value) => {
                 setSelectedSource(value);
-                setFormData((prev) => ({ ...prev, source_store_product: value?.id || null }));
+                setFormData((prev) => ({ ...prev, source_product: value?.id || null }));
               }}
               onInputChange={(_, value) => setSourceSearch(value)}
               loading={sourceLoading}
@@ -235,7 +235,7 @@ const ConversionModal = ({ isOpen, onClose, conversion }) => {
               value={selectedTarget}
               onChange={(_, value) => {
                 setSelectedTarget(value);
-                setFormData((prev) => ({ ...prev, target_store_product: value?.id || null }));
+                setFormData((prev) => ({ ...prev, target_product: value?.id || null }));
               }}
               onInputChange={(_, value) => setTargetSearch(value)}
               loading={targetLoading}
