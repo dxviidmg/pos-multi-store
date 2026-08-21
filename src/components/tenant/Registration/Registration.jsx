@@ -43,7 +43,7 @@ const Registration = () => {
   const debounceRef = useRef(null);
 
   useEffect(() => {
-    document.body.style.overflow = 'hidden';
+    document.body.style.overflow = 'auto';
     return () => { document.body.style.overflow = 'unset'; };
   }, []);
 
@@ -105,6 +105,29 @@ const Registration = () => {
       setPaymentSubmitting(false);
       const msg = error.response?.data?.detail || error.response?.data?.error || "Error al crear la cuenta.";
       setPaymentResult({ success: false, message: msg });
+      // Recreate payment form so user can retry
+      unmountCardForm();
+      setTimeout(() => {
+        createCardForm({
+          amount: selectedPlan.price,
+          onSubmit: async ({ token, email, payment_method_id, issuer_id, installments }) => {
+            setPaymentSubmitting(true);
+            setPaymentResult(null);
+            mutation.mutate({
+              ...formData,
+              plan_id: selectedPlan?.id,
+              card_token: token,
+              payer_email: email,
+              payment_method_id,
+              issuer_id,
+              installments,
+            });
+          },
+          onError: () => {
+            setPaymentResult({ success: false, message: "Error en el formulario de pago." });
+          },
+        });
+      }, 100);
     },
   });
 
