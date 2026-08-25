@@ -102,20 +102,36 @@ export const updateStoreProduct = async (data) => {
 
 /**
  * Validate products import file
- * @param {FormData} data - Form data with file
+ * @param {Object} data - Object with file and config options
  * @returns {Promise<Object>} Validation results
  */
 export const importProductsValidation = async (data) => {
-  return httpClient.post(getApiUrl("products/import-validation"), data);
+  const formData = new FormData();
+  Object.entries(data).forEach(([key, value]) => {
+    if (value !== "" && value !== null && value !== undefined) {
+      formData.append(key, value);
+    }
+  });
+  return httpClient.post(getApiUrl("products/import-validation"), formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
 };
 
 /**
  * Import products from file
- * @param {FormData} data - Form data with validated file
+ * @param {Object} data - Object with file and config options
  * @returns {Promise<Object>} Import results
  */
 export const importProducts = async (data) => {
-  return httpClient.post(getApiUrl("products/import"), data);
+  const formData = new FormData();
+  Object.entries(data).forEach(([key, value]) => {
+    if (value !== "" && value !== null && value !== undefined) {
+      formData.append(key, value);
+    }
+  });
+  return httpClient.post(getApiUrl("products/import"), formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
 };
 
 /**

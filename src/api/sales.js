@@ -41,20 +41,36 @@ export const getCashSummary = async (date) => {
 
 /**
  * Validate sales import file
- * @param {FormData} data - Form data with file
+ * @param {Object} data - Object with file
  * @returns {Promise<Object>} Validation results
  */
 export const importSalesValidation = async (data) => {
-  return httpClient.post(getApiUrl("sales/import-validation"), data);
+  const formData = new FormData();
+  Object.entries(data).forEach(([key, value]) => {
+    if (value !== "" && value !== null && value !== undefined) {
+      formData.append(key, value);
+    }
+  });
+  return httpClient.post(getApiUrl("sales/import-validation"), formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
 };
 
 /**
  * Import sales from file
- * @param {FormData} data - Form data with validated file
+ * @param {Object} data - Object with file
  * @returns {Promise<Object>} Import results
  */
 export const importSales = async (data) => {
-  return httpClient.post(getApiUrl("sales/import"), data);
+  const formData = new FormData();
+  Object.entries(data).forEach(([key, value]) => {
+    if (value !== "" && value !== null && value !== undefined) {
+      formData.append(key, value);
+    }
+  });
+  return httpClient.post(getApiUrl("sales/import"), formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
 };
 
 /**
