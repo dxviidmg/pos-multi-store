@@ -128,9 +128,11 @@ const Cart = ({ searchInputRef }) => {
 
   const handleQuantityChangeToCart = (e, product) => {
     const newQuantity = Number(e.target.value);
+    const isKg = product.product?.unit === "KG";
+    const minQty = isKg ? 0.1 : 1;
   
     // Permitir campo vacío mientras el usuario escribe
-    if (e.target.value === "" || newQuantity <= 0) return;
+    if (e.target.value === "" || newQuantity < minQty) return;
   
     // --- Control de límites según movimiento ---
     const stockLimit =

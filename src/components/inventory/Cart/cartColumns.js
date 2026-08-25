@@ -4,6 +4,10 @@ import CustomButton from "../../ui/Button/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { MOVEMENT_TYPES } from "../../../constants";
 
+const isKg = (row) => row.product?.unit === "KG";
+const getStep = (row) => isKg(row) ? 0.1 : 1;
+const getMin = (row) => isKg(row) ? 0.1 : 1;
+
 const commonColumns = [
   { name: "Código", field: "code", selector: (row) => row.product.code },
   {
@@ -54,21 +58,22 @@ export const getSaleColumns = (handleQuantityChangeToCart, handleRemoveFromCart,
         value={row.quantity}
         onChange={(e) => handleQuantityChangeToCart(e, row)}
         onKeyDown={(e) => {
+          const step = getStep(row);
           if (e.key === "ArrowUp") {
             e.preventDefault();
-            const newValue = row.quantity + 1;
+            const newValue = Math.round((row.quantity + step) * 10) / 10;
             const availableStock = (movementType === MOVEMENT_TYPES.ADD_STOCK || movementType === MOVEMENT_TYPES.SALE) ? Infinity : getAvailableStock(row.id, row.available_stock);
             if (newValue <= availableStock) {
               handleQuantityChangeToCart({ target: { value: newValue } }, row);
             }
           } else if (e.key === "ArrowDown") {
             e.preventDefault();
-            const newValue = Math.max(1, row.quantity - 1);
+            const min = getMin(row);
+            const newValue = Math.max(min, Math.round((row.quantity - step) * 10) / 10);
             handleQuantityChangeToCart({ target: { value: newValue } }, row);
           }
         }}
-        min="1"
-        max={movementType === MOVEMENT_TYPES.ADD_STOCK ? undefined : row.available_stock}
+        inputProps={{ min: getMin(row), step: getStep(row) }}
       />
     ),
   },
@@ -126,21 +131,22 @@ export const getTransferColumns = (handleQuantityChangeToCart, handleRemoveFromC
         value={row.quantity}
         onChange={(e) => handleQuantityChangeToCart(e, row)}
         onKeyDown={(e) => {
+          const step = getStep(row);
           if (e.key === "ArrowUp") {
             e.preventDefault();
-            const newValue = row.quantity + 1;
+            const newValue = Math.round((row.quantity + step) * 10) / 10;
             const availableStock = getAvailableStock(row.id, row.available_stock);
             if (newValue <= availableStock) {
               handleQuantityChangeToCart({ target: { value: newValue } }, row);
             }
           } else if (e.key === "ArrowDown") {
             e.preventDefault();
-            const newValue = Math.max(1, row.quantity - 1);
+            const min = getMin(row);
+            const newValue = Math.max(min, Math.round((row.quantity - step) * 10) / 10);
             handleQuantityChangeToCart({ target: { value: newValue } }, row);
           }
         }}
-        min="1"
-        max={row.available_stock}
+        inputProps={{ min: getMin(row), step: getStep(row) }}
       />
     ),
   },
@@ -165,24 +171,25 @@ export const getDistributionColumns = (handleQuantityChangeToCart, handleRemoveF
         value={row.quantity}
         onChange={(e) => handleQuantityChangeToCart(e, row)}
         onKeyDown={(e) => {
+          const step = getStep(row);
           if (e.key === "Enter") {
             e.preventDefault();
             searchInputRef?.current?.focus();
           } else if (e.key === "ArrowUp") {
             e.preventDefault();
-            const newValue = row.quantity + 1;
+            const newValue = Math.round((row.quantity + step) * 10) / 10;
             const availableStock = getAvailableStock(row.id, row.available_stock);
             if (newValue <= availableStock) {
               handleQuantityChangeToCart({ target: { value: newValue } }, row);
             }
           } else if (e.key === "ArrowDown") {
             e.preventDefault();
-            const newValue = Math.max(1, row.quantity - 1);
+            const min = getMin(row);
+            const newValue = Math.max(min, Math.round((row.quantity - step) * 10) / 10);
             handleQuantityChangeToCart({ target: { value: newValue } }, row);
           }
         }}
-        min="1"
-        max={row.available_stock}
+        inputProps={{ min: getMin(row), step: getStep(row) }}
       />
     ),
   },
@@ -223,20 +230,22 @@ export const getAddToStockColumns = (handleQuantityChangeToCart, handleRemoveFro
         value={row.quantity}
         onChange={(e) => handleQuantityChangeToCart(e, row)}
         onKeyDown={(e) => {
+          const step = getStep(row);
           if (e.key === "Enter") {
             e.preventDefault();
             searchInputRef?.current?.focus();
           } else if (e.key === "ArrowUp") {
             e.preventDefault();
-            const newValue = row.quantity + 1;
+            const newValue = Math.round((row.quantity + step) * 10) / 10;
             handleQuantityChangeToCart({ target: { value: newValue } }, row);
           } else if (e.key === "ArrowDown") {
             e.preventDefault();
-            const newValue = Math.max(1, row.quantity - 1);
+            const min = getMin(row);
+            const newValue = Math.max(min, Math.round((row.quantity - step) * 10) / 10);
             handleQuantityChangeToCart({ target: { value: newValue } }, row);
           }
         }}
-        min="1"
+        inputProps={{ min: getMin(row), step: getStep(row) }}
       />
     ),
   },
