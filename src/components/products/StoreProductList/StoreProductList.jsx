@@ -179,6 +179,7 @@ const StoreProductList = () => {
               { name: "Departamento", selector: (row) => row.product.department_name },
               { name: "Nombre", selector: (row) => row.product.name },
               { name: "Stock", selector: (row) => row.stock },
+              { name: "Unidad", selector: (row) => row.product.unit },
               {
                 name: "Acciones",
                 cell: (row) => (
