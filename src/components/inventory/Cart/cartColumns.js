@@ -1,12 +1,27 @@
 import React from "react";
-import { TextField, Checkbox } from "@mui/material";
+import { TextField, Checkbox, IconButton } from "@mui/material";
 import CustomButton from "../../ui/Button/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
+import ScaleIcon from "@mui/icons-material/Scale";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import { MOVEMENT_TYPES } from "../../../constants";
 
 const isKg = (row) => row.product?.unit === "KG";
-const getStep = (row) => isKg(row) ? 0.1 : 1;
-const getMin = (row) => isKg(row) ? 0.1 : 1;
+const SALE_MODES_CYCLE = ["KG", "FRAC", "$"];
+const getNextMode = (current) => {
+  const idx = SALE_MODES_CYCLE.indexOf(current);
+  return SALE_MODES_CYCLE[(idx + 1) % SALE_MODES_CYCLE.length];
+};
+const getStep = (row, mode) => {
+  if (mode === "$") return 1;
+  if (mode === "FRAC") return 0.1;
+  return 1;
+};
+const getMin = (row, mode) => {
+  if (mode === "$") return 1;
+  if (mode === "FRAC") return 0.1;
+  return 1;
+};
 
 const commonColumns = [
   { name: "Código", field: "code", selector: (row) => row.product.code },
@@ -48,40 +63,117 @@ const commonColumns2 = [
   },
 ];
 
-export const getSaleColumns = (handleQuantityChangeToCart, handleRemoveFromCart, handleChangePrice, movementType, getAvailableStock) => [
+export const getSaleColumns = (handleQuantityChangeToCart, handleRemoveFromCart, handleChangePrice, movementType, getAvailableStock, handleStockWarning, saleModes, setSaleModes) => [
   ...commonColumns2,
+  {
+    name: "Venta por",
+    width: 100,
+    selector: (row) => {
+      const mode = isKg(row) ? (saleModes[row.id] || "KG") : "PZ";
+      if (!isKg(row)) {
+        const unitLabels = { PZ: "Pieza", CO: "Costal" };
+        return <span style={{ fontSize: '0.8rem', fontWeight: 600 }}>{unitLabels[row.product?.unit] || "Pieza"}</span>;
+      }
+
+      const labels = { KG: "Kilo", FRAC: "Fracción", $: "Pesos" };
+      const icons = { KG: <ScaleIcon sx={{ fontSize: 14, mr: 0.3 }} />, FRAC: <ScaleIcon sx={{ fontSize: 14, mr: 0.3 }} />, $: <AttachMoneyIcon sx={{ fontSize: 14, mr: 0.3 }} /> };
+      const isActive = mode === "$" || mode === "FRAC";
+
+      return (
+        <IconButton
+          size="small"
+          onClick={() => setSaleModes((prev) => ({ ...prev, [row.id]: getNextMode(mode) }))}
+          sx={{ 
+            border: '1px solid', 
+            borderColor: isActive ? 'primary.main' : 'divider',
+            bgcolor: isActive ? 'primary.main' : 'transparent',
+            color: isActive ? '#fff' : 'text.secondary',
+            borderRadius: '8px',
+            px: 1,
+            width: 'auto', height: 28,
+            fontSize: '0.7rem', fontWeight: 600,
+            '&:hover': { bgcolor: isActive ? 'primary.dark' : 'action.hover' }
+          }}
+        >
+          {icons[mode]}{labels[mode]}
+        </IconButton>
+      );
+    },
+  },
   {
     name: "Cantidad",
     width: 100,
-    selector: (row) => (
-      <TextField size="small" type="number" sx={{ width: 80 }}
-        value={row.quantity}
-        onChange={(e) => handleQuantityChangeToCart(e, row)}
-        onKeyDown={(e) => {
-          const step = getStep(row);
-          if (e.key === "ArrowUp") {
-            e.preventDefault();
-            const newValue = Math.round((row.quantity + step) * 10) / 10;
-            const availableStock = (movementType === MOVEMENT_TYPES.ADD_STOCK || movementType === MOVEMENT_TYPES.SALE) ? Infinity : getAvailableStock(row.id, row.available_stock);
-            if (newValue <= availableStock) {
+    selector: (row) => {
+      const mode = isKg(row) ? (saleModes[row.id] || "KG") : "PZ";
+      const step = getStep(row, mode);
+      const min = getMin(row, mode);
+
+      if (mode === "$") {
+        return <span style={{ fontSize: '0.85rem' }}>{(Math.round(row.quantity * 1000) / 1000)} kg</span>;
+      }
+
+      return (
+        <TextField size="small" type="number" sx={{ width: 80 }}
+          value={row.quantity}
+          onChange={(e) => {
+            const val = e.target.value;
+            if (mode === "FRAC" && val.includes('.') && val.split('.')[1]?.length > 3) return;
+            if (mode === "KG" && val.includes('.')) return;
+            handleQuantityChangeToCart(e, row);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "ArrowUp") {
+              e.preventDefault();
+              const newValue = Math.round((row.quantity + step) * 1000) / 1000;
+              const availableStock = movementType === MOVEMENT_TYPES.ADD_STOCK ? Infinity : getAvailableStock(row.id, row.available_stock);
+              if (newValue <= availableStock) {
+                handleQuantityChangeToCart({ target: { value: newValue } }, row);
+              }
+            } else if (e.key === "ArrowDown") {
+              e.preventDefault();
+              const newValue = Math.max(min, Math.round((row.quantity - step) * 1000) / 1000);
               handleQuantityChangeToCart({ target: { value: newValue } }, row);
             }
-          } else if (e.key === "ArrowDown") {
-            e.preventDefault();
-            const min = getMin(row);
-            const newValue = Math.max(min, Math.round((row.quantity - step) * 10) / 10);
-            handleQuantityChangeToCart({ target: { value: newValue } }, row);
-          }
-        }}
-        inputProps={{ min: getMin(row), step: getStep(row) }}
-      />
-    ),
+          }}
+          inputProps={{ min, step }}
+        />
+      );
+    },
   },
   { name: "Stock", selector: (row) => row.available_stock },
-  { name: "Precio", selector: (row) => `$${row.product_price.toFixed(2)}` },
+  {
+    name: "Precio",
+    selector: (row) => `$${row.product_price.toFixed(2)}`,
+  },
   {
     name: "Subtotal",
-    selector: (row) => `$${(row.product_price * row.quantity).toFixed(2)}`,
+    width: 100,
+    selector: (row) => {
+      const mode = isKg(row) ? (saleModes[row.id] || "KG") : "PZ";
+      if (mode === "$") {
+        const pesoValue = Math.round(row.quantity * row.product_price * 10) / 10;
+        return (
+          <TextField size="small" type="number" sx={{ width: 80 }}
+            value={pesoValue}
+            onChange={(e) => handleQuantityChangeToCart(e, row)}
+            onKeyDown={(e) => {
+              if (e.key === "ArrowUp") {
+                e.preventDefault();
+                const newValue = Math.round((pesoValue + 1) * 10) / 10;
+                handleQuantityChangeToCart({ target: { value: newValue } }, row);
+              } else if (e.key === "ArrowDown") {
+                e.preventDefault();
+                const newValue = Math.max(1, Math.round((pesoValue - 1) * 10) / 10);
+                handleQuantityChangeToCart({ target: { value: newValue } }, row);
+              }
+            }}
+            inputProps={{ min: 1, step: 1 }}
+            InputProps={{ startAdornment: '$' }}
+          />
+        );
+      }
+      return `$${(row.product_price * row.quantity).toFixed(2)}`;
+    },
   },
   {
     name: "Aplicar mayoreo",
@@ -131,7 +223,7 @@ export const getTransferColumns = (handleQuantityChangeToCart, handleRemoveFromC
         value={row.quantity}
         onChange={(e) => handleQuantityChangeToCart(e, row)}
         onKeyDown={(e) => {
-          const step = getStep(row);
+          const step = getStep(row, "KG");
           if (e.key === "ArrowUp") {
             e.preventDefault();
             const newValue = Math.round((row.quantity + step) * 10) / 10;
@@ -141,12 +233,12 @@ export const getTransferColumns = (handleQuantityChangeToCart, handleRemoveFromC
             }
           } else if (e.key === "ArrowDown") {
             e.preventDefault();
-            const min = getMin(row);
+            const min = getMin(row, "KG");
             const newValue = Math.max(min, Math.round((row.quantity - step) * 10) / 10);
             handleQuantityChangeToCart({ target: { value: newValue } }, row);
           }
         }}
-        inputProps={{ min: getMin(row), step: getStep(row) }}
+        inputProps={{ min: getMin(row, "KG"), step: getStep(row, "KG") }}
       />
     ),
   },
@@ -171,7 +263,7 @@ export const getDistributionColumns = (handleQuantityChangeToCart, handleRemoveF
         value={row.quantity}
         onChange={(e) => handleQuantityChangeToCart(e, row)}
         onKeyDown={(e) => {
-          const step = getStep(row);
+          const step = getStep(row, "KG");
           if (e.key === "Enter") {
             e.preventDefault();
             searchInputRef?.current?.focus();
@@ -184,12 +276,12 @@ export const getDistributionColumns = (handleQuantityChangeToCart, handleRemoveF
             }
           } else if (e.key === "ArrowDown") {
             e.preventDefault();
-            const min = getMin(row);
+            const min = getMin(row, "KG");
             const newValue = Math.max(min, Math.round((row.quantity - step) * 10) / 10);
             handleQuantityChangeToCart({ target: { value: newValue } }, row);
           }
         }}
-        inputProps={{ min: getMin(row), step: getStep(row) }}
+        inputProps={{ min: getMin(row, "KG"), step: getStep(row, "KG") }}
       />
     ),
   },
@@ -230,7 +322,7 @@ export const getAddToStockColumns = (handleQuantityChangeToCart, handleRemoveFro
         value={row.quantity}
         onChange={(e) => handleQuantityChangeToCart(e, row)}
         onKeyDown={(e) => {
-          const step = getStep(row);
+          const step = getStep(row, "KG");
           if (e.key === "Enter") {
             e.preventDefault();
             searchInputRef?.current?.focus();
@@ -240,12 +332,12 @@ export const getAddToStockColumns = (handleQuantityChangeToCart, handleRemoveFro
             handleQuantityChangeToCart({ target: { value: newValue } }, row);
           } else if (e.key === "ArrowDown") {
             e.preventDefault();
-            const min = getMin(row);
+            const min = getMin(row, "KG");
             const newValue = Math.max(min, Math.round((row.quantity - step) * 10) / 10);
             handleQuantityChangeToCart({ target: { value: newValue } }, row);
           }
         }}
-        inputProps={{ min: getMin(row), step: getStep(row) }}
+        inputProps={{ min: getMin(row, "KG"), step: getStep(row, "KG") }}
       />
     ),
   },

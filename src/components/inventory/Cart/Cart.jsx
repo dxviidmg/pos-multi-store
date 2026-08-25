@@ -39,6 +39,7 @@ const Cart = ({ searchInputRef }) => {
   const [selectedStore, setSelectedStore] = useState("");
   const [confirmedStore, setConfirmedStore] = useState("");
   const [loading, setLoading] = useState(false);
+  const [saleModes, setSaleModes] = useState({});
   const lastQtyRef = useRef(null);
   const prevCartLenRef = useRef(0);
   
@@ -110,7 +111,11 @@ const Cart = ({ searchInputRef }) => {
   }, [cart]);
 
   const { totalProducts } = useMemo(() => {
-    const totalProducts = cart.reduce((acc, item) => acc + item.quantity, 0);
+    const totalProducts = cart.reduce((acc, item) => {
+      // Productos KG cuentan como 1 sin importar la cantidad
+      if (item.product?.unit === "KG") return acc + 1;
+      return acc + item.quantity;
+    }, 0);
     return { totalProducts };
   }, [cart]);
 
@@ -127,20 +132,26 @@ const Cart = ({ searchInputRef }) => {
   };
 
   const handleQuantityChangeToCart = (e, product) => {
-    const newQuantity = Number(e.target.value);
-    const isKg = product.product?.unit === "KG";
-    const minQty = isKg ? 0.1 : 1;
-  
-    // Permitir campo vacío mientras el usuario escribe
-    if (e.target.value === "" || newQuantity < minQty) return;
+    const rawValue = Number(e.target.value);
+    const productIsKg = product.product?.unit === "KG";
+    const mode = saleModes[product.id] || "KG";
+    const minQty = productIsKg ? (mode === "$" ? 1 : (mode === "FRAC" ? 0.1 : 1)) : 1;
+
+    // En modo $, el valor es pesos, calcular kg
+    let newQuantity;
+    if (mode === "$" && productIsKg) {
+      if (e.target.value === "" || rawValue < 1) return;
+      newQuantity = rawValue / product.product_price;
+    } else {
+      if (e.target.value === "" || rawValue < minQty) return;
+      newQuantity = rawValue;
+    }
   
     // --- Control de límites según movimiento ---
     const stockLimit =
       movementType === MOVEMENT_TYPES.TRANSFER
         ? product.stock
-        : movementType === MOVEMENT_TYPES.SALE
-        ? product.available_stock
-        : Infinity;
+        : product.available_stock;
   
     // Verificar stock disponible considerando otros carritos
     const availableStock = movementType === MOVEMENT_TYPES.ADD_STOCK ? Infinity : getAvailableStock(product.id, stockLimit);
@@ -267,7 +278,7 @@ const Cart = ({ searchInputRef }) => {
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const saleColumns = useMemo(() => getSaleColumns(handleQuantityChangeToCart, handleRemoveFromCart, handleChangePrice, movementType, getAvailableStock, handleStockWarning), [movementType, getAvailableStock]);
+  const saleColumns = useMemo(() => getSaleColumns(handleQuantityChangeToCart, handleRemoveFromCart, handleChangePrice, movementType, getAvailableStock, handleStockWarning, saleModes, setSaleModes), [movementType, getAvailableStock, saleModes]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const transferColumns = useMemo(() => getTransferColumns(handleQuantityChangeToCart, handleRemoveFromCart, getAvailableStock), []);
   // eslint-disable-next-line react-hooks/exhaustive-deps
