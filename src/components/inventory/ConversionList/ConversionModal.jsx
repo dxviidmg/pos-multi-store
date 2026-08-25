@@ -5,25 +5,19 @@ import {
   Box,
   Grid,
   TextField,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
   Typography,
   Autocomplete,
   CircularProgress,
 } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
-import { useConversionUnits, useCreateConversion, useUpdateConversion } from "../../../hooks/useConversions";
+import { useCreateConversion, useUpdateConversion } from "../../../hooks/useConversions";
 import { getProducts } from "../../../api/products";
 
 const INITIAL_FORM = {
   source_product: null,
   target_product: null,
   factor: "",
-  source_unit: "",
-  target_unit: "",
 };
 
 const ConversionModal = ({ isOpen, onClose, conversion }) => {
@@ -37,7 +31,6 @@ const ConversionModal = ({ isOpen, onClose, conversion }) => {
   const [selectedSource, setSelectedSource] = useState(null);
   const [selectedTarget, setSelectedTarget] = useState(null);
 
-  const { data: units = [] } = useConversionUnits();
   const createMutation = useCreateConversion({ onSuccess: () => onClose() });
   const updateMutation = useUpdateConversion({ onSuccess: () => onClose() });
 
@@ -49,8 +42,6 @@ const ConversionModal = ({ isOpen, onClose, conversion }) => {
         source_product: conversion.source_product,
         target_product: conversion.target_product,
         factor: conversion.factor,
-        source_unit: conversion.source_unit,
-        target_unit: conversion.target_unit,
       });
       setSelectedSource({ id: conversion.source_product, label: conversion.source_product_name });
       setSelectedTarget({ id: conversion.target_product, label: conversion.target_product_name });
@@ -116,8 +107,6 @@ const ConversionModal = ({ isOpen, onClose, conversion }) => {
       source_product: formData.source_product,
       target_product: formData.target_product,
       factor: Number(formData.factor),
-      source_unit: formData.source_unit,
-      target_unit: formData.target_unit,
     };
 
     if (isEditing) {
@@ -130,9 +119,7 @@ const ConversionModal = ({ isOpen, onClose, conversion }) => {
   const isFormIncomplete =
     !formData.source_product ||
     !formData.target_product ||
-    !formData.factor ||
-    !formData.source_unit ||
-    !formData.target_unit;
+    !formData.factor;
 
   const loading = createMutation.isPending || updateMutation.isPending;
 
@@ -181,26 +168,8 @@ const ConversionModal = ({ isOpen, onClose, conversion }) => {
             />
           </Grid>
 
-          {/* Unidad origen */}
-          <Grid item xs={6}>
-            <FormControl fullWidth size="small">
-              <InputLabel>Unidad origen</InputLabel>
-              <Select
-                value={formData.source_unit}
-                onChange={(e) => setFormData((prev) => ({ ...prev, source_unit: e.target.value }))}
-                label="Unidad origen"
-              >
-                {units.map((u) => (
-                  <MenuItem key={u.value} value={u.value}>
-                    {u.label}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
-
           {/* Factor */}
-          <Grid item xs={6}>
+          <Grid item xs={12}>
             <TextField
               size="small"
               fullWidth
@@ -217,11 +186,11 @@ const ConversionModal = ({ isOpen, onClose, conversion }) => {
           <Grid item xs={12}>
             <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 1, py: 1 }}>
               <Typography variant="body2" color="text.secondary">
-                1 {units.find((u) => u.value === formData.source_unit)?.label || "—"}
+                1 {selectedSource?.label || "—"}
               </Typography>
               <SwapHorizIcon color="primary" />
               <Typography variant="body2" color="text.secondary">
-                {formData.factor || "?"} {units.find((u) => u.value === formData.target_unit)?.label || "—"}
+                {formData.factor || "?"} {selectedTarget?.label || "—"}
               </Typography>
             </Box>
           </Grid>
@@ -257,24 +226,6 @@ const ConversionModal = ({ isOpen, onClose, conversion }) => {
                 />
               )}
             />
-          </Grid>
-
-          {/* Unidad destino */}
-          <Grid item xs={12}>
-            <FormControl fullWidth size="small">
-              <InputLabel>Unidad destino</InputLabel>
-              <Select
-                value={formData.target_unit}
-                onChange={(e) => setFormData((prev) => ({ ...prev, target_unit: e.target.value }))}
-                label="Unidad destino"
-              >
-                {units.map((u) => (
-                  <MenuItem key={u.value} value={u.value}>
-                    {u.label}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
           </Grid>
 
           {/* Botón guardar */}
