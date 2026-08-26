@@ -22,7 +22,7 @@ import { useUser } from "../../../context/UserContext";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { useModal } from "../../../hooks/useModal";
 import { useAvailableStock } from "../../../hooks/useAvailableStock";
-import { Grid, Select, MenuItem } from "@mui/material";
+import { Grid, Select, MenuItem, Typography } from "@mui/material";
 import PaymentIcon from "@mui/icons-material/Payment";
 import SendIcon from "@mui/icons-material/Send";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
@@ -316,15 +316,22 @@ const Cart = ({ searchInputRef }) => {
           <Grid container spacing={1} sx={{ mb: 1, alignItems: 'center' }}>
             {(movementType === MOVEMENT_TYPES.SALE || movementType === MOVEMENT_TYPES.RESERVATION) && (
               <>
-                <Grid item xs={12} md={4}>
-                  <h3>Productos: {totalProducts}</h3>
+                <Grid item xs={12} md={3}>
+                  <Typography variant="body2" color="text.secondary">Productos</Typography>
+                  <Typography variant="h5" sx={{ fontWeight: 700 }}>{totalProducts}</Typography>
                 </Grid>
 
-                <Grid item xs={12} md={4}>
-                  <h3>Total: ${total.toFixed(2)}</h3>
+                <Grid item xs={12} md={5}>
+                  <Typography variant="body2" color="text.secondary">Total</Typography>
+                  <Typography variant="h4" sx={{ fontWeight: 700, color: 'primary.main' }}>${total.toFixed(2)}</Typography>
                 </Grid>
                 <Grid item xs={12} md={4}>
-                  <CustomButton fullWidth onClick={() => paymentModal.open()} startIcon={<PaymentIcon />}>
+                  <CustomButton
+                    fullWidth
+                    onClick={() => paymentModal.open()}
+                    startIcon={<PaymentIcon />}
+                    sx={{ py: 1.2, fontSize: '0.875rem' }}
+                  >
                     Cobrar (Ctrl+P)
                   </CustomButton>
                 </Grid>
@@ -334,7 +341,10 @@ const Cart = ({ searchInputRef }) => {
             {(movementType === MOVEMENT_TYPES.TRANSFER ||
               movementType === MOVEMENT_TYPES.DISTRIBUTION) && (
               <>
-                <Grid item xs={12} md={3}><h3>Productos: {totalProducts}</h3></Grid>
+                <Grid item xs={12} md={3}>
+                  <Typography variant="body2" color="text.secondary">Productos</Typography>
+                  <Typography variant="h5" sx={{ fontWeight: 700 }}>{totalProducts}</Typography>
+                </Grid>
                 <Grid item xs={12} md={3}>
                   <Select fullWidth size="small" value={selectedStore}
                     onChange={handleDestinationStoreChange}

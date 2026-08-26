@@ -478,7 +478,7 @@ const StoreList = () => {
                       px: 4,
                       py: 1.2,
                       fontSize: '1rem',
-                      background: 'linear-gradient(135deg, #04346b 0%, #065a9e 100%)',
+                      background: '#04346b',
                       boxShadow: '0 4px 20px rgba(4, 53, 107, 0.3)',
                       '&:hover': {
                         boxShadow: '0 6px 24px rgba(4, 53, 107, 0.4)',

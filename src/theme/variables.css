@@ -3,24 +3,24 @@
   --color-primary-light: #065a9e;
   --color-primary-dark: #022347;
   --color-accent: #a78bfa;
-  --color-background: rgba(4, 53, 107, 0.08);
+  --color-background: #e8eef6;
   --color-paper: #ffffff;
   --color-text: #1e293b;
   --color-text-secondary: #4a5568;
   --color-border: #e2e8f0;
   --color-white: #ffffff;
 
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
-  --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.1);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.08);
 
-  --radius-sm: 0.5rem;
-  --radius-md: 0.875rem;
-  --radius-lg: 1.25rem;
-  --spacing-md: 1.5rem;
-  --spacing-sm: 1rem;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --spacing-md: 1.25rem;
+  --spacing-sm: 0.75rem;
 
-  --transition-base: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 0.15s ease;
 }
 
 [data-theme="dark"] {
@@ -30,7 +30,7 @@
   --color-text-secondary: #8b949e;
   --color-border: #30363d;
 
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.5);
-  --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.6);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.5);
 }

@@ -83,7 +83,7 @@ const openedMixin = (theme) => ({
   width: drawerWidth,
   transition: theme.transitions.create("width", {
     easing: theme.transitions.easing.sharp,
-    duration: 280,
+    duration: 200,
   }),
   overflowX: "hidden",
 });
@@ -91,7 +91,7 @@ const openedMixin = (theme) => ({
 const closedMixin = (theme) => ({
   transition: theme.transitions.create("width", {
     easing: theme.transitions.easing.sharp,
-    duration: 280,
+    duration: 200,
   }),
   overflowX: "hidden",
   width: `calc(${theme.spacing(8)} + 1px)`,
@@ -105,9 +105,9 @@ const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
 })(({ theme, open }) => ({
   zIndex: theme.zIndex.drawer + 1,
-  transition: theme.transitions.create(["width", "margin"], { duration: 280, easing: theme.transitions.easing.sharp }),
+  transition: theme.transitions.create(["width", "margin"], { duration: 200, easing: theme.transitions.easing.sharp }),
   background: colors.gradient.appbar,
-  boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+  boxShadow: "0 1px 0 rgba(0,0,0,0.08)",
   ...(open && {
     marginLeft: drawerWidth,
     width: `calc(100% - ${drawerWidth}px)`,
