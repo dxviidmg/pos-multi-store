@@ -146,7 +146,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
   const { user, logout, updateUser } = useUser();
   const dispatch = useDispatch();
 
-  const accent = '#a78bfa';
+  const accent = colors.accent;
 
   const [open, setOpen] = React.useState(false);
   const [openMenus, setOpenMenus] = React.useState({});
@@ -381,7 +381,23 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
           >
             {(user?.store_name || user?.tenant_name || "U").charAt(0).toUpperCase()}
           </Avatar>
-          <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={() => setAnchorEl(null)}
+            PaperProps={{
+              sx: {
+                bgcolor: 'primary.main',
+                color: '#fff',
+                border: 'none',
+                '& .MuiMenuItem-root': {
+                  fontSize: '0.8125rem',
+                  '&:hover': { bgcolor: 'rgba(255,255,255,0.08)' },
+                },
+                '& .MuiListItemIcon-root': { color: 'rgba(255,255,255,0.7)' },
+              },
+            }}
+          >
             <MenuItem onClick={() => { setAnchorEl(null); navigate("/perfil"); }}>
               <ListItemIcon><PersonSearchIcon fontSize="small" /></ListItemIcon>
               Perfil

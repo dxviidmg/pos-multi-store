@@ -27,7 +27,7 @@ const UpdatesModal = ({ open, onClose }) => {
 
   return (
     <CustomModal showOut={isOpen} onClose={handleClose} title="🎉 Novedades SmartVenta 2026">
-      <Grid container sx={{ padding: '1rem', backgroundColor: 'rgba(4, 53, 107, 0.2)' }}>
+      <Grid container sx={{ padding: '1rem', backgroundColor: 'modalBody.main' }}>
         <Grid item xs={12} className="card" sx={{ maxHeight: '60vh', overflow: 'auto' }}>
           {sections.map((s, i) => (
             <Box key={i} sx={{ mb: 2 }}>

@@ -15,7 +15,8 @@ const style = {
   bgcolor: 'background.paper',
   boxShadow: '0 24px 48px rgba(0,0,0,0.12)',
   borderRadius: 1,
-  border: '1px solid #e8ecf1',
+  border: '1px solid',
+  borderColor: 'divider',
 };
 
 function CustomModal({ showOut, onClose, title, children, maxWidth = 800 }) {

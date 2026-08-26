@@ -146,7 +146,7 @@ const PaymentEditModal = ({ isOpen, sale, onClose, onUpdate }) => {
         onClose={onClose}
         title="Cobrar apartado"
       >
-        <Grid container sx={{ padding: '1rem', backgroundColor: 'rgba(4, 53, 107, 0.2)' }}>
+        <Grid container sx={{ padding: '1rem', backgroundColor: 'modalBody.main' }}>
           {/* Información del apartado */}
           <Grid item xs={12} className="card" sx={{ marginBottom: '1rem' }}>
             <h2 style={{ marginBottom: '0.5rem' }}>Información</h2>

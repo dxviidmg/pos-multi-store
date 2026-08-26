@@ -203,7 +203,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
       title={showStoreProducts ? "Stock del producto" : formData.id ? "Actualizar producto" : "Crear producto"}
       maxWidth={950}
     >
-      <Grid container sx={{ padding: '1rem', backgroundColor: 'rgba(4, 53, 107, 0.2)' }}>
+      <Grid container sx={{ padding: '1rem', backgroundColor: 'modalBody.main' }}>
         <Grid item xs={12} className="card">
         
         {!showStoreProducts && (

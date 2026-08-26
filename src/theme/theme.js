@@ -5,10 +5,12 @@ export const getTheme = (mode) => createTheme({
     mode,
     primary: { main: '#04346b', light: '#065a9e', dark: '#022347' },
     secondary: { main: '#e94560' },
+    accent: { main: '#a78bfa', dark: '#7c5cbf' },
     success: { main: '#16a34a', light: '#dcfce7', dark: '#15803d' },
     warning: { main: '#d97706', light: '#fef3c7', dark: '#b45309' },
     error: { main: '#dc2626', light: '#fee2e2', dark: '#b91c1c' },
     info: { main: '#0284c7', light: '#e0f2fe', dark: '#0369a1' },
+    modalBody: { main: 'rgba(4, 53, 107, 0.2)' },
     ...(mode === 'light' ? {
       background: { default: '#e8eef6', paper: '#ffffff' },
       text: { primary: '#1e293b', secondary: '#4a5568' },

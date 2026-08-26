@@ -137,8 +137,8 @@ const DataTable = ({
             borderColor: 'divider',
             borderRadius: 2,
             "& .MuiDataGrid-columnHeaders": {
-              backgroundColor: '#04346b',
-              color: '#fff',
+              backgroundColor: 'primary.main',
+              color: 'primary.contrastText',
               minHeight: '36px !important',
               maxHeight: '36px !important',
             },

@@ -13,6 +13,7 @@ import { getFormattedDateTime } from "../../../utils/utils";
 import { showSuccess, showError } from "../../../utils/alerts";
 import { getStockUpdateRequests } from "../../../api/notifications";
 import Swal from "sweetalert2";
+import { colors } from "../../../theme/colors";
 import PageHeader from "../../ui/PageHeader";
 
 const StockUpdateRequestList = () => {
@@ -56,7 +57,7 @@ const StockUpdateRequestList = () => {
       showCancelButton: true,
       confirmButtonText: "Borrar",
       cancelButtonText: "Cancelar",
-      confirmButtonColor: "#d33",
+      confirmButtonColor: colors.primary,
     });
     if (!isConfirmed) return;
     try {

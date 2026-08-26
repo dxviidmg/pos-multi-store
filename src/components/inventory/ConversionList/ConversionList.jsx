@@ -3,6 +3,7 @@ import { Box, Typography } from "@mui/material";
 import DataTable from "../../ui/DataTable/DataTable";
 import CustomButton from "../../ui/Button/Button";
 import PageHeader from "../../ui/PageHeader";
+import { colors } from "../../../theme/colors";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { useConversions, useDeleteConversion, useApplyConversion } from "../../../hooks/useConversions";
 import { useModal } from "../../../hooks/useModal";
@@ -32,7 +33,7 @@ const ConversionList = () => {
       showCancelButton: true,
       confirmButtonText: "Sí, eliminar",
       cancelButtonText: "Cancelar",
-      confirmButtonColor: "#d33",
+      confirmButtonColor: colors.primary,
     });
 
     if (result.isConfirmed) {
@@ -49,7 +50,7 @@ const ConversionList = () => {
       showCancelButton: true,
       confirmButtonText: "Sí, desempacar",
       cancelButtonText: "Cancelar",
-      confirmButtonColor: "#04346b",
+      confirmButtonColor: colors.primary,
     });
 
     if (result.isConfirmed) {
