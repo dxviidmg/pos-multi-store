@@ -402,7 +402,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
               <ListItemIcon><PersonSearchIcon fontSize="small" /></ListItemIcon>
               Perfil
             </MenuItem>
-            <MenuItem onClick={() => { setAnchorEl(null); navigate("/", { replace: true }); logout(); window.location.reload(); }}>
+            <MenuItem onClick={() => { setAnchorEl(null); logout(); navigate('/'); }}>
               <ListItemIcon><LogoutIcon fontSize="small" /></ListItemIcon>
               Cerrar sesión
             </MenuItem>
