@@ -96,7 +96,7 @@ const StoreProductAuditList = () => {
               {user.role === "owner" ? (
                 <>
                   <strong>Revisa y aprueba las solicitudes de stock en{" "}
-                  <Link to="/solicitudes-ajustes-stock/" style={{ color: "#04346b", fontWeight: 600 }}>
+                  <Link to="/solicitudes-ajustes-stock/" style={{ color: "var(--color-primary)", fontWeight: 600 }}>
                     Solicitudes de Ajuste
                   </Link>.</strong>
                 </>

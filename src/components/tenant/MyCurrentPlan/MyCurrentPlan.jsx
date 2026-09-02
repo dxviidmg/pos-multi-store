@@ -114,7 +114,7 @@ const MyCurrentPlan = () => {
               variant="contained"
               color="success"
               size="small"
-              sx={{ background: '#2e7d32 !important', '&:hover': { background: '#1b5e20 !important' } }}
+              sx={{ bgcolor: 'success.main', '&:hover': { bgcolor: 'success.dark' } }}
             >
               Domiciliar (Ahorra ${plan.plan.price - equivalent.price} MXN/mes)
             </Button>

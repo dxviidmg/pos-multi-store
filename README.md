@@ -1,6 +1,6 @@
 # SmartVenta — Sistema de Punto de Venta Multi-Tienda
 
-> Última actualización: 17 de agosto de 2026, 16:17 hrs
+> Última actualización: 25 de agosto de 2026, 17:43 hrs
 > 
 
 Sistema de punto de venta (POS) diseñado para negocios con múltiples sucursales. Permite gestionar ventas, inventario, traspasos y distribuciones desde una sola plataforma, con visibilidad en tiempo real de todas las tiendas y almacenes.
@@ -23,6 +23,7 @@ Estas son las características que te interesan como dueño de tu negocio:
 - **Crear producto desde búsqueda** — Si no se encuentra un producto, puedes crearlo directamente con stock inicial
 - **Múltiples carritos simultáneos** — Atiende a varios clientes al mismo tiempo sin perder información
 - **Precios dinámicos** — Precio unitario y precio mayoreo automático según cantidad
+- **Venta por pesos (KG)** — Para productos por kilogramo, elige vender por kilo, fracción o monto en pesos ("Dame $20 de queso")
 - **Una pantalla para todo** — Ventas, traspasos y distribuciones desde la misma interfaz
 - **Atajos de teclado** — Ctrl+Q/W para buscar, Ctrl+E/R/T/Y/U/I para tipo de operación, Ctrl+B para enfocar búsqueda, Ctrl+J para seleccionar cliente
 - **Impresión de tickets** — Compatible con impresoras térmicas estándar
@@ -43,6 +44,7 @@ Estas son las características que te interesan como dueño de tu negocio:
 - **Historial de stock** — Cada movimiento de inventario queda registrado (ventas, traspasos, ajustes)
 - **Revisión de Stock** — Modal para consultar stock en otras tiendas y agregar stock directamente
 - **Agregar stock durante la venta** — Acceso rápido para aumentar inventario
+- **Unidad visible en inventario** — Columna de unidad (PZ, KG, Costal, etc.) en la tabla de inventario
 
 ### 🚚 Traslados Entre Tiendas
 

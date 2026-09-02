@@ -97,7 +97,7 @@ const StoreProductList = () => {
               {user.role === "owner" ? (
                 <>
                   <strong>Revisa y aprueba las solicitudes de stock en{" "}
-                  <Link to="/solicitudes-ajustes-stock/" style={{ color: "#04346b", fontWeight: 600 }}>
+                  <Link to="/solicitudes-ajustes-stock/" style={{ color: "var(--color-primary)", fontWeight: 600 }}>
                     Solicitudes de Ajuste
                   </Link>.</strong>
                 </>
@@ -179,6 +179,7 @@ const StoreProductList = () => {
               { name: "Departamento", selector: (row) => row.product.department_name },
               { name: "Nombre", selector: (row) => row.product.name },
               { name: "Stock", selector: (row) => row.stock },
+              { name: "Unidad", selector: (row) => row.product.unit },
               {
                 name: "Acciones",
                 cell: (row) => (

@@ -5,15 +5,15 @@ const DropZone = styled('label')(({ theme, isDragging }) => ({
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
-  padding: '1.5rem',
-  border: `2px dashed ${isDragging ? theme.palette.primary.main : theme.palette.divider}`,
-  borderRadius: 12,
+  padding: '1.25rem',
+  border: `1.5px dashed ${isDragging ? theme.palette.primary.main : theme.palette.divider}`,
+  borderRadius: 8,
   cursor: 'pointer',
-  backgroundColor: isDragging ? 'rgba(4, 52, 107, 0.06)' : 'transparent',
-  transition: 'all 0.2s ease',
+  backgroundColor: isDragging ? 'rgba(4, 52, 107, 0.04)' : 'transparent',
+  transition: 'border-color 0.15s ease, background-color 0.15s ease',
   '&:hover': {
     borderColor: theme.palette.primary.main,
-    backgroundColor: 'rgba(4, 52, 107, 0.04)',
+    backgroundColor: 'rgba(4, 52, 107, 0.02)',
   },
 }));
 

@@ -1,7 +1,6 @@
 import React, { memo, useState, useMemo } from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import { Box, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
-import { colors } from "../../../theme/colors";
+import { Box, TextField, Typography, Paper } from "@mui/material";
 
 const searchInObject = (obj, search) => {
   if (typeof obj === "string") return obj.toLowerCase().includes(search.toLowerCase());
@@ -58,12 +57,12 @@ const DataTable = ({
 
         if (col.cell) {
           column.renderCell = (params) => (
-            <div 
-              style={{ 
-                display: 'flex', 
-                gap: '2px', 
-                alignItems: 'center', 
-                justifyContent: getCellAlignment(params.row), 
+            <div
+              style={{
+                display: 'flex',
+                gap: '2px',
+                alignItems: 'center',
+                justifyContent: getCellAlignment(params.row),
                 width: '100%',
                 paddingRight: isRightAligned(params.row) ? '12px' : '2px'
               }}
@@ -92,35 +91,25 @@ const DataTable = ({
   return (
     <Box sx={{ width: "100%", mt: 1 }}>
       {searcher && (
-        <Box sx={{ mb: 2 }}>
-          <TextField size="small" fullWidth label="Buscar" placeholder="Buscar"
-            type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
+        <Box sx={{ mb: 1.5 }}>
+          <TextField
+            size="small"
+            fullWidth
+            placeholder="Buscar..."
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
         </Box>
       )}
 
       <Box sx={{ width: "100%", maxWidth: "100%", overflowX: "auto" }}>
         {data.length === 0 && !progressPending ? (
-          <TableContainer component={Paper}>
-            <Table size="small">
-              <TableHead>
-                <TableRow sx={{ backgroundColor: colors.primary }}>
-                  {visibleColumns.map((col, i) => (
-                    <TableCell key={i} sx={{ fontWeight: "bold", color: colors.text.white, py: 0.5, fontSize: "0.8125rem", textAlign: "center" }}>
-                      {col.name}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                <TableRow>
-                  <TableCell colSpan={visibleColumns.length} align="center" sx={{ py: 0.5, fontSize: "0.8125rem" }}>
-                    {noDataComponent}
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </TableContainer>
+          <Paper sx={{ p: 4, textAlign: 'center' }}>
+            <Typography variant="body2" color="text.secondary">
+              {noDataComponent}
+            </Typography>
+          </Paper>
         ) : (
         <DataGrid
           rows={rowsWithIds}
@@ -144,23 +133,29 @@ const DataTable = ({
           hideFooter={data.length <= 10}
           density="compact"
           sx={{
+            border: '1px solid',
+            borderColor: 'divider',
+            borderRadius: 2,
             "& .MuiDataGrid-columnHeaders": {
-              backgroundColor: colors.primary,
-              color: colors.text.white,
+              backgroundColor: 'primary.main',
+              color: 'primary.contrastText',
               minHeight: '36px !important',
               maxHeight: '36px !important',
             },
-            "& .MuiDataGrid-columnHeaderTitle": { textAlign: 'center', width: '100%' },
+            "& .MuiDataGrid-columnHeaderTitle": {
+              fontWeight: 600,
+              fontSize: '0.8125rem',
+            },
             "& .MuiDataGrid-columnHeader": { justifyContent: 'center' },
             "& .MuiDataGrid-columnHeaderTitleContainer": { justifyContent: 'center' },
             "& .MuiDataGrid-cell": {
-              py: 0, px: '2px', fontSize: '0.8125rem',
-              whiteSpace: 'normal !important', lineHeight: '1.3 !important',
-              justifyContent: 'center', textAlign: 'center', gap: '2px',
-              '& .MuiButtonBase-root': { transform: 'scale(0.8)', minWidth: 0, px: 1 },
+              py: 0.5, px: 1, fontSize: '0.8125rem',
+              whiteSpace: 'normal !important', lineHeight: '1.4 !important',
+              justifyContent: 'center', textAlign: 'center',
+              '& .MuiButtonBase-root': { transform: 'scale(0.85)', minWidth: 0, px: 0.5 },
             },
             "& .MuiDataGrid-row": {
-              minHeight: '32px !important',
+              minHeight: '34px !important',
               maxHeight: 'none !important',
             },
           }}

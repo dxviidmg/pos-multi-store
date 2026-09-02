@@ -94,7 +94,7 @@ const SaleModal = ({ isOpen, sale, onClose, onUpdate }) => {
       onClose={onClose}
       title={getTitle()}
     >
-      <Grid container sx={{ padding: '1rem', backgroundColor: 'rgba(4, 53, 107, 0.2)' }}>
+      <Grid container sx={{ padding: '1rem', backgroundColor: 'modalBody.main' }}>
         <Grid item xs={12} className="card">
         <Grid container spacing={2}>
           <Grid item xs={12} md={2}>
@@ -122,7 +122,7 @@ const SaleModal = ({ isOpen, sale, onClose, onUpdate }) => {
           {isReservation ? (
             <Grid item xs={12} md={4}>
               <Typography variant="body2" sx={{ fontWeight: 600, mt: 1 }}>
-                Devolver al cliente: <span style={{ color: "#04346b", fontSize: "1.1rem" }}>${cashBack?.toFixed(2)}</span>
+                Devolver al cliente: <span style={{ color: "var(--color-primary)", fontSize: "1.1rem" }}>${cashBack?.toFixed(2)}</span>
               </Typography>
             </Grid>
           ) : (

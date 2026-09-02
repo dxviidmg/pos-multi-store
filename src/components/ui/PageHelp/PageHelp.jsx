@@ -24,7 +24,7 @@ const PageHelp = memo(() => {
         onClose={() => setAnchorEl(null)}
         anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
         transformOrigin={{ vertical: "top", horizontal: "right" }}
-        slotProps={{ paper: { sx: { maxWidth: 400, borderRadius: 1.5, overflow: "hidden", bgcolor: theme.palette.mode === "dark" ? "background.default" : "#CCD2DE" } } }}
+        slotProps={{ paper: { sx: { maxWidth: 400, borderRadius: 1.5, overflow: "hidden", bgcolor: "background.default" } } }}
       >
         <Box sx={{ px: 2.5, py: 2 }}>
           <Typography variant="body1" color="text.primary" sx={{ lineHeight: 1.7 }}>

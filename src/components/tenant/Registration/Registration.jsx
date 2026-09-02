@@ -298,7 +298,7 @@ const Registration = () => {
                           value={formData.name}
                           onChange={(e) => {
                             const capitalized = e.target.value
-                              .replace(/\b\w/g, (c) => c.toUpperCase());
+                              .replace(/\b(\w)(\w*)/g, (_, first, rest) => first.toUpperCase() + rest);
                             setFormData((prev) => ({ ...prev, name: capitalized }));
                           }}
                           required

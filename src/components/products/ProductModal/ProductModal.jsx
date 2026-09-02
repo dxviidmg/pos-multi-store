@@ -15,15 +15,17 @@ import { useForm } from "../../../hooks/useForm";
 import noPhoto from "../../../assets/images/noPhoto.jpg";
 import { getDepartments } from "../../../api/departments";
 import SimpleTable from "../../ui/SimpleTable/SimpleTable";
-import { Grid, TextField, Box, Checkbox, FormControlLabel, Autocomplete } from "@mui/material";
+import { Grid, TextField, Box, Checkbox, FormControlLabel, Autocomplete, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import VisuallyHiddenInput from "../../ui/VisuallyHiddenInput";
+import { useConversionUnits } from "../../../hooks/useConversions";
 
 const INITIAL_FORM_DATA = {
   brand: "",
   department: "",
   code: "",
   name: "",
+  unit: "PZ",
   cost: "",
   unit_price: "",
   wholesale_price: "",
@@ -54,6 +56,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [codeExists, setCodeExists] = useState(false);
   const codeDebounceRef = useRef(null);
+  const { data: units = [] } = useConversionUnits();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -65,6 +68,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
           department: productData.department || "",
           code: productData.code || "",
           name: productData.name || "",
+          unit: productData.unit || "PZ",
           cost: productData.cost || "",
           unit_price: productData.unit_price || "",
           wholesale_price: productData.wholesale_price || "",
@@ -197,8 +201,9 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
       showOut={isOpen}
       onClose={onClose}
       title={showStoreProducts ? "Stock del producto" : formData.id ? "Actualizar producto" : "Crear producto"}
+      maxWidth={950}
     >
-      <Grid container sx={{ padding: '1rem', backgroundColor: 'rgba(4, 53, 107, 0.2)' }}>
+      <Grid container sx={{ padding: '1rem', backgroundColor: 'modalBody.main' }}>
         <Grid item xs={12} className="card">
         
         {!showStoreProducts && (
@@ -228,40 +233,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
 
           <Grid item xs={12} md={8}>
             <Grid container spacing={2}>
-              <Grid item xs={12} md={6}>
-                <Autocomplete
-                  size="small"
-                  options={brands}
-                  getOptionLabel={(option) => `${option.name} (${option.product_count})`}
-                  value={brands.find((b) => b.id === formData.brand) || null}
-                  onChange={(_, newValue) => {
-                    setFormData((prev) => ({ ...prev, brand: newValue?.id || "" }));
-                  }}
-                  isOptionEqualToValue={(option, value) => option.id === value.id}
-                  disabled={optionsLoaded && brands.length === 0}
-                  renderInput={(inputProps) => (
-                    <TextField {...inputProps} label="Marca" />
-                  )}
-                />
-              </Grid>
-
-              <Grid item xs={12} md={6}>
-                <Autocomplete
-                  size="small"
-                  options={departments}
-                  getOptionLabel={(option) => `${option.name} (${option.product_count})`}
-                  value={departments.find((d) => d.id === formData.department) || null}
-                  onChange={(_, newValue) => {
-                    setFormData((prev) => ({ ...prev, department: newValue?.id || "" }));
-                  }}
-                  isOptionEqualToValue={(option, value) => option.id === value.id}
-                  disabled={optionsLoaded && departments.length === 0}
-                  renderInput={(inputProps) => (
-                    <TextField {...inputProps} label="Departamento" />
-                  )}
-                />
-              </Grid>
-
+              {/* Fila 1: Identificación del producto */}
               <Grid item xs={12} md={6}>
                 <TextField size="small" fullWidth label="Código" type="text"
                   value={formData.code}
@@ -281,7 +253,58 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
                 />
               </Grid>
 
-              <Grid item xs={12} md={6}>
+              {/* Fila 2: Clasificación */}
+              <Grid item xs={12} md={4}>
+                <Autocomplete
+                  size="small"
+                  options={brands}
+                  getOptionLabel={(option) => `${option.name} (${option.product_count})`}
+                  value={brands.find((b) => b.id === formData.brand) || null}
+                  onChange={(_, newValue) => {
+                    setFormData((prev) => ({ ...prev, brand: newValue?.id || "" }));
+                  }}
+                  isOptionEqualToValue={(option, value) => option.id === value.id}
+                  disabled={optionsLoaded && brands.length === 0}
+                  renderInput={(inputProps) => (
+                    <TextField {...inputProps} label="Marca" />
+                  )}
+                />
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <Autocomplete
+                  size="small"
+                  options={departments}
+                  getOptionLabel={(option) => `${option.name} (${option.product_count})`}
+                  value={departments.find((d) => d.id === formData.department) || null}
+                  onChange={(_, newValue) => {
+                    setFormData((prev) => ({ ...prev, department: newValue?.id || "" }));
+                  }}
+                  isOptionEqualToValue={(option, value) => option.id === value.id}
+                  disabled={optionsLoaded && departments.length === 0}
+                  renderInput={(inputProps) => (
+                    <TextField {...inputProps} label="Departamento" />
+                  )}
+                />
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <FormControl fullWidth size="small">
+                  <InputLabel>Unidad</InputLabel>
+                  <Select
+                    value={formData.unit}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, unit: e.target.value }))}
+                    label="Unidad"
+                  >
+                    {units.map((u) => (
+                      <MenuItem key={u.value} value={u.value}>
+                        {u.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+
+              {/* Fila 3: Precios */}
+              <Grid item xs={12} md={4}>
                 <TextField size="small" fullWidth label="Costo" type="number"
                   value={formData.cost}
                   placeholder="Costo"
@@ -292,8 +315,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
                   helperText={isCostHigher ? "Debe ser menor al precio unitario" : ""}
                 />
               </Grid>
-
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} md={4}>
                 <TextField size="small" fullWidth label="Precio unitario" type="number"
                   value={formData.unit_price}
                   placeholder="Precio unitario"
@@ -304,8 +326,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
                   helperText={isCostHigher ? "Debe ser mayor al costo" : ""}
                 />
               </Grid>
-
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} md={4}>
                 <TextField size="small" fullWidth label="Precio mayoreo" type="number"
                   value={formData.wholesale_price}
                   placeholder="Precio de mayoreo"
@@ -317,10 +338,11 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
                 />
               </Grid>
 
-              <Grid item xs={12} md={6}>
-                <TextField size="small" fullWidth label="Cantidad mínima de mayoreo" type="number"
+              {/* Fila 4: Mayoreo config */}
+              <Grid item xs={12} md={4}>
+                <TextField size="small" fullWidth label="Cantidad mínima mayoreo" type="number"
                   value={formData.min_wholesale_quantity}
-                  placeholder="Cantidad mínima de mayoreo"
+                  placeholder="Cantidad mínima"
                   name="min_wholesale_quantity"
                   onChange={handleDataChange}
                   disabled={!canEditPrices}
@@ -328,8 +350,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
                   helperText={(formData.min_wholesale_quantity !== "" && formData.wholesale_price === "") ? "Requiere precio mayoreo" : ""}
                 />
               </Grid>
-
-              <Grid item xs={12} sx={{ mt: -1.5 }}>
+              <Grid item xs={12} md={8} sx={{ display: 'flex', alignItems: 'center' }}>
                 <FormControlLabel
                   control={
                     <Checkbox size="small"
@@ -339,7 +360,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
                       disabled={!canEditPrices}
                     />
                   }
-                  label="Permitir precio de mayoreo para clientes registrados"
+                  label="Aplicar mayoreo aún con descuento de cliente"
                 />
               </Grid>
 
