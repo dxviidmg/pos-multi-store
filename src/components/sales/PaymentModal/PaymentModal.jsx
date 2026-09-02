@@ -317,7 +317,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
         onClose={onClose}
         title={movementType === MOVEMENT_TYPES.RESERVATION ? "Registrar apartado" : "Finalizar venta"}
       >
-        <Grid container sx={{ padding: '1rem', backgroundColor: 'rgba(4, 53, 107, 0.2)' }}>
+        <Grid container sx={{ padding: '1rem', backgroundColor: 'modalBody.main' }}>
           {movementType === MOVEMENT_TYPES.RESERVATION && (
             <Grid item xs={12} sx={{ marginBottom: '1rem' }}>
               <Alert severity="info" variant="filled">
@@ -396,7 +396,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
               <Box sx={{ 
                 p: 1.5, 
                 borderRadius: 2, 
-                backgroundColor: 'rgba(4, 53, 107, 0.04)', 
+                backgroundColor: 'action.hover', 
                 border: '1px solid',
                 borderColor: 'divider'
               }}>

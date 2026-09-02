@@ -173,7 +173,7 @@ const StockModal = ({ isOpen, product, onClose }) => {
          maxWidth="sm"
        >
         <CustomSpinner isLoading={isLoading} />
-        <Box sx={{ p: 2, bgcolor: "#FFFFFF"}}>
+        <Box sx={{ p: 2, bgcolor: "background.paper"}}>
           <Grid container>
             {renderStockInfo()}
 

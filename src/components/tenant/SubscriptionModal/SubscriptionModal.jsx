@@ -75,7 +75,7 @@ const SubscriptionModal = ({ isOpen, subscription, onClose, onUpdate }) => {
     >
       <Grid
         container
-        sx={{ padding: "1rem", backgroundColor: "rgba(4, 53, 107, 0.2)" }}
+        sx={{ padding: "1rem", backgroundColor: "modalBody.main" }}
       >
         <Grid item xs={12} className="card">
           <Grid container spacing={2}>

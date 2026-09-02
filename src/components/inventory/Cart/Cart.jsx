@@ -22,7 +22,7 @@ import { useUser } from "../../../context/UserContext";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { useModal } from "../../../hooks/useModal";
 import { useAvailableStock } from "../../../hooks/useAvailableStock";
-import { Grid, Select, MenuItem } from "@mui/material";
+import { Grid, Select, MenuItem, Typography } from "@mui/material";
 import PaymentIcon from "@mui/icons-material/Payment";
 import SendIcon from "@mui/icons-material/Send";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
@@ -39,6 +39,7 @@ const Cart = ({ searchInputRef }) => {
   const [selectedStore, setSelectedStore] = useState("");
   const [confirmedStore, setConfirmedStore] = useState("");
   const [loading, setLoading] = useState(false);
+  const [saleModes, setSaleModes] = useState({});
   const lastQtyRef = useRef(null);
   const prevCartLenRef = useRef(0);
   
@@ -110,7 +111,11 @@ const Cart = ({ searchInputRef }) => {
   }, [cart]);
 
   const { totalProducts } = useMemo(() => {
-    const totalProducts = cart.reduce((acc, item) => acc + item.quantity, 0);
+    const totalProducts = cart.reduce((acc, item) => {
+      // Productos KG cuentan como 1 sin importar la cantidad
+      if (item.product?.unit === "KG") return acc + 1;
+      return acc + item.quantity;
+    }, 0);
     return { totalProducts };
   }, [cart]);
 
@@ -127,18 +132,26 @@ const Cart = ({ searchInputRef }) => {
   };
 
   const handleQuantityChangeToCart = (e, product) => {
-    const newQuantity = Number(e.target.value);
-  
-    // Permitir campo vacío mientras el usuario escribe
-    if (e.target.value === "" || newQuantity <= 0) return;
+    const rawValue = Number(e.target.value);
+    const productIsKg = product.product?.unit === "KG";
+    const mode = saleModes[product.id] || "KG";
+    const minQty = productIsKg ? (mode === "$" ? 1 : (mode === "FRAC" ? 0.1 : 1)) : 1;
+
+    // En modo $, el valor es pesos, calcular kg
+    let newQuantity;
+    if (mode === "$" && productIsKg) {
+      if (e.target.value === "" || rawValue < 1) return;
+      newQuantity = rawValue / product.product_price;
+    } else {
+      if (e.target.value === "" || rawValue < minQty) return;
+      newQuantity = rawValue;
+    }
   
     // --- Control de límites según movimiento ---
     const stockLimit =
       movementType === MOVEMENT_TYPES.TRANSFER
         ? product.stock
-        : movementType === MOVEMENT_TYPES.SALE
-        ? product.available_stock
-        : Infinity;
+        : product.available_stock;
   
     // Verificar stock disponible considerando otros carritos
     const availableStock = movementType === MOVEMENT_TYPES.ADD_STOCK ? Infinity : getAvailableStock(product.id, stockLimit);
@@ -265,7 +278,7 @@ const Cart = ({ searchInputRef }) => {
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const saleColumns = useMemo(() => getSaleColumns(handleQuantityChangeToCart, handleRemoveFromCart, handleChangePrice, movementType, getAvailableStock, handleStockWarning), [movementType, getAvailableStock]);
+  const saleColumns = useMemo(() => getSaleColumns(handleQuantityChangeToCart, handleRemoveFromCart, handleChangePrice, movementType, getAvailableStock, handleStockWarning, saleModes, setSaleModes), [movementType, getAvailableStock, saleModes]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const transferColumns = useMemo(() => getTransferColumns(handleQuantityChangeToCart, handleRemoveFromCart, getAvailableStock), []);
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -303,15 +316,22 @@ const Cart = ({ searchInputRef }) => {
           <Grid container spacing={1} sx={{ mb: 1, alignItems: 'center' }}>
             {(movementType === MOVEMENT_TYPES.SALE || movementType === MOVEMENT_TYPES.RESERVATION) && (
               <>
-                <Grid item xs={12} md={4}>
-                  <h3>Productos: {totalProducts}</h3>
+                <Grid item xs={12} md={3}>
+                  <Typography variant="body2" color="text.secondary">Productos</Typography>
+                  <Typography variant="h5" sx={{ fontWeight: 700 }}>{totalProducts}</Typography>
                 </Grid>
 
-                <Grid item xs={12} md={4}>
-                  <h3>Total: ${total.toFixed(2)}</h3>
+                <Grid item xs={12} md={5}>
+                  <Typography variant="body2" color="text.secondary">Total</Typography>
+                  <Typography variant="h4" sx={{ fontWeight: 700, color: 'primary.main' }}>${total.toFixed(2)}</Typography>
                 </Grid>
                 <Grid item xs={12} md={4}>
-                  <CustomButton fullWidth onClick={() => paymentModal.open()} startIcon={<PaymentIcon />}>
+                  <CustomButton
+                    fullWidth
+                    onClick={() => paymentModal.open()}
+                    startIcon={<PaymentIcon />}
+                    sx={{ py: 1.2, fontSize: '0.875rem' }}
+                  >
                     Cobrar (Ctrl+P)
                   </CustomButton>
                 </Grid>
@@ -321,7 +341,10 @@ const Cart = ({ searchInputRef }) => {
             {(movementType === MOVEMENT_TYPES.TRANSFER ||
               movementType === MOVEMENT_TYPES.DISTRIBUTION) && (
               <>
-                <Grid item xs={12} md={3}><h3>Productos: {totalProducts}</h3></Grid>
+                <Grid item xs={12} md={3}>
+                  <Typography variant="body2" color="text.secondary">Productos</Typography>
+                  <Typography variant="h5" sx={{ fontWeight: 700 }}>{totalProducts}</Typography>
+                </Grid>
                 <Grid item xs={12} md={3}>
                   <Select fullWidth size="small" value={selectedStore}
                     onChange={handleDestinationStoreChange}

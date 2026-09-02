@@ -196,7 +196,6 @@ const SearchProduct = ({ searchInputRef }) => {
           {!storePrinter ? "Configurar impresora" : printerConnected ? (
             <>
               <span className="default-text">Impresora conectada</span>
-              <span className="hover-text">Imprimir prueba</span>
             </>
           ) : "Impresora desconectada"}
         </CustomButton>

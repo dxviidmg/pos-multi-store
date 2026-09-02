@@ -14,7 +14,7 @@ export const deleteConversion = conversionService.delete;
  * @returns {Promise<Object>} Array of { value, label }
  */
 export const getConversionUnits = async () => {
-  return httpClient.get(getApiUrl("product-conversion/units"));
+  return httpClient.get(getApiUrl("products/units"));
 };
 
 /**

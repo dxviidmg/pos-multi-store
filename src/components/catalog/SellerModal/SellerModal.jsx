@@ -135,7 +135,7 @@ const SellerModal = ({ isOpen, seller, onClose, onUpdate }) => {
       onClose={onClose}
       title={formData.id ? "Actualizar vendedor" : "Crear vendedor"}
     >
-      <Grid container sx={{ padding: '1rem', backgroundColor: 'rgba(4, 53, 107, 0.2)' }}>
+      <Grid container sx={{ padding: '1rem', backgroundColor: 'modalBody.main' }}>
         <Grid item xs={12} className="card">
           <Grid container spacing={2}>
             <Grid item xs={12} md={6}>

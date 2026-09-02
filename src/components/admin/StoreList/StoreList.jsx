@@ -3,6 +3,7 @@ import DataTable from "../../ui/DataTable/DataTable";
 import { Typography, Chip, Grid, FormControlLabel, Checkbox, Box, TextField, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import CustomButton from "../../ui/Button/Button";
 import PageHeader from "../../ui/PageHeader";
+import { colors } from "../../../theme/colors";
 import { useNavigate } from "react-router-dom";
 import { formatCurrency, getDateDifference, getFormattedDate } from "../../../utils/utils";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
@@ -150,8 +151,8 @@ const StoreList = () => {
       showCancelButton: true,
       confirmButtonText: 'Sí, vaciar',
       cancelButtonText: 'Cancelar',
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
+      confirmButtonColor: colors.primary,
+      cancelButtonColor: colors.primaryLight,
       inputValidator: (value) => {
         if (value !== storeName) {
           return 'El nombre de la tienda no coincide';
@@ -478,7 +479,7 @@ const StoreList = () => {
                       px: 4,
                       py: 1.2,
                       fontSize: '1rem',
-                      background: 'linear-gradient(135deg, #04346b 0%, #065a9e 100%)',
+                      bgcolor: 'primary.main',
                       boxShadow: '0 4px 20px rgba(4, 53, 107, 0.3)',
                       '&:hover': {
                         boxShadow: '0 6px 24px rgba(4, 53, 107, 0.4)',
@@ -499,7 +500,7 @@ const StoreList = () => {
                 {
                   when: row => row.id === user?.store_id,
                   style: {
-                    backgroundColor: '#e3f2fd',
+                    backgroundColor: 'info.light',
                     fontWeight: 500,
                   },
                 },

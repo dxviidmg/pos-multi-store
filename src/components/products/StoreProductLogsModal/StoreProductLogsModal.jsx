@@ -73,7 +73,7 @@ const StoreProductLogsModal = ({ isOpen, logs: logsData, onClose, onUpdate }) =>
       onClose={onClose}
       title={`${adjustStock ? (String(formData.stock) === String(storeProduct.stock) ? "Confirmar cantidad" : "Modificar cantidad") : "Historial de movimientos"} de ${formData.product?.code} - ${formData.product?.name}`}
     >
-     <Grid container sx={{ padding: '1rem', backgroundColor: 'rgba(4, 53, 107, 0.2)' }}>
+     <Grid container sx={{ padding: '1rem', backgroundColor: 'modalBody.main' }}>
        <Grid item xs={12} className="card">
      <Grid container spacing={2}>
 
