@@ -8,6 +8,7 @@ import httpClient from "../../../api/httpClient";
 import { getApiUrl } from "../../../api/utils";
 
 const StockUpdateRequestModal = ({ isOpen, storeProduct, onClose }) => {
+  const MAX_STOCK = 99999999;
   const [requestedStock, setRequestedStock] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -60,7 +61,12 @@ const StockUpdateRequestModal = ({ isOpen, storeProduct, onClose }) => {
               <TextField size="small" fullWidth label="Stock actual" value={storeProduct?.stock ?? ""} disabled />
             </Grid>
             <Grid item xs={12} md={6}>
-              <TextField size="small" fullWidth label="Cantidad correcta" type="number" value={requestedStock} onChange={(e) => setRequestedStock(e.target.value)} inputProps={{ min: 0 }} />
+              <TextField size="small" fullWidth label="Cantidad correcta" type="number" value={requestedStock} onChange={(e) => {
+                const raw = e.target.value;
+                if (raw === "") { setRequestedStock(""); return; }
+                const num = Math.max(0, Math.min(Number(raw), MAX_STOCK));
+                setRequestedStock(num.toString());
+              }} inputProps={{ min: 0, max: MAX_STOCK }} />
             </Grid>
             <Grid item xs={12} md={6}>
               <CustomButton fullWidth onClick={handleSubmit2} disabled={requestedStock !== "" ||loading} startIcon={<SendIcon />}>
