@@ -11,6 +11,7 @@ import { Grid, TextField, LinearProgress } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 
 const INITIAL_FORM_DATA = { stock: "" };
+const MAX_STOCK = 99999999;
 
 const StoreProductLogsModal = ({ isOpen, logs: logsData, onClose, onUpdate }) => {
   const storeProduct = logsData?.storeProduct || {};
@@ -83,7 +84,11 @@ const StoreProductLogsModal = ({ isOpen, logs: logsData, onClose, onUpdate }) =>
             value={formData.stock}
             placeholder="Cantidad"
             name={"stock"}
-            onChange={handleInputChange}
+            onChange={(e) => {
+              const digits = e.target.value.replace(/\D/g, "");
+              const capped = digits === "" ? "" : Math.min(Number(digits), MAX_STOCK).toString();
+              handleInputChange({ target: { name: "stock", value: capped } });
+            }}
           />
         </Grid>
         )}
