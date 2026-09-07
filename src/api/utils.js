@@ -33,6 +33,20 @@ export const getPrinterUrl = (endpoint) => {
 };
 
 /**
+ * Build printer service WebSocket URL.
+ * Uses REACT_APP_PRINTER_WS_URL if defined; otherwise derives it from
+ * REACT_APP_PRINTER_URL by swapping the http(s) scheme for ws(s).
+ * @param {string} endpoint - Printer WS endpoint path (e.g. "printer-status")
+ * @returns {string} Full printer WebSocket URL
+ */
+export const getPrinterWsUrl = (endpoint) => {
+  const base =
+    process.env.REACT_APP_PRINTER_WS_URL ||
+    (process.env.REACT_APP_PRINTER_URL || "").replace(/^http/i, "ws");
+  return `${base}/${endpoint}/`;
+};
+
+/**
  * Build URL with query parameters
  * @param {string} baseUrl - Base URL
  * @param {Object} params - Query parameters object

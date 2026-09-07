@@ -29,6 +29,7 @@ import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { useQueryClient } from "@tanstack/react-query";
 import { cleanCart } from "../../../redux/cart/cartActions";
 import { useUser } from "../../../context/UserContext";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
@@ -145,6 +146,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
   const location = useLocation();
   const { user, logout, updateUser } = useUser();
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
 
   const accent = colors.accent;
 
@@ -168,10 +170,22 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
 
 
   const handleBack = () => {
+    // Al salir del contexto de una tienda, la data store-scoped (productos, ventas,
+    // resumen de tiendas, etc.) deja de ser válida. Limpiamos la caché para forzar
+    // un refetch y evitar mostrar datos de la tienda anterior o resúmenes vencidos.
+    queryClient.clear();
     dispatch(cleanCart());
     updateUser({ store_type: "", store_name: "", store_id: null });
     window.dispatchEvent(new Event("store-changed"));
     navigate("/tiendas/", { replace: true });
+  };
+
+  const handleLogout = () => {
+    // Limpiar estado que sobrevive al logout para no arrastrar datos del usuario anterior
+    queryClient.clear();      // vacía la caché de React Query (datos del usuario previo)
+    dispatch(cleanCart());    // limpia el carrito activo en Redux
+    logout();                 // borra el usuario de localStorage y del contexto
+    navigate("/");
   };
 
   const isActive = (href) => location.pathname === href;
@@ -402,7 +416,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
               <ListItemIcon><PersonSearchIcon fontSize="small" /></ListItemIcon>
               Perfil
             </MenuItem>
-            <MenuItem onClick={() => { setAnchorEl(null); logout(); navigate('/'); }}>
+            <MenuItem onClick={() => { setAnchorEl(null); handleLogout(); }}>
               <ListItemIcon><LogoutIcon fontSize="small" /></ListItemIcon>
               Cerrar sesión
             </MenuItem>
