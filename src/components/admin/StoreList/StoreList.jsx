@@ -24,6 +24,7 @@ import CustomModal from "../../ui/Modal/Modal";
 import CreateStoreModal from "./CreateStoreModal";
 import { useModal } from "../../../hooks/useModal";
 import { useCanCreateStore } from "../../../hooks/useCanCreateStore";
+import { useQueryClient } from "@tanstack/react-query";
 import { createMercadoPagoPreference } from "../../../api/mercadopago";
 import { showError } from "../../../utils/alerts";
 import mercadoPagoLogo from "../../../assets/mercadopago-logo.svg";
@@ -35,6 +36,7 @@ const StoreList = () => {
   const navigate = useNavigate();
   const today = getFormattedDate();
   const { user, updateUser } = useUser();
+  const queryClient = useQueryClient();
 
   const [storeInvestments, setStoreInvestments] = useState({});
   const [quickFilter, setQuickFilter] = useState("all");
@@ -114,10 +116,15 @@ const StoreList = () => {
     };
     updateUser(updatedData);
 
+    // Al entrar a una tienda, limpiamos la caché para que las consultas store-scoped
+    // (productos, ventas, inventario, etc.) se recarguen para la tienda seleccionada
+    // y no se muestre data de una tienda anterior.
+    queryClient.clear();
+
     window.dispatchEvent(new Event("store-changed"));
     const route = store_type === "A" ? "/distribuir/" : "/vender/";
     navigate(route, { replace: true });
-  }, [updateUser, navigate]);
+  }, [updateUser, navigate, queryClient]);
 
   const handleShowInvestment = useCallback(() => {
     setQuickFilter("investment");

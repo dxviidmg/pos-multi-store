@@ -9,6 +9,7 @@ import App from './App';
 import { getTheme } from './theme';
 import { useThemeMode } from './hooks/useThemeMode';
 import { UserProvider } from './context/UserContext';
+import ConnectionStatusBanner from './components/ui/ConnectionStatusBanner';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -30,6 +31,7 @@ const AppWrapper = () => {
         <UserProvider>
           <ThemeProvider theme={theme}>
             <CssBaseline />
+            <ConnectionStatusBanner />
             <App toggleTheme={toggleMode} themeMode={mode} />
           </ThemeProvider>
         </UserProvider>
