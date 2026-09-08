@@ -9,7 +9,6 @@ const tenantHeaders = {
 };
 
 export const checkTenantExists = async (short_name) => {
-  console.log('tenantHeaders', tenantHeaders)
   const response = await httpClient.get(getApiUrl("tenant-exists"), {
     params: { short_name },
     headers: tenantHeaders,

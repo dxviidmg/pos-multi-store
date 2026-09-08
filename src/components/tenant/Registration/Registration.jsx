@@ -19,7 +19,7 @@ import { checkTenantExists, getAvailablePlans } from "../../../api/registration"
 import {
   inputSx, pageContainerSx, overlayGradientSx, formPaperSx,
   successIconSx, labelSx, stepIndicatorSx, stepCountSx,
-  progressBarSx, primaryButtonSx, secondaryButtonSx, planCardSx,
+  progressBarSx,
 } from "./Registration.styles";
 
 const INITIAL_FORM_DATA = {
@@ -257,13 +257,28 @@ const Registration = () => {
                     src={Logo}
                     alt="SmartVenta"
                     sx={{
-                      maxWidth: "120px", height: "auto", borderRadius: 0,
+                      maxWidth: "120px", height: "auto", borderRadius: "12px",
                       mb: 2,
                       boxShadow: "0 12px 40px rgba(0,0,0,0.3)",
                     }}
                   />
                   <Typography sx={{ fontSize: "0.85rem", color: "rgba(255,255,255,0.7)" }}>
                     Crea tu negocio en un par de minutos
+                  </Typography>
+                  <Typography sx={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.6)", mt: 0.5 }}>
+                    ¿Ya tienes una cuenta?{" "}
+                    <Box
+                      component="span"
+                      sx={{
+                        color: "#a78bfa",
+                        fontWeight: 600,
+                        cursor: "pointer",
+                        "&:hover": { color: "#c4b5fd" },
+                      }}
+                      onClick={() => navigate("/login")}
+                    >
+                      Inicia sesión
+                    </Box>
                   </Typography>
                 </Box>
 
@@ -298,11 +313,13 @@ const Registration = () => {
                           value={formData.name}
                           onChange={(e) => {
                             const capitalized = e.target.value
-                              .replace(/\b(\w)(\w*)/g, (_, first, rest) => first.toUpperCase() + rest);
+                              .toLowerCase()
+                              .replace(/\b(\w)/g, (m) => m.toUpperCase());
                             setFormData((prev) => ({ ...prev, name: capitalized }));
                           }}
                           required
                           placeholder="Ej: Refraccionaria Ramirez"
+                          inputProps={{ autoCapitalize: "none", autoCorrect: "off" }}
                           sx={inputSx}
                         />
                       </Box>
@@ -311,29 +328,56 @@ const Registration = () => {
                         <Typography sx={labelSx}>
                           Clave de tu negocio
                         </Typography>
-                        <Typography sx={{ fontSize: "0.72rem", color: "rgba(255,255,255,0.55)", mb: 1, lineHeight: 1.6 }}>
-                          Es un código corto y único que usaremos para crear tus usuarios. Por ejemplo, si tu negocio es "Refaccionaria Ramírez", tu clave podría ser{" "}
-                          <span style={{ fontFamily: "monospace", color: "rgba(255,255,255,0.75)" }}>ramirez</span>,{" "}
-                          <span style={{ fontFamily: "monospace", color: "rgba(255,255,255,0.75)" }}>refram</span>,{" "}
-                          <span style={{ fontFamily: "monospace", color: "rgba(255,255,255,0.75)" }}>rr</span> o{" "}
-                          <span style={{ fontFamily: "monospace", color: "rgba(255,255,255,0.75)" }}>rramirez</span>
-                          {" "}— algo simbólico, fácil de recordar y relacionado al nombre de tu negocio. Tus usuarios se crearán así:{" "}
-                          <span style={{ fontFamily: "monospace", color: "rgba(255,255,255,0.75)" }}>ramirez.dueño</span>,{" "}
-                          <span style={{ fontFamily: "monospace", color: "rgba(255,255,255,0.75)" }}>ramirez.vendedor1</span>, etc.
-                          <br />
-                          <strong style={{ color: "rgba(255,255,255,0.7)" }}>No se puede cambiar después.</strong>
+                        <Typography sx={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.75)", mb: 1.25, lineHeight: 1.55 }}>
+                          Un código corto y único para crear tus usuarios.{" "}
+                          <strong style={{ color: "#fbbf24", fontWeight: 600 }}>No se puede cambiar después.</strong>
                         </Typography>
+                        <Box sx={{
+                          mb: 1.5, px: 1.5, py: 1.25,
+                          borderRadius: "10px",
+                          bgcolor: "rgba(255,255,255,0.06)",
+                          border: "1px solid rgba(255,255,255,0.12)",
+                        }}>
+                          <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, flexWrap: "wrap", mb: 1 }}>
+                            <Typography sx={{ fontSize: "0.72rem", color: "rgba(255,255,255,0.6)" }}>
+                              Ejemplos para "Mi Tienda":
+                            </Typography>
+                            {["mitienda", "mi.tienda", "mt"].map((ex) => (
+                              <Box key={ex} sx={{
+                                fontSize: "0.72rem", px: 1, py: 0.25, borderRadius: "6px",
+                                fontFamily: "monospace", fontWeight: 600,
+                                color: "#c4b5fd", bgcolor: "rgba(167,139,250,0.15)",
+                              }}>
+                                {ex}
+                              </Box>
+                            ))}
+                          </Box>
+                          <Typography sx={{ fontSize: "0.72rem", color: "rgba(255,255,255,0.6)", lineHeight: 1.5 }}>
+                            Tus usuarios se verán así:{" "}
+                            <span style={{ fontFamily: "monospace", color: "rgba(255,255,255,0.85)" }}>mitienda.dueño</span>,{" "}
+                            <span style={{ fontFamily: "monospace", color: "rgba(255,255,255,0.85)" }}>mitienda.vendedor.fulanito</span>
+                          </Typography>
+                        </Box>
                         <TextField
                           fullWidth size="small"
                           name="short_name"
                           value={formData.short_name}
                           onChange={(e) => {
-                            const val = e.target.value.replace(/\s/g, "").toLowerCase();
+                            const val = e.target.value
+                              .toLowerCase()
+                              .replace(/[^a-z0-9.]/g, "");
                             setFormData((prev) => ({ ...prev, short_name: val }));
                           }}
                           required
-                          placeholder="Ej: mitienda, donjuan, pdj"
-                          inputProps={{ maxLength: 10, style: { letterSpacing: "0.5px" } }}
+                          placeholder="Ej: mitienda, mi.tienda, mt"
+                          inputProps={{
+                            maxLength: 10,
+                            autoCapitalize: "none",
+                            autoCorrect: "off",
+                            autoComplete: "off",
+                            spellCheck: false,
+                            style: { letterSpacing: "0.5px", textTransform: "lowercase" },
+                          }}
                           InputProps={{
                             endAdornment: formData.short_name.trim() && (
                               <InputAdornment position="end" sx={{ mr: 0.5 }}>
@@ -354,7 +398,7 @@ const Registration = () => {
                           }}
                           sx={{
                             "& .MuiOutlinedInput-root": {
-                              borderRadius: 1,
+                              borderRadius: "10px",
                               fontSize: "0.9rem",
                               backgroundColor: "rgba(255,255,255,0.95)",
                               transition: "all 0.2s ease",
@@ -762,29 +806,6 @@ const Registration = () => {
                       )}
                     </Box>
                   )}
-                </Box>
-
-                {/* Footer */}
-                <Box sx={{
-                  px: 4, py: 2,
-                  borderTop: "1px solid rgba(255,255,255,0.08)",
-                  textAlign: "center",
-                }}>
-                  <Typography sx={{ fontSize: "0.82rem", color: "rgba(255,255,255,0.6)" }}>
-                    ¿Ya tienes una cuenta?{" "}
-                    <Box
-                      component="span"
-                      sx={{
-                        color: "#a78bfa",
-                        fontWeight: 600,
-                        cursor: "pointer",
-                        "&:hover": { color: "#c4b5fd" },
-                      }}
-                      onClick={() => navigate("/login")}
-                    >
-                      Inicia sesión
-                    </Box>
-                  </Typography>
                 </Box>
               </>
             )}
