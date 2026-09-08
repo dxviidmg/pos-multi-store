@@ -43,15 +43,27 @@ function Login({ onLogin }) {
       const response = await loginUser(state.formData);
       if (response.status === 200) {
         login(response.data);
-        if (response.data.role === "owner") navigate("/tiendas/");
-        else navigate("/vender/");
+        if (response.data.access_blocked) {
+          // Negocio vencido: el dueño entra solo para renovar/pagar
+          navigate("/mi-plan-actual/");
+        } else if (response.data.role === "owner") {
+          navigate("/tiendas/");
+        } else {
+          navigate("/vender/");
+        }
       } else {
         showAlert("Usuario o contraseña incorrecta");
       }
     } catch (error) {
-      showAlert(error.response?.status === 400
-        ? "Usuario o contraseña incorrecta"
-        : "Error desconocido, intente nuevamente.");
+      const status = error.response?.status;
+      const code = error.response?.data?.code;
+      if (status === 403 && code === "subscription_expired") {
+        showAlert("La suscripción del negocio venció. Contacta al propietario para reactivarla.");
+      } else if (status === 400) {
+        showAlert("Usuario o contraseña incorrecta");
+      } else {
+        showAlert("Error desconocido, intente nuevamente.");
+      }
     }
   };
 

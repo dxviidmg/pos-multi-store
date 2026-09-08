@@ -20,6 +20,17 @@ export const STORE_TYPES = {
   STORE: 'B'
 };
 
+// Motivos de cancelación de suscripción (deben coincidir con el backend)
+export const CANCELLATION_REASONS = [
+  { value: "price", label: "Muy caro / precio" },
+  { value: "not_using", label: "Ya no uso el sistema" },
+  { value: "switched_tool", label: "Cambié de herramienta" },
+  { value: "missing_features", label: "Faltan funcionalidades" },
+  { value: "technical_issues", label: "Problemas técnicos" },
+  { value: "business_closed", label: "Cierre / pausa del negocio" },
+  { value: "other", label: "Otro" },
+];
+
 // Textos de UI comunes
 export const UI_TEXT = {
   ALL: "Todos",
