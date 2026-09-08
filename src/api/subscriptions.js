@@ -9,3 +9,6 @@ export const getSubscriptions = () =>
 
 export const cancelSubscription = (data) =>
   httpClient.post(getApiUrl('subscriptions/cancel'), data);
+
+export const updateSubscriptionCard = (data) =>
+  httpClient.post(getApiUrl('subscriptions/update-card'), data);
