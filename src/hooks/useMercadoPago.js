@@ -17,12 +17,12 @@ export const useMercadoPago = () => {
     });
   }, []);
 
-  const createCardForm = useCallback(async ({ amount, onSubmit, onError }) => {
+  const createCardForm = useCallback(async ({ amount, containerId = 'mp-bricks-container', onSubmit, onError }) => {
     await loadSDK();
     const mp = new window.MercadoPago(MERCADO_PAGO_PUBLIC_KEY, { locale: 'es-MX' });
     const bricksBuilder = mp.bricks();
 
-    bricksControllerRef.current = await bricksBuilder.create('cardPayment', 'mp-bricks-container', {
+    bricksControllerRef.current = await bricksBuilder.create('cardPayment', containerId, {
       initialization: { amount: Number(amount) },
       customization: { visual: { style: { theme: 'default' } } },
       callbacks: {
