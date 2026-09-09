@@ -154,6 +154,15 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
   const [openMenus, setOpenMenus] = React.useState({});
   const [anchorEl, setAnchorEl] = React.useState(null);
 
+  // Limpieza compartida por el logout manual y otros cierres de sesión: vacía la caché
+  // de React Query, el carrito de Redux y borra el usuario del contexto.
+  const performLogout = React.useCallback(() => {
+    queryClient.clear();
+    dispatch(cleanCart());
+    logout();
+    navigate("/");
+  }, [queryClient, dispatch, logout, navigate]);
+
   if (!user) {
     return null;
   }
@@ -180,13 +189,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
     navigate("/tiendas/", { replace: true });
   };
 
-  const handleLogout = () => {
-    // Limpiar estado que sobrevive al logout para no arrastrar datos del usuario anterior
-    queryClient.clear();      // vacía la caché de React Query (datos del usuario previo)
-    dispatch(cleanCart());    // limpia el carrito activo en Redux
-    logout();                 // borra el usuario de localStorage y del contexto
-    navigate("/");
-  };
+  const handleLogout = () => performLogout();
 
   const isActive = (href) => location.pathname === href;
 

@@ -18,7 +18,7 @@ import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
 
 const MyCurrentPlan = () => {
-  const { user } = useUser();
+  const { user, logout } = useUser();
   const isOwner = user?.role === "owner";
   const [plan, setPlan] = useState(null);
   const [planLoading, setPlanLoading] = useState(true);
@@ -31,7 +31,6 @@ const MyCurrentPlan = () => {
   const [cancelReason, setCancelReason] = useState("");
   const [cancelling, setCancelling] = useState(false);
   const [cancelResult, setCancelResult] = useState(null);
-  const [accessUntil, setAccessUntil] = useState(null);
   const [showCancelSection, setShowCancelSection] = useState(false);
 
   // Estado de actualización de tarjeta
@@ -212,10 +211,14 @@ const MyCurrentPlan = () => {
     try {
       const res = await cancelSubscription({ reason: cancelReason });
       if (res.status === 200 || res.status === 201) {
-        setAccessUntil(res.data?.access_until ?? null);
-        setPlan((prev) => ({ ...prev, subscription_status: "cancelled" }));
+        // Al cancelar, el backend invalida los tokens del tenant: el dueño y todos sus
+        // usuarios (en cualquier máquina) quedan fuera. Cerramos la sesión de inmediato
+        // en esta máquina y redirigimos al login. Los demás saldrán en su siguiente
+        // petición al recibir 401.
         cancelModal.close();
-        showSuccess("Tu suscripción fue cancelada. Tendrás acceso hasta el final de tu periodo pagado.");
+        showSuccess("Suscripción cancelada. Se cerrará la sesión de todos los usuarios.");
+        logout();
+        window.location.href = "/login";
       } else {
         setCancelResult({ success: false, message: "No se pudo cancelar la suscripción." });
       }
@@ -338,11 +341,7 @@ const MyCurrentPlan = () => {
 
                   {isSubscription && isCancelled && (
                     <Alert severity="info" sx={{ mt: 2 }}>
-                      Tu suscripción está cancelada. Conservas acceso
-                      {accessUntil
-                        ? ` hasta el ${new Date(accessUntil).toLocaleDateString("es-MX", { year: "numeric", month: "long", day: "numeric" })}`
-                        : " hasta el final de tu periodo pagado"}
-                      . Para reactivarla, contacta a soporte.
+                      Tu suscripción está cancelada. Para reactivarla, contacta a soporte.
                     </Alert>
                   )}
 
@@ -483,9 +482,10 @@ const MyCurrentPlan = () => {
           )}
 
           <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
-            Al cancelar, se detendrá el cobro recurrente. Conservarás acceso hasta el
-            final de tu periodo ya pagado. No se generan reembolsos y, para reactivar
-            la suscripción más adelante, deberás contactar a soporte.
+            Al cancelar, se detendrá el cobro recurrente y se cerrará la sesión de
+            inmediato para ti y para todos tus usuarios, en cualquier equipo. Tus datos
+            se conservan. No se generan reembolsos y, para reactivar la suscripción más
+            adelante, deberás contactar a soporte.
           </Typography>
 
           <TextField
