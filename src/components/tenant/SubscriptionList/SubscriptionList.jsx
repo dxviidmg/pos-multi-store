@@ -4,9 +4,10 @@ import { getSubscriptions } from "../../../api/subscriptions";
 import { Grid, Chip } from "@mui/material";
 
 const statusMap = {
-  active: { label: "Activa", color: "success" },
+  authorized: { label: "Autorizada", color: "success" },
   paused: { label: "Pausada", color: "warning" },
   cancelled: { label: "Cancelada", color: "error" },
+  expired: { label: "Vencida", color: "warning" },
 };
 
 const formatDate = (dateStr) => {
@@ -19,6 +20,15 @@ const formatDate = (dateStr) => {
     hour: "2-digit",
     minute: "2-digit",
   });
+};
+
+const formatCard = (row) => {
+  if (!row.card_last_four) return "—";
+  const brand = row.card_brand
+    ? row.card_brand.charAt(0).toUpperCase() + row.card_brand.slice(1)
+    : "Tarjeta";
+  const expiration = row.card_expiration ? ` — vence ${row.card_expiration}` : "";
+  return `${brand} •••• ${row.card_last_four}${expiration}`;
 };
 
 const SubscriptionList = () => {
@@ -64,10 +74,15 @@ const SubscriptionList = () => {
               width: 160,
             },
             {
+              name: "Tarjeta",
+              selector: (row) => formatCard(row),
+              minWidth: 220,
+            },
+            {
               name: "Estado",
               cell: (row) => {
                 const status = statusMap[row.status] || { label: row.status, color: "default" };
-                return <Chip size="small" label={status.label} color={status.color} variant="outlined" />;
+                return <Chip size="small" label={status.label} color={status.color} variant="filled" />;
               },
               width: 140,
             },

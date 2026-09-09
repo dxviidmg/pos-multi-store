@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { getCurrentPlan, getPlanEquivalent } from "../../../api/plans";
-import { createSubscription, cancelSubscription } from "../../../api/subscriptions";
+import { createSubscription, cancelSubscription, updateSubscriptionCard } from "../../../api/subscriptions";
 import { useMercadoPago } from "../../../hooks/useMercadoPago";
 import { useModal } from "../../../hooks/useModal";
 import { useUser } from "../../../context/UserContext";
@@ -8,13 +8,14 @@ import { CANCELLATION_REASONS } from "../../../constants";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import CustomModal from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
-import { Grid, Stack, Card, CardContent, Typography, Box, Chip, Button, Alert, TextField, MenuItem } from "@mui/material";
+import { Grid, Stack, Typography, Box, Chip, Button, Alert, TextField, MenuItem } from "@mui/material";
 import { showSuccess } from "../../../utils/alerts";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import httpClient from "../../../api/httpClient";
 import { getApiUrl } from "../../../api/utils";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import CreditCardIcon from "@mui/icons-material/CreditCard";
 
 const MyCurrentPlan = () => {
   const { user } = useUser();
@@ -33,12 +34,39 @@ const MyCurrentPlan = () => {
   const [accessUntil, setAccessUntil] = useState(null);
   const [showCancelSection, setShowCancelSection] = useState(false);
 
+  // Estado de actualización de tarjeta
+  const [updatingCard, setUpdatingCard] = useState(false);
+  const [updateCardResult, setUpdateCardResult] = useState(null);
+
   const paymentModal = useModal();
   const cancelModal = useModal();
+  const updateCardModal = useModal();
   const { createCardForm, unmountCardForm } = useMercadoPago();
 
-  const isCancelled = plan?.subscription_status === "cancelled";
+  const subscriptionStatus = plan?.subscription_status;
+  const isCancelled = subscriptionStatus === "cancelled";
+  const isExpired = subscriptionStatus === "expired";
+  const isActive = subscriptionStatus === "active";
   const isSubscription = plan?.plan?.billing_type === "S";
+  const currentCard = plan?.current_card;
+
+  // Con access_until en el futuro el cliente sigue con acceso (aviso preventivo).
+  // Sin acceso, "expired" significa que MP ya canceló y debe reactivar creando suscripción.
+  const hasAccess = !user?.access_blocked;
+  const expiredWithAccess = isExpired && hasAccess;
+  const expiredWithoutAccess = isExpired && !hasAccess;
+
+  // La tarjeta caduca pronto si vence en menos de 2 meses. expiration viene como "MM/AA".
+  const cardExpiresSoon = (() => {
+    if (!currentCard?.expiration) return false;
+    const [mm, yy] = currentCard.expiration.split("/").map((v) => parseInt(v, 10));
+    if (!mm || Number.isNaN(yy)) return false;
+    // La tarjeta es válida hasta el último día del mes de expiración.
+    const expiryEnd = new Date(2000 + yy, mm, 1); // primer día del mes siguiente
+    const now = new Date();
+    const twoMonthsFromNow = new Date(now.getFullYear(), now.getMonth() + 2, now.getDate());
+    return expiryEnd <= twoMonthsFromNow;
+  })();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -125,6 +153,58 @@ const MyCurrentPlan = () => {
     cancelModal.close();
   };
 
+  const handleOpenUpdateCard = useCallback(() => {
+    setUpdateCardResult(null);
+    updateCardModal.open();
+    setTimeout(() => {
+      createCardForm({
+        amount: equivalent?.price || plan?.plan?.price,
+        containerId: "mp-bricks-container-update",
+        onSubmit: async ({ token, payment_method_id }) => {
+          setUpdatingCard(true);
+          try {
+            const res = await updateSubscriptionCard({
+              card_token: token,
+              payment_method_id,
+            });
+            if (res.status === 200) {
+              unmountCardForm();
+              updateCardModal.close();
+              showSuccess(
+                "Tarjeta actualizada. Los datos de la nueva tarjeta se reflejarán en tu próximo pago."
+              );
+            } else {
+              setUpdateCardResult({ success: false, message: "No se pudo actualizar la tarjeta." });
+            }
+          } catch (err) {
+            const status = err.response?.status;
+            let msg = err.response?.data?.detail;
+            if (status === 500) {
+              msg = "Ocurrió un problema al actualizar la tarjeta. Contacta a soporte técnico.";
+            } else if (status === 404) {
+              msg = msg || "No hay una suscripción activa para actualizar.";
+            } else if (!msg) {
+              msg = "No se pudo actualizar la tarjeta. Intenta de nuevo o contacta a soporte.";
+            }
+            setUpdateCardResult({ success: false, message: msg });
+          } finally {
+            setUpdatingCard(false);
+          }
+        },
+        onError: () => {
+          setUpdateCardResult({ success: false, message: "Error en el formulario de pago." });
+        },
+      });
+    }, 100);
+  }, [equivalent, plan, updateCardModal, createCardForm, unmountCardForm]);
+
+  const handleCloseUpdateCard = () => {
+    if (updatingCard) return;
+    unmountCardForm();
+    setUpdateCardResult(null);
+    updateCardModal.close();
+  };
+
   const handleCancelSubscription = async () => {
     if (!cancelReason) return;
     setCancelling(true);
@@ -195,25 +275,66 @@ const MyCurrentPlan = () => {
         ) : (
           <>
             {plan?.has_plan && (
-              <Card sx={{ mb: 2 }}>
-                <CardContent>
-                  <Typography variant="h6" sx={{ mb: 2 }}>
-                    Plan Actual: {plan.plan.name}
-                  </Typography>
+              <Box sx={{ mb: 2 }}>
+                <Typography variant="h6" sx={{ mb: 2 }}>
+                  Plan Actual: {plan.plan.name}
+                </Typography>
                   <Grid container spacing={3}>
-                    <Grid item xs={12} sm={6} md={4}>
+                    <Grid item xs={12} sm={6} md={3}>
                       <Typography variant="body2" color="textSecondary">Precio</Typography>
                       <Typography variant="body1">${plan.plan.price} MXN/mes</Typography>
                     </Grid>
-                    <Grid item xs={12} sm={6} md={4}>
+                    <Grid item xs={12} sm={6} md={3}>
                       <Typography variant="body2" color="textSecondary">Sucursales</Typography>
                       <Typography variant="body1">{plan.plan.stores}</Typography>
                     </Grid>
-                    <Grid item xs={12} sm={6} md={4}>
+                    <Grid item xs={12} sm={6} md={3}>
                       <Typography variant="body2" color="textSecondary">Facturación</Typography>
                       <Typography variant="body1">{plan.plan.billing_type_display}</Typography>
                     </Grid>
+                    {isSubscription && currentCard && (
+                      <Grid item xs={12} sm={6} md={3}>
+                        <Typography variant="body2" color="textSecondary">Tarjeta</Typography>
+                        <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
+                          <CreditCardIcon fontSize="small" color="action" />
+                          <Typography variant="body1">
+                            {currentCard.brand
+                              ? currentCard.brand.charAt(0).toUpperCase() + currentCard.brand.slice(1)
+                              : "Tarjeta"}{" "}
+                            •••• {currentCard.last_four}
+                            {currentCard.expiration ? ` — vence ${currentCard.expiration}` : ""}
+                          </Typography>
+                        </Box>
+                      </Grid>
+                    )}
                   </Grid>
+
+                  {isSubscription && currentCard && cardExpiresSoon && (
+                    <Alert
+                      severity="warning"
+                      icon={<CreditCardIcon />}
+                      sx={{ mt: 2, alignItems: "center" }}
+                      action={
+                        isOwner && (
+                          <Button
+                            onClick={handleOpenUpdateCard}
+                            variant="contained"
+                            size="small"
+                            sx={{
+                              whiteSpace: "nowrap",
+                              background: "linear-gradient(135deg, #04346b 0%, #065a9e 100%)",
+                              "&:hover": { background: "linear-gradient(135deg, #022347 0%, #04346b 100%)" },
+                            }}
+                          >
+                            Cambiar tarjeta
+                          </Button>
+                        )
+                      }
+                    >
+                      <strong>Tu tarjeta vence pronto</strong> (en menos de 2 meses).
+                      Actualízala para evitar que el cobro falle.
+                    </Alert>
+                  )}
 
                   {isSubscription && isCancelled && (
                     <Alert severity="info" sx={{ mt: 2 }}>
@@ -224,20 +345,52 @@ const MyCurrentPlan = () => {
                       . Para reactivarla, contacta a soporte.
                     </Alert>
                   )}
-                </CardContent>
-              </Card>
+
+                  {isSubscription && expiredWithAccess && (
+                    <Alert
+                      severity="warning"
+                      sx={{ mt: 2 }}
+                      action={
+                        isOwner && (
+                          <Button color="inherit" size="small" onClick={handleOpenUpdateCard}>
+                            Actualizar tarjeta
+                          </Button>
+                        )
+                      }
+                    >
+                      Tu tarjeta venció o el cobro falló. Actualízala para seguir usando el
+                      sistema sin interrupciones. Todavía tienes acceso, pero se suspenderá
+                      cuando termine tu vigencia.
+                    </Alert>
+                  )}
+
+                  {isSubscription && expiredWithoutAccess && (
+                    <Alert
+                      severity="error"
+                      sx={{ mt: 2 }}
+                      action={
+                        isOwner && (
+                          <Button color="inherit" size="small" onClick={handleOpenPayment}>
+                            Reactivar
+                          </Button>
+                        )
+                      }
+                    >
+                      Tu suscripción venció y se detuvo el acceso. Reactívala registrando una
+                      tarjeta para volver a usar el sistema.
+                    </Alert>
+                  )}
+              </Box>
             )}
           </>
         )}
       </Grid>
 
       <Grid item xs={12} className="card" sx={{ mt: 3 }}>
-        <Card>
-          <CardContent>
-            <Typography variant="h6" sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
-              <CalendarTodayIcon fontSize="small" /> Fechas del Negocio
-            </Typography>
-            {tenantDates ? (
+        <Typography variant="h6" sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+          <CalendarTodayIcon fontSize="small" /> Fechas del Negocio
+        </Typography>
+        {tenantDates ? (
               <Grid container spacing={3}>
                 <Grid item xs={12} sm={6} md={4}>
                   <Typography variant="body2" color="textSecondary">Fecha de creación</Typography>
@@ -267,13 +420,11 @@ const MyCurrentPlan = () => {
             ) : (
               <Typography variant="body2" color="textSecondary">Cargando fechas...</Typography>
             )}
-          </CardContent>
-        </Card>
       </Grid>
 
-      {isOwner && isSubscription && !isCancelled && (
+      {isOwner && isSubscription && isActive && (
         <Grid item xs={12} className="card" sx={{ mt: 3 }}>
-          <Box sx={{ textAlign: "center", py: 1 }}>
+          <Box sx={{ textAlign: "center"}}>
             {!showCancelSection ? (
               <Typography
                 variant="caption"
@@ -371,6 +522,21 @@ const MyCurrentPlan = () => {
               {cancelling ? "Cancelando..." : "Sí, cancelar"}
             </Button>
           </Stack>
+        </Box>
+      </CustomModal>
+
+      <CustomModal showOut={updateCardModal.isOpen} onClose={handleCloseUpdateCard} title="Actualizar tarjeta">
+        <Box sx={{ p: 3 }}>
+          {updateCardResult && !updateCardResult.success && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {updateCardResult.message}
+            </Alert>
+          )}
+          <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
+            Registra tu nueva tarjeta. No se genera ningún cobro ahora: los datos se
+            aplicarán en tu próximo pago recurrente.
+          </Typography>
+          <div id="mp-bricks-container-update" />
         </Box>
       </CustomModal>
     </>
