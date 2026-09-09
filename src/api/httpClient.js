@@ -36,14 +36,19 @@ httpClient.interceptors.response.use(
       const { status, config } = error.response;
       logger.error(`[API] ${status} ${config.url}`, error.response.data);
 
-      // Handle 401 Unauthorized
+      // Handle 401 Unauthorized.
+      // Cubre también el caso de tenant cancelado: el backend borra los tokens del
+      // tenant, por lo que la siguiente petición de cualquier usuario (dueño o
+      // trabajador, en cualquier máquina) recibe 401 y sale de la sesión.
       if (status === 401) {
         localStorage.removeItem('user');
         window.location.href = '/login';
       }
 
-      // Handle suscripción vencida durante la sesión (403 con code específico).
-      // No cerramos sesión: el dueño debe poder quedarse a renovar/pagar.
+      // Suscripción vencida durante la sesión (403 subscription_expired), tras los 7 días
+      // de gracia. Distinto de tenant cancelado (401): aquí el negocio sigue activo.
+      // El dueño entra en "modo pago" (access_blocked → /mi-plan-actual/) para renovar;
+      // administradores y vendedores quedan bloqueados.
       if (status === 403 && error.response.data?.code === "subscription_expired") {
         try {
           const raw = localStorage.getItem('user');
