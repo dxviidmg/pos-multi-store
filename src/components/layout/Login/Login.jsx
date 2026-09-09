@@ -57,7 +57,10 @@ function Login({ onLogin }) {
     } catch (error) {
       const status = error.response?.status;
       const code = error.response?.data?.code;
-      if (status === 403 && code === "subscription_expired") {
+      if (status === 403 && code === "tenant_inactive") {
+        // Negocio cancelado: nadie entra, ni el dueño. La reactivación es por soporte.
+        showAlert("Este negocio está inactivo. Contacta a soporte.");
+      } else if (status === 403 && code === "subscription_expired") {
         showAlert("La suscripción del negocio venció. Contacta al propietario para reactivarla.");
       } else if (status === 400) {
         showAlert("Usuario o contraseña incorrecta");
