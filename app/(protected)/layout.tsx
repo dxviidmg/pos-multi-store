@@ -3,8 +3,8 @@
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/src/context/UserContext';
-import MainLayout from '@/src/components/layout/MainLayout/MainLayout';
-import LoadingFallback from '@/src/components/ui/LoadingFallback';
+import MainLayout from '@/src/shared/layout/MainLayout/MainLayout';
+import LoadingFallback from '@/src/shared/ui/LoadingFallback';
 
 export default function ProtectedLayout({
   children,

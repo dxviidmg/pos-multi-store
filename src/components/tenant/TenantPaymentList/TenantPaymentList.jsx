@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import DataTable from "@/src/components/ui/DataTable/DataTable";
+import DataTable from "@/src/shared/ui/DataTable/DataTable";
 import { getPayments } from "@/src/api/tenants";
 import { Grid } from "@mui/material";
 

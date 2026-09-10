@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from "react";
-import { useFetchWithRetry } from "@/src/hooks/useFetch";
+import { useFetchWithRetry } from "@/src/shared/hooks/useFetch";
 import { getStoreProducts } from "@/src/api/products";
 import { showError } from "@/src/shared/utils/alerts";
 import Swal from "sweetalert2";

@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
-import DataTable from "@/src/components/ui/DataTable/DataTable";
+import DataTable from "@/src/shared/ui/DataTable/DataTable";
 import { exportToExcel, formatTimeFromDate, getFormattedDate } from "@/src/shared/utils/utils";
 import { getStoreProductLogs, getStoreProductLogsChoices } from "@/src/api/products";
-import { CustomSpinner } from "@/src/components/ui/Spinner/Spinner";
+import { CustomSpinner } from "@/src/shared/ui/Spinner/Spinner";
 import { getBrands } from "@/src/api/brands";
 import { getStores } from "@/src/api/stores";
-import CustomButton from "@/src/components/ui/Button/Button";
-import { chooseIcon } from "@/src/components/ui/Icons/Icons";
+import CustomButton from "@/src/shared/ui/Button/Button";
+import { chooseIcon } from "@/src/shared/ui/Icons/Icons";
 import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, Autocomplete } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
-import PageHeader from "@/src/components/ui/PageHeader";
+import PageHeader from "@/src/shared/ui/PageHeader";
 
 const LogList = () => {
   const today = getFormattedDate();

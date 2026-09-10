@@ -4,7 +4,7 @@ import { useEffect, Suspense } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/src/context/UserContext';
 import Login from '@/src/components/layout/Login/Login';
-import LoadingFallback from '@/src/components/ui/LoadingFallback';
+import LoadingFallback from '@/src/shared/ui/LoadingFallback';
 
 export const dynamic = 'force-dynamic';
 

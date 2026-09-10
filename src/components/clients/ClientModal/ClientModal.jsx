@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
-import { useForm } from "@/src/hooks/useForm";
-import CustomModal from "@/src/components/ui/Modal/Modal";
-import CustomButton from "@/src/components/ui/Button/Button";
+import { useForm } from "@/src/shared/hooks/useForm";
+import CustomModal from "@/src/shared/ui/Modal/Modal";
+import CustomButton from "@/src/shared/ui/Button/Button";
 import { useDiscounts } from "@/src/hooks/useDiscounts";
 import { useCreateClient, useUpdateClient } from "@/src/hooks/useClientMutations";
 import { Grid, TextField, FormControl, InputLabel, Select, MenuItem } from "@mui/material";

@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from "react";
-import CustomModal from "@/src/components/ui/Modal/Modal";
-import CustomButton from "@/src/components/ui/Button/Button";
-import SimpleTable from "@/src/components/ui/SimpleTable/SimpleTable";
+import CustomModal from "@/src/shared/ui/Modal/Modal";
+import CustomButton from "@/src/shared/ui/Button/Button";
+import SimpleTable from "@/src/shared/ui/SimpleTable/SimpleTable";
 import { Grid, TextField, Alert } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";

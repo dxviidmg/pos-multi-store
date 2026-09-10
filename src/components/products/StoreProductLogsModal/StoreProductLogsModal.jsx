@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useRef } from "react";
-import CustomModal from "@/src/components/ui/Modal/Modal";
-import DataTable from "@/src/components/ui/DataTable/DataTable";
+import CustomModal from "@/src/shared/ui/Modal/Modal";
+import DataTable from "@/src/shared/ui/DataTable/DataTable";
 import { getStoreProductLogs, updateStoreProduct } from "@/src/api/products";
 import { getFormattedDateTime } from "@/src/shared/utils/utils";
 import { showSuccess, showError } from "@/src/shared/utils/alerts";
-import { useForm } from "@/src/hooks/useForm";
-import CustomButton from "@/src/components/ui/Button/Button";
-import { chooseIcon } from "@/src/components/ui/Icons/Icons";
+import { useForm } from "@/src/shared/hooks/useForm";
+import CustomButton from "@/src/shared/ui/Button/Button";
+import { chooseIcon } from "@/src/shared/ui/Icons/Icons";
 import { Grid, TextField, LinearProgress } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 

@@ -20,6 +20,6 @@ export { useCancelSale } from '@/src/hooks/useSaleMutations';
 export * from '@/src/hooks/useTransfers';
 
 // Custom hooks
-export { useFetch, useFetchList, useFetchWithRetry } from '@/src/hooks/useFetch';
-export { useCrudMutation, createMutationHooks } from '@/src/hooks/useCrudMutation';
-export { useThemeMode } from '@/src/hooks/useThemeMode';
+export { useFetch, useFetchList, useFetchWithRetry } from '@/src/shared/hooks/useFetch';
+export { useCrudMutation, createMutationHooks } from '@/src/shared/hooks/useCrudMutation';
+export { useThemeMode } from '@/src/shared/hooks/useThemeMode';

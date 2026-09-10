@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
-import CustomModal from "@/src/components/ui/Modal/Modal";
-import CustomButton from "@/src/components/ui/Button/Button";
+import CustomModal from "@/src/shared/ui/Modal/Modal";
+import CustomButton from "@/src/shared/ui/Button/Button";
 import { getBrands } from "@/src/api/brands";
 import { showSuccess, showError } from "@/src/shared/utils/alerts";
 import {
@@ -11,7 +11,7 @@ import {
 } from "@/src/api/products";
 import { getStores } from "@/src/api/stores";
 import { useUser } from "@/src/context/UserContext";
-import { useForm } from "@/src/hooks/useForm";
+import { useForm } from "@/src/shared/hooks/useForm";
 import noPhotoImg from "@/src/shared/assets/images/noPhoto.webp";
 import { convertImageToWebp } from "@/src/shared/utils/image";
 
@@ -19,10 +19,10 @@ import { convertImageToWebp } from "@/src/shared/utils/image";
 // no una string. Normalizamos a la URL para usarla en <img src>.
 const noPhoto = noPhotoImg.src || noPhotoImg;
 import { getDepartments } from "@/src/api/departments";
-import SimpleTable from "@/src/components/ui/SimpleTable/SimpleTable";
+import SimpleTable from "@/src/shared/ui/SimpleTable/SimpleTable";
 import { Grid, TextField, Box, Checkbox, FormControlLabel, Autocomplete, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
-import VisuallyHiddenInput from "@/src/components/ui/VisuallyHiddenInput";
+import VisuallyHiddenInput from "@/src/shared/ui/VisuallyHiddenInput";
 import { useConversionUnits } from "@/src/hooks/useConversions";
 
 const INITIAL_FORM_DATA = {

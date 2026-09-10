@@ -2,8 +2,8 @@ import { logger } from "@/src/shared/utils/logger";
 import React, { useMemo, useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { selectCart, selectMovementType, selectClient } from "@/src/redux/cart/selectors";
-import CustomModal from "@/src/components/ui/Modal/Modal";
-import CustomButton from "@/src/components/ui/Button/Button";
+import CustomModal from "@/src/shared/ui/Modal/Modal";
+import CustomButton from "@/src/shared/ui/Button/Button";
 import { cleanCart, removeClientfromCart, addClientToCart } from "@/src/redux/cart/cartActions";
 import { createSale, getSale } from "@/src/api/sales";
 import { showSuccess, showError } from "@/src/shared/utils/alerts";
@@ -13,7 +13,7 @@ import { usePrinterStatus } from "@/src/hooks/usePrinterStatus";
 import SearchClient from "@/src/components/clients/SearchClient/SearchClient";
 import ClientModal from "@/src/components/clients/ClientModal/ClientModal";
 import SearchIcon from "@mui/icons-material/Search";
-import { CustomSpinner } from "@/src/components/ui/Spinner/Spinner";
+import { CustomSpinner } from "@/src/shared/ui/Spinner/Spinner";
 import { Grid, TextField, Radio, RadioGroup, FormControlLabel, Checkbox, FormLabel, Alert, Chip, Box } from "@mui/material";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
@@ -21,7 +21,7 @@ import MoneyOffIcon from "@mui/icons-material/MoneyOff";
 import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
 import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
 import { MOVEMENT_TYPES } from "@/src/shared/constants";
-import { useModal } from "@/src/hooks/useModal";
+import { useModal } from "@/src/shared/hooks/useModal";
 
 
 function roundUpCustom(value) {

@@ -1,19 +1,19 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
-import DataTable from "@/src/components/ui/DataTable/DataTable";
-import CustomButton from "@/src/components/ui/Button/Button";
-import PageHeader from "@/src/components/ui/PageHeader";
+import DataTable from "@/src/shared/ui/DataTable/DataTable";
+import CustomButton from "@/src/shared/ui/Button/Button";
+import PageHeader from "@/src/shared/ui/PageHeader";
 import { colors } from "@/src/shared/theme/colors";
-import { CustomSpinner } from "@/src/components/ui/Spinner/Spinner";
+import { CustomSpinner } from "@/src/shared/ui/Spinner/Spinner";
 import { useConversions, useDeleteConversion, useApplyConversion } from "@/src/hooks/useConversions";
-import { useModal } from "@/src/hooks/useModal";
+import { useModal } from "@/src/shared/hooks/useModal";
 import ConversionModal from "@/src/components/inventory/ConversionList/ConversionModal";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import UnarchiveIcon from "@mui/icons-material/Unarchive";
-import CustomTooltip from "@/src/components/ui/Tooltip";
+import CustomTooltip from "@/src/shared/ui/Tooltip";
 import Swal from "sweetalert2";
 import { useUser } from "@/src/context/UserContext";
 

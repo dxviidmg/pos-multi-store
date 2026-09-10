@@ -1,8 +1,8 @@
 import React, { useEffect, useCallback, useMemo } from "react";
-import useTaskPolling from "@/src/hooks/useTaskPolling";
-import CountdownTimer from "@/src/components/ui/CountdownTimer";
-import DataTable from "@/src/components/ui/DataTable/DataTable";
-import CustomButton from "@/src/components/ui/Button/Button";
+import useTaskPolling from "@/src/shared/hooks/useTaskPolling";
+import CountdownTimer from "@/src/shared/ui/CountdownTimer";
+import DataTable from "@/src/shared/ui/DataTable/DataTable";
+import CustomButton from "@/src/shared/ui/Button/Button";
 import DoughnutChart from "@/src/components/admin/Dashboard/DoughnutChart";
 import { BarChart } from "@mui/x-charts/BarChart";
 import {
@@ -10,8 +10,8 @@ import {
   LinearProgress, Skeleton,
 } from "@mui/material";
 import { exportToExcel } from "@/src/shared/utils/utils";
-import httpClient from "@/src/api/httpClient";
-import { getApiUrl } from "@/src/api/utils";
+import httpClient from "@/src/shared/api/httpClient";
+import { getApiUrl } from "@/src/shared/api/utils";
 import WarningIcon from "@mui/icons-material/Warning";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import DownloadIcon from "@mui/icons-material/Download";

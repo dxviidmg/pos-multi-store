@@ -1,6 +1,6 @@
 import React from "react";
 import { TextField, Checkbox, IconButton } from "@mui/material";
-import CustomButton from "@/src/components/ui/Button/Button";
+import CustomButton from "@/src/shared/ui/Button/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ScaleIcon from "@mui/icons-material/Scale";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";

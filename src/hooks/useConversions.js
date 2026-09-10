@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { getConversions, getConversionUnits, createConversion, updateConversion, deleteConversion, applyConversion } from '@/src/api/conversions';
-import { createMutationHooks, useCrudMutation } from '@/src/hooks/useCrudMutation';
+import { createMutationHooks, useCrudMutation } from '@/src/shared/hooks/useCrudMutation';
 
 export const useConversions = () => {
   return useQuery({

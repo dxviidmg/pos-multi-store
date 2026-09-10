@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getUserData } from '@/src/api/utils';
+import { getUserData } from '@/src/shared/api/utils';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || process.env.REACT_APP_API_URL || 'http://localhost:8000';
 

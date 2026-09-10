@@ -2,7 +2,7 @@ import { logger } from "@/src/shared/utils/logger";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { selectCart, selectMovementType } from "@/src/redux/cart/selectors";
-import SimpleTable from "@/src/components/ui/SimpleTable/SimpleTable";
+import SimpleTable from "@/src/shared/ui/SimpleTable/SimpleTable";
 import {
   cleanCart,
   removeFromCart,
@@ -11,7 +11,7 @@ import {
   changePrice,
   countStockOtherStores,
 } from "@/src/redux/cart/cartActions";
-import CustomButton from "@/src/components/ui/Button/Button";
+import CustomButton from "@/src/shared/ui/Button/Button";
 import PaymentModal from "@/src/components/sales/PaymentModal/PaymentModal";
 import StockModal from "@/src/components/inventory/StockModal/StockModal";
 import { getStores } from "@/src/api/stores";
@@ -19,8 +19,8 @@ import { confirmTransfers, createDistribution } from "@/src/api/transfers";
 import { showSuccess, showError, showWarning } from "@/src/shared/utils/alerts";
 import { addProducts, getStockOtherStores } from "@/src/api/products";
 import { useUser } from "@/src/context/UserContext";
-import { CustomSpinner } from "@/src/components/ui/Spinner/Spinner";
-import { useModal } from "@/src/hooks/useModal";
+import { CustomSpinner } from "@/src/shared/ui/Spinner/Spinner";
+import { useModal } from "@/src/shared/hooks/useModal";
 import { useAvailableStock } from "@/src/hooks/useAvailableStock";
 import { Grid, Select, MenuItem, Typography } from "@mui/material";
 import PaymentIcon from "@mui/icons-material/Payment";

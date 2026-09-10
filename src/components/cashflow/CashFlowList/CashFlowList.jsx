@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from "react";
-import DataTable from "@/src/components/ui/DataTable/DataTable";
-import CustomButton from "@/src/components/ui/Button/Button";
-import CustomTooltip from "@/src/components/ui/Tooltip";
+import DataTable from "@/src/shared/ui/DataTable/DataTable";
+import CustomButton from "@/src/shared/ui/Button/Button";
+import CustomTooltip from "@/src/shared/ui/Tooltip";
 import { getFormattedDate, formatTimeFromDate } from "@/src/shared/utils/utils";
 import { getCashFlow, deleteCashFlow } from "@/src/api/cashflow";
 import { useUser } from "@/src/context/UserContext";
 import CashFlowModal from "@/src/components/cashflow/CashFlowModal/CashFlowModal";
-import { useModal } from "@/src/hooks/useModal";
-import { CustomSpinner } from "@/src/components/ui/Spinner/Spinner";
+import { useModal } from "@/src/shared/hooks/useModal";
+import { CustomSpinner } from "@/src/shared/ui/Spinner/Spinner";
 import { Grid, TextField } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import PageHeader from "@/src/components/ui/PageHeader";
+import PageHeader from "@/src/shared/ui/PageHeader";
 import { showSuccess, showError, showConfirm } from "@/src/shared/utils/alerts";
 
 const today = getFormattedDate();

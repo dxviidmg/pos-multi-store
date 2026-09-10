@@ -1,6 +1,6 @@
 import { logger } from "@/src/shared/utils/logger";
-import httpClient from "@/src/api/httpClient";
-import { getApiUrl, buildUrlWithParams } from "@/src/api/utils";
+import httpClient from "@/src/shared/api/httpClient";
+import { getApiUrl, buildUrlWithParams } from "@/src/shared/api/utils";
 
 const timedRequest = async (axiosCall, meta = {}) => {
   const start = performance.now();

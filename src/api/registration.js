@@ -1,5 +1,5 @@
-import httpClient from "@/src/api/httpClient";
-import { getApiUrl } from "@/src/api/utils";
+import httpClient from "@/src/shared/api/httpClient";
+import { getApiUrl } from "@/src/shared/api/utils";
 
 const API_KEY = process.env.NEXT_PUBLIC_API_URL_KEY || process.env.REACT_APP_API_URL_KEY;
 

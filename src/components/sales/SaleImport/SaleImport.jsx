@@ -1,13 +1,13 @@
 import React, { useState, useRef } from "react";
-import SimpleTable from "@/src/components/ui/SimpleTable/SimpleTable";
-import CustomButton from "@/src/components/ui/Button/Button";
+import SimpleTable from "@/src/shared/ui/SimpleTable/SimpleTable";
+import CustomButton from "@/src/shared/ui/Button/Button";
 import { importSales, importSalesValidation } from "@/src/api/sales";
 import { showSuccess, showError } from "@/src/shared/utils/alerts";
-import { CustomSpinner } from "@/src/components/ui/Spinner/Spinner";
-import PageHeader from "@/src/components/ui/PageHeader";
-import DropZone from "@/src/components/ui/DropZone";
-import VisuallyHiddenInput from "@/src/components/ui/VisuallyHiddenInput";
-import StatusChip from "@/src/components/ui/StatusChip";
+import { CustomSpinner } from "@/src/shared/ui/Spinner/Spinner";
+import PageHeader from "@/src/shared/ui/PageHeader";
+import DropZone from "@/src/shared/ui/DropZone";
+import VisuallyHiddenInput from "@/src/shared/ui/VisuallyHiddenInput";
+import StatusChip from "@/src/shared/ui/StatusChip";
 import {
   Grid, Typography, Stepper, Step, StepLabel, Chip,
   LinearProgress, Tooltip,

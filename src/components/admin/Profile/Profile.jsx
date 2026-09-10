@@ -17,7 +17,7 @@ import { Save, Business, Settings, Person, Lock, Visibility, VisibilityOff } fro
 import { useUser } from "@/src/context/UserContext";
 import { getTenant, updateTenant } from '@/src/api/tenants';
 import { getUser, updateUser, changePassword } from '@/src/api/users';
-import { CustomSpinner } from '@/src/components/ui/Spinner/Spinner';
+import { CustomSpinner } from '@/src/shared/ui/Spinner/Spinner';
 
 const Profile = () => {
   const { user } = useUser();

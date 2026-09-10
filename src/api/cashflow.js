@@ -1,6 +1,6 @@
-import { createApiService } from "@/src/api/apiFactory";
-import httpClient from "@/src/api/httpClient";
-import { getApiUrl } from "@/src/api/utils";
+import { createApiService } from "@/src/shared/api/apiFactory";
+import httpClient from "@/src/shared/api/httpClient";
+import { getApiUrl } from "@/src/shared/api/utils";
 
 const cashFlowService = createApiService("cash-flow");
 

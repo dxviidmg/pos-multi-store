@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from "react";
-import DataTable from "@/src/components/ui/DataTable/DataTable";
+import DataTable from "@/src/shared/ui/DataTable/DataTable";
 import { getSellers } from "@/src/api/sellers";
-import CustomButton from "@/src/components/ui/Button/Button";
+import CustomButton from "@/src/shared/ui/Button/Button";
 import SellerModal from "@/src/components/catalog/SellerModal/SellerModal";
 import { getDateDifference, getFormattedDate } from "@/src/shared/utils/utils";
-import { chooseIcon } from "@/src/components/ui/Icons/Icons";
-import { useModal } from "@/src/hooks/useModal";
+import { chooseIcon } from "@/src/shared/ui/Icons/Icons";
+import { useModal } from "@/src/shared/hooks/useModal";
 import { useUserManagement } from "@/src/hooks/useUserManagement";
 import EditUserModal from "@/src/components/ui/UserModals/EditUserModal";
 import ChangePasswordModal from "@/src/components/ui/UserModals/ChangePasswordModal";
-import PageHeader from "@/src/components/ui/PageHeader";
+import PageHeader from "@/src/shared/ui/PageHeader";
 import { Grid, TextField } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import LockResetIcon from "@mui/icons-material/LockReset";
 import { useUser } from "@/src/context/UserContext";
-import CustomTooltip from "@/src/components/ui/Tooltip";
+import CustomTooltip from "@/src/shared/ui/Tooltip";
 
 const SellerList = () => {
   const today = getFormattedDate();

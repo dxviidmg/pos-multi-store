@@ -52,7 +52,7 @@ import PolicyIcon from "@mui/icons-material/Policy";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import logo from "@/src/shared/assets/images/logo.webp";
 import { colors } from "@/src/shared/theme/colors";
-import PageHelp from "@/src/components/ui/PageHelp/PageHelp";
+import PageHelp from "@/src/shared/ui/PageHelp/PageHelp";
 import NotificationsMenu from "@/src/components/ui/NotificationsMenu/NotificationsMenu";
 import PendingMenu from "@/src/components/ui/PendingMenu/PendingMenu";
 import DuplicateSalesMenu from "@/src/components/ui/DuplicateSalesMenu/DuplicateSalesMenu";

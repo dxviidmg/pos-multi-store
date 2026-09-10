@@ -1,4 +1,4 @@
-import { useCrudMutation } from '@/src/hooks/useCrudMutation';
+import { useCrudMutation } from '@/src/shared/hooks/useCrudMutation';
 import { cancelSale } from '@/src/api/sales';
 
 export const useCancelSale = (options = {}) => {

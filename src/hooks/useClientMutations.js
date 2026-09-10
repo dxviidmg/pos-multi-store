@@ -1,4 +1,4 @@
-import { createMutationHooks, useCrudMutation } from '@/src/hooks/useCrudMutation';
+import { createMutationHooks, useCrudMutation } from '@/src/shared/hooks/useCrudMutation';
 import { createClient, updateClient, deleteClient } from '@/src/api/clients';
 
 const api = {

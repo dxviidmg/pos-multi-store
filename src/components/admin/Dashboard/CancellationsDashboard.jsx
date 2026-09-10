@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
-import useTaskPolling from "@/src/hooks/useTaskPolling";
-import CountdownTimer from "@/src/components/ui/CountdownTimer";
+import useTaskPolling from "@/src/shared/hooks/useTaskPolling";
+import CountdownTimer from "@/src/shared/ui/CountdownTimer";
 import LineChart from "@/src/components/admin/Dashboard/LineChart";
 import DoughnutChart from "@/src/components/admin/Dashboard/DoughnutChart";
 import KPICard from "@/src/components/admin/Dashboard/KPICard";
@@ -13,8 +13,8 @@ import {
   MONTH_NAMES, MONTH_NAMES_SHORT, DAY_NAMES, CHART_COLORS,
   getTied,
 } from "@/src/shared/utils/utils";
-import httpClient from "@/src/api/httpClient";
-import { getApiUrl, buildUrlWithParams } from "@/src/api/utils";
+import httpClient from "@/src/shared/api/httpClient";
+import { getApiUrl, buildUrlWithParams } from "@/src/shared/api/utils";
 import BlockIcon from "@mui/icons-material/Block";
 import UndoIcon from "@mui/icons-material/Undo";
 import StorefrontIcon from "@mui/icons-material/Storefront";

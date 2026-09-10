@@ -9,7 +9,7 @@ import {
   Divider,
 } from "@mui/material";
 import { getTaskResult } from "@/src/api/products";
-import CustomButton from "@/src/components/ui/Button/Button";
+import CustomButton from "@/src/shared/ui/Button/Button";
 import { exportToExcel } from "@/src/shared/utils/utils";
 import DownloadIcon from "@mui/icons-material/Download";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";

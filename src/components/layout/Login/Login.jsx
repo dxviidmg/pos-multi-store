@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { loginUser } from "@/src/api/login";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/src/context/UserContext";
-import CustomButton from "@/src/components/ui/Button/Button";
+import CustomButton from "@/src/shared/ui/Button/Button";
 import Logo from "@/src/shared/assets/images/logo.webp";
 import { colors } from "@/src/shared/theme/colors";
 import './Login.css';

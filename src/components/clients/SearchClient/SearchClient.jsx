@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
-import SimpleTable from "@/src/components/ui/SimpleTable/SimpleTable";
+import SimpleTable from "@/src/shared/ui/SimpleTable/SimpleTable";
 import { getClients } from "@/src/api/clients";
-import CustomButton from "@/src/components/ui/Button/Button";
+import CustomButton from "@/src/shared/ui/Button/Button";
 import { useDispatch } from "react-redux";
 import { addClientToCart } from "@/src/redux/cart/cartActions";
 import { showError } from "@/src/shared/utils/alerts";

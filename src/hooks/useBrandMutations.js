@@ -1,4 +1,4 @@
-import { createMutationHooks } from '@/src/hooks/useCrudMutation';
+import { createMutationHooks } from '@/src/shared/hooks/useCrudMutation';
 import { createBrand, updateBrand, deleteBrands } from '@/src/api/brands';
 
 const api = {

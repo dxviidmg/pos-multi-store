@@ -1,4 +1,4 @@
-import { createApiService } from '@/src/api/apiFactory';
+import { createApiService } from '@/src/shared/api/apiFactory';
 
 const mercadopagoAPI = createApiService('mercadopago');
 

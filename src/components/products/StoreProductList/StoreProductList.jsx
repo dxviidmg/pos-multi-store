@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
-import DataTable from "@/src/components/ui/DataTable/DataTable";
+import DataTable from "@/src/shared/ui/DataTable/DataTable";
 import { getStoreProducts } from "@/src/api/products";
-import CustomButton from "@/src/components/ui/Button/Button";
+import CustomButton from "@/src/shared/ui/Button/Button";
 import { useUser } from "@/src/context/UserContext";
 import { exportToExcel } from "@/src/shared/utils/utils";
-import { useModal } from "@/src/hooks/useModal";
+import { useModal } from "@/src/shared/hooks/useModal";
 import StoreProductLogsModal from "@/src/components/products/StoreProductLogsModal/StoreProductLogsModal";
 import StockUpdateRequestModal from "@/src/components/inventory/StockUpdateRequestModal/StockUpdateRequestModal";
-import { CustomSpinner } from "@/src/components/ui/Spinner/Spinner";
+import { CustomSpinner } from "@/src/shared/ui/Spinner/Spinner";
 import { getBrands } from "@/src/api/brands";
 import { getDepartments } from "@/src/api/departments";
 import { Grid, TextField, Alert, Autocomplete } from "@mui/material";
@@ -18,8 +18,8 @@ import HistoryIcon from "@mui/icons-material/History";
 import SendIcon from "@mui/icons-material/Send";
 import Link from "next/link";
 import NotificationImportantIcon from "@mui/icons-material/NotificationImportant";
-import PageHeader from "@/src/components/ui/PageHeader";
-import CustomTooltip from "@/src/components/ui/Tooltip";
+import PageHeader from "@/src/shared/ui/PageHeader";
+import CustomTooltip from "@/src/shared/ui/Tooltip";
 
 const StoreProductList = () => {
   const { user } = useUser();

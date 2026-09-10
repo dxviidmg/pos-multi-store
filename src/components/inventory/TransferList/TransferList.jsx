@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
-import DataTable from "@/src/components/ui/DataTable/DataTable";
+import DataTable from "@/src/shared/ui/DataTable/DataTable";
 import { calculateTimeAgo, formatTimeFromDate } from "@/src/shared/utils/utils";
-import CustomButton from "@/src/components/ui/Button/Button";
+import CustomButton from "@/src/shared/ui/Button/Button";
 import { showSuccess, showError } from "@/src/shared/utils/alerts";
-import { CustomSpinner } from "@/src/components/ui/Spinner/Spinner";
+import { CustomSpinner } from "@/src/shared/ui/Spinner/Spinner";
 import { useTransfers, useDeleteTransfer } from "@/src/hooks/useTransfers";
 import { Grid, MenuItem, FormControl, InputLabel, Select, TextField } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import PageHeader from "@/src/components/ui/PageHeader";
+import PageHeader from "@/src/shared/ui/PageHeader";
 
 
 

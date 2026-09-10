@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from "react";
-import DataTable from "@/src/components/ui/DataTable/DataTable";
-import { CustomSpinner } from "@/src/components/ui/Spinner/Spinner";
-import CustomButton from "@/src/components/ui/Button/Button";
-import CustomTooltip from "@/src/components/ui/Tooltip";
+import DataTable from "@/src/shared/ui/DataTable/DataTable";
+import { CustomSpinner } from "@/src/shared/ui/Spinner/Spinner";
+import CustomButton from "@/src/shared/ui/Button/Button";
+import CustomTooltip from "@/src/shared/ui/Tooltip";
 import { Grid,  Chip } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import DeleteIcon from "@mui/icons-material/Delete";
-import httpClient from "@/src/api/httpClient";
-import { getApiUrl } from "@/src/api/utils";
+import httpClient from "@/src/shared/api/httpClient";
+import { getApiUrl } from "@/src/shared/api/utils";
 import { useUser } from "@/src/context/UserContext";
 import { getFormattedDateTime } from "@/src/shared/utils/utils";
 import { showSuccess, showError } from "@/src/shared/utils/alerts";
 import { getStockUpdateRequests } from "@/src/api/notifications";
 import Swal from "sweetalert2";
 import { colors } from "@/src/shared/theme/colors";
-import PageHeader from "@/src/components/ui/PageHeader";
+import PageHeader from "@/src/shared/ui/PageHeader";
 
 const StockUpdateRequestList = () => {
   const { user } = useUser();

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useCreateTenant } from "@/src/hooks/useRegistration";
 import { useMercadoPago } from "@/src/hooks/useMercadoPago";
-import CustomButton from "@/src/components/ui/Button/Button";
+import CustomButton from "@/src/shared/ui/Button/Button";
 import {
   Grid, TextField, Box, Typography, Paper,
   InputAdornment, CircularProgress, LinearProgress,

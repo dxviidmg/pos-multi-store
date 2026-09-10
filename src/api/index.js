@@ -25,5 +25,5 @@ export * from '@/src/api/registration';
 export * from '@/src/api/conversions';
 
 // Utilities
-export * from '@/src/api/utils';
-export { default as httpClient } from '@/src/api/httpClient';
+export * from '@/src/shared/api/utils';
+export { default as httpClient } from '@/src/shared/api/httpClient';

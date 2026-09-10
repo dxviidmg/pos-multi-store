@@ -1,15 +1,15 @@
 import React, { useEffect, useState, useRef } from "react";
-import DataTable from "@/src/components/ui/DataTable/DataTable";
+import DataTable from "@/src/shared/ui/DataTable/DataTable";
 import { getSales } from "@/src/api/sales";
-import CustomButton from "@/src/components/ui/Button/Button";
+import CustomButton from "@/src/shared/ui/Button/Button";
 import {
   getFormattedDate,
   handlePrintTicket,
   getFormattedDateTime,
 } from "@/src/shared/utils/utils";
-import { useModal } from "@/src/hooks/useModal";
+import { useModal } from "@/src/shared/hooks/useModal";
 import SaleModal from "@/src/components/sales/SaleModal/SaleModal";
-import { CustomSpinner } from "@/src/components/ui/Spinner/Spinner";
+import { CustomSpinner } from "@/src/shared/ui/Spinner/Spinner";
 import PrintIcon from "@mui/icons-material/Print";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import BlockIcon from "@mui/icons-material/Block";
@@ -21,8 +21,8 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { Popper, Paper, Grid, TextField, Select, MenuItem, FormControl, InputLabel, Box} from "@mui/material";
 import { useUser } from "@/src/context/UserContext";
 import PaymentEditModal from "@/src/components/sales/PaymentEditModal/PaymentEditModal";
-import CustomTooltip from "@/src/components/ui/Tooltip";
-import PageHeader from "@/src/components/ui/PageHeader";
+import CustomTooltip from "@/src/shared/ui/Tooltip";
+import PageHeader from "@/src/shared/ui/PageHeader";
 
 const ProductsPopperButton = ({ row, productsModal }) => {
   const [anchorEl, setAnchorEl] = useState(null);

@@ -1,7 +1,7 @@
 import { Grid, TextField, IconButton, InputAdornment, Alert } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import CustomModal from "@/src/components/ui/Modal/Modal";
-import CustomButton from "@/src/components/ui/Button/Button";
+import CustomModal from "@/src/shared/ui/Modal/Modal";
+import CustomButton from "@/src/shared/ui/Button/Button";
 
 const ChangePasswordModal = ({ open, onClose, passwordData, onChange, onSave, showPasswords, onToggleVisibility }) => {
   return (

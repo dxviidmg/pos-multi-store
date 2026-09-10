@@ -1,4 +1,4 @@
-import { useCrudMutation } from '@/src/hooks/useCrudMutation';
+import { useCrudMutation } from '@/src/shared/hooks/useCrudMutation';
 import { createProduct, updateProduct } from '@/src/api/products';
 
 const productErrorParser = (error) => {

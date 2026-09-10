@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { getSalesDashboard } from "@/src/api/sales";
-import useTaskPolling from "@/src/hooks/useTaskPolling";
-import CountdownTimer from "@/src/components/ui/CountdownTimer";
+import useTaskPolling from "@/src/shared/hooks/useTaskPolling";
+import CountdownTimer from "@/src/shared/ui/CountdownTimer";
 import LineChart from "@/src/components/admin/Dashboard/LineChart";
 import DoughnutChart from "@/src/components/admin/Dashboard/DoughnutChart";
 import SalesHeatmap from "@/src/components/admin/Dashboard/SalesHeatmap";
