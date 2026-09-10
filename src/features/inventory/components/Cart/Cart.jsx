@@ -1,0 +1,427 @@
+import { logger } from "@/src/shared/utils/logger";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { selectCart, selectMovementType } from "@/src/redux/cart/selectors";
+import SimpleTable from "@/src/shared/ui/SimpleTable/SimpleTable";
+import {
+  cleanCart,
+  removeFromCart,
+  updateMovementType,
+  updateQuantityInCart,
+  changePrice,
+  countStockOtherStores,
+} from "@/src/redux/cart/cartActions";
+import CustomButton from "@/src/shared/ui/Button/Button";
+import PaymentModal from "@/src/features/sales/components/PaymentModal/PaymentModal";
+import StockModal from "@/src/features/inventory/components/StockModal/StockModal";
+import { getStores } from "@/src/features/admin/api/stores";
+import { confirmTransfers, createDistribution } from "@/src/features/inventory/api/transfers";
+import { showSuccess, showError, showWarning } from "@/src/shared/utils/alerts";
+import { addProducts, getStockOtherStores } from "@/src/features/products/api/products";
+import { useUser } from "@/src/context/UserContext";
+import { CustomSpinner } from "@/src/shared/ui/Spinner/Spinner";
+import { useModal } from "@/src/shared/hooks/useModal";
+import { useAvailableStock } from "@/src/features/inventory/hooks/useAvailableStock";
+import { Grid, Select, MenuItem, Typography } from "@mui/material";
+import PaymentIcon from "@mui/icons-material/Payment";
+import SendIcon from "@mui/icons-material/Send";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
+import { MOVEMENT_TYPES, STORE_TYPES } from "@/src/shared/constants";
+import { getSaleColumns, getTransferColumns, getDistributionColumns, getAddToStockColumns } from "@/src/features/inventory/components/Cart/cartColumns";
+
+const Cart = ({ searchInputRef }) => {
+  const { user } = useUser();
+  const store_type = user?.store_type;
+  const dispatch = useDispatch();
+  const stockModal = useModal();
+  const paymentModal = useModal();
+  const [stores, setStores] = useState([]);
+  const [selectedStore, setSelectedStore] = useState("");
+  const [confirmedStore, setConfirmedStore] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [saleModes, setSaleModes] = useState({});
+  const lastQtyRef = useRef(null);
+  const prevCartLenRef = useRef(0);
+  
+  const { getAvailableStock } = useAvailableStock();
+  
+  const cart = useSelector(selectCart);
+  const movementType = useSelector(selectMovementType);
+  const { carts } = useSelector((state) => state.multiCartReducer);
+
+  // Auto-focus cantidad del último producto agregado en distribución o agregar inventario
+  useEffect(() => {
+    if ((movementType === MOVEMENT_TYPES.DISTRIBUTION || movementType === MOVEMENT_TYPES.ADD_STOCK) && cart.length > prevCartLenRef.current) {
+      setTimeout(() => {
+        if (lastQtyRef.current) {
+          lastQtyRef.current.focus();
+          lastQtyRef.current.select();
+        }
+      }, 50);
+    }
+    prevCartLenRef.current = cart.length;
+  }, [cart.length, movementType]);
+
+  useEffect(() => {
+    const handleShortcut = (event) => {
+      if (event.ctrlKey && (event.key === "p" || event.key === "P")) {
+        event.preventDefault();
+        if (movementType === MOVEMENT_TYPES.SALE || movementType === MOVEMENT_TYPES.RESERVATION) {
+          paymentModal.open();
+        }
+      }
+    };
+    window.addEventListener("keydown", handleShortcut);
+    return () => window.removeEventListener("keydown", handleShortcut);
+  }, [movementType, paymentModal]);
+
+  const handleDestinationStoreChange = (event) => {
+    setSelectedStore(event.target.value);
+  };
+
+  const handleConfirmStoreChange = (event) => {
+    setConfirmedStore(event.target.value);
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await getStores();
+        setStores(response.data);
+      } catch (error) {
+        logger.error("Error fetching stores:", error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    // Si el tipo de tienda es "A", se establece el movimiento como "distribucion"
+    if (store_type === STORE_TYPES.WAREHOUSE && movementType === MOVEMENT_TYPES.SALE) {
+      dispatch(updateMovementType(MOVEMENT_TYPES.DISTRIBUTION));
+    }
+  }, [store_type, dispatch, movementType]);
+
+  const { total } = useMemo(() => {
+    const total = cart.reduce(
+      (acc, item) => acc + item.product_price * item.quantity,
+      0
+    );
+    return { total };
+  }, [cart]);
+
+  const { totalProducts } = useMemo(() => {
+    const totalProducts = cart.reduce((acc, item) => {
+      // Productos KG cuentan como 1 sin importar la cantidad
+      if (item.product?.unit === "KG") return acc + 1;
+      return acc + item.quantity;
+    }, 0);
+    return { totalProducts };
+  }, [cart]);
+
+  const handleRemoveFromCart = (product) => dispatch(removeFromCart(product.id));
+
+  const handleStockOtherStores = async (product) => {
+    const response = await getStockOtherStores(product.id);
+    dispatch(countStockOtherStores(product, response.data));
+    stockModal.open(product);
+  };
+
+  const handleChangePrice = (product) => {
+    dispatch(changePrice(product));
+  };
+
+  const handleQuantityChangeToCart = (e, product) => {
+    const rawValue = Number(e.target.value);
+    const productIsKg = product.product?.unit === "KG";
+    const mode = saleModes[product.id] || "KG";
+    const minQty = productIsKg ? (mode === "$" ? 1 : (mode === "FRAC" ? 0.1 : 1)) : 1;
+
+    // En modo $, el valor es pesos, calcular kg
+    let newQuantity;
+    if (mode === "$" && productIsKg) {
+      if (e.target.value === "" || rawValue < 1) return;
+      newQuantity = rawValue / product.product_price;
+    } else {
+      if (e.target.value === "" || rawValue < minQty) return;
+      newQuantity = rawValue;
+    }
+  
+    // --- Control de límites según movimiento ---
+    const stockLimit =
+      movementType === MOVEMENT_TYPES.TRANSFER
+        ? product.stock
+        : product.available_stock;
+  
+    // Verificar stock disponible considerando otros carritos
+    const availableStock = movementType === MOVEMENT_TYPES.ADD_STOCK ? Infinity : getAvailableStock(product.id, stockLimit);
+    
+    if (Object.keys(carts).length > 1 && newQuantity > availableStock) {
+      showWarning("Stock no disponible", `"${product.product?.name || product.name}" está reservado en otros carritos`);
+      return;
+    }
+    
+    const quantity = Math.min(newQuantity, availableStock);
+  
+    // --- Mostrar modal si se excede el stock (excepto agregar) ---
+    if (movementType !== MOVEMENT_TYPES.ADD_STOCK && newQuantity > product.available_stock) {
+      stockModal.open(product);
+    }
+  
+    dispatch(updateQuantityInCart(product, quantity));
+  };
+  
+
+
+
+  const handleTransferFromCart = async (cart) => {
+    if (loading) return;
+    setLoading(true);
+
+    const data = { transfers: cart, destination_store: selectedStore };
+    try {
+      const response = await confirmTransfers(data);
+      if (response.status === 200) {
+        dispatch(cleanCart());
+        setLoading(false);
+        showSuccess("Traspaso confirmado");
+      } else if (response.status === 404) {
+        dispatch(cleanCart());
+        setLoading(false);
+        showError("Traspaso inexistente", "Checa cantidad y/o destino");
+      } else {
+        setLoading(false);
+        showError("Error desconocido", "Por favor llame a soporte técnico");
+      }
+    } catch (error) {
+      setLoading(false);
+      showError("Error en la solicitud", error.message);
+    }
+  };
+
+  const handleDistributionFromCart = async (cart) => {
+    if (loading) return; // Previene reenvío
+    setLoading(true)
+    const data = { products: cart, destination_store: selectedStore };
+    try {
+      const response = await createDistribution(data);
+      if (response.status === 201) {
+        dispatch(cleanCart());
+      setSelectedStore("")
+      setConfirmedStore("");
+      setTimeout(() => {
+        setLoading(false);
+      }, 200);
+        showSuccess("Distribución creada");
+      } else if (response.status === 404) {
+        setLoading(false);
+        showError("Distribución no encontrada", "Algunos productos no coinciden con la distribución solicitada, ya sea en cantidad o en código.");
+      } else {
+        setLoading(false);
+        showError("Error desconocido", "Por favor llame a soporte técnico");
+      }
+    } catch (error) {
+      setLoading(false);
+      showError("Error en la solicitud", error.message);
+    }
+  };
+
+  const handleAddToStock = async (cart) => {
+    if (loading) return;
+    setLoading(true);
+
+    const products_to_add = cart.map(item => ({
+      id: item.id,
+      stock: item.stock,
+      quantity: item.quantity
+    }));
+
+    const data = { store_products: products_to_add };
+    try {
+      const response = await addProducts(data);
+      if (response.status === 200) {
+        dispatch(cleanCart());
+        setLoading(false);
+        showSuccess("Producto añadido al inventario");
+      } else {
+        setLoading(false);
+        showError("Error en el inventario", "No se pudo añadir el producto");
+      }
+    } catch (error) {
+      showError("Error en la solicitud", error.message);
+    }
+  };
+
+
+  const commonColumns = [
+    { name: "Código", field: "code", selector: (row) => row.product.code },
+    {
+      name: "Marca",
+      field: "brand",
+      selector: (row) => row.product.brand_name,
+    },
+    {
+      name: "Nombre",
+      field: "name",
+      selector: (row) => row.product.name,
+      renderCell: (params) => (
+        <div className="cell-wrap">
+          {params.row.product.name}
+        </div>
+      ),
+    },
+    { name: "Stock", field: "stock", selector: (row) => row.available_stock },
+  ];
+
+  const handleStockWarning = (row) => {
+    showWarning("Stock no disponible", `"${row.product.name}" está reservado en otros carritos`);
+  };
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const saleColumns = useMemo(() => getSaleColumns(handleQuantityChangeToCart, handleRemoveFromCart, handleChangePrice, movementType, getAvailableStock, handleStockWarning, saleModes, setSaleModes), [movementType, getAvailableStock, saleModes]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const transferColumns = useMemo(() => getTransferColumns(handleQuantityChangeToCart, handleRemoveFromCart, getAvailableStock), []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const distributionColumns = useMemo(() => getDistributionColumns(handleQuantityChangeToCart, handleRemoveFromCart, handleStockOtherStores, getAvailableStock, cart, searchInputRef, lastQtyRef), [cart]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const addToStockColumns = useMemo(() => getAddToStockColumns(handleQuantityChangeToCart, handleRemoveFromCart, cart, searchInputRef, lastQtyRef), [cart]);
+
+  const getColumns = () => {
+    switch (movementType) {
+      case MOVEMENT_TYPES.SALE:
+      case MOVEMENT_TYPES.RESERVATION:
+        return saleColumns;
+
+      case MOVEMENT_TYPES.TRANSFER:
+        return transferColumns;
+
+      case MOVEMENT_TYPES.DISTRIBUTION:
+        return distributionColumns;
+
+      case MOVEMENT_TYPES.ADD_STOCK:
+        return addToStockColumns;
+
+      default:
+        return commonColumns;
+    }
+  };
+
+  return (
+    <div>
+      <CustomSpinner isLoading={loading} />
+      <PaymentModal isOpen={paymentModal.isOpen} onClose={() => { paymentModal.close(); setTimeout(() => searchInputRef?.current?.focus(), 100); }} />
+      <StockModal isOpen={stockModal.isOpen} product={stockModal.data} onClose={stockModal.close} />
+      <div>
+        {cart.length !== 0 && (
+          <Grid container spacing={1} sx={{ mb: 1, alignItems: 'center' }}>
+            {(movementType === MOVEMENT_TYPES.SALE || movementType === MOVEMENT_TYPES.RESERVATION) && (
+              <>
+                <Grid item xs={12} md={3}>
+                  <Typography variant="body2" color="text.secondary">Productos</Typography>
+                  <Typography variant="h5" sx={{ fontWeight: 700 }}>{totalProducts}</Typography>
+                </Grid>
+
+                <Grid item xs={12} md={5}>
+                  <Typography variant="body2" color="text.secondary">Total</Typography>
+                  <Typography variant="h4" sx={{ fontWeight: 700, color: 'primary.main' }}>${total.toFixed(2)}</Typography>
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  <CustomButton
+                    fullWidth
+                    onClick={() => paymentModal.open()}
+                    startIcon={<PaymentIcon />}
+                    sx={{ py: 1.2, fontSize: '0.875rem' }}
+                  >
+                    Cobrar (Ctrl+P)
+                  </CustomButton>
+                </Grid>
+              </>
+            )}
+
+            {(movementType === MOVEMENT_TYPES.TRANSFER ||
+              movementType === MOVEMENT_TYPES.DISTRIBUTION) && (
+              <>
+                <Grid item xs={12} md={3}>
+                  <Typography variant="body2" color="text.secondary">Productos</Typography>
+                  <Typography variant="h5" sx={{ fontWeight: 700 }}>{totalProducts}</Typography>
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <Select fullWidth size="small" value={selectedStore}
+                    onChange={handleDestinationStoreChange}
+                    displayEmpty
+                    renderValue={(value) => {
+                      if (!value) return <span style={{ color: "#999" }}>Selecciona un destino</span>;
+                      const store = stores.find((s) => s.id === value);
+                      return store ? <b>{store.name} ({store.store_type_display})</b> : value;
+                    }}
+                  >
+                    <MenuItem value="" disabled>Selecciona un destino</MenuItem>
+                    {stores.map((store) => (
+                      <MenuItem key={store.id} value={store.id}>
+                        <b>{store.name} ({store.store_type_display})</b>
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <Select fullWidth size="small" value={confirmedStore}
+                    onChange={handleConfirmStoreChange}
+                    displayEmpty
+                    renderValue={(value) => {
+                      if (!value) return <span style={{ color: "#999" }}>Confirma el destino</span>;
+                      const store = stores.find((s) => s.id === value);
+                      return store ? `${store.name} (${store.store_type_display})` : value;
+                    }}
+                  >
+                    <MenuItem value="" disabled>Confirma el destino</MenuItem>
+                    {stores.map((store) => (
+                      <MenuItem key={store.id} value={store.id}>
+                        {store.name} ({store.store_type_display})
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <CustomButton
+                    onClick={() =>
+                      movementType === MOVEMENT_TYPES.TRANSFER
+                        ? handleTransferFromCart(cart)
+                        : handleDistributionFromCart(cart)
+                    }
+                    disabled={!selectedStore || selectedStore !== confirmedStore}
+                    fullWidth
+                    startIcon={<SendIcon />}
+                  >
+                    {movementType === MOVEMENT_TYPES.TRANSFER ? "Transferir" : "Distribuir"}
+                  </CustomButton>
+                </Grid>
+              </>
+            )}
+
+            {movementType === MOVEMENT_TYPES.ADD_STOCK && (
+              <>
+                <Grid item xs={12} md={9}></Grid>
+                <Grid item xs={12} md={3}>
+                  <CustomButton
+                    fullWidth
+                    onClick={() => handleAddToStock(cart)}
+                    startIcon={<AddCircleIcon />}
+                  >
+                    Añadir
+                  </CustomButton>
+                </Grid>
+              </>
+            )}
+          </Grid>
+        )}
+        <SimpleTable
+          noDataComponent="Sin productos"
+          data={cart}
+          columns={getColumns()}
+        />
+      </div>
+    </div>
+  );
+};
+
+export default Cart;

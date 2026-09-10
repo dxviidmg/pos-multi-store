@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { getUser, updateUser, changePassword } from "@/src/api/users";
+import { getUser, updateUser, changePassword } from "@/src/shared/api/users";
 import { showSuccess, showError } from "@/src/shared/utils/alerts";
 
 export const useUserManagement = () => {

@@ -1,4 +1,4 @@
-import { getPrint } from "@/src/api/printers";
+import { getPrint } from "@/src/shared/api/printers";
 import { showAlert } from "@/src/shared/utils/alerts";
 
 export const handlePrintTicket = async (endpoint, data) => {

@@ -1,0 +1,164 @@
+import React, { useEffect, useState, useRef } from "react";
+import CustomModal from "@/src/shared/ui/Modal/Modal";
+import DataTable from "@/src/shared/ui/DataTable/DataTable";
+import { getStoreProductLogs, updateStoreProduct } from "@/src/features/products/api/products";
+import { getFormattedDateTime } from "@/src/shared/utils/utils";
+import { showSuccess, showError } from "@/src/shared/utils/alerts";
+import { useForm } from "@/src/shared/hooks/useForm";
+import CustomButton from "@/src/shared/ui/Button/Button";
+import { chooseIcon } from "@/src/shared/ui/Icons/Icons";
+import { Grid, TextField, LinearProgress } from "@mui/material";
+import SaveIcon from "@mui/icons-material/Save";
+
+const INITIAL_FORM_DATA = { stock: "" };
+const MAX_STOCK = 99999999;
+
+const StoreProductLogsModal = ({ isOpen, logs: logsData, onClose, onUpdate }) => {
+  const storeProduct = logsData?.storeProduct || {};
+  const adjustStock = logsData?.adjustStock || false;
+
+  const { values: formData, handleChange: handleInputChange, setValues: setFormData, reset: resetForm } = useForm(INITIAL_FORM_DATA);
+  const [logs, setLogs] = useState([]);
+  const [months, setMonths] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const debounceTimer = useRef(null);
+
+  useEffect(() => {
+    const fetchStoreProductLogs = async () => {
+      if (storeProduct.id) {
+        setFormData(storeProduct);
+        setLoading(true);
+
+        try {
+          const response = await getStoreProductLogs({
+            "store-product-id": storeProduct.id,
+            months
+          });
+          setLogs(response.data);
+        } catch (error) {
+          // Error silencioso - logs no críticos
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        resetForm();
+        setLogs([]);
+      }
+    };
+
+    if (storeProduct.id) {
+      clearTimeout(debounceTimer.current);
+      debounceTimer.current = setTimeout(fetchStoreProductLogs, 500);
+    }
+
+    return () => clearTimeout(debounceTimer.current);
+  }, [storeProduct.id, months]);
+
+
+  const handleCreateAdjustStock = async () => {
+    const response = await updateStoreProduct(formData);
+
+    if (response.status === 200) {
+      resetForm();
+      onClose();
+      onUpdate(response.data);
+      showSuccess("Ajuste exitoso");
+    } else {
+      showError("Error al realizar el ajuste", "Por favor llame a soporte técnico");
+    }
+  };
+
+  return (
+    <CustomModal
+      showOut={isOpen}
+      onClose={onClose}
+      title={`${adjustStock ? (String(formData.stock) === String(storeProduct.stock) ? "Confirmar cantidad" : "Modificar cantidad") : "Historial de movimientos"} de ${formData.product?.code} - ${formData.product?.name}`}
+    >
+     <Grid container sx={{ padding: '1rem', backgroundColor: 'modalBody.main' }}>
+       <Grid item xs={12} className="card">
+     <Grid container spacing={2}>
+
+        {adjustStock && (
+        <Grid item xs={12} md={6}>
+          <TextField size="small" fullWidth label="Cantidad" type="text"
+            value={formData.stock}
+            placeholder="Cantidad"
+            name={"stock"}
+            onChange={(e) => {
+              const digits = e.target.value.replace(/\D/g, "");
+              const capped = digits === "" ? "" : Math.min(Number(digits), MAX_STOCK).toString();
+              handleInputChange({ target: { name: "stock", value: capped } });
+            }}
+          />
+        </Grid>
+        )}
+
+        {adjustStock && (
+        <Grid item xs={12} md={6}>
+          <CustomButton
+            onClick={() => handleCreateAdjustStock()}
+            fullWidth
+            startIcon={<SaveIcon />}
+          >
+            {String(formData.stock) === String(storeProduct.stock) ? "Confirmar" : "Modificar"}
+          </CustomButton>
+        </Grid>
+        )}
+
+        {!adjustStock && (
+        <Grid item xs={12} md={12}>
+          {loading && <LinearProgress sx={{ mb: 2, borderRadius: 1 }} />}
+          <TextField
+            size="small"
+            label="Meses anteriores (iniciar desde cuántos meses atrás)"
+            type="number"
+            value={months}
+            onChange={(e) => setMonths(Number(e.target.value))}
+            inputProps={{ min: 1, max: 12 }}
+            sx={{ width: '100%', mb: 2 }}
+          />
+          <h1>Últimos movimientos</h1>
+          <DataTable
+            noDataComponent="Sin movimientos"
+            data={logs}
+            columns={[
+              {
+                name: "Fecha y hora",
+                selector: (row) => getFormattedDateTime(row.created_at),
+              },
+              {
+                name: "Descripción",
+                selector: (row) => row.description,
+              },
+              {
+                name: "Stock anterior",
+                selector: (row) => row.previous_stock,
+              },
+              {
+                name: "Stock actualizado",
+                selector: (row) => row.updated_stock,
+              },
+              {
+                name: "Diferencia",
+                selector: (row) => row.difference,
+              },
+              {
+                name: "Usuario",
+                selector: (row) => row.user_username,
+              },
+              {
+                name: "OK",
+                selector: (row) => chooseIcon(row.is_consistent),
+              },
+            ]}
+          />
+        </Grid>
+        )}
+      </Grid>
+       </Grid>
+      </Grid>
+     </CustomModal>
+  );
+};
+
+export default StoreProductLogsModal;

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { getTaskResult } from "@/src/api/products";
+import { getTaskResult } from "@/src/features/products/api/products";
 import { showError } from "@/src/shared/utils/alerts";
 import { getErrorMessage } from "@/src/shared/utils/utils";
 

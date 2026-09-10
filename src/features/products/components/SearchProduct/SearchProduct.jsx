@@ -1,0 +1,426 @@
+import { showSuccess, showError, showAlert } from "@/src/shared/utils/alerts";
+import { logger } from "@/src/shared/utils/logger";
+import React, { useEffect, useRef, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { selectMovementType } from "@/src/redux/cart/selectors";
+import SimpleTable from "@/src/shared/ui/SimpleTable/SimpleTable";
+import CustomButton from "@/src/shared/ui/Button/Button";
+import PageHeader from "@/src/shared/ui/PageHeader";
+import CustomTooltip from "@/src/shared/ui/Tooltip";
+import { getStoreProducts, getCreateProductsOnSale } from "@/src/features/products/api/products";
+import { updateMovementType } from "@/src/redux/cart/cartActions";
+import { Chip } from "@mui/material";
+import StockModal from "@/src/features/inventory/components/StockModal/StockModal";
+import ProductModal from "@/src/features/products/components/ProductModal/ProductModal";
+import { useModal } from "@/src/shared/hooks/useModal";
+import { useKeyboardShortcuts } from "@/src/shared/hooks/useKeyboardShortcuts";
+import { useProductSearch } from "@/src/features/products/hooks/useProductSearch";
+import { useCartActions } from "@/src/features/inventory/hooks/useCartActions";
+import { useAvailableStock } from "@/src/features/inventory/hooks/useAvailableStock";
+import { useUser } from "@/src/context/UserContext";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CancelIcon from "@mui/icons-material/Cancel";
+import { usePrinterStatus } from "@/src/shared/hooks/usePrinterStatus";
+import { handlePrintTicket } from "@/src/shared/utils/utils";
+import { Grid, TextField, FormLabel, RadioGroup, FormControlLabel, Radio, InputAdornment, IconButton, CircularProgress, LinearProgress, Alert } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
+import PushPinIcon from "@mui/icons-material/PushPin";
+import PushPinOutlinedIcon from "@mui/icons-material/PushPinOutlined";
+import AddIcon from "@mui/icons-material/Add";
+import InventoryIcon from "@mui/icons-material/Inventory";
+import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
+import EditIcon from "@mui/icons-material/Edit";
+import EditOffIcon from "@mui/icons-material/EditOff";
+import { MOVEMENT_TYPES, QUERY_TYPES } from "@/src/shared/constants";
+import ProductCarousel from "@/src/features/products/components/ProductCarousel/ProductCarousel";
+
+const SearchProduct = ({ searchInputRef }) => {
+  const localRef = useRef(null);
+  const inputRef = searchInputRef || localRef;
+
+  const dispatch = useDispatch();
+  const stockModal = useModal();
+  const productModal = useModal();
+  
+  const { getAvailableStock } = useAvailableStock();
+  const movementType = useSelector(selectMovementType);
+  
+  const { user } = useUser();
+  const storeType = user?.store_type;
+  const storePrinter = user?.store_printer;
+
+  const { connected: printerConnected } = usePrinterStatus(storePrinter);
+  
+  const [barcode, setBarcode] = useState("");
+  const [isInputFocused, setIsInputFocused] = useState(false);
+  const [keepListOpen, setKeepListOpen] = useState(false);
+  const [createProductsOnSale, setCreateProductsOnSale] = useState(false);
+  const [stockVerificationSnackbar, setStockVerificationSnackbar] = useState({ open: false, productName: "", productCode: "" });
+  
+  // Usar hooks extraídos
+  const { query, setQuery, data, setData, queryType, setQueryType, searching, fetchData } = useProductSearch();
+  const { handleAddToCartIfAvailable } = useCartActions(getAvailableStock, movementType, keepListOpen, setData, setQuery);
+
+  // "q" (por marca o nombre) y "visual" (búsqueda visual) comparten el mismo flujo de texto
+  const isTextMode = queryType === "q" || queryType === "visual";
+
+  // Usar hook de atajos de teclado
+  useKeyboardShortcuts(inputRef, dispatch, {
+    onVisualSearch: () => {
+      setQueryType(QUERY_TYPES.VISUAL);
+      setQuery("");
+      setData([]);
+      inputRef.current?.focus();
+    },
+  });
+
+  useEffect(() => {
+    const checkCreateProductsOnSale = async () => {
+      try {
+        const response = await getCreateProductsOnSale();
+        setCreateProductsOnSale(response.data.create_products_on_sale || false);
+      } catch (err) {
+        logger.error("Error checking create products on sale:", err);
+      }
+    };
+    checkCreateProductsOnSale();
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [inputRef]);
+
+  const handleSingleProductFetch = (storeProduct) => {
+    if (movementType === MOVEMENT_TYPES.SALE && storeProduct.available_stock === 0) {
+      handleOpenModal(storeProduct);
+    } else if (
+      movementType === MOVEMENT_TYPES.TRANSFER &&
+      storeProduct.reserved_stock === 0
+    ) {
+      showError("Este producto no está relacionado a algún traspaso");
+    } else if (movementType === MOVEMENT_TYPES.CHECK_STOCK) {
+      showSuccess(storeProduct.product.name, "Precio unitario $" + storeProduct.product.prices.unit_price);
+    } else {
+      const verification = handleAddToCartIfAvailable(storeProduct, stockModal);
+      if (verification) {
+        setStockVerificationSnackbar({
+          open: true,
+          productName: verification.productName,
+          productCode: verification.productCode
+        });
+      }
+    }
+    setQuery("");
+  };
+
+  const handleSearchProduct = async () => {
+    // "visual" usa el mismo parámetro de API que "q" (por marca o nombre)
+    const apiParam = queryType === "code" ? "code" : "q";
+    const response = await getStoreProducts({ [apiParam]: query });
+    const fetchedData = response.data;
+    setData(fetchedData);
+    if (fetchedData.length === 0) {
+      showError("Sin resultados", "No se encontraron productos con esa búsqueda");
+    }
+  };
+
+  useEffect(() => {
+    const isTextMode = queryType === "q" || queryType === "visual";
+    if (queryType === "code" && query) {
+      fetchData(handleSingleProductFetch, createProductsOnSale, productModal);
+    } else if (isTextMode && query) {
+      const timer = setTimeout(() => {
+        fetchData(handleSingleProductFetch, createProductsOnSale, productModal);
+      }, 300);
+      return () => clearTimeout(timer);
+    } else {
+      setData([]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query, queryType]);
+
+  const handleQueryTypeChange = (e) => {
+    setQueryType(e.target.value);
+    setQuery("");
+    setData([]);
+  };
+
+  const handleMovementTypeChange = (e) => {
+    dispatch(updateMovementType(e.target.value));
+    setData([]);
+  };
+
+  const handleBarcodeSearch = (event) => {
+    if (event.key === "Enter") {
+      setQuery(barcode);
+      setBarcode("");
+    }
+  };
+
+  const handleQueryChange = (e) => {
+    setQuery(e.target.value);
+  };
+
+  const handleOpenModal = (storeProduct) => {
+    stockModal.open(storeProduct);
+  };
+
+
+
+  return (
+    <>
+      <StockModal isOpen={stockModal.isOpen} product={stockModal.data} onClose={stockModal.close} />
+      <ProductModal isOpen={productModal.isOpen} product={productModal.data} onClose={productModal.close} onUpdate={(product) => {
+        // Obtener el store_product y agregar al carrito
+        getStoreProducts({ code: product.code }).then((response) => {
+          if (response.data.length > 0) {
+            handleAddToCartIfAvailable(response.data[0]);
+          }
+        });
+      }} />
+
+      <PageHeader title="Vender">
+        {stockVerificationSnackbar.open && user?.role !== "seller" && (storeType === "T" || storeType === "A") && (
+          <Alert 
+            severity="success" 
+            variant="filled" 
+            sx={{ py: 0 }}
+            onClose={() => setStockVerificationSnackbar({ ...stockVerificationSnackbar, open: false })}
+          >
+            El producto {stockVerificationSnackbar.productCode} necesita verificación de stock
+          </Alert>
+        )}
+        <CustomButton
+          fullWidth
+          onClick={async () => {
+            if (!storePrinter) {
+              showAlert("info", "Impresora no configurada", "Para configurar la impresora, contacte a soporte técnico. Recomendamos la Epson TM-88V.");
+            } else {
+              handlePrintTicket("test", {});
+            }
+          }}
+          startIcon={printerConnected ? <CheckCircleIcon fontSize="small" sx={{ color: 'success.main' }} /> : <CancelIcon fontSize="small" sx={{ color: 'error.main' }} />}
+          color={printerConnected ? "success" : undefined}
+        >
+          {!storePrinter ? "Configurar impresora" : printerConnected ? (
+            <>
+              <span className="default-text">Impresora conectada</span>
+            </>
+          ) : "Impresora desconectada"}
+        </CustomButton>
+      </PageHeader>
+
+      <Grid container spacing={0} sx={{ mb: 0.5, mt: -1.5 }}>
+        <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+          <FormLabel sx={{ fontWeight: 600, mr: 1, fontSize: '0.875rem' }}>Modo de búsqueda:</FormLabel>
+          <RadioGroup row value={queryType} onChange={handleQueryTypeChange}>
+            <FormControlLabel 
+              value="code" 
+              control={<Radio size="small" sx={{ py: 0.5 }} />} 
+              label="Código de barras (Ctrl+Q)"
+              sx={{ mr: 4 }}
+            />
+            <FormControlLabel 
+              value="q" 
+              control={<Radio size="small" sx={{ py: 0.5 }} />} 
+              label="Nombre o marca (Ctrl+W)"
+              sx={{ mr: 4 }}
+            />
+            <FormControlLabel 
+              value="visual" 
+              control={<Radio size="small" sx={{ py: 0.5 }} />} 
+              label="Visual (Ctrl+K)"
+            />
+          </RadioGroup>
+        </Grid>
+
+        <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+          <FormLabel sx={{ fontWeight: 600, mr: 1, fontSize: '0.875rem' }}>Tipo de operación:</FormLabel>
+          <RadioGroup row value={movementType} onChange={handleMovementTypeChange}>
+            {storeType !== "A" && (
+              <FormControlLabel 
+                value={MOVEMENT_TYPES.SALE} 
+                control={<Radio size="small" sx={{ py: 0.5 }} />} 
+                label="Venta (Ctrl+E)"
+                sx={{ mr: 4 }}
+              />
+            )}
+            {storeType !== "T" && (
+              <FormControlLabel 
+                value={MOVEMENT_TYPES.DISTRIBUTION} 
+                control={<Radio size="small" sx={{ py: 0.5 }} />} 
+                label="Distribución (Ctrl+T)"
+                sx={{ mr: 4 }}
+              />
+            )}
+            <FormControlLabel 
+              value={MOVEMENT_TYPES.TRANSFER} 
+              control={<Radio size="small" sx={{ py: 0.5 }} />} 
+              label="Confirmar traspaso (Ctrl+R)"
+              sx={{ mr: 4 }}
+            />
+            <FormControlLabel 
+              value={MOVEMENT_TYPES.ADD_STOCK} 
+              control={<Radio size="small" />} 
+              label="Agregar a inventario (Ctrl+Y)"
+              sx={{ mr: 4 }}
+            />
+            <FormControlLabel 
+              value={MOVEMENT_TYPES.CHECK_STOCK} 
+              control={<Radio size="small" />} 
+              label="Checar precio (Ctrl+U)"
+              sx={{ mr: 4 }}
+            />
+            {storeType !== "A" && (
+              <FormControlLabel 
+                value={MOVEMENT_TYPES.RESERVATION} 
+                control={<Radio size="small" sx={{ py: 0.5 }} />} 
+                label="Apartado (Ctrl+I)"
+                sx={{ mr: 4 }}
+              />
+            )}
+          </RadioGroup>
+        </Grid>
+      </Grid>
+
+      <Grid container spacing={1} sx={{ mb: 0.5 }}>
+        <Grid item xs={12} sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+          {isTextMode && (
+            <>
+              <IconButton
+                size="small"
+                onClick={() => setKeepListOpen(!keepListOpen)}
+                sx={{ width: 36, height: 36, bgcolor: keepListOpen ? 'primary.main' : 'transparent', color: keepListOpen ? 'white' : 'text.secondary', borderRadius: 1, '&:hover': { bgcolor: keepListOpen ? 'primary.dark' : 'action.hover' } }}
+              >
+                {keepListOpen ? <PushPinIcon fontSize="small" /> : <PushPinOutlinedIcon fontSize="small" />}
+              </IconButton>
+            </>
+          )}
+          <TextField size="small" fullWidth
+            inputRef={inputRef}
+            type="text"
+            value={queryType === "code" ? barcode : query}
+            placeholder={queryType === "code" ? "Buscar producto por código (Ctrl+B)" : "Buscar producto por nombre (Ctrl+B)"}
+            onChange={
+              isTextMode
+                ? handleQueryChange
+                : (e) => setBarcode(e.target.value.replace("'", "-"))
+            }
+            onKeyDown={queryType === "code" ? handleBarcodeSearch : (e) => { if (e.key === "Enter") handleSearchProduct(); }}
+            onFocus={() => setIsInputFocused(true)}
+            onBlur={() => setIsInputFocused(false)}
+            autoComplete="off"
+            InputProps={{
+              startAdornment: isTextMode ? (
+                <InputAdornment position="start">
+                  <IconButton size="small" onClick={handleSearchProduct} disabled={searching} sx={{ p: 0.5 }}>
+                    {searching ? <CircularProgress size={18} /> : <SearchIcon fontSize="small" />}
+                  </IconButton>
+                </InputAdornment>
+              ) : null
+            }}
+          />
+          <IconButton size="small" sx={{ width: 36, height: 36, bgcolor: isInputFocused ? 'primary.main' : 'warning.main', color: 'white', borderRadius: 1, '&:hover': { bgcolor: isInputFocused ? 'primary.dark' : 'warning.dark' } }}>
+            {isInputFocused ? <EditIcon fontSize="small" /> : <EditOffIcon fontSize="small" />}
+          </IconButton>
+          {isTextMode && data.length > 0 && (
+            <Chip label={`${data.length} resultados`} color="primary" size="small" sx={{ height: 36 }} />
+          )}
+        </Grid>
+        {searching && (
+          <Grid item xs={12}>
+            <LinearProgress />
+          </Grid>
+        )}
+        
+        {data.length > 0 && queryType === "visual" && (
+          <Grid item xs={12}>
+            <ProductCarousel
+              products={data}
+              movementType={movementType}
+              onSelect={(sp) => handleAddToCartIfAvailable(sp, stockModal)}
+            />
+          </Grid>
+        )}
+
+        {data.length > 0 && queryType !== "visual" && (
+          <Grid item xs={12}>
+            <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+              <SimpleTable
+              noDataComponent="Sin resultados"
+              data={data}
+              columns={[
+                { name: "Código", selector: (row) => row.product.code },
+                {
+                  name: "Marca",
+                  selector: (row) => row.product.brand_name,
+                },
+                {
+                  name: "Nombre",
+                  selector: (row) => row.product.name,
+                },
+                { name: "Stock", selector: (row) => row.available_stock },
+                {
+                  name: "Precios",
+                  cell: (row) => (
+                    row.product.prices.apply_wholesale
+                      ? <>Men: ${row.product.prices.unit_price.toFixed(2)}<br />May: ${row.product.prices.wholesale_price.toFixed(2)} ({row.product.prices.min_wholesale_quantity}+)</>
+                      : `$${row.product.prices.unit_price.toFixed(2)}`
+                  ),
+                },
+                {
+                  name: "Acciones",
+                  width: 180,
+                  cell: (row) => (
+                    <>
+                      <CustomTooltip text="Agregar al carrito">
+                        <CustomButton
+                          onClick={() => handleAddToCartIfAvailable(row)}
+                          disabled={
+                            movementType === MOVEMENT_TYPES.SALE && row.available_stock === 0
+                          }
+                        >
+                          <AddIcon />
+                        </CustomButton>
+                      </CustomTooltip>
+
+                      <CustomTooltip text="Ver stock en todas las tiendas">
+                        <CustomButton
+                          onClick={() =>
+                            handleOpenModal({ ...row, onlyRead: true })
+                          }
+                        >
+                          <InventoryIcon />
+                        </CustomButton>
+                      </CustomTooltip>
+
+                      <CustomTooltip text="Ver imagen del producto">
+                        <CustomButton
+                          onClick={() =>
+                            handleOpenModal({ ...row, showImage: true })
+                          }
+                          disabled={!row.product.image}
+                        >
+                          <RemoveRedEyeIcon />
+                        </CustomButton>
+                      </CustomTooltip>
+                    </>
+                  ),
+                },
+              ]}
+            />
+            </div>
+          </Grid>
+        )}
+      </Grid>
+
+    </>
+  );
+};
+
+export default SearchProduct;

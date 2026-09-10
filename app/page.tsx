@@ -3,10 +3,8 @@
 import { useEffect, Suspense } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/src/context/UserContext';
-import Login from '@/src/components/layout/Login/Login';
+import Login from '@/src/shared/layout/Login/Login';
 import LoadingFallback from '@/src/shared/ui/LoadingFallback';
-
-export const dynamic = 'force-dynamic';
 
 function PageContent() {
   const { user, isLoading } = useUser();

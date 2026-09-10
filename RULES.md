@@ -12,25 +12,65 @@
 
 ## Estructura de archivos
 
-- Componentes en `src/components/{dominio}/{NombreComponente}/{NombreComponente}.jsx`
-- Dominios: `admin`, `catalog`, `clients`, `finance`, `inventory`, `layout`, `products`, `sales`, `ui`
-- API en `src/api/{recurso}.js`
-- Hooks en `src/hooks/`
-- Constantes en `src/constants/`
-- Utilidades en `src/utils/`
-- Tema y colores en `src/theme/`
-- Redux solo en `src/redux/` (carritos)
+El proyecto usa **Next.js 14 (App Router)** con organización **por feature**. La regla
+mental: todo lo de un dominio (componentes, hooks y capa API) vive junto en su feature;
+lo verdaderamente transversal vive en `shared`.
+
+### `app/` — Rutas (App Router)
+- Cada segmento de ruta es una carpeta con `page.tsx`. Las rutas protegidas van bajo
+  `app/(protected)/` (route group con layout que valida sesión).
+- `page.tsx` es un wrapper delgado: `'use client'` + import directo del componente de la
+  feature. **No** usar `lazy()`/`Suspense`/`ErrorBoundary` manuales en las páginas.
+- Estados de carga y error por segmento: usar `loading.tsx` y `error.tsx`
+  (ej. `app/(protected)/loading.tsx`, `app/(protected)/error.tsx`), no wrappers propios.
+- Las páginas se generan con `scripts/generate-routes.js`; al agregar una ruta, añadirla
+  ahí (con `componentPath` apuntando a `features/...`) y regenerar.
+
+### `src/features/{dominio}/` — Lógica por dominio
+- Dominios actuales: `admin`, `catalog`, `cashflow`, `clients`, `inventory`, `products`,
+  `sales`, `tenant`.
+- Estructura interna de cada feature:
+  - `components/{NombreComponente}/{NombreComponente}.jsx`
+  - `hooks/` — hooks propios del dominio (queries, mutations, lógica)
+  - `api/` — servicios API del dominio (creados con `apiFactory`)
+  - `index.js` — barril que expone la API pública de la feature (componentes + hooks + api)
+- Un componente/hook/servicio usado por **una sola** feature vive dentro de esa feature.
+
+### `src/shared/` — Transversal (usado por 2+ features)
+- `ui/` — componentes reutilizables (`DataTable`, `Modal`, `Button`, `PageHeader`,
+  menús, `UserModals`, etc.)
+- `layout/` — `MainLayout`, `Login`
+- `hooks/` — hooks genéricos (`useFetch`, `useCrudMutation`, `useModal`, `useForm`,
+  `usePrinterStatus`, ...)
+- `api/` — `httpClient`, `apiFactory`, `utils`, `queryClient`, y servicios transversales
+  de auth (`login`, `users`) e impresión (`printers`)
+- `theme/`, `utils/`, `constants/`, `assets/`
+
+### Raíz de `src/`
+- `context/` — `UserContext`, `WebSocketContext`
+- `redux/`, `store.js`, `rootReducer.js` — Redux (solo carritos)
+- `providers.tsx` — árbol de providers (Redux, React Query, MUI, User, WebSocket)
+
+### Reglas de colocación
+- ¿Lo usa una sola feature? → dentro de `features/{esa}/`.
+- ¿Lo usan 2+ features, o es infraestructura? → `shared/`.
+- **No** reintroducir `src/components/`, `src/api/` ni `src/hooks/` en la raíz: esa era
+  la estructura legacy previa a la migración y ya no debe usarse.
+- Preferir imports vía el barril de la feature (`@/src/features/{dominio}`) para su API
+  pública; los internos de la feature pueden importar por ruta directa.
 
 ## Stack y dependencias
 
-- React 18 con Create React App
+- Next.js 14 (App Router) con React 18
 - Material UI (MUI) — no usar Bootstrap ni react-bootstrap
 - Redux para carritos multi-pestaña (`multiCartReducer`)
 - React Query (@tanstack/react-query) para estado del servidor
-- React Router v6 con lazy loading (`lazyRetry` + `Suspense`)
-- Axios centralizado en `api/httpClient.js`
+- Enrutado: App Router de Next (no usar `react-router-dom`)
+- Code-splitting automático por ruta de Next (no `lazyRetry` manual)
+- Axios centralizado en `shared/api/httpClient.js`
 - SweetAlert2 para confirmaciones personalizadas
 - Chart.js / MUI X Charts para gráficas
+- Requiere Node.js ≥ 18.17 para `next build`/`next dev`
 
 ## Componentes UI reutilizables
 
@@ -57,10 +97,10 @@
 ## Patrones de código
 
 - Hooks: `useModal()` para abrir/cerrar modales con datos. `useFetch`, `useFetchWithRetry`, `useCrudMutation` para datos del servidor.
-- API: usar `getApiUrl()` de `api/utils.js`. Para query params usar `buildUrlWithParams()`. El token se agrega automáticamente en el interceptor de `httpClient`.
-- Alertas: `showSuccess()`, `showError()`, `showWarning()`, `showAlert()` de `utils/alerts.js`. Nunca usar `Swal.fire` directo. Para confirmaciones personalizadas usar `showConfirm()` o Swal directo solo si se necesita input/configuración especial.
+- API: usar `getApiUrl()` de `shared/api/utils.js`. Para query params usar `buildUrlWithParams()`. El token se agrega automáticamente en el interceptor de `httpClient`.
+- Alertas: `showSuccess()`, `showError()`, `showWarning()`, `showAlert()` de `shared/utils/alerts.js`. Nunca usar `Swal.fire` directo. Para confirmaciones personalizadas usar `showConfirm()` o Swal directo solo si se necesita input/configuración especial.
 - Estado global: Redux solo para carritos (`multiCartReducer`). El resto es estado local o React Query.
-- Lazy loading: todas las rutas usan `lazyRetry()` + `Suspense` con auto-reload en `ChunkLoadError`.
+- Rutas y carga: Next hace code-splitting por ruta automáticamente. Usar `loading.tsx`/`error.tsx` del segmento para estados de carga/error; no `lazyRetry()` + `Suspense` manuales.
 - Memoización: usar `memo()` en componentes puros, `useMemo` para cálculos costosos, `useCallback` para funciones estables.
 
 ## Tablas (DataTable y SimpleTable)
@@ -92,9 +132,12 @@
 
 ## Variables de entorno
 
-- `REACT_APP_API_URL` — URL del backend.
-- `REACT_APP_PRINTER_URL` — URL del servicio de impresión.
-- `REACT_APP_WHATSAPP_NUMBER` — Número de soporte WhatsApp.
+- Next.js solo inyecta en el bundle variables con prefijo `NEXT_PUBLIC_*`. Usar ese
+  prefijo (se mantiene un fallback a `REACT_APP_*` en algunos módulos por compatibilidad,
+  pero las nuevas deben ser `NEXT_PUBLIC_*`).
+- `NEXT_PUBLIC_API_URL` — URL del backend.
+- `NEXT_PUBLIC_PRINTER_URL` — URL del servicio de impresión.
+- `NEXT_PUBLIC_WHATSAPP_NUMBER` — Número de soporte WhatsApp.
 
 ## Monitoreo
 
@@ -119,7 +162,7 @@
 
 - No dejar imports, variables ni exports sin usar.
 - No dejar código comentado (bloques `{/* ... */}` con JSX muerto).
-- No duplicar styled components entre archivos — extraer a `components/ui/`.
+- No duplicar styled components entre archivos — extraer a `shared/ui/`.
 - No pasar props que ya son el default del componente receptor.
 - Si un prop/export no se usa en ningún archivo, eliminarlo.
 - Usar `try/catch/finally` en llamadas async para garantizar que loading se desactive.
@@ -127,7 +170,7 @@
 ## Estilo visual y componentes
 
 - **Design tokens para colores**: Nunca usar valores hexadecimales hardcodeados. Usar tokens del tema: `text.primary`, `text.secondary`, `primary`, `accent`.
-- **Clases CSS utilitarias**: Extraer patrones de estilo inline repetidos (ej: ajuste de texto en celdas) a clases CSS en `App.css`.
+- **Clases CSS utilitarias**: Extraer patrones de estilo inline repetidos (ej: ajuste de texto en celdas) a clases CSS en `src/index.css`.
 - **Componente PageHeader**: Usar siempre en lugar de layouts manuales con `<h1>` + botones. Envolver título y acciones en `<PageHeader title="...">`.
 - **Box de MUI para layouts**: Usar `Box` con `sx` en lugar de `style` inline para flex layouts. Ej: `<Box sx={{ display: 'flex', gap: 0.5 }}>`.
 - **Clases semánticas para estados**: Usar `text-success`, `text-danger`, `text-warning` en lugar de colores hardcodeados.
