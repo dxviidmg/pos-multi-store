@@ -1,5 +1,6 @@
 import * as React from "react";
 import { styled } from "@mui/material/styles";
+import { useThemeModeContext } from "../../../providers";
 import {
   Box,
   CssBaseline,
@@ -144,6 +145,11 @@ const Drawer = styled(MuiDrawer, {
 export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess, children }) {
   const router = useRouter();
   const pathname = usePathname();
+  // Preferir el contexto de tema (fuente de verdad); las props quedan como
+  // fallback por compatibilidad.
+  const { mode, toggleMode } = useThemeModeContext();
+  const effectiveThemeMode = mode ?? themeMode;
+  const effectiveToggleTheme = toggleMode ?? toggleTheme;
   const { user, logout, updateUser } = useUser();
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
@@ -382,8 +388,8 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess, chi
             </>
           )}
           <PageHelp />
-          <IconButton color="inherit" onClick={toggleTheme} sx={{ mr: 1 }}>
-            {themeMode === "dark" ? <Brightness7Icon /> : <Brightness4Icon />}
+          <IconButton color="inherit" onClick={effectiveToggleTheme} sx={{ mr: 1 }}>
+            {effectiveThemeMode === "dark" ? <Brightness7Icon /> : <Brightness4Icon />}
           </IconButton>
           <Avatar
             onClick={(e) => setAnchorEl(e.currentTarget)}
@@ -437,7 +443,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess, chi
         >
           {open && (
             <a href="https://smartventa-pos.vercel.app/" target="_blank" rel="noopener noreferrer">
-              <Box component="img" src={logo} alt="SmartVenta"
+              <Box component="img" src={logo.src || logo} alt="SmartVenta"
                 sx={{ height: "38px", width: "auto", objectFit: "contain", borderRadius: 1, cursor: "pointer" }}
               />
             </a>

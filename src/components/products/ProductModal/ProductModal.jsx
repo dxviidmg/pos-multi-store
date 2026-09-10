@@ -12,8 +12,12 @@ import {
 import { getStores } from "../../../api/stores";
 import { useUser } from "../../../context/UserContext";
 import { useForm } from "../../../hooks/useForm";
-import noPhoto from "../../../assets/images/noPhoto.webp";
+import noPhotoImg from "../../../assets/images/noPhoto.webp";
 import { convertImageToWebp } from "../../../utils/image";
+
+// En Next.js, importar una imagen devuelve un objeto StaticImageData,
+// no una string. Normalizamos a la URL para usarla en <img src>.
+const noPhoto = noPhotoImg.src || noPhotoImg;
 import { getDepartments } from "../../../api/departments";
 import SimpleTable from "../../ui/SimpleTable/SimpleTable";
 import { Grid, TextField, Box, Checkbox, FormControlLabel, Autocomplete, FormControl, InputLabel, Select, MenuItem } from "@mui/material";

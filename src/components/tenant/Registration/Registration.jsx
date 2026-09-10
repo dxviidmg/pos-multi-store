@@ -240,7 +240,7 @@ const Registration = () => {
                 <Box sx={headerBannerSx}>
                   <Box
                     component="img"
-                    src={Logo}
+                    src={Logo.src || Logo}
                     alt="SmartVenta"
                     sx={{ maxWidth: "150px", height: "auto", display: "block", mx: "auto", mb: 2 }}
                   />

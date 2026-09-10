@@ -89,7 +89,7 @@ function Login({ onLogin }) {
         background: colors.gradient.sidebar,
       }}>
         <Box sx={{ position: 'relative', zIndex: 1, textAlign: 'center', px: 6 }}>
-          <Box component="img" src={Logo} alt="SmartVenta" sx={{
+          <Box component="img" src={Logo.src || Logo} alt="SmartVenta" sx={{
             maxWidth: 260, width: '100%', height: 'auto', mb: 4,
             filter: 'drop-shadow(0 8px 30px rgba(0,0,0,0.25))',
           }} />
@@ -124,7 +124,7 @@ function Login({ onLogin }) {
         }}>
           {/* Logo visible solo en móvil */}
           <Box sx={{ display: { xs: 'flex', md: 'none' }, justifyContent: 'center', mb: 3 }}>
-            <Box component="img" src={Logo} alt="SmartVenta" sx={{ maxWidth: 180, height: 'auto' }} />
+            <Box component="img" src={Logo.src || Logo} alt="SmartVenta" sx={{ maxWidth: 180, height: 'auto' }} />
           </Box>
 
           <Typography variant="h4" sx={{ fontWeight: 700, color: 'text.primary', mb: 0.5 }}>

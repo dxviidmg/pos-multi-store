@@ -563,7 +563,7 @@ const StoreList = () => {
 
       <CustomModal showOut={mpModal.isOpen} onClose={mpModal.close} title="Pago de servicio">
         <Box sx={{ p: 3, textAlign: 'center' }}>
-          <Box component="img" src={mercadoPagoLogo} alt="Mercado Pago" sx={{ height: 40, mb: 2 }} />
+          <Box component="img" src={mercadoPagoLogo.src || mercadoPagoLogo} alt="Mercado Pago" sx={{ height: 40, mb: 2 }} />
           <Typography variant="body1" sx={{ mb: 3 }}>
             Tu suscripción está próxima a vencer o ya venció. Realiza tu pago para continuar usando el sistema.
           </Typography>
