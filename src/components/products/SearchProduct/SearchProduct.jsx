@@ -1,5 +1,5 @@
-import { showSuccess, showError, showAlert } from "@/src/utils/alerts";
-import { logger } from "@/src/utils/logger";
+import { showSuccess, showError, showAlert } from "@/src/shared/utils/alerts";
+import { logger } from "@/src/shared/utils/logger";
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { selectMovementType } from "@/src/redux/cart/selectors";
@@ -21,7 +21,7 @@ import { useUser } from "@/src/context/UserContext";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { usePrinterStatus } from "@/src/hooks/usePrinterStatus";
-import { handlePrintTicket } from "@/src/utils/utils";
+import { handlePrintTicket } from "@/src/shared/utils/utils";
 import { Grid, TextField, FormLabel, RadioGroup, FormControlLabel, Radio, InputAdornment, IconButton, CircularProgress, LinearProgress, Alert } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import PushPinIcon from "@mui/icons-material/PushPin";
@@ -31,7 +31,7 @@ import InventoryIcon from "@mui/icons-material/Inventory";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import EditIcon from "@mui/icons-material/Edit";
 import EditOffIcon from "@mui/icons-material/EditOff";
-import { MOVEMENT_TYPES, QUERY_TYPES } from "@/src/constants";
+import { MOVEMENT_TYPES, QUERY_TYPES } from "@/src/shared/constants";
 import ProductCarousel from "@/src/components/products/ProductCarousel/ProductCarousel";
 
 const SearchProduct = ({ searchInputRef }) => {

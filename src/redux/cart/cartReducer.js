@@ -9,7 +9,7 @@ import {
   CHANGE_PRICE,
   COUNT_STOCK_OTHER_STORES
 } from "@/src/redux/cart/cartActions";
-import { MOVEMENT_TYPES } from "@/src/constants";
+import { MOVEMENT_TYPES } from "@/src/shared/constants";
 
 const initialState = {
   cart: [],

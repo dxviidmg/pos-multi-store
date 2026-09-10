@@ -6,7 +6,7 @@ import {
   getFormattedDate,
   handlePrintTicket,
   getFormattedDateTime,
-} from "@/src/utils/utils";
+} from "@/src/shared/utils/utils";
 import { useModal } from "@/src/hooks/useModal";
 import SaleModal from "@/src/components/sales/SaleModal/SaleModal";
 import { CustomSpinner } from "@/src/components/ui/Spinner/Spinner";

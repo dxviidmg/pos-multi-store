@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import DataTable from "@/src/components/ui/DataTable/DataTable";
-import { exportToExcel, formatTimeFromDate, getFormattedDate } from "@/src/utils/utils";
+import { exportToExcel, formatTimeFromDate, getFormattedDate } from "@/src/shared/utils/utils";
 import { getStoreProductLogs, getStoreProductLogsChoices } from "@/src/api/products";
 import { CustomSpinner } from "@/src/components/ui/Spinner/Spinner";
 import { getBrands } from "@/src/api/brands";

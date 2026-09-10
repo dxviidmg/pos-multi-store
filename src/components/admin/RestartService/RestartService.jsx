@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import CustomButton from "@/src/components/ui/Button/Button";
 import { getRedeployRender } from "@/src/api/restart";
 import { CustomSpinner } from "@/src/components/ui/Spinner/Spinner";
-import { formatTimeFromDate } from "@/src/utils/utils";
+import { formatTimeFromDate } from "@/src/shared/utils/utils";
 import { Grid, Typography, Alert, Box, Divider } from "@mui/material";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import SyncIcon from "@mui/icons-material/Sync";

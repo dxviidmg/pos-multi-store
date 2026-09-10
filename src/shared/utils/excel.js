@@ -1,5 +1,5 @@
 import * as XLSX from "xlsx";
-import { getFormattedDate } from "@/src/utils/date";
+import { getFormattedDate } from "@/src/shared/utils/date";
 
 export const exportToExcel = (data, prefixName, use_today = true) => {
   const worksheet = XLSX.utils.json_to_sheet(data, prefixName);

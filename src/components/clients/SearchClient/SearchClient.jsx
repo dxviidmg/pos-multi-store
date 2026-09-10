@@ -4,7 +4,7 @@ import { getClients } from "@/src/api/clients";
 import CustomButton from "@/src/components/ui/Button/Button";
 import { useDispatch } from "react-redux";
 import { addClientToCart } from "@/src/redux/cart/cartActions";
-import { showError } from "@/src/utils/alerts";
+import { showError } from "@/src/shared/utils/alerts";
 import { TextField } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 

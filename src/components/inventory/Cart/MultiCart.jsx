@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectMovementType } from "@/src/redux/cart/selectors";
 import { Tabs, Tab, IconButton, Box } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import { MOVEMENT_TYPES } from "@/src/constants";
+import { MOVEMENT_TYPES } from "@/src/shared/constants";
 import CloseIcon from "@mui/icons-material/Close";
 import Cart from "@/src/components/inventory/Cart/Cart";
 import { createNewCart, switchCart, closeCart } from "@/src/redux/cart/multiCartReducer";

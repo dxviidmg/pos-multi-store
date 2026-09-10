@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import DataTable from "@/src/components/ui/DataTable/DataTable";
 import CustomButton from "@/src/components/ui/Button/Button";
-import { getFormattedDateTime } from "@/src/utils/utils";
+import { getFormattedDateTime } from "@/src/shared/utils/utils";
 import { CustomSpinner } from "@/src/components/ui/Spinner/Spinner";
-import { showSuccess, showError } from "@/src/utils/alerts";
+import { showSuccess, showError } from "@/src/shared/utils/alerts";
 import { useUser } from "@/src/context/UserContext";
 import {
   confirmDistribution,

@@ -7,7 +7,7 @@ import {
   Grid, FormControl, InputLabel, Select, MenuItem, Box, Typography,
   LinearProgress, Skeleton,
 } from "@mui/material";
-import { MONTH_NAMES } from "@/src/utils/utils";
+import { MONTH_NAMES } from "@/src/shared/utils/utils";
 import httpClient from "@/src/api/httpClient";
 import { getApiUrl, buildUrlWithParams } from "@/src/api/utils";
 import InboxIcon from "@mui/icons-material/Inbox";

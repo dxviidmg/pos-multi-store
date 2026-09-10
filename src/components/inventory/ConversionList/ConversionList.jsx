@@ -3,7 +3,7 @@ import { Box, Typography } from "@mui/material";
 import DataTable from "@/src/components/ui/DataTable/DataTable";
 import CustomButton from "@/src/components/ui/Button/Button";
 import PageHeader from "@/src/components/ui/PageHeader";
-import { colors } from "@/src/theme/colors";
+import { colors } from "@/src/shared/theme/colors";
 import { CustomSpinner } from "@/src/components/ui/Spinner/Spinner";
 import { useConversions, useDeleteConversion, useApplyConversion } from "@/src/hooks/useConversions";
 import { useModal } from "@/src/hooks/useModal";

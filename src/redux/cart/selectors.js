@@ -1,5 +1,5 @@
 import { createSelector } from "reselect";
-import { MOVEMENT_TYPES } from "@/src/constants";
+import { MOVEMENT_TYPES } from "@/src/shared/constants";
 
 const selectMultiCart = (state) => state.multiCartReducer;
 

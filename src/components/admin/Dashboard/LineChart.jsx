@@ -2,7 +2,7 @@ import React from "react";
 import { LineChart as MuiLineChart } from '@mui/x-charts/LineChart';
 import { ChartsReferenceLine } from '@mui/x-charts/ChartsReferenceLine';
 import { Box, Typography } from '@mui/material';
-import { CHART_COLORS } from '@/src/utils/utils';
+import { CHART_COLORS } from '@/src/shared/utils/utils';
 
 const processData = (result, dataType, metricType, daysInMonth = 31) => {
   if (!result || !result.sales || result.sales.length === 0) return [];

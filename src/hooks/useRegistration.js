@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { createTenant } from "@/src/api/registration";
-import { showSuccess, showError } from "@/src/utils/alerts";
+import { showSuccess, showError } from "@/src/shared/utils/alerts";
 
 const registrationErrorParser = (error) => {
   if (error.response?.status === 400) {

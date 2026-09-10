@@ -3,7 +3,7 @@ import DataTable from "@/src/components/ui/DataTable/DataTable";
 import { getStoreProducts } from "@/src/api/products";
 import CustomButton from "@/src/components/ui/Button/Button";
 import { useUser } from "@/src/context/UserContext";
-import { exportToExcel } from "@/src/utils/utils";
+import { exportToExcel } from "@/src/shared/utils/utils";
 import { useModal } from "@/src/hooks/useModal";
 import StoreProductLogsModal from "@/src/components/products/StoreProductLogsModal/StoreProductLogsModal";
 import StockUpdateRequestModal from "@/src/components/inventory/StockUpdateRequestModal/StockUpdateRequestModal";

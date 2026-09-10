@@ -2,7 +2,7 @@ import { memo, useState } from "react";
 import { IconButton, Popover, Typography, Box } from "@mui/material";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import { usePathname } from "next/navigation";
-import helpTexts from "@/src/constants/helpTexts";
+import helpTexts from "@/src/shared/constants/helpTexts";
 import { useTheme } from "@mui/material/styles";
 
 const PageHelp = memo(() => {

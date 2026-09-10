@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import CustomModal from "@/src/components/ui/Modal/Modal";
 import CustomButton from "@/src/components/ui/Button/Button";
-import { showSuccess, showError } from "@/src/utils/alerts";
+import { showSuccess, showError } from "@/src/shared/utils/alerts";
 import { createStore } from "@/src/api/stores";
 import {
   Box,

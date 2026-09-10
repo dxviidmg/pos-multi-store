@@ -1,4 +1,4 @@
-import { logger } from "@/src/utils/logger";
+import { logger } from "@/src/shared/utils/logger";
 import {
   ADD_CLIENT_TO_CART,
   REMOVE_CLIENT_FROM_CART,
@@ -10,7 +10,7 @@ import {
   CHANGE_PRICE,
   COUNT_STOCK_OTHER_STORES
 } from "@/src/redux/cart/cartActions";
-import { MOVEMENT_TYPES } from "@/src/constants";
+import { MOVEMENT_TYPES } from "@/src/shared/constants";
 
 // Nuevas acciones para multi-cart
 export const CREATE_NEW_CART = "CREATE_NEW_CART";

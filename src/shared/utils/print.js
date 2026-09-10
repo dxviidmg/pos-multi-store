@@ -1,5 +1,5 @@
 import { getPrint } from "@/src/api/printers";
-import { showAlert } from "@/src/utils/alerts";
+import { showAlert } from "@/src/shared/utils/alerts";
 
 export const handlePrintTicket = async (endpoint, data) => {
   try {

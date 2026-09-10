@@ -12,7 +12,7 @@ import { BarChart } from "@mui/x-charts/BarChart";
 import {
   MONTH_NAMES, MONTH_NAMES_SHORT, DAY_NAMES, CHART_COLORS,
   getTied,
-} from "@/src/utils/utils";
+} from "@/src/shared/utils/utils";
 import httpClient from "@/src/api/httpClient";
 import { getApiUrl, buildUrlWithParams } from "@/src/api/utils";
 import BlockIcon from "@mui/icons-material/Block";

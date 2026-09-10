@@ -1,4 +1,4 @@
-import { logger } from "@/src/utils/logger";
+import { logger } from "@/src/shared/utils/logger";
 import React, { useMemo, useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { selectCart, selectMovementType, selectClient } from "@/src/redux/cart/selectors";
@@ -6,9 +6,9 @@ import CustomModal from "@/src/components/ui/Modal/Modal";
 import CustomButton from "@/src/components/ui/Button/Button";
 import { cleanCart, removeClientfromCart, addClientToCart } from "@/src/redux/cart/cartActions";
 import { createSale, getSale } from "@/src/api/sales";
-import { showSuccess, showError } from "@/src/utils/alerts";
+import { showSuccess, showError } from "@/src/shared/utils/alerts";
 import { useUser } from "@/src/context/UserContext";
-import { handlePrintTicket } from "@/src/utils/utils";
+import { handlePrintTicket } from "@/src/shared/utils/utils";
 import { usePrinterStatus } from "@/src/hooks/usePrinterStatus";
 import SearchClient from "@/src/components/clients/SearchClient/SearchClient";
 import ClientModal from "@/src/components/clients/ClientModal/ClientModal";
@@ -20,7 +20,7 @@ import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import MoneyOffIcon from "@mui/icons-material/MoneyOff";
 import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
 import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
-import { MOVEMENT_TYPES } from "@/src/constants";
+import { MOVEMENT_TYPES } from "@/src/shared/constants";
 import { useModal } from "@/src/hooks/useModal";
 
 

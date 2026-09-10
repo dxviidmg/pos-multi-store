@@ -3,7 +3,7 @@ import DataTable from "@/src/components/ui/DataTable/DataTable";
 import { getSellers } from "@/src/api/sellers";
 import CustomButton from "@/src/components/ui/Button/Button";
 import SellerModal from "@/src/components/catalog/SellerModal/SellerModal";
-import { getDateDifference, getFormattedDate } from "@/src/utils/utils";
+import { getDateDifference, getFormattedDate } from "@/src/shared/utils/utils";
 import { chooseIcon } from "@/src/components/ui/Icons/Icons";
 import { useModal } from "@/src/hooks/useModal";
 import { useUserManagement } from "@/src/hooks/useUserManagement";

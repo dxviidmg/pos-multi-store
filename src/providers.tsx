@@ -7,7 +7,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import store from '@/src/store';
 import { getQueryClient } from '@/src/api/queryClient';
-import { getTheme } from '@/src/theme';
+import { getTheme } from '@/src/shared/theme';
 import { UserProvider } from '@/src/context/UserContext';
 import { WebSocketProvider } from '@/src/context/WebSocketContext';
 import ConnectionStatusBanner from '@/src/components/ui/ConnectionStatusBanner';

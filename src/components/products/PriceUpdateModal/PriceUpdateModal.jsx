@@ -6,7 +6,7 @@ import { Grid, TextField, Alert } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { updatePricesProducts } from "@/src/api/products";
-import { showSuccess, showError } from "@/src/utils/alerts";
+import { showSuccess, showError } from "@/src/shared/utils/alerts";
 
 const PriceUpdateModal = ({ isOpen, onClose, selectedProducts, onSuccess }) => {
   const [formData, setFormData] = useState({

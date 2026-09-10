@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import DataTable from "@/src/components/ui/DataTable/DataTable";
 import CustomButton from "@/src/components/ui/Button/Button";
 import CustomTooltip from "@/src/components/ui/Tooltip";
-import { getFormattedDate, formatTimeFromDate } from "@/src/utils/utils";
+import { getFormattedDate, formatTimeFromDate } from "@/src/shared/utils/utils";
 import { getCashFlow, deleteCashFlow } from "@/src/api/cashflow";
 import { useUser } from "@/src/context/UserContext";
 import CashFlowModal from "@/src/components/cashflow/CashFlowModal/CashFlowModal";
@@ -13,7 +13,7 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import PageHeader from "@/src/components/ui/PageHeader";
-import { showSuccess, showError, showConfirm } from "@/src/utils/alerts";
+import { showSuccess, showError, showConfirm } from "@/src/shared/utils/alerts";
 
 const today = getFormattedDate();
 

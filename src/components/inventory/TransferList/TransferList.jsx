@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import DataTable from "@/src/components/ui/DataTable/DataTable";
-import { calculateTimeAgo, formatTimeFromDate } from "@/src/utils/utils";
+import { calculateTimeAgo, formatTimeFromDate } from "@/src/shared/utils/utils";
 import CustomButton from "@/src/components/ui/Button/Button";
-import { showSuccess, showError } from "@/src/utils/alerts";
+import { showSuccess, showError } from "@/src/shared/utils/alerts";
 import { CustomSpinner } from "@/src/components/ui/Spinner/Spinner";
 import { useTransfers, useDeleteTransfer } from "@/src/hooks/useTransfers";
 import { Grid, MenuItem, FormControl, InputLabel, Select, TextField } from "@mui/material";

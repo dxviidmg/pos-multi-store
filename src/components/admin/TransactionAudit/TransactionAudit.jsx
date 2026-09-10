@@ -5,7 +5,7 @@ import { getAudit, getAudit2 } from "@/src/api/audit";
 import { CustomSpinner } from "@/src/components/ui/Spinner/Spinner";
 import { Grid, TextField, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 import AssessmentIcon from "@mui/icons-material/Assessment";
-import { getFormattedDate } from "@/src/utils/utils";
+import { getFormattedDate } from "@/src/shared/utils/utils";
 import { getStores } from "@/src/api/stores";
 import { useEffect } from "react";
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from "react";
 import CustomModal from "@/src/components/ui/Modal/Modal";
 import CustomButton from "@/src/components/ui/Button/Button";
-import { showSuccess } from "@/src/utils/alerts";
+import { showSuccess } from "@/src/shared/utils/alerts";
 import { updateProduct } from "@/src/api/products";
 import { getStores } from "@/src/api/stores";
 import { useUser } from "@/src/context/UserContext";

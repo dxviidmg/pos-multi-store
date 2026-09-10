@@ -6,7 +6,7 @@ import {
   importProductsValidation,
 } from "@/src/api/products";
 import CustomButton from "@/src/components/ui/Button/Button";
-import { showSuccess, showError } from "@/src/utils/alerts";
+import { showSuccess, showError } from "@/src/shared/utils/alerts";
 import { CustomSpinner } from "@/src/components/ui/Spinner/Spinner";
 import PageHeader from "@/src/components/ui/PageHeader";
 import DropZone from "@/src/components/ui/DropZone";

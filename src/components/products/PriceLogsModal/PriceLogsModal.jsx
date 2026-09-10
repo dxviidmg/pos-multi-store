@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import CustomModal from "@/src/components/ui/Modal/Modal";
 import DataTable from "@/src/components/ui/DataTable/DataTable";
 import { getProductPriceLogs } from "@/src/api/products";
-import { getFormattedDateTime } from "@/src/utils/utils";
+import { getFormattedDateTime } from "@/src/shared/utils/utils";
 import { CustomSpinner } from "@/src/components/ui/Spinner/Spinner";
 import { Grid } from "@mui/material";
 

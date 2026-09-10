@@ -3,7 +3,7 @@ import { Box, IconButton, Typography } from "@mui/material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ProductCard from "@/src/components/products/ProductCarousel/ProductCard";
-import { MOVEMENT_TYPES } from "@/src/constants";
+import { MOVEMENT_TYPES } from "@/src/shared/constants";
 
 /**
  * Carrusel horizontal de tarjetas de producto para la búsqueda visual.

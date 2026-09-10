@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import DataTable from "@/src/components/ui/DataTable/DataTable";
 import CustomButton from "@/src/components/ui/Button/Button";
 import { deleteDepartments } from "@/src/api/departments";
-import { showSuccess, showError, showConfirm } from "@/src/utils/alerts";
+import { showSuccess, showError, showConfirm } from "@/src/shared/utils/alerts";
 import { useModal } from "@/src/hooks/useModal";
 import DepartmentModal from "@/src/components/catalog/DepartmentModal/DepartmentModal";
 import { useUser } from "@/src/context/UserContext";

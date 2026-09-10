@@ -16,7 +16,7 @@ import {
 import {
   MONTH_NAMES, MONTH_NAMES_SHORT, DAY_NAMES, CHART_COLORS,
   formatCurrency, getTied,
-} from "@/src/utils/utils";
+} from "@/src/shared/utils/utils";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";

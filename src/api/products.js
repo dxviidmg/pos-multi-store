@@ -1,4 +1,4 @@
-import { logger } from "@/src/utils/logger";
+import { logger } from "@/src/shared/utils/logger";
 import httpClient from "@/src/api/httpClient";
 import { getApiUrl, buildUrlWithParams } from "@/src/api/utils";
 

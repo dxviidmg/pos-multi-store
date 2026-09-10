@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import CustomModal from "@/src/components/ui/Modal/Modal";
 import CustomButton from "@/src/components/ui/Button/Button";
 import { getBrands } from "@/src/api/brands";
-import { showSuccess, showError } from "@/src/utils/alerts";
+import { showSuccess, showError } from "@/src/shared/utils/alerts";
 import {
   createProduct,
   getStoreProducts,
@@ -12,8 +12,8 @@ import {
 import { getStores } from "@/src/api/stores";
 import { useUser } from "@/src/context/UserContext";
 import { useForm } from "@/src/hooks/useForm";
-import noPhotoImg from "@/src/assets/images/noPhoto.webp";
-import { convertImageToWebp } from "@/src/utils/image";
+import noPhotoImg from "@/src/shared/assets/images/noPhoto.webp";
+import { convertImageToWebp } from "@/src/shared/utils/image";
 
 // En Next.js, importar una imagen devuelve un objeto StaticImageData,
 // no una string. Normalizamos a la URL para usarla en <img src>.

@@ -1,5 +1,5 @@
-import { logger } from "@/src/utils/logger";
-import { showSuccess } from "@/src/utils/alerts";
+import { logger } from "@/src/shared/utils/logger";
+import { showSuccess } from "@/src/shared/utils/alerts";
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { selectCarts, selectActiveCartId } from "@/src/redux/cart/selectors";
@@ -12,7 +12,7 @@ import { CustomSpinner } from "@/src/components/ui/Spinner/Spinner";
 import { getStockOtherStores } from "@/src/api/products";
 import { addToCart, updateMovementType, updateQuantityInCart } from "@/src/redux/cart/cartActions";
 import { Grid, TextField, Box, Alert, Chip, Tabs, Tab } from "@mui/material";
-import { MOVEMENT_TYPES } from "@/src/constants";
+import { MOVEMENT_TYPES } from "@/src/shared/constants";
 
 
 const StockModal = ({ isOpen, product, onClose }) => {

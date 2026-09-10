@@ -4,12 +4,12 @@ import { deleteProducts, getProducts, upperCodeProducts } from "@/src/api/produc
 import CustomButton from "@/src/components/ui/Button/Button";
 import { useModal } from "@/src/hooks/useModal";
 import ProductModal from "@/src/components/products/ProductModal/ProductModal";
-import { exportToExcel } from "@/src/utils/utils";
+import { exportToExcel } from "@/src/shared/utils/utils";
 import { CustomSpinner } from "@/src/components/ui/Spinner/Spinner";
 import { getBrands } from "@/src/api/brands";
 import { getDepartments } from "@/src/api/departments";
 import { useUser } from "@/src/context/UserContext";
-import { showSuccess, showError, showConfirm } from "@/src/utils/alerts";
+import { showSuccess, showError, showConfirm } from "@/src/shared/utils/alerts";
 import CustomTooltip from "@/src/components/ui/Tooltip";
 import PageHeader from "@/src/components/ui/PageHeader";
 import { Grid, TextField, Autocomplete } from "@mui/material";

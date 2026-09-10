@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectCart } from "@/src/redux/cart/selectors";
 import { addToCart, countStockOtherStores } from "@/src/redux/cart/cartActions";
 import { getStockOtherStores } from "@/src/api/products";
-import { showWarning } from "@/src/utils/alerts";
-import { MOVEMENT_TYPES } from "@/src/constants";
+import { showWarning } from "@/src/shared/utils/alerts";
+import { MOVEMENT_TYPES } from "@/src/shared/constants";
 
 export const useCartActions = (getAvailableStock, movementType, keepListOpen, setData, setQuery) => {
   const dispatch = useDispatch();

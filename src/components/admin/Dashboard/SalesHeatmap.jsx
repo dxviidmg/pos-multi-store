@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Box, Typography, Tooltip, useTheme } from "@mui/material";
-import { DAY_NAMES_SHORT, formatCurrency } from "@/src/utils/utils";
+import { DAY_NAMES_SHORT, formatCurrency } from "@/src/shared/utils/utils";
 
 const HOUR_LABELS = Array.from({ length: 24 }, (_, i) => `${i}:00`);
 const STORE_COLORS = [

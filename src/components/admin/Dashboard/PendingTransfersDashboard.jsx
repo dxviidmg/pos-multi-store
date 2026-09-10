@@ -9,7 +9,7 @@ import {
   Grid, Box, Typography,
   LinearProgress, Skeleton,
 } from "@mui/material";
-import { exportToExcel } from "@/src/utils/utils";
+import { exportToExcel } from "@/src/shared/utils/utils";
 import httpClient from "@/src/api/httpClient";
 import { getApiUrl } from "@/src/api/utils";
 import WarningIcon from "@mui/icons-material/Warning";

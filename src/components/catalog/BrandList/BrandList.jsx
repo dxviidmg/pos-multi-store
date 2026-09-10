@@ -3,7 +3,7 @@ import DataTable from "@/src/components/ui/DataTable/DataTable";
 import CustomButton from "@/src/components/ui/Button/Button";
 import { deleteBrands } from "@/src/api/brands";
 import BrandModal from "@/src/components/catalog/BrandModal/BrandModal";
-import { showSuccess, showError, showConfirm } from "@/src/utils/alerts";
+import { showSuccess, showError, showConfirm } from "@/src/shared/utils/alerts";
 import { useUser } from "@/src/context/UserContext";
 import EditIcon from "@mui/icons-material/Edit";
 import CustomTooltip from "@/src/components/ui/Tooltip";

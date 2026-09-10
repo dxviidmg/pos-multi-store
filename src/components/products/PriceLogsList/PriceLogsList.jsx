@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useEffect } from "react";
 import DataTable from "@/src/components/ui/DataTable/DataTable";
 import { useQuery } from "@tanstack/react-query";
-import { getFormattedDateTime, exportToExcel } from "@/src/utils/utils";
+import { getFormattedDateTime, exportToExcel } from "@/src/shared/utils/utils";
 import PageHeader from "@/src/components/ui/PageHeader";
 import { Grid, TextField } from "@mui/material";
 import httpClient from "@/src/api/httpClient";

@@ -9,11 +9,11 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import httpClient from "@/src/api/httpClient";
 import { getApiUrl } from "@/src/api/utils";
 import { useUser } from "@/src/context/UserContext";
-import { getFormattedDateTime } from "@/src/utils/utils";
-import { showSuccess, showError } from "@/src/utils/alerts";
+import { getFormattedDateTime } from "@/src/shared/utils/utils";
+import { showSuccess, showError } from "@/src/shared/utils/alerts";
 import { getStockUpdateRequests } from "@/src/api/notifications";
 import Swal from "sweetalert2";
-import { colors } from "@/src/theme/colors";
+import { colors } from "@/src/shared/theme/colors";
 import PageHeader from "@/src/components/ui/PageHeader";
 
 const StockUpdateRequestList = () => {

@@ -1,4 +1,4 @@
-import { logger } from "@/src/utils/logger";
+import { logger } from "@/src/shared/utils/logger";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { selectCart, selectMovementType } from "@/src/redux/cart/selectors";
@@ -16,7 +16,7 @@ import PaymentModal from "@/src/components/sales/PaymentModal/PaymentModal";
 import StockModal from "@/src/components/inventory/StockModal/StockModal";
 import { getStores } from "@/src/api/stores";
 import { confirmTransfers, createDistribution } from "@/src/api/transfers";
-import { showSuccess, showError, showWarning } from "@/src/utils/alerts";
+import { showSuccess, showError, showWarning } from "@/src/shared/utils/alerts";
 import { addProducts, getStockOtherStores } from "@/src/api/products";
 import { useUser } from "@/src/context/UserContext";
 import { CustomSpinner } from "@/src/components/ui/Spinner/Spinner";
@@ -26,7 +26,7 @@ import { Grid, Select, MenuItem, Typography } from "@mui/material";
 import PaymentIcon from "@mui/icons-material/Payment";
 import SendIcon from "@mui/icons-material/Send";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
-import { MOVEMENT_TYPES, STORE_TYPES } from "@/src/constants";
+import { MOVEMENT_TYPES, STORE_TYPES } from "@/src/shared/constants";
 import { getSaleColumns, getTransferColumns, getDistributionColumns, getAddToStockColumns } from "@/src/components/inventory/Cart/cartColumns";
 
 const Cart = ({ searchInputRef }) => {

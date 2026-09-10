@@ -1,6 +1,6 @@
 import { useEffect, useCallback } from "react";
 import { updateMovementType } from "@/src/redux/cart/cartActions";
-import { MOVEMENT_TYPES, QUERY_TYPES } from "@/src/constants";
+import { MOVEMENT_TYPES, QUERY_TYPES } from "@/src/shared/constants";
 
 export const useKeyboardShortcuts = (inputRef, dispatch, options = {}) => {
   const { onVisualSearch } = options;

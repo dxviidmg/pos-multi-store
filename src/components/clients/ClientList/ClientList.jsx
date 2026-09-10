@@ -5,7 +5,7 @@ import ClientModal from "@/src/components/clients/ClientModal/ClientModal";
 import DiscountModal from "@/src/components/clients/DiscountModal/DiscountModal";
 import EditIcon from "@mui/icons-material/Edit";
 import { useUser } from "@/src/context/UserContext";
-import { getDateDifference, getFormattedDate } from "@/src/utils/utils";
+import { getDateDifference, getFormattedDate } from "@/src/shared/utils/utils";
 import CustomTooltip from "@/src/components/ui/Tooltip";
 import { useClients } from "@/src/hooks/useClients";
 import { useModal } from "@/src/hooks/useModal";

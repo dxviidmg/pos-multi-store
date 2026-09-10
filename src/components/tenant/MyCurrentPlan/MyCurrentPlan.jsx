@@ -4,12 +4,12 @@ import { createSubscription, cancelSubscription, updateSubscriptionCard } from "
 import { useMercadoPago } from "@/src/hooks/useMercadoPago";
 import { useModal } from "@/src/hooks/useModal";
 import { useUser } from "@/src/context/UserContext";
-import { CANCELLATION_REASONS } from "@/src/constants";
+import { CANCELLATION_REASONS } from "@/src/shared/constants";
 import { CustomSpinner } from "@/src/components/ui/Spinner/Spinner";
 import CustomModal from "@/src/components/ui/Modal/Modal";
 import CustomButton from "@/src/components/ui/Button/Button";
 import { Grid, Stack, Typography, Box, Chip, Button, Alert, TextField, MenuItem } from "@mui/material";
-import { showSuccess } from "@/src/utils/alerts";
+import { showSuccess } from "@/src/shared/utils/alerts";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import httpClient from "@/src/api/httpClient";

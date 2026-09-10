@@ -3,7 +3,7 @@ import CustomModal from "@/src/components/ui/Modal/Modal";
 import CustomButton from "@/src/components/ui/Button/Button";
 import { Grid, TextField } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
-import { showSuccess, showError } from "@/src/utils/alerts";
+import { showSuccess, showError } from "@/src/shared/utils/alerts";
 import httpClient from "@/src/api/httpClient";
 import { getApiUrl } from "@/src/api/utils";
 

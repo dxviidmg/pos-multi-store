@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { logger } from '@/src/utils/logger';
+import { logger } from '@/src/shared/utils/logger';
 import {
   Box,
   Grid,

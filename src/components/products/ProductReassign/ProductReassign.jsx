@@ -3,7 +3,7 @@ import { CustomSpinner } from "@/src/components/ui/Spinner/Spinner";
 import { getBrands } from "@/src/api/brands";
 import { getDepartments } from "@/src/api/departments";
 import { reassignProducts } from "@/src/api/products";
-import { showSuccess, showError } from "@/src/utils/alerts";
+import { showSuccess, showError } from "@/src/shared/utils/alerts";
 import { useForm } from "@/src/hooks/useForm";
 import CustomButton from "@/src/components/ui/Button/Button";
 import { Grid, Select, MenuItem, FormControl, InputLabel} from "@mui/material";

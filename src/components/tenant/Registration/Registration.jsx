@@ -13,7 +13,7 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import StorefrontIcon from "@mui/icons-material/Storefront";
-import Logo from "@/src/assets/images/logo.webp";
+import Logo from "@/src/shared/assets/images/logo.webp";
 import { checkTenantExists, getAvailablePlans } from "@/src/api/registration";
 import {
   inputSx, pageContainerSx, overlayGradientSx, formPaperSx,

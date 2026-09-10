@@ -1,4 +1,4 @@
-import { logger } from "@/src/utils/logger";
+import { logger } from "@/src/shared/utils/logger";
 
 /**
  * Convierte un archivo de imagen a formato WebP en el cliente, con opción de
