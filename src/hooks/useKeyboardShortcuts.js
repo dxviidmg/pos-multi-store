@@ -2,7 +2,8 @@ import { useEffect, useCallback } from "react";
 import { updateMovementType } from "../redux/cart/cartActions";
 import { MOVEMENT_TYPES, QUERY_TYPES } from "../constants";
 
-export const useKeyboardShortcuts = (inputRef, dispatch) => {
+export const useKeyboardShortcuts = (inputRef, dispatch, options = {}) => {
+  const { onVisualSearch } = options;
   const handleShortcut = useCallback((event) => {
     if (event.ctrlKey && (event.key === "q" || event.key === "Q")) {
       event.preventDefault();
@@ -40,7 +41,11 @@ export const useKeyboardShortcuts = (inputRef, dispatch) => {
       event.preventDefault();
       inputRef?.current?.focus();
     }
-  }, [dispatch, inputRef]);
+    if (event.ctrlKey && (event.key === "k" || event.key === "K")) {
+      event.preventDefault();
+      onVisualSearch?.();
+    }
+  }, [dispatch, inputRef, onVisualSearch]);
 
   useEffect(() => {
     window.addEventListener("keydown", handleShortcut);
