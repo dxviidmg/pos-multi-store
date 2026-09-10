@@ -3,7 +3,7 @@ import { loginUser } from "../../../api/login";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../../context/UserContext";
 import CustomButton from "../../ui/Button/Button";
-import Logo from "../../../assets/images/logo.jpg";
+import Logo from "../../../assets/images/logo.webp";
 import BgImage from "../../../assets/images/bg.webp";
 import './Login.css';
 import {

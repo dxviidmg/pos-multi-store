@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
-import noPhoto from "../../../assets/images/noPhoto.jpg";
+import noPhoto from "../../../assets/images/noPhoto.webp";
 
 /**
  * Tarjeta visual de producto para el carrusel de búsqueda visual.

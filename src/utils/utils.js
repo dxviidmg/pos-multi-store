@@ -5,3 +5,4 @@ export { exportToExcel } from "./excel";
 export { handlePrintTicket } from "./print";
 export { CHART_COLORS, getTied } from "./chart";
 export { getErrorMessage } from "./error";
+export { convertImageToWebp } from "./image";
