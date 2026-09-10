@@ -31,7 +31,8 @@ import InventoryIcon from "@mui/icons-material/Inventory";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import EditIcon from "@mui/icons-material/Edit";
 import EditOffIcon from "@mui/icons-material/EditOff";
-import { MOVEMENT_TYPES } from "../../../constants";
+import { MOVEMENT_TYPES, QUERY_TYPES } from "../../../constants";
+import ProductCarousel from "../ProductCarousel/ProductCarousel";
 
 const SearchProduct = ({ searchInputRef }) => {
   const localRef = useRef(null);
@@ -60,8 +61,18 @@ const SearchProduct = ({ searchInputRef }) => {
   const { query, setQuery, data, setData, queryType, setQueryType, searching, fetchData } = useProductSearch();
   const { handleAddToCartIfAvailable } = useCartActions(getAvailableStock, movementType, keepListOpen, setData, setQuery);
 
+  // "q" (por marca o nombre) y "visual" (búsqueda visual) comparten el mismo flujo de texto
+  const isTextMode = queryType === "q" || queryType === "visual";
+
   // Usar hook de atajos de teclado
-  useKeyboardShortcuts(inputRef, dispatch);
+  useKeyboardShortcuts(inputRef, dispatch, {
+    onVisualSearch: () => {
+      setQueryType(QUERY_TYPES.VISUAL);
+      setQuery("");
+      setData([]);
+      inputRef.current?.focus();
+    },
+  });
 
   useEffect(() => {
     const checkCreateProductsOnSale = async () => {
@@ -108,7 +119,9 @@ const SearchProduct = ({ searchInputRef }) => {
   };
 
   const handleSearchProduct = async () => {
-    const response = await getStoreProducts({ [queryType]: query });
+    // "visual" usa el mismo parámetro de API que "q" (por marca o nombre)
+    const apiParam = queryType === "code" ? "code" : "q";
+    const response = await getStoreProducts({ [apiParam]: query });
     const fetchedData = response.data;
     setData(fetchedData);
     if (fetchedData.length === 0) {
@@ -117,9 +130,10 @@ const SearchProduct = ({ searchInputRef }) => {
   };
 
   useEffect(() => {
+    const isTextMode = queryType === "q" || queryType === "visual";
     if (queryType === "code" && query) {
       fetchData(handleSingleProductFetch, createProductsOnSale, productModal);
-    } else if (queryType === "q" && query) {
+    } else if (isTextMode && query) {
       const timer = setTimeout(() => {
         fetchData(handleSingleProductFetch, createProductsOnSale, productModal);
       }, 300);
@@ -203,18 +217,24 @@ const SearchProduct = ({ searchInputRef }) => {
 
       <Grid container spacing={0} sx={{ mb: 0.5, mt: -1.5 }}>
         <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
-          <FormLabel sx={{ fontWeight: 600, mr: 1, fontSize: '0.875rem' }}>Tipo de búsqueda:</FormLabel>
+          <FormLabel sx={{ fontWeight: 600, mr: 1, fontSize: '0.875rem' }}>Modo de búsqueda:</FormLabel>
           <RadioGroup row value={queryType} onChange={handleQueryTypeChange}>
             <FormControlLabel 
               value="code" 
               control={<Radio size="small" sx={{ py: 0.5 }} />} 
-              label="Por código de barras (Ctrl+Q)"
+              label="Código de barras (Ctrl+Q)"
               sx={{ mr: 4 }}
             />
             <FormControlLabel 
               value="q" 
               control={<Radio size="small" sx={{ py: 0.5 }} />} 
-              label="Por marca o nombre (Ctrl+W)"
+              label="Nombre o marca (Ctrl+W)"
+              sx={{ mr: 4 }}
+            />
+            <FormControlLabel 
+              value="visual" 
+              control={<Radio size="small" sx={{ py: 0.5 }} />} 
+              label="Visual (Ctrl+K)"
             />
           </RadioGroup>
         </Grid>
@@ -270,7 +290,7 @@ const SearchProduct = ({ searchInputRef }) => {
 
       <Grid container spacing={1} sx={{ mb: 0.5 }}>
         <Grid item xs={12} sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-          {queryType === "q" && (
+          {isTextMode && (
             <>
               <IconButton
                 size="small"
@@ -287,7 +307,7 @@ const SearchProduct = ({ searchInputRef }) => {
             value={queryType === "code" ? barcode : query}
             placeholder={queryType === "code" ? "Buscar producto por código (Ctrl+B)" : "Buscar producto por nombre (Ctrl+B)"}
             onChange={
-              queryType === "q"
+              isTextMode
                 ? handleQueryChange
                 : (e) => setBarcode(e.target.value.replace("'", "-"))
             }
@@ -296,7 +316,7 @@ const SearchProduct = ({ searchInputRef }) => {
             onBlur={() => setIsInputFocused(false)}
             autoComplete="off"
             InputProps={{
-              startAdornment: queryType === "q" ? (
+              startAdornment: isTextMode ? (
                 <InputAdornment position="start">
                   <IconButton size="small" onClick={handleSearchProduct} disabled={searching} sx={{ p: 0.5 }}>
                     {searching ? <CircularProgress size={18} /> : <SearchIcon fontSize="small" />}
@@ -308,7 +328,7 @@ const SearchProduct = ({ searchInputRef }) => {
           <IconButton size="small" sx={{ width: 36, height: 36, bgcolor: isInputFocused ? 'primary.main' : 'warning.main', color: 'white', borderRadius: 1, '&:hover': { bgcolor: isInputFocused ? 'primary.dark' : 'warning.dark' } }}>
             {isInputFocused ? <EditIcon fontSize="small" /> : <EditOffIcon fontSize="small" />}
           </IconButton>
-          {queryType === "q" && data.length > 0 && (
+          {isTextMode && data.length > 0 && (
             <Chip label={`${data.length} resultados`} color="primary" size="small" sx={{ height: 36 }} />
           )}
         </Grid>
@@ -318,7 +338,17 @@ const SearchProduct = ({ searchInputRef }) => {
           </Grid>
         )}
         
-        {data.length > 0 && (
+        {data.length > 0 && queryType === "visual" && (
+          <Grid item xs={12}>
+            <ProductCarousel
+              products={data}
+              movementType={movementType}
+              onSelect={(sp) => handleAddToCartIfAvailable(sp, stockModal)}
+            />
+          </Grid>
+        )}
+
+        {data.length > 0 && queryType !== "visual" && (
           <Grid item xs={12}>
             <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
               <SimpleTable
