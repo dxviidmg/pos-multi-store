@@ -7,13 +7,13 @@ import { logger } from "@/src/shared/utils/logger";
  * Hook to keep server connection alive with periodic pings
  * Pings server every 3 minutes to prevent connection timeout
  */
-export default function useKeepAlive() {
+export default function useKeepAlive(): void {
   useEffect(() => {
     const pingServer = () => {
       httpClient
-        .get(getApiUrl("ping"))
-        .then(res => logger.log("Ping:", res.data.status))
-        .catch(err => logger.error("Ping error:", err));
+        .get(getApiUrl('ping'))
+        .then((res) => logger.log('Ping:', res.data.status))
+        .catch((err) => logger.error('Ping error:', err));
     };
 
     pingServer();

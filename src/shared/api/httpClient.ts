@@ -1,7 +1,10 @@
-import axios from 'axios';
+import axios, { AxiosError, InternalAxiosRequestConfig, AxiosResponse } from 'axios';
 import { getUserData } from '@/src/shared/api/utils';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || process.env.REACT_APP_API_URL || 'http://localhost:8000';
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  process.env.REACT_APP_API_URL ||
+  'http://localhost:8000';
 
 const httpClient = axios.create({
   baseURL: API_URL,
@@ -10,7 +13,7 @@ const httpClient = axios.create({
 
 // Request interceptor
 httpClient.interceptors.request.use(
-  (config) => {
+  (config: InternalAxiosRequestConfig) => {
     const user = getUserData();
     if (user?.token) {
       config.headers.Authorization = `Token ${user.token}`;
@@ -20,13 +23,13 @@ httpClient.interceptors.request.use(
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error: AxiosError) => Promise.reject(error)
 );
 
 // Response interceptor
 httpClient.interceptors.response.use(
-  (response) => response,
-  (error) => {
+  (response: AxiosResponse) => response,
+  (error: AxiosError<{ code?: string }>) => {
     if (error.response) {
       const { status } = error.response;
       const code = error.response.data?.code;
@@ -46,7 +49,7 @@ httpClient.interceptors.response.use(
       // de gracia. Distinto de tenant cancelado (401): aquí el negocio sigue activo.
       // El dueño entra en "modo pago" (access_blocked → /mi-plan-actual/) para renovar;
       // administradores y vendedores quedan bloqueados.
-      if (status === 403 && code === "subscription_expired") {
+      if (status === 403 && code === 'subscription_expired') {
         if (typeof window !== 'undefined') {
           try {
             const raw = localStorage.getItem('user');
