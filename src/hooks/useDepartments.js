@@ -4,7 +4,7 @@ import { getDepartments } from '../api/departments';
 export const useDepartments = () => {
   return useQuery({
     queryKey: ['departments'],
-    queryFn: getDepartments,
+    queryFn: () => getDepartments(),
     select: (response) => response.data,
   });
 };

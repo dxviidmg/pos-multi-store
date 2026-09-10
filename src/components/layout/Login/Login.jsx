@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { loginUser } from "../../../api/login";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import { useUser } from "../../../context/UserContext";
 import CustomButton from "../../ui/Button/Button";
 import Logo from "../../../assets/images/logo.webp";
@@ -16,7 +16,7 @@ import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import LoginIcon from "@mui/icons-material/Login";
 
 function Login({ onLogin }) {
-  const navigate = useNavigate();
+  const router = useRouter();
   const { login } = useUser();
   const [state, setState] = useState({
     formData: { username: "", password: "" },
@@ -46,11 +46,11 @@ function Login({ onLogin }) {
         login(response.data);
         if (response.data.access_blocked) {
           // Negocio vencido: el dueño entra solo para renovar/pagar
-          navigate("/mi-plan-actual/");
+          router.push("/mi-plan-actual/");
         } else if (response.data.role === "owner") {
-          navigate("/tiendas/");
+          router.push("/tiendas/");
         } else {
-          navigate("/vender/");
+          router.push("/vender/");
         }
       } else {
         showAlert("Usuario o contraseña incorrecta");
@@ -181,7 +181,7 @@ function Login({ onLogin }) {
               Iniciar sesión
             </CustomButton>
 
-            <Button onClick={() => navigate("/registrarme")} fullWidth
+            <Button onClick={() => router.push("/registrarme")} fullWidth
               variant="outlined" startIcon={<PersonAddIcon />}
               sx={{
                 py: 1, borderRadius: '10px', fontWeight: 600, fontSize: '0.85rem',

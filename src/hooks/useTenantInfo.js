@@ -4,7 +4,7 @@ import { getTenantInfo } from '../api/tenants';
 export const useTenantInfo = () => {
   return useQuery({
     queryKey: ['tenantInfo'],
-    queryFn: getTenantInfo,
+    queryFn: () => getTenantInfo(),
     select: (response) => response.data,
   });
 };

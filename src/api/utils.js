@@ -20,8 +20,12 @@ export const getUserData = () => {
  * @param {boolean} end_slash - Whether to add trailing slash
  * @returns {string} Full API URL
  */
+const API_URL = process.env.NEXT_PUBLIC_API_URL || process.env.REACT_APP_API_URL;
+const PRINTER_URL = process.env.NEXT_PUBLIC_PRINTER_URL || process.env.REACT_APP_PRINTER_URL;
+const PRINTER_WS_URL = process.env.NEXT_PUBLIC_PRINTER_WS_URL || process.env.REACT_APP_PRINTER_WS_URL;
+
 export const getApiUrl = (endpoint, end_slash = true) =>
-  `${process.env.REACT_APP_API_URL}/api/${endpoint}${end_slash ? '/' : ''}`;
+  `${API_URL}/api/${endpoint}${end_slash ? '/' : ''}`;
 
 /**
  * Build printer service URL
@@ -29,20 +33,20 @@ export const getApiUrl = (endpoint, end_slash = true) =>
  * @returns {string} Full printer URL
  */
 export const getPrinterUrl = (endpoint) => {
-  return `${process.env.REACT_APP_PRINTER_URL}/${endpoint}/`;
+  return `${PRINTER_URL}/${endpoint}/`;
 };
 
 /**
  * Build printer service WebSocket URL.
- * Uses REACT_APP_PRINTER_WS_URL if defined; otherwise derives it from
- * REACT_APP_PRINTER_URL by swapping the http(s) scheme for ws(s).
+ * Uses PRINTER_WS_URL if defined; otherwise derives it from
+ * PRINTER_URL by swapping the http(s) scheme for ws(s).
  * @param {string} endpoint - Printer WS endpoint path (e.g. "printer-status")
  * @returns {string} Full printer WebSocket URL
  */
 export const getPrinterWsUrl = (endpoint) => {
   const base =
-    process.env.REACT_APP_PRINTER_WS_URL ||
-    (process.env.REACT_APP_PRINTER_URL || "").replace(/^http/i, "ws");
+    PRINTER_WS_URL ||
+    (PRINTER_URL || "").replace(/^http/i, "ws");
   return `${base}/${endpoint}/`;
 };
 
@@ -50,7 +54,7 @@ export const getPrinterWsUrl = (endpoint) => {
  * Build URL with query parameters
  * @param {string} baseUrl - Base URL
  * @param {Object} params - Query parameters object
- * @returns {URL} URL object with parameters
+ * @returns {string} URL string with parameters
  */
 export const buildUrlWithParams = (baseUrl, params) => {
   const url = new URL(baseUrl);
@@ -61,5 +65,5 @@ export const buildUrlWithParams = (baseUrl, params) => {
       }
     });
   }
-  return url;
+  return url.toString();
 };

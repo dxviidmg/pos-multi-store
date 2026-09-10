@@ -16,7 +16,7 @@ import DownloadIcon from "@mui/icons-material/Download";
 import TuneIcon from "@mui/icons-material/Tune";
 import HistoryIcon from "@mui/icons-material/History";
 import SendIcon from "@mui/icons-material/Send";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import NotificationImportantIcon from "@mui/icons-material/NotificationImportant";
 import PageHeader from "../../ui/PageHeader";
 import CustomTooltip from "../../ui/Tooltip";

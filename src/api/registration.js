@@ -1,7 +1,7 @@
 import httpClient from "./httpClient";
 import { getApiUrl } from "./utils";
 
-const API_KEY = process.env.REACT_APP_API_URL_KEY;
+const API_KEY = process.env.NEXT_PUBLIC_API_URL_KEY || process.env.REACT_APP_API_URL_KEY;
 
 const tenantHeaders = {
   "Content-Type": "application/json",

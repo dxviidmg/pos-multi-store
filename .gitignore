@@ -8,6 +8,12 @@
 # testing
 /coverage
 
+# Next.js
+/.next
+/out
+*.tsbuildinfo
+next-env.d.ts
+
 # production
 /build
 

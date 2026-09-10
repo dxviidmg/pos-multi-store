@@ -27,7 +27,7 @@ import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import NewspaperIcon from "@mui/icons-material/Newspaper";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
-import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import { useRouter, usePathname } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { useQueryClient } from "@tanstack/react-query";
 import { cleanCart } from "../../../redux/cart/cartActions";
@@ -141,9 +141,9 @@ const Drawer = styled(MuiDrawer, {
   };
 });
 
-export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
-  const navigate = useNavigate();
-  const location = useLocation();
+export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess, children }) {
+  const router = useRouter();
+  const pathname = usePathname();
   const { user, logout, updateUser } = useUser();
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
@@ -160,8 +160,8 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
     queryClient.clear();
     dispatch(cleanCart());
     logout();
-    navigate("/");
-  }, [queryClient, dispatch, logout, navigate]);
+    router.push("/");
+  }, [queryClient, dispatch, logout, router]);
 
   if (!user) {
     return null;
@@ -186,12 +186,12 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
     dispatch(cleanCart());
     updateUser({ store_type: "", store_name: "", store_id: null });
     window.dispatchEvent(new Event("store-changed"));
-    navigate("/tiendas/", { replace: true });
+    router.push("/tiendas/");
   };
 
   const handleLogout = () => performLogout();
 
-  const isActive = (href) => location.pathname === href;
+  const isActive = (href) => pathname === href;
 
   const currentHour = new Date().getHours();
   const isDashboardRestricted =
@@ -415,7 +415,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
               },
             }}
           >
-            <MenuItem onClick={() => { setAnchorEl(null); navigate("/perfil"); }}>
+            <MenuItem onClick={() => { setAnchorEl(null); router.push("/perfil"); }}>
               <ListItemIcon><PersonSearchIcon fontSize="small" /></ListItemIcon>
               Perfil
             </MenuItem>
@@ -484,7 +484,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
                     <List component="div" disablePadding>
                       {item.dropdown.map((sub, i) =>
                         sub.divider || sub.hidden ? null : (
-                          <ListItemButton key={i} onClick={() => !sub.disabled && navigate(sub.href)} disabled={sub.disabled}
+                          <ListItemButton key={i} onClick={() => !sub.disabled && router.push(sub.href)} disabled={sub.disabled}
                             sx={{
                               pl: 6.5, py: 0.6, borderRadius: "8px", my: 0.2, mx: 0.5,
                               ...(isActive(sub.href) ? activeSx : {}),
@@ -511,7 +511,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
 
             return (
               <ListItem key={idx} disablePadding sx={{ mb: 0.3 }}>
-                <ListItemButton onClick={() => navigate(item.href)}
+                <ListItemButton onClick={() => router.push(item.href)}
                   sx={{
                     borderRadius: "10px", py: 1,
                     justifyContent: open ? "initial" : "center",
@@ -542,7 +542,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
             <>
               <ListItemButton
                 component="a"
-                href={`https://api.whatsapp.com/send/?phone=${process.env.REACT_APP_WHATSAPP_NUMBER}&text=${encodeURIComponent(`Soporte SmartVenta\nTenant: ${user.tenant_name}\nTienda: ${user.store_name || "General"}`)}&type=phone_number&app_absent=0`}
+                href={`https://api.whatsapp.com/send/?phone=${process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || process.env.REACT_APP_WHATSAPP_NUMBER}&text=${encodeURIComponent(`Soporte SmartVenta\nTenant: ${user.tenant_name}\nTienda: ${user.store_name || "General"}`)}&type=phone_number&app_absent=0`}
                 target="_blank"
                 rel="noopener noreferrer"
                 sx={{
@@ -562,7 +562,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
 
       <Box component="main" sx={{ flexGrow: 1, p: { xs: 1.5, sm: 2, md: 3 }, minWidth: 0, overflowY: "auto" }}>
         <DrawerHeader />
-        <Outlet />
+        {children}
       </Box>
     </Box>
   );

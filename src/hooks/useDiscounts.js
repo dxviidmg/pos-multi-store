@@ -4,7 +4,7 @@ import { getDiscounts } from '../api/discounts';
 export const useDiscounts = () => {
   return useQuery({
     queryKey: ['discounts'],
-    queryFn: getDiscounts,
+    queryFn: () => getDiscounts(),
     select: (response) => response.data,
   });
 };

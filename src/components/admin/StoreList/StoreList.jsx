@@ -4,7 +4,7 @@ import { Typography, Chip, Grid, FormControlLabel, Checkbox, Box, TextField, For
 import CustomButton from "../../ui/Button/Button";
 import PageHeader from "../../ui/PageHeader";
 import { colors } from "../../../theme/colors";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import { formatCurrency, getDateDifference, getFormattedDate } from "../../../utils/utils";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import AddBusinessIcon from "@mui/icons-material/AddBusiness";
@@ -33,7 +33,7 @@ const getCashValueTotal = (value) => formatCurrency(value || 0);
 
 
 const StoreList = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const today = getFormattedDate();
   const { user, updateUser } = useUser();
   const queryClient = useQueryClient();
@@ -123,8 +123,8 @@ const StoreList = () => {
 
     window.dispatchEvent(new Event("store-changed"));
     const route = store_type === "A" ? "/distribuir/" : "/vender/";
-    navigate(route, { replace: true });
-  }, [updateUser, navigate, queryClient]);
+    router.push(route);
+  }, [updateUser, router, queryClient]);
 
   const handleShowInvestment = useCallback(() => {
     setQuickFilter("investment");

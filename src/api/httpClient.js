@@ -1,7 +1,10 @@
 import axios from 'axios';
 import { getUserData } from './utils';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || process.env.REACT_APP_API_URL || 'http://localhost:8000';
+
 const httpClient = axios.create({
+  baseURL: API_URL,
   timeout: 60000,
 });
 
@@ -33,8 +36,10 @@ httpClient.interceptors.response.use(
       // tenant, por lo que la siguiente petición de cualquier usuario (dueño o
       // trabajador, en cualquier máquina) recibe 401 y sale de la sesión.
       if (status === 401) {
-        localStorage.removeItem('user');
-        window.location.href = '/login';
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('user');
+          window.location.href = '/';
+        }
       }
 
       // Suscripción vencida durante la sesión (403 subscription_expired), tras los 7 días
@@ -42,20 +47,22 @@ httpClient.interceptors.response.use(
       // El dueño entra en "modo pago" (access_blocked → /mi-plan-actual/) para renovar;
       // administradores y vendedores quedan bloqueados.
       if (status === 403 && code === "subscription_expired") {
-        try {
-          const raw = localStorage.getItem('user');
-          if (raw) {
-            const stored = JSON.parse(raw);
-            if (!stored.access_blocked) {
-              stored.access_blocked = true;
-              localStorage.setItem('user', JSON.stringify(stored));
-              if (window.location.pathname !== '/mi-plan-actual/') {
-                window.location.href = '/mi-plan-actual/';
+        if (typeof window !== 'undefined') {
+          try {
+            const raw = localStorage.getItem('user');
+            if (raw) {
+              const stored = JSON.parse(raw);
+              if (!stored.access_blocked) {
+                stored.access_blocked = true;
+                localStorage.setItem('user', JSON.stringify(stored));
+                if (window.location.pathname !== '/mi-plan-actual/') {
+                  window.location.href = '/mi-plan-actual/';
+                }
               }
             }
+          } catch (e) {
+            // Ignorar errores al leer/escribir el usuario en localStorage.
           }
-        } catch (e) {
-          // Ignorar errores al leer/escribir el usuario en localStorage.
         }
       }
     }

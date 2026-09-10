@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import { useCreateTenant } from "../../../hooks/useRegistration";
 import { useMercadoPago } from "../../../hooks/useMercadoPago";
 import CustomButton from "../../ui/Button/Button";
@@ -34,7 +34,7 @@ const TOTAL_STEPS = 3;
 const STEP_LABELS = ["Negocio", "Propietario", "Plan"];
 
 const Registration = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
   const [registered, setRegistered] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
@@ -217,7 +217,7 @@ const Registration = () => {
                   </Box>
                 )}
                 <CustomButton
-                  onClick={() => navigate("/login")}
+                  onClick={() => router.push("/")}
                   fullWidth
                   sx={primaryButtonSx}
                 >
@@ -660,7 +660,7 @@ const Registration = () => {
                           cursor: "pointer",
                           "&:hover": { color: "primary.light" },
                         }}
-                        onClick={() => navigate("/login")}
+                        onClick={() => router.push("/")}
                       >
                         Inicia sesión
                       </Box>

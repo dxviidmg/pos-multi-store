@@ -8,7 +8,7 @@ export const useCanCreateStore = () => {
 
   const query = useQuery({
     queryKey: QUERY_KEY,
-    queryFn: canCreateStore,
+    queryFn: () => canCreateStore(),
     select: (response) => response.data,
   });
 

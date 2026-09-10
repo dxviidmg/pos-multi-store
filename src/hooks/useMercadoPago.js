@@ -1,6 +1,6 @@
 import { useCallback, useRef } from 'react';
 
-const MERCADO_PAGO_PUBLIC_KEY = process.env.REACT_APP_MERCADO_PAGO_PUBLIC_KEY
+const MERCADO_PAGO_PUBLIC_KEY = process.env.NEXT_PUBLIC_MERCADO_PAGO_PUBLIC_KEY || process.env.REACT_APP_MERCADO_PAGO_PUBLIC_KEY
 
 export const useMercadoPago = () => {
   const bricksControllerRef = useRef(null);

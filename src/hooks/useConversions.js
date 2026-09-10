@@ -5,7 +5,7 @@ import { createMutationHooks, useCrudMutation } from './useCrudMutation';
 export const useConversions = () => {
   return useQuery({
     queryKey: ['conversions'],
-    queryFn: getConversions,
+    queryFn: () => getConversions(),
     select: (response) => response.data,
   });
 };
@@ -13,7 +13,7 @@ export const useConversions = () => {
 export const useConversionUnits = () => {
   return useQuery({
     queryKey: ['conversionUnits'],
-    queryFn: getConversionUnits,
+    queryFn: () => getConversionUnits(),
     select: (response) => response.data,
   });
 };

@@ -20,7 +20,7 @@ import DownloadIcon from "@mui/icons-material/Download";
 import ErrorIcon from "@mui/icons-material/Error";
 
 const URL_TEMPLATE =
-  process.env.REACT_APP_API_URL +
+  (process.env.NEXT_PUBLIC_API_URL || process.env.REACT_APP_API_URL) +
   "/static/templates/SmartVenta_plantilla_importacion_inventario_o_ventas.xlsx";
 
 const ACTION_OPTIONS = [
