@@ -220,6 +220,14 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess, chi
         hidden: user.role === "seller"
       },
       {
+        label: "Movimientos",
+        dropdown: [
+          { label: "Distribuciones", href: "/distribuciones/", hidden: user.role === "seller" },
+          { label: "Traspasos", href: "/traspasos/", hidden: user.role === "seller" },
+        ],
+        hidden: user.role === "seller",
+      },
+      {
         label: "Caja",
         dropdown: [
           { label: "Corte de caja", href: "/corte-caja/" },
@@ -248,6 +256,11 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess, chi
         hidden: user.role === "seller"
       },
 
+      { label: "Ventas", href: "/ventas/", hidden: user.role !== "seller" },
+      { label: "Apartados", href: "/apartados/", hidden: user.role !== "seller" },
+      { label: "Movimientos en caja", href: "/movimientos-caja/", hidden: user.role !== "seller" },
+      { label: "Traspasos", href: "/traspasos/", hidden: user.role !== "seller" },
+      { label: "Historial de stock", href: "/historial-stock/", hidden: user.role === "seller" },
       {
         label: "Auditoria",
         dropdown: [
@@ -255,20 +268,6 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess, chi
         ],
         hidden: user.role === "seller",
       },
-      
-      {
-        label: "Movimientos",
-        dropdown: [
-          { label: "Distribuciones", href: "/distribuciones/", hidden: user.role === "seller" },
-          { label: "Traspasos", href: "/traspasos/", hidden: user.role === "seller" },
-        ],
-        hidden: user.role === "seller",
-      },
-      { label: "Ventas", href: "/ventas/", hidden: user.role !== "seller" },
-      { label: "Apartados", href: "/apartados/", hidden: user.role !== "seller" },
-      { label: "Movimientos en caja", href: "/movimientos-caja/", hidden: user.role !== "seller" },
-      { label: "Traspasos", href: "/traspasos/", hidden: user.role !== "seller" },
-      { label: "Historial de stock", href: "/historial-stock/", hidden: user.role === "seller" },
     ],
     A: [
       { label: "Distribuir", href: "/distribuir/" },
@@ -311,7 +310,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess, chi
           { label: "Ventas ajustadas o canceladas", href: "/tablero-ventas-ajustadas-cancelaciones/" },
           { label: "Verificación de stock", href: "/tablero-verificacion-stock/" },
           { label: "Marcas y productos", href: "/tablero-productos/" },
-          { label: "Transpasos pendientes", href: "/tablero-traspasos-pendientes/" },
+          { label: "Traspasos pendientes", href: "/tablero-traspasos-pendientes/" },
         ],
       },
       { label: "Tiendas", href: "/tiendas/" },
@@ -334,14 +333,6 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess, chi
         ],
       },
       {
-        label: "Auditoria",
-        dropdown: [
-          { label: "Productos", href: "/auditoria-productos/" },
-          { label: "Transacciones", href: "/auditoria-transacciones/" },
-        ],
-      },
-
-      {
         label: "Facturación",
         dropdown: [
           { label: "Mi Plan Actual", href: "/mi-plan-actual/" },
@@ -351,6 +342,13 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess, chi
       },
       { label: "Servicios", href: "/servicios/" },
       { label: "Sincronizar", href: "/sincronizar/" },
+      {
+        label: "Auditoria",
+        dropdown: [
+          { label: "Productos", href: "/auditoria-productos/" },
+          { label: "Transacciones", href: "/auditoria-transacciones/" },
+        ],
+      },
     ],
   };
 

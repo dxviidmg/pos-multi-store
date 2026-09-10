@@ -1,4 +1,4 @@
-import React, { memo, useState, useEffect, useRef, useCallback } from "react";
+import React, { memo, useState, useEffect, useCallback } from "react";
 import {
   IconButton, Badge, Popover, Box, Typography, List, ListItemButton,
   ListItemIcon, ListItemText,
@@ -10,9 +10,7 @@ import SendIcon from "@mui/icons-material/Send";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import InboxIcon from "@mui/icons-material/Inbox";
-import { useUser } from "@/src/context/UserContext";
-
-const WS_BASE = (process.env.NEXT_PUBLIC_API_URL || process.env.REACT_APP_API_URL)?.replace(/^http/, "ws");
+import { useWebSocket } from "@/src/context/WebSocketContext";
 
 const isWithinAllowedHours = () => {
   const now = new Date();
@@ -30,76 +28,31 @@ const EVENT_CONFIG = {
   reservation_created: { icon: <ShoppingCartIcon fontSize="small" />, href: "/ventas/" },
 };
 
-let reconnectAttempts = 0;
-const maxReconnectAttempts = 5;
-let pollingInterval = null;
-
 const NotificationsMenu = memo(() => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [notifications, setNotifications] = useState([]);
   const [seen, setSeen] = useState(true);
-  const wsRef = useRef(null);
-  const reconnectRef = useRef(null);
-  const { user } = useUser();
+  const { subscribeRaw } = useWebSocket();
 
-  const connectWs = useCallback(() => {
-    if (!user?.token || !WS_BASE) return;
-
-    if (wsRef.current) wsRef.current.close();
-    if (reconnectRef.current) clearTimeout(reconnectRef.current);
-
-    let url = `${WS_BASE}/ws/notifications/?token=${user.token}`;
-    if (user.store_id) url += `&store_id=${user.store_id}`;
-
-    const ws = new WebSocket(url);
-    wsRef.current = ws;
-
-    ws.onmessage = (event) => {
-      const msg = JSON.parse(event.data);
-      const config = EVENT_CONFIG[msg.event] || { icon: <NotificationsIcon fontSize="small" />, href: "/" };
-      setNotifications((prev) => [
-        { id: `${msg.event}-${Date.now()}`, icon: config.icon, text: msg.message, storeName: msg.store_name, href: config.href },
-        ...prev,
-      ]);
-      setSeen(false);
-    };
-
-    ws.onerror = () => {
-      reconnectAttempts++;
-      ws.close();
-    };
-
-    ws.onclose = () => {
-      if (reconnectAttempts < maxReconnectAttempts) {
-        const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 30000);
-        reconnectAttempts++;
-        reconnectRef.current = setTimeout(connectWs, delay);
-      } else {
-        // Fallback a polling cada 60s
-        if (!pollingInterval) {
-          pollingInterval = setInterval(() => {
-            fetch('/api/audit/notifications/')
-              .then(r => r.json())
-              .then(data => setNotifications(data));
-          }, 60000);
-        }
-      }
-    };
+  const handleMessage = useCallback((msg) => {
+    // Solo procesamos mensajes de notificación conocidos (tienen `event`).
+    if (!msg?.event) return;
+    const config = EVENT_CONFIG[msg.event];
+    // Ignorar eventos que no son notificaciones de este menú (p.ej. printer_status).
+    if (!config && !msg.message) return;
+    const resolved = config || { icon: <NotificationsIcon fontSize="small" />, href: "/" };
+    setNotifications((prev) => [
+      { id: `${msg.event}-${Date.now()}`, icon: resolved.icon, text: msg.message, storeName: msg.store_name, href: resolved.href },
+      ...prev,
+    ]);
+    setSeen(false);
   }, []);
 
   useEffect(() => {
     if (!isWithinAllowedHours()) return;
-
-    connectWs();
-    const onStoreChange = () => connectWs();
-    window.addEventListener("store-changed", onStoreChange);
-    return () => {
-      if (wsRef.current) wsRef.current.close();
-      if (reconnectRef.current) clearTimeout(reconnectRef.current);
-      if (pollingInterval) clearInterval(pollingInterval);
-      window.removeEventListener("store-changed", onStoreChange);
-    };
-  }, [connectWs]);
+    const unsubscribe = subscribeRaw(handleMessage);
+    return unsubscribe;
+  }, [subscribeRaw, handleMessage]);
 
   const count = notifications.length;
 

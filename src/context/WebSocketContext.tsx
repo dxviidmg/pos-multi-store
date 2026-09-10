@@ -12,6 +12,13 @@ interface WebSocketContextType {
   isConnected: boolean;
   send: (message: WebSocketMessage) => void;
   subscribe: (messageType: string, callback: (data: any) => void) => () => void;
+  /**
+   * Suscribe a TODOS los mensajes crudos que llegan del backend, tal cual.
+   * Útil para consumidores (p.ej. NotificationsMenu) cuyos mensajes no siguen
+   * el formato { type, data } sino un shape propio como { event, message, ... }.
+   * Retorna una función para desuscribirse.
+   */
+  subscribeRaw: (callback: (message: any) => void) => () => void;
 }
 
 const WebSocketContext = React.createContext<WebSocketContextType | null>(null);
@@ -21,6 +28,7 @@ export function WebSocketProvider({ children }: { children: React.ReactNode }) {
   const [isConnected, setIsConnected] = useState(false);
   const wsRef = useRef<WebSocket | null>(null);
   const subscribersRef = useRef<Map<string, Set<(data: any) => void>>>(new Map());
+  const rawSubscribersRef = useRef<Set<(message: any) => void>>(new Set());
   const reconnectTimeoutRef = useRef<NodeJS.Timeout>();
 
   const connect = useCallback(() => {
@@ -60,6 +68,17 @@ export function WebSocketProvider({ children }: { children: React.ReactNode }) {
       ws.onmessage = (event) => {
         try {
           const message = JSON.parse(event.data);
+
+          // Entregar el mensaje crudo a los suscriptores "raw".
+          rawSubscribersRef.current.forEach((callback) => {
+            try {
+              callback(message);
+            } catch (err) {
+              console.error('Error en suscriptor raw de WebSocket:', err);
+            }
+          });
+
+          // Enrutamiento por tipo para consumidores con formato { type, data }.
           const callbacks = subscribersRef.current.get(message.type);
           if (callbacks) {
             callbacks.forEach((callback) => callback(message.data));
@@ -134,10 +153,18 @@ export function WebSocketProvider({ children }: { children: React.ReactNode }) {
     []
   );
 
+  const subscribeRaw = useCallback((callback: (message: any) => void) => {
+    rawSubscribersRef.current.add(callback);
+    return () => {
+      rawSubscribersRef.current.delete(callback);
+    };
+  }, []);
+
   const value: WebSocketContextType = {
     isConnected,
     send,
     subscribe,
+    subscribeRaw,
   };
 
   return (
