@@ -12,7 +12,8 @@ import {
 import { getStores } from "../../../api/stores";
 import { useUser } from "../../../context/UserContext";
 import { useForm } from "../../../hooks/useForm";
-import noPhoto from "../../../assets/images/noPhoto.jpg";
+import noPhoto from "../../../assets/images/noPhoto.webp";
+import { convertImageToWebp } from "../../../utils/image";
 import { getDepartments } from "../../../api/departments";
 import SimpleTable from "../../ui/SimpleTable/SimpleTable";
 import { Grid, TextField, Box, Checkbox, FormControlLabel, Autocomplete, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
@@ -123,15 +124,17 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
   }, [formData.code, isCreating]);
 
 
-  const handleImageChange = (e) => {
+  const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      setFormValue("image", file);
+      // Convertir a WebP (más ligero) antes de guardar; con fallback al original
+      const webpFile = await convertImageToWebp(file, { quality: 0.85, maxWidth: 1000, maxHeight: 1000 });
+      setFormValue("image", webpFile);
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewImage(reader.result);
       };
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(webpFile);
     }
   };
 

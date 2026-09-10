@@ -12,6 +12,7 @@ export const MOVEMENT_TYPES = {
 export const QUERY_TYPES = {
   CODE: 'code',
   NAME: 'q',
+  VISUAL: 'visual',
 };
 
 // Tipos de tienda

@@ -26,7 +26,9 @@ export const useProductSearch = () => {
 
   const fetchData = useCallback(
     async (handleSingleProductFetch, createProductsOnSale, productModal) => {
-      if (!query || queryType === "q") {
+      // El modo "visual" busca igual que "q" (por marca o nombre)
+      const isTextMode = queryType === "q" || queryType === "visual";
+      if (!query || isTextMode) {
         setData([]);
         return;
       }

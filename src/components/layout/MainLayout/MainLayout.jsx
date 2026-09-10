@@ -49,7 +49,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import DescriptionIcon from "@mui/icons-material/Description";
 import PolicyIcon from "@mui/icons-material/Policy";
 import BarChartIcon from "@mui/icons-material/BarChart";
-import logo from "../../../assets/images/logo.jpg";
+import logo from "../../../assets/images/logo.webp";
 import { colors } from "../../../theme/colors";
 import PageHelp from "../../ui/PageHelp/PageHelp";
 import NotificationsMenu from "../../ui/NotificationsMenu/NotificationsMenu";
