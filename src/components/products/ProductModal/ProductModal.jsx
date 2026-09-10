@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import CustomModal from "@/src/shared/ui/Modal/Modal";
 import CustomButton from "@/src/shared/ui/Button/Button";
-import { getBrands } from "@/src/api/brands";
+import { getBrands } from "@/src/features/catalog/api/brands";
 import { showSuccess, showError } from "@/src/shared/utils/alerts";
 import {
   createProduct,
@@ -18,7 +18,7 @@ import { convertImageToWebp } from "@/src/shared/utils/image";
 // En Next.js, importar una imagen devuelve un objeto StaticImageData,
 // no una string. Normalizamos a la URL para usarla en <img src>.
 const noPhoto = noPhotoImg.src || noPhotoImg;
-import { getDepartments } from "@/src/api/departments";
+import { getDepartments } from "@/src/features/catalog/api/departments";
 import SimpleTable from "@/src/shared/ui/SimpleTable/SimpleTable";
 import { Grid, TextField, Box, Checkbox, FormControlLabel, Autocomplete, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";

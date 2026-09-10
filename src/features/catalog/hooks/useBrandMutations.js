@@ -1,5 +1,5 @@
 import { createMutationHooks } from '@/src/shared/hooks/useCrudMutation';
-import { createBrand, updateBrand, deleteBrands } from '@/src/api/brands';
+import { createBrand, updateBrand, deleteBrands } from '@/src/features/catalog/api/brands';
 
 const api = {
   create: createBrand,

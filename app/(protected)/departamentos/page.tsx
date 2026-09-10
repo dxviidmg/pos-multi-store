@@ -21,7 +21,7 @@ const Lazy = ({ children }: { children: React.ReactNode }) => (
 );
 
 const Component = lazyRetry(() =>
-  import('@/src/components/catalog/DepartmentList/DepartmentList').then((m) => ({
+  import('@/src/features/catalog/components/DepartmentList/DepartmentList').then((m) => ({
     default: m.default,
   }))
 );

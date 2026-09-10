@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import DataTable from "@/src/shared/ui/DataTable/DataTable";
-import { getSellers } from "@/src/api/sellers";
+import { getSellers } from "@/src/features/catalog/api/sellers";
 import CustomButton from "@/src/shared/ui/Button/Button";
-import SellerModal from "@/src/components/catalog/SellerModal/SellerModal";
+import SellerModal from "@/src/features/catalog/components/SellerModal/SellerModal";
 import { getDateDifference, getFormattedDate } from "@/src/shared/utils/utils";
 import { chooseIcon } from "@/src/shared/ui/Icons/Icons";
 import { useModal } from "@/src/shared/hooks/useModal";
-import { useUserManagement } from "@/src/hooks/useUserManagement";
+import { useUserManagement } from "@/src/shared/hooks/useUserManagement";
 import EditUserModal from "@/src/components/ui/UserModals/EditUserModal";
 import ChangePasswordModal from "@/src/components/ui/UserModals/ChangePasswordModal";
 import PageHeader from "@/src/shared/ui/PageHeader";

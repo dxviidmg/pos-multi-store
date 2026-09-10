@@ -1,32 +1,32 @@
 import React, { useEffect } from "react";
 import CustomModal from "@/src/shared/ui/Modal/Modal";
 import CustomButton from "@/src/shared/ui/Button/Button";
-import { useCreateDepartment, useUpdateDepartment } from "@/src/hooks/useDepartmentMutations";
+import { useCreateBrand, useUpdateBrand } from "@/src/features/catalog/hooks/useBrandMutations";
 import { useForm } from "@/src/shared/hooks/useForm";
 import { Grid, TextField } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 
-const DepartmentModal = ({ isOpen, department, onClose, onUpdate }) => {
+const BrandModal = ({ isOpen, brand, onClose, onUpdate }) => {
   const { values, handleChange, reset, setValues } = useForm({ name: "" });
 
-  const createMutation = useCreateDepartment();
-  const updateMutation = useUpdateDepartment();
+  const createMutation = useCreateBrand();
+  const updateMutation = useUpdateBrand();
   const isLoading = createMutation.isPending || updateMutation.isPending;
 
   useEffect(() => {
     if (isOpen) {
-      if (department) {
+      if (brand) {
         setValues({
-          id: department.id || "",
-          name: department.name || "",
+          id: brand.id || "",
+          name: brand.name || "",
         });
       } else {
         setValues({ name: "" });
       }
     }
-  }, [isOpen, department, setValues]);
+  }, [isOpen, brand, setValues]);
 
-  const handleDepartmentSubmit = () => {
+  const handleBrandSubmit = () => {
     const mutation = values.id ? updateMutation : createMutation;
     
     mutation.mutate(values, {
@@ -42,7 +42,7 @@ const DepartmentModal = ({ isOpen, department, onClose, onUpdate }) => {
     <CustomModal 
       showOut={isOpen} 
       onClose={onClose}
-      title={values.id ? "Actualizar departamento" : "Crear departamento"}
+      title={values.id ? "Actualizar marca" : "Crear marca"}
     >
       <Grid container sx={{ padding: '1rem', backgroundColor: 'modalBody.main' }}>
         <Grid item xs={12} className="card">
@@ -63,7 +63,7 @@ const DepartmentModal = ({ isOpen, department, onClose, onUpdate }) => {
           <Grid item xs={12} md={6}>
             <CustomButton
               fullWidth={true}
-              onClick={handleDepartmentSubmit}
+              onClick={handleBrandSubmit}
               disabled={values.name === "" || isLoading}
               marginTop="3px"
               startIcon={<SaveIcon />}
@@ -78,4 +78,4 @@ const DepartmentModal = ({ isOpen, department, onClose, onUpdate }) => {
   );
 };
 
-export default DepartmentModal;
+export default BrandModal;

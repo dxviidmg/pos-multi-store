@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import DataTable from "@/src/shared/ui/DataTable/DataTable";
 import CustomButton from "@/src/shared/ui/Button/Button";
-import { deleteDepartments } from "@/src/api/departments";
+import { deleteDepartments } from "@/src/features/catalog/api/departments";
 import { showSuccess, showError, showConfirm } from "@/src/shared/utils/alerts";
 import { useModal } from "@/src/shared/hooks/useModal";
-import DepartmentModal from "@/src/components/catalog/DepartmentModal/DepartmentModal";
+import DepartmentModal from "@/src/features/catalog/components/DepartmentModal/DepartmentModal";
 import { useUser } from "@/src/context/UserContext";
 import EditIcon from "@mui/icons-material/Edit";
 import CustomTooltip from "@/src/shared/ui/Tooltip";
-import { useDepartments } from "@/src/hooks/useDepartments";
+import { useDepartments } from "@/src/features/catalog/hooks/useDepartments";
 import PageHeader from "@/src/shared/ui/PageHeader";
 import { Grid } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";

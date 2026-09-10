@@ -3,7 +3,7 @@ import DataTable from "@/src/shared/ui/DataTable/DataTable";
 import { exportToExcel, formatTimeFromDate, getFormattedDate } from "@/src/shared/utils/utils";
 import { getStoreProductLogs, getStoreProductLogsChoices } from "@/src/api/products";
 import { CustomSpinner } from "@/src/shared/ui/Spinner/Spinner";
-import { getBrands } from "@/src/api/brands";
+import { getBrands } from "@/src/features/catalog/api/brands";
 import { getStores } from "@/src/api/stores";
 import CustomButton from "@/src/shared/ui/Button/Button";
 import { chooseIcon } from "@/src/shared/ui/Icons/Icons";

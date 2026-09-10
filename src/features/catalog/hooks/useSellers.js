@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getSellers } from '@/src/api/sellers';
+import { getSellers } from '@/src/features/catalog/api/sellers';
 
 export const useSellers = () => {
   return useQuery({

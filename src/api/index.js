@@ -5,9 +5,9 @@
 
 // CRUD Services
 export * from '@/src/api/clients';
-export * from '@/src/api/brands';
-export * from '@/src/api/departments';
-export * from '@/src/api/sellers';
+export * from '@/src/features/catalog/api/brands';
+export * from '@/src/features/catalog/api/departments';
+export * from '@/src/features/catalog/api/sellers';
 export * from '@/src/api/discounts';
 export * from '@/src/api/stores';
 export * from '@/src/api/tenants';

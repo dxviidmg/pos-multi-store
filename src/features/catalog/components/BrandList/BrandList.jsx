@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import DataTable from "@/src/shared/ui/DataTable/DataTable";
 import CustomButton from "@/src/shared/ui/Button/Button";
-import { deleteBrands } from "@/src/api/brands";
-import BrandModal from "@/src/components/catalog/BrandModal/BrandModal";
+import { deleteBrands } from "@/src/features/catalog/api/brands";
+import BrandModal from "@/src/features/catalog/components/BrandModal/BrandModal";
 import { showSuccess, showError, showConfirm } from "@/src/shared/utils/alerts";
 import { useUser } from "@/src/context/UserContext";
 import EditIcon from "@mui/icons-material/Edit";
 import CustomTooltip from "@/src/shared/ui/Tooltip";
-import { useBrands } from "@/src/hooks/useBrands";
+import { useBrands } from "@/src/features/catalog/hooks/useBrands";
 import { useModal } from "@/src/shared/hooks/useModal";
 import PageHeader from "@/src/shared/ui/PageHeader";
 import { Grid } from "@mui/material";

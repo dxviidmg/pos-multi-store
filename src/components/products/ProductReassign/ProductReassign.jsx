@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { CustomSpinner } from "@/src/shared/ui/Spinner/Spinner";
-import { getBrands } from "@/src/api/brands";
-import { getDepartments } from "@/src/api/departments";
+import { getBrands } from "@/src/features/catalog/api/brands";
+import { getDepartments } from "@/src/features/catalog/api/departments";
 import { reassignProducts } from "@/src/api/products";
 import { showSuccess, showError } from "@/src/shared/utils/alerts";
 import { useForm } from "@/src/shared/hooks/useForm";

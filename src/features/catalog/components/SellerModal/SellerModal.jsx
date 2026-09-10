@@ -5,7 +5,7 @@ import { showSuccess } from "@/src/shared/utils/alerts";
 import { updateProduct } from "@/src/api/products";
 import { getStores } from "@/src/api/stores";
 import { useUser } from "@/src/context/UserContext";
-import { createSeller } from "@/src/api/sellers";
+import { createSeller } from "@/src/features/catalog/api/sellers";
 import { Grid, TextField, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 
