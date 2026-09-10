@@ -16,6 +16,27 @@ const timedRequest = async (axiosCall, meta = {}) => {
 };
 
 /**
+ * Construye un FormData para crear/actualizar producto cuando incluye imagen (File).
+ * Omite valores nulos/indefinidos y serializa booleanos como "true"/"false".
+ * @param {Object} data - Datos del producto (con image: File)
+ * @returns {FormData}
+ */
+const buildProductFormData = (data) => {
+  const formData = new FormData();
+  Object.entries(data).forEach(([key, value]) => {
+    if (value === null || value === undefined || value === "") return;
+    if (value instanceof File) {
+      formData.append(key, value);
+    } else if (typeof value === "boolean") {
+      formData.append(key, value ? "true" : "false");
+    } else {
+      formData.append(key, value);
+    }
+  });
+  return formData;
+};
+
+/**
  * Get store products with optional filters
  * @param {Object} params - Query parameters
  * @param {Object} config - Axios config options
@@ -47,6 +68,9 @@ export const getProducts = async (params) => {
 export const createProduct = async (data) => {
   if (data.min_wholesale_quantity === "") data.min_wholesale_quantity = null;
   if (data.wholesale_price === "") data.wholesale_price = null;
+  if (data.image instanceof File) {
+    return httpClient.post(getApiUrl("product"), buildProductFormData(data));
+  }
   return httpClient.post(getApiUrl("product"), data);
 };
 
@@ -61,6 +85,9 @@ export const updateProduct = async (data) => {
   }
   if (data.min_wholesale_quantity === "") data.min_wholesale_quantity = null;
   if (data.wholesale_price === "") data.wholesale_price = null;
+  if (data.image instanceof File) {
+    return httpClient.patch(getApiUrl(`product/${data.id}`), buildProductFormData(data));
+  }
   return httpClient.patch(getApiUrl(`product/${data.id}`), data);
 };
 
