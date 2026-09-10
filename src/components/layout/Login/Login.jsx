@@ -4,15 +4,16 @@ import { useNavigate } from "react-router-dom";
 import { useUser } from "../../../context/UserContext";
 import CustomButton from "../../ui/Button/Button";
 import Logo from "../../../assets/images/logo.webp";
-import BgImage from "../../../assets/images/bg.webp";
+import { colors } from "../../../theme/colors";
 import './Login.css';
 import {
   TextField, Box, Alert, Paper, Stack, Typography,
-  IconButton, InputAdornment,
+  IconButton, InputAdornment, Button,
 } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import LoginIcon from "@mui/icons-material/Login";
 
 function Login({ onLogin }) {
   const navigate = useNavigate();
@@ -75,125 +76,127 @@ function Login({ onLogin }) {
   return (
     <Box sx={{
       minHeight: '100vh', height: '100vh', display: 'flex',
-      alignItems: 'center', justifyContent: 'center',
-      backgroundImage: `url(${BgImage})`, backgroundSize: 'cover',
-      backgroundPosition: 'center', position: 'fixed',
-      top: 0, left: 0, right: 0, bottom: 0,
+      position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+      bgcolor: 'background.paper',
     }}>
+      {/* Panel izquierdo — marca (oculto en móvil) */}
       <Box sx={{
-        position: 'absolute', inset: 0,
-        background: 'linear-gradient(135deg, rgba(4,52,107,0.85) 0%, rgba(6,90,158,0.75) 100%)',
-        backdropFilter: 'blur(2px)',
-      }} />
-
-      <Paper elevation={0} sx={{
-        position: 'relative', zIndex: 1,
-        width: '100%', maxWidth: 400, borderRadius: 1, overflow: 'hidden',
-        background: 'rgba(4,52,107,0.95)',
-        backdropFilter: 'blur(24px)',
-        border: '1px solid rgba(255,255,255,0.1)',
-        boxShadow: '0 24px 80px rgba(0,0,0,0.4)',
+        display: { xs: 'none', md: 'flex' },
+        flex: 1, position: 'relative',
+        alignItems: 'center', justifyContent: 'center',
+        flexDirection: 'column',
+        overflow: 'hidden',
+        background: colors.gradient.sidebar,
       }}>
-        <Box sx={{ textAlign: 'center', pt: 5, pb: 2, px: 4 }}>
+        <Box sx={{ position: 'relative', zIndex: 1, textAlign: 'center', px: 6 }}>
           <Box component="img" src={Logo} alt="SmartVenta" sx={{
-            maxWidth: '160px', height: 'auto', mb: 3, borderRadius: 0,
-            boxShadow: '0 12px 40px rgba(0,0,0,0.3)',
+            maxWidth: 260, width: '100%', height: 'auto', mb: 4,
+            filter: 'drop-shadow(0 8px 30px rgba(0,0,0,0.25))',
           }} />
-          <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem' }}>
-            Ingrese sus credenciales para continuar
+          <Typography variant="h4" sx={{
+            color: '#fff', fontWeight: 700, mb: 1.5, letterSpacing: '-0.01em',
+          }}>
+            Punto de venta multi-tienda
+          </Typography>
+          <Typography variant="body1" sx={{
+            color: 'rgba(255,255,255,0.82)', maxWidth: 380, mx: 'auto', lineHeight: 1.6,
+          }}>
+            Gestiona ventas, inventario y traspasos de todas tus tiendas desde un solo lugar.
           </Typography>
         </Box>
+      </Box>
 
-        <Box sx={{ px: 4, pb: 5, pt: 2 }}>
+      {/* Panel derecho — formulario */}
+      <Box sx={{
+        flex: { xs: 1, md: 0.9 },
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        px: { xs: 3, sm: 6 }, py: 4,
+        bgcolor: 'background.default',
+      }}>
+        <Paper elevation={0} sx={{
+          width: '100%', maxWidth: 420,
+          borderRadius: '16px',
+          bgcolor: 'background.paper',
+          border: '1px solid',
+          borderColor: 'divider',
+          boxShadow: '0 8px 30px rgba(0,0,0,0.08)',
+          p: { xs: 3, sm: 4 },
+        }}>
+          {/* Logo visible solo en móvil */}
+          <Box sx={{ display: { xs: 'flex', md: 'none' }, justifyContent: 'center', mb: 3 }}>
+            <Box component="img" src={Logo} alt="SmartVenta" sx={{ maxWidth: 180, height: 'auto' }} />
+          </Box>
+
+          <Typography variant="h4" sx={{ fontWeight: 700, color: 'text.primary', mb: 0.5 }}>
+            Bienvenido
+          </Typography>
+          <Typography variant="body1" sx={{ color: 'text.secondary', mb: 4 }}>
+            Ingresa tus credenciales para continuar
+          </Typography>
+
           {alertData.shown && (
-            <Alert severity="error" sx={{
-              mb: 2.5, borderRadius: 1,
-              backgroundColor: 'rgba(167,139,250,0.15)',
-              backdropFilter: 'blur(10px)',
-              color: 'white',
-              border: '1px solid rgba(167,139,250,0.3)',
-              '& .MuiAlert-icon': { color: 'accent' },
-            }}>
+            <Alert severity="error" sx={{ mb: 3, borderRadius: '10px' }}>
               {alertData.message}
             </Alert>
           )}
 
-          <Stack component="form" spacing={2.5}>
-            <Box>
-              <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.85)', mb: 1, fontWeight: 600 }}>
-                Usuario
-              </Typography>
-              <TextField fullWidth name="username" placeholder="Ingrese su usuario"
-                value={formData.username} onChange={handleChange}
-                required autoFocus autoComplete="username" size="small"
-                sx={{
-                  '& .MuiOutlinedInput-root': {
-                    borderRadius: 1, backgroundColor: 'rgba(255,255,255,0.95)',
-                    '& fieldset': { borderColor: 'transparent' },
-                    '&:hover fieldset': { borderColor: 'rgba(4,52,107,0.3)' },
-                  },
-                }}
-              />
-            </Box>
+          <Stack component="form" onSubmit={handleSubmit} spacing={2.5}>
+            <TextField fullWidth name="username" label="Usuario" placeholder="Ingresa tu usuario"
+              value={formData.username} onChange={handleChange}
+              required autoFocus autoComplete="username" size="small"
+              sx={{ '& .MuiOutlinedInput-root': { borderRadius: '10px' } }}
+            />
 
-            <Box>
-              <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.85)', mb: 1, fontWeight: 600 }}>
-                Contraseña
-              </Typography>
-              <TextField fullWidth name="password" placeholder="Ingrese su contraseña"
-                type={showPassword ? "text" : "password"}
-                value={formData.password} onChange={handleChange}
-                required autoComplete="current-password" size="small"
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton size="small"
-                        onClick={() => setState(prev => ({ ...prev, showPassword: !prev.showPassword }))}
-                        sx={{ color: 'primary' }}
-                      >
-                        {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-                sx={{
-                  '& .MuiOutlinedInput-root': {
-                    borderRadius: 1, backgroundColor: 'rgba(255,255,255,0.95)',
-                    '& fieldset': { borderColor: 'transparent' },
-                    '&:hover fieldset': { borderColor: 'rgba(4,52,107,0.3)' },
-                  },
-                }}
-              />
-            </Box>
+            <TextField fullWidth name="password" label="Contraseña" placeholder="Ingresa tu contraseña"
+              type={showPassword ? "text" : "password"}
+              value={formData.password} onChange={handleChange}
+              required autoComplete="current-password" size="small"
+              sx={{ '& .MuiOutlinedInput-root': { borderRadius: '10px' } }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton size="small"
+                      onClick={() => setState(prev => ({ ...prev, showPassword: !prev.showPassword }))}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
 
-            <CustomButton onClick={handleSubmit} fullWidth
+            <CustomButton type="submit" fullWidth
+              startIcon={<LoginIcon />}
               sx={{
-                py: 1.3, mt: 1, borderRadius: 1, fontWeight: 700, fontSize: '0.95rem',
-                background: 'linear-gradient(135deg, #a78bfa 0%, #7c5cbf 100%)',
+                py: 1.25, mt: 1, borderRadius: '10px', fontWeight: 700, fontSize: '0.95rem',
+                background: 'linear-gradient(135deg, #04346b 0%, #065a9e 100%)',
+                boxShadow: '0 4px 20px rgba(4,53,107,0.25)',
                 '&:hover': {
-                  background: 'linear-gradient(135deg, #7c5cbf 0%, #6344a3 100%)',
-                  boxShadow: '0 6px 20px rgba(167,139,250,0.4)',
+                  background: 'linear-gradient(135deg, #022347 0%, #04346b 100%)',
+                  boxShadow: '0 8px 30px rgba(4,53,107,0.35)',
                 },
               }}
             >
-              Iniciar Sesión
+              Iniciar sesión
             </CustomButton>
 
-            <CustomButton onClick={() => navigate("/registrarme")} fullWidth
+            <Button onClick={() => navigate("/registrarme")} fullWidth
+              variant="outlined" startIcon={<PersonAddIcon />}
               sx={{
-                py: 1, mt: 1.5, borderRadius: 1, fontWeight: 600, fontSize: '0.85rem',
-                background: 'rgba(255,255,255,0.1)',
+                py: 1, borderRadius: '10px', fontWeight: 600, fontSize: '0.85rem',
+                borderColor: 'divider', color: 'text.secondary',
                 '&:hover': {
-                  background: 'rgba(255,255,255,0.2)',
+                  borderColor: 'primary.main', color: 'primary.main',
+                  bgcolor: 'action.hover',
                 },
               }}
-              startIcon={<PersonAddIcon />}
             >
               Registrar nuevo cliente
-            </CustomButton>
+            </Button>
           </Stack>
-        </Box>
-      </Paper>
+        </Paper>
+      </Box>
     </Box>
   );
 }

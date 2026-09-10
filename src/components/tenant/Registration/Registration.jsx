@@ -14,12 +14,11 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import Logo from "../../../assets/images/logo.webp";
-import BgImage from "../../../assets/images/bg.webp";
 import { checkTenantExists, getAvailablePlans } from "../../../api/registration";
 import {
   inputSx, pageContainerSx, overlayGradientSx, formPaperSx,
-  successIconSx, labelSx, stepIndicatorSx, stepCountSx,
-  progressBarSx,
+  successIconSx, stepIndicatorSx, stepCountSx,
+  progressBarSx, primaryButtonSx, secondaryButtonSx, headerBannerSx,
 } from "./Registration.styles";
 
 const INITIAL_FORM_DATA = {
@@ -180,10 +179,7 @@ const Registration = () => {
   const isFormIncomplete = !isStep1Valid || !isStep2Valid || !isStep3Valid;
 
   return (
-      <Box sx={{
-        ...pageContainerSx,
-        backgroundImage: `url(${BgImage})`,
-      }}>
+      <Box sx={pageContainerSx}>
         <Box sx={overlayGradientSx} />
 
         <Paper elevation={0} sx={formPaperSx}>
@@ -191,12 +187,12 @@ const Registration = () => {
               // ─── Success state ─────────────────────────────────────
               <Box sx={{ px: 4, py: 4, textAlign: "center" }}>
                 <Box sx={successIconSx}>
-                  <CheckCircleIcon sx={{ fontSize: 24, color: "#34d399" }} />
+                  <CheckCircleIcon sx={{ fontSize: 24, color: "#11998e" }} />
                 </Box>
-                <Typography sx={{ fontSize: "1.25rem", fontWeight: 700, color: "#fff", mb: 0.5 }}>
+                <Typography sx={{ fontSize: "1.25rem", fontWeight: 700, color: "text.primary", mb: 0.5 }}>
                   ¡Listo!
                 </Typography>
-                <Typography sx={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.7)", mb: 1, lineHeight: 1.6 }}>
+                <Typography sx={{ fontSize: "0.875rem", color: "text.secondary", mb: 1, lineHeight: 1.6 }}>
                   Tu negocio ha sido registrado.<br />
                   Tu pago se procesa en un máximo de 24 horas.<br />
                   Por el momento, ya puedes iniciar sesión.
@@ -204,17 +200,18 @@ const Registration = () => {
                 {ownerUsername && (
                   <Box sx={{
                     mb: 2.5, px: 2, py: 1.5,
-                    borderRadius: 1,
-                    bgcolor: "rgba(255,255,255,0.08)",
-                    border: "1px solid rgba(255,255,255,0.15)",
+                    borderRadius: "10px",
+                    bgcolor: "action.hover",
+                    border: "1px solid",
+                    borderColor: "divider",
                   }}>
-                    <Typography sx={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.5)", mb: 0.75 }}>
+                    <Typography sx={{ fontSize: "0.75rem", color: "text.secondary", mb: 0.75 }}>
                       Usuario y contraseña predeterminados:
                     </Typography>
-                    <Typography sx={{ fontSize: "1rem", fontWeight: 700, color: "#a78bfa", fontFamily: "monospace", letterSpacing: "0.5px" }}>
+                    <Typography sx={{ fontSize: "1rem", fontWeight: 700, color: "primary.main", fontFamily: "monospace", letterSpacing: "0.5px" }}>
                       {ownerUsername}
                     </Typography>
-                    <Typography sx={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.45)", mt: 0.75, lineHeight: 1.5 }}>
+                    <Typography sx={{ fontSize: "0.7rem", color: "text.secondary", mt: 0.75, lineHeight: 1.5 }}>
                       Usa este mismo valor como usuario y contraseña para tu primer inicio de sesión.
                     </Typography>
                   </Box>
@@ -222,26 +219,15 @@ const Registration = () => {
                 <CustomButton
                   onClick={() => navigate("/login")}
                   fullWidth
-                  sx={{
-                    py: 1.3,
-                    borderRadius: 1,
-                    fontSize: "0.9rem",
-                    fontWeight: 700,
-                    background: "linear-gradient(135deg, #a78bfa 0%, #7c5cbf 100%)",
-                    color: "#fff",
-                    "&:hover": {
-                      background: "linear-gradient(135deg, #7c5cbf 0%, #6344a3 100%)",
-                      boxShadow: "0 6px 20px rgba(167,139,250,0.4)",
-                    },
-                  }}
+                  sx={primaryButtonSx}
                 >
                   Iniciar sesión
                 </CustomButton>
                 <Typography
                   sx={{
-                    mt: 2, fontSize: "0.8rem", color: "rgba(255,255,255,0.6)",
+                    mt: 2, fontSize: "0.8rem", color: "text.secondary",
                     fontWeight: 500, cursor: "pointer",
-                    "&:hover": { color: "rgba(255,255,255,0.9)" },
+                    "&:hover": { color: "primary.main" },
                   }}
                   onClick={() => { setRegistered(false); setActiveStep(0); }}
                 >
@@ -250,35 +236,19 @@ const Registration = () => {
               </Box>
             ) : (
               <>
-                {/* Header */}
-                <Box sx={{ px: 4, pt: 3, pb: 0, textAlign: "center" }}>
+                {/* Header banner azul */}
+                <Box sx={headerBannerSx}>
                   <Box
                     component="img"
                     src={Logo}
                     alt="SmartVenta"
-                    sx={{
-                      maxWidth: "120px", height: "auto", borderRadius: "12px",
-                      mb: 2,
-                      boxShadow: "0 12px 40px rgba(0,0,0,0.3)",
-                    }}
+                    sx={{ maxWidth: "150px", height: "auto", display: "block", mx: "auto", mb: 2 }}
                   />
-                  <Typography sx={{ fontSize: "0.85rem", color: "rgba(255,255,255,0.7)" }}>
-                    Crea tu negocio en un par de minutos
+                  <Typography variant="h5" sx={{ fontWeight: 700, color: "#fff", mb: 0.5 }}>
+                    Crea tu cuenta
                   </Typography>
-                  <Typography sx={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.6)", mt: 0.5 }}>
-                    ¿Ya tienes una cuenta?{" "}
-                    <Box
-                      component="span"
-                      sx={{
-                        color: "#a78bfa",
-                        fontWeight: 600,
-                        cursor: "pointer",
-                        "&:hover": { color: "#c4b5fd" },
-                      }}
-                      onClick={() => navigate("/login")}
-                    >
-                      Inicia sesión
-                    </Box>
+                  <Typography sx={{ fontSize: "0.85rem", color: "rgba(255,255,255,0.75)" }}>
+                    Configura tu negocio en un par de minutos
                   </Typography>
                 </Box>
 
@@ -303,12 +273,10 @@ const Registration = () => {
                 <Box sx={{ px: 4, pt: 2.5, pb: 2.5 }}>
                   {activeStep === 0 && (
                     <Box>
-                      <Box sx={{ mb: 2 }}>
-                        <Typography sx={labelSx}>
-                          Nombre del negocio
-                        </Typography>
+                      <Box sx={{ mb: 2.5 }}>
                         <TextField
                           fullWidth size="small"
+                          label="Nombre del negocio"
                           name="name"
                           value={formData.name}
                           onChange={(e) => {
@@ -318,48 +286,17 @@ const Registration = () => {
                             setFormData((prev) => ({ ...prev, name: capitalized }));
                           }}
                           required
-                          placeholder="Ej: Refraccionaria Ramirez"
+                          placeholder="Ej: Mi Tienda"
                           inputProps={{ autoCapitalize: "none", autoCorrect: "off" }}
                           sx={inputSx}
                         />
                       </Box>
 
                       <Box sx={{ mb: 1 }}>
-                        <Typography sx={labelSx}>
-                          Clave de tu negocio
-                        </Typography>
-                        <Typography sx={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.75)", mb: 1.25, lineHeight: 1.55 }}>
-                          Un código corto y único para crear tus usuarios.{" "}
-                          <strong style={{ color: "#fbbf24", fontWeight: 600 }}>No se puede cambiar después.</strong>
-                        </Typography>
-                        <Box sx={{
-                          mb: 1.5, px: 1.5, py: 1.25,
-                          borderRadius: "10px",
-                          bgcolor: "rgba(255,255,255,0.06)",
-                          border: "1px solid rgba(255,255,255,0.12)",
-                        }}>
-                          <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, flexWrap: "wrap", mb: 1 }}>
-                            <Typography sx={{ fontSize: "0.72rem", color: "rgba(255,255,255,0.6)" }}>
-                              Ejemplos para "Mi Tienda":
-                            </Typography>
-                            {["mitienda", "mi.tienda", "mt"].map((ex) => (
-                              <Box key={ex} sx={{
-                                fontSize: "0.72rem", px: 1, py: 0.25, borderRadius: "6px",
-                                fontFamily: "monospace", fontWeight: 600,
-                                color: "#c4b5fd", bgcolor: "rgba(167,139,250,0.15)",
-                              }}>
-                                {ex}
-                              </Box>
-                            ))}
-                          </Box>
-                          <Typography sx={{ fontSize: "0.72rem", color: "rgba(255,255,255,0.6)", lineHeight: 1.5 }}>
-                            Tus usuarios se verán así:{" "}
-                            <span style={{ fontFamily: "monospace", color: "rgba(255,255,255,0.85)" }}>mitienda.dueño</span>,{" "}
-                            <span style={{ fontFamily: "monospace", color: "rgba(255,255,255,0.85)" }}>mitienda.vendedor.fulanito</span>
-                          </Typography>
-                        </Box>
                         <TextField
                           fullWidth size="small"
+                          label="Clave de tu negocio"
+                          helperText="Identificador único para tu negocio, verifica disponibilidad"
                           name="short_name"
                           value={formData.short_name}
                           onChange={(e) => {
@@ -369,7 +306,7 @@ const Registration = () => {
                             setFormData((prev) => ({ ...prev, short_name: val }));
                           }}
                           required
-                          placeholder="Ej: mitienda, mi.tienda, mt"
+                          placeholder="Ej: mitienda, mi.tienda, mt, tiendita, tienda, mtnd, abc, wyz"
                           inputProps={{
                             maxLength: 10,
                             autoCapitalize: "none",
@@ -381,17 +318,34 @@ const Registration = () => {
                           InputProps={{
                             endAdornment: formData.short_name.trim() && (
                               <InputAdornment position="end" sx={{ mr: 0.5 }}>
-                                <Box sx={{
-                                  display: "flex", alignItems: "center", justifyContent: "center",
-                                  width: 22, height: 22, borderRadius: "50%",
-                                  transition: "all 0.2s ease",
-                                  ...(shortNameStatus === "checking" && { bgcolor: "transparent" }),
-                                  ...(shortNameStatus === "available" && { bgcolor: "rgba(5,150,105,0.1)" }),
-                                  ...(shortNameStatus === "taken" && { bgcolor: "rgba(239,68,68,0.08)" }),
-                                }}>
-                                  {shortNameStatus === "checking" && <CircularProgress size={14} sx={{ color: "#6b7280" }} />}
-                                  {shortNameStatus === "available" && <CheckCircleIcon sx={{ color: "#059669", fontSize: 16 }} />}
-                                  {shortNameStatus === "taken" && <CancelIcon sx={{ color: "#dc2626", fontSize: 16 }} />}
+                                <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                                  {shortNameStatus === "checking" && (
+                                    <Typography sx={{ fontSize: "0.72rem", color: "#6b7280", fontWeight: 500 }}>
+                                      Verificando...
+                                    </Typography>
+                                  )}
+                                  {shortNameStatus === "available" && (
+                                    <Typography sx={{ fontSize: "0.72rem", color: "#059669", fontWeight: 600 }}>
+                                      Disponible
+                                    </Typography>
+                                  )}
+                                  {shortNameStatus === "taken" && (
+                                    <Typography sx={{ fontSize: "0.72rem", color: "#dc2626", fontWeight: 600 }}>
+                                      En uso
+                                    </Typography>
+                                  )}
+                                  <Box sx={{
+                                    display: "flex", alignItems: "center", justifyContent: "center",
+                                    width: 22, height: 22, borderRadius: "50%",
+                                    transition: "all 0.2s ease",
+                                    ...(shortNameStatus === "checking" && { bgcolor: "transparent" }),
+                                    ...(shortNameStatus === "available" && { bgcolor: "rgba(5,150,105,0.1)" }),
+                                    ...(shortNameStatus === "taken" && { bgcolor: "rgba(239,68,68,0.08)" }),
+                                  }}>
+                                    {shortNameStatus === "checking" && <CircularProgress size={14} sx={{ color: "#6b7280" }} />}
+                                    {shortNameStatus === "available" && <CheckCircleIcon sx={{ color: "#059669", fontSize: 16 }} />}
+                                    {shortNameStatus === "taken" && <CancelIcon sx={{ color: "#dc2626", fontSize: 16 }} />}
+                                  </Box>
                                 </Box>
                               </InputAdornment>
                             ),
@@ -400,72 +354,45 @@ const Registration = () => {
                             "& .MuiOutlinedInput-root": {
                               borderRadius: "10px",
                               fontSize: "0.9rem",
-                              backgroundColor: "rgba(255,255,255,0.95)",
+                              backgroundColor: "background.paper",
                               transition: "all 0.2s ease",
                               "& fieldset": {
                                 borderColor: shortNameStatus === "available"
-                                  ? "rgba(52,211,153,0.6)"
+                                  ? "rgba(17,153,142,0.6)"
                                   : shortNameStatus === "taken"
                                   ? "rgba(239,68,68,0.6)"
-                                  : "transparent",
+                                  : undefined,
                                 transition: "border-color 0.2s ease",
                               },
                               "&:hover fieldset": {
                                 borderColor: shortNameStatus === "available"
-                                  ? "rgba(52,211,153,0.8)"
+                                  ? "rgba(17,153,142,0.8)"
                                   : shortNameStatus === "taken"
                                   ? "rgba(239,68,68,0.7)"
-                                  : "rgba(255,255,255,0.4)",
+                                  : undefined,
                               },
                               "&.Mui-focused fieldset": {
                                 borderColor: shortNameStatus === "available"
-                                  ? "#34d399"
+                                  ? "#11998e"
                                   : shortNameStatus === "taken"
                                   ? "#ef4444"
-                                  : "#a78bfa",
+                                  : "#065a9e",
                                 boxShadow: shortNameStatus === "available"
-                                  ? "0 0 0 3px rgba(52,211,153,0.15)"
+                                  ? "0 0 0 3px rgba(17,153,142,0.15)"
                                   : shortNameStatus === "taken"
                                   ? "0 0 0 3px rgba(239,68,68,0.1)"
-                                  : "0 0 0 3px rgba(167,139,250,0.15)",
+                                  : "0 0 0 3px rgba(6,90,158,0.15)",
                               },
+                            },
+                            "& label.Mui-focused": {
+                              color: shortNameStatus === "available"
+                                ? "#11998e"
+                                : shortNameStatus === "taken"
+                                ? "#ef4444"
+                                : "#065a9e",
                             },
                           }}
                         />
-
-                        {/* Status message — fixed height to prevent layout shift */}
-                        <Box sx={{ minHeight: 24, mt: 0.75, display: "flex", alignItems: "center" }}>
-                          {shortNameStatus === "checking" && (
-                            <Typography sx={{
-                              fontSize: "0.72rem", color: "rgba(255,255,255,0.6)",
-                              display: "flex", alignItems: "center", gap: 0.5,
-                              animation: "fadeIn 0.2s ease",
-                              "@keyframes fadeIn": { from: { opacity: 0 }, to: { opacity: 1 } },
-                            }}>
-                              ⏳ Verificando disponibilidad...
-                            </Typography>
-                          )}
-                          {shortNameStatus === "available" && (
-                            <Typography sx={{
-                              fontSize: "0.72rem", color: "#34d399", fontWeight: 500,
-                              display: "flex", alignItems: "center", gap: 0.5,
-                              animation: "fadeIn 0.2s ease",
-                              "@keyframes fadeIn": { from: { opacity: 0, transform: "translateY(2px)" }, to: { opacity: 1, transform: "translateY(0)" } },
-                            }}>
-                              ✓ Disponible
-                            </Typography>
-                          )}
-                          {shortNameStatus === "taken" && (
-                            <Typography sx={{
-                              fontSize: "0.72rem", color: "#f87171", fontWeight: 500,
-                              display: "flex", alignItems: "center", gap: 0.5,
-                              animation: "fadeIn 0.2s ease",
-                              "@keyframes fadeIn": { from: { opacity: 0, transform: "translateY(2px)" }, to: { opacity: 1, transform: "translateY(0)" } },
-                            }}>
-                              ✕ Este identificador ya está en uso
-                            </Typography>
-                          )}
-                        </Box>
 
                         {/* Suggestions when taken */}
                         {shortNameStatus === "taken" && (
@@ -476,7 +403,7 @@ const Registration = () => {
                           gap: 0.75,
                           flexWrap: "wrap",
                         }}>
-                          <Typography sx={{ fontSize: "0.68rem", color: "rgba(255,255,255,0.5)" }}>
+                          <Typography sx={{ fontSize: "0.68rem", color: "text.secondary" }}>
                             Prueba con:
                           </Typography>
                           {[
@@ -492,15 +419,16 @@ const Registration = () => {
                                 px: 1,
                                 py: 0.25,
                                 borderRadius: "6px",
-                                border: "1px solid rgba(255,255,255,0.2)",
-                                color: "rgba(255,255,255,0.85)",
+                                border: "1px solid",
+                                borderColor: "divider",
+                                color: "text.primary",
                                 cursor: "pointer",
                                 fontFamily: "monospace",
                                 fontWeight: 500,
                                 transition: "all 0.15s ease",
                                 "&:hover": {
-                                  bgcolor: "rgba(255,255,255,0.1)",
-                                  borderColor: "rgba(255,255,255,0.4)",
+                                  bgcolor: "action.hover",
+                                  borderColor: "primary.main",
                                 },
                               }}
                             >
@@ -516,24 +444,7 @@ const Registration = () => {
                         disabled={!isStep1Valid}
                         fullWidth
                         endIcon={<ArrowForwardIcon sx={{ fontSize: "18px !important" }} />}
-                        sx={{
-                          mt: 0.5,
-                          py: 1.3,
-                          borderRadius: 1,
-                          fontSize: "0.9rem",
-                          fontWeight: 700,
-                          background: "linear-gradient(135deg, #a78bfa 0%, #7c5cbf 100%)",
-                          color: "#fff",
-                          "&:hover": {
-                            background: "linear-gradient(135deg, #7c5cbf 0%, #6344a3 100%)",
-                            boxShadow: "0 6px 20px rgba(167,139,250,0.4)",
-                          },
-                          "&.Mui-disabled": {
-                            background: "rgba(255,255,255,0.1)",
-                            color: "rgba(255,255,255,0.3)",
-                            boxShadow: "none",
-                          },
-                        }}
+                        sx={{ mt: 0.5, ...primaryButtonSx }}
                       >
                         Continuar
                       </CustomButton>
@@ -544,11 +455,9 @@ const Registration = () => {
                     <Box>
                       <Grid container spacing={2}>
                         <Grid item xs={6}>
-                          <Typography sx={labelSx}>
-                            Nombre *
-                          </Typography>
                           <TextField
                             fullWidth size="small"
+                            label="Nombre"
                             name="first_name"
                             value={formData.first_name}
                             onChange={handleChange}
@@ -559,11 +468,9 @@ const Registration = () => {
                           />
                         </Grid>
                         <Grid item xs={6}>
-                          <Typography sx={labelSx}>
-                            Apellidos
-                          </Typography>
                           <TextField
                             fullWidth size="small"
+                            label="Apellidos"
                             name="last_name"
                             value={formData.last_name}
                             onChange={handleChange}
@@ -572,11 +479,9 @@ const Registration = () => {
                           />
                         </Grid>
                         <Grid item xs={12}>
-                          <Typography sx={labelSx}>
-                            Correo electrónico *
-                          </Typography>
                           <TextField
                             fullWidth size="small"
+                            label="Correo electrónico"
                             name="email"
                             value={formData.email}
                             onChange={handleChange}
@@ -587,11 +492,9 @@ const Registration = () => {
                           />
                         </Grid>
                         <Grid item xs={12}>
-                          <Typography sx={labelSx}>
-                            Teléfono *
-                          </Typography>
                           <TextField
                             fullWidth size="small"
+                            label="Teléfono"
                             name="phone_number"
                             value={formData.phone_number}
                             onChange={handleChange}
@@ -607,16 +510,7 @@ const Registration = () => {
                         <CustomButton
                           onClick={() => setActiveStep(0)}
                           startIcon={<ArrowBackIcon sx={{ fontSize: "16px !important" }} />}
-                          sx={{
-                            py: 1.3, px: 2.5,
-                            borderRadius: 1,
-                            fontSize: "0.85rem",
-                            fontWeight: 600,
-                            color: "rgba(255,255,255,0.8)",
-                            bgcolor: "rgba(255,255,255,0.1)",
-                            border: "1px solid rgba(255,255,255,0.15)",
-                            "&:hover": { bgcolor: "rgba(255,255,255,0.2)" },
-                          }}
+                          sx={secondaryButtonSx}
                         >
                           Atrás
                         </CustomButton>
@@ -625,23 +519,7 @@ const Registration = () => {
                           disabled={!isStep2Valid}
                           fullWidth
                           endIcon={<ArrowForwardIcon sx={{ fontSize: "18px !important" }} />}
-                          sx={{
-                            py: 1.3,
-                            borderRadius: 1,
-                            fontSize: "0.9rem",
-                            fontWeight: 700,
-                            background: "linear-gradient(135deg, #a78bfa 0%, #7c5cbf 100%)",
-                            color: "#fff",
-                            "&:hover": {
-                              background: "linear-gradient(135deg, #7c5cbf 0%, #6344a3 100%)",
-                              boxShadow: "0 6px 20px rgba(167,139,250,0.4)",
-                            },
-                            "&.Mui-disabled": {
-                              background: "rgba(255,255,255,0.1)",
-                              color: "rgba(255,255,255,0.3)",
-                              boxShadow: "none",
-                            },
-                          }}
+                          sx={primaryButtonSx}
                         >
                           Continuar
                         </CustomButton>
@@ -653,10 +531,10 @@ const Registration = () => {
                     <Box>
                       {plansLoading ? (
                         <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
-                          <CircularProgress size={28} sx={{ color: "#a78bfa" }} />
+                          <CircularProgress size={28} sx={{ color: "primary.main" }} />
                         </Box>
                       ) : plans.length === 0 ? (
-                        <Typography sx={{ fontSize: "0.85rem", color: "rgba(255,255,255,0.6)", textAlign: "center", py: 3 }}>
+                        <Typography sx={{ fontSize: "0.85rem", color: "text.secondary", textAlign: "center", py: 3 }}>
                           No hay planes disponibles en este momento.
                         </Typography>
                       ) : (
@@ -667,48 +545,50 @@ const Registration = () => {
                               onClick={() => setSelectedPlan(plan)}
                               sx={{
                                 cursor: "pointer",
-                                borderRadius: 1,
+                                borderRadius: "12px",
                                 bgcolor: selectedPlan?.id === plan.id
-                                  ? "rgba(167,139,250,0.15)"
-                                  : "rgba(255,255,255,0.05)",
+                                  ? "rgba(4,53,107,0.06)"
+                                  : "background.paper",
                                 border: selectedPlan?.id === plan.id
-                                  ? "2px solid #a78bfa"
-                                  : "2px solid rgba(255,255,255,0.1)",
+                                  ? "2px solid #065a9e"
+                                  : "2px solid",
+                                borderColor: selectedPlan?.id === plan.id ? "#065a9e" : "divider",
                                 boxShadow: selectedPlan?.id === plan.id
-                                  ? "0 0 0 3px rgba(167,139,250,0.2)"
+                                  ? "0 0 0 3px rgba(6,90,158,0.15)"
                                   : "none",
                                 transition: "all 0.2s ease",
                                 "&:hover": {
-                                  borderColor: "rgba(167,139,250,0.5)",
-                                  bgcolor: "rgba(167,139,250,0.08)",
+                                  borderColor: "primary.main",
+                                  bgcolor: "rgba(4,53,107,0.04)",
                                 },
                               }}
                             >
                               <CardContent sx={{ p: 2, "&:last-child": { pb: 2 } }}>
                                 <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                                   <Box>
-                                    <Typography sx={{ fontSize: "0.95rem", fontWeight: 700, color: "#fff" }}>
+                                    <Typography sx={{ fontSize: "0.95rem", fontWeight: 700, color: "text.primary" }}>
                                       {plan.name}
                                     </Typography>
                                     <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 0.5 }}>
                                       <Chip
-                                        icon={<StorefrontIcon sx={{ fontSize: "14px !important", color: "rgba(255,255,255,0.7) !important" }} />}
+                                        icon={<StorefrontIcon sx={{ fontSize: "14px !important" }} />}
                                         label={`${plan.stores} ${plan.stores === 1 ? "tienda" : "tiendas"}`}
                                         size="small"
                                         sx={{
                                           fontSize: "0.72rem", height: 22,
-                                          bgcolor: "rgba(255,255,255,0.1)",
-                                          color: "rgba(255,255,255,0.8)",
-                                          border: "1px solid rgba(255,255,255,0.15)",
+                                          bgcolor: "action.hover",
+                                          color: "text.secondary",
+                                          border: "1px solid",
+                                          borderColor: "divider",
                                         }}
                                       />
                                     </Box>
                                   </Box>
                                   <Box sx={{ textAlign: "right" }}>
-                                    <Typography sx={{ fontSize: "1.2rem", fontWeight: 700, color: "#a78bfa" }}>
+                                    <Typography sx={{ fontSize: "1.2rem", fontWeight: 700, color: "primary.main" }}>
                                       ${plan.price}
                                     </Typography>
-                                    <Typography sx={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.5)" }}>
+                                    <Typography sx={{ fontSize: "0.7rem", color: "text.secondary" }}>
                                       MXN/mes
                                     </Typography>
                                   </Box>
@@ -723,16 +603,7 @@ const Registration = () => {
                         <CustomButton
                           onClick={() => setActiveStep(1)}
                           startIcon={<ArrowBackIcon sx={{ fontSize: "16px !important" }} />}
-                          sx={{
-                            py: 1.3, px: 2.5,
-                            borderRadius: 1,
-                            fontSize: "0.85rem",
-                            fontWeight: 600,
-                            color: "rgba(255,255,255,0.8)",
-                            bgcolor: "rgba(255,255,255,0.1)",
-                            border: "1px solid rgba(255,255,255,0.15)",
-                            "&:hover": { bgcolor: "rgba(255,255,255,0.2)" },
-                          }}
+                          sx={secondaryButtonSx}
                         >
                           Atrás
                         </CustomButton>
@@ -740,23 +611,7 @@ const Registration = () => {
                           onClick={handleSubmit}
                           disabled={isFormIncomplete || mutation.isPending}
                           fullWidth
-                          sx={{
-                            py: 1.3,
-                            borderRadius: 1,
-                            fontSize: "0.9rem",
-                            fontWeight: 700,
-                            background: "linear-gradient(135deg, #a78bfa 0%, #7c5cbf 100%)",
-                            color: "#fff",
-                            "&:hover": {
-                              background: "linear-gradient(135deg, #7c5cbf 0%, #6344a3 100%)",
-                              boxShadow: "0 6px 20px rgba(167,139,250,0.4)",
-                            },
-                            "&.Mui-disabled": {
-                              background: "rgba(255,255,255,0.1)",
-                              color: "rgba(255,255,255,0.3)",
-                              boxShadow: "none",
-                            },
-                          }}
+                          sx={primaryButtonSx}
                         >
                           {mutation.isPending ? "Creando cuenta..." : "Crear cuenta y pagar"}
                         </CustomButton>
@@ -768,21 +623,17 @@ const Registration = () => {
                     <Box>
                       {paymentResult && (
                         <Alert severity="error" sx={{
-                          mb: 2, borderRadius: 1, fontSize: "0.85rem",
-                          backgroundColor: "rgba(239,68,68,0.15)",
-                          color: "#fca5a5",
-                          border: "1px solid rgba(239,68,68,0.3)",
-                          "& .MuiAlert-icon": { color: "#f87171" },
+                          mb: 2, borderRadius: "10px", fontSize: "0.85rem",
                         }}>
                           {paymentResult.message}
                         </Alert>
                       )}
-                      <Typography sx={{ fontSize: "0.85rem", color: "rgba(255,255,255,0.7)", mb: 2 }}>
-                        Se activará cobro recurrente de <strong style={{ color: "#fff" }}>${selectedPlan?.price} MXN/mes</strong> con tu tarjeta.
+                      <Typography sx={{ fontSize: "0.85rem", color: "text.secondary", mb: 2 }}>
+                        Se activará cobro recurrente de <strong style={{ color: "inherit" }}>${selectedPlan?.price} MXN/mes</strong> con tu tarjeta.
                       </Typography>
                       {paymentSubmitting && (
                         <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
-                          <CircularProgress size={24} sx={{ color: "#a78bfa" }} />
+                          <CircularProgress size={24} sx={{ color: "primary.main" }} />
                         </Box>
                       )}
                       <div id="mp-bricks-container" />
@@ -790,21 +641,30 @@ const Registration = () => {
                         <CustomButton
                           onClick={handleBackFromPayment}
                           startIcon={<ArrowBackIcon sx={{ fontSize: "16px !important" }} />}
-                          sx={{
-                            mt: 2, py: 1, px: 2.5,
-                            borderRadius: 1,
-                            fontSize: "0.85rem",
-                            fontWeight: 600,
-                            color: "rgba(255,255,255,0.8)",
-                            bgcolor: "rgba(255,255,255,0.1)",
-                            border: "1px solid rgba(255,255,255,0.15)",
-                            "&:hover": { bgcolor: "rgba(255,255,255,0.2)" },
-                          }}
+                          sx={{ mt: 2, ...secondaryButtonSx }}
                         >
                           Atrás
                         </CustomButton>
                       )}
                     </Box>
+                  )}
+
+                  {!showPayment && (
+                    <Typography sx={{ fontSize: "0.8rem", color: "text.secondary", textAlign: "center", mt: 2.5 }}>
+                      ¿Ya tienes una cuenta?{" "}
+                      <Box
+                        component="span"
+                        sx={{
+                          color: "primary.main",
+                          fontWeight: 600,
+                          cursor: "pointer",
+                          "&:hover": { color: "primary.light" },
+                        }}
+                        onClick={() => navigate("/login")}
+                      >
+                        Inicia sesión
+                      </Box>
+                    </Typography>
                   )}
                 </Box>
               </>
