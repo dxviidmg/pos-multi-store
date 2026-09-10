@@ -1,29 +1,29 @@
 import React, { useEffect, useState, useRef } from "react";
-import CustomModal from "../../ui/Modal/Modal";
-import CustomButton from "../../ui/Button/Button";
-import { getBrands } from "../../../api/brands";
-import { showSuccess, showError } from "../../../utils/alerts";
+import CustomModal from "@/src/components/ui/Modal/Modal";
+import CustomButton from "@/src/components/ui/Button/Button";
+import { getBrands } from "@/src/api/brands";
+import { showSuccess, showError } from "@/src/utils/alerts";
 import {
   createProduct,
   getStoreProducts,
   updateProduct,
   addProducts,
-} from "../../../api/products";
-import { getStores } from "../../../api/stores";
-import { useUser } from "../../../context/UserContext";
-import { useForm } from "../../../hooks/useForm";
-import noPhotoImg from "../../../assets/images/noPhoto.webp";
-import { convertImageToWebp } from "../../../utils/image";
+} from "@/src/api/products";
+import { getStores } from "@/src/api/stores";
+import { useUser } from "@/src/context/UserContext";
+import { useForm } from "@/src/hooks/useForm";
+import noPhotoImg from "@/src/assets/images/noPhoto.webp";
+import { convertImageToWebp } from "@/src/utils/image";
 
 // En Next.js, importar una imagen devuelve un objeto StaticImageData,
 // no una string. Normalizamos a la URL para usarla en <img src>.
 const noPhoto = noPhotoImg.src || noPhotoImg;
-import { getDepartments } from "../../../api/departments";
-import SimpleTable from "../../ui/SimpleTable/SimpleTable";
+import { getDepartments } from "@/src/api/departments";
+import SimpleTable from "@/src/components/ui/SimpleTable/SimpleTable";
 import { Grid, TextField, Box, Checkbox, FormControlLabel, Autocomplete, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
-import VisuallyHiddenInput from "../../ui/VisuallyHiddenInput";
-import { useConversionUnits } from "../../../hooks/useConversions";
+import VisuallyHiddenInput from "@/src/components/ui/VisuallyHiddenInput";
+import { useConversionUnits } from "@/src/hooks/useConversions";
 
 const INITIAL_FORM_DATA = {
   brand: "",

@@ -1,5 +1,5 @@
-import { createMutationHooks, useCrudMutation } from './useCrudMutation';
-import { createClient, updateClient, deleteClient } from '../api/clients';
+import { createMutationHooks, useCrudMutation } from '@/src/hooks/useCrudMutation';
+import { createClient, updateClient, deleteClient } from '@/src/api/clients';
 
 const api = {
   create: createClient,

@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getStoresCashSummary } from '../api/stores';
+import { getStoresCashSummary } from '@/src/api/stores';
 
 export const useStores = (params) => {
   return useQuery({

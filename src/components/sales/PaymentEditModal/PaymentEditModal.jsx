@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
-import CustomModal from "../../ui/Modal/Modal";
-import CustomButton from "../../ui/Button/Button";
-import { updateSale } from "../../../api/sales";
-import { showSuccess, showError } from "../../../utils/alerts";
-import { handlePrintTicket } from "../../../utils/utils";
-import { useUser } from "../../../context/UserContext";
-import { usePrinterStatus } from "../../../hooks/usePrinterStatus";
+import CustomModal from "@/src/components/ui/Modal/Modal";
+import CustomButton from "@/src/components/ui/Button/Button";
+import { updateSale } from "@/src/api/sales";
+import { showSuccess, showError } from "@/src/utils/alerts";
+import { handlePrintTicket } from "@/src/utils/utils";
+import { useUser } from "@/src/context/UserContext";
+import { usePrinterStatus } from "@/src/hooks/usePrinterStatus";
 import { Grid, TextField, Radio, RadioGroup, FormControlLabel, FormLabel, Chip, Box } from "@mui/material";
 import MoneyOffIcon from "@mui/icons-material/MoneyOff";
-import { CustomSpinner } from "../../ui/Spinner/Spinner";
+import { CustomSpinner } from "@/src/components/ui/Spinner/Spinner";
 
 const INITIAL_PAYMENT_STATE = { paidWith: 0, change: 0 };
 

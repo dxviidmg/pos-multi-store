@@ -1,25 +1,25 @@
 import React, { useEffect, useState } from "react";
-import DataTable from "../../ui/DataTable/DataTable";
-import CustomButton from "../../ui/Button/Button";
-import { getFormattedDateTime } from "../../../utils/utils";
-import { CustomSpinner } from "../../ui/Spinner/Spinner";
-import { showSuccess, showError } from "../../../utils/alerts";
-import { useUser } from "../../../context/UserContext";
+import DataTable from "@/src/components/ui/DataTable/DataTable";
+import CustomButton from "@/src/components/ui/Button/Button";
+import { getFormattedDateTime } from "@/src/utils/utils";
+import { CustomSpinner } from "@/src/components/ui/Spinner/Spinner";
+import { showSuccess, showError } from "@/src/utils/alerts";
+import { useUser } from "@/src/context/UserContext";
 import {
   confirmDistribution,
   deleteDistribution,
   deleteTransfer,
   getDistributions,
   updateTransfer,
-} from "../../../api/transfers";
-import CustomTooltip from "../../ui/Tooltip";
+} from "@/src/api/transfers";
+import CustomTooltip from "@/src/components/ui/Tooltip";
 import { Grid, TextField} from "@mui/material";
 import ChecklistIcon from "@mui/icons-material/Checklist";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from "@mui/icons-material/Save";
 import SendIcon from "@mui/icons-material/Send";
-import PageHeader from "../../ui/PageHeader";
+import PageHeader from "@/src/components/ui/PageHeader";
 
 const DistributionList = () => {
   const { user } = useUser();

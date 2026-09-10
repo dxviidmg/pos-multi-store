@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import AuditCard from "../../ui/AuditCard/AuditCard";
-import CustomButton from "../../ui/Button/Button";
-import { getProductAudit, getProductAuditActivity } from "../../../api/audit";
-import { CustomSpinner } from "../../ui/Spinner/Spinner";
+import AuditCard from "@/src/components/ui/AuditCard/AuditCard";
+import CustomButton from "@/src/components/ui/Button/Button";
+import { getProductAudit, getProductAuditActivity } from "@/src/api/audit";
+import { CustomSpinner } from "@/src/components/ui/Spinner/Spinner";
 import { Grid } from "@mui/material";
 import AssessmentIcon from "@mui/icons-material/Assessment";
 

@@ -1,5 +1,5 @@
-import httpClient from "./httpClient";
-import { getApiUrl, buildUrlWithParams } from "./utils";
+import httpClient from "@/src/api/httpClient";
+import { getApiUrl, buildUrlWithParams } from "@/src/api/utils";
 
 /**
  * Creates a CRUD API service for a given resource

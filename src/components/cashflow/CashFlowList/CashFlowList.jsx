@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from "react";
-import DataTable from "../../ui/DataTable/DataTable";
-import CustomButton from "../../ui/Button/Button";
-import CustomTooltip from "../../ui/Tooltip";
-import { getFormattedDate, formatTimeFromDate } from "../../../utils/utils";
-import { getCashFlow, deleteCashFlow } from "../../../api/cashflow";
-import { useUser } from "../../../context/UserContext";
-import CashFlowModal from "../CashFlowModal/CashFlowModal";
-import { useModal } from "../../../hooks/useModal";
-import { CustomSpinner } from "../../ui/Spinner/Spinner";
+import DataTable from "@/src/components/ui/DataTable/DataTable";
+import CustomButton from "@/src/components/ui/Button/Button";
+import CustomTooltip from "@/src/components/ui/Tooltip";
+import { getFormattedDate, formatTimeFromDate } from "@/src/utils/utils";
+import { getCashFlow, deleteCashFlow } from "@/src/api/cashflow";
+import { useUser } from "@/src/context/UserContext";
+import CashFlowModal from "@/src/components/cashflow/CashFlowModal/CashFlowModal";
+import { useModal } from "@/src/hooks/useModal";
+import { CustomSpinner } from "@/src/components/ui/Spinner/Spinner";
 import { Grid, TextField } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import PageHeader from "../../ui/PageHeader";
-import { showSuccess, showError, showConfirm } from "../../../utils/alerts";
+import PageHeader from "@/src/components/ui/PageHeader";
+import { showSuccess, showError, showConfirm } from "@/src/utils/alerts";
 
 const today = getFormattedDate();
 

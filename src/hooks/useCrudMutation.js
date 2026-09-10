@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { showSuccess, showError } from '../utils/alerts';
+import { showSuccess, showError } from '@/src/utils/alerts';
 
 /**
  * Hook genérico para crear mutaciones CRUD

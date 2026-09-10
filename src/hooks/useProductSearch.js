@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from "react";
-import { useFetchWithRetry } from "./useFetch";
-import { getStoreProducts } from "../api/products";
-import { showError } from "../utils/alerts";
+import { useFetchWithRetry } from "@/src/hooks/useFetch";
+import { getStoreProducts } from "@/src/api/products";
+import { showError } from "@/src/utils/alerts";
 import Swal from "sweetalert2";
 
 export const useProductSearch = () => {

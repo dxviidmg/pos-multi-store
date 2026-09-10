@@ -5,12 +5,12 @@ import { Provider } from 'react-redux';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import store from './store';
-import { getQueryClient } from './api/queryClient';
-import { getTheme } from './theme';
-import { UserProvider } from './context/UserContext';
-import { WebSocketProvider } from './context/WebSocketContext';
-import ConnectionStatusBanner from './components/ui/ConnectionStatusBanner';
+import store from '@/src/store';
+import { getQueryClient } from '@/src/api/queryClient';
+import { getTheme } from '@/src/theme';
+import { UserProvider } from '@/src/context/UserContext';
+import { WebSocketProvider } from '@/src/context/WebSocketContext';
+import ConnectionStatusBanner from '@/src/components/ui/ConnectionStatusBanner';
 
 type ThemeMode = 'light' | 'dark';
 

@@ -1,17 +1,17 @@
 import React, { useEffect, useCallback, useMemo } from "react";
-import useTaskPolling from "../../../hooks/useTaskPolling";
-import CountdownTimer from "../../ui/CountdownTimer";
-import DataTable from "../../ui/DataTable/DataTable";
-import CustomButton from "../../ui/Button/Button";
-import DoughnutChart from "./DoughnutChart";
+import useTaskPolling from "@/src/hooks/useTaskPolling";
+import CountdownTimer from "@/src/components/ui/CountdownTimer";
+import DataTable from "@/src/components/ui/DataTable/DataTable";
+import CustomButton from "@/src/components/ui/Button/Button";
+import DoughnutChart from "@/src/components/admin/Dashboard/DoughnutChart";
 import { BarChart } from "@mui/x-charts/BarChart";
 import {
   Grid, Box, Typography,
   LinearProgress, Skeleton,
 } from "@mui/material";
-import { exportToExcel } from "../../../utils/utils";
-import httpClient from "../../../api/httpClient";
-import { getApiUrl } from "../../../api/utils";
+import { exportToExcel } from "@/src/utils/utils";
+import httpClient from "@/src/api/httpClient";
+import { getApiUrl } from "@/src/api/utils";
 import WarningIcon from "@mui/icons-material/Warning";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import DownloadIcon from "@mui/icons-material/Download";

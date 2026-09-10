@@ -4,26 +4,26 @@
  */
 
 // CRUD Services
-export * from './clients';
-export * from './brands';
-export * from './departments';
-export * from './sellers';
-export * from './discounts';
-export * from './stores';
-export * from './tenants';
-export * from './cashflow';
+export * from '@/src/api/clients';
+export * from '@/src/api/brands';
+export * from '@/src/api/departments';
+export * from '@/src/api/sellers';
+export * from '@/src/api/discounts';
+export * from '@/src/api/stores';
+export * from '@/src/api/tenants';
+export * from '@/src/api/cashflow';
 
 // Complex Services (not using factory)
-export * from './products';
-export * from './sales';
-export * from './transfers';
-export * from './audit';
-export * from './printers';
-export * from './login';
-export * from './restart';
-export * from './registration';
-export * from './conversions';
+export * from '@/src/api/products';
+export * from '@/src/api/sales';
+export * from '@/src/api/transfers';
+export * from '@/src/api/audit';
+export * from '@/src/api/printers';
+export * from '@/src/api/login';
+export * from '@/src/api/restart';
+export * from '@/src/api/registration';
+export * from '@/src/api/conversions';
 
 // Utilities
-export * from './utils';
-export { default as httpClient } from './httpClient';
+export * from '@/src/api/utils';
+export { default as httpClient } from '@/src/api/httpClient';

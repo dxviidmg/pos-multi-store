@@ -1,21 +1,21 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
-import DataTable from "../../ui/DataTable/DataTable";
-import CustomButton from "../../ui/Button/Button";
-import PageHeader from "../../ui/PageHeader";
-import { colors } from "../../../theme/colors";
-import { CustomSpinner } from "../../ui/Spinner/Spinner";
-import { useConversions, useDeleteConversion, useApplyConversion } from "../../../hooks/useConversions";
-import { useModal } from "../../../hooks/useModal";
-import ConversionModal from "./ConversionModal";
+import DataTable from "@/src/components/ui/DataTable/DataTable";
+import CustomButton from "@/src/components/ui/Button/Button";
+import PageHeader from "@/src/components/ui/PageHeader";
+import { colors } from "@/src/theme/colors";
+import { CustomSpinner } from "@/src/components/ui/Spinner/Spinner";
+import { useConversions, useDeleteConversion, useApplyConversion } from "@/src/hooks/useConversions";
+import { useModal } from "@/src/hooks/useModal";
+import ConversionModal from "@/src/components/inventory/ConversionList/ConversionModal";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import UnarchiveIcon from "@mui/icons-material/Unarchive";
-import CustomTooltip from "../../ui/Tooltip";
+import CustomTooltip from "@/src/components/ui/Tooltip";
 import Swal from "sweetalert2";
-import { useUser } from "../../../context/UserContext";
+import { useUser } from "@/src/context/UserContext";
 
 const ConversionList = () => {
   const { user } = useUser();

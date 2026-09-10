@@ -1,4 +1,4 @@
-import { createApiService } from "./apiFactory";
+import { createApiService } from "@/src/api/apiFactory";
 
 const discountService = createApiService("discount");
 

@@ -1,6 +1,6 @@
 import { Grid, TextField } from "@mui/material";
-import CustomModal from "../Modal/Modal";
-import CustomButton from "../Button/Button";
+import CustomModal from "@/src/components/ui/Modal/Modal";
+import CustomButton from "@/src/components/ui/Button/Button";
 
 const EditUserModal = ({ open, onClose, userData, onChange, onSave }) => {
   return (

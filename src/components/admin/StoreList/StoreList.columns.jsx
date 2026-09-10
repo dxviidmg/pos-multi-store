@@ -1,8 +1,8 @@
 import { Box } from "@mui/material";
-import CustomButton from "../../ui/Button/Button";
-import CustomTooltip from "../../ui/Tooltip";
-import { formatCurrency } from "../../../utils/utils";
-import { chooseIcon } from "../../ui/Icons/Icons";
+import CustomButton from "@/src/components/ui/Button/Button";
+import CustomTooltip from "@/src/components/ui/Tooltip";
+import { formatCurrency } from "@/src/utils/utils";
+import { chooseIcon } from "@/src/components/ui/Icons/Icons";
 import HomeIcon from "@mui/icons-material/Home";
 import PrintIcon from "@mui/icons-material/Print";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";

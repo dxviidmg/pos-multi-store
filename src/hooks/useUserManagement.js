@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { getUser, updateUser, changePassword } from "../api/users";
-import { showSuccess, showError } from "../utils/alerts";
+import { getUser, updateUser, changePassword } from "@/src/api/users";
+import { showSuccess, showError } from "@/src/utils/alerts";
 
 export const useUserManagement = () => {
   const [editUserModal, setEditUserModal] = useState({ open: false, userId: null, data: {} });

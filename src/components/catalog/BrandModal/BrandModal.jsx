@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
-import CustomModal from "../../ui/Modal/Modal";
-import CustomButton from "../../ui/Button/Button";
-import { useCreateBrand, useUpdateBrand } from "../../../hooks/useBrandMutations";
-import { useForm } from "../../../hooks/useForm";
+import CustomModal from "@/src/components/ui/Modal/Modal";
+import CustomButton from "@/src/components/ui/Button/Button";
+import { useCreateBrand, useUpdateBrand } from "@/src/hooks/useBrandMutations";
+import { useForm } from "@/src/hooks/useForm";
 import { Grid, TextField } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 

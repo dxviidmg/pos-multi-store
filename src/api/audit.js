@@ -1,5 +1,5 @@
-import httpClient from "./httpClient";
-import { getApiUrl, buildUrlWithParams } from "./utils";
+import httpClient from "@/src/api/httpClient";
+import { getApiUrl, buildUrlWithParams } from "@/src/api/utils";
 
 export const getAudit = async (params) => {
   const url = buildUrlWithParams(getApiUrl("sales-logs-audit"), params);

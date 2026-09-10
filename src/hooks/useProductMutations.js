@@ -1,5 +1,5 @@
-import { useCrudMutation } from './useCrudMutation';
-import { createProduct, updateProduct } from '../api/products';
+import { useCrudMutation } from '@/src/hooks/useCrudMutation';
+import { createProduct, updateProduct } from '@/src/api/products';
 
 const productErrorParser = (error) => {
   if (error.response?.status === 400 && error.response.data?.code) {

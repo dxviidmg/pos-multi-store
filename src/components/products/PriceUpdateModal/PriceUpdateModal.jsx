@@ -1,12 +1,12 @@
 import React, { useState, useMemo, useEffect } from "react";
-import CustomModal from "../../ui/Modal/Modal";
-import CustomButton from "../../ui/Button/Button";
-import SimpleTable from "../../ui/SimpleTable/SimpleTable";
+import CustomModal from "@/src/components/ui/Modal/Modal";
+import CustomButton from "@/src/components/ui/Button/Button";
+import SimpleTable from "@/src/components/ui/SimpleTable/SimpleTable";
 import { Grid, TextField, Alert } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
-import { updatePricesProducts } from "../../../api/products";
-import { showSuccess, showError } from "../../../utils/alerts";
+import { updatePricesProducts } from "@/src/api/products";
+import { showSuccess, showError } from "@/src/utils/alerts";
 
 const PriceUpdateModal = ({ isOpen, onClose, selectedProducts, onSuccess }) => {
   const [formData, setFormData] = useState({

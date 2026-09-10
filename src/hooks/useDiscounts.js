@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getDiscounts } from '../api/discounts';
+import { getDiscounts } from '@/src/api/discounts';
 
 export const useDiscounts = () => {
   return useQuery({

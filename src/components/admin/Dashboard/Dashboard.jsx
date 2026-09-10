@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
-import { getSalesDashboard } from "../../../api/sales";
-import useTaskPolling from "../../../hooks/useTaskPolling";
-import CountdownTimer from "../../ui/CountdownTimer";
-import LineChart from "./LineChart";
-import DoughnutChart from "./DoughnutChart";
-import SalesHeatmap from "./SalesHeatmap";
-import AvgTicketChart from "./AvgTicketChart";
-import KPICard from "./KPICard";
+import { getSalesDashboard } from "@/src/api/sales";
+import useTaskPolling from "@/src/hooks/useTaskPolling";
+import CountdownTimer from "@/src/components/ui/CountdownTimer";
+import LineChart from "@/src/components/admin/Dashboard/LineChart";
+import DoughnutChart from "@/src/components/admin/Dashboard/DoughnutChart";
+import SalesHeatmap from "@/src/components/admin/Dashboard/SalesHeatmap";
+import AvgTicketChart from "@/src/components/admin/Dashboard/AvgTicketChart";
+import KPICard from "@/src/components/admin/Dashboard/KPICard";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { ChartsReferenceLine } from "@mui/x-charts/ChartsReferenceLine";
 import {
@@ -16,7 +16,7 @@ import {
 import {
   MONTH_NAMES, MONTH_NAMES_SHORT, DAY_NAMES, CHART_COLORS,
   formatCurrency, getTied,
-} from "../../../utils/utils";
+} from "@/src/utils/utils";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";

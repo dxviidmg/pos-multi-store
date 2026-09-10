@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { CustomSpinner } from "../../ui/Spinner/Spinner";
-import { getBrands } from "../../../api/brands";
-import { getDepartments } from "../../../api/departments";
-import { reassignProducts } from "../../../api/products";
-import { showSuccess, showError } from "../../../utils/alerts";
-import { useForm } from "../../../hooks/useForm";
-import CustomButton from "../../ui/Button/Button";
+import { CustomSpinner } from "@/src/components/ui/Spinner/Spinner";
+import { getBrands } from "@/src/api/brands";
+import { getDepartments } from "@/src/api/departments";
+import { reassignProducts } from "@/src/api/products";
+import { showSuccess, showError } from "@/src/utils/alerts";
+import { useForm } from "@/src/hooks/useForm";
+import CustomButton from "@/src/components/ui/Button/Button";
 import { Grid, Select, MenuItem, FormControl, InputLabel} from "@mui/material";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
-import PageHeader from "../../ui/PageHeader";
+import PageHeader from "@/src/components/ui/PageHeader";
 
 const REASSIGN_TYPE = [
   { value: "brand", label: "Marca" },

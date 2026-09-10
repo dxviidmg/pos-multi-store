@@ -5,7 +5,7 @@ import {
 } from "@mui/material";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import InboxIcon from "@mui/icons-material/Inbox";
-import { getPendingMovements } from "../../../api/notifications";
+import { getPendingMovements } from "@/src/api/notifications";
 
 const PendingMenu = memo(() => {
   const [anchorEl, setAnchorEl] = useState(null);

@@ -1,8 +1,8 @@
 import React, { useEffect, memo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import CustomButton from "../../ui/Button/Button";
-import { removeClientfromCart } from "../../../redux/cart/cartActions";
+import CustomButton from "@/src/components/ui/Button/Button";
+import { removeClientfromCart } from "@/src/redux/cart/cartActions";
 import { Grid, TextField, Box } from "@mui/material";
 import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
 

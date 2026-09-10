@@ -5,7 +5,7 @@ import {
 } from "@mui/material";
 import TuneIcon from "@mui/icons-material/Tune";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-import { getStockUpdateRequests } from "../../../api/notifications";
+import { getStockUpdateRequests } from "@/src/api/notifications";
 
 const StockRequestMenu = memo(() => {
   const [anchorEl, setAnchorEl] = useState(null);

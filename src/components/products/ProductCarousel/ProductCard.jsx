@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
-import noPhotoImg from "../../../assets/images/noPhoto.webp";
+import noPhotoImg from "@/src/assets/images/noPhoto.webp";
 
 // En Next.js, importar una imagen devuelve un objeto StaticImageData,
 // no una string. Normalizamos a la URL para usarla en <img src>.

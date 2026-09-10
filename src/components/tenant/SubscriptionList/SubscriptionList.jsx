@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import DataTable from "../../ui/DataTable/DataTable";
-import { getSubscriptions } from "../../../api/subscriptions";
+import DataTable from "@/src/components/ui/DataTable/DataTable";
+import { getSubscriptions } from "@/src/api/subscriptions";
 import { Grid, Chip } from "@mui/material";
 
 const statusMap = {

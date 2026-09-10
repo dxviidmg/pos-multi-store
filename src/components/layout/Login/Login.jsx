@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { loginUser } from "../../../api/login";
+import { loginUser } from "@/src/api/login";
 import { useRouter } from "next/navigation";
-import { useUser } from "../../../context/UserContext";
-import CustomButton from "../../ui/Button/Button";
-import Logo from "../../../assets/images/logo.webp";
-import { colors } from "../../../theme/colors";
+import { useUser } from "@/src/context/UserContext";
+import CustomButton from "@/src/components/ui/Button/Button";
+import Logo from "@/src/assets/images/logo.webp";
+import { colors } from "@/src/theme/colors";
 import './Login.css';
 import {
   TextField, Box, Alert, Paper, Stack, Typography,

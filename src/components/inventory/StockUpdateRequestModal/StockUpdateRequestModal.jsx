@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import CustomModal from "../../ui/Modal/Modal";
-import CustomButton from "../../ui/Button/Button";
+import CustomModal from "@/src/components/ui/Modal/Modal";
+import CustomButton from "@/src/components/ui/Button/Button";
 import { Grid, TextField } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
-import { showSuccess, showError } from "../../../utils/alerts";
-import httpClient from "../../../api/httpClient";
-import { getApiUrl } from "../../../api/utils";
+import { showSuccess, showError } from "@/src/utils/alerts";
+import httpClient from "@/src/api/httpClient";
+import { getApiUrl } from "@/src/api/utils";
 
 const StockUpdateRequestModal = ({ isOpen, storeProduct, onClose }) => {
   const MAX_STOCK = 99999999;

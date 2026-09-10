@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from "react";
-import DataTable from "../../ui/DataTable/DataTable";
-import { getSellers } from "../../../api/sellers";
-import CustomButton from "../../ui/Button/Button";
-import SellerModal from "../SellerModal/SellerModal";
-import { getDateDifference, getFormattedDate } from "../../../utils/utils";
-import { chooseIcon } from "../../ui/Icons/Icons";
-import { useModal } from "../../../hooks/useModal";
-import { useUserManagement } from "../../../hooks/useUserManagement";
-import EditUserModal from "../../ui/UserModals/EditUserModal";
-import ChangePasswordModal from "../../ui/UserModals/ChangePasswordModal";
-import PageHeader from "../../ui/PageHeader";
+import DataTable from "@/src/components/ui/DataTable/DataTable";
+import { getSellers } from "@/src/api/sellers";
+import CustomButton from "@/src/components/ui/Button/Button";
+import SellerModal from "@/src/components/catalog/SellerModal/SellerModal";
+import { getDateDifference, getFormattedDate } from "@/src/utils/utils";
+import { chooseIcon } from "@/src/components/ui/Icons/Icons";
+import { useModal } from "@/src/hooks/useModal";
+import { useUserManagement } from "@/src/hooks/useUserManagement";
+import EditUserModal from "@/src/components/ui/UserModals/EditUserModal";
+import ChangePasswordModal from "@/src/components/ui/UserModals/ChangePasswordModal";
+import PageHeader from "@/src/components/ui/PageHeader";
 import { Grid, TextField } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import LockResetIcon from "@mui/icons-material/LockReset";
-import { useUser } from "../../../context/UserContext";
-import CustomTooltip from "../../ui/Tooltip";
+import { useUser } from "@/src/context/UserContext";
+import CustomTooltip from "@/src/components/ui/Tooltip";
 
 const SellerList = () => {
   const today = getFormattedDate();

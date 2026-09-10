@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useMemo } from "react";
-import CustomModal from "../../ui/Modal/Modal";
-import DataTable from "../../ui/DataTable/DataTable";
-import { getProductPriceLogs } from "../../../api/products";
-import { getFormattedDateTime } from "../../../utils/utils";
-import { CustomSpinner } from "../../ui/Spinner/Spinner";
+import CustomModal from "@/src/components/ui/Modal/Modal";
+import DataTable from "@/src/components/ui/DataTable/DataTable";
+import { getProductPriceLogs } from "@/src/api/products";
+import { getFormattedDateTime } from "@/src/utils/utils";
+import { CustomSpinner } from "@/src/components/ui/Spinner/Spinner";
 import { Grid } from "@mui/material";
 
 const PriceLogsModal = ({ isOpen, product, onClose }) => {

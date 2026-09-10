@@ -1,15 +1,15 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { getStores } from "../../../api/stores";
-import useTaskPolling from "../../../hooks/useTaskPolling";
-import CountdownTimer from "../../ui/CountdownTimer";
-import SimpleTable from "../../ui/SimpleTable/SimpleTable";
+import { getStores } from "@/src/api/stores";
+import useTaskPolling from "@/src/hooks/useTaskPolling";
+import CountdownTimer from "@/src/components/ui/CountdownTimer";
+import SimpleTable from "@/src/components/ui/SimpleTable/SimpleTable";
 import {
   Grid, FormControl, InputLabel, Select, MenuItem, Box, Typography,
   LinearProgress, Skeleton,
 } from "@mui/material";
-import { MONTH_NAMES } from "../../../utils/utils";
-import httpClient from "../../../api/httpClient";
-import { getApiUrl, buildUrlWithParams } from "../../../api/utils";
+import { MONTH_NAMES } from "@/src/utils/utils";
+import httpClient from "@/src/api/httpClient";
+import { getApiUrl, buildUrlWithParams } from "@/src/api/utils";
 import InboxIcon from "@mui/icons-material/Inbox";
 
 const TOP_BRANDS_COLUMNS = [

@@ -1,10 +1,10 @@
 import React from "react";
 import { TextField, Checkbox, IconButton } from "@mui/material";
-import CustomButton from "../../ui/Button/Button";
+import CustomButton from "@/src/components/ui/Button/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ScaleIcon from "@mui/icons-material/Scale";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
-import { MOVEMENT_TYPES } from "../../../constants";
+import { MOVEMENT_TYPES } from "@/src/constants";
 
 const isKg = (row) => row.product?.unit === "KG";
 const SALE_MODES_CYCLE = ["KG", "FRAC", "$"];

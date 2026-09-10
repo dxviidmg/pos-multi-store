@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { Box, Typography } from "@mui/material";
-import { CHART_COLORS, DAY_NAMES_SHORT } from "../../../utils/utils";
+import { CHART_COLORS, DAY_NAMES_SHORT } from "@/src/utils/utils";
 
 const AvgTicketChart = ({ data }) => {
   const series = useMemo(() => {

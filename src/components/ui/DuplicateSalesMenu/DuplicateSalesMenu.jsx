@@ -5,7 +5,7 @@ import {
 } from "@mui/material";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-import { getDuplicateSales } from "../../../api/notifications";
+import { getDuplicateSales } from "@/src/api/notifications";
 
 const DuplicateSalesMenu = memo(() => {
   const [anchorEl, setAnchorEl] = useState(null);

@@ -1,18 +1,18 @@
-import { logger } from "../../../utils/logger";
-import { showSuccess } from "../../../utils/alerts";
+import { logger } from "@/src/utils/logger";
+import { showSuccess } from "@/src/utils/alerts";
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { selectCarts, selectActiveCartId } from "../../../redux/cart/selectors";
-import CustomModal from "../../ui/Modal/Modal";
-import SimpleTable from "../../ui/SimpleTable/SimpleTable";
-import CustomButton from "../../ui/Button/Button";
-import { createTransfer } from "../../../api/transfers";
-import { addProducts } from "../../../api/products";
-import { CustomSpinner } from "../../ui/Spinner/Spinner";
-import { getStockOtherStores } from "../../../api/products";
-import { addToCart, updateMovementType, updateQuantityInCart } from "../../../redux/cart/cartActions";
+import { selectCarts, selectActiveCartId } from "@/src/redux/cart/selectors";
+import CustomModal from "@/src/components/ui/Modal/Modal";
+import SimpleTable from "@/src/components/ui/SimpleTable/SimpleTable";
+import CustomButton from "@/src/components/ui/Button/Button";
+import { createTransfer } from "@/src/api/transfers";
+import { addProducts } from "@/src/api/products";
+import { CustomSpinner } from "@/src/components/ui/Spinner/Spinner";
+import { getStockOtherStores } from "@/src/api/products";
+import { addToCart, updateMovementType, updateQuantityInCart } from "@/src/redux/cart/cartActions";
 import { Grid, TextField, Box, Alert, Chip, Tabs, Tab } from "@mui/material";
-import { MOVEMENT_TYPES } from "../../../constants";
+import { MOVEMENT_TYPES } from "@/src/constants";
 
 
 const StockModal = ({ isOpen, product, onClose }) => {

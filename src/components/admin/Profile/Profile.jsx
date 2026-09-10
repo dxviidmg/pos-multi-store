@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { logger } from '../../../utils/logger';
+import { logger } from '@/src/utils/logger';
 import {
   Box,
   Grid,
@@ -14,10 +14,10 @@ import {
   InputAdornment,
 } from '@mui/material';
 import { Save, Business, Settings, Person, Lock, Visibility, VisibilityOff } from '@mui/icons-material';
-import { useUser } from "../../../context/UserContext";
-import { getTenant, updateTenant } from '../../../api/tenants';
-import { getUser, updateUser, changePassword } from '../../../api/users';
-import { CustomSpinner } from '../../ui/Spinner/Spinner';
+import { useUser } from "@/src/context/UserContext";
+import { getTenant, updateTenant } from '@/src/api/tenants';
+import { getUser, updateUser, changePassword } from '@/src/api/users';
+import { CustomSpinner } from '@/src/components/ui/Spinner/Spinner';
 
 const Profile = () => {
   const { user } = useUser();

@@ -1,5 +1,5 @@
-import httpClient from "./httpClient";
-import { getPrinterUrl, getUserData, getApiUrl } from "./utils";
+import httpClient from "@/src/api/httpClient";
+import { getPrinterUrl, getUserData, getApiUrl } from "@/src/api/utils";
 
 /**
  * Send print job to printer service

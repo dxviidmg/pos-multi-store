@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { useUser } from './UserContext';
+import { useUser } from '@/src/context/UserContext';
 
 interface WebSocketMessage {
   type: string;

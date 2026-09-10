@@ -1,15 +1,15 @@
 import React, { useEffect, useState, useRef } from "react";
-import DataTable from "../../ui/DataTable/DataTable";
-import { getSales } from "../../../api/sales";
-import CustomButton from "../../ui/Button/Button";
+import DataTable from "@/src/components/ui/DataTable/DataTable";
+import { getSales } from "@/src/api/sales";
+import CustomButton from "@/src/components/ui/Button/Button";
 import {
   getFormattedDate,
   handlePrintTicket,
   getFormattedDateTime,
-} from "../../../utils/utils";
-import { useModal } from "../../../hooks/useModal";
-import SaleModal from "../SaleModal/SaleModal";
-import { CustomSpinner } from "../../ui/Spinner/Spinner";
+} from "@/src/utils/utils";
+import { useModal } from "@/src/hooks/useModal";
+import SaleModal from "@/src/components/sales/SaleModal/SaleModal";
+import { CustomSpinner } from "@/src/components/ui/Spinner/Spinner";
 import PrintIcon from "@mui/icons-material/Print";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import BlockIcon from "@mui/icons-material/Block";
@@ -19,10 +19,10 @@ import ErrorIcon from "@mui/icons-material/Error";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { Popper, Paper, Grid, TextField, Select, MenuItem, FormControl, InputLabel, Box} from "@mui/material";
-import { useUser } from "../../../context/UserContext";
-import PaymentEditModal from "../PaymentEditModal/PaymentEditModal";
-import CustomTooltip from "../../ui/Tooltip";
-import PageHeader from "../../ui/PageHeader";
+import { useUser } from "@/src/context/UserContext";
+import PaymentEditModal from "@/src/components/sales/PaymentEditModal/PaymentEditModal";
+import CustomTooltip from "@/src/components/ui/Tooltip";
+import PageHeader from "@/src/components/ui/PageHeader";
 
 const ProductsPopperButton = ({ row, productsModal }) => {
   const [anchorEl, setAnchorEl] = useState(null);

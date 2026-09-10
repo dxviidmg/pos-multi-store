@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
-import { getTransfers } from '../api/transfers';
-import { createApiService } from '../api/apiFactory';
-import { createMutationHooks } from './useCrudMutation';
+import { getTransfers } from '@/src/api/transfers';
+import { createApiService } from '@/src/api/apiFactory';
+import { createMutationHooks } from '@/src/hooks/useCrudMutation';
 
 // Transfers
 export const useTransfers = (params = {}) => {

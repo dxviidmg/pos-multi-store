@@ -1,6 +1,6 @@
-import { createApiService } from "./apiFactory";
-import httpClient from "./httpClient";
-import { getApiUrl } from "./utils";
+import { createApiService } from "@/src/api/apiFactory";
+import httpClient from "@/src/api/httpClient";
+import { getApiUrl } from "@/src/api/utils";
 
 const paymentService = createApiService("payment");
 

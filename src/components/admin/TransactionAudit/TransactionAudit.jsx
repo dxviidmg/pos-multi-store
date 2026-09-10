@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import AuditCard from "../../ui/AuditCard/AuditCard";
-import CustomButton from "../../ui/Button/Button";
-import { getAudit, getAudit2 } from "../../../api/audit";
-import { CustomSpinner } from "../../ui/Spinner/Spinner";
+import AuditCard from "@/src/components/ui/AuditCard/AuditCard";
+import CustomButton from "@/src/components/ui/Button/Button";
+import { getAudit, getAudit2 } from "@/src/api/audit";
+import { CustomSpinner } from "@/src/components/ui/Spinner/Spinner";
 import { Grid, TextField, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 import AssessmentIcon from "@mui/icons-material/Assessment";
-import { getFormattedDate } from "../../../utils/utils";
-import { getStores } from "../../../api/stores";
+import { getFormattedDate } from "@/src/utils/utils";
+import { getStores } from "@/src/api/stores";
 import { useEffect } from "react";
 
 const TransactionAudit = () => {

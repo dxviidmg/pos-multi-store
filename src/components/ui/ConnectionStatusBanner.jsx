@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Snackbar, Alert, AlertTitle, Box } from "@mui/material";
 import WifiOffIcon from "@mui/icons-material/WifiOff";
 import WifiIcon from "@mui/icons-material/Wifi";
-import { useOnlineStatus } from "../../hooks/useOnlineStatus";
+import { useOnlineStatus } from "@/src/hooks/useOnlineStatus";
 
 const RESTORED_DURATION_MS = 3000;
 

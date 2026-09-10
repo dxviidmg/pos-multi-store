@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import CustomModal from "../../ui/Modal/Modal";
-import CustomButton from "../../ui/Button/Button";
-import SimpleTable from "../../ui/SimpleTable/SimpleTable";
-import { useCancelSale } from "../../../hooks/useSaleMutations";
+import CustomModal from "@/src/components/ui/Modal/Modal";
+import CustomButton from "@/src/components/ui/Button/Button";
+import SimpleTable from "@/src/components/ui/SimpleTable/SimpleTable";
+import { useCancelSale } from "@/src/hooks/useSaleMutations";
 import { Grid, TextField, Checkbox, FormControlLabel, Typography } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 

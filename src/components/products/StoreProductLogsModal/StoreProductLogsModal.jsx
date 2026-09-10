@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useRef } from "react";
-import CustomModal from "../../ui/Modal/Modal";
-import DataTable from "../../ui/DataTable/DataTable";
-import { getStoreProductLogs, updateStoreProduct } from "../../../api/products";
-import { getFormattedDateTime } from "../../../utils/utils";
-import { showSuccess, showError } from "../../../utils/alerts";
-import { useForm } from "../../../hooks/useForm";
-import CustomButton from "../../ui/Button/Button";
-import { chooseIcon } from "../../ui/Icons/Icons";
+import CustomModal from "@/src/components/ui/Modal/Modal";
+import DataTable from "@/src/components/ui/DataTable/DataTable";
+import { getStoreProductLogs, updateStoreProduct } from "@/src/api/products";
+import { getFormattedDateTime } from "@/src/utils/utils";
+import { showSuccess, showError } from "@/src/utils/alerts";
+import { useForm } from "@/src/hooks/useForm";
+import CustomButton from "@/src/components/ui/Button/Button";
+import { chooseIcon } from "@/src/components/ui/Icons/Icons";
 import { Grid, TextField, LinearProgress } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 

@@ -1,27 +1,27 @@
-import { logger } from "../../../utils/logger";
+import { logger } from "@/src/utils/logger";
 import React, { useMemo, useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { selectCart, selectMovementType, selectClient } from "../../../redux/cart/selectors";
-import CustomModal from "../../ui/Modal/Modal";
-import CustomButton from "../../ui/Button/Button";
-import { cleanCart, removeClientfromCart, addClientToCart } from "../../../redux/cart/cartActions";
-import { createSale, getSale } from "../../../api/sales";
-import { showSuccess, showError } from "../../../utils/alerts";
-import { useUser } from "../../../context/UserContext";
-import { handlePrintTicket } from "../../../utils/utils";
-import { usePrinterStatus } from "../../../hooks/usePrinterStatus";
-import SearchClient from "../../clients/SearchClient/SearchClient";
-import ClientModal from "../../clients/ClientModal/ClientModal";
+import { selectCart, selectMovementType, selectClient } from "@/src/redux/cart/selectors";
+import CustomModal from "@/src/components/ui/Modal/Modal";
+import CustomButton from "@/src/components/ui/Button/Button";
+import { cleanCart, removeClientfromCart, addClientToCart } from "@/src/redux/cart/cartActions";
+import { createSale, getSale } from "@/src/api/sales";
+import { showSuccess, showError } from "@/src/utils/alerts";
+import { useUser } from "@/src/context/UserContext";
+import { handlePrintTicket } from "@/src/utils/utils";
+import { usePrinterStatus } from "@/src/hooks/usePrinterStatus";
+import SearchClient from "@/src/components/clients/SearchClient/SearchClient";
+import ClientModal from "@/src/components/clients/ClientModal/ClientModal";
 import SearchIcon from "@mui/icons-material/Search";
-import { CustomSpinner } from "../../ui/Spinner/Spinner";
+import { CustomSpinner } from "@/src/components/ui/Spinner/Spinner";
 import { Grid, TextField, Radio, RadioGroup, FormControlLabel, Checkbox, FormLabel, Alert, Chip, Box } from "@mui/material";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import MoneyOffIcon from "@mui/icons-material/MoneyOff";
 import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
 import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
-import { MOVEMENT_TYPES } from "../../../constants";
-import { useModal } from "../../../hooks/useModal";
+import { MOVEMENT_TYPES } from "@/src/constants";
+import { useModal } from "@/src/hooks/useModal";
 
 
 function roundUpCustom(value) {

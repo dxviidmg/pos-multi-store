@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
-import { useForm } from "../../../hooks/useForm";
-import CustomModal from "../../ui/Modal/Modal";
-import CustomButton from "../../ui/Button/Button";
-import { useDiscounts } from "../../../hooks/useDiscounts";
-import { useCreateClient, useUpdateClient } from "../../../hooks/useClientMutations";
+import { useForm } from "@/src/hooks/useForm";
+import CustomModal from "@/src/components/ui/Modal/Modal";
+import CustomButton from "@/src/components/ui/Button/Button";
+import { useDiscounts } from "@/src/hooks/useDiscounts";
+import { useCreateClient, useUpdateClient } from "@/src/hooks/useClientMutations";
 import { Grid, TextField, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 

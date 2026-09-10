@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
-import SimpleTable from "../../ui/SimpleTable/SimpleTable";
-import { getClients } from "../../../api/clients";
-import CustomButton from "../../ui/Button/Button";
+import SimpleTable from "@/src/components/ui/SimpleTable/SimpleTable";
+import { getClients } from "@/src/api/clients";
+import CustomButton from "@/src/components/ui/Button/Button";
 import { useDispatch } from "react-redux";
-import { addClientToCart } from "../../../redux/cart/cartActions";
-import { showError } from "../../../utils/alerts";
+import { addClientToCart } from "@/src/redux/cart/cartActions";
+import { showError } from "@/src/utils/alerts";
 import { TextField } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 

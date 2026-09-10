@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import CustomModal from "../../ui/Modal/Modal";
-import CustomButton from "../../ui/Button/Button";
-import { showSuccess, showError } from "../../../utils/alerts";
-import { createCashFlow, updateCashFlow, getCashFlowChoices } from "../../../api/cashflow";
+import CustomModal from "@/src/components/ui/Modal/Modal";
+import CustomButton from "@/src/components/ui/Button/Button";
+import { showSuccess, showError } from "@/src/utils/alerts";
+import { createCashFlow, updateCashFlow, getCashFlowChoices } from "@/src/api/cashflow";
 import {
   Box,
   Grid,

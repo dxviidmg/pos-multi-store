@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { getTaskResult } from "../api/products";
-import { showError } from "../utils/alerts";
-import { getErrorMessage } from "../utils/utils";
+import { getTaskResult } from "@/src/api/products";
+import { showError } from "@/src/utils/alerts";
+import { getErrorMessage } from "@/src/utils/utils";
 
 const POLL_INTERVAL = 10;
 

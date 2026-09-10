@@ -1,4 +1,4 @@
-import { createApiService } from "./apiFactory";
+import { createApiService } from "@/src/api/apiFactory";
 
 const brandService = createApiService("brand", { pluralDelete: "brands/delete" });
 

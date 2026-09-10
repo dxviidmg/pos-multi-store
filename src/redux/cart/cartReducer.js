@@ -8,8 +8,8 @@ import {
   UPDATE_QUANTITY_IN_CART,
   CHANGE_PRICE,
   COUNT_STOCK_OTHER_STORES
-} from "./cartActions";
-import { MOVEMENT_TYPES } from "../../constants";
+} from "@/src/redux/cart/cartActions";
+import { MOVEMENT_TYPES } from "@/src/constants";
 
 const initialState = {
   cart: [],

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import CustomModal from "../../ui/Modal/Modal";
-import CustomButton from "../../ui/Button/Button";
+import CustomModal from "@/src/components/ui/Modal/Modal";
+import CustomButton from "@/src/components/ui/Button/Button";
 import {
   Box,
   Grid,
@@ -11,8 +11,8 @@ import {
 } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
-import { useCreateConversion, useUpdateConversion } from "../../../hooks/useConversions";
-import { getProducts } from "../../../api/products";
+import { useCreateConversion, useUpdateConversion } from "@/src/hooks/useConversions";
+import { getProducts } from "@/src/api/products";
 
 const INITIAL_FORM = {
   source_product: null,

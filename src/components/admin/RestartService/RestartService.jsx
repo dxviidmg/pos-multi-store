@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useState } from "react";
-import CustomButton from "../../ui/Button/Button";
-import { getRedeployRender } from "../../../api/restart";
-import { CustomSpinner } from "../../ui/Spinner/Spinner";
-import { formatTimeFromDate } from "../../../utils/utils";
+import CustomButton from "@/src/components/ui/Button/Button";
+import { getRedeployRender } from "@/src/api/restart";
+import { CustomSpinner } from "@/src/components/ui/Spinner/Spinner";
+import { formatTimeFromDate } from "@/src/utils/utils";
 import { Grid, Typography, Alert, Box, Divider } from "@mui/material";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import SyncIcon from "@mui/icons-material/Sync";

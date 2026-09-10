@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
-import useTaskPolling from "../../../hooks/useTaskPolling";
-import CountdownTimer from "../../ui/CountdownTimer";
-import LineChart from "./LineChart";
-import DoughnutChart from "./DoughnutChart";
-import KPICard from "./KPICard";
+import useTaskPolling from "@/src/hooks/useTaskPolling";
+import CountdownTimer from "@/src/components/ui/CountdownTimer";
+import LineChart from "@/src/components/admin/Dashboard/LineChart";
+import DoughnutChart from "@/src/components/admin/Dashboard/DoughnutChart";
+import KPICard from "@/src/components/admin/Dashboard/KPICard";
 import {
   Grid, FormControl, InputLabel, Select, MenuItem, Box, Typography,
   LinearProgress, Skeleton,
@@ -12,9 +12,9 @@ import { BarChart } from "@mui/x-charts/BarChart";
 import {
   MONTH_NAMES, MONTH_NAMES_SHORT, DAY_NAMES, CHART_COLORS,
   getTied,
-} from "../../../utils/utils";
-import httpClient from "../../../api/httpClient";
-import { getApiUrl, buildUrlWithParams } from "../../../api/utils";
+} from "@/src/utils/utils";
+import httpClient from "@/src/api/httpClient";
+import { getApiUrl, buildUrlWithParams } from "@/src/api/utils";
 import BlockIcon from "@mui/icons-material/Block";
 import UndoIcon from "@mui/icons-material/Undo";
 import StorefrontIcon from "@mui/icons-material/Storefront";

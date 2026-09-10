@@ -1,12 +1,12 @@
 import React, { useMemo, useState, useEffect } from "react";
-import DataTable from "../../ui/DataTable/DataTable";
+import DataTable from "@/src/components/ui/DataTable/DataTable";
 import { useQuery } from "@tanstack/react-query";
-import { getFormattedDateTime, exportToExcel } from "../../../utils/utils";
-import PageHeader from "../../ui/PageHeader";
+import { getFormattedDateTime, exportToExcel } from "@/src/utils/utils";
+import PageHeader from "@/src/components/ui/PageHeader";
 import { Grid, TextField } from "@mui/material";
-import httpClient from "../../../api/httpClient";
-import { getApiUrl } from "../../../api/utils";
-import CustomButton from "../../ui/Button/Button";
+import httpClient from "@/src/api/httpClient";
+import { getApiUrl } from "@/src/api/utils";
+import CustomButton from "@/src/components/ui/Button/Button";
 import DownloadIcon from "@mui/icons-material/Download";
 
 const fetchPriceLogs = async (months) => {

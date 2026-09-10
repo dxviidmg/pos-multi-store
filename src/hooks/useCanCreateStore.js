@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { canCreateStore } from '../api/stores';
+import { canCreateStore } from '@/src/api/stores';
 
 const QUERY_KEY = ['canCreateStore'];
 

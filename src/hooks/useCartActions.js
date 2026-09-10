@@ -1,10 +1,10 @@
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { selectCart } from "../redux/cart/selectors";
-import { addToCart, countStockOtherStores } from "../redux/cart/cartActions";
-import { getStockOtherStores } from "../api/products";
-import { showWarning } from "../utils/alerts";
-import { MOVEMENT_TYPES } from "../constants";
+import { selectCart } from "@/src/redux/cart/selectors";
+import { addToCart, countStockOtherStores } from "@/src/redux/cart/cartActions";
+import { getStockOtherStores } from "@/src/api/products";
+import { showWarning } from "@/src/utils/alerts";
+import { MOVEMENT_TYPES } from "@/src/constants";
 
 export const useCartActions = (getAvailableStock, movementType, keepListOpen, setData, setQuery) => {
   const dispatch = useDispatch();

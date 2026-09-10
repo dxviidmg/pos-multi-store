@@ -8,9 +8,9 @@ import {
   Chip,
   Divider,
 } from "@mui/material";
-import { getTaskResult } from "../../../api/products";
-import CustomButton from "../Button/Button";
-import { exportToExcel } from "../../../utils/utils";
+import { getTaskResult } from "@/src/api/products";
+import CustomButton from "@/src/components/ui/Button/Button";
+import { exportToExcel } from "@/src/utils/utils";
 import DownloadIcon from "@mui/icons-material/Download";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ErrorIcon from "@mui/icons-material/Error";

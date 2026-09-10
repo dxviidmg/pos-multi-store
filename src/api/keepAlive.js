@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import httpClient from "./httpClient";
-import { getApiUrl } from "./utils";
-import { logger } from "../utils/logger";
+import httpClient from "@/src/api/httpClient";
+import { getApiUrl } from "@/src/api/utils";
+import { logger } from "@/src/utils/logger";
 
 /**
  * Hook to keep server connection alive with periodic pings

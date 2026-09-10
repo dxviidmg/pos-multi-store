@@ -1,6 +1,6 @@
 import * as React from "react";
 import { styled } from "@mui/material/styles";
-import { useThemeModeContext } from "../../../providers";
+import { useThemeModeContext } from "@/src/providers";
 import {
   Box,
   CssBaseline,
@@ -31,8 +31,8 @@ import Brightness7Icon from "@mui/icons-material/Brightness7";
 import { useRouter, usePathname } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { useQueryClient } from "@tanstack/react-query";
-import { cleanCart } from "../../../redux/cart/cartActions";
-import { useUser } from "../../../context/UserContext";
+import { cleanCart } from "@/src/redux/cart/cartActions";
+import { useUser } from "@/src/context/UserContext";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
@@ -50,13 +50,13 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import DescriptionIcon from "@mui/icons-material/Description";
 import PolicyIcon from "@mui/icons-material/Policy";
 import BarChartIcon from "@mui/icons-material/BarChart";
-import logo from "../../../assets/images/logo.webp";
-import { colors } from "../../../theme/colors";
-import PageHelp from "../../ui/PageHelp/PageHelp";
-import NotificationsMenu from "../../ui/NotificationsMenu/NotificationsMenu";
-import PendingMenu from "../../ui/PendingMenu/PendingMenu";
-import DuplicateSalesMenu from "../../ui/DuplicateSalesMenu/DuplicateSalesMenu";
-import StockRequestMenu from "../../ui/StockRequestMenu/StockRequestMenu";
+import logo from "@/src/assets/images/logo.webp";
+import { colors } from "@/src/theme/colors";
+import PageHelp from "@/src/components/ui/PageHelp/PageHelp";
+import NotificationsMenu from "@/src/components/ui/NotificationsMenu/NotificationsMenu";
+import PendingMenu from "@/src/components/ui/PendingMenu/PendingMenu";
+import DuplicateSalesMenu from "@/src/components/ui/DuplicateSalesMenu/DuplicateSalesMenu";
+import StockRequestMenu from "@/src/components/ui/StockRequestMenu/StockRequestMenu";
 
 const iconMap = {
   Vender: <ShoppingCartIcon />,

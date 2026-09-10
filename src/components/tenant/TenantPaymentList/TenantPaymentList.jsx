@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import DataTable from "../../ui/DataTable/DataTable";
-import { getPayments } from "../../../api/tenants";
+import DataTable from "@/src/components/ui/DataTable/DataTable";
+import { getPayments } from "@/src/api/tenants";
 import { Grid } from "@mui/material";
 
 const formatDate = (dateStr) => {

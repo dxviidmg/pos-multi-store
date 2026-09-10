@@ -1,8 +1,8 @@
-import { logger } from "../../../utils/logger";
+import { logger } from "@/src/utils/logger";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { selectCart, selectMovementType } from "../../../redux/cart/selectors";
-import SimpleTable from "../../ui/SimpleTable/SimpleTable";
+import { selectCart, selectMovementType } from "@/src/redux/cart/selectors";
+import SimpleTable from "@/src/components/ui/SimpleTable/SimpleTable";
 import {
   cleanCart,
   removeFromCart,
@@ -10,24 +10,24 @@ import {
   updateQuantityInCart,
   changePrice,
   countStockOtherStores,
-} from "../../../redux/cart/cartActions";
-import CustomButton from "../../ui/Button/Button";
-import PaymentModal from "../../sales/PaymentModal/PaymentModal";
-import StockModal from "../StockModal/StockModal";
-import { getStores } from "../../../api/stores";
-import { confirmTransfers, createDistribution } from "../../../api/transfers";
-import { showSuccess, showError, showWarning } from "../../../utils/alerts";
-import { addProducts, getStockOtherStores } from "../../../api/products";
-import { useUser } from "../../../context/UserContext";
-import { CustomSpinner } from "../../ui/Spinner/Spinner";
-import { useModal } from "../../../hooks/useModal";
-import { useAvailableStock } from "../../../hooks/useAvailableStock";
+} from "@/src/redux/cart/cartActions";
+import CustomButton from "@/src/components/ui/Button/Button";
+import PaymentModal from "@/src/components/sales/PaymentModal/PaymentModal";
+import StockModal from "@/src/components/inventory/StockModal/StockModal";
+import { getStores } from "@/src/api/stores";
+import { confirmTransfers, createDistribution } from "@/src/api/transfers";
+import { showSuccess, showError, showWarning } from "@/src/utils/alerts";
+import { addProducts, getStockOtherStores } from "@/src/api/products";
+import { useUser } from "@/src/context/UserContext";
+import { CustomSpinner } from "@/src/components/ui/Spinner/Spinner";
+import { useModal } from "@/src/hooks/useModal";
+import { useAvailableStock } from "@/src/hooks/useAvailableStock";
 import { Grid, Select, MenuItem, Typography } from "@mui/material";
 import PaymentIcon from "@mui/icons-material/Payment";
 import SendIcon from "@mui/icons-material/Send";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
-import { MOVEMENT_TYPES, STORE_TYPES } from "../../../constants";
-import { getSaleColumns, getTransferColumns, getDistributionColumns, getAddToStockColumns } from "./cartColumns";
+import { MOVEMENT_TYPES, STORE_TYPES } from "@/src/constants";
+import { getSaleColumns, getTransferColumns, getDistributionColumns, getAddToStockColumns } from "@/src/components/inventory/Cart/cartColumns";
 
 const Cart = ({ searchInputRef }) => {
   const { user } = useUser();

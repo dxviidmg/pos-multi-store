@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
-import SearchProduct from "../../products/SearchProduct/SearchProduct";
-import MultiCart from "../../inventory/Cart/MultiCart";
+import SearchProduct from "@/src/components/products/SearchProduct/SearchProduct";
+import MultiCart from "@/src/components/inventory/Cart/MultiCart";
 import { Grid } from "@mui/material";
 
 const SaleCreate = () => {

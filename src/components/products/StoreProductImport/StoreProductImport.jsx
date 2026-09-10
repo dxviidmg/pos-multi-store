@@ -1,13 +1,13 @@
 import React, { useState, useRef } from "react";
-import SimpleTable from "../../ui/SimpleTable/SimpleTable";
-import { importStoreProducts, importStoreProductsValidation } from "../../../api/products";
-import CustomButton from "../../ui/Button/Button";
-import { showSuccess, showError } from "../../../utils/alerts";
-import { CustomSpinner } from "../../ui/Spinner/Spinner";
-import PageHeader from "../../ui/PageHeader";
-import DropZone from "../../ui/DropZone";
-import VisuallyHiddenInput from "../../ui/VisuallyHiddenInput";
-import StatusChip from "../../ui/StatusChip";
+import SimpleTable from "@/src/components/ui/SimpleTable/SimpleTable";
+import { importStoreProducts, importStoreProductsValidation } from "@/src/api/products";
+import CustomButton from "@/src/components/ui/Button/Button";
+import { showSuccess, showError } from "@/src/utils/alerts";
+import { CustomSpinner } from "@/src/components/ui/Spinner/Spinner";
+import PageHeader from "@/src/components/ui/PageHeader";
+import DropZone from "@/src/components/ui/DropZone";
+import VisuallyHiddenInput from "@/src/components/ui/VisuallyHiddenInput";
+import StatusChip from "@/src/components/ui/StatusChip";
 import {
   Grid, Select, MenuItem, FormControl, InputLabel,
   Typography, Stepper, Step, StepLabel, Chip,

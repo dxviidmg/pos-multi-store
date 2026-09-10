@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { useCreateTenant } from "../../../hooks/useRegistration";
-import { useMercadoPago } from "../../../hooks/useMercadoPago";
-import CustomButton from "../../ui/Button/Button";
+import { useCreateTenant } from "@/src/hooks/useRegistration";
+import { useMercadoPago } from "@/src/hooks/useMercadoPago";
+import CustomButton from "@/src/components/ui/Button/Button";
 import {
   Grid, TextField, Box, Typography, Paper,
   InputAdornment, CircularProgress, LinearProgress,
@@ -13,13 +13,13 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import StorefrontIcon from "@mui/icons-material/Storefront";
-import Logo from "../../../assets/images/logo.webp";
-import { checkTenantExists, getAvailablePlans } from "../../../api/registration";
+import Logo from "@/src/assets/images/logo.webp";
+import { checkTenantExists, getAvailablePlans } from "@/src/api/registration";
 import {
   inputSx, pageContainerSx, overlayGradientSx, formPaperSx,
   successIconSx, stepIndicatorSx, stepCountSx,
   progressBarSx, primaryButtonSx, secondaryButtonSx, headerBannerSx,
-} from "./Registration.styles";
+} from "@/src/components/tenant/Registration/Registration.styles";
 
 const INITIAL_FORM_DATA = {
   name: "",

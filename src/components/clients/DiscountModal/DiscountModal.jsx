@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import CustomModal from "../../ui/Modal/Modal";
-import CustomButton from "../../ui/Button/Button";
-import { createDiscount } from "../../../api/discounts";
-import { showSuccess, showError } from "../../../utils/alerts";
+import CustomModal from "@/src/components/ui/Modal/Modal";
+import CustomButton from "@/src/components/ui/Button/Button";
+import { createDiscount } from "@/src/api/discounts";
+import { showSuccess, showError } from "@/src/utils/alerts";
 import { TextField, Box } from "@mui/material";
 import DiscountIcon from "@mui/icons-material/Discount";
 import { useQueryClient } from "@tanstack/react-query";

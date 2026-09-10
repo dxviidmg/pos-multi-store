@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import CustomModal from "../../ui/Modal/Modal";
+import CustomModal from "@/src/components/ui/Modal/Modal";
 import { Grid, Typography, Box, Chip } from "@mui/material";
-import { useUser } from "../../../context/UserContext";
-import updates from "../../../constants/smartventa_2026_updates.json";
+import { useUser } from "@/src/context/UserContext";
+import updates from "@/src/constants/smartventa_2026_updates.json";
 
 const UpdatesModal = ({ open, onClose }) => {
   const [isOpen, setIsOpen] = useState(open !== undefined ? open : true);

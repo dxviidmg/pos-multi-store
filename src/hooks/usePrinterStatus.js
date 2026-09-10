@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { testPrinterConnection } from "../api/printers";
-import { getPrinterWsUrl } from "../api/utils";
+import { testPrinterConnection } from "@/src/api/printers";
+import { getPrinterWsUrl } from "@/src/api/utils";
 
 // Reconnect backoff (ms) while the WS is down. Grows until it caps out.
 const RECONNECT_STEPS = [3000, 5000, 10000];

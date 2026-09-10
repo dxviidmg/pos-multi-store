@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { PieChart } from '@mui/x-charts/PieChart';
 import { Box, Typography } from '@mui/material';
-import { CHART_COLORS } from '../../../utils/utils';
+import { CHART_COLORS } from '@/src/utils/utils';
 
 const processData = (result, dataType, metricType) => {
   if (!result || !result.sales || result.sales.length === 0) return [];

@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
-import DataTable from "../../ui/DataTable/DataTable";
-import { getStoreProducts } from "../../../api/products";
-import CustomButton from "../../ui/Button/Button";
-import { useUser } from "../../../context/UserContext";
-import { exportToExcel } from "../../../utils/utils";
-import { useModal } from "../../../hooks/useModal";
-import StoreProductLogsModal from "../StoreProductLogsModal/StoreProductLogsModal";
-import StockUpdateRequestModal from "../../inventory/StockUpdateRequestModal/StockUpdateRequestModal";
-import { CustomSpinner } from "../../ui/Spinner/Spinner";
-import { getBrands } from "../../../api/brands";
-import { getDepartments } from "../../../api/departments";
+import DataTable from "@/src/components/ui/DataTable/DataTable";
+import { getStoreProducts } from "@/src/api/products";
+import CustomButton from "@/src/components/ui/Button/Button";
+import { useUser } from "@/src/context/UserContext";
+import { exportToExcel } from "@/src/utils/utils";
+import { useModal } from "@/src/hooks/useModal";
+import StoreProductLogsModal from "@/src/components/products/StoreProductLogsModal/StoreProductLogsModal";
+import StockUpdateRequestModal from "@/src/components/inventory/StockUpdateRequestModal/StockUpdateRequestModal";
+import { CustomSpinner } from "@/src/components/ui/Spinner/Spinner";
+import { getBrands } from "@/src/api/brands";
+import { getDepartments } from "@/src/api/departments";
 import { Grid, TextField, Alert, Autocomplete } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import DownloadIcon from "@mui/icons-material/Download";
@@ -18,8 +18,8 @@ import HistoryIcon from "@mui/icons-material/History";
 import SendIcon from "@mui/icons-material/Send";
 import Link from "next/link";
 import NotificationImportantIcon from "@mui/icons-material/NotificationImportant";
-import PageHeader from "../../ui/PageHeader";
-import CustomTooltip from "../../ui/Tooltip";
+import PageHeader from "@/src/components/ui/PageHeader";
+import CustomTooltip from "@/src/components/ui/Tooltip";
 
 
 const StoreProductAuditList = () => {

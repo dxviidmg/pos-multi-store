@@ -10,7 +10,7 @@ import SendIcon from "@mui/icons-material/Send";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import InboxIcon from "@mui/icons-material/Inbox";
-import { useUser } from "../../../context/UserContext";
+import { useUser } from "@/src/context/UserContext";
 
 const WS_BASE = (process.env.NEXT_PUBLIC_API_URL || process.env.REACT_APP_API_URL)?.replace(/^http/, "ws");
 

@@ -2,8 +2,8 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Box, IconButton, Typography } from "@mui/material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import ProductCard from "./ProductCard";
-import { MOVEMENT_TYPES } from "../../../constants";
+import ProductCard from "@/src/components/products/ProductCarousel/ProductCard";
+import { MOVEMENT_TYPES } from "@/src/constants";
 
 /**
  * Carrusel horizontal de tarjetas de producto para la búsqueda visual.
