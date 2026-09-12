@@ -33,6 +33,8 @@ import EditIcon from "@mui/icons-material/Edit";
 import EditOffIcon from "@mui/icons-material/EditOff";
 import { MOVEMENT_TYPES, QUERY_TYPES } from "../../../constants";
 import ProductCarousel from "../ProductCarousel/ProductCarousel";
+import BarcodeScanner from "../../ui/BarcodeScanner/BarcodeScanner";
+import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
 
 const SearchProduct = ({ searchInputRef }) => {
   const localRef = useRef(null);
@@ -59,6 +61,7 @@ const SearchProduct = ({ searchInputRef }) => {
   const [keepListOpen, setKeepListOpen] = useState(false);
   const [createProductsOnSale, setCreateProductsOnSale] = useState(false);
   const [stockVerificationSnackbar, setStockVerificationSnackbar] = useState({ open: false, productName: "", productCode: "" });
+  const [scannerOpen, setScannerOpen] = useState(false);
   
   // Usar hooks extraídos
   const { query, setQuery, data, setData, queryType, setQueryType, searching, fetchData } = useProductSearch();
@@ -163,6 +166,11 @@ const SearchProduct = ({ searchInputRef }) => {
       setQuery(barcode);
       setBarcode("");
     }
+  };
+
+  const handleScanDetected = (code) => {
+    setBarcode(code);
+    setQuery(code);
   };
 
   const handleQueryChange = (e) => {
@@ -372,6 +380,15 @@ const SearchProduct = ({ searchInputRef }) => {
               {searching ? <CircularProgress size={18} color="inherit" /> : <SearchIcon fontSize="small" />}
             </IconButton>
           )}
+          {queryType === "code" && isMobile && (
+            <IconButton
+              size="small"
+              onClick={() => setScannerOpen(true)}
+              sx={{ width: 36, height: 36, bgcolor: 'success.main', color: 'white', borderRadius: 1 }}
+            >
+              <QrCodeScannerIcon fontSize="small" />
+            </IconButton>
+          )}
           {isTextMode && (
             <IconButton 
               size="small" 
@@ -485,6 +502,11 @@ const SearchProduct = ({ searchInputRef }) => {
         )}
       </Grid>
 
+      <BarcodeScanner
+        open={scannerOpen}
+        onClose={() => setScannerOpen(false)}
+        onDetected={handleScanDetected}
+      />
     </>
   );
 };
