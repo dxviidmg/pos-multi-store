@@ -14,7 +14,7 @@ import SearchClient from "../../clients/SearchClient/SearchClient";
 import ClientModal from "../../clients/ClientModal/ClientModal";
 import SearchIcon from "@mui/icons-material/Search";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
-import { Grid, TextField, Radio, RadioGroup, FormControlLabel, Checkbox, FormLabel, Alert, Chip, Box } from "@mui/material";
+import { Grid, TextField, Radio, RadioGroup, FormControlLabel, Checkbox, FormLabel, Alert, Chip, Box, useMediaQuery, useTheme } from "@mui/material";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import MoneyOffIcon from "@mui/icons-material/MoneyOff";
@@ -39,6 +39,8 @@ const INITIAL_SALE_EXCHANGE_STATE = { refunded: 0, payment: 0 };
 const PaymentModal = ({ isOpen, onClose }) => {
   const dispatch = useDispatch();
   const inputPaymentRef = useRef(null);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const cart = useSelector(selectCart);
   const movementType = useSelector(selectMovementType);
   const client = useSelector(selectClient);
@@ -485,7 +487,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
           <Grid item xs={12} className="card" sx={{ marginBottom: '1rem' }}>
             <h2 style={{ marginBottom: '0.5rem' }}>Totales</h2>
             <Grid container spacing={2}>
-              <Grid item xs={12} md={3}>
+              <Grid item xs={6} md={3}>
                 <TextField
                   fullWidth
                   size="small"
@@ -497,7 +499,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
                 />
               </Grid>
 
-              <Grid item xs={12} md={3}>
+              <Grid item xs={6} md={3}>
                 <TextField
                   fullWidth
                   size="small"
@@ -508,7 +510,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
                   InputProps={{ startAdornment: '$' }}
                 />
               </Grid>
-              <Grid item xs={12} md={3}>
+              <Grid item xs={6} md={3}>
                 <TextField
                   fullWidth
                   size="small"
@@ -520,7 +522,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
                   InputProps={{ startAdornment: '$' }}
                 />
               </Grid>
-              <Grid item xs={12} md={3}>
+              <Grid item xs={6} md={3}>
                 {paymentMethods.methods.TA > 0 ||
                 paymentMethods.methods.TR > 0 ? (
                   <TextField
@@ -565,7 +567,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
 
           <Grid item xs={12} className="card">
             <Grid container spacing={2}>
-              <Grid item xs={12} md={paymentMethods.type === "checkbox" ? 3 : 4}>
+              <Grid item xs={6} md={paymentMethods.type === "checkbox" ? 3 : 4}>
                 <FormLabel>Tipo de pago:</FormLabel>
                 <RadioGroup
                   value={paymentMethods.type}
@@ -579,7 +581,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
                 </RadioGroup>
               </Grid>
 
-              <Grid item xs={12} md={paymentMethods.type === "checkbox" ? 3 : 4}>
+              <Grid item xs={6} md={paymentMethods.type === "checkbox" ? 3 : 4}>
                 <FormLabel>Medios de pago:</FormLabel>
                 <RadioGroup
                   value={
@@ -647,24 +649,38 @@ const PaymentModal = ({ isOpen, onClose }) => {
               )}
 
               <Grid item xs={12} md={paymentMethods.type === "checkbox" ? 3 : 4}>
-                <FormLabel sx={{ display: 'block', textAlign: 'center' }}>{printer ? 'Con impresión de ticket' : 'Sin impresión de ticket'}</FormLabel>
-                <CustomButton
-                  disabled={handleDisableButton()}
-                  fullWidth
-                  onClick={() => handleCreateSale(!!printer)}
-                  startIcon={<MoneyOffIcon />}
-                  sx={{ mt: 1 }}
-                >
-                  {movementType === MOVEMENT_TYPES.RESERVATION ? "Apartar" : "Cobrar"}<br />(Ctrl + G)
-                </CustomButton>
-                {printer && (
-                  <Chip
-                    label={printerError || (printerConnected ? "Impresora conectada" : "Impresora desconectada")}
-                    color={printerConnected ? "success" : "error"}
-                    variant="filled"
-                    size="small"
-                    sx={{ mt: 1, width: '100%' }}
-                  />
+                {!isMobile && (
+                  <>
+                    <FormLabel sx={{ display: 'block', textAlign: 'center' }}>{printer ? 'Con impresión de ticket' : 'Sin impresión de ticket'}</FormLabel>
+                    <CustomButton
+                      disabled={handleDisableButton()}
+                      fullWidth
+                      onClick={() => handleCreateSale(!!printer)}
+                      startIcon={<MoneyOffIcon />}
+                      sx={{ mt: 1 }}
+                    >
+                      {movementType === MOVEMENT_TYPES.RESERVATION ? "Apartar" : "Cobrar"}<br />(Ctrl + G)
+                    </CustomButton>
+                    {printer && (
+                      <Chip
+                        label={printerError || (printerConnected ? "Impresora conectada" : "Impresora desconectada")}
+                        color={printerConnected ? "success" : "error"}
+                        variant="filled"
+                        size="small"
+                        sx={{ mt: 1, width: '100%' }}
+                      />
+                    )}
+                  </>
+                )}
+                {isMobile && (
+                  <CustomButton
+                    disabled={handleDisableButton()}
+                    fullWidth
+                    onClick={() => handleCreateSale(false)}
+                    startIcon={<MoneyOffIcon />}
+                  >
+                    {movementType === MOVEMENT_TYPES.RESERVATION ? "Apartar" : "Cobrar"}<br />(Ctrl + G)
+                  </CustomButton>
                 )}
               </Grid>
             </Grid>
