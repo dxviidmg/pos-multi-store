@@ -330,17 +330,6 @@ const SearchProduct = ({ searchInputRef }) => {
 
       <Grid container spacing={1} sx={{ mb: 0.5 }}>
         <Grid item xs={12} sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-          {isTextMode && (
-            <>
-              <IconButton
-                size="small"
-                onClick={() => setKeepListOpen(!keepListOpen)}
-                sx={{ width: 36, height: 36, bgcolor: keepListOpen ? 'primary.main' : 'transparent', color: keepListOpen ? 'white' : 'text.secondary', borderRadius: 1, '&:hover': { bgcolor: keepListOpen ? 'primary.dark' : 'action.hover' } }}
-              >
-                {keepListOpen ? <PushPinIcon fontSize="small" /> : <PushPinOutlinedIcon fontSize="small" />}
-              </IconButton>
-            </>
-          )}
           <TextField size="small" fullWidth
             inputRef={inputRef}
             type="text"
@@ -356,7 +345,7 @@ const SearchProduct = ({ searchInputRef }) => {
             onBlur={() => setIsInputFocused(false)}
             autoComplete="off"
             InputProps={{
-              startAdornment: isTextMode ? (
+              startAdornment: isTextMode && !isMobile ? (
                 <InputAdornment position="start">
                   <IconButton size="small" onClick={handleSearchProduct} disabled={searching} sx={{ p: 0.5 }}>
                     {searching ? <CircularProgress size={18} /> : <SearchIcon fontSize="small" />}
@@ -365,9 +354,38 @@ const SearchProduct = ({ searchInputRef }) => {
               ) : null
             }}
           />
+          {queryType === "code" && (
+            <IconButton 
+              size="small" 
+              onClick={handleBarcodeSearch}
+              disabled={searching}
+              sx={{ width: 36, height: 36, bgcolor: 'primary.main', color: 'white', borderRadius: 1 }}
+            >
+              {searching ? <CircularProgress size={18} color="inherit" /> : <SearchIcon fontSize="small" />}
+            </IconButton>
+          )}
+          {isTextMode && (
+            <IconButton 
+              size="small" 
+              onClick={handleSearchProduct}
+              disabled={searching}
+              sx={{ width: 36, height: 36, bgcolor: 'primary.main', color: 'white', borderRadius: 1 }}
+            >
+              {searching ? <CircularProgress size={18} color="inherit" /> : <SearchIcon fontSize="small" />}
+            </IconButton>
+          )}
           <IconButton size="small" sx={{ width: 36, height: 36, bgcolor: isInputFocused ? 'primary.main' : 'warning.main', color: 'white', borderRadius: 1, '&:hover': { bgcolor: isInputFocused ? 'primary.dark' : 'warning.dark' } }}>
             {isInputFocused ? <EditIcon fontSize="small" /> : <EditOffIcon fontSize="small" />}
           </IconButton>
+          {isTextMode && (
+            <IconButton
+              size="small"
+              onClick={() => setKeepListOpen(!keepListOpen)}
+              sx={{ width: 36, height: 36, bgcolor: keepListOpen ? 'primary.main' : 'transparent', color: keepListOpen ? 'white' : 'text.secondary', borderRadius: 1, '&:hover': { bgcolor: keepListOpen ? 'primary.dark' : 'action.hover' } }}
+            >
+              {keepListOpen ? <PushPinIcon fontSize="small" /> : <PushPinOutlinedIcon fontSize="small" />}
+            </IconButton>
+          )}
           {isTextMode && data.length > 0 && (
             <Chip label={`${data.length} resultados`} color="primary" size="small" sx={{ height: 36 }} />
           )}

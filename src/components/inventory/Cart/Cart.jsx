@@ -22,10 +22,11 @@ import { useUser } from "../../../context/UserContext";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { useModal } from "../../../hooks/useModal";
 import { useAvailableStock } from "../../../hooks/useAvailableStock";
-import { Grid, Select, MenuItem, Typography } from "@mui/material";
+import { Grid, Select, MenuItem, Typography, useMediaQuery, useTheme, TextField, IconButton, Box, Switch, FormControlLabel, Checkbox } from "@mui/material";
 import PaymentIcon from "@mui/icons-material/Payment";
 import SendIcon from "@mui/icons-material/Send";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { MOVEMENT_TYPES, STORE_TYPES } from "../../../constants";
 import { getSaleColumns, getTransferColumns, getDistributionColumns, getAddToStockColumns } from "./cartColumns";
 
@@ -33,6 +34,8 @@ const Cart = ({ searchInputRef }) => {
   const { user } = useUser();
   const store_type = user?.store_type;
   const dispatch = useDispatch();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const stockModal = useModal();
   const paymentModal = useModal();
   const [stores, setStores] = useState([]);
@@ -316,12 +319,12 @@ const Cart = ({ searchInputRef }) => {
           <Grid container spacing={1} sx={{ mb: 1, alignItems: 'center' }}>
             {(movementType === MOVEMENT_TYPES.SALE || movementType === MOVEMENT_TYPES.RESERVATION) && (
               <>
-                <Grid item xs={12} md={3}>
+                <Grid item xs={6} md={3}>
                   <Typography variant="body2" color="text.secondary">Productos</Typography>
                   <Typography variant="h5" sx={{ fontWeight: 700 }}>{totalProducts}</Typography>
                 </Grid>
 
-                <Grid item xs={12} md={5}>
+                <Grid item xs={6} md={5}>
                   <Typography variant="body2" color="text.secondary">Total</Typography>
                   <Typography variant="h4" sx={{ fontWeight: 700, color: 'primary.main' }}>${total.toFixed(2)}</Typography>
                 </Grid>
@@ -414,11 +417,160 @@ const Cart = ({ searchInputRef }) => {
             )}
           </Grid>
         )}
-        <SimpleTable
-          noDataComponent="Sin productos"
-          data={cart}
-          columns={getColumns()}
-        />
+        {!isMobile ? (
+          <SimpleTable
+            noDataComponent="Sin productos"
+            data={cart}
+            columns={getColumns()}
+          />
+        ) : (
+          <Grid container spacing={1}>
+            {cart.map((item, idx) => {
+              const isKgProduct = item.product?.unit === "KG";
+              const currentMode = isKgProduct ? (saleModes[item.id] || "KG") : "PZ";
+              const SALE_MODES_CYCLE = ["KG", "FRAC", "$"];
+              const getNextMode = (current) => {
+                const modeIdx = SALE_MODES_CYCLE.indexOf(current);
+                return SALE_MODES_CYCLE[(modeIdx + 1) % SALE_MODES_CYCLE.length];
+              };
+
+              const modeLabels = { KG: "Kilo", FRAC: "Fracción", $: "Pesos", PZ: "Pieza" };
+              const unitLabels = { PZ: "Pieza", CO: "Costal", KG: "Kilo" };
+
+              return (
+                <Grid item xs={12} key={idx} sx={{ p: 2, bgcolor: 'background.paper', borderRadius: 1, border: '1px solid', borderColor: 'divider' }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', mb: 1 }}>
+                    <Box sx={{ flex: 1 }}>
+                      <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 0.5 }}>
+                        {item.product.name}
+                      </Typography>
+                      <Typography variant="caption" display="block" sx={{ color: 'text.secondary', mb: 0.3 }}>
+                        Código: {item.product.code}
+                      </Typography>
+                      <Typography variant="caption" display="block" sx={{ color: 'text.secondary' }}>
+                        Marca: {item.product.brand_name}
+                      </Typography>
+                    </Box>
+                    <IconButton 
+                      size="small" 
+                      onClick={() => handleRemoveFromCart(item)}
+                      sx={{ color: 'error.main' }}
+                    >
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                  </Box>
+
+                  {/* Modo de venta (solo para SALE) */}
+                  {movementType === MOVEMENT_TYPES.SALE && (
+                    <Box sx={{ mb: 1 }}>
+                      {isKgProduct ? (
+                        <IconButton
+                          size="small"
+                          onClick={() => setSaleModes((prev) => ({ ...prev, [item.id]: getNextMode(currentMode) }))}
+                          sx={{ 
+                            border: '1px solid', 
+                            borderColor: currentMode === "$" || currentMode === "FRAC" ? 'primary.main' : 'divider',
+                            bgcolor: currentMode === "$" || currentMode === "FRAC" ? 'primary.main' : 'transparent',
+                            color: currentMode === "$" || currentMode === "FRAC" ? '#fff' : 'text.secondary',
+                            borderRadius: '8px',
+                            px: 1,
+                            fontSize: '0.75rem', fontWeight: 600,
+                            '&:hover': { bgcolor: currentMode === "$" || currentMode === "FRAC" ? 'primary.dark' : 'action.hover' }
+                          }}
+                        >
+                          Venta por: {modeLabels[currentMode]}
+                        </IconButton>
+                      ) : (
+                        <Typography variant="caption" sx={{ fontWeight: 600 }}>
+                          Venta por: {unitLabels[item.product?.unit] || "Pieza"}
+                        </Typography>
+                      )}
+                    </Box>
+                  )}
+                  
+                  <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', mb: 1, flexWrap: 'wrap' }}>
+                    <Box sx={{ flex: 1, minWidth: 100 }}>
+                      <Typography variant="caption" sx={{ display: 'block', mb: 0.5, fontWeight: 600 }}>
+                        {currentMode === "$" ? 'Monto ($)' : currentMode === "FRAC" ? 'Fracción' : currentMode === "KG" ? 'Kilos' : 'Cantidad'}
+                      </Typography>
+                      <TextField
+                        size="small"
+                        type="number"
+                        value={item.quantity}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          // No permitir decimales en KG ni en PZ
+                          if ((currentMode === "KG" || currentMode === "PZ") && val.includes('.')) return;
+                          // Limitar decimales en FRAC a 3 dígitos
+                          if (currentMode === "FRAC" && val.includes('.') && val.split('.')[1]?.length > 3) return;
+                          handleQuantityChangeToCart(e, item);
+                        }}
+                        onKeyDown={(e) => {
+                          const step = currentMode === "FRAC" ? 0.1 : 1;
+                          const min = currentMode === "FRAC" ? 0.1 : currentMode === "$" ? 1 : 1;
+                          const availableStock = getAvailableStock(item.id, item.available_stock);
+                          
+                          if (e.key === "ArrowUp") {
+                            e.preventDefault();
+                            const newValue = Math.round((item.quantity + step) * 1000) / 1000;
+                            if (newValue <= availableStock) {
+                              handleQuantityChangeToCart({ target: { value: newValue } }, item);
+                            }
+                          } else if (e.key === "ArrowDown") {
+                            e.preventDefault();
+                            const newValue = Math.max(min, Math.round((item.quantity - step) * 1000) / 1000);
+                            handleQuantityChangeToCart({ target: { value: newValue } }, item);
+                          }
+                        }}
+                        inputProps={{ step: currentMode === "FRAC" ? 0.1 : 1, min: currentMode === "FRAC" ? 0.1 : 1 }}
+                        fullWidth
+                      />
+                    </Box>
+                    <Box sx={{ flex: 1, minWidth: 100 }}>
+                      <Typography variant="caption" sx={{ display: 'block', mb: 0.5, fontWeight: 600 }}>Precio unitario</Typography>
+                      <TextField
+                        size="small"
+                        type="number"
+                        value={item.unit_price || item.product.prices.unit_price}
+                        disabled
+                        inputProps={{ step: 0.01, min: 0 }}
+                        fullWidth
+                      />
+                    </Box>
+                  </Box>
+
+                  {/* Switch de mayoreo */}
+                  {item.product.prices.apply_wholesale && movementType === MOVEMENT_TYPES.SALE && currentMode === "KG" && (
+                    <Box sx={{ mb: 1 }}>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            size="small"
+                            checked={item.product_price === item.product.prices.wholesale_price}
+                            onChange={() => handleChangePrice(item)}
+                            disabled={!item.product.prices.wholesale_price}
+                          />
+                        }
+                        label={`Mayoreo (${item.product.prices.min_wholesale_quantity}+) - $${item.product.prices.wholesale_price.toFixed(2)}`}
+                      />
+                    </Box>
+                  )}
+
+                  <Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
+                    <Box>
+                      <Typography variant="caption" sx={{ display: 'block', color: 'text.secondary', fontWeight: 600 }}>Stock</Typography>
+                      <Typography variant="body2">{item.available_stock}</Typography>
+                    </Box>
+                    <Box>
+                      <Typography variant="caption" sx={{ display: 'block', color: 'text.secondary', fontWeight: 600 }}>Total</Typography>
+                      <Typography variant="body2" sx={{ fontWeight: 700 }}>${(item.quantity * (item.unit_price || item.product.prices.unit_price)).toFixed(2)}</Typography>
+                    </Box>
+                  </Box>
+                </Grid>
+              );
+            })}
+          </Grid>
+        )}
       </div>
     </div>
   );
