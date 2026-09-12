@@ -130,16 +130,36 @@ const Drawer = styled(MuiDrawer, {
     flexShrink: 0,
     whiteSpace: "nowrap",
     boxSizing: "border-box",
-    ...(open && {
-      ...openedMixin(theme),
-      "& .MuiDrawer-paper": { ...openedMixin(theme), ...paperBase },
-    }),
-    ...(!open && {
-      ...closedMixin(theme),
-      "& .MuiDrawer-paper": { ...closedMixin(theme), ...paperBase },
-    }),
+    [theme.breakpoints.up("md")]: {
+      ...(open && {
+        ...openedMixin(theme),
+        "& .MuiDrawer-paper": { ...openedMixin(theme), ...paperBase },
+      }),
+      ...(!open && {
+        ...closedMixin(theme),
+        "& .MuiDrawer-paper": { ...closedMixin(theme), ...paperBase },
+      }),
+    },
+    [theme.breakpoints.down("md")]: {
+      display: "none",
+    },
   };
 });
+
+const DrawerModal = styled(MuiDrawer)(({ theme }) => ({
+  [theme.breakpoints.up("md")]: {
+    display: "none",
+  },
+  "& .MuiDrawer-paper": {
+    width: drawerWidth,
+    background: colors.gradient.sidebar,
+    color: "#fff",
+    borderRight: "none",
+    display: "flex",
+    flexDirection: "column",
+    boxSizing: "border-box",
+  },
+}));
 
 export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
   const navigate = useNavigate();
@@ -172,8 +192,14 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
     if (open) setOpenMenus({});
   };
 
+  const toggleDrawer = (newOpen) => (event) => {
+    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+      return;
+    }
+    setOpen(newOpen);
+  };
+
   const handleToggleMenu = (label) => {
-    setOpen(true);
     setOpenMenus((prev) => ({ [label]: !prev[label] }));
   };
 
@@ -427,6 +453,137 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
         </Toolbar>
       </AppBar>
 
+      {/* Drawer modal para mobile/tablets */}
+      <DrawerModal anchor="left" open={open} onClose={toggleDrawer(false)}>
+        <DrawerHeader
+          sx={{
+            display: "flex", alignItems: "center", justifyContent: "center",
+            minHeight: "60px !important",
+            borderBottom: "1px solid rgba(255,255,255,0.06)",
+          }}
+        >
+          <a href="https://smartventa-pos.vercel.app/" target="_blank" rel="noopener noreferrer">
+            <Box component="img" src={logo} alt="SmartVenta"
+              sx={{ height: "38px", width: "auto", objectFit: "contain", borderRadius: 1, cursor: "pointer" }}
+            />
+          </a>
+        </DrawerHeader>
+
+        <Divider sx={{ backgroundColor: "rgba(255,255,255,0.06)" }} />
+
+        <List sx={{
+          pt: 1.5, px: 1, flex: 1, overflowY: "auto", overflowX: "hidden",
+          "&::-webkit-scrollbar": { width: "4px" },
+          "&::-webkit-scrollbar-thumb": { backgroundColor: "rgba(255,255,255,0.2)", borderRadius: "4px" },
+        }}>
+          {menuItems.map((item, idx) => {
+            if (item.hidden) return null;
+
+            if (item.dropdown) {
+              return (
+                <React.Fragment key={idx}>
+                  <ListItem disablePadding sx={{ mb: 0.3 }}>
+                    <ListItemButton
+                      onClick={() => !item.disabled && handleToggleMenu(item.label)}
+                      disabled={item.disabled}
+                      sx={{
+                        borderRadius: "10px", py: 1,
+                        justifyContent: "initial",
+                        "&:hover": { backgroundColor: item.disabled ? "transparent" : "rgba(255,255,255,0.08)" },
+                      }}
+                    >
+                      <ListItemIcon sx={{ color: item.disabled ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.7)", minWidth: 38, justifyContent: "center" }}>
+                        {iconMap[item.label] || <DashboardIcon />}
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={item.label}
+                        secondary={item.disabled ? item.disabledMessage : null}
+                        primaryTypographyProps={{ fontWeight: 600, fontSize: "0.8rem" }}
+                        secondaryTypographyProps={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.4)" }}
+                      />
+                      {!item.disabled && (openMenus[item.label] ? <ExpandLess sx={{ fontSize: 18 }} /> : <ExpandMore sx={{ fontSize: 18 }} />)}
+                    </ListItemButton>
+                  </ListItem>
+                  <Collapse in={openMenus[item.label]} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
+                      {item.dropdown.map((sub, i) =>
+                        sub.divider || sub.hidden ? null : (
+                          <ListItemButton key={i} onClick={() => !sub.disabled && navigate(sub.href)} disabled={sub.disabled}
+                            sx={{
+                              pl: 6.5, py: 0.6, borderRadius: "8px", my: 0.2, mx: 0.5,
+                              ...(isActive(sub.href) ? activeSx : {}),
+                              "&:hover": { backgroundColor: sub.disabled ? "transparent" : "rgba(255,255,255,0.06)" },
+                            }}
+                          >
+                            <ListItemText primary={sub.label}
+                              secondary={sub.disabled ? sub.disabledMessage : null}
+                              primaryTypographyProps={{
+                                fontSize: "0.75rem",
+                                color: sub.disabled ? "rgba(255,255,255,0.3)" : isActive(sub.href) ? accent : "rgba(255,255,255,0.75)",
+                                fontWeight: isActive(sub.href) ? 600 : 400,
+                              }}
+                              secondaryTypographyProps={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.4)" }}
+                            />
+                          </ListItemButton>
+                        )
+                      )}
+                    </List>
+                  </Collapse>
+                </React.Fragment>
+              );
+            }
+
+            return (
+              <ListItem key={idx} disablePadding sx={{ mb: 0.3 }}>
+                <ListItemButton onClick={() => navigate(item.href)}
+                  sx={{
+                    borderRadius: "10px", py: 1,
+                    justifyContent: "initial",
+                    ...(isActive(item.href) ? activeSx : {}),
+                    "&:hover": { backgroundColor: "rgba(255,255,255,0.08)" },
+                  }}
+                >
+                  <ListItemIcon sx={{
+                    color: isActive(item.href) ? accent : "rgba(255,255,255,0.7)",
+                    minWidth: 38, justifyContent: "center",
+                  }}>
+                    {iconMap[item.label] || <DashboardIcon />}
+                  </ListItemIcon>
+                  <ListItemText primary={item.label}
+                    primaryTypographyProps={{
+                      fontWeight: 600, fontSize: "0.8rem",
+                      color: isActive(item.href) ? accent : "inherit",
+                    }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            );
+          })}
+        </List>
+        <Box sx={{ mt: "auto", p: 1 }}>
+          {user.role !== "seller" && (
+            <>
+              <ListItemButton
+                component="a"
+                href={`https://api.whatsapp.com/send/?phone=${process.env.REACT_APP_WHATSAPP_NUMBER}&text=${encodeURIComponent(`Soporte SmartVenta\nTenant: ${user.tenant_name}\nTienda: ${user.store_name || "General"}`)}&type=phone_number&app_absent=0`}
+                target="_blank"
+                rel="noopener noreferrer"
+                sx={{
+                  borderRadius: 2, justifyContent: "initial",
+                  "&:hover": { backgroundColor: "rgba(37, 211, 102, 0.12)" },
+                }}
+              >
+                <ListItemIcon sx={{ color: "#25D366", minWidth: 38, justifyContent: "center" }}>
+                  <WhatsAppIcon />
+                </ListItemIcon>
+                <ListItemText primary="Soporte" primaryTypographyProps={{ fontWeight: 600, fontSize: "0.8rem" }} />
+              </ListItemButton>
+            </>
+          )}
+        </Box>
+      </DrawerModal>
+
+      {/* Drawer permanente para desktop */}
       <Drawer variant="permanent" open={open}>
         <DrawerHeader
           sx={{
@@ -560,7 +717,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
         </Box>
       </Drawer>
 
-      <Box component="main" sx={{ flexGrow: 1, p: { xs: 1.5, sm: 2, md: 3 }, minWidth: 0, overflowY: "auto" }}>
+      <Box component="main" sx={{ flexGrow: 1, p: { xs: 1.5, sm: 2, md: 3 }, minWidth: 0, overflowY: "auto", position: "relative" }}>
         <DrawerHeader />
         <Outlet />
       </Box>
