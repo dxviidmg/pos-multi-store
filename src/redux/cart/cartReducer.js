@@ -134,7 +134,7 @@ const cartReducer = (state = initialState, action) => {
       };
 
     case CLEAN_CART:
-      return { ...state, cart: [] };
+      return { ...state, cart: [], movementType: MOVEMENT_TYPES.SALE, client: null };
 
     case UPDATE_MOVEMENT_TYPE:
       return { ...state, movementType: action.payload};
