@@ -22,7 +22,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { usePrinterStatus } from "../../../hooks/usePrinterStatus";
 import { handlePrintTicket } from "../../../utils/utils";
-import { Grid, TextField, FormLabel, RadioGroup, FormControlLabel, Radio, InputAdornment, IconButton, CircularProgress, LinearProgress, Alert } from "@mui/material";
+import { Grid, TextField, FormLabel, RadioGroup, FormControlLabel, Radio, InputAdornment, IconButton, CircularProgress, LinearProgress, Alert, Select, MenuItem, useMediaQuery, useTheme } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import PushPinIcon from "@mui/icons-material/PushPin";
 import PushPinOutlinedIcon from "@mui/icons-material/PushPinOutlined";
@@ -37,6 +37,9 @@ import ProductCarousel from "../ProductCarousel/ProductCarousel";
 const SearchProduct = ({ searchInputRef }) => {
   const localRef = useRef(null);
   const inputRef = searchInputRef || localRef;
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   const dispatch = useDispatch();
   const stockModal = useModal();
@@ -195,96 +198,133 @@ const SearchProduct = ({ searchInputRef }) => {
             El producto {stockVerificationSnackbar.productCode} necesita verificación de stock
           </Alert>
         )}
-        <CustomButton
-          fullWidth
-          onClick={async () => {
-            if (!storePrinter) {
-              showAlert("info", "Impresora no configurada", "Para configurar la impresora, contacte a soporte técnico. Recomendamos la Epson TM-88V.");
-            } else {
-              handlePrintTicket("test", {});
-            }
-          }}
-          startIcon={printerConnected ? <CheckCircleIcon fontSize="small" sx={{ color: 'success.main' }} /> : <CancelIcon fontSize="small" sx={{ color: 'error.main' }} />}
-          color={printerConnected ? "success" : undefined}
-        >
-          {!storePrinter ? "Configurar impresora" : printerConnected ? (
-            <>
-              <span className="default-text">Impresora conectada</span>
-            </>
-          ) : "Impresora desconectada"}
-        </CustomButton>
+        {!isMobile && (
+          <CustomButton
+            fullWidth
+            onClick={async () => {
+              if (!storePrinter) {
+                showAlert("info", "Impresora no configurada", "Para configurar la impresora, contacte a soporte técnico. Recomendamos la Epson TM-88V.");
+              } else {
+                handlePrintTicket("test", {});
+              }
+            }}
+            startIcon={printerConnected ? <CheckCircleIcon fontSize="small" sx={{ color: 'success.main' }} /> : <CancelIcon fontSize="small" sx={{ color: 'error.main' }} />}
+            color={printerConnected ? "success" : undefined}
+          >
+            {!storePrinter ? "Configurar impresora" : printerConnected ? (
+              <>
+                <span className="default-text">Impresora conectada</span>
+              </>
+            ) : "Impresora desconectada"}
+          </CustomButton>
+        )}
       </PageHeader>
 
       <Grid container spacing={0} sx={{ mb: 0.5, mt: -1.5 }}>
-        <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
-          <FormLabel sx={{ fontWeight: 600, mr: 1, fontSize: '0.875rem' }}>Modo de búsqueda:</FormLabel>
-          <RadioGroup row value={queryType} onChange={handleQueryTypeChange}>
-            <FormControlLabel 
-              value="code" 
-              control={<Radio size="small" sx={{ py: 0.5 }} />} 
-              label="Código de barras (Ctrl+Q)"
-              sx={{ mr: 4 }}
-            />
-            <FormControlLabel 
-              value="q" 
-              control={<Radio size="small" sx={{ py: 0.5 }} />} 
-              label="Nombre o marca (Ctrl+W)"
-              sx={{ mr: 4 }}
-            />
-            <FormControlLabel 
-              value="visual" 
-              control={<Radio size="small" sx={{ py: 0.5 }} />} 
-              label="Visual (Ctrl+K)"
-            />
-          </RadioGroup>
+        <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
+          <FormLabel sx={{ fontWeight: 600, fontSize: '0.875rem' }}>Modo de búsqueda:</FormLabel>
+          {isMobile ? (
+            <Select
+              size="small"
+              value={queryType}
+              onChange={handleQueryTypeChange}
+              fullWidth
+            >
+              <MenuItem value="code">Código de barras</MenuItem>
+              <MenuItem value="q">Nombre o marca</MenuItem>
+              <MenuItem value="visual">Visual</MenuItem>
+            </Select>
+          ) : (
+            <RadioGroup row value={queryType} onChange={handleQueryTypeChange}>
+              <FormControlLabel 
+                value="code" 
+                control={<Radio size="small" sx={{ py: 0.5 }} />} 
+                label="Código de barras (Ctrl+Q)"
+                sx={{ mr: 4 }}
+              />
+              <FormControlLabel 
+                value="q" 
+                control={<Radio size="small" sx={{ py: 0.5 }} />} 
+                label="Nombre o marca (Ctrl+W)"
+                sx={{ mr: 4 }}
+              />
+              <FormControlLabel 
+                value="visual" 
+                control={<Radio size="small" sx={{ py: 0.5 }} />} 
+                label="Visual (Ctrl+K)"
+              />
+            </RadioGroup>
+          )}
         </Grid>
 
-        <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
-          <FormLabel sx={{ fontWeight: 600, mr: 1, fontSize: '0.875rem' }}>Tipo de operación:</FormLabel>
-          <RadioGroup row value={movementType} onChange={handleMovementTypeChange}>
-            {storeType !== "A" && (
+        <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
+          <FormLabel sx={{ fontWeight: 600, fontSize: '0.875rem' }}>Tipo de operación:</FormLabel>
+          {isMobile ? (
+            <Select
+              size="small"
+              value={movementType}
+              onChange={handleMovementTypeChange}
+              fullWidth
+            >
+              {storeType !== "A" && (
+                <MenuItem value={MOVEMENT_TYPES.SALE}>Venta</MenuItem>
+              )}
+              {storeType !== "T" && (
+                <MenuItem value={MOVEMENT_TYPES.DISTRIBUTION}>Distribución</MenuItem>
+              )}
+              <MenuItem value={MOVEMENT_TYPES.TRANSFER}>Confirmar traspaso</MenuItem>
+              <MenuItem value={MOVEMENT_TYPES.ADD_STOCK}>Agregar a inventario</MenuItem>
+              <MenuItem value={MOVEMENT_TYPES.CHECK_STOCK}>Checar precio</MenuItem>
+              {storeType !== "A" && (
+                <MenuItem value={MOVEMENT_TYPES.RESERVATION}>Apartado</MenuItem>
+              )}
+            </Select>
+          ) : (
+            <RadioGroup row value={movementType} onChange={handleMovementTypeChange}>
+              {storeType !== "A" && (
+                <FormControlLabel 
+                  value={MOVEMENT_TYPES.SALE} 
+                  control={<Radio size="small" sx={{ py: 0.5 }} />} 
+                  label="Venta (Ctrl+E)"
+                  sx={{ mr: 4 }}
+                />
+              )}
+              {storeType !== "T" && (
+                <FormControlLabel 
+                  value={MOVEMENT_TYPES.DISTRIBUTION} 
+                  control={<Radio size="small" sx={{ py: 0.5 }} />} 
+                  label="Distribución (Ctrl+T)"
+                  sx={{ mr: 4 }}
+                />
+              )}
               <FormControlLabel 
-                value={MOVEMENT_TYPES.SALE} 
+                value={MOVEMENT_TYPES.TRANSFER} 
                 control={<Radio size="small" sx={{ py: 0.5 }} />} 
-                label="Venta (Ctrl+E)"
+                label="Confirmar traspaso (Ctrl+R)"
                 sx={{ mr: 4 }}
               />
-            )}
-            {storeType !== "T" && (
               <FormControlLabel 
-                value={MOVEMENT_TYPES.DISTRIBUTION} 
-                control={<Radio size="small" sx={{ py: 0.5 }} />} 
-                label="Distribución (Ctrl+T)"
+                value={MOVEMENT_TYPES.ADD_STOCK} 
+                control={<Radio size="small" />} 
+                label="Agregar a inventario (Ctrl+Y)"
                 sx={{ mr: 4 }}
               />
-            )}
-            <FormControlLabel 
-              value={MOVEMENT_TYPES.TRANSFER} 
-              control={<Radio size="small" sx={{ py: 0.5 }} />} 
-              label="Confirmar traspaso (Ctrl+R)"
-              sx={{ mr: 4 }}
-            />
-            <FormControlLabel 
-              value={MOVEMENT_TYPES.ADD_STOCK} 
-              control={<Radio size="small" />} 
-              label="Agregar a inventario (Ctrl+Y)"
-              sx={{ mr: 4 }}
-            />
-            <FormControlLabel 
-              value={MOVEMENT_TYPES.CHECK_STOCK} 
-              control={<Radio size="small" />} 
-              label="Checar precio (Ctrl+U)"
-              sx={{ mr: 4 }}
-            />
-            {storeType !== "A" && (
               <FormControlLabel 
-                value={MOVEMENT_TYPES.RESERVATION} 
-                control={<Radio size="small" sx={{ py: 0.5 }} />} 
-                label="Apartado (Ctrl+I)"
+                value={MOVEMENT_TYPES.CHECK_STOCK} 
+                control={<Radio size="small" />} 
+                label="Checar precio (Ctrl+U)"
                 sx={{ mr: 4 }}
               />
-            )}
-          </RadioGroup>
+              {storeType !== "A" && (
+                <FormControlLabel 
+                  value={MOVEMENT_TYPES.RESERVATION} 
+                  control={<Radio size="small" sx={{ py: 0.5 }} />} 
+                  label="Apartado (Ctrl+I)"
+                  sx={{ mr: 4 }}
+                />
+              )}
+            </RadioGroup>
+          )}
         </Grid>
       </Grid>
 
