@@ -10,7 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 
-const SimpleTable = ({ data, columns, noDataComponent }) => {
+const SimpleTable = ({ data, columns, noDataComponent, onRowClicked }) => {
   const getCellAlignment = (row, col) => {
     const value = col.selector ? col.selector(row) : row[col.field];
     if (typeof value === 'string' && value.includes('$')) {
@@ -45,7 +45,11 @@ const SimpleTable = ({ data, columns, noDataComponent }) => {
             </TableRow>
           ) : (
             data.map((row, rowIdx) => (
-              <TableRow key={rowIdx}>
+              <TableRow
+                key={rowIdx}
+                onClick={onRowClicked ? () => onRowClicked(row) : undefined}
+                sx={onRowClicked ? { cursor: 'pointer', '&:hover': { backgroundColor: 'action.hover' } } : undefined}
+              >
                 {columns.map((col, colIdx) => (
                   <TableCell
                     key={colIdx}

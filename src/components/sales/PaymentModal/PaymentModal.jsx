@@ -335,15 +335,24 @@ const PaymentModal = ({ isOpen, onClose }) => {
             </Grid>
           )}
           {movementType !== MOVEMENT_TYPES.RESERVATION && (
-          <Grid item xs={12} className="card" sx={{ marginBottom: '1rem' }}>
+          <Grid item xs={12} className="card" sx={{ padding: '0.75rem !important', marginBottom: '1rem !important' }}>
             <Grid container spacing={2}>
               <Grid item xs={12} md={6}>
                 <CustomButton
                   fullWidth
-                  onClick={(e) => setHideClient((prevState) => !prevState)}
+                  onClick={() => {
+                    if (!hideClient) {
+                      // Está abierto → cerrar y limpiar
+                      setHideClient(true);
+                      dispatch(removeClientfromCart());
+                    } else {
+                      setHideClient(false);
+                    }
+                  }}
                   startIcon={<PersonAddIcon />}
+                  color={!hideClient ? 'error' : 'primary'}
                 >
-                  Añadir cliente
+                  {!hideClient ? 'Quitar cliente' : 'Añadir cliente'}
                 </CustomButton>
               </Grid>
 
@@ -360,83 +369,61 @@ const PaymentModal = ({ isOpen, onClose }) => {
           </Grid>
           )}
 
-          <Grid item xs={12} className="card" hidden={movementType === MOVEMENT_TYPES.RESERVATION ? false : hideClient} sx={{ marginBottom: '1.5rem' }}>
+          <Grid item xs={12} className="card" hidden={movementType === MOVEMENT_TYPES.RESERVATION ? false : hideClient} sx={{ padding: '0.75rem !important', marginBottom: '1rem !important' }}>
             {/* Encabezado */}
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <PersonAddIcon sx={{ color: 'primary.main', fontSize: '1.4rem' }} />
-                <Box component="h2" sx={{ m: 0, fontSize: '1.1rem', fontWeight: 600 }}>Seleccionar cliente</Box>
-              </Box>
-              {!client?.id && (
-                <Chip 
-                  label="Sin cliente seleccionado" 
-                  size="small" 
-                  variant="outlined"
-                  sx={{ fontSize: '0.75rem', opacity: 0.7 }}
-                />
-              )}
-            </Box>
+            <p style={{ marginBottom: '0.5rem', fontWeight: 'bold'}}>{client?.id ? 'Cliente seleccionado' : 'Seleccionar cliente'}</p>
 
-            {/* Búsqueda + Crear cliente */}
-            <Grid container spacing={1.5} sx={{ mb: 2 }}>
-              <Grid item xs={12} md={9}>
-                <SearchClient />
+            {/* Búsqueda + Crear cliente — solo si no hay cliente seleccionado */}
+            {!client?.id && (
+              <Grid container spacing={1}>
+                <Grid item xs={12}>
+                  <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                    <Box sx={{ flex: 1 }}>
+                      <SearchClient />
+                    </Box>
+                    <CustomButton
+                      onClick={() => clientModal.open()}
+                      startIcon={<PersonAddAltIcon />}
+                      sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}
+                    >
+                      Crear cliente
+                    </CustomButton>
+                  </Box>
+                </Grid>
               </Grid>
-              <Grid item xs={12} md={3} sx={{ display: 'flex', alignItems: 'flex-end', pb: '9px' }}>
-                <CustomButton
-                  fullWidth
-                  onClick={() => clientModal.open()}
-                  startIcon={<PersonAddAltIcon />}
-                >
-                  Crear cliente
-                </CustomButton>
-              </Grid>
-            </Grid>
+            )}
 
             {/* Info del cliente seleccionado */}
             {client?.id && (
-              <Box sx={{ 
-                p: 1.5, 
-                borderRadius: 2, 
-                backgroundColor: 'action.hover', 
-                border: '1px solid',
-                borderColor: 'divider'
-              }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
-                  <Box component="span" sx={{ fontSize: '0.8rem', fontWeight: 600, color: 'text.secondary', textTransform: 'uppercase', letterSpacing: '0.03em' }}>
-                    Cliente seleccionado
-                  </Box>
-                </Box>
-                <Grid container spacing={2} sx={{ alignItems: 'center' }}>
-                  <Grid item xs={12} md={3}>
-                    <TextField size="small" fullWidth label="Nombre" value={client.full_name || ""} disabled />
-                  </Grid>
-                  <Grid item xs={12} md={3}>
-                    <TextField size="small" fullWidth label="Teléfono" value={client.phone_number || ""} disabled />
-                  </Grid>
-                  <Grid item xs={12} md={3}>
-                    <TextField size="small" fullWidth label="Descuento" value={client.discount_percentage != null ? `${client.discount_percentage}%` : ""} disabled />
-                  </Grid>
-                  <Grid item xs={12} md={3}>
-                    <CustomButton 
-                      fullWidth 
-                      onClick={() => dispatch(removeClientfromCart())} 
-                      startIcon={<PersonRemoveIcon />}
-                      color="inherit"
-                      sx={{ opacity: 0.8, '&:hover': { opacity: 1 } }}
-                    >
-                      Borrar (Ctrl+O)
-                    </CustomButton>
-                  </Grid>
+              <Grid container spacing={2} sx={{ alignItems: 'center' }}>
+                <Grid item xs={12} md={3}>
+                  <TextField size="small" fullWidth label="Nombre" value={client.full_name || ""} disabled />
                 </Grid>
-              </Box>
+                <Grid item xs={12} md={3}>
+                  <TextField size="small" fullWidth label="Teléfono" value={client.phone_number || ""} disabled />
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <TextField size="small" fullWidth label="Descuento" value={client.discount_percentage != null ? `${client.discount_percentage}%` : ""} disabled />
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <CustomButton
+                    fullWidth
+                    onClick={() => dispatch(removeClientfromCart())}
+                    startIcon={<PersonRemoveIcon />}
+                    color="inherit"
+                    sx={{ opacity: 0.8, '&:hover': { opacity: 1 } }}
+                  >
+                    Borrar (Ctrl+O)
+                  </CustomButton>
+                </Grid>
+              </Grid>
             )}
 
             <ClientModal isOpen={clientModal.isOpen} client={null} onClose={clientModal.close} onUpdate={(newClient) => { if (newClient) dispatch(addClientToCart(newClient)); }} />
           </Grid>
 
-          <Grid item xs={12} className="card" hidden={hideExchange} sx={{ marginBottom: '1.5rem' }}>
-            <h2>Cambio de mercancia</h2>
+          <Grid item xs={12} className="card" hidden={hideExchange} sx={{ padding: '0.75rem !important', marginBottom: '1rem !important' }}>
+            <p style={{ marginBottom: '0.5rem', fontWeight: 'bold'}}>Cambio de mercancia</p>
             <Grid container spacing={2}>
               <Grid item xs={12} md={3}>
                 <TextField
@@ -484,10 +471,10 @@ const PaymentModal = ({ isOpen, onClose }) => {
             </Grid>
           </Grid>
 
-          <Grid item xs={12} className="card" sx={{ marginBottom: '1rem' }}>
-            <h2 style={{ marginBottom: '0.5rem' }}>Totales</h2>
-            <Grid container spacing={2}>
-              <Grid item xs={6} md={3}>
+          <Grid item xs={12} className="card" sx={{ padding: '0.75rem !important', marginBottom: '1rem !important' }}>
+            <p style={{ marginBottom: '0.5rem', fontWeight: 'bold'}}>Totales</p>
+            <Grid container spacing={isMobile ? 1.5 : 2}>
+              <Grid item xs={isMobile ? 6 : (client?.id ? 3 : 4)}>
                 <TextField
                   fullWidth
                   size="small"
@@ -496,21 +483,61 @@ const PaymentModal = ({ isOpen, onClose }) => {
                   value={total.toFixed(2)}
                   disabled
                   InputProps={{ startAdornment: '$' }}
+                  sx={{
+                    '& .MuiInputBase-input.Mui-disabled': {
+                      fontWeight: 700,
+                      WebkitTextFillColor: '#04346b',
+                    },
+                    '& .MuiInputAdornment-root p': {
+                      fontWeight: 700,
+                      color: '#04346b',
+                      WebkitTextFillColor: '#04346b',
+                    },
+                    '& .MuiOutlinedInput-root.Mui-disabled': {
+                      backgroundColor: 'rgba(4, 52, 107, 0.06)',
+                      '& fieldset': { borderColor: '#04346b', borderWidth: 2 },
+                    },
+                    '& .MuiInputLabel-root.Mui-disabled': {
+                      color: '#04346b',
+                      fontWeight: 600,
+                    },
+                  }}
                 />
               </Grid>
 
-              <Grid item xs={6} md={3}>
-                <TextField
-                  fullWidth
-                  size="small"
-                  label="Total con descuento"
-                  type="number"
-                  value={totalDiscount.toFixed(2)}
-                  disabled
-                  InputProps={{ startAdornment: '$' }}
-                />
-              </Grid>
-              <Grid item xs={6} md={3}>
+              {client?.id && (
+                <Grid item xs={isMobile ? 6 : 3}>
+                  <TextField
+                    fullWidth
+                    size="small"
+                    label="Total con descuento"
+                    type="number"
+                    value={totalDiscount.toFixed(2)}
+                    disabled
+                    InputProps={{ startAdornment: '$' }}
+                    sx={{
+                      '& .MuiInputBase-input.Mui-disabled': {
+                        fontWeight: 700,
+                        WebkitTextFillColor: '#065a9e',
+                      },
+                      '& .MuiInputAdornment-root p': {
+                        fontWeight: 700,
+                        color: '#065a9e',
+                        WebkitTextFillColor: '#065a9e',
+                      },
+                      '& .MuiOutlinedInput-root.Mui-disabled': {
+                        backgroundColor: 'rgba(6, 90, 158, 0.08)',
+                        '& fieldset': { borderColor: '#065a9e', borderWidth: 2 },
+                      },
+                      '& .MuiInputLabel-root.Mui-disabled': {
+                        color: '#065a9e',
+                        fontWeight: 600,
+                      },
+                    }}
+                  />
+                </Grid>
+              )}
+              <Grid item xs={isMobile ? 6 : (client?.id ? 3 : 4)}>
                 <TextField
                   fullWidth
                   size="small"
@@ -520,9 +547,13 @@ const PaymentModal = ({ isOpen, onClose }) => {
                   onChange={handlePaidWithChange}
                   inputRef={inputPaymentRef}
                   InputProps={{ startAdornment: '$' }}
+                  sx={{
+                    '& .MuiInputBase-input': { fontWeight: 700 },
+                    '& .MuiInputAdornment-root p': { fontWeight: 700 },
+                  }}
                 />
               </Grid>
-              <Grid item xs={6} md={3}>
+              <Grid item xs={isMobile ? 6 : (client?.id ? 3 : 4)}>
                 {paymentMethods.methods.TA > 0 ||
                 paymentMethods.methods.TR > 0 ? (
                   <TextField
@@ -559,15 +590,37 @@ const PaymentModal = ({ isOpen, onClose }) => {
                     value={payment.change}
                     disabled
                     InputProps={{ startAdornment: '$' }}
+                    sx={{
+                      '& .MuiInputBase-input.Mui-disabled': {
+                        fontWeight: 700,
+                        WebkitTextFillColor: payment.change > 0 ? '#11998e' : '#04346b',
+                      },
+                      '& .MuiInputAdornment-root p': {
+                        fontWeight: 700,
+                        color: payment.change > 0 ? '#11998e' : '#04346b',
+                        WebkitTextFillColor: payment.change > 0 ? '#11998e' : '#04346b',
+                      },
+                      '& .MuiOutlinedInput-root.Mui-disabled': {
+                        backgroundColor: payment.change > 0 ? 'rgba(17, 153, 142, 0.08)' : 'rgba(4, 52, 107, 0.06)',
+                        '& fieldset': {
+                          borderColor: payment.change > 0 ? '#11998e' : '#04346b',
+                          borderWidth: 2,
+                        },
+                      },
+                      '& .MuiInputLabel-root.Mui-disabled': {
+                        color: payment.change > 0 ? '#11998e' : '#04346b',
+                        fontWeight: 600,
+                      },
+                    }}
                   />
                 )}
               </Grid>
             </Grid>
           </Grid>
 
-          <Grid item xs={12} className="card">
-            <Grid container spacing={2}>
-              <Grid item xs={6} md={paymentMethods.type === "checkbox" ? 3 : 4}>
+          <Grid item xs={12} className="card" sx={{ padding: '0.75rem !important' }}>
+            <Grid container spacing={isMobile ? 1.5 : 2}>
+              <Grid item xs={isMobile ? 12 : (paymentMethods.type === "checkbox" ? 3 : 4)}>
                 <FormLabel>Tipo de pago:</FormLabel>
                 <RadioGroup
                   value={paymentMethods.type}
@@ -581,7 +634,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
                 </RadioGroup>
               </Grid>
 
-              <Grid item xs={6} md={paymentMethods.type === "checkbox" ? 3 : 4}>
+              <Grid item xs={isMobile ? 6 : (paymentMethods.type === "checkbox" ? 3 : 4)}>
                 <FormLabel>Medios de pago:</FormLabel>
                 <RadioGroup
                   value={
@@ -629,7 +682,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
               </Grid>
 
               {paymentMethods.type === "checkbox" && (
-                <Grid item xs={12} md={3}>
+                <Grid item xs={isMobile ? 6 : 3}>
                   <FormLabel>Cantidades:</FormLabel>
                   <RadioGroup>
                   {["EF", "TA", "TR"].map((method, index) => (
@@ -648,7 +701,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
                 </Grid>
               )}
 
-              <Grid item xs={12} md={paymentMethods.type === "checkbox" ? 3 : 4}>
+              <Grid item xs={isMobile ? 12 : (paymentMethods.type === "checkbox" ? 3 : 4)}>
                 {!isMobile && (
                   <>
                     <FormLabel sx={{ display: 'block', textAlign: 'center' }}>{printer ? 'Con impresión de ticket' : 'Sin impresión de ticket'}</FormLabel>

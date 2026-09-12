@@ -220,112 +220,120 @@ const SearchProduct = ({ searchInputRef }) => {
         )}
       </PageHeader>
 
-      <Grid container spacing={0} sx={{ mb: 0.5, mt: -1.5 }}>
-        <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
-          <FormLabel sx={{ fontWeight: 600, fontSize: '0.875rem' }}>Modo de búsqueda:</FormLabel>
-          {isMobile ? (
-            <Select
-              size="small"
-              value={queryType}
-              onChange={handleQueryTypeChange}
-              fullWidth
-            >
-              <MenuItem value="code">Código de barras</MenuItem>
-              <MenuItem value="q">Nombre o marca</MenuItem>
-              <MenuItem value="visual">Visual</MenuItem>
-            </Select>
-          ) : (
-            <RadioGroup row value={queryType} onChange={handleQueryTypeChange}>
-              <FormControlLabel 
-                value="code" 
-                control={<Radio size="small" sx={{ py: 0.5 }} />} 
-                label="Código de barras (Ctrl+Q)"
-                sx={{ mr: 4 }}
-              />
-              <FormControlLabel 
-                value="q" 
-                control={<Radio size="small" sx={{ py: 0.5 }} />} 
-                label="Nombre o marca (Ctrl+W)"
-                sx={{ mr: 4 }}
-              />
-              <FormControlLabel 
-                value="visual" 
-                control={<Radio size="small" sx={{ py: 0.5 }} />} 
-                label="Visual (Ctrl+K)"
-              />
-            </RadioGroup>
-          )}
-        </Grid>
+      <Grid container spacing={isMobile ? 1.5 : 0} sx={{ mb: 0.5, mt: -1.5 }}>
+        {isMobile ? (
+          <>
+            <Grid item xs={12}>
+              <FormLabel sx={{ fontWeight: 600, fontSize: '0.875rem', display: 'block', mb: 0.5 }}>Modo de búsqueda:</FormLabel>
+              <Select
+                size="small"
+                value={queryType}
+                onChange={handleQueryTypeChange}
+                fullWidth
+              >
+                <MenuItem value="code">Código de barras</MenuItem>
+                <MenuItem value="q">Nombre o marca</MenuItem>
+                <MenuItem value="visual">Visual</MenuItem>
+              </Select>
+            </Grid>
 
-        <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
-          <FormLabel sx={{ fontWeight: 600, fontSize: '0.875rem' }}>Tipo de operación:</FormLabel>
-          {isMobile ? (
-            <Select
-              size="small"
-              value={movementType}
-              onChange={handleMovementTypeChange}
-              fullWidth
-            >
-              {storeType !== "A" && (
-                <MenuItem value={MOVEMENT_TYPES.SALE}>Venta</MenuItem>
-              )}
-              {storeType !== "T" && (
-                <MenuItem value={MOVEMENT_TYPES.DISTRIBUTION}>Distribución</MenuItem>
-              )}
-              <MenuItem value={MOVEMENT_TYPES.TRANSFER}>Confirmar traspaso</MenuItem>
-              <MenuItem value={MOVEMENT_TYPES.ADD_STOCK}>Agregar a inventario</MenuItem>
-              <MenuItem value={MOVEMENT_TYPES.CHECK_STOCK}>Checar precio</MenuItem>
-              {storeType !== "A" && (
-                <MenuItem value={MOVEMENT_TYPES.RESERVATION}>Apartado</MenuItem>
-              )}
-            </Select>
-          ) : (
-            <RadioGroup row value={movementType} onChange={handleMovementTypeChange}>
-              {storeType !== "A" && (
+            <Grid item xs={12}>
+              <FormLabel sx={{ fontWeight: 600, fontSize: '0.875rem', display: 'block', mb: 0.5 }}>Tipo de operación:</FormLabel>
+              <Select
+                size="small"
+                value={movementType}
+                onChange={handleMovementTypeChange}
+                fullWidth
+              >
+                {storeType !== "A" && (
+                  <MenuItem value={MOVEMENT_TYPES.SALE}>Venta</MenuItem>
+                )}
+                {storeType !== "T" && (
+                  <MenuItem value={MOVEMENT_TYPES.DISTRIBUTION}>Distribución</MenuItem>
+                )}
+                <MenuItem value={MOVEMENT_TYPES.TRANSFER}>Confirmar traspaso</MenuItem>
+                <MenuItem value={MOVEMENT_TYPES.ADD_STOCK}>Agregar a inventario</MenuItem>
+                <MenuItem value={MOVEMENT_TYPES.CHECK_STOCK}>Checar precio</MenuItem>
+                {storeType !== "A" && (
+                  <MenuItem value={MOVEMENT_TYPES.RESERVATION}>Apartado</MenuItem>
+                )}
+              </Select>
+            </Grid>
+          </>
+        ) : (
+          <>
+            <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
+              <FormLabel sx={{ fontWeight: 600, fontSize: '0.875rem' }}>Modo de búsqueda:</FormLabel>
+              <RadioGroup row value={queryType} onChange={handleQueryTypeChange}>
                 <FormControlLabel 
-                  value={MOVEMENT_TYPES.SALE} 
+                  value="code" 
                   control={<Radio size="small" sx={{ py: 0.5 }} />} 
-                  label="Venta (Ctrl+E)"
+                  label="Código de barras (Ctrl+Q)"
                   sx={{ mr: 4 }}
                 />
-              )}
-              {storeType !== "T" && (
                 <FormControlLabel 
-                  value={MOVEMENT_TYPES.DISTRIBUTION} 
+                  value="q" 
                   control={<Radio size="small" sx={{ py: 0.5 }} />} 
-                  label="Distribución (Ctrl+T)"
+                  label="Nombre o marca (Ctrl+W)"
                   sx={{ mr: 4 }}
                 />
-              )}
-              <FormControlLabel 
-                value={MOVEMENT_TYPES.TRANSFER} 
-                control={<Radio size="small" sx={{ py: 0.5 }} />} 
-                label="Confirmar traspaso (Ctrl+R)"
-                sx={{ mr: 4 }}
-              />
-              <FormControlLabel 
-                value={MOVEMENT_TYPES.ADD_STOCK} 
-                control={<Radio size="small" />} 
-                label="Agregar a inventario (Ctrl+Y)"
-                sx={{ mr: 4 }}
-              />
-              <FormControlLabel 
-                value={MOVEMENT_TYPES.CHECK_STOCK} 
-                control={<Radio size="small" />} 
-                label="Checar precio (Ctrl+U)"
-                sx={{ mr: 4 }}
-              />
-              {storeType !== "A" && (
                 <FormControlLabel 
-                  value={MOVEMENT_TYPES.RESERVATION} 
+                  value="visual" 
                   control={<Radio size="small" sx={{ py: 0.5 }} />} 
-                  label="Apartado (Ctrl+I)"
+                  label="Visual (Ctrl+K)"
+                />
+              </RadioGroup>
+            </Grid>
+
+            <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
+              <FormLabel sx={{ fontWeight: 600, fontSize: '0.875rem' }}>Tipo de operación:</FormLabel>
+              <RadioGroup row value={movementType} onChange={handleMovementTypeChange}>
+                {storeType !== "A" && (
+                  <FormControlLabel 
+                    value={MOVEMENT_TYPES.SALE} 
+                    control={<Radio size="small" sx={{ py: 0.5 }} />} 
+                    label="Venta (Ctrl+E)"
+                    sx={{ mr: 4 }}
+                  />
+                )}
+                {storeType !== "T" && (
+                  <FormControlLabel 
+                    value={MOVEMENT_TYPES.DISTRIBUTION} 
+                    control={<Radio size="small" sx={{ py: 0.5 }} />} 
+                    label="Distribución (Ctrl+T)"
+                    sx={{ mr: 4 }}
+                  />
+                )}
+                <FormControlLabel 
+                  value={MOVEMENT_TYPES.TRANSFER} 
+                  control={<Radio size="small" sx={{ py: 0.5 }} />} 
+                  label="Confirmar traspaso (Ctrl+R)"
                   sx={{ mr: 4 }}
                 />
-              )}
-            </RadioGroup>
-          )}
-        </Grid>
+                <FormControlLabel 
+                  value={MOVEMENT_TYPES.ADD_STOCK} 
+                  control={<Radio size="small" />} 
+                  label="Agregar a inventario (Ctrl+Y)"
+                  sx={{ mr: 4 }}
+                />
+                <FormControlLabel 
+                  value={MOVEMENT_TYPES.CHECK_STOCK} 
+                  control={<Radio size="small" />} 
+                  label="Checar precio (Ctrl+U)"
+                  sx={{ mr: 4 }}
+                />
+                {storeType !== "A" && (
+                  <FormControlLabel 
+                    value={MOVEMENT_TYPES.RESERVATION} 
+                    control={<Radio size="small" sx={{ py: 0.5 }} />} 
+                    label="Apartado (Ctrl+I)"
+                    sx={{ mr: 4 }}
+                  />
+                )}
+              </RadioGroup>
+            </Grid>
+          </>
+        )}
       </Grid>
 
       <Grid container spacing={1} sx={{ mb: 0.5 }}>
