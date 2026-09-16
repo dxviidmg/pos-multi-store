@@ -241,7 +241,7 @@ const SaleList = () => {
               name: "Productos",
               selector: (row) => <ProductsPopperButton row={row} productsModal={productsModal} />,
             },
-            { name: "Número de productos", selector: (row) => row.products_sale?.reduce((sum, p) => sum + p.quantity, 0) || 0, width: 80 },
+            { name: "Número de productos", selector: (row) => row.products_sale?.reduce((sum, p) => sum + (p.sells_by_fraction ? 1 : p.quantity), 0) || 0, width: 80 },
             { name: "Total", selector: (row) => `$${row.total}`, width: 80, omit: user.role === "seller" },
             ...(params.reservation_in_progress === "true"
               ? [
