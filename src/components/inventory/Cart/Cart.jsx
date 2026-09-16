@@ -115,8 +115,8 @@ const Cart = ({ searchInputRef }) => {
 
   const { totalProducts } = useMemo(() => {
     const totalProducts = cart.reduce((acc, item) => {
-      // Productos KG cuentan como 1 sin importar la cantidad
-      if (item.product?.unit === "KG") return acc + 1;
+      // Productos KG y LT cuentan como 1 sin importar la cantidad
+      if (item.product?.unit === "KG" || item.product?.unit === "LT") return acc + 1;
       return acc + item.quantity;
     }, 0);
     return { totalProducts };
@@ -136,11 +136,11 @@ const Cart = ({ searchInputRef }) => {
 
   const handleQuantityChangeToCart = (e, product) => {
     const rawValue = Number(e.target.value);
-    const productIsKg = product.product?.unit === "KG";
+    const productIsKg = product.product?.unit === "KG" || product.product?.unit === "LT";
     const mode = saleModes[product.id] || "KG";
     const minQty = productIsKg ? (mode === "$" ? 1 : (mode === "FRAC" ? 0.1 : 1)) : 1;
 
-    // En modo $, el valor es pesos, calcular kg
+    // En modo $, el valor es pesos, calcular kg/lt
     let newQuantity;
     if (mode === "$" && productIsKg) {
       if (e.target.value === "" || rawValue < 1) return;
@@ -426,7 +426,7 @@ const Cart = ({ searchInputRef }) => {
         ) : (
           <Grid container spacing={1}>
             {cart.map((item, idx) => {
-              const isKgProduct = item.product?.unit === "KG";
+              const isKgProduct = item.product?.unit === "KG" || item.product?.unit === "LT";
               const currentMode = isKgProduct ? (saleModes[item.id] || "KG") : "PZ";
               const SALE_MODES_CYCLE = ["KG", "FRAC", "$"];
               const getNextMode = (current) => {
@@ -434,8 +434,9 @@ const Cart = ({ searchInputRef }) => {
                 return SALE_MODES_CYCLE[(modeIdx + 1) % SALE_MODES_CYCLE.length];
               };
 
-              const modeLabels = { KG: "Kilo", FRAC: "Fracción", $: "Pesos", PZ: "Pieza" };
-              const unitLabels = { PZ: "Pieza", CO: "Costal", KG: "Kilo" };
+              const unitLabel = item.product?.unit === "LT" ? "Litro" : "Kilo";
+              const modeLabels = { KG: unitLabel, FRAC: "Fracción", $: "Pesos", PZ: "Pieza" };
+              const unitLabels = { PZ: "Pieza", CO: "Costal", KG: "Kilo", LT: "Litro" };
 
               return (
                 <Grid item xs={12} key={idx} sx={{ p: 2, bgcolor: 'background.paper', borderRadius: 1, border: '1px solid', borderColor: 'divider' }}>

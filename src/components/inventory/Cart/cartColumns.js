@@ -6,7 +6,7 @@ import ScaleIcon from "@mui/icons-material/Scale";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import { MOVEMENT_TYPES } from "../../../constants";
 
-const isKg = (row) => row.product?.unit === "KG";
+const isKg = (row) => row.product?.unit === "KG" || row.product?.unit === "LT";
 const SALE_MODES_CYCLE = ["KG", "FRAC", "$"];
 const getNextMode = (current) => {
   const idx = SALE_MODES_CYCLE.indexOf(current);
@@ -75,7 +75,8 @@ export const getSaleColumns = (handleQuantityChangeToCart, handleRemoveFromCart,
         return <span style={{ fontSize: '0.8rem', fontWeight: 600 }}>{unitLabels[row.product?.unit] || "Pieza"}</span>;
       }
 
-      const labels = { KG: "Kilo", FRAC: "Fracción", $: "Pesos" };
+      const unitLabel = row.product?.unit === "LT" ? "Litro" : "Kilo";
+      const labels = { KG: unitLabel, FRAC: "Fracción", $: "Pesos" };
       const icons = { KG: <ScaleIcon sx={{ fontSize: 14, mr: 0.3 }} />, FRAC: <ScaleIcon sx={{ fontSize: 14, mr: 0.3 }} />, $: <AttachMoneyIcon sx={{ fontSize: 14, mr: 0.3 }} /> };
       const isActive = mode === "$" || mode === "FRAC";
 
@@ -140,7 +141,7 @@ export const getSaleColumns = (handleQuantityChangeToCart, handleRemoveFromCart,
       );
     },
   },
-  { name: "Stock", selector: (row) => row.available_stock },
+  { name: "Stock", selector: (row) => `${row.available_stock} ${row.product?.unit || "PZ"}` },
   {
     name: "Precio",
     selector: (row) => `$${row.product_price.toFixed(2)}`,
@@ -212,9 +213,9 @@ export const getTransferColumns = (handleQuantityChangeToCart, handleRemoveFromC
       </div>
     ),
   },
-  { name: "Stock disponible", selector: (row) => row.available_stock },
-  { name: "Stock apartado", selector: (row) => row.reserved_stock },
-  { name: "Stock total", selector: (row) => row.available_stock + row.reserved_stock },
+  { name: "Stock disponible", selector: (row) => `${row.available_stock} ${row.product?.unit || "PZ"}` },
+  { name: "Stock apartado", selector: (row) => `${row.reserved_stock} ${row.product?.unit || "PZ"}` },
+  { name: "Stock total", selector: (row) => `${row.available_stock + row.reserved_stock} ${row.product?.unit || "PZ"}` },
   {
     name: "Cantidad",
     width: 100,
