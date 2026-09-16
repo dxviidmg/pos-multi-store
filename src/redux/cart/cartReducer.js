@@ -17,7 +17,7 @@ const initialState = {
   movementType: MOVEMENT_TYPES.SALE
 };
 
-const aClientIsSelected = (client) => Object.keys(client).length > 0;
+const aClientIsSelected = (client) => !!client && Object.keys(client).length > 0;
 
 const calculateProductPrice = (quantity, prices, clientSelected) => {
   if (!prices.wholesale_price_on_client_discount && clientSelected) {
