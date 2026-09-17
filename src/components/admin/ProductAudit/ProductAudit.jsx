@@ -40,7 +40,7 @@ const ProductAudit = () => {
             <AuditCard title="Códigos repetidos" syncResult={syncData?.duplicate_codes} />
           </Grid>
           <Grid item xs={12} lg={3}>
-            <AuditCard title="Costo en cero" syncResult={syncData?.zero_cost} />
+            <AuditCard title="Problemas de Costo" syncResult={syncData?.cost_issues} />
           </Grid>
           <Grid item xs={12} lg={3}>
             <AuditCard title="Precio mayoreo inconsistente" syncResult={syncData?.wholesale_issues} />
