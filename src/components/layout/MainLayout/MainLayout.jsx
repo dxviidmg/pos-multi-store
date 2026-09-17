@@ -389,7 +389,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
   };
 
   return (
-    <Box sx={{ display: "flex", overflowX: "hidden" }}>
+    <Box sx={{ display: "flex", overflowX: "hidden", height: "100vh" }}>
       <CssBaseline />
 
       <AppBar position="fixed" open={open}>
