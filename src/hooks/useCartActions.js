@@ -28,8 +28,9 @@ export const useCartActions = (getAvailableStock, movementType, keepListOpen, se
             : storeProduct.available_stock;
         const availableStock = getAvailableStock(storeProduct.id, stock);
         
-        if (availableStock >= 1) {
-          dispatch(addToCart({ ...storeProduct, quantity: 1 }));
+        if (availableStock > 0) {
+          const quantity = availableStock < 1 ? availableStock : 1;
+          dispatch(addToCart({ ...storeProduct, quantity }));
           added = true;
           if (!keepListOpen) {
             setData([]);
@@ -54,7 +55,9 @@ export const useCartActions = (getAvailableStock, movementType, keepListOpen, se
           setQuery("");
         }
       } else if (currentQuantityInCart < availableStock) {
-        dispatch(addToCart({ ...storeProduct, quantity: 1 }));
+        const remainingStock = availableStock - currentQuantityInCart;
+        const quantity = remainingStock < 1 ? remainingStock : 1;
+        dispatch(addToCart({ ...storeProduct, quantity }));
         added = true;
         if (!keepListOpen) {
           setData([]);

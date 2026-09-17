@@ -5,6 +5,8 @@ import CustomButton from "../../ui/Button/Button";
 import PageHeader from "../../ui/PageHeader";
 import { colors } from "../../../theme/colors";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { cleanCart } from "../../../redux/cart/cartActions";
 import { formatCurrency, getDateDifference, getFormattedDate } from "../../../utils/utils";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import AddBusinessIcon from "@mui/icons-material/AddBusiness";
@@ -34,6 +36,7 @@ const getCashValueTotal = (value) => formatCurrency(value || 0);
 
 const StoreList = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const today = getFormattedDate();
   const { user, updateUser } = useUser();
   const queryClient = useQueryClient();
@@ -116,6 +119,9 @@ const StoreList = () => {
     };
     updateUser(updatedData);
 
+    // Limpiar carrito y resetear movementType al cambiar de tienda
+    dispatch(cleanCart());
+
     // Al entrar a una tienda, limpiamos la caché para que las consultas store-scoped
     // (productos, ventas, inventario, etc.) se recarguen para la tienda seleccionada
     // y no se muestre data de una tienda anterior.
@@ -124,7 +130,7 @@ const StoreList = () => {
     window.dispatchEvent(new Event("store-changed"));
     const route = store_type === "A" ? "/distribuir/" : "/vender/";
     navigate(route, { replace: true });
-  }, [updateUser, navigate, queryClient]);
+  }, [updateUser, navigate, queryClient, dispatch]);
 
   const handleShowInvestment = useCallback(() => {
     setQuickFilter("investment");
