@@ -3,7 +3,7 @@ import { BarChart } from "@mui/x-charts/BarChart";
 import { Box, Typography } from "@mui/material";
 import { CHART_COLORS, DAY_NAMES_SHORT } from "../../../utils/utils";
 
-const AvgTicketChart = ({ data }) => {
+const AvgTicketChart = ({ data, metricType }) => {
   const series = useMemo(() => {
     if (!data?.sales?.length || !data?.stores?.length) return [];
 
@@ -17,19 +17,30 @@ const AvgTicketChart = ({ data }) => {
       grouped[s.store_name][day].count += 1;
     });
 
+    const isPrimaryAmount = metricType === "total";
+
     return data.stores.map((store, i) => ({
-      data: grouped[store.name].map((d) => d.count ? Math.round((d.total / d.count) * 100) / 100 : 0),
+      data: grouped[store.name].map((d) => {
+        if (isPrimaryAmount) {
+          return d.count ? Math.round((d.total / d.count) * 100) / 100 : 0;
+        } else {
+          return d.count ? Math.round((d.count / Math.ceil(new Date(data.sales[0].created_at).getDate() / 7)) * 100) / 100 : 0;
+        }
+      }),
       label: store.name,
       color: CHART_COLORS[i % CHART_COLORS.length],
     }));
-  }, [data]);
+  }, [data, metricType]);
 
   if (!series.length) return null;
+
+  const isPrimaryAmount = metricType === "total";
+  const title = isPrimaryAmount ? "Ticket promedio" : "Transacciones";
 
   return (
     <Box sx={{ width: "100%", height: "100%" }}>
       <Typography variant="h6" sx={{ mb: 2, fontWeight: 500, color: "text.primary" }}>
-        Ticket promedio por día de la semana
+        {title} por día de la semana
       </Typography>
       <BarChart
         xAxis={[{ data: DAY_NAMES_SHORT, scaleType: "band", tickLabelStyle: { fontSize: 11, fill: "#64748b" } }]}
