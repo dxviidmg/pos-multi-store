@@ -62,6 +62,7 @@ const iconMap = {
   Ventas: <ReceiptIcon />,
   Clientes: <PersonSearchIcon />,
   Dashboard: <BarChartIcon />,
+  Tableros: <BarChartIcon />,
   Tienda: <LocalShippingIcon />,
   Distribuciones: <LocalShippingIcon />,
   Traspasos: <SwapHorizIcon />,
@@ -76,6 +77,7 @@ const iconMap = {
   Sincronizar: <SyncIcon />,
   Distribuir: <LocalShippingIcon />,
   Auditoria: <PolicyIcon />,
+  Facturación: <ReceiptIcon />,
 };
 
 const drawerWidth = 256;
@@ -199,8 +201,12 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
     setOpen(newOpen);
   };
 
-  const handleToggleMenu = (label) => {
-    setOpenMenus((prev) => ({ [label]: !prev[label] }));
+  const handleToggleMenu = (label, shouldOpenDrawer = false) => {
+    if (shouldOpenDrawer) {
+      setOpen(true);
+    } else {
+      setOpenMenus((prev) => ({ [label]: !prev[label] }));
+    }
   };
 
 
@@ -383,7 +389,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
   };
 
   return (
-    <Box sx={{ display: "flex", overflow: "hidden" }}>
+    <Box sx={{ display: "flex", overflowX: "hidden", height: "100vh" }}>
       <CssBaseline />
 
       <AppBar position="fixed" open={open}>
@@ -484,7 +490,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
                 <React.Fragment key={idx}>
                   <ListItem disablePadding sx={{ mb: 0.3 }}>
                     <ListItemButton
-                      onClick={() => !item.disabled && handleToggleMenu(item.label)}
+                      onClick={() => !item.disabled && handleToggleMenu(item.label, !open)}
                       disabled={item.disabled}
                       sx={{
                         borderRadius: "10px", py: 1,
@@ -616,7 +622,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
                 <React.Fragment key={idx}>
                   <ListItem disablePadding sx={{ mb: 0.3 }}>
                     <ListItemButton
-                      onClick={() => !item.disabled && handleToggleMenu(item.label)}
+                      onClick={() => !item.disabled && handleToggleMenu(item.label, !open)}
                       disabled={item.disabled}
                       sx={{
                         borderRadius: "10px", py: 1,
@@ -637,31 +643,33 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
                       {open && !item.disabled && (openMenus[item.label] ? <ExpandLess sx={{ fontSize: 18 }} /> : <ExpandMore sx={{ fontSize: 18 }} />)}
                     </ListItemButton>
                   </ListItem>
-                  <Collapse in={openMenus[item.label]} timeout="auto" unmountOnExit>
-                    <List component="div" disablePadding>
-                      {item.dropdown.map((sub, i) =>
-                        sub.divider || sub.hidden ? null : (
-                          <ListItemButton key={i} onClick={() => !sub.disabled && navigate(sub.href)} disabled={sub.disabled}
-                            sx={{
-                              pl: 6.5, py: 0.6, borderRadius: "8px", my: 0.2, mx: 0.5,
-                              ...(isActive(sub.href) ? activeSx : {}),
-                              "&:hover": { backgroundColor: sub.disabled ? "transparent" : "rgba(255,255,255,0.06)" },
-                            }}
-                          >
-                            <ListItemText primary={sub.label}
-                              secondary={sub.disabled && open ? sub.disabledMessage : null}
-                              primaryTypographyProps={{
-                                fontSize: "0.75rem",
-                                color: sub.disabled ? "rgba(255,255,255,0.3)" : isActive(sub.href) ? accent : "rgba(255,255,255,0.75)",
-                                fontWeight: isActive(sub.href) ? 600 : 400,
+                  {open && (
+                    <Collapse in={openMenus[item.label]} timeout="auto" unmountOnExit>
+                      <List component="div" disablePadding>
+                        {item.dropdown.map((sub, i) =>
+                          sub.divider || sub.hidden ? null : (
+                            <ListItemButton key={i} onClick={() => !sub.disabled && navigate(sub.href)} disabled={sub.disabled}
+                              sx={{
+                                pl: 6.5, py: 0.6, borderRadius: "8px", my: 0.2, mx: 0.5,
+                                ...(isActive(sub.href) ? activeSx : {}),
+                                "&:hover": { backgroundColor: sub.disabled ? "transparent" : "rgba(255,255,255,0.06)" },
                               }}
-                              secondaryTypographyProps={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.4)" }}
-                            />
-                          </ListItemButton>
-                        )
-                      )}
-                    </List>
-                  </Collapse>
+                            >
+                              <ListItemText primary={sub.label}
+                                secondary={sub.disabled && open ? sub.disabledMessage : null}
+                                primaryTypographyProps={{
+                                  fontSize: "0.75rem",
+                                  color: sub.disabled ? "rgba(255,255,255,0.3)" : isActive(sub.href) ? accent : "rgba(255,255,255,0.75)",
+                                  fontWeight: isActive(sub.href) ? 600 : 400,
+                                }}
+                                secondaryTypographyProps={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.4)" }}
+                              />
+                            </ListItemButton>
+                          )
+                        )}
+                      </List>
+                    </Collapse>
+                  )}
                 </React.Fragment>
               );
             }
