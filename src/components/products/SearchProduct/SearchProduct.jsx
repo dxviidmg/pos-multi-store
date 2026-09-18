@@ -33,6 +33,8 @@ import EditIcon from "@mui/icons-material/Edit";
 import EditOffIcon from "@mui/icons-material/EditOff";
 import { MOVEMENT_TYPES, QUERY_TYPES } from "../../../constants";
 import ProductCarousel from "../ProductCarousel/ProductCarousel";
+import SearchSuggestions from "./SearchSuggestions";
+import { useProductSuggestions } from "../../../hooks/useProductSuggestions";
 import BarcodeScanner from "../../ui/BarcodeScanner/BarcodeScanner";
 import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
 
@@ -66,6 +68,22 @@ const SearchProduct = ({ searchInputRef }) => {
   // Usar hooks extraídos
   const { query, setQuery, data, setData, queryType, setQueryType, searching, fetchData } = useProductSearch();
   const { handleAddToCartIfAvailable } = useCartActions(getAvailableStock, movementType, keepListOpen, setData, setQuery);
+
+  // Sugerencias tipo autocompletado (solo modo "Nombre o marca")
+  const {
+    suggestions,
+    loading: suggestionsLoading,
+    open: suggestionsOpen,
+    setOpen: setSuggestionsOpen,
+    noResults: suggestionsNoResults,
+  } = useProductSuggestions({ query, queryType, enabled: queryType === "q" });
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  // Reiniciar el resaltado cuando cambian las sugerencias.
+  useEffect(() => {
+    setHighlightedIndex(-1);
+  }, [suggestions]);
 
   // "q" (por marca o nombre) y "visual" (búsqueda visual) comparten el mismo flujo de texto
   const isTextMode = queryType === "q" || queryType === "visual";
@@ -125,6 +143,9 @@ const SearchProduct = ({ searchInputRef }) => {
   };
 
   const handleSearchProduct = async () => {
+    // Al ejecutar la búsqueda final (Enter/lupa) se cierra el desplegable de sugerencias.
+    setSuggestionsOpen(false);
+    setHighlightedIndex(-1);
     // "visual" usa el mismo parámetro de API que "q" (por marca o nombre)
     const apiParam = queryType === "code" ? "code" : "q";
     const response = await getStoreProducts({ [apiParam]: query });
@@ -175,6 +196,46 @@ const SearchProduct = ({ searchInputRef }) => {
 
   const handleQueryChange = (e) => {
     setQuery(e.target.value);
+  };
+
+  const handleSuggestionSelect = (storeProduct) => {
+    setSuggestionsOpen(false);
+    setHighlightedIndex(-1);
+    handleSingleProductFetch(storeProduct);
+    // handleSingleProductFetch ya limpia el query (setQuery("")).
+    // Si el pin está activo, reponemos el texto para mantener la lista abierta.
+    if (keepListOpen) {
+      setQuery(query);
+    }
+  };
+
+  const handleSearchKeyDown = (e) => {
+    // Manejo de teclado del desplegable, solo en modo "Nombre o marca" y con sugerencias abiertas.
+    if (queryType === "q" && suggestionsOpen && suggestions.length > 0) {
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        setHighlightedIndex((prev) => (prev + 1) % suggestions.length);
+        return;
+      }
+      if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setHighlightedIndex((prev) => (prev <= 0 ? suggestions.length - 1 : prev - 1));
+        return;
+      }
+      if (e.key === "Enter" && highlightedIndex >= 0) {
+        e.preventDefault();
+        handleSuggestionSelect(suggestions[highlightedIndex]);
+        return;
+      }
+      if (e.key === "Escape") {
+        e.preventDefault();
+        setSuggestionsOpen(false);
+        setHighlightedIndex(-1);
+        return;
+      }
+    }
+    // Sin sugerencia resaltada: comportamiento actual (resultado final → tabla).
+    if (e.key === "Enter") handleSearchProduct();
   };
 
   const handleOpenModal = (storeProduct) => {
@@ -348,6 +409,7 @@ const SearchProduct = ({ searchInputRef }) => {
         <Grid item xs={12} sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
           <TextField size="small" fullWidth
             inputRef={inputRef}
+            ref={(node) => setAnchorEl(node)}
             type="text"
             value={queryType === "code" ? barcode : query}
             placeholder={queryType === "code" ? "Buscar producto por código (Ctrl+B)" : "Buscar producto por nombre (Ctrl+B)"}
@@ -356,7 +418,13 @@ const SearchProduct = ({ searchInputRef }) => {
                 ? handleQueryChange
                 : (e) => setBarcode(e.target.value.replace("'", "-"))
             }
-            onKeyDown={queryType === "code" ? handleBarcodeSearch : (e) => { if (e.key === "Enter") handleSearchProduct(); }}
+            onKeyDown={
+              queryType === "code"
+                ? handleBarcodeSearch
+                : queryType === "q"
+                ? handleSearchKeyDown
+                : (e) => { if (e.key === "Enter") handleSearchProduct(); }
+            }
             onFocus={() => setIsInputFocused(true)}
             onBlur={() => setIsInputFocused(false)}
             autoComplete="off"
@@ -415,6 +483,21 @@ const SearchProduct = ({ searchInputRef }) => {
             <Chip label={`${data.length} resultados`} color="primary" size="small" sx={{ height: 36 }} />
           )}
         </Grid>
+
+        {queryType === "q" && (
+          <SearchSuggestions
+            anchorEl={anchorEl}
+            open={suggestionsOpen}
+            loading={suggestionsLoading}
+            noResults={suggestionsNoResults}
+            suggestions={suggestions}
+            highlightedIndex={highlightedIndex}
+            onHover={setHighlightedIndex}
+            onSelect={handleSuggestionSelect}
+            onClickAway={() => setSuggestionsOpen(false)}
+          />
+        )}
+
         {searching && (
           <Grid item xs={12}>
             <LinearProgress />
