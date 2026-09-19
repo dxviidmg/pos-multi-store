@@ -61,12 +61,21 @@ const ProductList = () => {
   };
 
   const handleUpdateProductList = (updated) => {
+    // Guardar posición del scroll antes de actualizar
+    const scrollTop = document.querySelector('[role="grid"]')?.scrollTop || 0;
+    
     setProducts((prev) => {
       const exists = prev.some((item) => item.id === updated.id);
       return exists
         ? prev.map((item) => (item.id === updated.id ? updated : item))
         : [...prev, updated];
     });
+
+    // Restaurar posición del scroll después de la actualización
+    setTimeout(() => {
+      const grid = document.querySelector('[role="grid"]');
+      if (grid) grid.scrollTop = scrollTop;
+    }, 0);
   };
 
   const handleDownload = () => {
