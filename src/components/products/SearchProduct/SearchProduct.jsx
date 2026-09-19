@@ -247,14 +247,27 @@ const SearchProduct = ({ searchInputRef }) => {
   return (
     <>
       <StockModal isOpen={stockModal.isOpen} product={stockModal.data} onClose={stockModal.close} />
-      <ProductModal isOpen={productModal.isOpen} product={productModal.data} onClose={productModal.close} onUpdate={(product) => {
-        // Obtener el store_product y agregar al carrito
-        getStoreProducts({ code: product.code }).then((response) => {
-          if (response.data.length > 0) {
-            handleAddToCartIfAvailable(response.data[0]);
-          }
-        });
-      }} />
+      <ProductModal 
+        isOpen={productModal.isOpen} 
+        product={productModal.data} 
+        onClose={() => {
+          productModal.close();
+          // Limpiar búsqueda al cerrar modal sin crear
+          setQuery("");
+          setBarcode("");
+        }} 
+        onUpdate={(product) => {
+          // Obtener el store_product y agregar al carrito
+          getStoreProducts({ code: product.code }).then((response) => {
+            if (response.data.length > 0) {
+              handleAddToCartIfAvailable(response.data[0]);
+            }
+          });
+          // Limpiar búsqueda después de agregar al carrito
+          setQuery("");
+          setBarcode("");
+        }} 
+      />
 
       <PageHeader title="Vender">
         {stockVerificationSnackbar.open && user?.role !== "seller" && (storeType === "T" || storeType === "A") && (
