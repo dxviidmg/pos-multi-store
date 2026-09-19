@@ -428,6 +428,9 @@ const SearchProduct = ({ searchInputRef }) => {
             onFocus={() => setIsInputFocused(true)}
             onBlur={() => setIsInputFocused(false)}
             autoComplete="off"
+            spellCheck="false"
+            autoCorrect="off"
+            autoCapitalize="off"
             InputProps={{
               startAdornment: isTextMode && !isMobile ? (
                 <InputAdornment position="start">
