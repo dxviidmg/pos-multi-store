@@ -7,6 +7,9 @@ import { exportToExcel } from "../../../utils/utils";
 import { useModal } from "../../../hooks/useModal";
 import StoreProductLogsModal from "../StoreProductLogsModal/StoreProductLogsModal";
 import StockUpdateRequestModal from "../../inventory/StockUpdateRequestModal/StockUpdateRequestModal";
+import StoreProductGallery from "./StoreProductGallery";
+import ProductViewToggle from "../ProductList/ProductViewToggle";
+import { useViewModePreference } from "../../../hooks/useViewModePreference";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { getBrands } from "../../../api/brands";
 import { getDepartments } from "../../../api/departments";
@@ -25,6 +28,7 @@ const StoreProductList = () => {
   const { user } = useUser();
   const logsModal = useModal();
   const requestModal = useModal();
+  const [viewMode, setViewMode] = useViewModePreference("storeProductList.viewMode", "table");
   const [storeProducts, setStoreProducts] = useState([]);
   const [brands, setBrands] = useState([]);
   const [departments, setDepartments] = useState([]);
@@ -59,13 +63,27 @@ const StoreProductList = () => {
   };
 
   const handleUpdateStoreProductList = (updated) => {
+    // Guardar posición del scroll antes de actualizar
+    const scrollTop = document.querySelector('[role="grid"]')?.scrollTop || 0;
+    
     setStoreProducts((prev) => {
       const exists = prev.some((item) => item.id === updated.id);
       return exists
         ? prev.map((item) => (item.id === updated.id ? updated : item))
         : [...prev, updated];
     });
+
+    // Restaurar posición del scroll después de la actualización
+    setTimeout(() => {
+      const grid = document.querySelector('[role="grid"]');
+      if (grid) grid.scrollTop = scrollTop;
+    }, 0);
   };
+
+  // Handlers para galería (reutilizan los flujos existentes)
+  const handleLogsGallery = (storeProduct) => logsModal.open({ storeProduct, adjustStock: false });
+  const handleAdjustStockGallery = (storeProduct) => logsModal.open({ storeProduct, adjustStock: true });
+  const handleRequestGallery = (storeProduct) => requestModal.open(storeProduct);
 
   const handleDataChange = (e) => {
     const { name, value } = e.target;
@@ -111,6 +129,15 @@ const StoreProductList = () => {
           </PageHeader>
 
           <Grid container spacing={2} sx={{ mb: 2 }}>
+            {/* Fila 1: Solo Modo de vista */}
+            <Grid item xs={12} md={3}>
+              <ProductViewToggle value={viewMode} onChange={setViewMode} />
+            </Grid>
+            <Grid item xs={12} md={9} />
+          </Grid>
+
+          <Grid container spacing={2} sx={{ mb: 2 }}>
+            {/* Fila 2: Filtros */}
             <Grid item xs={12} md={3}>
               <TextField size="small" fullWidth label="Código" type="text"
                 value={params.code || ""} onChange={handleDataChange} name="code"
@@ -168,14 +195,24 @@ const StoreProductList = () => {
             )}
           </Grid>
 
-          <DataTable
-            searcher={true}
-            progressPending={loading}
-            noDataComponent="Sin inventario"
-            data={storeProducts}
-            columns={[
-              { name: "Código", selector: (row) => row.product.code },
-              { name: "Marca", selector: (row) => row.product.brand_name },
+          {viewMode === "gallery" ? (
+            <StoreProductGallery
+              storeProducts={storeProducts}
+              loading={loading}
+              onAdjustStock={handleAdjustStockGallery}
+              onLogs={handleLogsGallery}
+              onRequest={handleRequestGallery}
+              role={user.role}
+            />
+          ) : (
+            <DataTable
+              searcher={true}
+              progressPending={loading}
+              noDataComponent="Sin inventario"
+              data={storeProducts}
+              columns={[
+                { name: "Código", selector: (row) => row.product.code },
+                { name: "Marca", selector: (row) => row.product.brand_name },
               { name: "Departamento", selector: (row) => row.product.department_name },
               { name: "Nombre", selector: (row) => row.product.name },
               { name: "Stock", selector: (row) => row.stock },
@@ -209,7 +246,8 @@ const StoreProductList = () => {
                 ),
               },
             ]}
-          />
+            />
+          )}
         </Grid>
       </Grid>
     </>

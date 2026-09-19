@@ -51,6 +51,17 @@ export const getStoreProducts = async (params, config = {}) => {
 };
 
 /**
+ * Get product suggestions for autocomplete (name/brand search).
+ * Reutiliza el endpoint store-product con limit=5 para el desplegable de sugerencias.
+ * @param {string} q - Texto de búsqueda (nombre o marca)
+ * @param {Object} config - Axios config (ej. { signal } para cancelación)
+ * @returns {Promise<Object>} Store products response (máx 5)
+ */
+export const getStoreProductSuggestions = async (q, config = {}) => {
+  return getStoreProducts({ q, limit: 5 }, config);
+};
+
+/**
  * Get products with optional filters
  * @param {Object} params - Query parameters
  * @returns {Promise<Object>} Products list response
