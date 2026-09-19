@@ -246,7 +246,16 @@ const SearchProduct = ({ searchInputRef }) => {
 
   return (
     <>
-      <StockModal isOpen={stockModal.isOpen} product={stockModal.data} onClose={stockModal.close} />
+      <StockModal 
+        isOpen={stockModal.isOpen} 
+        product={stockModal.data} 
+        onClose={() => {
+          stockModal.close();
+          // Limpiar búsqueda al cerrar modal de cantidad
+          setQuery("");
+          setBarcode("");
+        }} 
+      />
       <ProductModal 
         isOpen={productModal.isOpen} 
         product={productModal.data} 
