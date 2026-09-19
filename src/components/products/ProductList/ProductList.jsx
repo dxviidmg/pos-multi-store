@@ -24,6 +24,9 @@ import HistoryIcon from "@mui/icons-material/History";
 import PriceChangeIcon from "@mui/icons-material/PriceChange";
 import PriceLogsModal from "../PriceLogsModal/PriceLogsModal";
 import PriceUpdateModal from "../PriceUpdateModal/PriceUpdateModal";
+import ProductViewToggle from "./ProductViewToggle";
+import ProductGallery from "./ProductGallery";
+import { useViewModePreference } from "../../../hooks/useViewModePreference";
 
 const ProductList = () => {
   const { user } = useUser();
@@ -34,6 +37,7 @@ const ProductList = () => {
   const [optionsLoaded, setOptionsLoaded] = useState(false);
   const [params, setParams] = useState({});
   const [selectedRows, setSelectedRows] = useState([]);
+  const [viewMode, setViewMode] = useViewModePreference("productList.viewMode", "table");
   const productModal = useModal();
   const priceLogsModal = useModal();
   const priceUpdateModal = useModal();
@@ -57,12 +61,21 @@ const ProductList = () => {
   };
 
   const handleUpdateProductList = (updated) => {
+    // Guardar posición del scroll antes de actualizar
+    const scrollTop = document.querySelector('[role="grid"]')?.scrollTop || 0;
+    
     setProducts((prev) => {
       const exists = prev.some((item) => item.id === updated.id);
       return exists
         ? prev.map((item) => (item.id === updated.id ? updated : item))
         : [...prev, updated];
     });
+
+    // Restaurar posición del scroll después de la actualización
+    setTimeout(() => {
+      const grid = document.querySelector('[role="grid"]');
+      if (grid) grid.scrollTop = scrollTop;
+    }, 0);
   };
 
   const handleDownload = () => {
@@ -110,6 +123,11 @@ const ProductList = () => {
     priceUpdateModal.open();
   };
 
+  // Handlers de acciones para la vista de galería (reutilizan los flujos existentes).
+  const handleEditProduct = (product) => productModal.open({ product, showStoreProducts: false });
+  const handlePriceLogs = (product) => priceLogsModal.open(product);
+  const handleStoreStock = (product) => productModal.open({ product, showStoreProducts: true });
+
   const handleUpperCodeProducts = async () => {
     const response = await upperCodeProducts();
     if (response.status === 200) {
@@ -136,6 +154,15 @@ const ProductList = () => {
           </PageHeader>
 
           <Grid container spacing={2} sx={{ mb: 2 }}>
+            {/* Fila 1: Solo Modo de vista */}
+            <Grid item xs={12} md={3}>
+              <ProductViewToggle value={viewMode} onChange={setViewMode} />
+            </Grid>
+            <Grid item xs={12} md={9} />
+          </Grid>
+
+          <Grid container spacing={2} sx={{ mb: 2 }}>
+            {/* Fila 2: Filtros desde "Buscar por código" */}
             <Grid item xs={12} md={3}>
               <TextField
                 size="small" label="Buscar por código" fullWidth
@@ -225,53 +252,64 @@ const ProductList = () => {
             </Grid>
           </Grid>
 
-          <DataTable
-            setSelectedRows={setSelectedRows}
-            searcher={true}
-            progressPending={loading}
-            noDataComponent="Sin productos"
-            data={products}
-            columns={[
-              { name: "Código", selector: (row) => row.code },
-              { name: "Marca", selector: (row) => row.brand_name },
-              { name: "Departamento", selector: (row) => row.department_name },
-              { name: "Nombre", selector: (row) => row.name },
-              { name: "Stock", selector: (row) => row.stock, omit: user.role !== "owner" },
-              {
-                name: "Precios",
-                cell: (row) => (
-                  row.apply_wholesale
-                    ? <>Men: ${row.unit_price}<br />May: ${row.wholesale_price} ({row.min_wholesale_quantity}+)</>
-                    : `$${row.unit_price}`
-                ),
-              },
-              ...(user.role !== "seller" ? [{
-                name: "Acciones",
-                width: 180,
-                cell: (row) => (
-                  <>
-                    <CustomTooltip text="Editar producto">
-                      <CustomButton onClick={() => productModal.open({ product: row, showStoreProducts: false })}>
-                        <EditIcon />
-                      </CustomButton>
-                    </CustomTooltip>
-                    <CustomTooltip text="Historial de precios">
-                      <CustomButton onClick={() => priceLogsModal.open(row)}>
-                        <HistoryIcon />
-                      </CustomButton>
-                    </CustomTooltip>
-                    {user.role === "owner" && (
-                      <CustomTooltip text="Mostrar stock en todas las tiendas y almacenes">
-                        <CustomButton onClick={() => productModal.open({ product: row, showStoreProducts: true })}>
-                          <ChecklistIcon />
+          {viewMode === "gallery" ? (
+            <ProductGallery
+              products={products}
+              loading={loading}
+              onEdit={handleEditProduct}
+              onPriceLogs={handlePriceLogs}
+              onStoreStock={handleStoreStock}
+              role={user.role}
+            />
+          ) : (
+            <DataTable
+              setSelectedRows={setSelectedRows}
+              searcher={true}
+              progressPending={loading}
+              noDataComponent="Sin productos"
+              data={products}
+              columns={[
+                { name: "Código", selector: (row) => row.code },
+                { name: "Marca", selector: (row) => row.brand_name },
+                { name: "Departamento", selector: (row) => row.department_name },
+                { name: "Nombre", selector: (row) => row.name },
+                { name: "Stock", selector: (row) => row.stock, omit: user.role !== "owner" },
+                {
+                  name: "Precios",
+                  cell: (row) => (
+                    row.apply_wholesale
+                      ? <>Men: ${row.unit_price}<br />May: ${row.wholesale_price} ({row.min_wholesale_quantity}+)</>
+                      : `$${row.unit_price}`
+                  ),
+                },
+                ...(user.role !== "seller" ? [{
+                  name: "Acciones",
+                  width: 180,
+                  cell: (row) => (
+                    <>
+                      <CustomTooltip text="Editar producto">
+                        <CustomButton onClick={() => productModal.open({ product: row, showStoreProducts: false })}>
+                          <EditIcon />
                         </CustomButton>
                       </CustomTooltip>
-                    )}
-                  </>
-                ),
-              }] : []),
-            ]}
-          />
+                      <CustomTooltip text="Historial de precios">
+                        <CustomButton onClick={() => priceLogsModal.open(row)}>
+                          <HistoryIcon />
+                        </CustomButton>
+                      </CustomTooltip>
+                      {user.role === "owner" && (
+                        <CustomTooltip text="Mostrar stock en todas las tiendas y almacenes">
+                          <CustomButton onClick={() => productModal.open({ product: row, showStoreProducts: true })}>
+                            <ChecklistIcon />
+                          </CustomButton>
+                        </CustomTooltip>
+                      )}
+                    </>
+                  ),
+                }] : []),
+              ]}
+            />
+          )}
         </Grid>
       </Grid>
     </>
