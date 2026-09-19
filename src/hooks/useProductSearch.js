@@ -67,6 +67,9 @@ export const useProductSearch = () => {
             });
             if (confirm.isConfirmed) {
               productModal.open({ code: query, createFromSearch: true });
+            } else {
+              // Si cancela, limpiar la búsqueda para evitar que se re-abra el diálogo
+              setQuery("");
             }
           } else {
             showError("Producto no encontrado", `No se encontró ningún producto con el código "${query}"`);
