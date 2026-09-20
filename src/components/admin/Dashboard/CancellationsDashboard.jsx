@@ -80,7 +80,7 @@ const CancellationsDashboard = () => {
     return (
       <Box>
         <Box className="card" sx={{ mb: 3 }}>
-          <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>Ventas ajustadas o canceladas</Typography>
+          <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>Ventas canceladas</Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>Procesando datos...</Typography>
           <LinearProgress variant={progress > 0 ? "determinate" : "indeterminate"} value={progress} sx={{ height: 6, borderRadius: 3, mb: 1 }} />
           <CountdownTimer seconds={countdown} />
@@ -100,7 +100,7 @@ const CancellationsDashboard = () => {
     return (
       <Box>
         <Box className="card">
-          <Typography variant="h4" sx={{ fontWeight: 700, mb: 2 }}>Ventas ajustadas o canceladas</Typography>
+          <Typography variant="h4" sx={{ fontWeight: 700, mb: 2 }}>Ventas canceladas</Typography>
           <Filters {...{ metricType, setMetricType, year, setYear, month, setMonth }} />
         </Box>
         <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: 350, gap: 2, opacity: 0.7 }}>
@@ -120,7 +120,7 @@ const CancellationsDashboard = () => {
       <Box className="card" sx={{ mb: 0 }}>
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 1, mb: 2 }}>
           <Box>
-            <Typography variant="h4" sx={{ fontWeight: 700 }}>Ventas ajustadas o canceladas</Typography>
+            <Typography variant="h4" sx={{ fontWeight: 700 }}>Ventas canceladas</Typography>
             <Typography variant="body2" color="text.secondary">{periodLabel}</Typography>
           </Box>
         </Box>
