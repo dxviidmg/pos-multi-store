@@ -334,7 +334,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
         label: "Tableros",
         dropdown: [
           { label: "Ventas exitosas", href: "/tablero-ventas/", disabled: isDashboardRestricted, disabledMessage: "Antes de 10 AM o después de 9 PM" },
-          { label: "Ventas ajustadas o canceladas", href: "/tablero-ventas-ajustadas-cancelaciones/" },
+          { label: "Ventas canceladas", href: "/tablero-ventas-ajustadas-cancelaciones/" },
           { label: "Verificación de stock", href: "/tablero-verificacion-stock/" },
           { label: "Marcas y productos", href: "/tablero-productos/" },
           { label: "Transpasos pendientes", href: "/tablero-traspasos-pendientes/" },
@@ -393,28 +393,46 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
       <CssBaseline />
 
       <AppBar position="fixed" open={open}>
-        <Toolbar sx={{ minHeight: "60px !important" }}>
+        <Toolbar sx={{ minHeight: "60px !important", gap: { xs: 0.5, sm: 1 } }}>
           <IconButton color="inherit" edge="start" onClick={handleDrawerToggle} sx={{ mr: 2 }}>
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 700, letterSpacing: "-0.01em" }}>
+          <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 700, letterSpacing: "-0.01em", fontSize: { xs: "0.95rem", sm: "1.25rem" }, display: { xs: open ? "none" : "block", sm: "block" } }}>
             {user.store_name ? `${user.tenant_name} - ${user.store_name}` : user.tenant_name}
           </Typography>
+          
+          {/* Mobile: Solo flecha regreso (si aplica) - ocultar cuando drawer abierto */}
           {user.role === "owner" && user.store_id && (
-            <IconButton color="inherit" onClick={handleBack}>
+            <IconButton color="inherit" onClick={handleBack} sx={{ display: { xs: open ? "none" : "inline-flex", sm: "inline-flex" } }}>
               <ArrowBackIcon />
             </IconButton>
           )}
-                        <PendingMenu />
-          {user.role !== "seller" && (
-            <>
-              <DuplicateSalesMenu />
-              <StockRequestMenu />
+
+          {/* Desktop: todos los menus */}
+          <Box sx={{ display: { xs: "none", lg: "flex" }, alignItems: "center", gap: 0.5 }}>
+            <PendingMenu />
+            {user.role !== "seller" && (
+              <>
+                <DuplicateSalesMenu />
+                <StockRequestMenu />
+                <NotificationsMenu />
+              </>
+            )}
+          </Box>
+
+          {/* Mobile: solo NotificationsMenu - ocultar cuando drawer abierto */}
+          <Box sx={{ display: { xs: open ? "none" : "flex", lg: "none" }, alignItems: "center" }}>
+            {user.role !== "seller" && (
               <NotificationsMenu />
-            </>
-          )}
-          <PageHelp />
-          <IconButton color="inherit" onClick={toggleTheme} sx={{ mr: 1 }}>
+            )}
+          </Box>
+
+          {/* Ayuda - ocultar cuando drawer abierto en mobile */}
+          <Box sx={{ display: { xs: open ? "none" : "inline-flex", sm: "inline-flex" } }}>
+            <PageHelp />
+          </Box>
+
+          <IconButton color="inherit" onClick={toggleTheme} sx={{ mr: 1, display: { xs: "none", sm: "inline-flex" } }}>
             {themeMode === "dark" ? <Brightness7Icon /> : <Brightness4Icon />}
           </IconButton>
           <Avatar
@@ -426,6 +444,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
               fontSize: "0.85rem", fontWeight: 700, mr: 1, cursor: "pointer",
               transition: "all 0.2s",
               "&:hover": { transform: "scale(1.1)", bgcolor: accent },
+              display: { xs: "none", sm: "flex" }
             }}
           >
             {(user?.store_name || user?.tenant_name || "U").charAt(0).toUpperCase()}
@@ -479,8 +498,9 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
 
         <List sx={{
           pt: 1.5, px: 1, flex: 1, overflowY: "auto", overflowX: "hidden",
-          "&::-webkit-scrollbar": { width: "4px" },
-          "&::-webkit-scrollbar-thumb": { backgroundColor: "rgba(255,255,255,0.2)", borderRadius: "4px" },
+          "&::-webkit-scrollbar": { width: "12px" },
+          "&::-webkit-scrollbar-thumb": { backgroundColor: "rgba(255,255,255,0.4)", borderRadius: "4px" },
+          "&::-webkit-scrollbar-thumb:hover": { backgroundColor: "rgba(255,255,255,0.6)" },
         }}>
           {menuItems.map((item, idx) => {
             if (item.hidden) return null;
@@ -586,6 +606,21 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
               </ListItemButton>
             </>
           )}
+          
+          <Divider sx={{ backgroundColor: "rgba(255,255,255,0.06)", my: 1 }} />
+          
+          <ListItemButton
+            onClick={handleLogout}
+            sx={{
+              borderRadius: 2, justifyContent: "initial",
+              "&:hover": { backgroundColor: "rgba(244, 67, 54, 0.12)" },
+            }}
+          >
+            <ListItemIcon sx={{ color: "rgba(244, 67, 54, 0.8)", minWidth: 38, justifyContent: "center" }}>
+              <LogoutIcon />
+            </ListItemIcon>
+            <ListItemText primary="Cerrar sesión" primaryTypographyProps={{ fontWeight: 600, fontSize: "0.8rem", color: "rgba(244, 67, 54, 0.8)" }} />
+          </ListItemButton>
         </Box>
       </DrawerModal>
 
@@ -611,8 +646,9 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
 
         <List sx={{
           pt: 1.5, px: 1, flex: 1, overflowY: "auto", overflowX: "hidden",
-          "&::-webkit-scrollbar": { width: "4px" },
-          "&::-webkit-scrollbar-thumb": { backgroundColor: "rgba(255,255,255,0.2)", borderRadius: "4px" },
+          "&::-webkit-scrollbar": { width: "10px" },
+          "&::-webkit-scrollbar-thumb": { backgroundColor: "rgba(255,255,255,0.4)", borderRadius: "4px" },
+          "&::-webkit-scrollbar-thumb:hover": { backgroundColor: "rgba(255,255,255,0.6)" },
         }}>
           {menuItems.map((item, idx) => {
             if (item.hidden) return null;
@@ -722,6 +758,21 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
               </ListItemButton>
             </>
           )}
+          
+          <Divider sx={{ backgroundColor: "rgba(255,255,255,0.06)", my: 1 }} />
+          
+          <ListItemButton
+            onClick={handleLogout}
+            sx={{
+              borderRadius: 2, justifyContent: open ? "initial" : "center",
+              "&:hover": { backgroundColor: "rgba(244, 67, 54, 0.12)" },
+            }}
+          >
+            <ListItemIcon sx={{ color: "rgba(244, 67, 54, 0.8)", minWidth: open ? 38 : 0, justifyContent: "center" }}>
+              <LogoutIcon />
+            </ListItemIcon>
+            <ListItemText primary="Cerrar sesión" primaryTypographyProps={{ fontWeight: 600, fontSize: "0.8rem", color: "rgba(244, 67, 54, 0.8)" }} sx={{ opacity: open ? 1 : 0 }} />
+          </ListItemButton>
         </Box>
       </Drawer>
 
