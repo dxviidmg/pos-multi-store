@@ -601,6 +601,21 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
               </ListItemButton>
             </>
           )}
+          
+          <Divider sx={{ backgroundColor: "rgba(255,255,255,0.06)", my: 1 }} />
+          
+          <ListItemButton
+            onClick={handleLogout}
+            sx={{
+              borderRadius: 2, justifyContent: "initial",
+              "&:hover": { backgroundColor: "rgba(244, 67, 54, 0.12)" },
+            }}
+          >
+            <ListItemIcon sx={{ color: "rgba(244, 67, 54, 0.8)", minWidth: 38, justifyContent: "center" }}>
+              <LogoutIcon />
+            </ListItemIcon>
+            <ListItemText primary="Cerrar sesión" primaryTypographyProps={{ fontWeight: 600, fontSize: "0.8rem", color: "rgba(244, 67, 54, 0.8)" }} />
+          </ListItemButton>
         </Box>
       </DrawerModal>
 
@@ -737,6 +752,21 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
               </ListItemButton>
             </>
           )}
+          
+          <Divider sx={{ backgroundColor: "rgba(255,255,255,0.06)", my: 1 }} />
+          
+          <ListItemButton
+            onClick={handleLogout}
+            sx={{
+              borderRadius: 2, justifyContent: open ? "initial" : "center",
+              "&:hover": { backgroundColor: "rgba(244, 67, 54, 0.12)" },
+            }}
+          >
+            <ListItemIcon sx={{ color: "rgba(244, 67, 54, 0.8)", minWidth: open ? 38 : 0, justifyContent: "center" }}>
+              <LogoutIcon />
+            </ListItemIcon>
+            <ListItemText primary="Cerrar sesión" primaryTypographyProps={{ fontWeight: 600, fontSize: "0.8rem", color: "rgba(244, 67, 54, 0.8)" }} sx={{ opacity: open ? 1 : 0 }} />
+          </ListItemButton>
         </Box>
       </Drawer>
 
