@@ -393,28 +393,42 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
       <CssBaseline />
 
       <AppBar position="fixed" open={open}>
-        <Toolbar sx={{ minHeight: "60px !important" }}>
+        <Toolbar sx={{ minHeight: "60px !important", gap: { xs: 0.5, sm: 1 } }}>
           <IconButton color="inherit" edge="start" onClick={handleDrawerToggle} sx={{ mr: 2 }}>
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 700, letterSpacing: "-0.01em" }}>
+          <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 700, letterSpacing: "-0.01em", fontSize: { xs: "0.95rem", sm: "1.25rem" } }}>
             {user.store_name ? `${user.tenant_name} - ${user.store_name}` : user.tenant_name}
           </Typography>
+          
+          {/* Mobile: Solo flecha regreso (si aplica) */}
           {user.role === "owner" && user.store_id && (
-            <IconButton color="inherit" onClick={handleBack}>
+            <IconButton color="inherit" onClick={handleBack} sx={{ display: { xs: "inline-flex" } }}>
               <ArrowBackIcon />
             </IconButton>
           )}
-                        <PendingMenu />
-          {user.role !== "seller" && (
-            <>
-              <DuplicateSalesMenu />
-              <StockRequestMenu />
+
+          {/* Desktop: todos los menus */}
+          <Box sx={{ display: { xs: "none", lg: "flex" }, alignItems: "center", gap: 0.5 }}>
+            <PendingMenu />
+            {user.role !== "seller" && (
+              <>
+                <DuplicateSalesMenu />
+                <StockRequestMenu />
+                <NotificationsMenu />
+              </>
+            )}
+          </Box>
+
+          {/* Mobile: solo NotificationsMenu */}
+          <Box sx={{ display: { xs: "flex", lg: "none" }, alignItems: "center" }}>
+            {user.role !== "seller" && (
               <NotificationsMenu />
-            </>
-          )}
+            )}
+          </Box>
+
           <PageHelp />
-          <IconButton color="inherit" onClick={toggleTheme} sx={{ mr: 1 }}>
+          <IconButton color="inherit" onClick={toggleTheme} sx={{ mr: 1, display: { xs: "none", sm: "inline-flex" } }}>
             {themeMode === "dark" ? <Brightness7Icon /> : <Brightness4Icon />}
           </IconButton>
           <Avatar
@@ -426,6 +440,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
               fontSize: "0.85rem", fontWeight: 700, mr: 1, cursor: "pointer",
               transition: "all 0.2s",
               "&:hover": { transform: "scale(1.1)", bgcolor: accent },
+              display: { xs: "none", sm: "flex" }
             }}
           >
             {(user?.store_name || user?.tenant_name || "U").charAt(0).toUpperCase()}
