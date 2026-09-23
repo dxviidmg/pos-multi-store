@@ -15,7 +15,7 @@ import StatusChip from "../../ui/StatusChip";
 import {
   Alert, Grid, Select, MenuItem, FormControl, InputLabel,
   Typography, Stepper, Step, StepLabel, Chip,
-  LinearProgress, Tooltip,
+  LinearProgress, Tooltip, TablePagination, Box,
 } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
@@ -60,6 +60,8 @@ const ProductImport = () => {
   const [loading, setLoading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [validationResult, setValidationResult] = useState(null);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -82,6 +84,7 @@ const ProductImport = () => {
       setProducts([]);
       setProductsError([]);
       setValidationResult(null);
+      setPage(0);
     }
   };
 
@@ -95,6 +98,7 @@ const ProductImport = () => {
       setProducts([]);
       setProductsError([]);
       setValidationResult(null);
+      setPage(0);
     }
   };
 
@@ -110,6 +114,7 @@ const ProductImport = () => {
       const successes = response.data.length - errors.length;
       setProductsError(errors);
       setValidationResult({ successes, errors: errors.length });
+      setPage(0);
       const text = errors.length > 0
         ? `${errors.length} filas tienen errores. Corrige los errores y vuelve a subir el archivo.`
         : "Todas las filas están bien";
@@ -140,6 +145,7 @@ const ProductImport = () => {
         import_stock: canIncludeQuantity ? "N" : "",
       });
       setValidationResult(null);
+      setPage(0);
       if (fileInputRef.current) fileInputRef.current.value = "";
       showSuccess("Productos importados");
     } catch (error) {
@@ -290,7 +296,7 @@ const ProductImport = () => {
         <h1>Filas con error</h1>
         <SimpleTable
           noDataComponent="Sin filas con error"
-          data={products}
+          data={productsError.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
           columns={[
             ...productColumns,
             ...(formData.import_stock === "Y"
@@ -299,6 +305,22 @@ const ProductImport = () => {
               { name: "Estado", cell: (row) => <StatusChip status={row.status} /> },
           ]}
         />
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25]}
+            component="div"
+            count={productsError.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={(event, newPage) => setPage(newPage)}
+            onRowsPerPageChange={(event) => {
+              setRowsPerPage(parseInt(event.target.value, 10));
+              setPage(0);
+            }}
+            labelRowsPerPage="Filas por página"
+            labelDisplayedRows={({ from, to, count }) => `${from}-${to} de ${count}`}
+          />
+        </Box>
       </Grid>
       )}
     </>
