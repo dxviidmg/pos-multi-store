@@ -13,7 +13,7 @@ import { useViewModePreference } from "../../../hooks/useViewModePreference";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { getBrands } from "../../../api/brands";
 import { getDepartments } from "../../../api/departments";
-import { Grid, TextField, Alert, Autocomplete } from "@mui/material";
+import { Grid, TextField, Alert, Autocomplete, Select, MenuItem } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import DownloadIcon from "@mui/icons-material/Download";
 import TuneIcon from "@mui/icons-material/Tune";
@@ -36,6 +36,7 @@ const StoreProductList = () => {
   const [loading, setLoading] = useState(false);
   const [params, setParams] = useState({ only_stock: true });
   const [showAlert, setShowAlert] = useState(true);
+  const [searchField, setSearchField] = useState("code");
 
   useEffect(() => {
     const fetchOptions = async () => {
@@ -90,6 +91,27 @@ const StoreProductList = () => {
     setParams((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleSearchFieldChange = (e) => {
+    setSearchField(e.target.value);
+    setParams((prev) => {
+      const newParams = { ...prev };
+      delete newParams.code;
+      delete newParams.name;
+      return newParams;
+    });
+  };
+
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setParams((prev) => ({
+      ...prev,
+      [searchField === "code" ? "code" : "q"]: value,
+      [searchField === "code" ? "q" : "code"]: undefined,
+    }));
+  };
+
+  const isSearchDisabled = !params.code && !params.q && !params.brand_id && !params.department_id && !params.max_stock;
+
   return (
     <>
       <CustomSpinner isLoading={loading} />
@@ -128,22 +150,44 @@ const StoreProductList = () => {
             )}
           </PageHeader>
 
-          <Grid container spacing={2} sx={{ mb: 2 }}>
-            {/* Fila 1: Solo Modo de vista */}
+          <Grid container spacing={2} sx={{ mb: 3 }}>
+            {/* Fila 1: BÚSQUEDA + BOTÓN BUSCAR */}
             <Grid item xs={12} md={3}>
-              <ProductViewToggle value={viewMode} onChange={setViewMode} />
+              <Select
+                size="small"
+                fullWidth
+                value={searchField}
+                onChange={handleSearchFieldChange}
+                sx={{ backgroundColor: "rgba(4, 53, 107, 0.05)" }}
+              >
+                <MenuItem value="code">Código</MenuItem>
+                <MenuItem value="name">Nombre</MenuItem>
+              </Select>
             </Grid>
-            <Grid item xs={12} md={9} />
-          </Grid>
-
-          <Grid container spacing={2} sx={{ mb: 2 }}>
-            {/* Fila 2: Filtros */}
-            <Grid item xs={12} md={3}>
-              <TextField size="small" fullWidth label="Código" type="text"
-                value={params.code || ""} onChange={handleDataChange} name="code"
+            <Grid item xs={12} md={6}>
+              <TextField 
+                size="small" 
+                fullWidth 
+                placeholder={searchField === "code" ? "Ej: SKU-001" : "Ej: Producto..."} 
+                type="text"
+                value={searchField === "code" ? (params.code || "") : (params.q || "")} 
+                onChange={handleSearchChange}
                 onKeyDown={(e) => e.key === "Enter" && fetchStoreProducts()}
+                sx={{ backgroundColor: "#fff" }}
               />
             </Grid>
+            <Grid item xs={12} md={3}>
+              <CustomButton 
+                fullWidth 
+                onClick={fetchStoreProducts}
+                startIcon={<SearchIcon />}
+                disabled={isSearchDisabled}
+              >
+                Buscar
+              </CustomButton>
+            </Grid>
+
+            {/* Fila 2: FILTROS SECUNDARIOS */}
             <Grid item xs={12} md={3}>
               <Autocomplete
                 size="small"
@@ -177,19 +221,30 @@ const StoreProductList = () => {
               />
             </Grid>
             <Grid item xs={12} md={3}>
-              <TextField size="small" fullWidth label="Stock máximo" type="number"
-                value={params.max_stock || ""} onChange={handleDataChange} name="max_stock"
+              <TextField 
+                size="small" 
+                fullWidth 
+                label="Stock máximo" 
+                type="number"
+                value={params.max_stock || ""} 
+                onChange={handleDataChange} 
+                name="max_stock"
               />
             </Grid>
             <Grid item xs={12} md={3}>
-              <CustomButton fullWidth onClick={fetchStoreProducts} startIcon={<SearchIcon />}>
-                Buscar
-              </CustomButton>
+              <ProductViewToggle value={viewMode} onChange={setViewMode} />
             </Grid>
+
+            {/* Fila 3: DESCARGA */}
             {user.role !== "seller" && (
-            <Grid item xs={12} md={3}>
-              <CustomButton fullWidth onClick={handleDownload} disabled={storeProducts.length === 0} startIcon={<DownloadIcon />}>
-                Descargar inventario
+            <Grid item xs={12} md={12}>
+              <CustomButton 
+                fullWidth 
+                onClick={handleDownload} 
+                disabled={storeProducts.length === 0} 
+                startIcon={<DownloadIcon />}
+              >
+                Descargar
               </CustomButton>
             </Grid>
             )}
@@ -206,7 +261,7 @@ const StoreProductList = () => {
             />
           ) : (
             <DataTable
-              searcher={true}
+              searcher={false}
               progressPending={loading}
               noDataComponent="Sin inventario"
               data={storeProducts}

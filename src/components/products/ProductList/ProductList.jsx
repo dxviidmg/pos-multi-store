@@ -12,7 +12,7 @@ import { useUser } from "../../../context/UserContext";
 import { showSuccess, showError, showConfirm } from "../../../utils/alerts";
 import CustomTooltip from "../../ui/Tooltip";
 import PageHeader from "../../ui/PageHeader";
-import { Grid, TextField, Autocomplete } from "@mui/material";
+import { Grid, TextField, Autocomplete, Select, MenuItem } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import EditIcon from "@mui/icons-material/Edit";
 import ChecklistIcon from "@mui/icons-material/Checklist";
@@ -38,6 +38,7 @@ const ProductList = () => {
   const [params, setParams] = useState({});
   const [selectedRows, setSelectedRows] = useState([]);
   const [viewMode, setViewMode] = useViewModePreference("productList.viewMode", "table");
+  const [searchField, setSearchField] = useState("code");
   const productModal = useModal();
   const priceLogsModal = useModal();
   const priceUpdateModal = useModal();
@@ -99,6 +100,27 @@ const ProductList = () => {
     setParams((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleSearchFieldChange = (e) => {
+    setSearchField(e.target.value);
+    setParams((prev) => {
+      const newParams = { ...prev };
+      delete newParams.code;
+      delete newParams.q;
+      return newParams;
+    });
+  };
+
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setParams((prev) => ({
+      ...prev,
+      [searchField === "code" ? "code" : "q"]: value,
+      [searchField === "code" ? "q" : "code"]: undefined,
+    }));
+  };
+
+  const isSearchDisabled = !params.code && !params.q && !params.brand_id && !params.department_id && !params.max_stock;
+
   const handleDeleteProducts = async () => {
     const stockCount = selectedRows.reduce((sum, el) => sum + el.stock, 0);
     if (stockCount > 0) {
@@ -153,23 +175,44 @@ const ProductList = () => {
             </CustomButton>
           </PageHeader>
 
-          <Grid container spacing={2} sx={{ mb: 2 }}>
-            {/* Fila 1: Solo Modo de vista */}
+          <Grid container spacing={2} sx={{ mb: 3 }}>
+            {/* Fila 1: BÚSQUEDA + BOTÓN BUSCAR */}
             <Grid item xs={12} md={3}>
-              <ProductViewToggle value={viewMode} onChange={setViewMode} />
+              <Select
+                size="small"
+                fullWidth
+                value={searchField}
+                onChange={handleSearchFieldChange}
+                sx={{ backgroundColor: "rgba(4, 53, 107, 0.05)" }}
+              >
+                <MenuItem value="code">Código</MenuItem>
+                <MenuItem value="q">Nombre</MenuItem>
+              </Select>
             </Grid>
-            <Grid item xs={12} md={9} />
-          </Grid>
-
-          <Grid container spacing={2} sx={{ mb: 2 }}>
-            {/* Fila 2: Filtros desde "Buscar por código" */}
-            <Grid item xs={12} md={3}>
-              <TextField
-                size="small" label="Buscar por código" fullWidth
-                value={params.code || ""} onChange={handleDataChange} name="code"
+            <Grid item xs={12} md={6}>
+              <TextField 
+                size="small" 
+                fullWidth 
+                placeholder={searchField === "code" ? "Ej: SKU-001" : "Ej: Producto..."} 
+                type="text"
+                value={searchField === "code" ? (params.code || "") : (params.q || "")} 
+                onChange={handleSearchChange}
                 onKeyDown={(e) => e.key === "Enter" && fetchProducts()}
+                sx={{ backgroundColor: "#fff" }}
               />
             </Grid>
+            <Grid item xs={12} md={3}>
+              <CustomButton 
+                fullWidth 
+                onClick={fetchProducts}
+                startIcon={<SearchIcon />}
+                disabled={isSearchDisabled}
+              >
+                Buscar
+              </CustomButton>
+            </Grid>
+
+            {/* Fila 2: FILTROS SECUNDARIOS */}
             <Grid item xs={12} md={3}>
               <Autocomplete
                 size="small"
@@ -209,18 +252,24 @@ const ProductList = () => {
               </Grid>
             )}
             <Grid item xs={12} md={3}>
-              <TextField size="small" label="Stock Máximo" fullWidth type="number"
-                value={params.max_stock || ""} onChange={handleDataChange} name="max_stock"
+              <TextField 
+                size="small" 
+                fullWidth 
+                label="Stock máximo" 
+                type="number"
+                value={params.max_stock || ""} 
+                onChange={handleDataChange} 
+                name="max_stock"
               />
             </Grid>
             <Grid item xs={12} md={3}>
-              <CustomButton fullWidth onClick={fetchProducts} startIcon={<SearchIcon />}>
-                Buscar
-              </CustomButton>
+              <ProductViewToggle value={viewMode} onChange={setViewMode} />
             </Grid>
+
+            {/* Fila 3: ACCIONES */}
             <Grid item xs={12} md={3}>
               <CustomButton fullWidth onClick={handleDownload} disabled={products.length === 0} startIcon={<DownloadIcon />}>
-                Descargar productos
+                Descargar
               </CustomButton>
             </Grid>
             <Grid item xs={12} md={3}>
@@ -240,14 +289,14 @@ const ProductList = () => {
                 </CustomButton>
               </CustomTooltip>
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={3}>
               <CustomButton
                 fullWidth
                 onClick={handleUpdatePrices}
                 disabled={selectedRows.length < 2 || user.role !== "owner"}
                 startIcon={<PriceChangeIcon />}
               >
-                Actualización masiva de costos y precios
+                Actualizar precios
               </CustomButton>
             </Grid>
           </Grid>
@@ -264,7 +313,7 @@ const ProductList = () => {
           ) : (
             <DataTable
               setSelectedRows={setSelectedRows}
-              searcher={true}
+              searcher={false}
               progressPending={loading}
               noDataComponent="Sin productos"
               data={products}
