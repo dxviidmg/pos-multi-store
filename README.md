@@ -1,6 +1,6 @@
 # SmartVenta — Sistema de Punto de Venta Multi-Tienda
 
-> Última actualización: 25 de agosto de 2026, 17:43 hrs
+> Última actualización: 24 de septiembre de 2026
 > 
 
 Sistema de punto de venta (POS) diseñado para negocios con múltiples sucursales. Permite gestionar ventas, inventario, traspasos y distribuciones desde una sola plataforma, con visibilidad en tiempo real de todas las tiendas y almacenes.
@@ -20,14 +20,18 @@ Estas son las características que te interesan como dueño de tu negocio:
 ### 💰 Punto de Venta Rápido y Versátil
 
 - **Búsqueda instantánea** por código de barras o nombre de producto
+- **Sugerencias al escribir** — Autocompletado al buscar por nombre o marca
+- **Búsqueda visual** — Explora los resultados en un carrusel con imágenes y datos de los productos
+- **Escáner con cámara** — Lee códigos de barras desde la cámara del móvil
 - **Crear producto desde búsqueda** — Si no se encuentra un producto, puedes crearlo directamente con stock inicial
 - **Múltiples carritos simultáneos** — Atiende a varios clientes al mismo tiempo sin perder información
 - **Precios dinámicos** — Precio unitario y precio mayoreo automático según cantidad
 - **Venta por pesos (KG)** — Para productos por kilogramo, elige vender por kilo, fracción o monto en pesos ("Dame $20 de queso")
 - **Una pantalla para todo** — Ventas, traspasos y distribuciones desde la misma interfaz
-- **Atajos de teclado** — Ctrl+Q/W para buscar, Ctrl+E/R/T/Y/U/I para tipo de operación, Ctrl+B para enfocar búsqueda, Ctrl+J para seleccionar cliente
+- **Atajos de teclado** — Ctrl+Q/W para buscar, Ctrl+K para búsqueda visual, Ctrl+E/R/T/Y/U/I para tipo de operación, Ctrl+B para enfocar búsqueda, Ctrl+J para seleccionar cliente
 - **Impresión de tickets** — Compatible con impresoras térmicas estándar
-- **Indicador de impresora** — Ícono visual verde/rojo que muestra si la impresora está conectada o desconectada
+- **Indicador de impresora en tiempo real** — Muestra el estado conectado/desconectado, recibe cambios mediante WebSocket y reintenta la conexión automáticamente
+- **Interfaz móvil para vender** — Búsqueda, carrito y modal de pago adaptados a teléfonos y tabletas
 
 ### 🏪 Control Total de Todas tus Tiendas
 
@@ -45,6 +49,7 @@ Estas son las características que te interesan como dueño de tu negocio:
 - **Revisión de Stock** — Modal para consultar stock en otras tiendas y agregar stock directamente
 - **Agregar stock durante la venta** — Acceso rápido para aumentar inventario
 - **Unidad visible en inventario** — Columna de unidad (PZ, KG, Costal, etc.) en la tabla de inventario
+- **Unidad visible en el carrito** — El stock disponible muestra su unidad de medida
 
 ### 🚚 Traslados Entre Tiendas
 
@@ -95,7 +100,9 @@ Estas son las características que te interesan como dueño de tu negocio:
 - **Heatmap de ventas** — Visualiza cuándo y dónde se vende más
 - **Análisis de cancelaciones** — Tablero dedicado a ventas canceladas y devueltas
 - **Top de marcas y productos** — Qué productos y marcas venden más (y cuáles menos)
-- **Gráficas de tendencia** — Compara ventas por día, semana o mes
+- **Gráficas de tendencia** — Consulta ventas por día del mes o por mes del año
+- **Comparación por tienda** — Consulta ventas, ganancias, margen, ticket promedio y transacciones por sucursal
+- **Métricas por periodo** — Alterna entre importes y número de transacciones; consulta promedios por día o mes y gráficas de líneas o barras
 
 ### 🔍 Auditoría Integrada
 
@@ -114,9 +121,19 @@ Estas son las características que te interesan como dueño de tu negocio:
 - **Importación masiva** — Carga miles de productos desde Excel en minutos
 - **Plantillas descargables** — Formato listo para llenar
 - **Validación previa** — El sistema revisa errores antes de importar
+- **Errores paginados en importación** — Revisa por páginas las filas con errores detectadas durante la carga
 - **Historial de precios** — Ve cómo ha cambiado el precio de cada producto
 - **Actualización masiva de precios** — Actualiza costo, precio unitario y mayoreo de múltiples productos seleccionados a la vez
 - **Imágenes de productos** — Agrega fotos a cada producto para identificación visual
+- **Vistas de tabla y galería** — Cambia la presentación de Productos e Inventario; el navegador recuerda la preferencia
+- **Filtros de catálogo** — Busca por código o nombre y filtra por marca, departamento y stock máximo
+
+### 💳 Planes y Suscripciones
+
+- **Consulta del plan actual** — Revisa el plan asignado, sus pagos y el estado de la suscripción
+- **Tarjeta de pago** — Actualiza la tarjeta de una suscripción activa y recibe avisos cuando está próxima a vencer o falla un cobro
+- **Renovación por vencimiento** — Si se suspende el acceso, el dueño puede entrar a las páginas de plan y pagos para renovarlo
+- **Cancelación de suscripción** — El dueño puede registrar el motivo de baja; la cancelación corta el acceso y cierra las sesiones de los usuarios del negocio
 
 ### 🔐 Roles y Permisos
 
@@ -130,6 +147,8 @@ Estas son las características que te interesan como dueño de tu negocio:
 
 - **Modo oscuro/claro** — Elige la apariencia que prefieras
 - **Diseño intuitivo** — Interfaz moderna y fácil de usar
+- **Navegación adaptable** — Barra superior y menú lateral ajustados a pantallas móviles, con acceso a cerrar sesión
+- **Instalación en móvil** — La aplicación incluye un manifiesto y un ícono para instalarla desde un navegador compatible
 
 ### 📞 Soporte Integrado
 
@@ -141,6 +160,7 @@ Estas son las características que te interesan como dueño de tu negocio:
 - **Solicitudes de ajuste** — Vendedores y admins pueden pedir cambios de stock; el dueño aprueba o rechaza
 - **Notificaciones en tiempo real** — Alertas instantáneas sobre traspasos, distribuciones y solicitudes
 - **Indicador de ventas duplicadas** — Alerta visual cuando hay ventas duplicadas en el sistema
+- **Aviso de conexión** — Muestra cuándo se pierde Internet y confirma cuando la conexión se restablece
 
 ---
 
@@ -171,13 +191,14 @@ Estas características son parte de la arquitectura técnica y no deben menciona
 ### Arquitectura del Sistema
 
 - **Frontend:** React 18 con Create React App
-- **UI:** Material UI (MUI) con tema personalizado
+- **UI:** Material UI (MUI) con tema personalizado y variables CSS
 - **Estado global:** Redux con patrón multi-carrito
 - **Estado del servidor:** React Query (@tanstack/react-query)
 - **Routing:** React Router v6 con lazy loading
 - **HTTP:** Cliente Axios centralizado
 - **Backend:** API REST (Django/DRF)
 - **Tiempo real:** WebSocket (Django Channels)
+- **Impresora:** servicio local con estado por WebSocket y comprobación HTTP de respaldo
 - **Tareas asíncronas:** Celery
 
 ### Patrones de Diseño
@@ -198,6 +219,7 @@ Estas características son parte de la arquitectura técnica y no deben menciona
 - **Lazy loading** — Carga de rutas bajo demanda
 - **Polling de progreso** — Seguimiento de tareas asíncronas
 - **Optimistic updates** — Actualización inmediata de UI
+- **Imágenes WebP** — Recursos de interfaz en WebP y conversión de fotos de productos en el navegador cuando es compatible
 
 ---
 
@@ -265,6 +287,17 @@ Estas características son parte de la arquitectura técnica y no deben menciona
 
 ## 🛠️ Scripts Disponibles
 
+Para trabajar con este frontend se necesita Node.js y npm, además de la API del sistema. Instala las dependencias con `npm ci`, copia `.env.template` a `.env` y configura las URL y claves de tu entorno.
+
+| Variable | Uso |
+|----------|-----|
+| `REACT_APP_API_URL` | URL base de la API; el cliente añade `/api/` a las rutas. |
+| `REACT_APP_PRINTER_URL` | URL HTTP del servicio local de impresión. |
+| `REACT_APP_PRINTER_WS_URL` | URL WebSocket del servicio de impresión (opcional); si falta, se deriva de `REACT_APP_PRINTER_URL`. |
+| `REACT_APP_WHATSAPP_NUMBER` | Número del enlace de soporte. |
+| `REACT_APP_MERCADO_PAGO_PUBLIC_KEY` | Clave pública para el formulario de pago. |
+| `REACT_APP_API_URL_KEY` | Clave usada por las solicitudes públicas de registro. |
+
 ```bash
 npm start       # Inicia en modo desarrollo en http://localhost:3000
 npm run build   # Genera build de producción en /build
@@ -275,25 +308,23 @@ npm test        # Ejecuta tests
 
 ## 🎨 Guía de Estilos (Design Tokens)
 
-Referencia para mantener consistencia visual entre el sistema y la landing page.
+Referencia del tema actual del frontend. Los valores fuente están en `src/theme/theme.js` y `src/theme/variables.css`.
 
 ### Tipografía
 
-```
-Fuentes:        'Inter', 'Plus Jakarta Sans', sans-serif
-```
+Fuente principal: `Inter, sans-serif`.
 
 | Nivel  | Tamaño    | Peso |
 |--------|-----------|------|
-| h1     | 2.25rem   | 700  |
-| h2     | 1.875rem  | 700  |
-| h3     | 1.5rem    | 600  |
-| h4     | 1.3125rem | 600  |
-| h5     | 1.125rem  | 600  |
-| h6     | 1rem      | 600  |
+| h1     | 1.75rem   | 700  |
+| h2     | 1.5rem    | 700  |
+| h3     | 1.25rem   | 600  |
+| h4     | 1.125rem  | 600  |
+| h5     | 1rem      | 600  |
+| h6     | 0.875rem  | 600  |
 | body1  | 0.875rem  | 400  |
-| body2  | 0.8rem    | 400  |
-| button | —         | 600, sin uppercase, letter-spacing 0.02em |
+| body2  | 0.8125rem | 400  |
+| button | 0.8125rem | 600, sin mayúsculas forzadas |
 
 ### Paleta de Colores
 
@@ -303,16 +334,17 @@ Fuentes:        'Inter', 'Plus Jakarta Sans', sans-serif
 |---------------|-----------|----------------------------|
 | primary       | `#04346b` | Color principal, botones   |
 | primary-light | `#065a9e` | Hover, gradientes          |
-| primary-dark  | `#022347` | Sidebar fondo, énfasis     |
-| accent        | `#a78bfa` | Elementos activos, sidebar |
+| primary-dark  | `#022347` | Énfasis                    |
+| secondary     | `#e94560` | Acento secundario          |
+| accent        | `#a78bfa` | Elementos destacados       |
 
 **Fondos (modo claro):**
 
 | Token      | Valor                      |
 |------------|----------------------------|
-| default    | `rgba(4, 53, 107, 0.08)`   |
+| default    | `#e8eef6`                  |
 | paper      | `#ffffff`                  |
-| border     | `#e8ecf1`                  |
+| divider    | `#e2e8f0`                  |
 
 **Fondos (modo oscuro):**
 
@@ -320,7 +352,7 @@ Fuentes:        'Inter', 'Plus Jakarta Sans', sans-serif
 |------------|------------|
 | default    | `#0d1117`  |
 | paper      | `#161b22`  |
-| border     | `#30363d`  |
+| divider    | `#30363d`  |
 
 **Texto (modo claro):**
 
@@ -339,43 +371,31 @@ Fuentes:        'Inter', 'Plus Jakarta Sans', sans-serif
 ### Gradientes
 
 ```css
-/* Barra superior / botones principales */
-background: linear-gradient(135deg, #04346b 0%, #065a9e 100%);
-
-/* Sidebar */
-background: linear-gradient(180deg, #04346b 0%, #032a56 50%, #022347 100%);
-
-/* Cards decorativas */
+/* Tarjetas de indicadores del tablero de ventas */
 background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-
-/* Éxito */
 background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-
-/* Advertencia */
+background: linear-gradient(135deg, #a78bfa 0%, #7c5cbf 100%);
 background: linear-gradient(135deg, #f2994a 0%, #f2c94c 100%);
-
-/* Info */
 background: linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%);
 ```
 
 ### Bordes y Sombras
 
 ```css
-border-radius: 12px;   /* General (shape) */
-border-radius: 16px;   /* Cards */
-border-radius: 14px;   /* Paper */
-border-radius: 10px;   /* Botones, inputs */
-border-radius: 8px;    /* Chips, tooltips */
+border-radius: 8px;   /* shape general, Paper y Card */
+border-radius: 6px;   /* Button, Chip, TextField y Select */
+border-radius: 10px;  /* Dialog */
+border-radius: 4px;   /* Tooltip */
 
-box-shadow: 0 1px 3px rgba(0,0,0,0.06);   /* Sutil */
-box-shadow: 0 4px 20px rgba(0,0,0,0.12);  /* Medio */
-box-shadow: 0 8px 30px rgba(0,0,0,0.08);  /* Hover cards */
+box-shadow: 0 1px 2px rgba(0,0,0,0.05);  /* Sombra ligera */
+box-shadow: 0 2px 8px rgba(0,0,0,0.08);  /* Sombra media */
+box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* Sombra amplia */
 ```
 
 ### Transiciones
 
 ```css
-transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);  /* Botones */
-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);   /* Cards */
-transition: all 0.2s ease;                             /* Inputs */
+transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease; /* Button */
+transition: box-shadow 0.15s ease; /* Card */
+transition: border-color 0.15s ease, box-shadow 0.15s ease; /* TextField */
 ```
