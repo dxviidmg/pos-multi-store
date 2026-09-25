@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import DataTable from "../../ui/DataTable/DataTable";
-import { deleteProducts, getProducts, upperCodeProducts } from "../../../api/products";
+import { deleteProducts, getProducts, updateProduct, upperCodeProducts } from "../../../api/products";
 import CustomButton from "../../ui/Button/Button";
 import { useModal } from "../../../hooks/useModal";
 import ProductModal from "../ProductModal/ProductModal";
@@ -22,11 +22,13 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import TextFormatIcon from "@mui/icons-material/TextFormat";
 import HistoryIcon from "@mui/icons-material/History";
 import PriceChangeIcon from "@mui/icons-material/PriceChange";
+import CameraAltIcon from "@mui/icons-material/CameraAlt";
 import PriceLogsModal from "../PriceLogsModal/PriceLogsModal";
 import PriceUpdateModal from "../PriceUpdateModal/PriceUpdateModal";
 import ProductViewToggle from "./ProductViewToggle";
 import ProductGallery from "./ProductGallery";
 import { useViewModePreference } from "../../../hooks/useViewModePreference";
+import { convertImageToWebp } from "../../../utils/image";
 
 const ProductList = () => {
   const { user } = useUser();
@@ -42,6 +44,8 @@ const ProductList = () => {
   const productModal = useModal();
   const priceLogsModal = useModal();
   const priceUpdateModal = useModal();
+  const cameraInputRef = useRef(null);
+  const cameraProductRef = useRef(null);
 
   useEffect(() => {
     const fetchOptions = async () => {
@@ -150,6 +154,29 @@ const ProductList = () => {
   const handlePriceLogs = (product) => priceLogsModal.open(product);
   const handleStoreStock = (product) => productModal.open({ product, showStoreProducts: true });
 
+  const handleCameraClick = (product) => {
+    cameraProductRef.current = product;
+    cameraInputRef.current.value = "";
+    cameraInputRef.current.click();
+  };
+
+  const handleCameraCapture = async (e) => {
+    const file = e.target.files[0];
+    const product = cameraProductRef.current;
+    if (!file || !product) return;
+
+    try {
+      const webpFile = await convertImageToWebp(file, { quality: 0.85, maxWidth: 1000, maxHeight: 1000 });
+      const response = await updateProduct({ id: product.id, image: webpFile });
+      if (response.status === 200) {
+        handleUpdateProductList(response.data);
+        showSuccess("Imagen actualizada");
+      }
+    } catch {
+      showError("Error al actualizar imagen");
+    }
+  };
+
   const handleUpperCodeProducts = async () => {
     const response = await upperCodeProducts();
     if (response.status === 200) {
@@ -162,6 +189,14 @@ const ProductList = () => {
 
   return (
     <>
+      <input
+        ref={cameraInputRef}
+        type="file"
+        accept="image/*"
+        capture="environment"
+        onChange={handleCameraCapture}
+        style={{ display: "none" }}
+      />
       <CustomSpinner isLoading={loading} />
       <ProductModal isOpen={productModal.isOpen} product={productModal.data} onClose={productModal.close} onUpdate={handleUpdateProductList} />
       <PriceLogsModal isOpen={priceLogsModal.isOpen} product={priceLogsModal.data} onClose={priceLogsModal.close} />
@@ -308,6 +343,7 @@ const ProductList = () => {
               onEdit={handleEditProduct}
               onPriceLogs={handlePriceLogs}
               onStoreStock={handleStoreStock}
+              onCameraPhoto={handleCameraClick}
               role={user.role}
             />
           ) : (
@@ -333,12 +369,17 @@ const ProductList = () => {
                 },
                 ...(user.role !== "seller" ? [{
                   name: "Acciones",
-                  width: 180,
+                  width: 220,
                   cell: (row) => (
                     <>
                       <CustomTooltip text="Editar producto">
                         <CustomButton onClick={() => productModal.open({ product: row, showStoreProducts: false })}>
                           <EditIcon />
+                        </CustomButton>
+                      </CustomTooltip>
+                      <CustomTooltip text="Tomar foto">
+                        <CustomButton onClick={() => handleCameraClick(row)}>
+                          <CameraAltIcon />
                         </CustomButton>
                       </CustomTooltip>
                       <CustomTooltip text="Historial de precios">

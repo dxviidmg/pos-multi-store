@@ -15,6 +15,7 @@ const EditUserModal = ({ open, onClose, userData, onChange, onSave }) => {
                 name="username"
                 value={userData.username || ''}
                 size="small"
+                autoComplete="off"
                 disabled
               />
             </Grid>

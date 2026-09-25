@@ -1,6 +1,7 @@
 import React from "react";
 import { Box, Typography, IconButton, Stack } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
+import CameraAltIcon from "@mui/icons-material/CameraAlt";
 import HistoryIcon from "@mui/icons-material/History";
 import ChecklistIcon from "@mui/icons-material/Checklist";
 import CustomTooltip from "../../ui/Tooltip";
@@ -10,7 +11,7 @@ import noPhoto from "../../../assets/images/noPhoto.webp";
  * Tarjeta de producto para la vista de galería de /productos/.
  * Diseño uniforme, serio y elegante. Clic abre edición; acciones abajo.
  */
-const ProductGridCard = ({ product, onEdit, onPriceLogs, onStoreStock, role }) => {
+const ProductGridCard = ({ product, onEdit, onPriceLogs, onStoreStock, onCameraPhoto, role }) => {
   if (!product) return null;
 
   const isOwner = role === "owner";
@@ -164,6 +165,11 @@ const ProductGridCard = ({ product, onEdit, onPriceLogs, onStoreStock, role }) =
           <CustomTooltip text="Editar">
             <IconButton size="small" onClick={() => onEdit?.(product)} sx={{ color: "primary.main" }}>
               <EditIcon fontSize="small" />
+            </IconButton>
+          </CustomTooltip>
+          <CustomTooltip text="Tomar foto">
+            <IconButton size="small" onClick={() => onCameraPhoto?.(product)} sx={{ color: "primary.main" }}>
+              <CameraAltIcon fontSize="small" />
             </IconButton>
           </CustomTooltip>
           <CustomTooltip text="Historial">
