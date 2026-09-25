@@ -156,13 +156,13 @@ const SellerList = () => {
                 selector: (row) => row.store_detail?.name,
               },
               {
-                name: "Nombre",
-                selector: (row) =>
-                  `${row.worker.first_name} ${row.worker.last_name}`,
-              },
-              {
-                name: "Activo",
-                selector: (row) => chooseIcon(row.worker.is_active),
+                name: "Usuario",
+                cell: (row) => (
+                  <div>
+                    <div>{row.worker.username}</div>
+                    <div>{`${row.worker.first_name} ${row.worker.last_name}`}</div>
+                  </div>
+                ),
               },
               {
                 name: "Vendido",
