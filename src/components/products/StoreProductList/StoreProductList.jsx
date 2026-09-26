@@ -13,7 +13,7 @@ import { useViewModePreference } from "../../../hooks/useViewModePreference";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { getBrands } from "../../../api/brands";
 import { getDepartments } from "../../../api/departments";
-import { Grid, TextField, Alert, Autocomplete, Select, MenuItem } from "@mui/material";
+import { Grid, TextField, Alert, Autocomplete, Select, MenuItem, useMediaQuery, useTheme } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import DownloadIcon from "@mui/icons-material/Download";
 import TuneIcon from "@mui/icons-material/Tune";
@@ -25,10 +25,13 @@ import PageHeader from "../../ui/PageHeader";
 import CustomTooltip from "../../ui/Tooltip";
 
 const StoreProductList = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const { user } = useUser();
   const logsModal = useModal();
   const requestModal = useModal();
-  const [viewMode, setViewMode] = useViewModePreference("storeProductList.viewMode", "table");
+  const [viewModePref, setViewModePref] = useViewModePreference("storeProductList.viewMode", "table");
+  const viewMode = isMobile ? "gallery" : viewModePref;
   const [storeProducts, setStoreProducts] = useState([]);
   const [brands, setBrands] = useState([]);
   const [departments, setDepartments] = useState([]);
@@ -231,9 +234,11 @@ const StoreProductList = () => {
                 name="max_stock"
               />
             </Grid>
-            <Grid item xs={12} md={3}>
-              <ProductViewToggle value={viewMode} onChange={setViewMode} />
-            </Grid>
+            {!isMobile && (
+              <Grid item xs={12} md={3}>
+                <ProductViewToggle value={viewModePref} onChange={setViewModePref} />
+              </Grid>
+            )}
 
             {/* Fila 3: DESCARGA */}
             {user.role !== "seller" && (
