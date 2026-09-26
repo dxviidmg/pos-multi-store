@@ -52,6 +52,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import DescriptionIcon from "@mui/icons-material/Description";
 import PolicyIcon from "@mui/icons-material/Policy";
 import BarChartIcon from "@mui/icons-material/BarChart";
+import HistoryIcon from "@mui/icons-material/History";
 import logo from "../../../assets/images/logo.webp";
 import { colors } from "../../../theme/colors";
 import PageHelp from "../../ui/PageHelp/PageHelp";
@@ -81,6 +82,8 @@ const iconMap = {
   Distribuir: <LocalShippingIcon />,
   Auditoria: <PolicyIcon />,
   Facturación: <ReceiptIcon />,
+  Regresar: <ArrowBackIcon />,
+  "Historial de stock": <HistoryIcon />,
 };
 
 const drawerWidth = 256;
@@ -282,11 +285,15 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
 
   const linksByType = {
     T: [
-      user.multistore ? {
+      ...(user.multistore ? [{
         label: "Tienda",
         action: "store-selector",
         dropdown: stores.map(s => ({ label: s.full_name || s.name, storeId: s.id }))
-      } : null,
+      }] : [{
+        label: "Regresar",
+        action: "go-back",
+        onClick: handleBack
+      }]),
       { label: "Vender", href: "/vender/" },
       {
         label: "Ventas",
@@ -347,13 +354,36 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
       { label: "Movimientos en caja", href: "/movimientos-caja/", hidden: user.role !== "seller" },
       { label: "Traspasos", href: "/traspasos/", hidden: user.role !== "seller" },
       { label: "Historial de stock", href: "/historial-stock/", hidden: user.role === "seller" },
+      {
+        label: "Auditoria",
+        dropdown: [
+          { label: "Productos", href: "/auditoria-productos/" },
+          { label: "Transacciones", href: "/auditoria-transacciones/" },
+        ],
+        hidden: user.role !== "owner",
+      },
+      {
+        label: "Facturación",
+        dropdown: [
+          { label: "Mi Plan Actual", href: "/mi-plan-actual/" },
+          { label: "Historial de pagos", href: "/pagos/" },
+          { label: "Suscripciones", href: "/suscripciones/" },
+        ],
+        hidden: user.role !== "owner",
+      },
+      { label: "Servicios", href: "/servicios/", hidden: user.role !== "owner" },
+      { label: "Sincronizar", href: "/sincronizar/", hidden: user.role !== "owner" },
     ],
     A: [
-      user.multistore ? {
+      ...(user.multistore ? [{
         label: "Tienda",
         action: "store-selector",
         dropdown: stores.map(s => ({ label: s.full_name || s.name, storeId: s.id }))
-      } : null,
+      }] : [{
+        label: "Regresar",
+        action: "go-back",
+        onClick: handleBack
+      }]),
       { label: "Distribuir", href: "/distribuir/" },
       {
         label: "Movimientos",
@@ -385,6 +415,25 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
         ],
       },
       { label: "Historial de stock", href: "/historial-stock/", hidden: user.role === "seller" },
+      {
+        label: "Auditoria",
+        dropdown: [
+          { label: "Productos", href: "/auditoria-productos/" },
+          { label: "Transacciones", href: "/auditoria-transacciones/" },
+        ],
+        hidden: user.role !== "owner",
+      },
+      {
+        label: "Facturación",
+        dropdown: [
+          { label: "Mi Plan Actual", href: "/mi-plan-actual/" },
+          { label: "Historial de pagos", href: "/pagos/" },
+          { label: "Suscripciones", href: "/suscripciones/" },
+        ],
+        hidden: user.role !== "owner",
+      },
+      { label: "Servicios", href: "/servicios/", hidden: user.role !== "owner" },
+      { label: "Sincronizar", href: "/sincronizar/", hidden: user.role !== "owner" },
     ],
     G: [
       {
@@ -707,8 +756,38 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
           "&::-webkit-scrollbar-thumb": { backgroundColor: "rgba(255,255,255,0.4)", borderRadius: "4px" },
           "&::-webkit-scrollbar-thumb:hover": { backgroundColor: "rgba(255,255,255,0.6)" },
         }}>
-          {menuItems.filter(item => item !== null).map((item, idx) => {
+          {menuItems.map((item, idx) => {
             if (item.hidden) return null;
+
+            // Manejo especial para go-back (regresar a general)
+            if (item.action === "go-back") {
+              return (
+                <ListItem key={idx} disablePadding sx={{ mb: 0.3 }}>
+                  <ListItemButton
+                    onClick={item.onClick}
+                    sx={{
+                      borderRadius: "10px", py: 1,
+                      justifyContent: open ? "initial" : "center",
+                      "&:hover": { backgroundColor: "rgba(255,255,255,0.08)" },
+                    }}
+                  >
+                    <ListItemIcon sx={{
+                      color: "rgba(255,255,255,0.7)",
+                      minWidth: open ? 38 : 0, justifyContent: "center",
+                    }}>
+                      {iconMap[item.label] || <DashboardIcon />}
+                    </ListItemIcon>
+                    <ListItemText primary={item.label}
+                      primaryTypographyProps={{
+                        fontWeight: 600, fontSize: "0.8rem",
+                        color: "inherit",
+                      }}
+                      sx={{ opacity: open ? 1 : 0 }}
+                    />
+                  </ListItemButton>
+                </ListItem>
+              );
+            }
 
             if (item.dropdown) {
               // Manejo especial para store-selector
