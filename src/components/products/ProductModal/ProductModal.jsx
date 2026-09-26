@@ -163,9 +163,13 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
             const storeProducts = await getStoreProducts({ code: formData.code });
             if (storeProducts.data.length > 0) {
               const sp = storeProducts.data[0];
-              await addProducts({
+              const addResponse = await addProducts({
                 store_products: [{ id: sp.id, quantity: parseInt(initialStockValue) }],
               });
+              // Si add retorna 200, actualizar el stock en la respuesta del producto
+              if (addResponse.status === 200) {
+                response.data.stock = (response.data.stock || 0) + parseInt(initialStockValue);
+              }
             }
           } catch (stockError) {
             showError("Producto creado, pero hubo error al agregar stock");
@@ -203,7 +207,11 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
     const areOptionalFieldsConsistent =
       (wholesale_price === "") === (min_wholesale_quantity === "");
 
-    return !areRequiredFieldsComplete || !areOptionalFieldsConsistent;
+    // Para single-store en creación, initial_stock es requerido
+    const isInitialStockRequired = !formData.id && !user.multistore && user.store_id;
+    const isInitialStockComplete = !isInitialStockRequired || (initial_stock !== "" && parseInt(initial_stock) > 0);
+
+    return !areRequiredFieldsComplete || !areOptionalFieldsConsistent || !isInitialStockComplete;
   };
 
   const isCostHigher = formData.cost !== "" && formData.unit_price !== "" && Number(formData.cost) >= Number(formData.unit_price);
