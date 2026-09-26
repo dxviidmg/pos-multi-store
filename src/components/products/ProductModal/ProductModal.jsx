@@ -192,6 +192,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
       image,
       department,
       department_name,
+      initial_stock,
       ...requiredFields
     } = formData;
 
