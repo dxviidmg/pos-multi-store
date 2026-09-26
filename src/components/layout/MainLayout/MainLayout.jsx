@@ -354,25 +354,6 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
       { label: "Movimientos en caja", href: "/movimientos-caja/", hidden: user.role !== "seller" },
       { label: "Traspasos", href: "/traspasos/", hidden: user.role !== "seller" },
       { label: "Historial de stock", href: "/historial-stock/", hidden: user.role === "seller" },
-      {
-        label: "Auditoria",
-        dropdown: [
-          { label: "Productos", href: "/auditoria-productos/" },
-          { label: "Transacciones", href: "/auditoria-transacciones/" },
-        ],
-        hidden: user.role !== "owner",
-      },
-      {
-        label: "Facturación",
-        dropdown: [
-          { label: "Mi Plan Actual", href: "/mi-plan-actual/" },
-          { label: "Historial de pagos", href: "/pagos/" },
-          { label: "Suscripciones", href: "/suscripciones/" },
-        ],
-        hidden: user.role !== "owner",
-      },
-      { label: "Servicios", href: "/servicios/", hidden: user.role !== "owner" },
-      { label: "Sincronizar", href: "/sincronizar/", hidden: user.role !== "owner" },
     ],
     A: [
       ...(user.multistore ? [{
@@ -415,25 +396,6 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
         ],
       },
       { label: "Historial de stock", href: "/historial-stock/", hidden: user.role === "seller" },
-      {
-        label: "Auditoria",
-        dropdown: [
-          { label: "Productos", href: "/auditoria-productos/" },
-          { label: "Transacciones", href: "/auditoria-transacciones/" },
-        ],
-        hidden: user.role !== "owner",
-      },
-      {
-        label: "Facturación",
-        dropdown: [
-          { label: "Mi Plan Actual", href: "/mi-plan-actual/" },
-          { label: "Historial de pagos", href: "/pagos/" },
-          { label: "Suscripciones", href: "/suscripciones/" },
-        ],
-        hidden: user.role !== "owner",
-      },
-      { label: "Servicios", href: "/servicios/", hidden: user.role !== "owner" },
-      { label: "Sincronizar", href: "/sincronizar/", hidden: user.role !== "owner" },
     ],
     G: [
       {
