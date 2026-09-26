@@ -33,6 +33,7 @@ const INITIAL_FORM_DATA = {
   min_wholesale_quantity: "",
   wholesale_price_on_client_discount: false,
   image: null,
+  initial_stock: "",
 };
 
 const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
@@ -50,7 +51,6 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
   const [departments, setDepartments] = useState([]);
   const [optionsLoaded, setOptionsLoaded] = useState(false);
   const { values: formData, handleChange: handleDataChange, setValues: setFormData, setValue: setFormValue } = useForm(INITIAL_FORM_DATA);
-  const [initialStock, setInitialStock] = useState("");
 
   const [previewImage, setPreviewImage] = useState(null);
   const [storeProduct, setStoreProduct] = useState([]);
@@ -86,8 +86,11 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
           setStoreProduct(r.data.map((sp) => ({ ...sp, store_name: storeMap[sp.store] || `Tienda #${sp.store}` })));
         }
       } else {
-        setFormData({ ...INITIAL_FORM_DATA, code: productData.code || "" });
-        setInitialStock(createFromSearch ? "1" : "");
+        setFormData({
+          ...INITIAL_FORM_DATA,
+          code: productData.code || "",
+          initial_stock: createFromSearch ? "1" : "",
+        });
         setPreviewImage(noPhoto);
         setStoreProduct([]);
       }
@@ -138,35 +141,41 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
     }
   };
 
-  const handleProductSubmit = async (e) => {
+  const handleProductSubmit = async () => {
     setIsLoading(true);
     const apiCall = formData.id ? updateProduct : createProduct;
-    
-    // Filtrar department si es "0" o vacío
+
+    // Filtrar department si es "0" o vacío, e initial_stock del producto (no se envía al backend)
     const cleanFormData = { ...formData };
     if (cleanFormData.department === "0" || !cleanFormData.department) {
       delete cleanFormData.department;
     }
-    
+    const initialStockValue = cleanFormData.initial_stock;
+    delete cleanFormData.initial_stock;
+
     try {
       const response = await apiCall(cleanFormData);
 
       if ([200, 201].includes(response.status)) {
-        if (createFromSearch && initialStock && parseInt(initialStock) > 0) {
-          const storeProducts = await getStoreProducts({ code: formData.code });
-          if (storeProducts.data.length > 0) {
-            const sp = storeProducts.data[0];
-            await addProducts({
-              store_products: [{ id: sp.id, quantity: parseInt(initialStock) }],
-            });
+        // Agregar stock si: no es multistore, está dentro de tienda, es creación, y hay stock > 0
+        if (!formData.id && !user.multistore && user.store_id && initialStockValue && parseInt(initialStockValue) > 0) {
+          try {
+            const storeProducts = await getStoreProducts({ code: formData.code });
+            if (storeProducts.data.length > 0) {
+              const sp = storeProducts.data[0];
+              await addProducts({
+                store_products: [{ id: sp.id, quantity: parseInt(initialStockValue) }],
+              });
+            }
+          } catch (stockError) {
+            showError("Producto creado, pero hubo error al agregar stock");
           }
         }
         onClose();
         onUpdate(response.data);
         setFormData(INITIAL_FORM_DATA);
-        setInitialStock("");
         setPreviewImage(null);
-        showSuccess(`Producto ${formData.id ? "actualizado" : "creado"}${createFromSearch ? ` con stock de ${initialStock}` : ""}`);
+        showSuccess(`Producto ${formData.id ? "actualizado" : "creado"}${!user.multistore && user.store_id && initialStockValue ? ` con stock de ${initialStockValue}` : ""}`);
       }
     } catch (error) {
       showError(`Error al ${formData.id ? "actualizar" : "crear"} producto`);
@@ -367,12 +376,13 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
                 />
               </Grid>
 
-              {createFromSearch && (
+              {!user.multistore && user.store_id && !formData.id && (
                 <Grid item xs={12}>
                   <TextField size="small" fullWidth label="Stock inicial" type="number"
-                    value={initialStock}
+                    value={formData.initial_stock}
                     placeholder="Stock"
-                    onChange={(e) => setInitialStock(e.target.value)}
+                    name="initial_stock"
+                    onChange={handleDataChange}
                   />
                 </Grid>
               )}
