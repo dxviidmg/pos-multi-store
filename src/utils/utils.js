@@ -4,6 +4,5 @@ export { formatCurrency } from "./currency";
 export { exportToExcel } from "./excel";
 export { handlePrintTicket } from "./print";
 export { CHART_COLORS, getTied } from "./chart";
-export { getErrorMessage } from "./error";
-export { upsertById } from "./array";
 export { convertImageToWebp } from "./image";
+export { upsertById } from "./array";

@@ -52,7 +52,7 @@ function Login() {
           navigate("/vender/");
         }
       } else {
-        showAlert("Usuario o contraseña incorrecta");
+        showAlert("Usuario o contraseña incorrectos.");
       }
     } catch (error) {
       const status = error.response?.status;
@@ -63,9 +63,9 @@ function Login() {
       } else if (status === 403 && code === "subscription_expired") {
         showAlert("La suscripción del negocio venció. Contacta al propietario para reactivarla.");
       } else if (status === 400) {
-        showAlert("Usuario o contraseña incorrecta");
+        showAlert("Usuario o contraseña incorrectos.");
       } else {
-        showAlert("Error desconocido, intente nuevamente.");
+        showAlert("No se pudo iniciar sesión. Intenta de nuevo.");
       }
     }
   };

@@ -3,7 +3,7 @@ import SimpleTable from "../../ui/SimpleTable/SimpleTable";
 import { getClients } from "../../../api/clients";
 import { useDispatch } from "react-redux";
 import { addClientToCart } from "../../../redux/cart/cartActions";
-import { showError } from "../../../utils/alerts";
+import { showWarning } from "../../../utils/alerts";
 import { TextField, Box } from "@mui/material";
 
 const SearchClient = () => {
@@ -44,7 +44,7 @@ const SearchClient = () => {
       if (client) {
         handleSelectClient(client);
       } else {
-        showError("Error al seleccionar cliente", "Fuera de rango");
+        showWarning("No se pudo seleccionar el cliente", `No hay un cliente en la posición ${event.key}.`);
       }
     }
   };

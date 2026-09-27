@@ -9,7 +9,7 @@ import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { getBrands } from "../../../api/brands";
 import { getDepartments } from "../../../api/departments";
 import { useUser } from "../../../context/UserContext";
-import { showSuccess, showError, showConfirm } from "../../../utils/alerts";
+import { showSuccess, showConfirm, showRequestError, showWarning } from "../../../utils/alerts";
 import CustomTooltip from "../../ui/Tooltip";
 import PageHeader from "../../ui/PageHeader";
 import { Grid, TextField, Autocomplete, Select, MenuItem, useMediaQuery, useTheme } from "@mui/material";
@@ -127,7 +127,7 @@ const ProductList = () => {
   const handleDeleteProducts = async () => {
     const stockCount = selectedRows.reduce((sum, el) => sum + el.stock, 0);
     if (stockCount > 0) {
-      showError("Error al borrar productos", "Los productos no deben tener stock cero para ser borrados");
+      showWarning("No se pudo eliminar los productos", "Solo se pueden eliminar productos sin stock.");
       return;
     }
     const confirmed = await showConfirm("¿Eliminar productos seleccionados?", `Se eliminarán ${selectedRows.length} producto(s)`);
@@ -140,7 +140,7 @@ const ProductList = () => {
       setProducts((prev) => prev.filter((p) => !selectedIds.includes(p.id)));
       showSuccess("Productos eliminados");
     } else {
-      showError("Error al borrar productos");
+      showRequestError("eliminar los productos", response);
     }
   };
 
@@ -171,8 +171,8 @@ const ProductList = () => {
         handleUpdateProductList(response.data);
         showSuccess("Imagen actualizada");
       }
-    } catch {
-      showError("Error al actualizar imagen");
+    } catch (error) {
+      showRequestError("actualizar la imagen", error);
     }
   };
 
@@ -182,7 +182,7 @@ const ProductList = () => {
       await fetchProducts();
       showSuccess("Códigos pasaron a mayúsculas");
     } else {
-      showError("Error al procesar códigos de productos");
+      showRequestError("pasar los códigos a mayúsculas", response);
     }
   };
 

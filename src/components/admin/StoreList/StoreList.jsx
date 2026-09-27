@@ -28,7 +28,7 @@ import { useModal } from "../../../hooks/useModal";
 import { useCanCreateStore } from "../../../hooks/useCanCreateStore";
 import { useQueryClient } from "@tanstack/react-query";
 import { createMercadoPagoPreference } from "../../../api/mercadopago";
-import { showError } from "../../../utils/alerts";
+import { showRequestError } from "../../../utils/alerts";
 import mercadoPagoLogo from "../../../assets/mercadopago-logo.svg";
 
 const getCashValueTotal = (value) => formatCurrency(value || 0);
@@ -87,8 +87,8 @@ const StoreList = () => {
         window.open(res.data.init_point, "_blank");
         mpModal.close();
       }
-    } catch {
-      showError("Error", "No se pudo crear el enlace de pago");
+    } catch (error) {
+      showRequestError("crear el enlace de pago", error);
     } finally {
       setMpLoading(false);
     }

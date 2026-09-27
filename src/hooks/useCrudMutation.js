@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { showSuccess, showError } from '../utils/alerts';
+import { showSuccess, showWarning, showRequestError } from '../utils/alerts';
 
 /**
  * Hook genérico para crear mutaciones CRUD
@@ -7,17 +7,17 @@ import { showSuccess, showError } from '../utils/alerts';
  * @param {Object} options - Opciones de configuración
  * @param {string|Array} options.queryKey - Query key a invalidar
  * @param {string} options.successMessage - Mensaje de éxito
- * @param {string} options.errorMessage - Mensaje de error
+ * @param {string} options.errorAction - Acción para el mensaje de error ("crear la marca")
  * @param {Function} options.onSuccess - Callback adicional de éxito
  * @param {Function} options.onError - Callback adicional de error
- * @param {Function} options.errorParser - Función para parsear errores del servidor
+ * @param {Function} options.errorParser - Devuelve el motivo si el error es de validación conocida
  * @returns {Object} Mutation object de React Query
  */
 export const useCrudMutation = (mutationFn, options = {}) => {
   const {
     queryKey,
     successMessage,
-    errorMessage = 'Error en la operación',
+    errorAction = 'realizar la operación',
     onSuccess: onSuccessCallback,
     onError: onErrorCallback,
     errorParser,
@@ -45,13 +45,12 @@ export const useCrudMutation = (mutationFn, options = {}) => {
       }
     },
     onError: (error, variables, context) => {
-      let message = errorMessage;
-      
-      if (errorParser) {
-        message = errorParser(error) || errorMessage;
+      const reason = errorParser?.(error);
+      if (reason) {
+        showWarning(`No se pudo ${errorAction}`, reason);
+      } else {
+        showRequestError(errorAction, error);
       }
-      
-      showError('Error', message);
       onErrorCallback?.(error, variables, context);
     },
   });
@@ -62,14 +61,18 @@ export const useCrudMutation = (mutationFn, options = {}) => {
  * @param {string} resource - Nombre del recurso (singular)
  * @param {string} resourcePlural - Nombre del recurso (plural) para query key
  * @param {Object} api - Objeto con funciones de API (create, update, delete)
+ * @param {Object} options.feminine - true si el recurso es femenino ("Marca creada")
  * @returns {Object} Hooks de mutación { useCreate, useUpdate, useDelete }
  */
-export const createMutationHooks = (resource, resourcePlural, api) => {
+export const createMutationHooks = (resource, resourcePlural, api, { feminine = false } = {}) => {
+  const noun = `${feminine ? "la" : "el"} ${resource.toLowerCase()}`;
+  const done = (verb) => `${resource} ${verb}${feminine ? "a" : "o"}`;
+
   const useCreate = (options = {}) => {
     return useCrudMutation(api.create, {
       queryKey: resourcePlural,
-      successMessage: `${resource} creado`,
-      errorMessage: `Error al crear ${resource}`,
+      successMessage: done("cread"),
+      errorAction: `crear ${noun}`,
       ...options,
     });
   };
@@ -77,8 +80,8 @@ export const createMutationHooks = (resource, resourcePlural, api) => {
   const useUpdate = (options = {}) => {
     return useCrudMutation(api.update, {
       queryKey: resourcePlural,
-      successMessage: `${resource} actualizado`,
-      errorMessage: `Error al actualizar ${resource}`,
+      successMessage: done("actualizad"),
+      errorAction: `actualizar ${noun}`,
       ...options,
     });
   };
@@ -86,8 +89,8 @@ export const createMutationHooks = (resource, resourcePlural, api) => {
   const useDelete = (options = {}) => {
     return useCrudMutation(api.delete, {
       queryKey: resourcePlural,
-      successMessage: `${resource} eliminado`,
-      errorMessage: `Error al eliminar ${resource}`,
+      successMessage: done("eliminad"),
+      errorAction: `eliminar ${noun}`,
       ...options,
     });
   };

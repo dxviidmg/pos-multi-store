@@ -1,4 +1,4 @@
-import { showSuccess, showError, showAlert } from "../../../utils/alerts";
+import { showSuccess, showAlert, showWarning } from "../../../utils/alerts";
 import { logger } from "../../../utils/logger";
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
@@ -126,7 +126,7 @@ const SearchProduct = ({ searchInputRef }) => {
       movementType === MOVEMENT_TYPES.TRANSFER &&
       storeProduct.reserved_stock === 0
     ) {
-      showError("Este producto no está relacionado a algún traspaso");
+      showWarning("No se pudo agregar el producto", "No está incluido en ningún traspaso pendiente.");
     } else if (movementType === MOVEMENT_TYPES.CHECK_STOCK) {
       showSuccess(storeProduct.product.name, "Precio unitario $" + storeProduct.product.prices.unit_price);
     } else {
@@ -152,7 +152,7 @@ const SearchProduct = ({ searchInputRef }) => {
     const fetchedData = response.data;
     setData(fetchedData);
     if (fetchedData.length === 0) {
-      showError("Sin resultados", "No se encontraron productos con esa búsqueda");
+      showWarning("No se encontraron productos", "Prueba con otro nombre, marca o código.");
     }
   };
 

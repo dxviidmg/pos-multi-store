@@ -10,7 +10,7 @@ import httpClient from "../../../api/httpClient";
 import { getApiUrl } from "../../../api/utils";
 import { useUser } from "../../../context/UserContext";
 import { getFormattedDateTime } from "../../../utils/utils";
-import { showSuccess, showError } from "../../../utils/alerts";
+import { showSuccess, showRequestError } from "../../../utils/alerts";
 import { getStockUpdateRequests } from "../../../api/notifications";
 import Swal from "sweetalert2";
 import { colors } from "../../../theme/colors";
@@ -44,8 +44,8 @@ const StockUpdateRequestList = () => {
       await httpClient.post(getApiUrl(`stock-update-request/${row.id}/approve`), {});
       setRequests((prev) => prev.map((r) => r.id === row.id ? { ...r, applied: true } : r));
       showSuccess("Ajuste aplicado");
-    } catch {
-      showError("Error", "No se pudo aplicar el ajuste");
+    } catch (error) {
+      showRequestError("aplicar el ajuste", error);
     }
   };
 
@@ -64,8 +64,8 @@ const StockUpdateRequestList = () => {
       await httpClient.delete(getApiUrl(`stock-update-request/${row.id}`));
       setRequests((prev) => prev.filter((r) => r.id !== row.id));
       showSuccess("Solicitud eliminada");
-    } catch {
-      showError("Error", "No se pudo eliminar la solicitud");
+    } catch (error) {
+      showRequestError("eliminar la solicitud", error);
     }
   };
 

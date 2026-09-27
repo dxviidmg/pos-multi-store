@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import CustomModal from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
 import { updateSale } from "../../../api/sales";
-import { showSuccess, showError } from "../../../utils/alerts";
+import { showSuccess, showRequestError } from "../../../utils/alerts";
 import { handlePrintTicket } from "../../../utils/utils";
 import { useUser } from "../../../context/UserContext";
 import { usePrinterStatus } from "../../../hooks/usePrinterStatus";
@@ -82,10 +82,10 @@ const PaymentEditModal = ({ isOpen, sale, onClose, onUpdate }) => {
           handlePrintTicket("ticket", response.data);
         }
       } else {
-        showError("Error al añadir un pago de apartado", "Por favor llame a soporte técnico");
+        showRequestError("registrar el abono", response);
       }
     } catch (error) {
-      showError("Error al añadir un pago de apartado", "Por favor llame a soporte técnico");
+      showRequestError("registrar el abono", error);
     } finally {
       isSubmittingRef.current = false;
       setIsLoading(false);

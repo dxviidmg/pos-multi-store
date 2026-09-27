@@ -6,7 +6,7 @@ import { exportToExcel, getFormattedDate, formatCurrency } from "../../../utils/
 import { getCashSummary } from "../../../api/sales";
 import { getCashFlow } from "../../../api/cashflow";
 import { getDuplicateSales } from "../../../api/notifications";
-import { showAlert } from "../../../utils/alerts";
+import { showWarning } from "../../../utils/alerts";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import PageHeader from "../../ui/PageHeader";
 import { Grid, TextField, Box, Typography, Stack } from "@mui/material";
@@ -14,8 +14,8 @@ import DownloadIcon from "@mui/icons-material/Download";
 import PaymentIcon from "@mui/icons-material/Payment";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
-import { logger } from "../../../utils/logger";
 import ReceiptIcon from "@mui/icons-material/Receipt";
+import { logger } from "../../../utils/logger";
 
 const summaryColumns = [
   { name: "Tipo", selector: (row) => row.name },
@@ -71,7 +71,7 @@ const CashSummary = () => {
         const { data } = await getDuplicateSales();
         if (data && data.length > 0 && data[0].messages && data[0].messages.length > 0) {
           const message = `${data[0].messages.join(", ")}\n\nPosiblemente no cuadren las cuentas por esas ventas duplicadas.`;
-          showAlert("Atención", message);
+          showWarning("Posibles ventas duplicadas", message);
         }
       } catch (err) {
         logger.error("Error fetching duplicate sales:", err);

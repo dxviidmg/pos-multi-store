@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import CustomModal from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
 import { getBrands } from "../../../api/brands";
-import { showSuccess, showError } from "../../../utils/alerts";
+import { showSuccess, showRequestError, showWarning } from "../../../utils/alerts";
 import {
   createProduct,
   getStoreProducts,
@@ -172,7 +172,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
               }
             }
           } catch (stockError) {
-            showError("Producto creado, pero hubo error al agregar stock");
+            showWarning("Producto creado sin stock inicial", "No se pudo agregar el stock. Ajústalo desde Inventario.");
           }
         }
         onClose();
@@ -182,7 +182,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
         showSuccess(`Producto ${formData.id ? "actualizado" : "creado"}${!user.multistore && user.store_id && initialStockValue ? ` con stock de ${initialStockValue}` : ""}`);
       }
     } catch (error) {
-      showError(`Error al ${formData.id ? "actualizar" : "crear"} producto`);
+      showRequestError(`${formData.id ? "actualizar" : "crear"} el producto`, error);
     } finally {
       setIsLoading(false);
     }

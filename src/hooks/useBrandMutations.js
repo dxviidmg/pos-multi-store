@@ -7,7 +7,7 @@ const api = {
   delete: deleteBrands
 };
 
-const { useCreate, useUpdate } = createMutationHooks('Marca', 'brands', api);
+const { useCreate, useUpdate } = createMutationHooks('Marca', 'brands', api, { feminine: true });
 
 export const useCreateBrand = useCreate;
 export const useUpdateBrand = useUpdate;

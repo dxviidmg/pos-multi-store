@@ -9,7 +9,7 @@ import PaymentModal from "../../sales/PaymentModal/PaymentModal";
 import StockModal from "../StockModal/StockModal";
 import { getStores } from "../../../api/stores";
 import { confirmTransfers, createDistribution } from "../../../api/transfers";
-import { showSuccess, showError, showWarning } from "../../../utils/alerts";
+import { showSuccess, showWarning, showRequestError } from "../../../utils/alerts";
 import { addProducts } from "../../../api/products";
 import { useUser } from "../../../context/UserContext";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
@@ -150,7 +150,7 @@ const Cart = ({ searchInputRef, cartViewMode = "table", setCartViewMode }) => {
     const availableStock = movementType === MOVEMENT_TYPES.ADD_STOCK ? Infinity : getAvailableStock(product.id, stockLimit);
     
     if (Object.keys(carts).length > 1 && newQuantity > availableStock) {
-      showWarning("Stock no disponible", `"${product.product?.name || product.name}" está reservado en otros carritos`);
+      showWarning("No se pudo cambiar la cantidad", `"${product.product?.name || product.name}" está reservado en otros carritos.`);
       return;
     }
     
@@ -181,14 +181,14 @@ const Cart = ({ searchInputRef, cartViewMode = "table", setCartViewMode }) => {
       } else if (response.status === 404) {
         dispatch(cleanCart());
         setLoading(false);
-        showError("Traspaso inexistente", "Checa cantidad y/o destino");
+        showWarning("No se pudo confirmar el traspaso", "No coincide con un traspaso pendiente. Revisa la cantidad y el destino.");
       } else {
         setLoading(false);
-        showError("Error desconocido", "Por favor llame a soporte técnico");
+        showRequestError("confirmar el traspaso", response);
       }
     } catch (error) {
       setLoading(false);
-      showError("Error en la solicitud", error.message);
+      showRequestError("confirmar el traspaso", error);
     }
   };
 
@@ -208,14 +208,14 @@ const Cart = ({ searchInputRef, cartViewMode = "table", setCartViewMode }) => {
         showSuccess("Distribución creada");
       } else if (response.status === 404) {
         setLoading(false);
-        showError("Distribución no encontrada", "Algunos productos no coinciden con la distribución solicitada, ya sea en cantidad o en código.");
+        showWarning("No se pudo crear la distribución", "Algunos productos no coinciden con la distribución solicitada, en cantidad o en código.");
       } else {
         setLoading(false);
-        showError("Error desconocido", "Por favor llame a soporte técnico");
+        showRequestError("crear la distribución", response);
       }
     } catch (error) {
       setLoading(false);
-      showError("Error en la solicitud", error.message);
+      showRequestError("crear la distribución", error);
     }
   };
 
@@ -238,10 +238,10 @@ const Cart = ({ searchInputRef, cartViewMode = "table", setCartViewMode }) => {
         showSuccess("Producto agregado al inventario");
       } else {
         setLoading(false);
-        showError("Error en el inventario", "No se pudo añadir el producto");
+        showRequestError("agregar el producto al inventario", response);
       }
     } catch (error) {
-      showError("Error en la solicitud", error.message);
+      showRequestError("agregar el producto al inventario", error);
     }
   };
 

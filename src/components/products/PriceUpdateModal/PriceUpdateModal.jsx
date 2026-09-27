@@ -6,7 +6,7 @@ import { Grid, TextField, Alert } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { updatePricesProducts } from "../../../api/products";
-import { showSuccess, showError } from "../../../utils/alerts";
+import { showSuccess, showRequestError } from "../../../utils/alerts";
 import { formatCurrency } from "../../../utils/utils";
 
 const PriceUpdateModal = ({ isOpen, onClose, selectedProducts, onSuccess }) => {
@@ -76,7 +76,7 @@ const PriceUpdateModal = ({ isOpen, onClose, selectedProducts, onSuccess }) => {
       onClose();
       onSuccess();
     } else {
-      showError("Error al actualizar precios");
+      showRequestError("actualizar los precios", response);
     }
     setIsLoading(false);
   };

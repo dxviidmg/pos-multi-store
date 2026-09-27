@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from "react";
 import { useFetchWithRetry } from "./useFetch";
 import { getStoreProducts } from "../api/products";
-import { showError } from "../utils/alerts";
+import { showError, showWarning } from "../utils/alerts";
 import Swal from "sweetalert2";
 
 export const useProductSearch = () => {
@@ -49,7 +49,7 @@ export const useProductSearch = () => {
         logSearchTiming(elapsed, query);
 
         if (!fetchedData) {
-          showError("Búsqueda tardada", "La búsqueda tardó demasiado. Reintentar o buscar de manera manual");
+          showError("Error al buscar el producto", "La búsqueda tardó demasiado. Intenta de nuevo o búscalo por nombre.");
           return;
         }
 
@@ -71,7 +71,7 @@ export const useProductSearch = () => {
               setQuery("");
             }
           } else {
-            showError("Producto no encontrado", `No se encontró ningún producto con el código "${query}"`);
+            showWarning("No se encontró el producto", `No hay ningún producto con el código "${query}".`);
           }
         } else if (fetchedData.length === 1) {
           handleSingleProductFetch(fetchedData[0]);

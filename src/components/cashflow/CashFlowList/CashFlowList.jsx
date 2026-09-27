@@ -13,7 +13,7 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import PageHeader from "../../ui/PageHeader";
-import { showSuccess, showError, showConfirm } from "../../../utils/alerts";
+import { showSuccess, showConfirm, showRequestError } from "../../../utils/alerts";
 
 const today = getFormattedDate();
 
@@ -56,7 +56,7 @@ const CashFlowList = () => {
       setCashFlow((prev) => prev.filter((item) => item.id !== row.id));
       showSuccess("Movimiento eliminado");
     } else {
-      showError("Error al eliminar", "No se pudo eliminar el movimiento");
+      showRequestError("eliminar el movimiento", response);
     }
   };
 

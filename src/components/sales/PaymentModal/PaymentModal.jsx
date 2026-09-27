@@ -6,7 +6,7 @@ import CustomModal from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
 import { cleanCart, removeClientfromCart, addClientToCart } from "../../../redux/cart/cartActions";
 import { createSale, getSale } from "../../../api/sales";
-import { showSuccess, showError } from "../../../utils/alerts";
+import { showSuccess, showRequestError } from "../../../utils/alerts";
 import { useUser } from "../../../context/UserContext";
 import { handlePrintTicket } from "../../../utils/utils";
 import { usePrinterStatus } from "../../../hooks/usePrinterStatus";
@@ -253,7 +253,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
         throw new Error("Sale error");
       }
     } catch (error) {
-      showError("Error al finalizar la venta", "Por favor llame a soporte técnico");
+      showRequestError("finalizar la venta", error);
     } finally {
       isSubmittingRef.current = false; // 🔓 libera lock
       setIsLoading(false);

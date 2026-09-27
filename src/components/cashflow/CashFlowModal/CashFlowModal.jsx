@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import CustomModal from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
-import { showSuccess, showError } from "../../../utils/alerts";
+import { showSuccess, showRequestError } from "../../../utils/alerts";
 import { createCashFlow, updateCashFlow, getCashFlowChoices } from "../../../api/cashflow";
 import {
   Box,
@@ -65,10 +65,7 @@ const CashFlowModal = ({ isOpen, cashFlow, onClose, onUpdate }) => {
       setFormData(INITIAL_FORM);
       showSuccess(formData.id ? "Movimiento actualizado" : "Movimiento creado");
     } else {
-      showError(
-        "Error al guardar movimiento",
-        "Error desconocido, por favor comuníquese con soporte"
-      );
+      showRequestError("guardar el movimiento", response);
     }
   };
 

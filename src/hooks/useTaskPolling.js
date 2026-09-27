@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { getTaskResult } from "../api/products";
-import { showError } from "../utils/alerts";
-import { getErrorMessage } from "../utils/utils";
+import { showError, showRequestError, SUPPORT_HINT } from "../utils/alerts";
 
 const POLL_INTERVAL = 10;
 
@@ -47,12 +46,12 @@ const useTaskPolling = (startTask) => {
             setProgress(100);
             clearTimers();
           } else if (taskData.status === "FAILURE") {
-            showError("Error", taskData.error?.message || "Error desconocido");
+            showError("Error al procesar la tarea", taskData.error?.message || SUPPORT_HINT);
             setLoading(false);
             clearTimers();
           }
         } catch (error) {
-          showError("Error", getErrorMessage(error));
+          showRequestError("consultar la tarea", error);
           setLoading(false);
           clearTimers();
         }
@@ -65,7 +64,7 @@ const useTaskPolling = (startTask) => {
         startCountdown();
       }, POLL_INTERVAL * 1000);
     } catch (error) {
-      showError("Error al cargar el tablero", getErrorMessage(error));
+      showRequestError("cargar el tablero", error);
       setLoading(false);
     }
   }, [startTask]);

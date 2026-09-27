@@ -13,8 +13,8 @@ const LABELS = {
   countUnit: "departamento(s)",
   confirmTitle: "¿Eliminar departamentos seleccionados?",
   deleted: "Departamentos eliminados",
-  deleteError: "Error al borrar departamentos",
-  hasProducts: "Los departamentos no deben tener productos relacionados",
+  deleteAction: "eliminar los departamentos",
+  hasProducts: "Los departamentos seleccionados tienen productos relacionados.",
 };
 
 const DepartmentList = () => (

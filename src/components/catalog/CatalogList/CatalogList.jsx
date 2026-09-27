@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import DataTable from "../../ui/DataTable/DataTable";
 import CustomButton from "../../ui/Button/Button";
 import CatalogModal from "../CatalogModal/CatalogModal";
-import { showSuccess, showError, showConfirm } from "../../../utils/alerts";
+import { showSuccess, showConfirm, showRequestError, showWarning } from "../../../utils/alerts";
 import { useUser } from "../../../context/UserContext";
 import EditIcon from "@mui/icons-material/Edit";
 import CustomTooltip from "../../ui/Tooltip";
@@ -25,7 +25,7 @@ const CatalogList = ({ useData, deleteFn, useCreate, useUpdate, labels }) => {
   const handleDelete = async () => {
     const productsCount = selectedRows.reduce((sum, el) => sum + el.product_count, 0);
     if (productsCount > 0) {
-      showError(labels.deleteError, labels.hasProducts);
+      showWarning(`No se pudo ${labels.deleteAction}`, labels.hasProducts);
       return;
     }
     const confirmed = await showConfirm(labels.confirmTitle, `Se eliminarán ${selectedRows.length} ${labels.countUnit}`);
@@ -36,7 +36,7 @@ const CatalogList = ({ useData, deleteFn, useCreate, useUpdate, labels }) => {
       showSuccess(labels.deleted);
       refetch();
     } else {
-      showError(labels.deleteError);
+      showRequestError(labels.deleteAction, response);
     }
   };
 

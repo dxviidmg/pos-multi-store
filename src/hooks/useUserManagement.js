@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { getUser, updateUser, changePassword } from "../api/users";
-import { showSuccess, showError } from "../utils/alerts";
+import { showSuccess, showRequestError } from "../utils/alerts";
 
 export const useUserManagement = () => {
   const [editUserModal, setEditUserModal] = useState({ open: false, userId: null, data: {} });
@@ -13,7 +13,7 @@ export const useUserManagement = () => {
       const response = await getUser(userId);
       setEditUserModal({ open: true, userId, data: response.data });
     } catch (error) {
-      showError('Error', 'No se pudo cargar la información del usuario');
+      showRequestError('cargar el usuario', error);
     }
   };
 
@@ -32,7 +32,7 @@ export const useUserManagement = () => {
       showSuccess('Guardado', 'Usuario actualizado');
       handleCloseEditUser();
     } catch (error) {
-      showError('Error', 'No se pudo actualizar el usuario');
+      showRequestError('actualizar el usuario', error);
     }
   };
 
@@ -67,7 +67,7 @@ export const useUserManagement = () => {
       showSuccess('Guardado', 'Contraseña actualizada');
       handleCloseChangePassword();
     } catch (error) {
-      showError('Error', error.response?.data?.message || 'No se pudo cambiar la contraseña');
+      showRequestError('cambiar la contraseña', error);
     }
   };
 

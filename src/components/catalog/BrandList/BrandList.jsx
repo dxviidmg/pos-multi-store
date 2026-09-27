@@ -13,8 +13,8 @@ const LABELS = {
   countUnit: "marca(s)",
   confirmTitle: "¿Eliminar marcas seleccionadas?",
   deleted: "Marcas eliminadas",
-  deleteError: "Error al borrar marcas",
-  hasProducts: "Las marcas no deben tener productos relacionados",
+  deleteAction: "eliminar las marcas",
+  hasProducts: "Las marcas seleccionadas tienen productos relacionados.",
 };
 
 const BrandList = () => (

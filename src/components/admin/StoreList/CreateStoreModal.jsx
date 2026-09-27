@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import CustomModal from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
-import { showSuccess, showError } from "../../../utils/alerts";
+import { showSuccess, showRequestError } from "../../../utils/alerts";
 import { createStore } from "../../../api/stores";
 import {
   Box,
@@ -42,10 +42,7 @@ const CreateStoreModal = ({ isOpen, onClose, onCreated }) => {
       setFormData(INITIAL_FORM);
       showSuccess("Tienda creada");
     } else {
-      showError(
-        "Error al crear tienda",
-        response.data?.detail || "Error desconocido, por favor comuníquese con soporte"
-      );
+      showRequestError("crear la tienda", response);
     }
   };
 
