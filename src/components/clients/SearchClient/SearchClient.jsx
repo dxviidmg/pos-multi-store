@@ -68,13 +68,7 @@ const SearchClient = () => {
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Nombre y/o número (Ctrl+J)"
         InputLabelProps={{ shrink: true }}
-        sx={{
-          animation: 'fadeIn 0.3s ease',
-          '@keyframes fadeIn': {
-            from: { opacity: 0, transform: 'translateX(-8px)' },
-            to: { opacity: 1, transform: 'translateX(0)' },
-          },
-        }}
+        className="fade-in-left"
       />
       {query && (
         <Box sx={{ position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 10, mt: 0.5 }}>

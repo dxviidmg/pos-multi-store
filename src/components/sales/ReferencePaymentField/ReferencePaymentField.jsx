@@ -12,25 +12,19 @@ const ReferencePaymentField = ({ value, onChange }) => {
       size="small"
       label="Referencia de pago"
       type="text"
+      className="fade-in-left"
       color={isEmpty ? "error" : "primary"}
       focused={isEmpty}
       value={value}
       onChange={(e) => onChange(e.target.value)}
       InputLabelProps={{ shrink: true }}
-      sx={{
-        animation: 'fadeIn 0.3s ease',
-        '@keyframes fadeIn': {
-          from: { opacity: 0, transform: 'translateX(-8px)' },
-          to: { opacity: 1, transform: 'translateX(0)' },
+      sx={isEmpty ? {
+        '& .MuiOutlinedInput-root': {
+          '& fieldset': { borderColor: 'rgba(0,0,0,0.23)' },
+          '&:hover fieldset': { borderColor: 'rgba(0,0,0,0.87)' },
+          '&.Mui-focused fieldset': { borderColor: 'rgba(0,0,0,0.23)' },
         },
-        ...(isEmpty && {
-          '& .MuiOutlinedInput-root': {
-            '& fieldset': { borderColor: 'rgba(0,0,0,0.23)' },
-            '&:hover fieldset': { borderColor: 'rgba(0,0,0,0.87)' },
-            '&.Mui-focused fieldset': { borderColor: 'rgba(0,0,0,0.23)' },
-          },
-        }),
-      }}
+      } : undefined}
     />
   );
 };

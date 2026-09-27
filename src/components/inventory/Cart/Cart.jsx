@@ -293,7 +293,7 @@ const Cart = ({ searchInputRef, cartViewMode = "table", setCartViewMode }) => {
                     )}
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                       <Typography variant="body2" color="text.secondary">Productos:</Typography>
-                      <Typography variant="h4" sx={{ fontWeight: 700, color: 'primary.main' }}>{totalProducts}</Typography>
+                      <Typography key={totalProducts} variant="h4" className="value-pop" sx={{ fontWeight: 700, color: 'primary.main' }}>{totalProducts}</Typography>
                     </Box>
                   </Box>
                 </Grid>
@@ -301,7 +301,7 @@ const Cart = ({ searchInputRef, cartViewMode = "table", setCartViewMode }) => {
                 <Grid item xs={6} md={5}>
                   <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
                     <Typography variant="body2" color="text.secondary">Total:</Typography>
-                    <Typography variant="h4" sx={{ fontWeight: 700, color: 'primary.main' }}>${total.toFixed(2)}</Typography>
+                    <Typography key={total} variant="h4" className="value-pop" sx={{ fontWeight: 700, color: 'primary.main' }}>${total.toFixed(2)}</Typography>
                   </Box>
                 </Grid>
                 <Grid item xs={12} md={4}>
@@ -329,7 +329,7 @@ const Cart = ({ searchInputRef, cartViewMode = "table", setCartViewMode }) => {
                     )}
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                       <Typography variant="body2" color="text.secondary">Productos:</Typography>
-                      <Typography variant="h4" sx={{ fontWeight: 700, color: 'primary.main' }}>{totalProducts}</Typography>
+                      <Typography key={totalProducts} variant="h4" className="value-pop" sx={{ fontWeight: 700, color: 'primary.main' }}>{totalProducts}</Typography>
                     </Box>
                   </Box>
                 </Grid>
@@ -425,7 +425,7 @@ const Cart = ({ searchInputRef, cartViewMode = "table", setCartViewMode }) => {
               const unitLabels = { PZ: "Pieza", CO: "Costal", KG: "Kilo", LT: "Litro" };
 
               return (
-                <Grid item xs={12} md={3} key={idx} sx={{ display: 'flex' }}>
+                <Grid item xs={12} md={3} key={item.id ?? idx} className="fade-in-up" sx={{ display: 'flex' }}>
                   <Box sx={{ width: '100%', bgcolor: 'background.paper', borderRadius: '12px', border: '1px solid', borderColor: 'divider', overflow: 'hidden', display: 'flex', flexDirection: 'column', transition: 'all 0.2s ease', '&:hover': { boxShadow: '0 2px 8px rgba(0,0,0,0.1)', borderColor: 'primary.light' } }}>
                     {/* Imagen */}
                     <Box
@@ -597,7 +597,7 @@ const Cart = ({ searchInputRef, cartViewMode = "table", setCartViewMode }) => {
               const unitLabels = { PZ: "Pieza", CO: "Costal", KG: "Kilo", LT: "Litro" };
 
               return (
-                <Grid item xs={12} key={idx} sx={{ bgcolor: 'background.paper', borderRadius: 2, border: '1px solid', borderColor: 'divider', p: 1.5 }}>
+                <Grid item xs={12} key={item.id ?? idx} className="fade-in-up" sx={{ bgcolor: 'background.paper', borderRadius: 2, border: '1px solid', borderColor: 'divider', p: 1.5 }}>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', mb: 1 }}>
                     <Box sx={{ flex: 1 }}>
                       <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 0.5 }}>

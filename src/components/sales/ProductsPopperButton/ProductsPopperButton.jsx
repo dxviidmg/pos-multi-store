@@ -34,7 +34,7 @@ const ProductsPopperButton = ({ row }) => {
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
-        <Paper elevation={3} sx={{ maxHeight: '400px', maxWidth: '350px', overflow: 'auto', p: 1.5 }}>
+        <Paper elevation={3} className="dropdown-enter" sx={{ maxHeight: '400px', maxWidth: '350px', overflow: 'auto', p: 1.5 }}>
           {row.products_sale?.map((p, i) => (
             <Box
               key={i}
