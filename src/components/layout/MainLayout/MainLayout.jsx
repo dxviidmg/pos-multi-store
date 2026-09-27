@@ -452,8 +452,17 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
   const menuItems = linksByType[type];
 
   const activeSx = {
+    position: "relative",
     background: `${accent}26`,
     "&:hover": { background: `${accent}33` },
+    "&::before": {
+      content: '""',
+      position: "absolute",
+      left: 0, top: 8, bottom: 8, width: 3,
+      borderRadius: 3,
+      background: accent,
+      boxShadow: `0 0 12px ${accent}`,
+    },
   };
 
   return (
@@ -958,7 +967,9 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
 
       <Box component="main" sx={{ flexGrow: 1, p: { xs: 1.5, sm: 2, md: 3 }, minWidth: 0, overflowY: "auto", position: "relative" }}>
         <DrawerHeader />
-        <Outlet />
+        <Box key={location.pathname} className="page-enter">
+          <Outlet />
+        </Box>
       </Box>
 
       <Backdrop

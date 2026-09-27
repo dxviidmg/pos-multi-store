@@ -13,16 +13,20 @@ const style = {
   maxHeight: '90vh',
   overflow: 'auto',
   bgcolor: 'background.paper',
-  boxShadow: '0 24px 48px rgba(0,0,0,0.12)',
-  borderRadius: 1,
+  boxShadow: 24,
+  borderRadius: 2,
   border: '1px solid',
   borderColor: 'divider',
 };
 
 function CustomModal({ showOut, onClose, title, children, maxWidth = 800 }) {
   return (
-    <Modal open={showOut} onClose={onClose}>
-      <Box sx={{ ...style, maxWidth }}>
+    <Modal
+      open={showOut}
+      onClose={onClose}
+      slotProps={{ backdrop: { sx: { backgroundColor: 'rgba(2,17,38,0.45)', backdropFilter: 'blur(4px)' } } }}
+    >
+      <Box className="modal-enter" sx={{ ...style, maxWidth }}>
         <Box className="modal__header" sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Typography variant="h6" sx={{ flexGrow: 1, textAlign: 'center', fontWeight: 600 }}>
             {title}

@@ -2,26 +2,21 @@ import React from "react";
 import { Box, Typography } from "@mui/material";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import TrendingDownIcon from "@mui/icons-material/TrendingDown";
+import { colors } from "../../../theme";
 
-const gradients = [
-  "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-  "linear-gradient(135deg, #11998e 0%, #38ef7d 100%)",
-  "linear-gradient(135deg, #a78bfa 0%, #7c5cbf 100%)",
-  "linear-gradient(135deg, #f2994a 0%, #f2c94c 100%)",
-  "linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%)",
-];
+const gradients = colors.gradient.kpi;
 
 const KPICard = ({ title, value, subtitle, trend, icon: Icon, index = 0 }) => {
   const gradient = gradients[index % gradients.length];
 
   return (
-    <Box sx={{ height: "100%" }}>
+    <Box className="fade-in-up" sx={{ height: "100%", animationDelay: `${index * 60}ms` }}>
       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
         <Box sx={{ flex: 1 }}>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5, fontWeight: 500 }}>
             {title}
           </Typography>
-          <Typography variant="h4" sx={{ fontWeight: 700, mb: 0.5 }}>
+          <Typography variant="h4" sx={{ fontWeight: 800, mb: 0.5, fontVariantNumeric: "tabular-nums" }}>
             {value}
           </Typography>
           {subtitle && (
@@ -43,9 +38,9 @@ const KPICard = ({ title, value, subtitle, trend, icon: Icon, index = 0 }) => {
         {Icon && (
           <Box sx={{
             background: gradient,
-            color: "white", p: 1.5, borderRadius: 2.5,
+            color: "common.white", p: 1.5, borderRadius: 1.5,
             display: "flex", alignItems: "center", justifyContent: "center",
-            boxShadow: "0 4px 14px rgba(0,0,0,0.15)",
+            boxShadow: colors.shadow.brand,
           }}>
             <Icon sx={{ fontSize: 26 }} />
           </Box>
