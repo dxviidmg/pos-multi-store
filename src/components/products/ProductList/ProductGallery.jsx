@@ -5,7 +5,7 @@ import ProductGridCard from "./ProductGridCard";
 /**
  * Vista de galería (cuadrícula de tarjetas) para la lista de productos.
  */
-const ProductGallery = ({ products = [], loading, onEdit, onPriceLogs, onStoreStock, role }) => {
+const ProductGallery = ({ products = [], loading, onEdit, onPriceLogs, onStoreStock, onCameraPhoto, role }) => {
   if (loading) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", py: 6 }}>
@@ -33,6 +33,7 @@ const ProductGallery = ({ products = [], loading, onEdit, onPriceLogs, onStoreSt
             onEdit={onEdit}
             onPriceLogs={onPriceLogs}
             onStoreStock={onStoreStock}
+            onCameraPhoto={onCameraPhoto}
             role={role}
           />
         </Grid>

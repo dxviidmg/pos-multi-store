@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import DataTable from "../../ui/DataTable/DataTable";
-import { deleteProducts, getProducts, upperCodeProducts } from "../../../api/products";
+import { deleteProducts, getProducts, updateProduct, upperCodeProducts } from "../../../api/products";
 import CustomButton from "../../ui/Button/Button";
 import { useModal } from "../../../hooks/useModal";
 import ProductModal from "../ProductModal/ProductModal";
@@ -12,7 +12,7 @@ import { useUser } from "../../../context/UserContext";
 import { showSuccess, showError, showConfirm } from "../../../utils/alerts";
 import CustomTooltip from "../../ui/Tooltip";
 import PageHeader from "../../ui/PageHeader";
-import { Grid, TextField, Autocomplete } from "@mui/material";
+import { Grid, TextField, Autocomplete, Select, MenuItem, useMediaQuery, useTheme } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import EditIcon from "@mui/icons-material/Edit";
 import ChecklistIcon from "@mui/icons-material/Checklist";
@@ -22,13 +22,17 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import TextFormatIcon from "@mui/icons-material/TextFormat";
 import HistoryIcon from "@mui/icons-material/History";
 import PriceChangeIcon from "@mui/icons-material/PriceChange";
+import CameraAltIcon from "@mui/icons-material/CameraAlt";
 import PriceLogsModal from "../PriceLogsModal/PriceLogsModal";
 import PriceUpdateModal from "../PriceUpdateModal/PriceUpdateModal";
 import ProductViewToggle from "./ProductViewToggle";
 import ProductGallery from "./ProductGallery";
 import { useViewModePreference } from "../../../hooks/useViewModePreference";
+import { convertImageToWebp } from "../../../utils/image";
 
 const ProductList = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const { user } = useUser();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -37,10 +41,14 @@ const ProductList = () => {
   const [optionsLoaded, setOptionsLoaded] = useState(false);
   const [params, setParams] = useState({});
   const [selectedRows, setSelectedRows] = useState([]);
-  const [viewMode, setViewMode] = useViewModePreference("productList.viewMode", "table");
+  const [viewModePref, setViewModePref] = useViewModePreference("productList.viewMode", "table");
+  const viewMode = isMobile ? "gallery" : viewModePref;
+  const [searchField, setSearchField] = useState("code");
   const productModal = useModal();
   const priceLogsModal = useModal();
   const priceUpdateModal = useModal();
+  const cameraInputRef = useRef(null);
+  const cameraProductRef = useRef(null);
 
   useEffect(() => {
     const fetchOptions = async () => {
@@ -99,6 +107,27 @@ const ProductList = () => {
     setParams((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleSearchFieldChange = (e) => {
+    setSearchField(e.target.value);
+    setParams((prev) => {
+      const newParams = { ...prev };
+      delete newParams.code;
+      delete newParams.q;
+      return newParams;
+    });
+  };
+
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setParams((prev) => ({
+      ...prev,
+      [searchField === "code" ? "code" : "q"]: value,
+      [searchField === "code" ? "q" : "code"]: undefined,
+    }));
+  };
+
+  const isSearchDisabled = !params.code && !params.q && !params.brand_id && !params.department_id && !params.max_stock;
+
   const handleDeleteProducts = async () => {
     const stockCount = selectedRows.reduce((sum, el) => sum + el.stock, 0);
     if (stockCount > 0) {
@@ -128,6 +157,29 @@ const ProductList = () => {
   const handlePriceLogs = (product) => priceLogsModal.open(product);
   const handleStoreStock = (product) => productModal.open({ product, showStoreProducts: true });
 
+  const handleCameraClick = (product) => {
+    cameraProductRef.current = product;
+    cameraInputRef.current.value = "";
+    cameraInputRef.current.click();
+  };
+
+  const handleCameraCapture = async (e) => {
+    const file = e.target.files[0];
+    const product = cameraProductRef.current;
+    if (!file || !product) return;
+
+    try {
+      const webpFile = await convertImageToWebp(file, { quality: 0.85, maxWidth: 1000, maxHeight: 1000 });
+      const response = await updateProduct({ id: product.id, image: webpFile });
+      if (response.status === 200) {
+        handleUpdateProductList(response.data);
+        showSuccess("Imagen actualizada");
+      }
+    } catch {
+      showError("Error al actualizar imagen");
+    }
+  };
+
   const handleUpperCodeProducts = async () => {
     const response = await upperCodeProducts();
     if (response.status === 200) {
@@ -140,6 +192,14 @@ const ProductList = () => {
 
   return (
     <>
+      <input
+        ref={cameraInputRef}
+        type="file"
+        accept="image/*"
+        capture="environment"
+        onChange={handleCameraCapture}
+        style={{ display: "none" }}
+      />
       <CustomSpinner isLoading={loading} />
       <ProductModal isOpen={productModal.isOpen} product={productModal.data} onClose={productModal.close} onUpdate={handleUpdateProductList} />
       <PriceLogsModal isOpen={priceLogsModal.isOpen} product={priceLogsModal.data} onClose={priceLogsModal.close} />
@@ -153,23 +213,44 @@ const ProductList = () => {
             </CustomButton>
           </PageHeader>
 
-          <Grid container spacing={2} sx={{ mb: 2 }}>
-            {/* Fila 1: Solo Modo de vista */}
+          <Grid container spacing={2} sx={{ mb: 3 }}>
+            {/* Fila 1: BÚSQUEDA + BOTÓN BUSCAR */}
             <Grid item xs={12} md={3}>
-              <ProductViewToggle value={viewMode} onChange={setViewMode} />
+              <Select
+                size="small"
+                fullWidth
+                value={searchField}
+                onChange={handleSearchFieldChange}
+                sx={{ backgroundColor: "rgba(4, 53, 107, 0.05)" }}
+              >
+                <MenuItem value="code">Código</MenuItem>
+                <MenuItem value="q">Nombre</MenuItem>
+              </Select>
             </Grid>
-            <Grid item xs={12} md={9} />
-          </Grid>
-
-          <Grid container spacing={2} sx={{ mb: 2 }}>
-            {/* Fila 2: Filtros desde "Buscar por código" */}
-            <Grid item xs={12} md={3}>
-              <TextField
-                size="small" label="Buscar por código" fullWidth
-                value={params.code || ""} onChange={handleDataChange} name="code"
+            <Grid item xs={12} md={6}>
+              <TextField 
+                size="small" 
+                fullWidth 
+                placeholder={searchField === "code" ? "Ej: SKU-001" : "Ej: Producto..."} 
+                type="text"
+                value={searchField === "code" ? (params.code || "") : (params.q || "")} 
+                onChange={handleSearchChange}
                 onKeyDown={(e) => e.key === "Enter" && fetchProducts()}
+                sx={{ backgroundColor: "#fff" }}
               />
             </Grid>
+            <Grid item xs={12} md={3}>
+              <CustomButton 
+                fullWidth 
+                onClick={fetchProducts}
+                startIcon={<SearchIcon />}
+                disabled={isSearchDisabled}
+              >
+                Buscar
+              </CustomButton>
+            </Grid>
+
+            {/* Fila 2: FILTROS SECUNDARIOS */}
             <Grid item xs={12} md={3}>
               <Autocomplete
                 size="small"
@@ -209,18 +290,26 @@ const ProductList = () => {
               </Grid>
             )}
             <Grid item xs={12} md={3}>
-              <TextField size="small" label="Stock Máximo" fullWidth type="number"
-                value={params.max_stock || ""} onChange={handleDataChange} name="max_stock"
+              <TextField 
+                size="small" 
+                fullWidth 
+                label="Stock máximo" 
+                type="number"
+                value={params.max_stock || ""} 
+                onChange={handleDataChange} 
+                name="max_stock"
               />
             </Grid>
-            <Grid item xs={12} md={3}>
-              <CustomButton fullWidth onClick={fetchProducts} startIcon={<SearchIcon />}>
-                Buscar
-              </CustomButton>
-            </Grid>
+            {!isMobile && (
+              <Grid item xs={12} md={3}>
+                <ProductViewToggle value={viewModePref} onChange={setViewModePref} />
+              </Grid>
+            )}
+
+            {/* Fila 3: ACCIONES */}
             <Grid item xs={12} md={3}>
               <CustomButton fullWidth onClick={handleDownload} disabled={products.length === 0} startIcon={<DownloadIcon />}>
-                Descargar productos
+                Descargar
               </CustomButton>
             </Grid>
             <Grid item xs={12} md={3}>
@@ -240,14 +329,14 @@ const ProductList = () => {
                 </CustomButton>
               </CustomTooltip>
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={3}>
               <CustomButton
                 fullWidth
                 onClick={handleUpdatePrices}
                 disabled={selectedRows.length < 2 || user.role !== "owner"}
                 startIcon={<PriceChangeIcon />}
               >
-                Actualización masiva de costos y precios
+                Actualizar precios
               </CustomButton>
             </Grid>
           </Grid>
@@ -259,12 +348,13 @@ const ProductList = () => {
               onEdit={handleEditProduct}
               onPriceLogs={handlePriceLogs}
               onStoreStock={handleStoreStock}
+              onCameraPhoto={handleCameraClick}
               role={user.role}
             />
           ) : (
             <DataTable
               setSelectedRows={setSelectedRows}
-              searcher={true}
+              searcher={false}
               progressPending={loading}
               noDataComponent="Sin productos"
               data={products}
@@ -284,12 +374,17 @@ const ProductList = () => {
                 },
                 ...(user.role !== "seller" ? [{
                   name: "Acciones",
-                  width: 180,
+                  width: 220,
                   cell: (row) => (
                     <>
                       <CustomTooltip text="Editar producto">
                         <CustomButton onClick={() => productModal.open({ product: row, showStoreProducts: false })}>
                           <EditIcon />
+                        </CustomButton>
+                      </CustomTooltip>
+                      <CustomTooltip text="Tomar foto">
+                        <CustomButton onClick={() => handleCameraClick(row)}>
+                          <CameraAltIcon />
                         </CustomButton>
                       </CustomTooltip>
                       <CustomTooltip text="Historial de precios">

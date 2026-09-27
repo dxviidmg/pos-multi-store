@@ -96,7 +96,8 @@ const DataTable = ({
             size="small"
             fullWidth
             placeholder="Buscar..."
-            type="text"
+            type="search"
+            autoComplete="off"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />

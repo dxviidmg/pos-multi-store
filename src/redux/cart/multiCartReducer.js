@@ -204,7 +204,7 @@ const multiCartReducer = (state = initialState, action) => {
     }
 
     case UPDATE_MOVEMENT_TYPE: {
-      return updateActiveCart(state, { movementType: action.payload });
+      return updateActiveCart(state, { movementType: action.payload, cart: [], client: {} });
     }
 
     case UPDATE_QUANTITY_IN_CART: {

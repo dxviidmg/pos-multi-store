@@ -22,15 +22,18 @@ import { useUser } from "../../../context/UserContext";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { useModal } from "../../../hooks/useModal";
 import { useAvailableStock } from "../../../hooks/useAvailableStock";
-import { Grid, Select, MenuItem, Typography, useMediaQuery, useTheme, TextField, IconButton, Box, Switch, FormControlLabel, Checkbox } from "@mui/material";
+import { Grid, Select, MenuItem, Typography, useMediaQuery, useTheme, TextField, IconButton, Box, Switch, FormControlLabel, Checkbox, Tooltip } from "@mui/material";
 import PaymentIcon from "@mui/icons-material/Payment";
 import SendIcon from "@mui/icons-material/Send";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import DeleteIcon from "@mui/icons-material/Delete";
+import ViewWeekIcon from "@mui/icons-material/ViewWeek";
+import ViewAgendaIcon from "@mui/icons-material/ViewAgenda";
 import { MOVEMENT_TYPES, STORE_TYPES } from "../../../constants";
 import { getSaleColumns, getTransferColumns, getDistributionColumns, getAddToStockColumns } from "./cartColumns";
+import noPhotoImage from "../../../assets/images/noPhoto.webp";
 
-const Cart = ({ searchInputRef }) => {
+const Cart = ({ searchInputRef, cartViewMode = "table", setCartViewMode }) => {
   const { user } = useUser();
   const store_type = user?.store_type;
   const dispatch = useDispatch();
@@ -320,13 +323,53 @@ const Cart = ({ searchInputRef }) => {
             {(movementType === MOVEMENT_TYPES.SALE || movementType === MOVEMENT_TYPES.RESERVATION) && (
               <>
                 <Grid item xs={6} md={3}>
-                  <Typography variant="body2" color="text.secondary">Productos</Typography>
-                  <Typography variant="h5" sx={{ fontWeight: 700 }}>{totalProducts}</Typography>
+                  <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                    {!isMobile && (
+                      <Box sx={{ display: 'flex', gap: 1 }}>
+                        <Tooltip title="Vista de tabla">
+                          <IconButton
+                            onClick={() => setCartViewMode("table")}
+                            size="small"
+                            sx={{
+                              bgcolor: cartViewMode === "table" ? 'primary.main' : 'transparent',
+                              color: cartViewMode === "table" ? 'white' : 'text.primary',
+                              border: '1px solid',
+                              borderColor: cartViewMode === "table" ? 'primary.main' : 'divider',
+                              '&:hover': { bgcolor: cartViewMode === "table" ? 'primary.dark' : 'action.hover' },
+                            }}
+                          >
+                            <ViewAgendaIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Vista de cards">
+                          <IconButton
+                            onClick={() => setCartViewMode("cards")}
+                            size="small"
+                            sx={{
+                              bgcolor: cartViewMode === "cards" ? 'primary.main' : 'transparent',
+                              color: cartViewMode === "cards" ? 'white' : 'text.primary',
+                              border: '1px solid',
+                              borderColor: cartViewMode === "cards" ? 'primary.main' : 'divider',
+                              '&:hover': { bgcolor: cartViewMode === "cards" ? 'primary.dark' : 'action.hover' },
+                            }}
+                          >
+                            <ViewWeekIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                      </Box>
+                    )}
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                      <Typography variant="body2" color="text.secondary">Productos:</Typography>
+                      <Typography variant="h4" sx={{ fontWeight: 700, color: 'primary.main' }}>{totalProducts}</Typography>
+                    </Box>
+                  </Box>
                 </Grid>
 
                 <Grid item xs={6} md={5}>
-                  <Typography variant="body2" color="text.secondary">Total</Typography>
-                  <Typography variant="h4" sx={{ fontWeight: 700, color: 'primary.main' }}>${total.toFixed(2)}</Typography>
+                  <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                    <Typography variant="body2" color="text.secondary">Total:</Typography>
+                    <Typography variant="h4" sx={{ fontWeight: 700, color: 'primary.main' }}>${total.toFixed(2)}</Typography>
+                  </Box>
                 </Grid>
                 <Grid item xs={12} md={4}>
                   <CustomButton
@@ -345,8 +388,46 @@ const Cart = ({ searchInputRef }) => {
               movementType === MOVEMENT_TYPES.DISTRIBUTION) && (
               <>
                 <Grid item xs={12} md={3}>
-                  <Typography variant="body2" color="text.secondary">Productos</Typography>
-                  <Typography variant="h5" sx={{ fontWeight: 700 }}>{totalProducts}</Typography>
+                  <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                    {!isMobile && (
+                      <Box sx={{ display: 'flex', gap: 1 }}>
+                        <Tooltip title="Vista de tabla">
+                          <IconButton
+                            onClick={() => setCartViewMode("table")}
+                            size="small"
+                            sx={{
+                              bgcolor: cartViewMode === "table" ? 'primary.main' : 'transparent',
+                              color: cartViewMode === "table" ? 'white' : 'text.primary',
+                              border: '1px solid',
+                              borderColor: cartViewMode === "table" ? 'primary.main' : 'divider',
+                              '&:hover': { bgcolor: cartViewMode === "table" ? 'primary.dark' : 'action.hover' },
+                            }}
+                          >
+                            <ViewAgendaIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Vista de cards">
+                          <IconButton
+                            onClick={() => setCartViewMode("cards")}
+                            size="small"
+                            sx={{
+                              bgcolor: cartViewMode === "cards" ? 'primary.main' : 'transparent',
+                              color: cartViewMode === "cards" ? 'white' : 'text.primary',
+                              border: '1px solid',
+                              borderColor: cartViewMode === "cards" ? 'primary.main' : 'divider',
+                              '&:hover': { bgcolor: cartViewMode === "cards" ? 'primary.dark' : 'action.hover' },
+                            }}
+                          >
+                            <ViewWeekIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                      </Box>
+                    )}
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                      <Typography variant="body2" color="text.secondary">Productos:</Typography>
+                      <Typography variant="h4" sx={{ fontWeight: 700, color: 'primary.main' }}>{totalProducts}</Typography>
+                    </Box>
+                  </Box>
                 </Grid>
                 <Grid item xs={12} md={3}>
                   <Select fullWidth size="small" value={selectedStore}
@@ -403,7 +484,41 @@ const Cart = ({ searchInputRef }) => {
 
             {movementType === MOVEMENT_TYPES.ADD_STOCK && (
               <>
-                <Grid item xs={12} md={9}></Grid>
+                {!isMobile && (
+                  <Grid item md={1} sx={{ display: 'flex', gap: 1, justifyContent: 'flex-start', alignItems: 'center' }}>
+                    <Tooltip title="Vista de tabla">
+                      <IconButton
+                        onClick={() => setCartViewMode("table")}
+                        size="small"
+                        sx={{
+                          bgcolor: cartViewMode === "table" ? 'primary.main' : 'transparent',
+                          color: cartViewMode === "table" ? 'white' : 'text.primary',
+                          border: '1px solid',
+                          borderColor: cartViewMode === "table" ? 'primary.main' : 'divider',
+                          '&:hover': { bgcolor: cartViewMode === "table" ? 'primary.dark' : 'action.hover' },
+                        }}
+                      >
+                        <ViewAgendaIcon fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Vista de cards">
+                      <IconButton
+                        onClick={() => setCartViewMode("cards")}
+                        size="small"
+                        sx={{
+                          bgcolor: cartViewMode === "cards" ? 'primary.main' : 'transparent',
+                          color: cartViewMode === "cards" ? 'white' : 'text.primary',
+                          border: '1px solid',
+                          borderColor: cartViewMode === "cards" ? 'primary.main' : 'divider',
+                          '&:hover': { bgcolor: cartViewMode === "cards" ? 'primary.dark' : 'action.hover' },
+                        }}
+                      >
+                        <ViewWeekIcon fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+                  </Grid>
+                )}
+                <Grid item xs={12} md={8}></Grid>
                 <Grid item xs={12} md={3}>
                   <CustomButton
                     fullWidth
@@ -417,13 +532,191 @@ const Cart = ({ searchInputRef }) => {
             )}
           </Grid>
         )}
-        {!isMobile ? (
+        {!isMobile && cartViewMode === "table" && (
           <SimpleTable
             noDataComponent="Sin productos"
             data={cart}
             columns={getColumns()}
           />
-        ) : (
+        )}
+        {!isMobile && cartViewMode === "cards" && (
+          <Grid container spacing={2} sx={{ p: 2 }}>
+            {cart.map((item, idx) => {
+              const isKgProduct = item.product?.unit === "KG" || item.product?.unit === "LT";
+              const currentMode = isKgProduct ? (saleModes[item.id] || "KG") : "PZ";
+              const SALE_MODES_CYCLE = ["KG", "FRAC", "$"];
+              const getNextMode = (current) => {
+                const modeIdx = SALE_MODES_CYCLE.indexOf(current);
+                return SALE_MODES_CYCLE[(modeIdx + 1) % SALE_MODES_CYCLE.length];
+              };
+
+              const unitLabel = item.product?.unit === "LT" ? "Litro" : "Kilo";
+              const modeLabels = { KG: unitLabel, FRAC: "Fracción", $: "Pesos", PZ: "Pieza" };
+              const unitLabels = { PZ: "Pieza", CO: "Costal", KG: "Kilo", LT: "Litro" };
+
+              return (
+                <Grid item xs={12} md={3} key={idx} sx={{ display: 'flex' }}>
+                  <Box sx={{ width: '100%', bgcolor: 'background.paper', borderRadius: '12px', border: '1px solid', borderColor: 'divider', overflow: 'hidden', display: 'flex', flexDirection: 'column', transition: 'all 0.2s ease', '&:hover': { boxShadow: '0 2px 8px rgba(0,0,0,0.1)', borderColor: 'primary.light' } }}>
+                    {/* Imagen */}
+                    <Box
+                      component="img"
+                      src={item.product.image || noPhotoImage}
+                      alt={item.product.name}
+                      sx={{
+                        width: '100%',
+                        height: 140,
+                        objectFit: 'cover',
+                        borderBottom: '1px solid',
+                        borderColor: 'divider',
+                        transition: 'transform 0.3s ease',
+                        cursor: 'pointer',
+                        display: 'block',
+                        '&:hover': { transform: 'scale(1.04)' }
+                      }}
+                    />
+
+                    {/* Contenido */}
+                    <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', flex: 1, gap: 1.5 }}>
+                      {/* Encabezado: Marca y Nombre + Botón Eliminar */}
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 1 }}>
+                        <Box sx={{ flex: 1, minWidth: 0 }}>
+                          <Typography sx={{ color: 'text.secondary', fontSize: '0.75rem', fontWeight: 500, lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', mb: 0.5 }}>
+                            {item.product.brand_name}
+                          </Typography>
+                          <Typography sx={{ fontWeight: 700, fontSize: '0.95rem', color: 'text.primary', lineHeight: 1.35, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                            {item.product.name}
+                          </Typography>
+                        </Box>
+                        <IconButton 
+                          size="small" 
+                          onClick={() => handleRemoveFromCart(item)}
+                          sx={{ color: 'error.main', flexShrink: 0, width: 32, height: 32 }}
+                        >
+                          <DeleteIcon sx={{ fontSize: '1rem' }} />
+                        </IconButton>
+                      </Box>
+
+                      {/* Código */}
+                      <Typography variant="body2" sx={{ fontSize: '0.8rem', color: 'text.primary', lineHeight: 1.4 }}>
+                        <span style={{ fontWeight: 600 }}>Código:</span> {item.product.code}
+                      </Typography>
+
+                      {/* Unidad y Subtotal */}
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Typography variant="body2" sx={{ fontSize: '0.8rem', color: 'text.primary', lineHeight: 1.4 }}>
+                          <span style={{ fontWeight: 600 }}>{item.quantity}</span> {isKgProduct ? (unitLabels[item.product?.unit] || "Pieza") : "Pieza"}
+                        </Typography>
+                        <Typography variant="body2" sx={{ fontSize: '0.8rem', color: 'text.primary', lineHeight: 1.4 }}>
+                          <span style={{ fontWeight: 600 }}>Subtotal:</span> ${(item.quantity * (item.unit_price || item.product.prices.unit_price)).toFixed(2)}
+                        </Typography>
+                      </Box>
+
+                      {/* Modo de venta - solo para KG/LT */}
+                      {movementType === MOVEMENT_TYPES.SALE && isKgProduct && (
+                        <Box>
+                          <IconButton
+                            size="small"
+                            onClick={() => setSaleModes((prev) => ({ ...prev, [item.id]: getNextMode(currentMode) }))}
+                            sx={{ 
+                              border: '1px solid', 
+                              borderColor: currentMode === "$" || currentMode === "FRAC" ? 'primary.main' : 'divider',
+                              bgcolor: currentMode === "$" || currentMode === "FRAC" ? 'primary.main' : 'transparent',
+                              color: currentMode === "$" || currentMode === "FRAC" ? '#fff' : 'text.secondary',
+                              borderRadius: '4px',
+                              px: 0.75,
+                              py: 0.4,
+                              fontSize: '0.6rem', 
+                              fontWeight: 600,
+                              width: '100%',
+                              justifyContent: 'center',
+                              '&:hover': { bgcolor: currentMode === "$" || currentMode === "FRAC" ? 'primary.dark' : 'action.hover' }
+                            }}
+                          >
+                            {modeLabels[currentMode]}
+                          </IconButton>
+                        </Box>
+                      )}
+
+                      {/* Cantidad y Precio */}
+                      <Grid container spacing={1}>
+                        <Grid item xs={6}>
+                          <Typography variant="caption" sx={{ display: 'block', mb: 0.5, fontWeight: 600, fontSize: '0.6rem', textTransform: 'uppercase' }}>
+                            {currentMode === "$" ? 'Monto' : currentMode === "FRAC" ? 'Frac' : currentMode === "KG" ? 'Kg' : 'Cant'}
+                          </Typography>
+                          <TextField
+                            size="small"
+                            type="number"
+                            value={item.quantity}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              if ((currentMode === "KG" || currentMode === "PZ") && val.includes('.')) return;
+                              if (currentMode === "FRAC" && val.includes('.') && val.split('.')[1]?.length > 3) return;
+                              handleQuantityChangeToCart(e, item);
+                            }}
+                            onKeyDown={(e) => {
+                              const step = currentMode === "FRAC" ? 0.1 : 1;
+                              const min = currentMode === "FRAC" ? 0.1 : 1;
+                              const availableStock = getAvailableStock(item.id, item.available_stock);
+                              
+                              if (e.key === "ArrowUp") {
+                                e.preventDefault();
+                                const newValue = Math.round((item.quantity + step) * 1000) / 1000;
+                                if (newValue <= availableStock) {
+                                  handleQuantityChangeToCart({ target: { value: newValue } }, item);
+                                }
+                              } else if (e.key === "ArrowDown") {
+                                e.preventDefault();
+                                const newValue = Math.max(min, Math.round((item.quantity - step) * 1000) / 1000);
+                                handleQuantityChangeToCart({ target: { value: newValue } }, item);
+                              }
+                            }}
+                            inputProps={{ step: currentMode === "FRAC" ? 0.1 : 1, min: currentMode === "FRAC" ? 0.1 : 1 }}
+                            fullWidth
+                            sx={{ '& input': { fontSize: '0.75rem', py: 0.4, textAlign: 'center' } }}
+                          />
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Typography variant="caption" sx={{ display: 'block', mb: 0.5, fontWeight: 600, fontSize: '0.6rem', textTransform: 'uppercase' }}>
+                            Precio
+                          </Typography>
+                          <TextField
+                            size="small"
+                            type="number"
+                            value={item.unit_price || item.product.prices.unit_price}
+                            disabled
+                            inputProps={{ step: 0.01, min: 0 }}
+                            fullWidth
+                            sx={{ '& input': { fontSize: '0.75rem', py: 0.4, textAlign: 'center' } }}
+                          />
+                        </Grid>
+                      </Grid>
+
+                      {/* Mayoreo */}
+                      {item.product.prices.apply_wholesale && movementType === MOVEMENT_TYPES.SALE && currentMode === "KG" && (
+                        <Box>
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                checked={item.apply_wholesale || false}
+                                onChange={(e) => {
+                                  dispatch(changePrice(item));
+                                }}
+                                size="small"
+                              />
+                            }
+                            label={`Mayoreo $${(item.product.prices.wholesale_price).toFixed(2)}`}
+                            sx={{ fontSize: '0.65rem', m: 0, '& .MuiTypography-root': { fontSize: '0.65rem' } }}
+                          />
+                        </Box>
+                      )}
+                    </Box>
+                  </Box>
+                </Grid>
+              );
+            })}
+          </Grid>
+        )}
+        {isMobile && (
           <Grid container spacing={1}>
             {cart.map((item, idx) => {
               const isKgProduct = item.product?.unit === "KG" || item.product?.unit === "LT";
@@ -439,7 +732,7 @@ const Cart = ({ searchInputRef }) => {
               const unitLabels = { PZ: "Pieza", CO: "Costal", KG: "Kilo", LT: "Litro" };
 
               return (
-                <Grid item xs={12} key={idx} sx={{ p: 2, bgcolor: 'background.paper', borderRadius: 1, border: '1px solid', borderColor: 'divider' }}>
+                <Grid item xs={12} key={idx} sx={{ bgcolor: 'background.paper', borderRadius: 2, border: '1px solid', borderColor: 'divider', p: 1.5 }}>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', mb: 1 }}>
                     <Box sx={{ flex: 1 }}>
                       <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 0.5 }}>

@@ -22,6 +22,7 @@ const ChangePasswordModal = ({ open, onClose, passwordData, onChange, onSave, sh
                 value={passwordData.old_password}
                 onChange={onChange}
                 size="small"
+                autoComplete="new-password"
                 type={showPasswords.current ? "text" : "password"}
                 InputProps={{
                   endAdornment: (
@@ -42,6 +43,7 @@ const ChangePasswordModal = ({ open, onClose, passwordData, onChange, onSave, sh
                 value={passwordData.new_password}
                 onChange={onChange}
                 size="small"
+                autoComplete="new-password"
                 type={showPasswords.new ? "text" : "password"}
                 InputProps={{
                   endAdornment: (
@@ -62,6 +64,7 @@ const ChangePasswordModal = ({ open, onClose, passwordData, onChange, onSave, sh
                 value={passwordData.confirm_password}
                 onChange={onChange}
                 size="small"
+                autoComplete="new-password"
                 type={showPasswords.confirm ? "text" : "password"}
                 InputProps={{
                   endAdornment: (

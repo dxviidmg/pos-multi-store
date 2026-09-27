@@ -57,6 +57,7 @@ const SearchSuggestions = ({
               {suggestions.map((sp, index) => {
                 const product = sp.product || {};
                 const isHighlighted = index === highlightedIndex;
+                const unitPrice = product.prices?.unit_price;
 
                 return (
                   <MenuItem
@@ -74,15 +75,20 @@ const SearchSuggestions = ({
                     }}
                   >
                     <Box sx={{ minWidth: 0, flex: 1, display: "flex", alignItems: "baseline", gap: 1 }}>
-                      <Typography variant="body2" noWrap sx={{ fontWeight: 600 }}>
-                        {product.name}
-                      </Typography>
                       {product.brand_name && (
-                        <Typography variant="caption" color="text.secondary" noWrap>
+                        <Typography variant="caption" color="text.secondary" noWrap sx={{ fontWeight: 600 }}>
                           {product.brand_name}
                         </Typography>
                       )}
+                      <Typography variant="body2" noWrap sx={{ fontWeight: 600 }}>
+                        {product.name}
+                      </Typography>
                     </Box>
+                    {unitPrice !== undefined && (
+                      <Typography variant="caption" sx={{ fontWeight: 600, color: 'primary.main', whiteSpace: 'nowrap' }}>
+                        ${unitPrice.toFixed(2)}
+                      </Typography>
+                    )}
                   </MenuItem>
                 );
               })}
