@@ -9,6 +9,7 @@ import { usePrinterStatus } from "../../../hooks/usePrinterStatus";
 import { Grid, TextField, Radio, RadioGroup, FormControlLabel, FormLabel, Chip } from "@mui/material";
 import MoneyOffIcon from "@mui/icons-material/MoneyOff";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
+import ReferencePaymentField from "../ReferencePaymentField/ReferencePaymentField";
 
 const INITIAL_PAYMENT_STATE = { paidWith: 0, change: 0 };
 
@@ -184,31 +185,7 @@ const PaymentEditModal = ({ isOpen, sale, onClose, onUpdate }) => {
               </Grid>
               <Grid item xs={12} md={3}>
                 {paymentMethod !== "EF" ? (
-                  <TextField
-                    fullWidth
-                    size="small"
-                    label="Referencia de pago"
-                    type="text"
-                    color={referencePayment === "" ? "error" : "primary"}
-                    focused={referencePayment === ""}
-                    value={referencePayment}
-                    onChange={(e) => setReferencePayment(e.target.value)}
-                    InputLabelProps={{ shrink: true }}
-                    sx={{
-                      animation: 'fadeIn 0.3s ease',
-                      '@keyframes fadeIn': {
-                        from: { opacity: 0, transform: 'translateX(-8px)' },
-                        to: { opacity: 1, transform: 'translateX(0)' },
-                      },
-                      ...(referencePayment === "" && {
-                        '& .MuiOutlinedInput-root': {
-                          '& fieldset': { borderColor: 'rgba(0,0,0,0.23)' },
-                          '&:hover fieldset': { borderColor: 'rgba(0,0,0,0.87)' },
-                          '&.Mui-focused fieldset': { borderColor: 'rgba(0,0,0,0.23)' },
-                        },
-                      }),
-                    }}
-                  />
+                  <ReferencePaymentField value={referencePayment} onChange={setReferencePayment} />
                 ) : (
                   <TextField fullWidth size="small" label="Cambio" type="number" value={payment.change} disabled InputProps={{ startAdornment: '$' }} />
                 )}

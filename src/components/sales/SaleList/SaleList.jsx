@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import DataTable from "../../ui/DataTable/DataTable";
 import { getSales } from "../../../api/sales";
 import CustomButton from "../../ui/Button/Button";
@@ -6,6 +6,7 @@ import {
   getFormattedDate,
   handlePrintTicket,
   getFormattedDateTime,
+  upsertById,
 } from "../../../utils/utils";
 import { useModal } from "../../../hooks/useModal";
 import SaleModal from "../SaleModal/SaleModal";
@@ -18,58 +19,12 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ErrorIcon from "@mui/icons-material/Error";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import { Popper, Paper, Grid, TextField, Select, MenuItem, FormControl, InputLabel, Box} from "@mui/material";
+import { Grid, TextField, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 import { useUser } from "../../../context/UserContext";
 import PaymentEditModal from "../PaymentEditModal/PaymentEditModal";
 import CustomTooltip from "../../ui/Tooltip";
 import PageHeader from "../../ui/PageHeader";
-
-const ProductsPopperButton = ({ row, productsModal }) => {
-  const [anchorEl, setAnchorEl] = useState(null);
-  const timeoutRef = useRef(null);
-  const buttonRef = useRef(null);
-  const open = Boolean(anchorEl);
-
-  const handleMouseEnter = () => {
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    setAnchorEl(buttonRef.current);
-  };
-
-  const handleMouseLeave = () => {
-    timeoutRef.current = setTimeout(() => setAnchorEl(null), 200);
-  };
-
-  return (
-    <>
-      <CustomButton
-        ref={buttonRef}
-        onClick={() => productsModal.open(row)}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-      >
-        <VisibilityIcon />
-      </CustomButton>
-      <Popper
-        open={open}
-        anchorEl={anchorEl}
-        placement="right"
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-      >
-        <Paper elevation={3} sx={{ maxHeight: '400px', maxWidth: '350px', overflow: 'auto', p: 1.5 }}>
-          {row.products_sale?.map((p, i) => (
-            <Box
-              key={i}
-              sx={{ py: 0.5, borderBottom: i < row.products_sale.length - 1 ? '1px solid #ddd' : 'none' }}
-            >
-              {p.quantity} - {p.name} {p.code && `(${p.code})`}
-            </Box>
-          ))}
-        </Paper>
-      </Popper>
-    </>
-  );
-};
+import ProductsPopperButton from "../ProductsPopperButton/ProductsPopperButton";
 
 const TYPE_OPTIONS = [
   { value: false, label: "Ventas" },
@@ -96,7 +51,6 @@ const SaleList = () => {
   const [searchBy, setSearchBy] = useState("date");
   const saleModal = useModal();
   const paymentEditModal = useModal();
-  const productsModal = useModal();
 
   useEffect(() => {
     const fetchSalesData = async () => {
@@ -118,12 +72,7 @@ const SaleList = () => {
       setParams((prev) => ({ ...prev }));
       return;
     }
-    setSales((prev) => {
-      const exists = prev.some((item) => item.id === updated.id);
-      return exists
-        ? prev.map((item) => (item.id === updated.id ? updated : item))
-        : [...prev, updated];
-    });
+    setSales((prev) => upsertById(prev, updated));
   };
 
   return (
@@ -190,22 +139,22 @@ const SaleList = () => {
 
         <Grid container spacing={2} sx={{ mb: 1 }}>
           <Grid item xs={6} md={3}>
-            <CustomButton fullWidth variant={quickFilter === "all" ? "contained" : "outlined"} onClick={() => setQuickFilter("all")} size="small">
+            <CustomButton fullWidth variant={quickFilter === "all" ? "contained" : "outlined"} onClick={() => setQuickFilter("all")}>
               Todas ({sales.length})
             </CustomButton>
           </Grid>
           <Grid item xs={6} md={3}>
-            <CustomButton fullWidth variant={quickFilter === "duplicated" ? "contained" : "outlined"} onClick={() => setQuickFilter("duplicated")} size="small" color={sales.filter(s => s.is_repeated).length > 0 && quickFilter !== "duplicated" ? "error" : "primary"}>
+            <CustomButton fullWidth variant={quickFilter === "duplicated" ? "contained" : "outlined"} onClick={() => setQuickFilter("duplicated")} color={sales.filter(s => s.is_repeated).length > 0 && quickFilter !== "duplicated" ? "error" : "primary"}>
               Duplicadas ({sales.filter(s => s.is_repeated).length})
             </CustomButton>
           </Grid>
           <Grid item xs={6} md={3}>
-            <CustomButton fullWidth variant={quickFilter === "canceled" ? "contained" : "outlined"} onClick={() => setQuickFilter("canceled")} size="small">
+            <CustomButton fullWidth variant={quickFilter === "canceled" ? "contained" : "outlined"} onClick={() => setQuickFilter("canceled")}>
               Canceladas ({sales.filter(s => s.is_canceled).length})
             </CustomButton>
           </Grid>
           <Grid item xs={6} md={3}>
-            <CustomButton fullWidth variant={quickFilter === "returned" ? "contained" : "outlined"} onClick={() => setQuickFilter("returned")} size="small">
+            <CustomButton fullWidth variant={quickFilter === "returned" ? "contained" : "outlined"} onClick={() => setQuickFilter("returned")}>
               Con devolución ({sales.filter(s => s.has_return).length})
             </CustomButton>
           </Grid>
@@ -214,7 +163,7 @@ const SaleList = () => {
         <DataTable
           progressPending={loading}
           noDataComponent="Sin ventas"
-          searcher={true}
+          searcher
           data={quickFilter === "all" ? sales
             : quickFilter === "duplicated" ? sales.filter(s => s.is_repeated)            : quickFilter === "canceled" ? sales.filter(s => s.is_canceled)
             : sales.filter(s => s.has_return)
@@ -239,7 +188,7 @@ const SaleList = () => {
             },
             {
               name: "Productos",
-              selector: (row) => <ProductsPopperButton row={row} productsModal={productsModal} />,
+              selector: (row) => <ProductsPopperButton row={row} />,
             },
             { name: "Número de productos", selector: (row) => row.products_sale?.reduce((sum, p) => sum + (p.sells_by_fraction ? 1 : p.quantity), 0) || 0, width: 80 },
             { name: "Total", selector: (row) => `$${row.total}`, width: 80, omit: user.role === "seller" },

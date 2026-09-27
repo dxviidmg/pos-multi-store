@@ -4,7 +4,7 @@ import { deleteProducts, getProducts, updateProduct, upperCodeProducts } from ".
 import CustomButton from "../../ui/Button/Button";
 import { useModal } from "../../../hooks/useModal";
 import ProductModal from "../ProductModal/ProductModal";
-import { exportToExcel } from "../../../utils/utils";
+import { exportToExcel, upsertById } from "../../../utils/utils";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { getBrands } from "../../../api/brands";
 import { getDepartments } from "../../../api/departments";
@@ -26,7 +26,8 @@ import CameraAltIcon from "@mui/icons-material/CameraAlt";
 import PriceLogsModal from "../PriceLogsModal/PriceLogsModal";
 import PriceUpdateModal from "../PriceUpdateModal/PriceUpdateModal";
 import ProductViewToggle from "./ProductViewToggle";
-import ProductGallery from "./ProductGallery";
+import ProductGridCard from "./ProductGridCard";
+import CardGallery from "../../ui/CardGallery/CardGallery";
 import { useViewModePreference } from "../../../hooks/useViewModePreference";
 import { convertImageToWebp } from "../../../utils/image";
 
@@ -72,12 +73,7 @@ const ProductList = () => {
     // Guardar posición del scroll antes de actualizar
     const scrollTop = document.querySelector('[role="grid"]')?.scrollTop || 0;
     
-    setProducts((prev) => {
-      const exists = prev.some((item) => item.id === updated.id);
-      return exists
-        ? prev.map((item) => (item.id === updated.id ? updated : item))
-        : [...prev, updated];
-    });
+    setProducts((prev) => upsertById(prev, updated));
 
     // Restaurar posición del scroll después de la actualización
     setTimeout(() => {
@@ -342,14 +338,20 @@ const ProductList = () => {
           </Grid>
 
           {viewMode === "gallery" ? (
-            <ProductGallery
-              products={products}
+            <CardGallery
+              items={products}
               loading={loading}
-              onEdit={handleEditProduct}
-              onPriceLogs={handlePriceLogs}
-              onStoreStock={handleStoreStock}
-              onCameraPhoto={handleCameraClick}
-              role={user.role}
+              emptyText="Sin productos"
+              renderItem={(product) => (
+                <ProductGridCard
+                  product={product}
+                  onEdit={handleEditProduct}
+                  onPriceLogs={handlePriceLogs}
+                  onStoreStock={handleStoreStock}
+                  onCameraPhoto={handleCameraClick}
+                  role={user.role}
+                />
+              )}
             />
           ) : (
             <DataTable

@@ -14,6 +14,7 @@ import SearchClient from "../../clients/SearchClient/SearchClient";
 import ClientModal from "../../clients/ClientModal/ClientModal";
 import SearchIcon from "@mui/icons-material/Search";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
+import ReferencePaymentField from "../ReferencePaymentField/ReferencePaymentField";
 import { Grid, TextField, Radio, RadioGroup, FormControlLabel, Checkbox, FormLabel, Alert, Chip, Box, useMediaQuery, useTheme } from "@mui/material";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
@@ -556,31 +557,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
               <Grid item xs={isMobile ? 6 : (client?.id ? 3 : 4)}>
                 {paymentMethods.methods.TA > 0 ||
                 paymentMethods.methods.TR > 0 ? (
-                  <TextField
-                    fullWidth
-                    size="small"
-                    label="Referencia de pago"
-                    type="text"
-                    color={referencePayment === "" ? "error" : "primary"}
-                    focused={referencePayment === ""}
-                    value={referencePayment}
-                    onChange={(e) => setReferencePayment(e.target.value)}
-                    InputLabelProps={{ shrink: true }}
-                    sx={{
-                      animation: 'fadeIn 0.3s ease',
-                      '@keyframes fadeIn': {
-                        from: { opacity: 0, transform: 'translateX(-8px)' },
-                        to: { opacity: 1, transform: 'translateX(0)' },
-                      },
-                      ...(referencePayment === "" && {
-                        '& .MuiOutlinedInput-root': {
-                          '& fieldset': { borderColor: 'rgba(0,0,0,0.23)' },
-                          '&:hover fieldset': { borderColor: 'rgba(0,0,0,0.87)' },
-                          '&.Mui-focused fieldset': { borderColor: 'rgba(0,0,0,0.23)' },
-                        },
-                      }),
-                    }}
-                  />
+                  <ReferencePaymentField value={referencePayment} onChange={setReferencePayment} />
                 ) : (
                   <TextField
                     fullWidth

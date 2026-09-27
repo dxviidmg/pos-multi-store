@@ -7,14 +7,14 @@ import { getCashSummary } from "../../../api/sales";
 import { getCashFlow } from "../../../api/cashflow";
 import { getDuplicateSales } from "../../../api/notifications";
 import { showAlert } from "../../../utils/alerts";
-import CashFlowModal from "../../cashflow/CashFlowModal/CashFlowModal";
-import { useModal } from "../../../hooks/useModal";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
+import PageHeader from "../../ui/PageHeader";
 import { Grid, TextField, Box, Typography, Stack } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
 import PaymentIcon from "@mui/icons-material/Payment";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
+import { logger } from "../../../utils/logger";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 
 const summaryColumns = [
@@ -24,7 +24,6 @@ const summaryColumns = [
 
 const CashSummary = () => {
   const { user } = useUser();
-  const cashFlowModal = useModal();
   const [cashSummary, setCashSummary] = useState([]);
   const [paymentMethodsSummary, setPaymentMethodsSummary] = useState([]);
   const [salesSummary, setSalesSummary] = useState([]);
@@ -75,7 +74,7 @@ const CashSummary = () => {
           showAlert("Atención", message);
         }
       } catch (err) {
-        console.error("Error fetching duplicate sales:", err);
+        logger.error("Error fetching duplicate sales:", err);
       }
     };
     fetchDuplicates();
@@ -84,15 +83,6 @@ const CashSummary = () => {
   const handleExport = () => {
     const dateFile = `${date}`;
     exportToExcel(cashSummary, `Corte de caja ${user?.store_name} ${dateFile}`, false);
-  };
-
-  const handleUpdateCashFlowList = (updated) => {
-    setCashFlow((prev) => {
-      const exists = prev.some((item) => item.id === updated.id);
-      return exists
-        ? prev.map((item) => (item.id === updated.id ? updated : item))
-        : [...prev, updated];
-    });
   };
 
   const totalColumns = [
@@ -109,20 +99,13 @@ const CashSummary = () => {
   return (
     <>
       <CustomSpinner isLoading={loading} />
-      <CashFlowModal
-        isOpen={cashFlowModal.isOpen}
-        cashFlow={cashFlowModal.data}
-        onClose={cashFlowModal.close}
-        onUpdate={handleUpdateCashFlowList}
-      />
 
       <Grid item xs={12} className="card">
-        <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
-          <Typography variant="h4" component="h1">Corte de caja</Typography>
-          <CustomButton onClick={handleExport} startIcon={<DownloadIcon />}>
+        <PageHeader title="Corte de caja">
+          <CustomButton fullWidth onClick={handleExport} startIcon={<DownloadIcon />}>
             Descargar corte
           </CustomButton>
-        </Stack>
+        </PageHeader>
 
         <Box sx={{ mb: 3, maxWidth: 300 }}>
           <TextField

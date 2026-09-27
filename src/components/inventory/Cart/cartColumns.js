@@ -6,16 +6,16 @@ import ScaleIcon from "@mui/icons-material/Scale";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import { MOVEMENT_TYPES } from "../../../constants";
 
-const isKg = (row) => row.product?.unit === "KG" || row.product?.unit === "LT";
+export const isKg = (row) => row.product?.unit === "KG" || row.product?.unit === "LT";
 const SALE_MODES_CYCLE = ["KG", "FRAC", "$"];
-const getNextMode = (current) => {
+export const getNextMode = (current) => {
   const idx = SALE_MODES_CYCLE.indexOf(current);
   return SALE_MODES_CYCLE[(idx + 1) % SALE_MODES_CYCLE.length];
 };
 const getStep = (mode) => (mode === "FRAC" ? 0.1 : 1);
 const getMin = getStep;
 
-const commonColumns = [
+export const commonColumns = [
   { name: "Código", field: "code", selector: (row) => row.product.code },
   {
     name: "Marca",

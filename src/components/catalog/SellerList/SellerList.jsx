@@ -3,8 +3,7 @@ import DataTable from "../../ui/DataTable/DataTable";
 import { getSellers } from "../../../api/sellers";
 import CustomButton from "../../ui/Button/Button";
 import SellerModal from "../SellerModal/SellerModal";
-import { getDateDifference, getFormattedDate } from "../../../utils/utils";
-import { chooseIcon } from "../../ui/Icons/Icons";
+import { getDateDifference, getFormattedDate, upsertById } from "../../../utils/utils";
 import { useModal } from "../../../hooks/useModal";
 import { useUserManagement } from "../../../hooks/useUserManagement";
 import EditUserModal from "../../ui/UserModals/EditUserModal";
@@ -59,12 +58,7 @@ const SellerList = () => {
   }, [params]);
 
   const handleUpdateSellerList = (updated) => {
-    setSellers((prev) => {
-      const exists = prev.some((item) => item.id === updated.id);
-      return exists
-        ? prev.map((item) => (item.id === updated.id ? updated : item))
-        : [...prev, updated];
-    });
+    setSellers((prev) => upsertById(prev, updated));
   };
 
   const handleParams = (e) => {

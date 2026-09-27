@@ -10,16 +10,12 @@ import StockUpdateRequestModal from "../../inventory/StockUpdateRequestModal/Sto
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { getBrands } from "../../../api/brands";
 import { getDepartments } from "../../../api/departments";
-import { Grid, TextField, Alert, Autocomplete } from "@mui/material";
+import { Grid, TextField, Autocomplete } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import DownloadIcon from "@mui/icons-material/Download";
-import TuneIcon from "@mui/icons-material/Tune";
-import HistoryIcon from "@mui/icons-material/History";
-import SendIcon from "@mui/icons-material/Send";
-import { Link } from "react-router-dom";
-import NotificationImportantIcon from "@mui/icons-material/NotificationImportant";
 import PageHeader from "../../ui/PageHeader";
-import CustomTooltip from "../../ui/Tooltip";
+import StoreProductActions from "../StoreProductActions/StoreProductActions";
+import StockRequestAlert from "../StockRequestAlert/StockRequestAlert";
 
 
 const StoreProductAuditList = () => {
@@ -85,28 +81,7 @@ const StoreProductAuditList = () => {
       <Grid container>
         <Grid item xs={12} className="card">
           <PageHeader title="Inventario a verificar" childrenMd={8}>
-            {showAlert && (
-            <Alert 
-              severity="info" 
-              variant="filled" 
-              sx={{ py: 0, borderRadius: 2 }}
-              icon={<NotificationImportantIcon fontSize="inherit" />}
-              onClose={() => setShowAlert(false)}
-            >
-              {user.role === "owner" ? (
-                <>
-                  <strong>Revisa y aprueba las solicitudes de stock en{" "}
-                  <Link to="/solicitudes-ajustes-stock/" style={{ color: "var(--color-primary)", fontWeight: 600 }}>
-                    Solicitudes de Ajuste
-                  </Link>.</strong>
-                </>
-              ) : (
-                <>
-                  <strong>¿Ves un stock incorrecto?</strong> Usa el icono <SendIcon sx={{ fontSize: 14, verticalAlign: "middle" }} /> para solicitar un ajuste.
-                </>
-              )}
-            </Alert>
-            )}
+            {showAlert && <StockRequestAlert role={user.role} onClose={() => setShowAlert(false)} />}
           </PageHeader>
 
           <Grid container spacing={2} sx={{ mb: 2 }}>
@@ -166,7 +141,7 @@ const StoreProductAuditList = () => {
           </Grid>
 
           <DataTable
-            searcher={true}
+            searcher
             progressPending={loading}
             noDataComponent="Sin productos"
             data={storeProducts}
@@ -179,29 +154,13 @@ const StoreProductAuditList = () => {
               {
                 name: "Acciones",
                 cell: (row) => (
-                  <>
-                    {user.role === "owner" && (
-                      <CustomTooltip text="Ajustar cantidad">
-                        <CustomButton onClick={() => logsModal.open({ storeProduct: row, adjustStock: true })}>
-                          <TuneIcon />
-                        </CustomButton>
-                      </CustomTooltip>
-                    )}
-                    {user.role !== "seller" && (
-                    <CustomTooltip text="Movimientos de stock">
-                      <CustomButton onClick={() => logsModal.open({ storeProduct: row, adjustStock: false })}>
-                        <HistoryIcon />
-                      </CustomButton>
-                    </CustomTooltip>
-                    )}
-                    {user.role !== "owner" && (
-                      <CustomTooltip text="Solicitar ajuste de stock">
-                        <CustomButton onClick={() => requestModal.open(row)}>
-                          <SendIcon />
-                        </CustomButton>
-                      </CustomTooltip>
-                    )}
-                  </>
+                  <StoreProductActions
+                    row={row}
+                    role={user.role}
+                    onAdjust={(storeProduct) => logsModal.open({ storeProduct, adjustStock: true })}
+                    onLogs={(storeProduct) => logsModal.open({ storeProduct, adjustStock: false })}
+                    onRequest={requestModal.open}
+                  />
                 ),
               },
             ]}
