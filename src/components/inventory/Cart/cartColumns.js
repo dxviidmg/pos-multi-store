@@ -171,7 +171,7 @@ export const getSaleColumns = (handleQuantityChangeToCart, handleRemoveFromCart,
     ),
   },
   {
-    name: "Borrar",
+    name: "Quitar",
     selector: (row) => (
       <CustomButton onClick={() => handleRemoveFromCart(row)}>
         <DeleteIcon />
@@ -221,7 +221,7 @@ export const getTransferColumns = (handleQuantityChangeToCart, handleRemoveFromC
     ),
   },
   {
-    name: "Borrar",
+    name: "Quitar",
     selector: (row) => (
       <CustomButton onClick={() => handleRemoveFromCart(row)}>
         <DeleteIcon />
@@ -264,7 +264,7 @@ export const getDistributionColumns = (handleQuantityChangeToCart, handleRemoveF
     ),
   },
   {
-    name: "Stock General",
+    name: "Stock general",
     cell: (row) => (
       <div>
         {row.stockOtherStores && row.stockOtherStores.length > 0 && (
@@ -280,7 +280,7 @@ export const getDistributionColumns = (handleQuantityChangeToCart, handleRemoveF
     ),
   },
   {
-    name: "Borrar",
+    name: "Quitar",
     selector: (row) => (
       <CustomButton onClick={() => handleRemoveFromCart(row)}>
         <DeleteIcon />
@@ -320,7 +320,7 @@ export const getAddToStockColumns = (handleQuantityChangeToCart, handleRemoveFro
     ),
   },
   {
-    name: "Borrar",
+    name: "Quitar",
     selector: (row) => (
       <CustomButton onClick={() => handleRemoveFromCart(row)}>
         <DeleteIcon />

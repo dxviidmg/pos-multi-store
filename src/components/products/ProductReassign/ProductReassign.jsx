@@ -105,8 +105,8 @@ const ProductReassign = () => {
           </Grid>
           <Grid item xs={12} md={3}>
             <FormControl fullWidth size="small">
-              <InputLabel>Borrar origen</InputLabel>
-              <Select value={params.delete_origin} onChange={handleDataChange} name="delete_origin" label="Borrar origen">
+              <InputLabel>Eliminar origen</InputLabel>
+              <Select value={params.delete_origin} onChange={handleDataChange} name="delete_origin" label="Eliminar origen">
                 <MenuItem value="">Selecciona</MenuItem>
                 {DELETE_ORIGIN.map((opt) => (
                   <MenuItem key={String(opt.value)} value={opt.value}>{opt.label}</MenuItem>

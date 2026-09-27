@@ -179,7 +179,7 @@ const DistributionList = () => {
                             <EditIcon />
                           </CustomButton>
                         </CustomTooltip>
-                        <CustomTooltip text="Borrar producto">
+                        <CustomTooltip text="Eliminar producto">
                           <CustomButton onClick={() => handleDeleteTransfer(row)}>
                             <DeleteIcon />
                           </CustomButton>

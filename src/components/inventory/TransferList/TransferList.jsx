@@ -24,7 +24,7 @@ const TransferList = () => {
   const handleDelete = async (transfer) => {
     try {
       await deleteTransferMutation.mutateAsync(transfer.id);
-      showSuccess("Transferencia eliminada");
+      showSuccess("Traspaso eliminado");
     } catch (error) {
       showError("Error al eliminar transferencia");
     }

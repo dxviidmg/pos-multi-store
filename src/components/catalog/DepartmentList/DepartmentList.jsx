@@ -7,7 +7,7 @@ import { useCreateDepartment, useUpdateDepartment } from "../../../hooks/useDepa
 const LABELS = {
   title: "Departamentos",
   singular: "departamento",
-  create: "Nuevo Departamento",
+  create: "Nuevo departamento",
   deleteSelected: "Eliminar seleccionados",
   empty: "Sin departamentos",
   countUnit: "departamento(s)",

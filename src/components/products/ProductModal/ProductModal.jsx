@@ -221,7 +221,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
     <CustomModal
       showOut={isOpen}
       onClose={onClose}
-      title={showStoreProducts ? "Stock del producto" : formData.id ? "Actualizar producto" : "Crear producto"}
+      title={showStoreProducts ? "Stock del producto" : formData.id ? "Editar producto" : "Crear producto"}
       maxWidth={950}
     >
       <Grid container sx={{ padding: '1rem', backgroundColor: 'modalBody.main' }}>
@@ -398,7 +398,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
 
               <Grid item xs={12} sx={{ mt: -1.5 }}>
                 <CustomButton
-                  fullWidth={true}
+                  fullWidth
                   onClick={(e) => handleProductSubmit(e)}
                   disabled={isFormIncomplete() || isCostHigher || isWholesaleHigher || isLoading || codeExists}
                   startIcon={<SaveIcon />}

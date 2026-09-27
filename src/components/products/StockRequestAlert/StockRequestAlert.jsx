@@ -18,7 +18,7 @@ const StockRequestAlert = ({ role, onClose }) => (
     {role === "owner" ? (
       <strong>Revisa y aprueba las solicitudes de stock en{" "}
         <Link to="/solicitudes-ajustes-stock/" style={{ color: "var(--color-primary)", fontWeight: 600 }}>
-          Solicitudes de Ajuste
+          Solicitudes de ajuste
         </Link>.</strong>
     ) : (
       <>

@@ -5,7 +5,7 @@ import ViewAgendaIcon from "@mui/icons-material/ViewAgenda";
 
 const OPTIONS = [
   { value: "table", title: "Vista de tabla", Icon: ViewAgendaIcon },
-  { value: "cards", title: "Vista de cards", Icon: ViewWeekIcon },
+  { value: "cards", title: "Vista de tarjetas", Icon: ViewWeekIcon },
 ];
 
 /**

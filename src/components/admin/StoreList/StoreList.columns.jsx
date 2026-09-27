@@ -238,7 +238,7 @@ export const getStorageColumns = ({ user, storeInvestments, handleSelectStore, h
   {
     name: "Entrar",
     cell: (row) => (
-      <CustomTooltip text="Ingresar al almacen">
+      <CustomTooltip text="Ingresar al almacén">
         <CustomButton onClick={() => handleSelectStore(row)}><HomeIcon /></CustomButton>
       </CustomTooltip>
     ),

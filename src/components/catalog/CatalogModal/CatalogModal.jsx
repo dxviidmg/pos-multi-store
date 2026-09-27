@@ -33,7 +33,7 @@ const CatalogModal = ({ isOpen, item, onClose, onUpdate, useCreate, useUpdate, e
     <CustomModal
       showOut={isOpen}
       onClose={onClose}
-      title={values.id ? `Actualizar ${entityLabel}` : `Crear ${entityLabel}`}
+      title={values.id ? `Editar ${entityLabel}` : `Crear ${entityLabel}`}
     >
       <Grid container sx={{ padding: '1rem', backgroundColor: 'modalBody.main' }}>
         <Grid item xs={12} className="card">
@@ -58,7 +58,7 @@ const CatalogModal = ({ isOpen, item, onClose, onUpdate, useCreate, useUpdate, e
                 disabled={values.name === "" || isLoading}
                 startIcon={<SaveIcon />}
               >
-                {isLoading ? "Creando..." : values.id ? "Actualizar" : "Crear"}
+                {isLoading ? "Guardando..." : values.id ? "Actualizar" : "Crear"}
               </CustomButton>
             </Grid>
           </Grid>

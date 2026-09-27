@@ -324,7 +324,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
           {movementType === MOVEMENT_TYPES.RESERVATION && (
             <Grid item xs={12} sx={{ marginBottom: '1rem' }}>
               <Alert severity="info" variant="filled">
-                El cliente paga un anticipo. El resto se liquida después.
+                El cliente deja un abono. El resto se liquida después.
               </Alert>
             </Grid>
           )}
@@ -353,7 +353,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
                   startIcon={<PersonAddIcon />}
                   color={!hideClient ? 'error' : 'primary'}
                 >
-                  {!hideClient ? 'Quitar cliente' : 'Añadir cliente'}
+                  {!hideClient ? 'Quitar cliente' : 'Agregar cliente'}
                 </CustomButton>
               </Grid>
 
@@ -414,7 +414,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
                     color="inherit"
                     sx={{ opacity: 0.8, '&:hover': { opacity: 1 } }}
                   >
-                    Borrar (Ctrl+O)
+                    Quitar (Ctrl+O)
                   </CustomButton>
                 </Grid>
               </Grid>

@@ -71,9 +71,9 @@ const PaymentEditModal = ({ isOpen, sale, onClose, onUpdate }) => {
 
         if (reservation_in_progress) {
           onUpdate(response.data);
-          showSuccess("Abono exitoso");
+          showSuccess("Abono registrado");
         } else {
-          showSuccess("Liquidación exitosa");
+          showSuccess("Apartado liquidado");
           onUpdate({ ...response.data, delete: true });
         }
 

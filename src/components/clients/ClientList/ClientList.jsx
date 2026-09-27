@@ -59,7 +59,7 @@ const ClientList = () => {
             )}
             <Grid item xs={12} md={6}>
               <CustomButton fullWidth onClick={() => clientModal.open()} startIcon={<AddIcon />}>
-                Nuevo Cliente
+                Nuevo cliente
               </CustomButton>
             </Grid>
           </Grid>

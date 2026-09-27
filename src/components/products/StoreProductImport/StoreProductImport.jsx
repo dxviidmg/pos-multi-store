@@ -24,7 +24,7 @@ const URL_TEMPLATE =
   "/static/templates/SmartVenta_plantilla_importacion_inventario_o_ventas.xlsx";
 
 const ACTION_OPTIONS = [
-  { value: "E", label: "Añadir" },
+  { value: "E", label: "Agregar" },
   { value: "A", label: "Sustituir" },
 ];
 

@@ -185,7 +185,7 @@ const StoreList = () => {
     if (result.isConfirmed) {
       try {
         await resetStoreStock(storeId);
-        Swal.fire('Stock vaciado', 'El stock de la tienda ha sido vaciado exitosamente', 'success');
+        Swal.fire('Stock vaciado', 'Stock de la tienda vaciado', 'success');
       } catch (error) {
         Swal.fire('Error', 'No se pudo vaciar el stock de la tienda', 'error');
       }
@@ -276,19 +276,19 @@ const StoreList = () => {
               </Grid>
               <Grid item xs={12} sm={6} md={3}>
                 <Box sx={{ bgcolor: 'var(--color-primary)', p: 1, borderRadius: 1, textAlign: 'center' }}>
-                  <Typography variant="caption" sx={{ color: '#fff', fontWeight: 600 }}>Ventas Totales</Typography>
+                  <Typography variant="caption" sx={{ color: '#fff', fontWeight: 600 }}>Ventas totales</Typography>
                   <Typography variant="h5" sx={{ color: '#fff', fontWeight: 700 }}>{totals.total_sales || 0}</Typography>
                 </Box>
               </Grid>
               <Grid item xs={12} sm={6} md={3}>
                 <Box sx={{ bgcolor: 'var(--color-primary)', p: 1, borderRadius: 1, textAlign: 'center' }}>
-                  <Typography variant="caption" sx={{ color: '#fff', fontWeight: 600 }}>Monto Total</Typography>
+                  <Typography variant="caption" sx={{ color: '#fff', fontWeight: 600 }}>Monto total</Typography>
                   <Typography variant="h5" sx={{ color: '#fff', fontWeight: 700 }}>{getCashValueTotal(totals.total_day)}</Typography>
                 </Box>
               </Grid>
               <Grid item xs={12} sm={6} md={3}>
                 <Box sx={{ bgcolor: 'var(--color-primary)', p: 1, borderRadius: 1, textAlign: 'center' }}>
-                  <Typography variant="caption" sx={{ color: '#fff', fontWeight: 600 }}>Ganancia Total</Typography>
+                  <Typography variant="caption" sx={{ color: '#fff', fontWeight: 600 }}>Ganancia total</Typography>
                   <Typography variant="h5" sx={{ color: '#fff', fontWeight: 700 }}>{getCashValueTotal(totals.profit)}</Typography>
                 </Box>
               </Grid>

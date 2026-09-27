@@ -127,7 +127,7 @@ const ConversionList = () => {
     <>
       <CustomSpinner isLoading={isLoading} />
       <Box className="card">
-        <PageHeader title="Conversiones de Producto">
+        <PageHeader title="Conversiones de producto">
           <CustomButton
             onClick={() => modal.open()}
             startIcon={<AddIcon />}

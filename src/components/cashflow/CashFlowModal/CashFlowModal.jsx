@@ -79,7 +79,7 @@ const CashFlowModal = ({ isOpen, cashFlow, onClose, onUpdate }) => {
     <CustomModal
       showOut={isOpen}
       onClose={onClose}
-      title={formData.id ? "Actualizar movimiento" : "Crear movimiento"}
+      title={formData.id ? "Editar movimiento" : "Crear movimiento"}
     >
       <Box sx={{ p: 3 }}>
         <Typography

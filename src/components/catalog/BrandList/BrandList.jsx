@@ -7,7 +7,7 @@ import { useCreateBrand, useUpdateBrand } from "../../../hooks/useBrandMutations
 const LABELS = {
   title: "Marcas",
   singular: "marca",
-  create: "Nueva Marca",
+  create: "Nueva marca",
   deleteSelected: "Eliminar seleccionadas",
   empty: "Sin marcas",
   countUnit: "marca(s)",

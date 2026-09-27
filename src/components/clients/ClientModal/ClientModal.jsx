@@ -50,7 +50,7 @@ const ClientModal = ({ isOpen, client, onClose, onUpdate }) => {
     <CustomModal
       showOut={isOpen}
       onClose={onClose}
-      title={values.id ? "Actualizar cliente" : "Crear cliente"}
+      title={values.id ? "Editar cliente" : "Crear cliente"}
     >
       <Grid container sx={{ padding: '1rem', backgroundColor: 'modalBody.main' }}>
         <Grid item xs={12} className="card">
@@ -104,7 +104,7 @@ const ClientModal = ({ isOpen, client, onClose, onUpdate }) => {
             disabled={isFormIncomplete || isLoading}
             startIcon={<SaveIcon />}
           >
-            {isLoading ? "Creando..." : values.id ? "Actualizar" : "Crear"} cliente
+            {isLoading ? "Guardando..." : values.id ? "Actualizar" : "Crear"} cliente
           </CustomButton>
         </Grid>
       </Grid>

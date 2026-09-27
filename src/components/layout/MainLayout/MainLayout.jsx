@@ -75,7 +75,7 @@ const iconMap = {
   Servicios: <MiscellaneousServicesIcon />,
   Sincronizar: <SyncIcon />,
   Distribuir: <LocalShippingIcon />,
-  Auditoria: <PolicyIcon />,
+  "Auditoría": <PolicyIcon />,
   Facturación: <ReceiptIcon />,
   Regresar: <ArrowBackIcon />,
   "Historial de stock": <HistoryIcon />,
@@ -319,7 +319,7 @@ export default function MainLayout({ toggleTheme, themeMode }) {
           { label: "Departamentos", href: "/departamentos/", hidden: user.role === "seller" },
           { label: "Reasignación", href: "/reasignacion/", hidden: user.role === "seller" },
           { divider: true, hidden: user.role === "seller" },
-          { label: "Importar Productos", href: "/importar-productos/", hidden: user.role === "seller" },
+          { label: "Importar productos", href: "/importar-productos/", hidden: user.role === "seller" },
           { label: "Importar inventario", href: "/importar-inventario/", hidden: user.role === "seller" },
           { divider: true },
           { label: "Solicitudes de ajustes de stock", href: "/solicitudes-ajustes-stock/", hidden: user.role === "seller"},
@@ -329,7 +329,7 @@ export default function MainLayout({ toggleTheme, themeMode }) {
       },
 
       {
-        label: "Auditoria",
+        label: "Auditoría",
         dropdown: [
           { label: "Inventario a verificar", href: "/auditoria-inventario/" },
         ],
@@ -377,7 +377,7 @@ export default function MainLayout({ toggleTheme, themeMode }) {
           { label: "Marcas", href: "/marcas/" },
           { label: "Departamentos", href: "/departamentos/" },
           { divider: true },
-          { label: "Importar Productos", href: "/importar-productos/" },
+          { label: "Importar productos", href: "/importar-productos/" },
           { label: "Importar inventario", href: "/importar-inventario/" },
           { divider: true },
           { label: "Solicitudes de ajustes de stock", href: "/solicitudes-ajustes-stock/" },
@@ -385,7 +385,7 @@ export default function MainLayout({ toggleTheme, themeMode }) {
         ],
       },
       {
-        label: "Auditoria",
+        label: "Auditoría",
         dropdown: [
           { label: "Inventario a verificar", href: "/auditoria-inventario/", hidden: user.role === "seller" },
         ],
@@ -400,7 +400,7 @@ export default function MainLayout({ toggleTheme, themeMode }) {
           { label: "Ventas canceladas", href: "/tablero-ventas-ajustadas-cancelaciones/" },
           { label: "Verificación de stock", href: "/tablero-verificacion-stock/" },
           { label: "Marcas y productos", href: "/tablero-productos/" },
-          { label: "Transpasos pendientes", href: "/tablero-traspasos-pendientes/" },
+          { label: "Traspasos pendientes", href: "/tablero-traspasos-pendientes/" },
         ],
       },
       { label: "Tiendas", href: "/tiendas/" },
@@ -416,14 +416,14 @@ export default function MainLayout({ toggleTheme, themeMode }) {
           { label: "Departamentos", href: "/departamentos/" },
           { label: "Reasignación", href: "/reasignacion/" },
           { divider: true },
-          { label: "Importar Productos", href: "/importar-productos/" },
+          { label: "Importar productos", href: "/importar-productos/" },
           { divider: true },
           { label: "Solicitudes de ajustes de stock", href: "/solicitudes-ajustes-stock/" },
           { label: "Historial de cambio de precios", href: "/historial-precios/" },
         ],
       },
       {
-        label: "Auditoria",
+        label: "Auditoría",
         dropdown: [
           { label: "Productos", href: "/auditoria-productos/" },
           { label: "Transacciones", href: "/auditoria-transacciones/" },
@@ -433,7 +433,7 @@ export default function MainLayout({ toggleTheme, themeMode }) {
       {
         label: "Facturación",
         dropdown: [
-          { label: "Mi Plan Actual", href: "/mi-plan-actual/" },
+          { label: "Mi plan actual", href: "/mi-plan-actual/" },
           { label: "Historial de pagos", href: "/pagos/" },
           { label: "Suscripciones", href: "/suscripciones/" },
         ],

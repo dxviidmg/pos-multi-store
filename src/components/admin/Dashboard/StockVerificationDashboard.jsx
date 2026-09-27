@@ -69,7 +69,7 @@ const StockVerificationDashboard = () => {
     return (
       <Box>
         <Box className="card" sx={{ mb: 3 }}>
-          <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>Verificación de Stock</Typography>
+          <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>Verificación de stock</Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>Procesando datos...</Typography>
           <LinearProgress variant={progress > 0 ? "determinate" : "indeterminate"} value={progress} sx={{ height: 6, borderRadius: 3, mb: 1 }} />
           <CountdownTimer seconds={countdown} />
@@ -89,12 +89,12 @@ const StockVerificationDashboard = () => {
     return (
       <Box>
         <Box className="card" sx={{ mb: 3 }}>
-          <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>Verificación de Stock</Typography>
+          <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>Verificación de stock</Typography>
           <Typography variant="body2" color="text.secondary">{DESCRIPTION}</Typography>
         </Box>
         <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: 350, gap: 2, opacity: 0.7 }}>
           <InboxIcon sx={{ fontSize: 64, color: "text.secondary" }} />
-          <Typography variant="h6" color="text.secondary">Todo el stock está OK</Typography>
+          <Typography variant="h6" color="text.secondary">Todo el stock está correcto</Typography>
         </Box>
       </Box>
     );
@@ -103,7 +103,7 @@ const StockVerificationDashboard = () => {
   return (
     <Box>
       <Box className="card" sx={{ mb: 3 }}>
-        <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>Verificación de Stock</Typography>
+        <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>Verificación de stock</Typography>
         <Typography variant="body2" color="text.secondary">{DESCRIPTION}</Typography>
       </Box>
 
@@ -156,7 +156,7 @@ const StockVerificationDashboard = () => {
 
       <Box className="card" sx={{ mb: 0 }}>
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-          <Typography variant="h6" sx={{ fontWeight: 600 }}>Productos a Verificar</Typography>
+          <Typography variant="h6" sx={{ fontWeight: 600 }}>Productos a verificar</Typography>
           <CustomButton onClick={handleDownload} disabled={!products?.length} startIcon={<DownloadIcon />}>
             Descargar
           </CustomButton>

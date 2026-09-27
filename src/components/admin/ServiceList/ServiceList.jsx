@@ -13,7 +13,7 @@ const SERVICES = [
     icon: <StorefrontIcon />,
     title: "Tienda / Almacén",
     price: 500,
-    notes: "Agrega una nueva sucursal o almacén a tu cuenta.",
+    notes: "Agrega una nueva tienda o almacén a tu cuenta.",
   },
   {
     icon: <PrintIcon />,

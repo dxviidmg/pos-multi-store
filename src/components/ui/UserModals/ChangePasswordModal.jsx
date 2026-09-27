@@ -5,7 +5,7 @@ import CustomButton from "../Button/Button";
 
 const ChangePasswordModal = ({ open, onClose, passwordData, onChange, onSave, showPasswords, onToggleVisibility }) => {
   return (
-    <CustomModal showOut={open} onClose={onClose} title="Cambiar Contraseña">
+    <CustomModal showOut={open} onClose={onClose} title="Cambiar contraseña">
       <Grid container sx={{ padding: '1rem', backgroundColor: 'modalBody.main' }}>
         <Grid item xs={12} className="card">
           <Grid container spacing={2}>
@@ -17,7 +17,7 @@ const ChangePasswordModal = ({ open, onClose, passwordData, onChange, onSave, sh
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                label="Tu Contraseña Actual (Seguridad)"
+                label="Tu contraseña actual (seguridad)"
                 name="old_password"
                 value={passwordData.old_password}
                 onChange={onChange}
@@ -38,7 +38,7 @@ const ChangePasswordModal = ({ open, onClose, passwordData, onChange, onSave, sh
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                label="Nueva Contraseña"
+                label="Nueva contraseña"
                 name="new_password"
                 value={passwordData.new_password}
                 onChange={onChange}
@@ -59,7 +59,7 @@ const ChangePasswordModal = ({ open, onClose, passwordData, onChange, onSave, sh
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                label="Confirmar Nueva Contraseña"
+                label="Confirmar nueva contraseña"
                 name="confirm_password"
                 value={passwordData.confirm_password}
                 onChange={onChange}
@@ -83,7 +83,7 @@ const ChangePasswordModal = ({ open, onClose, passwordData, onChange, onSave, sh
                 fullWidth
                 disabled={!passwordData.old_password || !passwordData.new_password || !passwordData.confirm_password}
               >
-                Cambiar Contraseña
+                Cambiar contraseña
               </CustomButton>
             </Grid>
           </Grid>

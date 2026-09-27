@@ -51,11 +51,11 @@ const StockUpdateRequestList = () => {
 
   const handleDelete = async (row) => {
     const { isConfirmed } = await Swal.fire({
-      title: "¿Borrar solicitud?",
+      title: "¿Eliminar solicitud?",
       text: `${row.product_name} — Cantidad: ${row.requested_stock}`,
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "Borrar",
+      confirmButtonText: "Eliminar",
       cancelButtonText: "Cancelar",
       confirmButtonColor: colors.primary,
     });
@@ -104,7 +104,7 @@ const StockUpdateRequestList = () => {
                     </CustomButton>
                   </CustomTooltip>
                   }
-                  <CustomTooltip text="Borrar solicitud">
+                  <CustomTooltip text="Eliminar solicitud">
                     <CustomButton onClick={() => handleDelete(row)}>
                       <DeleteIcon />
                     </CustomButton>

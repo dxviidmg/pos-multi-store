@@ -40,7 +40,7 @@ const CreateStoreModal = ({ isOpen, onClose, onCreated }) => {
       onCreated(response.data);
       onClose();
       setFormData(INITIAL_FORM);
-      showSuccess("Tienda creada exitosamente");
+      showSuccess("Tienda creada");
     } else {
       showError(
         "Error al crear tienda",
@@ -148,7 +148,7 @@ const CreateStoreModal = ({ isOpen, onClose, onCreated }) => {
               startIcon={<SaveIcon />}
               sx={{ height: "40px", mt: 0.5 }}
             >
-              {loading ? "Creando..." : "Crear tienda"}
+              {loading ? "Guardando..." : "Crear tienda"}
             </CustomButton>
           </Grid>
         </Grid>

@@ -234,7 +234,7 @@ const Cart = ({ searchInputRef, cartViewMode = "table", setCartViewMode }) => {
       if (response.status === 200) {
         dispatch(cleanCart());
         setLoading(false);
-        showSuccess("Producto añadido al inventario");
+        showSuccess("Producto agregado al inventario");
       } else {
         setLoading(false);
         showError("Error en el inventario", "No se pudo añadir el producto");
@@ -400,7 +400,7 @@ const Cart = ({ searchInputRef, cartViewMode = "table", setCartViewMode }) => {
                     onClick={() => handleAddToStock(cart)}
                     startIcon={<AddCircleIcon />}
                   >
-                    Añadir
+                    Agregar
                   </CustomButton>
                 </Grid>
               </>

@@ -122,7 +122,7 @@ const Profile = () => {
     
     try {
       await updateTenant(user.tenant_id, { ...tenantData, ...settings });
-      setMessage({ type: 'success', text: 'Datos del negocio guardados correctamente' });
+      setMessage({ type: 'success', text: 'Datos del negocio guardados' });
     } catch (error) {
       logger.error('Save error:', error);
       setMessage({ type: 'error', text: 'Error al guardar los datos del negocio' });
@@ -137,7 +137,7 @@ const Profile = () => {
     
     try {
       await updateUser(user.user_id, userData);
-      setMessage({ type: 'success', text: 'Datos del usuario guardados correctamente' });
+      setMessage({ type: 'success', text: 'Datos del usuario guardados' });
     } catch (error) {
       logger.error('Save error:', error);
       setMessage({ type: 'error', text: 'Error al guardar los datos del usuario' });
@@ -165,7 +165,7 @@ const Profile = () => {
         current_password: passwordData.current_password,
         new_password: passwordData.new_password,
       });
-      setMessage({ type: 'success', text: 'Contraseña cambiada correctamente' });
+      setMessage({ type: 'success', text: 'Contraseña actualizada' });
       setPasswordData({ current_password: '', new_password: '', confirm_password: '' });
     } catch (error) {
       logger.error('Password change error:', error);
@@ -195,7 +195,7 @@ const Profile = () => {
                   <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                     <Business sx={{ mr: 1 }} />
                     <Typography variant="h6" fontWeight={600}>
-                      Información del Negocio
+                      Información del negocio
                     </Typography>
                   </Box>
                   <Divider sx={{ mb: 2 }} />
@@ -204,7 +204,7 @@ const Profile = () => {
                     <Grid item xs={12}>
                       <TextField
                         fullWidth
-                        label="Nombre del Negocio"
+                        label="Nombre del negocio"
                         name="name"
                         value={tenantData.name}
                         onChange={handleTenantChange}
@@ -214,7 +214,7 @@ const Profile = () => {
                     <Grid item xs={12}>
                       <TextField
                         fullWidth
-                        label="Nombre Corto"
+                        label="Nombre corto"
                         name="short_name"
                         value={tenantData.short_name}
                         size="small"
@@ -224,7 +224,7 @@ const Profile = () => {
                     <Grid item xs={12}>
                       <TextField
                         fullWidth
-                        label="Fecha de Creación"
+                        label="Fecha de creación"
                         name="created_at"
                         value={tenantData.created_at ? new Date(tenantData.created_at).toLocaleDateString('es-MX') : ''}
                         size="small"
@@ -276,7 +276,7 @@ const Profile = () => {
               onClick={handleSaveTenant}
               disabled={savingTenant}
             >
-              Guardar Datos del Negocio
+              Guardar datos del negocio
             </Button>
           </Grid>
             </>
@@ -287,7 +287,7 @@ const Profile = () => {
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                 <Person sx={{ mr: 1 }} />
                 <Typography variant="h6" fontWeight={600}>
-                  Información del Usuario
+                  Información del usuario
                 </Typography>
               </Box>
               <Divider sx={{ mb: 2 }} />
@@ -344,7 +344,7 @@ const Profile = () => {
               onClick={handleSaveUser}
               disabled={savingUser}
             >
-              Guardar Datos del Usuario
+              Guardar datos del usuario
             </Button>
           </Grid>
 
@@ -353,7 +353,7 @@ const Profile = () => {
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                 <Lock sx={{ mr: 1 }} />
                 <Typography variant="h6" fontWeight={600}>
-                  Cambiar Contraseña
+                  Cambiar contraseña
                 </Typography>
               </Box>
               <Divider sx={{ mb: 2 }} />
@@ -362,7 +362,7 @@ const Profile = () => {
                 <Grid item xs={12}>
                   <TextField
                     fullWidth
-                    label="Contraseña Actual"
+                    label="Contraseña actual"
                     name="current_password"
                     value={passwordData.current_password}
                     onChange={handlePasswordChange}
@@ -386,7 +386,7 @@ const Profile = () => {
                 <Grid item xs={12}>
                   <TextField
                     fullWidth
-                    label="Nueva Contraseña"
+                    label="Nueva contraseña"
                     name="new_password"
                     value={passwordData.new_password}
                     onChange={handlePasswordChange}
@@ -410,7 +410,7 @@ const Profile = () => {
                 <Grid item xs={12}>
                   <TextField
                     fullWidth
-                    label="Confirmar Nueva Contraseña"
+                    label="Confirmar nueva contraseña"
                     name="confirm_password"
                     value={passwordData.confirm_password}
                     onChange={handlePasswordChange}
@@ -441,7 +441,7 @@ const Profile = () => {
               onClick={handleChangePassword}
               disabled={savingPassword || !passwordData.current_password || !passwordData.new_password || !passwordData.confirm_password}
             >
-              Cambiar Contraseña
+              Cambiar contraseña
             </Button>
           </Grid>
         </Grid>

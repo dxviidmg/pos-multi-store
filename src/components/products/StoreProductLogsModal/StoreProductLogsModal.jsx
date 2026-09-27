@@ -62,7 +62,7 @@ const StoreProductLogsModal = ({ isOpen, logs: logsData, onClose, onUpdate }) =>
       resetForm();
       onClose();
       onUpdate(response.data);
-      showSuccess("Ajuste exitoso");
+      showSuccess("Stock ajustado");
     } else {
       showError("Error al realizar el ajuste", "Por favor llame a soporte técnico");
     }
@@ -72,7 +72,7 @@ const StoreProductLogsModal = ({ isOpen, logs: logsData, onClose, onUpdate }) =>
     <CustomModal
       showOut={isOpen}
       onClose={onClose}
-      title={`${adjustStock ? (String(formData.stock) === String(storeProduct.stock) ? "Confirmar cantidad" : "Modificar cantidad") : "Historial de movimientos"} de ${formData.product?.code} - ${formData.product?.name}`}
+      title={`${adjustStock ? (String(formData.stock) === String(storeProduct.stock) ? "Confirmar cantidad" : "Editar cantidad") : "Historial de movimientos"} de ${formData.product?.code} - ${formData.product?.name}`}
     >
      <Grid container sx={{ padding: '1rem', backgroundColor: 'modalBody.main' }}>
        <Grid item xs={12} className="card">

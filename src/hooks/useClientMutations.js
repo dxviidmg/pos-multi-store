@@ -17,7 +17,7 @@ const clientErrorParser = (error) => {
       return 'El teléfono debe tener al menos 10 dígitos.';
     }
     if (phoneError === 'client with this phone number already exists.') {
-      return 'El teléfono ya existe.';
+      return 'El teléfono ya está registrado.';
     }
   }
   return 'Error desconocido. Por favor, contacte soporte.';

@@ -97,7 +97,7 @@ const SellerList = () => {
         <Grid item xs={12} className="card">
           <PageHeader title="Vendedores">
             <CustomButton fullWidth onClick={() => sellerModal.open()} startIcon={<AddIcon />}>
-              Nuevo Vendedor
+              Nuevo vendedor
             </CustomButton>
           </PageHeader>
 

@@ -205,7 +205,7 @@ const ProductList = () => {
         <Grid item xs={12} className="card">
           <PageHeader title="Productos">
             <CustomButton fullWidth onClick={() => productModal.open({ product: null, showStoreProducts: false })} startIcon={<AddIcon />}>
-              Nuevo Producto
+              Nuevo producto
             </CustomButton>
           </PageHeader>
 

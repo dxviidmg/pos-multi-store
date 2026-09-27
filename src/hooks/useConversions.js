@@ -31,7 +31,7 @@ export const useDeleteConversion = useDelete;
 export const useApplyConversion = (options = {}) => {
   return useCrudMutation(applyConversion, {
     queryKey: 'conversions',
-    successMessage: 'Conversión aplicada correctamente',
+    successMessage: 'Conversión aplicada',
     errorMessage: 'Error al aplicar la conversión',
     ...options,
   });

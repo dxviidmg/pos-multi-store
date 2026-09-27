@@ -133,7 +133,7 @@ const SellerModal = ({ isOpen, seller, onClose, onUpdate }) => {
     <CustomModal
       showOut={isOpen}
       onClose={onClose}
-      title={formData.id ? "Actualizar vendedor" : "Crear vendedor"}
+      title={formData.id ? "Editar vendedor" : "Crear vendedor"}
     >
       <Grid container sx={{ padding: '1rem', backgroundColor: 'modalBody.main' }}>
         <Grid item xs={12} className="card">

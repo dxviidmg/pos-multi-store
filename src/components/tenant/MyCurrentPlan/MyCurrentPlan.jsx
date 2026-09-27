@@ -117,7 +117,7 @@ const MyCurrentPlan = () => {
               paymentModal.close();
               setPlan((prev) => ({ ...prev, plan: equivalent, has_plan: true }));
               setEquivalent(null);
-              showSuccess("¡Suscripción activada exitosamente!");
+              showSuccess("¡Suscripción activada!");
             } else {
               setResult({ success: false, message: "Error al crear la suscripción." });
             }
@@ -255,7 +255,7 @@ const MyCurrentPlan = () => {
 
       <Grid item xs={12} className="card">
         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
-          <h1>Mi Plan Actual</h1>
+          <h1>Mi plan actual</h1>
           {plan?.plan?.billing_type === "S" ? (
             <Chip icon={<CheckCircleIcon />} label="Domiciliación activada" color="success" variant="filled" />
           ) : equivalent ? (
@@ -281,7 +281,7 @@ const MyCurrentPlan = () => {
             {plan?.has_plan && (
               <Box sx={{ mb: 2 }}>
                 <Typography variant="h6" sx={{ mb: 2 }}>
-                  Plan Actual: {plan.plan.name}
+                  Plan actual: {plan.plan.name}
                 </Typography>
                   <Grid container spacing={3}>
                     <Grid item xs={12} sm={6} md={3}>
@@ -388,7 +388,7 @@ const MyCurrentPlan = () => {
 
       <Grid item xs={12} className="card" sx={{ mt: 3 }}>
         <Typography variant="h6" sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
-          <CalendarTodayIcon fontSize="small" /> Fechas del Negocio
+          <CalendarTodayIcon fontSize="small" /> Fechas del negocio
         </Typography>
         {tenantDates ? (
               <Grid container spacing={3}>
