@@ -1,4 +1,27 @@
 import { createTheme } from '@mui/material/styles';
+import { colors } from './colors';
+
+const DISPLAY = "'Plus Jakarta Sans', 'Inter', sans-serif";
+
+const lightShadows = [
+  'none',
+  '0 1px 2px rgba(2,35,71,0.06)',
+  '0 1px 3px rgba(2,35,71,0.08)',
+  '0 2px 6px rgba(2,35,71,0.08)',
+  '0 4px 12px rgba(2,35,71,0.08)',
+  '0 8px 24px rgba(2,35,71,0.10)',
+  ...Array(19).fill('0 12px 32px rgba(2,35,71,0.14)'),
+];
+
+const darkShadows = [
+  'none',
+  '0 1px 2px rgba(0,0,0,0.3)',
+  '0 1px 3px rgba(0,0,0,0.35)',
+  '0 2px 6px rgba(0,0,0,0.4)',
+  '0 4px 12px rgba(0,0,0,0.4)',
+  '0 8px 24px rgba(0,0,0,0.45)',
+  ...Array(19).fill('0 12px 32px rgba(0,0,0,0.5)'),
+];
 
 export const getTheme = (mode) => createTheme({
   palette: {
@@ -24,10 +47,10 @@ export const getTheme = (mode) => createTheme({
   shape: { borderRadius: 8 },
   typography: {
     fontFamily: "'Inter', sans-serif",
-    h1: { fontWeight: 700, fontSize: '1.75rem', letterSpacing: '-0.02em' },
-    h2: { fontWeight: 700, fontSize: '1.5rem', letterSpacing: '-0.01em' },
-    h3: { fontWeight: 600, fontSize: '1.25rem', letterSpacing: '-0.01em' },
-    h4: { fontWeight: 600, fontSize: '1.125rem' },
+    h1: { fontFamily: DISPLAY, fontWeight: 800, fontSize: '1.75rem', letterSpacing: '-0.025em' },
+    h2: { fontFamily: DISPLAY, fontWeight: 700, fontSize: '1.5rem', letterSpacing: '-0.02em' },
+    h3: { fontFamily: DISPLAY, fontWeight: 700, fontSize: '1.25rem', letterSpacing: '-0.015em' },
+    h4: { fontFamily: DISPLAY, fontWeight: 700, fontSize: '1.125rem', letterSpacing: '-0.01em' },
     h5: { fontWeight: 600, fontSize: '1rem' },
     h6: { fontWeight: 600, fontSize: '0.875rem' },
     body1: { fontSize: '0.875rem', fontWeight: 400, lineHeight: 1.5 },
@@ -35,15 +58,7 @@ export const getTheme = (mode) => createTheme({
     button: { textTransform: 'none', fontWeight: 600, fontSize: '0.8125rem', letterSpacing: '0.01em' },
     caption: { fontSize: '0.75rem', color: mode === 'light' ? '#64748b' : '#8b949e' },
   },
-  shadows: [
-    'none',
-    '0 1px 2px rgba(0,0,0,0.05)',
-    '0 1px 3px rgba(0,0,0,0.07)',
-    '0 2px 4px rgba(0,0,0,0.06)',
-    '0 2px 8px rgba(0,0,0,0.08)',
-    '0 4px 12px rgba(0,0,0,0.08)',
-    ...Array(19).fill('0 4px 12px rgba(0,0,0,0.08)'),
-  ],
+  shadows: mode === 'light' ? lightShadows : darkShadows,
   components: {
     MuiCssBaseline: {
       styleOverrides: {
@@ -51,26 +66,35 @@ export const getTheme = (mode) => createTheme({
           WebkitFontSmoothing: 'antialiased',
           MozOsxFontSmoothing: 'grayscale',
         },
+        '@media (prefers-reduced-motion: reduce)': {
+          '*, *::before, *::after': {
+            animationDuration: '0.01ms !important',
+            animationIterationCount: '1 !important',
+            transitionDuration: '0.01ms !important',
+            scrollBehavior: 'auto !important',
+          },
+        },
       },
     },
     MuiButton: {
       defaultProps: { disableElevation: true },
       styleOverrides: {
         root: {
-          borderRadius: 6,
+          borderRadius: 8,
           padding: '6px 16px',
           fontWeight: 600,
           fontSize: '0.8125rem',
-          transition: 'background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease',
-          '&:hover': { transform: 'none' },
-          '&:active': { transform: 'none' },
+          transition: 'background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.2s ease, transform 0.2s ease',
+          '&:active': { transform: 'translateY(0)' },
+          '&.Mui-focusVisible': { boxShadow: '0 0 0 3px rgba(167,139,250,0.45)' },
         },
         contained: {
-          background: '#04346b',
+          background: colors.primary,
           color: '#fff',
           '&:hover': {
-            background: '#065a9e',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.12)',
+            background: colors.primaryLight,
+            boxShadow: colors.shadow.brand,
+            transform: 'translateY(-1px)',
           },
         },
         outlined: {
@@ -104,7 +128,7 @@ export const getTheme = (mode) => createTheme({
       defaultProps: { elevation: 0 },
       styleOverrides: {
         root: {
-          borderRadius: 8,
+          borderRadius: 12,
           border: `1px solid ${mode === 'light' ? '#e2e8f0' : '#30363d'}`,
           backgroundImage: 'none',
         },
@@ -114,12 +138,11 @@ export const getTheme = (mode) => createTheme({
       defaultProps: { elevation: 0 },
       styleOverrides: {
         root: {
-          borderRadius: 8,
+          borderRadius: 12,
           border: `1px solid ${mode === 'light' ? '#e2e8f0' : '#30363d'}`,
-          transition: 'box-shadow 0.15s ease',
+          transition: 'box-shadow 0.2s ease',
           '&:hover': {
-            boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-            transform: 'none',
+            boxShadow: mode === 'light' ? lightShadows[4] : darkShadows[4],
           },
         },
       },
@@ -127,8 +150,8 @@ export const getTheme = (mode) => createTheme({
     MuiChip: {
       styleOverrides: {
         root: {
-          borderRadius: 6,
-          fontWeight: 500,
+          borderRadius: 999,
+          fontWeight: 600,
           fontSize: '0.75rem',
           height: 24,
         },
@@ -139,7 +162,7 @@ export const getTheme = (mode) => createTheme({
       styleOverrides: {
         root: {
           '& .MuiOutlinedInput-root': {
-            borderRadius: 6,
+            borderRadius: 8,
             fontSize: '0.875rem',
             transition: 'border-color 0.15s ease, box-shadow 0.15s ease',
             '&:hover fieldset': {
@@ -148,7 +171,7 @@ export const getTheme = (mode) => createTheme({
             '&.Mui-focused fieldset': {
               borderColor: '#04346b',
               borderWidth: '1.5px',
-              boxShadow: '0 0 0 3px rgba(4,52,107,0.08)',
+              boxShadow: '0 0 0 3px rgba(4,52,107,0.12)',
             },
           },
         },
@@ -157,7 +180,7 @@ export const getTheme = (mode) => createTheme({
     MuiSelect: {
       styleOverrides: {
         root: {
-          borderRadius: 6,
+          borderRadius: 8,
           fontSize: '0.875rem',
         },
       },
@@ -165,7 +188,7 @@ export const getTheme = (mode) => createTheme({
     MuiDialog: {
       styleOverrides: {
         paper: {
-          borderRadius: 10,
+          borderRadius: 16,
           border: `1px solid ${mode === 'light' ? '#e2e8f0' : '#30363d'}`,
         },
       },
@@ -173,7 +196,7 @@ export const getTheme = (mode) => createTheme({
     MuiTooltip: {
       styleOverrides: {
         tooltip: {
-          borderRadius: 4,
+          borderRadius: 6,
           fontSize: '0.75rem',
           backgroundColor: mode === 'light' ? '#1e293b' : '#e2e8f0',
           color: mode === 'light' ? '#fff' : '#1e293b',
@@ -206,6 +229,7 @@ export const getTheme = (mode) => createTheme({
           },
           '& .MuiTableCell-root': {
             fontSize: '0.8125rem',
+            fontVariantNumeric: 'tabular-nums',
             padding: '6px 12px',
             borderBottom: `1px solid ${mode === 'light' ? '#f1f5f9' : '#21262d'}`,
           },
@@ -233,7 +257,7 @@ export const getTheme = (mode) => createTheme({
     MuiAlert: {
       styleOverrides: {
         root: {
-          borderRadius: 6,
+          borderRadius: 8,
           fontSize: '0.8125rem',
         },
       },
@@ -243,6 +267,42 @@ export const getTheme = (mode) => createTheme({
         root: {
           borderRadius: 4,
           height: 3,
+          backgroundColor: mode === 'light' ? 'rgba(4,52,107,0.08)' : 'rgba(255,255,255,0.08)',
+        },
+        bar: {
+          borderRadius: 4,
+          background: `linear-gradient(90deg, ${colors.primaryLight} 0%, ${colors.accent} 100%)`,
+        },
+      },
+    },
+    MuiSkeleton: {
+      defaultProps: { animation: 'wave' },
+      styleOverrides: {
+        root: {
+          backgroundColor: mode === 'light' ? 'rgba(4,52,107,0.07)' : 'rgba(255,255,255,0.06)',
+        },
+        rounded: { borderRadius: 8 },
+      },
+    },
+    MuiPopover: {
+      styleOverrides: {
+        paper: {
+          borderRadius: 12,
+          boxShadow: mode === 'light' ? lightShadows[5] : darkShadows[5],
+        },
+      },
+    },
+    MuiMenu: {
+      styleOverrides: {
+        list: { padding: 4 },
+      },
+    },
+    MuiMenuItem: {
+      styleOverrides: {
+        root: {
+          borderRadius: 6,
+          fontSize: '0.8125rem',
+          transition: 'background-color 0.15s ease',
         },
       },
     },

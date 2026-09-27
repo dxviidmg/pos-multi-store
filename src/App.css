@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap');
 @import './theme/variables.css';
 
 /* Base resets */
@@ -11,6 +11,8 @@ p {
 h1, h2, h3 {
   margin: 0;
   color: var(--color-text);
+  font-family: var(--font-display);
+  letter-spacing: -0.015em;
 }
 
 /* Card component */
@@ -19,9 +21,44 @@ h1, h2, h3 {
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   color: var(--color-text);
+  box-shadow: var(--shadow-sm);
   margin-bottom: 1rem;
   min-width: 0;
   padding: var(--spacing-md);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.card-interactive:hover {
+  box-shadow: var(--shadow-md);
+  border-color: rgba(6, 90, 158, 0.35);
+}
+
+/* Entrance animation; stagger with animation-delay */
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in-up {
+  animation: fade-in-up 0.45s var(--ease-out) both;
+}
+
+@keyframes page-enter {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+.page-enter {
+  animation: page-enter 0.35s var(--ease-out) both;
+}
+
+@keyframes modal-enter {
+  from { opacity: 0; transform: translate(-50%, -48%) scale(0.98); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+.modal-enter {
+  animation: modal-enter 0.25s var(--ease-out) both;
 }
 
 .card h1 {
@@ -49,6 +86,12 @@ h1, h2, h3 {
 
 .icon-success { color: #16a34a; }
 .icon-danger { color: #dc2626; }
+
+/* Aligned numbers in grids */
+.MuiDataGrid-cell,
+.MuiDataGrid-footerContainer {
+  font-variant-numeric: tabular-nums;
+}
 
 /* Cell text wrap */
 .cell-wrap {
@@ -80,5 +123,5 @@ input:focus, select:focus, textarea:focus {
 /* Scrollbar */
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.2); border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.3); }
+::-webkit-scrollbar-thumb { background: rgba(100,116,139,0.35); border-radius: 999px; border: 2px solid transparent; background-clip: padding-box; }
+::-webkit-scrollbar-thumb:hover { background: rgba(100,116,139,0.55); border: 2px solid transparent; background-clip: padding-box; }

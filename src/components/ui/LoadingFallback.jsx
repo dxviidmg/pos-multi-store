@@ -1,14 +1,5 @@
-import { Box, CircularProgress } from "@mui/material";
+import { PageSkeleton } from "./Skeleton/Skeleton";
 
-const LoadingFallback = () => (
-  <Box
-    display="flex"
-    justifyContent="center"
-    alignItems="center"
-    minHeight="60vh"
-  >
-    <CircularProgress />
-  </Box>
-);
+const LoadingFallback = () => <PageSkeleton />;
 
 export default LoadingFallback;

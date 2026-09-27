@@ -1,6 +1,8 @@
 import React, { memo, useState, useMemo } from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import { Box, TextField, Typography, Paper } from "@mui/material";
+import { Box, TextField, Typography, Paper, LinearProgress } from "@mui/material";
+import InboxOutlinedIcon from "@mui/icons-material/InboxOutlined";
+import { TableSkeleton } from "../Skeleton/Skeleton";
 
 const searchInObject = (obj, search) => {
   if (typeof obj === "string") return obj.toLowerCase().includes(search.toLowerCase());
@@ -105,8 +107,11 @@ const DataTable = ({
       )}
 
       <Box sx={{ width: "100%", maxWidth: "100%", overflowX: "auto" }}>
-        {data.length === 0 && !progressPending ? (
-          <Paper sx={{ p: 4, textAlign: 'center' }}>
+        {data.length === 0 && progressPending ? (
+          <TableSkeleton columns={Math.min(Math.max(visibleColumns.length, 3), 6)} />
+        ) : data.length === 0 ? (
+          <Paper className="fade-in-up" sx={{ p: 4, textAlign: 'center' }}>
+            <InboxOutlinedIcon sx={{ fontSize: 36, color: 'text.disabled', mb: 1 }} />
             <Typography variant="body2" color="text.secondary">
               {noDataComponent}
             </Typography>
@@ -117,6 +122,7 @@ const DataTable = ({
           columns={muiColumns}
           getRowId={(row) => row._id}
           loading={progressPending}
+          slots={{ loadingOverlay: LinearProgress }}
           pagination={true}
           paginationModel={paginationModel}
           onPaginationModelChange={setPaginationModel}
@@ -133,10 +139,12 @@ const DataTable = ({
           localeText={{ noRowsLabel: noDataComponent }}
           hideFooter={data.length <= 10}
           density="compact"
+          className="fade-in-up"
           sx={{
             border: '1px solid',
             borderColor: 'divider',
-            borderRadius: 2,
+            borderRadius: 1.5,
+            overflow: 'hidden',
             "& .MuiDataGrid-columnHeaders": {
               backgroundColor: 'primary.main',
               color: 'primary.contrastText',
@@ -158,7 +166,10 @@ const DataTable = ({
             "& .MuiDataGrid-row": {
               minHeight: '34px !important',
               maxHeight: 'none !important',
+              transition: 'background-color 0.15s ease',
+              '&:hover': { backgroundColor: 'action.hover' },
             },
+            "& .MuiDataGrid-cell:focus, & .MuiDataGrid-columnHeader:focus": { outline: 'none' },
           }}
         />
         )}
