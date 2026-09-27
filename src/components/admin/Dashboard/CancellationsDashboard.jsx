@@ -129,24 +129,24 @@ const CancellationsDashboard = () => {
 
       <Grid container spacing={2}>
         <Grid item xs={6} md={4}>
-          <Box className="card" sx={{ height: "100%", mb: 0 }}>
+          <Box className="card card-interactive" sx={{ height: "100%", mb: 0 }}>
             <KPICard title="Canceladas/Devueltas" value={kpis.total} subtitle={`${kpis.percentage}% de ${kpis.totalValidSales + kpis.total} ventas`} icon={BlockIcon} index={0} />
           </Box>
         </Grid>
         <Grid item xs={6} md={4}>
-          <Box className="card" sx={{ height: "100%", mb: 0 }}>
+          <Box className="card card-interactive" sx={{ height: "100%", mb: 0 }}>
             <KPICard title="Canceladas" value={kpis.totalCanceled} subtitle="Ventas canceladas" icon={BlockIcon} index={1} />
           </Box>
         </Grid>
         <Grid item xs={6} md={4}>
-          <Box className="card" sx={{ height: "100%", mb: 0 }}>
+          <Box className="card card-interactive" sx={{ height: "100%", mb: 0 }}>
             <KPICard title="Devoluciones" value={kpis.totalReturned} subtitle="Ventas con devolución" icon={UndoIcon} index={2} />
           </Box>
         </Grid>
 
         {hasMultipleStores && (
           <Grid item xs={6} md={4}>
-            <Box className="card" sx={{ height: "100%", mb: 0 }}>
+            <Box className="card card-interactive" sx={{ height: "100%", mb: 0 }}>
               <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
                 <StorefrontIcon sx={{ fontSize: 18, color: "primary.main" }} />
                 <Typography variant="body2" sx={{ fontWeight: 600, color: "text.secondary" }}>Más cancelaciones</Typography>
@@ -156,7 +156,7 @@ const CancellationsDashboard = () => {
           </Grid>
         )}
         <Grid item xs={6} md={4}>
-          <Box className="card" sx={{ height: "100%", mb: 0 }}>
+          <Box className="card card-interactive" sx={{ height: "100%", mb: 0 }}>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
               <CalendarMonthIcon sx={{ fontSize: 18, color: "primary.main" }} />
               <Typography variant="body2" sx={{ fontWeight: 600, color: "text.secondary" }}>Día con más</Typography>
@@ -165,7 +165,7 @@ const CancellationsDashboard = () => {
           </Box>
         </Grid>
         <Grid item xs={6} md={4}>
-          <Box className="card" sx={{ height: "100%", mb: 0 }}>
+          <Box className="card card-interactive" sx={{ height: "100%", mb: 0 }}>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
               <AccessTimeIcon sx={{ fontSize: 18, color: "primary.main" }} />
               <Typography variant="body2" sx={{ fontWeight: 600, color: "text.secondary" }}>Hora con más</Typography>

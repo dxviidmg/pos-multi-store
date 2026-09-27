@@ -1,530 +1,539 @@
-# SmartVenta — Sistema de Punto de Venta Multi-Tienda
+# SmartVenta — Punto de Venta Web Multi-Sucursal
 
-> **Última actualización:** 26 de septiembre de 2026
+> Última actualización: 27 de septiembre de 2026
 
-**SmartVenta** es una plataforma moderna de punto de venta (POS) diseñada para negocios minoristas y mayoristas con múltiples sucursales. Gestiona ventas, inventario, traspasos y distribuciones desde una sola plataforma con visibilidad en tiempo real de todas tus tiendas y almacenes.
+**SmartVenta** es un punto de venta en la nube para negocios con una o varias tiendas y almacenes. Vendes, surtes, mueves mercancía entre sucursales y controlas precios desde el navegador, sin instalar nada. Cada pieza queda registrada: sabes quién la movió, cuándo y a dónde fue.
 
----
-
-## ¿Por Qué SmartVenta?
-
-Si diriges un negocio con varias tiendas, probablemente necesitas:
-
-- **Control centralizado** de inventario sin perder tiempo sincronizando datos entre tiendas
-- **Venta rápida** desde cualquier dispositivo sin complicaciones
-- **Información en tiempo real** para tomar decisiones sin demoras
-- **Reportes y análisis** que te muestren dónde estás ganando y dónde no
-- **Seguridad y auditoría** para proteger tu negocio y detectar problemas antes de que escalen
-
-SmartVenta hace todo esto sin requerir configuración complicada ni depender de costosos consultores.
+> **Nota para la landing page:** este documento es la fuente de datos del sitio. Las secciones "Funcionalidades estrella" y "Funcionalidades principales" están escritas en lenguaje de cliente y se pueden copiar tal cual. La sección "Características internas" es solo para el equipo y **no debe publicarse**.
 
 ---
 
-## 🎯 Funcionalidades Principales
+## ¿Para quién es SmartVenta?
 
-### 💰 Punto de Venta Rápido y Versátil
-
-**Vende más rápido, con menos errores:**
-
-- **Búsqueda instantánea** — Encuentra productos por código de barras, nombre o marca en milisegundos
-- **Autocompletado inteligente** — Sugerencias mientras escribes para acelerar la búsqueda
-- **Escáner con cámara** — Lee códigos de barras directamente desde la cámara del móvil
-- **Búsqueda visual** — Explora resultados en carrusel con imágenes de productos para identificación rápida
-- **Crear producto al vender** — Si no encuentras un producto, créalo directamente con stock inicial (usuarios single-store)
-- **Múltiples carritos simultáneos** — Atiende a varios clientes sin perder información; cambia de cliente con un clic
-- **Una pantalla para todo** — Ventas, traspasos, distribuciones y agregaciones de stock desde la misma interfaz sin cambiar de página
-- **Precios dinámicos** — Precio unitario y mayoreo automático según cantidad comprada
-- **Venta por peso** — Para productos vendidos por kilogramo o fracción, elige por kilo, fracción o monto exacto ("Dame $20 de queso")
-- **Atajos de teclado** — Ctrl+Q/W para búsqueda, Ctrl+K para visual, Ctrl+B para enfocar, Ctrl+E/R/T/Y/U/I para cambiar operación
-- **Impresión de tickets** — Compatible con impresoras térmicas estándar de punto de venta
-- **Estado de impresora en tiempo real** — Indicador conectado/desconectado, reintenta automáticamente si se desconecta
-- **Interfaz móvil completa** — Búsqueda, carrito y pagos optimizados para teléfono y tableta
-
-**Resultado:** Vendedores atienden más clientes en menos tiempo con menos errores.
+- **Cadenas de tiendas** que necesitan ver y mover su inventario entre sucursales sin llamadas ni hojas de cálculo.
+- **Negocios con almacén** que surten a sus tiendas y quieren saber qué salió, qué llegó y qué falta.
+- **Tiendas con varios vendedores** en mostrador, que atienden a varios clientes a la vez.
+- **Negocios de una sola tienda** que quieren empezar rápido: dan de alta productos con su stock en un solo paso.
+- **Giros que venden a granel** (semillas, forrajes, abarrotes, ferreterías): venta por kilo, por fracción o por monto, y desempaque de bultos a kilos.
 
 ---
 
-### 🏪 Control Total de Todas tus Tiendas
+## ⭐ Funcionalidades Estrella
 
-**Administra tu operación desde un solo lugar:**
+Las cinco razones por las que un negocio elige SmartVenta.
 
-- **Panel centralizado** — Acceso a todas tus tiendas y almacenes desde el menú principal
-- **Cambio instantáneo de tienda** — Selector integrado en el menú para cambiar entre tiendas sin cerrar sesión
-  - Para usuarios multitienda: selector desplegable en el menú lateral
-  - Para usuarios single-store: botón "Ver General" para volver a estadísticas globales
-- **Cambio sin URL** — Solo se actualiza el contexto de la tienda, el carrito se vacía automáticamente
-- **Indicador de catálogo** — Sabes exactamente qué tiendas tienen el catálogo completo y cuáles les faltan productos
-- **Límite por plan** — Sistema automático que valida cuántas tiendas puedes crear según tu suscripción
-- **Crear tienda rápido** — Botón siempre visible para agregar tiendas o almacenes sin dejar la pantalla
-- **Stock inicial en creación** — Para usuarios de una sola tienda, agrega stock directamente en el modal de crear productos
+### 1. Varias tiendas, varios vendedores, varios clientes a la vez
 
-**Resultado:** Información descentralizada se convierte en decisiones centralizadas.
+**El problema:** en hora pico, un cliente decide mientras otro ya quiere pagar. Con un punto de venta tradicional, el vendedor cancela o hace esperar a alguien.
 
----
+**Con SmartVenta:**
+- **Carritos simultáneos sin límite** — Abre una pestaña por cliente. Cada una guarda sus productos y su cliente, y muestra cuántos artículos lleva.
+- **Cambia de cliente con un clic** — Atiende al que ya decidió y regresa al otro sin perder nada.
+- **Todas tus sucursales en un solo acceso** — El dueño entra a cualquier tienda o almacén y cambia de sucursal desde el menú, sin cerrar sesión.
+- **Vendedores ilimitados sin costo** — Crea cuentas de vendedor por tienda en segundos; el sistema propone el usuario y la contraseña inicial.
+- **Ventas por vendedor** — Consulta cuánto vendió cada vendedor en el periodo que elijas.
+- **Cada quien ve lo suyo** — El vendedor solo ve vender, ventas, apartados, inventario, caja y traspasos. El dueño ve todo.
 
-### 📦 Inventario Inteligente
-
-**Nunca pierdas control de tu stock:**
-
-- **Stock unificado en tiempo real** — Consulta simultáneamente cuánto tienes en todas tus tiendas
-- **Reservas automáticas** — El sistema reserva productos entre carritos simultáneos para evitar ventas duplicadas
-- **Historial completo de stock** — Cada movimiento (ventas, traspasos, ajustes) queda registrado con usuario y hora
-- **Revisión rápida de inventario** — Modal interactivo para consultar stock en otras tiendas y agregar inventario directamente
-- **Unidad visible** — Visualiza el tipo de unidad (Pieza, Kilogramo, Costal, Litro, etc.) en todas las tablas
-- **Agregar stock en emergencia** — Acceso rápido desde el carrito si necesitas aumentar inventario durante una venta
-- **Alertas de inconsistencias** — El sistema detecta automáticamente discrepancias entre stock registrado y movimientos
-
-**Resultado:** Inventario preciso = menores pérdidas y mayor confianza en tus números.
+**Resultado:** atiendes a más clientes en hora pico y controlas todas tus tiendas desde una sola cuenta.
 
 ---
 
-### 🚚 Traslados Entre Tiendas
+### 2. Stock que no se vende dos veces
 
-**Mueve mercancía de forma controlada:**
+**El problema:** dos vendedores ofrecen la última pieza al mismo tiempo, o un traspaso se envía con mercancía que ya se vendió.
 
-- **Traspasos con trazabilidad** — Envía productos de una tienda a otra con registro completo desde envío hasta recepción
-- **Distribuciones masivas** — Un almacén abastece múltiples tiendas en una sola operación
-- **Confirmación obligatoria** — Cada tienda confirma exactamente lo que recibe
-- **Dashboard de pendientes** — Panel separado que muestra traspasos pendientes de hoy y anteriores
-- **Filtros por estado** — Busca rápidamente traspasos pendientes o aplicados con actualización automática
-- **Sincronización automática** — El sistema valida que lo enviado coincida con lo recibido
+**Con SmartVenta:**
+- **Apartado automático entre carritos** — Lo que está en un carrito se descuenta del disponible de los demás carritos abiertos.
+- **Traspasos y distribuciones limitados al stock real** — No puedes enviar más de lo que hay. La venta sí permite vender aunque el sistema marque cero, para no frenar al cliente cuando la pieza está en el anaquel.
+- **"Agregar y vender"** — Si el sistema dice cero pero el producto está en tu mano, lo agregas al inventario y lo vendes en el mismo paso.
+- **Stock de las demás sucursales al instante** — Si no hay en tu tienda, ves cuánto hay en las otras y pides un traspaso desde ahí mismo.
+- **Stock general al distribuir** — El almacén ve el stock de todas las tiendas mientras arma un envío, para mandar a quien lo necesita.
+- **Apartados con stock separado** — Los apartados se muestran aparte para que no se ofrezcan a otro cliente.
 
-**Resultado:** Cero pérdidas en tránsito, 100% trazabilidad.
-
----
-
-### 🔄 Conversiones de Producto (Desempaque)
-
-**Convierte presentaciones automáticamente:**
-
-- **Desempaque automático** — Un clic para convertir 1 Costal en 10 Kg o cualquier equivalencia que definas
-- **Configuración única** — Define cada equivalencia una sola vez, se aplica a todos los usuarios
-- **Múltiples unidades soportadas** — Pieza, Kilogramo, Costal, Litro, Metro, Rollo, Caja y más
-- **Trazabilidad completa** — Cada conversión se registra en el historial de stock por tienda
-- **Acceso directo** — Botón "Desempacar" en la tabla de conversiones sin navegar
-
-**Resultado:** Flexibilidad en cómo vendes sin perder control del inventario.
+**Resultado:** menos ventas que no se pueden surtir y menos discusiones entre sucursales.
 
 ---
 
-### 👥 Gestión de Clientes
+### 3. Trazabilidad completa de cada producto
 
-**Personaliza la experiencia de compra:**
+**El problema:** "¿Quién movió esto?", "¿Cuándo llegó?", "¿Por qué no cuadra?". Sin historial, las diferencias de inventario se vuelven discusiones.
 
-- **Registro completo** — Historial de compras por cliente con fechas y montos
-- **Descuentos personalizados** — Aplica descuentos por porcentaje automático al cliente
-- **Búsqueda rápida** — Encuentra clientes por nombre o número de teléfono al vender
-- **Historial de compras** — Ve exactamente qué ha comprado cada cliente y cuándo
+**Con SmartVenta:**
+- **Historial de cada movimiento** — Cada venta, traspaso, distribución, ajuste o entrada de mercancía guarda la fecha y la hora, quién lo hizo, el stock anterior, la diferencia y el stock nuevo.
+- **Historial por producto de hasta 12 meses** — Abre cualquier producto y revisa su vida completa en esa tienda.
+- **Historial diario de toda la tienda** — Filtra por tienda o almacén, marca y tipo de movimiento. Descárgalo a Excel.
+- **Traspasos con confirmación escaneando** — La tienda pide mercancía, y el traspaso se confirma escaneando los productos. Un producto sin traspaso pendiente se rechaza.
+- **Seguimiento de traspasos pendientes** — Tablero con lo pendiente por tienda, separado entre hoy y días anteriores, con detalle de quién pide, quién surte, producto y cantidad.
+- **Solicitudes de ajuste con aprobación** — El vendedor o administrador reporta "la cantidad es correcta" o pide un ajuste con la cantidad real. Solo el dueño aprueba.
+- **Revisión de inventario guiada** — Lista de productos por verificar; al confirmarlos salen de la lista y queda registro.
+- **Avisos al momento** — Notificaciones cuando se crea o confirma un traspaso o distribución, cuando llega una solicitud de ajuste o se hace un apartado.
+- **Movimientos marcados** — El historial marca con un indicador los registros que no cuadran.
 
-**Resultado:** Clientes felices con experiencia personalizada.
-
----
-
-### 🛒 Sistema de Apartados
-
-**Separa productos sin cobrar el total:**
-
-- **Apartados desde el POS** — Crear apartado en un clic sin cerrar la venta
-- **Reserva automática de stock** — Productos apartados se descuentan del inventario disponible
-- **Listado completo de apartados** — Consulta todos los apartados activos, su estado y cliente
-- **Seguimiento por cliente** — Vincula apartados para control personalizado
-- **Conversión a venta** — Convierte un apartado en venta cuando el cliente está listo
-
-**Resultado:** Mayor flexibilidad de venta, clientes satisfechos.
+**Resultado:** cada diferencia tiene un responsable y una fecha. Las mermas dejan de ser un misterio.
 
 ---
 
-### 🔄 Devoluciones y Cancelaciones
+### 4. Cambio de precios fácil y masivo
 
-**Maneja cambios y devoluciones profesionalmente:**
+**El problema:** sube el proveedor y tienes que cambiar precios uno por uno, con el riesgo de dejar precios viejos o vender por debajo del costo.
 
-- **Cancelación total** — Anula una venta completa con motivo registrado
-- **Devolución parcial** — Devuelve solo algunos productos de una venta
-- **Motivos documentados** — Cada cambio queda registrado para análisis de por qué se cancelan ventas
-- **Filtros rápidos** — Encuentra rápidamente ventas canceladas o con devolución
-- **Análisis de cancelaciones** — Dashboard con razones de cancelación para identificar problemas
+**Con SmartVenta:**
+- **Actualización masiva** — Selecciona varios productos y cambia a la vez costo, precio unitario, precio de mayoreo y cantidad mínima de mayoreo. Solo se cambia lo que llenas.
+- **Aviso de precios distintos** — Si los productos seleccionados tienen precios diferentes, ves una tabla comparativa antes de confirmar.
+- **Protección contra errores** — El costo y el precio de mayoreo deben ser menores al precio unitario; el precio de mayoreo y su cantidad mínima van siempre juntos.
+- **Mayoreo automático en caja** — Al llegar a la cantidad mínima, el carrito aplica el precio de mayoreo solo. Tú decides si el mayoreo se combina con el descuento de cliente.
+- **Historial de precios** — Consulta cada cambio con el valor anterior, el nuevo, la fecha y quién lo hizo. Filtra hasta 12 meses atrás y descarga a Excel.
+- **Precios bajo control** — Solo el dueño edita precios de productos existentes.
+- **Importación masiva desde Excel** — Carga tu catálogo con precios desde una plantilla.
 
-**Resultado:** Datos sobre cancelaciones para mejorar operaciones.
-
----
-
-### 💳 Corte de Caja Inteligente
-
-**Cierra tu día de forma rápida y precisa:**
-
-- **Resumen automático por método de pago** — Efectivo, tarjeta, transferencia en un vistazo
-- **Movimientos detallados** — Registra entradas y salidas de dinero (no solo ventas)
-- **Corte parcial y total** — Consulta el estado actual de la caja o el cierre del día
-- **Exportación a Excel** — Descarga tu corte de caja con un clic para análisis externo
-- **Validación automática** — Sistema verifica que caja coincida con ventas registradas
-
-**Resultado:** Cierre de caja en 2 minutos, sin errores.
+**Resultado:** ajustas cientos de precios en minutos, sin errores y con registro de cada cambio.
 
 ---
 
-### 📈 Tableros de Análisis Empresarial
+### 5. Tu catálogo con fotos
 
-**Entiende tu negocio con datos reales:**
+**El problema:** productos parecidos, códigos que nadie recuerda, vendedores nuevos que no conocen la mercancía.
 
-- **Dashboard de ventas** — KPIs clave: mejor/peor tienda, mejor/peor día, hora pico, ticket promedio
-- **Heatmap de ventas** — Visualización gráfica de cuándo y dónde se vende más
-- **Análisis de cancelaciones** — Tablero dedicado a ventas canceladas y devueltas con motivos
-- **Top de marcas y productos** — Qué vende, qué no se mueve y qué está ganando dinero
-- **Gráficas de tendencia** — Ventas por día del mes o por mes del año con líneas o barras
-- **Comparación entre tiendas** — Consulta ventas, ganancias, margen, ticket promedio y transacciones por sucursal
-- **Métricas por período** — Alterna entre montos y número de transacciones; compara promedios
-- **Stock de productos** — Dashboard que muestra qué se está vendiendo y qué se está estancando
+**Con SmartVenta:**
+- **Toma la foto desde el celular** — Un botón abre la cámara trasera y guarda la foto del producto al instante.
+- **Fotos ligeras automáticamente** — Las imágenes se optimizan al subirlas para que el sistema cargue rápido incluso con datos móviles.
+- **Búsqueda visual al vender** — Explora los resultados en un carrusel con foto, precio y stock. Los productos sin existencia aparecen atenuados.
+- **Foto en el carrito** — Confirma visualmente que estás cobrando el producto correcto.
+- **Vista de galería** — Productos e inventario en tarjetas con imagen o en tabla; el sistema recuerda tu preferencia.
 
-**Resultado:** Decisiones basadas en datos, no en intuición.
+**Resultado:** vendedores nuevos venden desde el primer día y hay menos errores por productos parecidos.
 
 ---
 
-### 🔍 Auditoría Automática
+## ✨ Funcionalidades Principales
 
-**Detecta problemas antes de que escalen:**
+### 💰 Punto de Venta
 
-- **Detección automática de inconsistencias:**
-  - Ventas duplicadas (mismo producto, mismo cliente, mismo horario)
-  - Códigos de producto repetidos
-  - Productos sin precio de mayoreo
-  - Stock faltante en tiendas (diferencias)
-  - Productos sin movimiento en meses
-  - Logs inconsistentes
-- **Auditoría de inventario dinámica** — Modal interactivo para confirmar o cambiar stock; eliminación automática después de revisar
-- **Acceso configurable** — Restringe quién puede ver tableros por horario
-- **Logs de auditoría** — Cada cambio importante queda registrado con usuario y hora
+- **Búsqueda por código de barras** — Escanea con lector o escribe el código y presiona Enter
+- **Sugerencias al escribir** — Desde la tercera letra aparecen productos por nombre o marca
+- **Escáner con la cámara del celular** — Lee códigos de barras sin lector
+- **Crear producto desde la venta** — Si un código no existe, créalo en el momento (se activa desde tu perfil)
+- **Checar precio** — Modo para consultar precio y stock sin agregar al carrito
+- **Venta a granel** — En productos por kilo o litro elige vender por kilo, por fracción o por monto ("dame $20 de queso")
+- **Cobro en efectivo, tarjeta, transferencia o mixto** — Con cálculo de cambio y referencia para pagos electrónicos
+- **Intercambio de mercancía** — Aplica una devolución anterior como parte del pago de una nueva compra
+- **Totales redondeados** — El total se redondea a los siguientes 50 centavos para facilitar el cambio
+- **Descuento por cliente** — Selecciona al cliente y su descuento se aplica al cobrar
+- **Protección contra cobros dobles** — Evita registrar dos veces la misma venta
+- **Atajos de teclado** — Ctrl+E venta, Ctrl+R traspaso, Ctrl+T distribución, Ctrl+Y agregar a inventario, Ctrl+U checar precio, Ctrl+I apartado, Ctrl+B buscar, Ctrl+K búsqueda visual, Ctrl+J cliente, Ctrl+P cobrar, Ctrl+G confirmar pago
+- **Fijar resultados** — Mantén la búsqueda abierta para agregar varios productos seguidos
+- **Vista en tabla o tarjetas** — Elige cómo ver el carrito en computadora
+- **Impresión de tickets** — Compatible con impresoras térmicas (recomendada Epson TM-88V); reimprime desde ventas y apartados
+- **Estado de la impresora a la vista** — Indicador de conectada/desconectada que se reconecta solo
+- **Vender desde el celular** — Búsqueda, carrito y cobro adaptados a teléfono y tableta
 
-**Resultado:** Seguridad y control total sobre tu operación.
+### 🔀 Una sola pantalla para todas las operaciones
+
+Desde la pantalla de venta cambias de operación sin cambiar de página; el carrito se vacía al cambiar para no mezclar operaciones:
+
+| Operación | Tienda | Almacén |
+|-----------|:------:|:-------:|
+| Venta | ✅ | — |
+| Apartado | ✅ | — |
+| Confirmar traspaso | ✅ | ✅ |
+| Distribución | — | ✅ |
+| Agregar a inventario | ✅ | ✅ |
+| Checar precio | ✅ | ✅ |
+
+### 🏪 Control de Sucursales
+
+- **Vista general de tiendas y almacenes** — Productos, ventas, monto y ganancia de cada sucursal en el periodo que elijas
+- **Semáforo de desempeño** — Cada sucursal se marca por encima, en o por debajo del promedio
+- **Catálogo incompleto** — Filtro para ver qué sucursales no tienen todos los productos
+- **Filtros rápidos** — Pagos, ventas, administradores, inversión, impresoras y acciones por sucursal
+- **Entrar a una sucursal** — Un clic y estás vendiendo o distribuyendo en esa tienda o almacén
+- **Cambiar de sucursal desde el menú** — Selector de tienda para dueños con varias sucursales; botón "Regresar" para volver a la vista general
+- **Crear tienda o almacén** — Nombre, dirección y teléfono; el sistema respeta el límite de tu plan
+- **Vaciar stock con doble confirmación** — Hay que escribir el nombre de la sucursal para confirmar
+- **Stock inicial al crear productos** — Si tienes una sola tienda, das de alta el producto y su existencia en un solo paso
+
+### 📦 Inventario
+
+- **Inventario por tienda** — Con filtros por código, nombre, marca, departamento y stock máximo
+- **Solo lo que tienes** — Por defecto muestra productos con existencia
+- **Stock en otras sucursales** — Consulta desde el carrito y pide traspaso con un botón
+- **Agregar mercancía** — Entrada de inventario desde la pantalla de venta
+- **Importar inventario desde Excel** — Suma o sustituye existencias con validación previa
+- **Exportar inventario a Excel**
+- **Unidad visible** — Pieza, kilo, costal, litro, metro, rollo o caja en tablas y carrito
+
+### 🚚 Traspasos y Distribuciones
+
+- **Pedir mercancía a otra sucursal** — Desde el stock de otras tiendas, con un botón
+- **Confirmar escaneando** — El traspaso se aplica al escanear los productos y elegir destino
+- **Traspasos pendientes y aplicados** — Lista filtrable con tiempo transcurrido y hora de confirmación
+- **Distribución desde almacén** — El almacén arma el envío viendo el stock de todas las tiendas
+- **Confirmación de distribuciones** — Revisa los productos antes de confirmar; el dueño puede corregir cantidades
+
+### 🔄 Desempaque de Productos
+
+- **Convierte bultos en unidades** — Define una vez "1 costal = 10 kilos" y desempaca con un clic en tienda
+- **Equivalencias controladas** — Solo el dueño crea o cambia equivalencias
+
+### 🛒 Apartados
+
+- **Aparta desde el punto de venta** — Con cliente y anticipo
+- **Abonos y liquidación** — Registra abonos parciales o liquida el total, con ticket
+- **Control de saldos** — Lista con total, pagado y lo que falta por cliente
+- **Cancelación con devolución** — Al cancelar muestra el monto a regresar
+
+### ↩️ Devoluciones y Cancelaciones
+
+- **Devolución parcial** — Por producto y cantidad
+- **Cancelación total** — De cualquier venta
+- **Motivo obligatorio** — Siempre queda registrado por qué se canceló o devolvió
+- **Alerta de ventas duplicadas** — Aviso en el encabezado y en el corte de caja
+
+### 💵 Caja
+
+- **Corte de caja diario** — Ventas y apartados por forma de pago, entradas y salidas de dinero y resumen general
+- **Movimientos de caja** — Registra entradas y salidas con concepto y monto; solo el dueño las edita o elimina
+- **Exportar a Excel** — Descarga el corte con un clic
+
+### 👥 Clientes y Vendedores
+
+- **Clientes** — Nombre, teléfono, descuento asignado y total comprado en el periodo
+- **Descuentos predefinidos** — El dueño crea porcentajes de descuento para asignarlos a clientes
+- **Búsqueda de cliente al vender** — Por nombre o número
+- **Vendedores ilimitados** — Crea cuentas por tienda, cambia contraseñas y consulta lo vendido por cada uno
+
+### 📋 Catálogo de Productos
+
+- **Alta de producto completa** — Código, nombre, marca, departamento, unidad, costo, precios, mayoreo y foto
+- **Aviso de código repetido** — Te avisa al escribir si el código ya existe
+- **Importación desde Excel en 4 pasos** — Subir, configurar, validar e importar; crea marcas y departamentos faltantes; errores por página
+- **Marcas y departamentos** — Con número de productos en cada uno; no se borran si aún tienen productos
+- **Reasignación masiva** — Pasa todos los productos de una marca o departamento a otro
+- **Formatear códigos** — Unifica todos los códigos en mayúsculas
+- **Borrado seguro** — Solo productos sin existencia
+- **Exportar catálogo a Excel** — Incluye precios y enlace de imagen
+
+### 📈 Tableros
+
+- **Ventas** — Ventas, ganancias, margen y ticket promedio, o número de transacciones; por mes o por año
+- **Mejor y peor** — Tienda, día del mes, día de la semana y hora con más y menos ventas
+- **Comparativo por sucursal** — Ventas, ganancia, margen y ticket de cada tienda
+- **Mapa de calor** — Días y horas de mayor venta por tienda
+- **Cancelaciones** — Monto y porcentaje cancelado o devuelto, cuándo y dónde ocurre más, y sus motivos
+- **Marcas y productos** — Más vendidos y menos vendidos por tienda y periodo
+- **Verificación de stock** — Productos por verificar y cobertura por tienda
+- **Traspasos pendientes** — Por tienda, hoy contra días anteriores
+- **Consulta fuera de horario pico** — Con varias sucursales, el tablero de ventas se consulta antes de las 10 AM o después de las 9 PM para no afectar la operación
+
+### 🔍 Auditoría
+
+- **Ventas y movimientos** — Detecta ventas duplicadas y movimientos de inventario inconsistentes
+- **Stock** — Detecta diferencias de existencias
+- **Catálogo** — Códigos repetidos, problemas de costo, mayoreo inconsistente y productos faltantes en tiendas
+- **Actividad** — Productos sin movimiento
+- **Resultados descargables** — Cada revisión se descarga a Excel
+
+### 💳 Registro, Planes y Pagos
+
+- **Registro en línea en 3 pasos** — Negocio, propietario y plan; sugerencias si la clave de tu negocio ya está ocupada
+- **Pago con tarjeta** — Cobro recurrente seguro con Mercado Pago
+- **Mi plan** — Plan, precio, sucursales, tarjeta y fechas del servicio; aviso cuando la tarjeta está por vencer
+- **Domiciliación con ahorro** — Opción de cobro automático cuando tu plan lo permite
+- **Reactivación** — Si el servicio vence, el dueño entra a su plan y pagos para reactivarlo
+- **Historial de pagos y suscripciones**
+
+### ⚙️ Configuración
+
+- **Perfil** — Nombre, correo y contraseña de cada usuario
+- **Opciones del negocio** — Mostrar stock de almacenes y permitir crear productos desde la venta
+- **Modo oscuro o claro** — Se recuerda en tu equipo
+- **Ayuda en cada pantalla** — Botón que explica qué puedes hacer ahí
+- **Soporte por WhatsApp** — Con los datos de tu negocio y tienda ya escritos
+- **Aviso de conexión** — Te avisa si se pierde Internet y cuando regresa
+
+### 🔐 Roles
+
+| Rol | Qué hace |
+|-----|----------|
+| **Dueño** | Todo: tableros, auditoría, sucursales, precios, ajustes de stock, aprobaciones, planes |
+| **Administrador** | Opera la tienda: venta, caja, inventario, traspasos, historial; pide ajustes de stock |
+| **Vendedor** | Vende, aparta, consulta inventario, movimientos de caja y traspasos |
 
 ---
 
-### 📋 Gestión Profesional de Productos
+## 💲 Servicios y Precios de Referencia
 
-**Catálogo siempre actualizado:**
+Lista que se muestra dentro del sistema (sección Servicios):
 
-- **Importación masiva** — Carga miles de productos desde Excel en minutos
-- **Plantillas descargables** — Formato listo para llenar sin sorpresas
-- **Validación previa a importación** — El sistema revisa errores antes de cargar
-- **Errores paginados** — Si hay problemas, los ves página por página
-- **Historial de precios** — Ve cómo ha evolucionado cada precio y cuándo cambió
-- **Actualización masiva de precios** — Cambia costo, unitario y mayoreo de múltiples productos a la vez
-- **Imágenes de productos** — Sube fotos para identificación visual rápida
-- **Vista tabla y galería** — Cambia presentación de Productos e Inventario; el navegador recuerda tu preferencia
-- **Filtros inteligentes** — Busca por código o nombre; filtra por marca, departamento y nivel de stock
-- **Reasignación de productos** — Mueve productos entre tiendas de forma masiva
-
-**Resultado:** Catálogo profesional y actualizado sin esfuerzo manual.
+| Servicio | Precio |
+|----------|--------|
+| Tienda o almacén | $500 MXN / mes |
+| Impresora USB | Sin costo |
+| Impresora WiFi | $100 MXN / mes |
+| Módulo de vendedores (ilimitados) | Sin costo |
+| Integraciones con terceros | $500 MXN / mes |
 
 ---
 
-### 💳 Planes y Suscripciones
+## ⚙️ Características Internas (No para Marketing)
 
-**Control sobre tu suscripción:**
+Detalle técnico para el equipo. No publicar en la landing page.
 
-- **Panel de plan actual** — Revisa plan asignado, historial de pagos y estado de suscripción
-- **Actualización de tarjeta** — Cambia la tarjeta de una suscripción activa en cualquier momento
-- **Avisos de vencimiento** — Notificaciones cuando la tarjeta está próxima a vencer o falla un cobro
-- **Renovación automática** — Si se suspende acceso, el dueño accede a plan y pagos para renovar
-- **Cancelación de suscripción** — El dueño registra motivo de baja; se cierra acceso inmediatamente
+### Stack
 
-**Resultado:** Transparencia y control sobre facturación.
+| Capa | Tecnología |
+|------|-----------|
+| Framework | React 18.3 (Create React App + react-app-rewired) |
+| UI | Material UI 5.18, MUI X Data Grid 6, MUI X Charts 6 |
+| Estado del servidor | @tanstack/react-query 5 |
+| Estado global | Redux 5 (solo multi-carrito) |
+| Routing | React Router 6 con lazy loading (`lazyRetry` + `Suspense` + `ErrorBoundary`) |
+| HTTP | Axios con cliente centralizado |
+| Códigos de barras | @zxing/browser |
+| Excel | xlsx |
+| Alertas | SweetAlert2 vía `utils/alerts.js` |
+| Pagos | @mercadopago/sdk-js (Card Payment Brick) |
+| Backend | API REST Django/DRF, WebSocket con Django Channels, tareas con Celery |
 
----
+### Ficha técnica de las funcionalidades estrella
 
-### 🔐 Roles y Permisos Granulares
+**1. Multi-carrito y multi-sucursal**
+- `src/redux/cart/multiCartReducer.js`: carritos ilimitados (`CREATE_NEW_CART`, `SWITCH_CART`, `CLOSE_CART`); el último no se puede cerrar. Solo en modo venta se pueden abrir carritos nuevos.
+- `UPDATE_MOVEMENT_TYPE` vacía carrito y cliente.
+- Cambio de sucursal: actualiza `store_id`, `store_name`, `store_type` en `UserContext`, limpia caché de React Query y carrito, emite `store-changed`. Overlay de 1 s.
+- `user.multistore` decide selector de tienda vs botón "Regresar", restricción horaria del tablero y stock inicial obligatorio.
+- Menú por `store_type` (G general, T tienda, A almacén) y rol (`owner`, `seller`; cualquier otro rol ve el menú de administrador).
+- Vendedores: API `store-worker`, rol fijo `V`, usuario `{tenant}.tienda.{store}.{patrón}`.
 
-**Acceso según responsabilidad:**
+**2. Reserva de stock**
+- `getReservedStock` suma lo que hay en los demás carritos y lo resta del disponible.
+- Venta permite exceder stock; traspaso/distribución se limitan (traspaso usa `reserved_stock`, el resto `available_stock`); "agregar" no valida.
+- `getStockOtherStores` alimenta `StockModal`; en distribución se consulta automáticamente (`COUNT_STOCK_OTHER_STORES`).
 
-- **Dueño (Owner)** — Acceso total a todo el sistema, puede ver tableros, auditar, editar productos, gestionar usuarios
-- **Administrador** — Gestiona una o más tiendas; puede crear ventas, traspasos, distribuciones; no ajusta stock ni edita productos
-- **Vendedor** — Solo realiza ventas y operaciones básicas de atención al cliente
-- **Vistas personalizadas** — Cada rol ve solo lo que necesita en el menú y en tableros
+**3. Trazabilidad**
+- Logs por tienda: `is_consistent`, stock anterior, diferencia, stock nuevo, descripción, `user_username`, fecha. Tipos desde `store-product-logs/choices`.
+- `StoreProductLogsModal`: historial por producto 1–12 meses.
+- Traspasos: se crean desde `StockModal` (origen = otra tienda, destino = actual) y se confirman con `transfers/confirm` escaneando productos.
+- Notificaciones: WebSocket `/ws/notifications/` filtrado por tienda; eventos `transfer_*`, `distribution_*`, `stock_request_*`, `reservation_created`; conecta de 8:00 a 21:00; tras 5 fallos pasa a polling cada 60 s.
+- Tableros pesados como tareas asíncronas con `useTaskPolling` (barra de progreso).
 
-**Resultado:** Seguridad y organización sin complicaciones.
+**4. Precios masivos**
+- `PriceUpdateModal` → `POST products/update-prices`, solo campos llenos. Requiere rol owner y ≥ 2 productos seleccionados en vista tabla (no disponible en móvil).
+- `PriceLogsList` agrupa cambios del mismo producto en el mismo minuto.
+- `calculateProductPrice`: mayoreo al llegar a `min_wholesale_quantity`; con cliente se usa unitario salvo `wholesale_price_on_client_discount`. `CHANGE_PRICE` alterna unitario/mayoreo.
 
----
+**5. Imágenes**
+- `utils/image.js`: conversión a WebP en navegador (calidad 0.85, máx. 1000×1000, sin agrandar, conserva original si falla).
+- Captura directa con `capture="environment"`.
+- Preferencia de vista en `localStorage` (`productList.viewMode`, `storeProductList.viewMode`); en móvil siempre galería.
 
-### 🌙 Interfaz Moderna y Adaptable
+### Otros detalles técnicos
 
-**Funciona en cualquier dispositivo:**
-
-- **Modo oscuro/claro** — Elige la apariencia que prefieras; se recuerda
-- **Diseño intuitivo** — Interfaz moderna sin jerga técnica
-- **Navegación móvil** — Barra superior y menú lateral adaptados a pantallas pequeñas
-- **Instalación en móvil** — La app incluye manifiesto para instalarla desde navegador compatible
-- **Feedback visual claro** — Indicadores visibles de carga, éxito, errores y conexión
-
-**Resultado:** Experiencia profesional en escritorio, tablet o teléfono.
-
----
-
-### 📞 Soporte y Ayuda
-
-**No estás solo:**
-
-- **WhatsApp directo** — Botón para contactar soporte con información de tu tienda prellenada
-- **Ayuda contextual** — Botón de ayuda en cada página que explica qué puedes hacer ahí
-- **Notificaciones en tiempo real** — Alertas instantáneas sobre traspasos, distribuciones, solicitudes
-
-**Resultado:** Soporte rápido cuando lo necesitas.
-
----
-
-### ⚡ Características Operativas Avanzadas
-
-**Optimizaciones que ahorran tiempo:**
-
-- **Solicitudes de ajuste de stock** — Vendedores y admins piden cambios; el dueño aprueba o rechaza
-- **Notificaciones en tiempo real** — WebSocket para alertas de traspasos, distribuciones, solicitudes
-- **Indicador de duplicadas** — Alerta visual cuando hay dos ventas iguales
-- **Aviso de conexión** — Muestra si Internet se pierde y confirma reconexión
-- **Búsqueda ultrarrápida** — Resultados en milisegundos incluso con miles de productos
-- **Caché inteligente** — Carga desde cache local cuando Internet falla
-- **Lazy loading** — Cargas de página rápidas, componentes se cargan bajo demanda
-
-**Resultado:** Sistema rápido, responsive, sin interrupciones.
+- **Búsqueda:** sugerencias desde 3 caracteres, 300 ms de espera, máximo 5, cancela peticiones previas; timeout 8 s con 1 reintento; tiempos registrados en `localStorage`.
+- **Impresora:** servicio local HTTP + WebSocket de estado; reconexión a 3/5/10 s, heartbeat 25 s y comprobación HTTP de respaldo. Deshabilitada en móvil.
+- **Suscripción:** `access_blocked` limita rutas a plan, suscripciones, pagos y perfil; un 403 `subscription_expired` lo activa en sesión.
+- **Sincronizar:** `RestartService` llama `redeploy-render` y bloquea el botón 3 minutos.
+- **Hooks:** `useFetch`, `useCrudMutation`, `useModal`, `useForm`, `useQueries`, `useTaskPolling`, `useViewModePreference`, `useKeyboardShortcuts`, `usePrinterStatus`.
+- **Componentes compartidos:** `PageHeader`, `DataTable`, `SimpleTable`, `CustomModal`, `CustomButton`, `CustomTooltip`, `DropZone`, `VisuallyHiddenInput`, `StatusChip`.
+- **Manifiesto web** en modo standalone; no hay service worker, así que no hay trabajo sin conexión.
 
 ---
 
-## 🛠️ Arquitectura Técnica
+## 📖 Diccionario de Términos
 
-**Para equipos de desarrollo:**
-
-### Stack del Frontend
-
-| Componente | Tecnología | Versión |
-|-----------|-----------|---------|
-| Framework | React | 18.3.1 |
-| UI Library | Material-UI (MUI) | 5.18.0 |
-| Routing | React Router | 6.26.2 |
-| Estado Global | Redux | 5.0.1 |
-| Estado del Servidor | React Query | 5.90.21 |
-| HTTP Client | Axios | 1.7.7 |
-| Iconos | MUI Icons | 5.18.0 |
-| Tablas avanzadas | MUI X Data Grid | 6.20.4 |
-| Gráficos | MUI X Charts | 6.19.8 |
-| Alertas | SweetAlert2 | 11.14.4 |
-| Escaneo de códigos | ZXing | 0.21.3 |
-| Excel | XLSX | 0.18.5 |
-| Testing | React Testing Library | 13.4.0 |
-
-### Arquitectura y Patrones
-
-- **React Query** — Gestión automática de cache para estado del servidor
-- **Redux** — Estado global para multi-carrito y operaciones transversales
-- **Lazy Loading** — Componentes cargados bajo demanda con Suspense
-- **Custom Hooks** — `useFetch`, `useCrudMutation`, `useModal`, `useForm`, `useQueries`
-- **Componentes Compartidos** — `PageHeader`, `DataTable`, `SimpleTable`, `CustomModal`, `CustomButton`
-- **API Factory** — Patrón genérico para CRUD que reduce código repetitivo
-- **Error Boundary** — Captura errores sin romper la app
-- **WebSocket** — Conexión en tiempo real para notificaciones y estado de impresora
-
-### Características de Rendimiento
-
-- **Búsqueda optimizada** — Índices backend + caché frontend
-- **Optimistic Updates** — UI actualiza antes de confirmación del servidor
-- **Imágenes WebP** — Fotos de productos convertidas a WebP automáticamente
-- **Lazy Loading de rutas** — Cada página se carga bajo demanda
-- **Versionado de caché** — Invalidación inteligente cuando datos cambian
-
----
-
-## 📖 Diccionario de Términos Comerciales
+### Términos del Negocio
 
 | Término | Definición |
-|---------|-----------|
-| **Traspaso** | Movimiento de mercancía de una tienda a otra con trazabilidad completa: registro de envío, transporte, recepción. |
-| **Distribución** | Operación donde un almacén abastece múltiples tiendas en una sola operación. Ideal para reabastecimiento centralizado. |
-| **Venta** | Transacción donde un cliente adquiere productos. Puede ser en efectivo, tarjeta o transferencia. |
-| **Devolución** | Proceso donde el cliente regresa uno o más productos de una venta previa. Puede ser parcial o total. El sistema recalcula ganancia. |
-| **Cancelación** | Anulación completa de una venta con registro del motivo. A diferencia de devolución, no implica retorno físico. |
-| **Corte de Caja** | Resumen diario de movimientos de dinero en una tienda. Incluye ventas por método de pago y movimientos adicionales. |
-| **Ticket Promedio** | Monto promedio de cada venta. Indicador clave para evaluar rendimiento de tienda. |
-| **Inventario** | Conjunto de productos disponibles en una tienda o almacén en un momento específico. |
-| **Stock** | Cantidad registrada de un producto específico en una tienda. |
-| **Catálogo** | Conjunto de productos disponibles para venta. Puede estar incompleto si faltan productos en una tienda. |
-| **Almacén** | Ubicación central que almacena y distribuye productos a tiendas. No es punto de venta directo. |
-| **Tienda/Sucursal** | Punto de venta donde se atienden clientes directamente. |
-| **Tenant** | Un negocio completo con sus tiendas, productos y usuarios. El sistema soporta múltiples tenants. |
-| **Descuento** | Reducción del precio final. Puede ser por porcentaje o monto fijo. Se aplica a cliente específico. |
-| **Precio Mayoreo** | Precio reducido cuando se compran múltiples unidades del mismo producto. |
-| **Ganancia** | Diferencia entre precio de venta y costo. Sistema calcula automáticamente por producto y por venta. |
-| **Marca** | Categoría de producto (Nike, Sony, etc.) para organizar catálogo. |
-| **Departamento** | Agrupación de productos similares (Electrónica, Ropa, Alimentos). |
+|---------|------------|
+| **Traspaso** | Movimiento de mercancía de una sucursal a otra. Se pide desde la tienda que necesita y se confirma escaneando los productos. |
+| **Distribución** | Envío de mercancía desde un almacén a una tienda. |
+| **Apartado** | Venta con anticipo; el cliente abona hasta liquidar. |
+| **Venta** | Transacción en efectivo, tarjeta, transferencia o pago mixto. |
+| **Devolución** | El cliente regresa uno o más productos de una venta. Puede ser parcial. |
+| **Cancelación** | Anulación completa de una venta con motivo registrado. |
+| **Intercambio de mercancía** | Uso de una devolución como parte del pago de una nueva compra. |
+| **Desempaque** | Conversión de un producto en otro según una equivalencia (1 costal = 10 kg). |
+| **Corte de caja** | Resumen diario de ventas por forma de pago y movimientos de dinero. |
+| **Movimiento de caja** | Entrada o salida de dinero que no es venta (retiro, gasto). |
+| **Solicitud de ajuste** | Petición de un administrador o vendedor para corregir el stock; la aprueba el dueño. |
+| **Ticket promedio** | Monto promedio de cada venta. |
+| **Stock** | Cantidad disponible de un producto en una sucursal. |
+| **Catálogo** | Productos dados de alta. Una sucursal tiene catálogo incompleto si le faltan productos. |
+| **Almacén** | Sucursal que surte a las tiendas. No vende directamente. |
+| **Tienda / Sucursal** | Punto de venta donde se atiende a clientes. |
+| **Negocio (tenant)** | Cuenta completa con sus sucursales, productos y usuarios. |
 
----
-
-## 📖 Términos Técnicos (Para Usuarios)
+### Términos de Producto y Precio
 
 | Término | Definición |
-|---------|-----------|
-| **Código de Barras** | Identificador único de cada producto (código SKU). Escaneable con cámara o lector dedicado. |
-| **Precio Unitario** | Precio de venta de un solo producto. Es el default si no hay mayoreo. |
-| **Cantidad Mínima Mayoreo** | Número mínimo de unidades para aplicar automáticamente el precio de mayoreo. |
-| **Costo** | Precio que pagaste por el producto. Se usa para calcular ganancia. |
-| **Movimiento de Caja** | Entrada o salida de dinero que no es venta (ej. retiro, gasto, adelanto). |
-| **Venta Duplicada** | Dos ventas idénticas del mismo producto al mismo cliente en poco tiempo. Sistema alerta sobre esto. |
-| **Unidad de Medida** | Tipo de producto (Pieza, Kilogramo, Costal, Litro, Metro, Rollo, Caja, etc.). |
+|---------|------------|
+| **Código** | Identificador único del producto; normalmente su código de barras. |
+| **Costo** | Lo que pagaste por el producto; se usa para calcular ganancia. |
+| **Precio unitario** | Precio de venta de una pieza. |
+| **Precio mayoreo** | Precio menor que se aplica al llegar a la cantidad mínima. |
+| **Cantidad mínima mayoreo** | Piezas necesarias para aplicar el precio de mayoreo. |
+| **Descuento de cliente** | Porcentaje asignado a un cliente que se aplica al cobrar. |
+| **Unidad** | Pieza, kilo, costal, litro, metro, rollo o caja. |
+
+### Términos de Auditoría
+
+| Término | Definición |
+|---------|------------|
+| **Venta duplicada** | Dos ventas iguales registradas en poco tiempo; normalmente un error. |
+| **Movimiento inconsistente** | Registro de inventario que no cuadra con el anterior. |
+| **Discrepancia de stock** | Diferencia entre el stock registrado y el calculado por movimientos. |
+| **Producto por verificar** | Producto marcado para conteo físico. |
+| **Producto sin movimiento** | Producto que no se ha vendido ni movido en el periodo revisado. |
+
+### Formas de Pago
+
+| Clave | Definición |
+|-------|------------|
+| **EF** | Efectivo |
+| **TA** | Tarjeta de débito o crédito |
+| **TR** | Transferencia bancaria |
 
 ---
 
-## 📋 Roles de Usuario
+## 🛠️ Scripts Disponibles
 
-| Rol | Puede Ver | Puede Hacer | No Puede |
-|-----|-----------|-----------|----------|
-| **Dueño** | Todo | Crear/editar productos, traspasos, distribuciones, auditorías, tableros, usuarios, planes | — |
-| **Administrador** | Tienda(s) asignada(s) | Ventas, traspasos, distribuciones, corte de caja | Editar productos, ver auditorías, crear tiendas |
-| **Vendedor** | Su tienda | Ventas, apartados | Traspasos, inventario, editar productos |
+Para trabajar con este frontend se necesita Node.js y npm, además de la API del sistema. Instala las dependencias con `npm ci`, copia `.env.template` a `.env` y configura las URL y claves de tu entorno.
 
----
+| Variable | Uso |
+|----------|-----|
+| `REACT_APP_API_URL` | URL base de la API; el cliente añade `/api/` a las rutas. |
+| `REACT_APP_PRINTER_URL` | URL HTTP del servicio local de impresión. |
+| `REACT_APP_PRINTER_WS_URL` | URL WebSocket del servicio de impresión (opcional); si falta, se deriva de `REACT_APP_PRINTER_URL`. |
+| `REACT_APP_WHATSAPP_NUMBER` | Número del enlace de soporte. |
+| `REACT_APP_MERCADO_PAGO_PUBLIC_KEY` | Clave pública para el formulario de pago. |
+| `REACT_APP_API_URL_KEY` | Clave usada por las solicitudes públicas de registro. |
 
-## 🚀 Comenzar con SmartVenta
-
-### Requisitos
-
-- Node.js 14+ con npm
-- Conexión a Internet
-- Una instancia de la API del sistema (backend)
-
-### Instalación
-
-1. **Clonar o descargar el repositorio**
-   ```bash
-   git clone <repo-url>
-   cd pos-multi-store
-   ```
-
-2. **Instalar dependencias**
-   ```bash
-   npm ci
-   ```
-
-3. **Configurar variables de entorno**
-   ```bash
-   cp .env.template .env
-   ```
-
-4. **Configurar el archivo `.env`**
-
-| Variable | Descripción | Ejemplo |
-|----------|-----------|---------|
-| `REACT_APP_API_URL` | URL base de la API (sin `/api/`) | `https://api.smartventa.com` |
-| `REACT_APP_PRINTER_URL` | URL HTTP del servicio de impresión | `http://localhost:9000` |
-| `REACT_APP_PRINTER_WS_URL` | URL WebSocket de impresora (opcional) | `ws://localhost:9000` |
-| `REACT_APP_WHATSAPP_NUMBER` | Número de soporte WhatsApp | `+5511999999999` |
-
-5. **Iniciar en desarrollo**
-   ```bash
-   npm start
-   ```
-
-6. **Compilar para producción**
-   ```bash
-   npm run build
-   ```
-
----
-
-## 📚 Documentación Técnica
-
-### Estructura de Carpetas
-
-```
-src/
-├── api/                    # Clientes HTTP y endpoints
-├── application/            # Estructura y configuración de app
-├── assets/                 # Imágenes y recursos
-├── components/             # Componentes por dominio
-│   ├── sales/             # Ventas, apartados
-│   ├── inventory/         # Traspasos, distribuciones
-│   ├── products/          # Productos, catálogo
-│   ├── clients/           # Clientes
-│   ├── admin/             # Dashboards, auditoría
-│   ├── cashflow/          # Movimientos de caja
-│   ├── tenant/            # Planes, suscripciones
-│   ├── ui/                # Componentes compartidos
-│   └── layout/            # Layout principal
-├── constants/              # Constantes globales
-├── context/                # Context API (autenticación, usuario)
-├── domain/                 # Lógica de negocio
-├── hooks/                  # Custom hooks
-├── infrastructure/         # Configuración de servicios
-├── redux/                  # Redux (multi-carrito)
-├── theme/                  # Tema MUI
-└── utils/                  # Funciones utilitarias
-```
-
-### Hooks Personalizados
-
-- `useFetch` — Obtener datos del servidor
-- `useCrudMutation` — Crear, actualizar, eliminar
-- `useModal` — Abrir/cerrar modales
-- `useForm` — Manejo de formularios
-- `useQueries` — Multiples queries simultáneas
-- `useConversionUnits` — Unidades de conversión
-
-### Componentes Compartidos
-
-- `CustomModal` — Modal reutilizable
-- `CustomButton` — Botón con estilos consistentes
-- `CustomTooltip` — Tooltip accesible
-- `DataTable` — Tabla avanzada con paginación y filtros
-- `SimpleTable` — Tabla simple y ligera
-- `PageHeader` — Encabezado estándar de página
-- `StatusChip` — Chip de estado (pendiente, completado, etc.)
-
-### Patrón Redux (Multi-Carrito)
-
-```javascript
-// Acciones disponibles
-- CREATE_NEW_CART      // Crear nuevo carrito
-- SWITCH_CART          // Cambiar carrito activo
-- CLOSE_CART           // Cerrar carrito
-- ADD_TO_CART          // Agregar producto
-- REMOVE_FROM_CART     // Remover producto
-- UPDATE_QUANTITY_IN_CART  // Cambiar cantidad
-- ADD_CLIENT_TO_CART   // Asignar cliente
-- REMOVE_CLIENT_FROM_CART  // Remover cliente
-- UPDATE_MOVEMENT_TYPE // Cambiar tipo de operación (limpia carrito automáticamente)
-- CLEAN_CART           // Limpiar carrito actual
+```bash
+npm start       # Inicia en modo desarrollo en http://localhost:3000
+npm run build   # Genera build de producción en /build
+npm test        # Ejecuta tests
 ```
 
 ---
 
-## 🔐 Seguridad
+## 🎨 Guía de Estilos (Design Tokens)
 
-- **Autenticación por Token** — JWT con expiración configurable
-- **Roles y Permisos** — Acceso granular por rol
-- **HTTPS** — Comunicación encriptada
-- **CORS** — Protección contra peticiones cruzadas
-- **Validación Frontend y Backend** — Doble validación de datos
-- **Logs de Auditoría** — Cada cambio importante se registra
+Referencia del tema actual del frontend. Los valores fuente están en `src/theme/theme.js` y `src/theme/variables.css`.
 
----
+### Tipografía
 
-## 📊 Rendimiento
+Fuente de texto: `Inter, sans-serif`. Títulos h1–h4: `Plus Jakarta Sans` (peso 700–800). Montos y tablas usan números de ancho fijo (`tabular-nums`).
 
-- **TTL de Caché** — 1 min a 1 hora según tipo de dato
-- **Lazy Loading** — Componentes bajo demanda
-- **Imágenes Optimizadas** — WebP automático
-- **Búsqueda Indexada** — Resultados en milisegundos
-- **Polling de Tareas** — Seguimiento asincrónico sin bloqueos
+| Nivel  | Tamaño    | Peso |
+|--------|-----------|------|
+| h1     | 1.75rem   | 800  |
+| h2     | 1.5rem    | 700  |
+| h3     | 1.25rem   | 700  |
+| h4     | 1.125rem  | 700  |
+| h5     | 1rem      | 600  |
+| h6     | 0.875rem  | 600  |
+| body1  | 0.875rem  | 400  |
+| body2  | 0.8125rem | 400  |
+| button | 0.8125rem | 600, sin mayúsculas forzadas |
 
----
+### Paleta de Colores
 
-## 🤝 Contribución y Soporte
+**Primarios:**
 
-Este es un proyecto privado. Para contribuir o reportar bugs, contacta al equipo de desarrollo.
+| Token         | Valor     | Uso                        |
+|---------------|-----------|----------------------------|
+| primary       | `#04346b` | Color principal, botones   |
+| primary-light | `#065a9e` | Hover, gradientes          |
+| primary-dark  | `#022347` | Énfasis                    |
+| secondary     | `#e94560` | Acento secundario          |
+| accent        | `#a78bfa` | Elementos destacados       |
 
----
+**Fondos (modo claro):**
 
-## 📄 Licencia
+| Token      | Valor                      |
+|------------|----------------------------|
+| default    | `#e8eef6`                  |
+| paper      | `#ffffff`                  |
+| divider    | `#e2e8f0`                  |
 
-SmartVenta © 2026. Todos los derechos reservados.
+**Fondos (modo oscuro):**
 
----
+| Token      | Valor      |
+|------------|------------|
+| default    | `#0d1117`  |
+| paper      | `#161b22`  |
+| divider    | `#30363d`  |
 
-**¿Listo para transformar tu negocio?** Contacta a nuestro equipo de soporte para una demostración personalizada.
+**Texto (modo claro):**
 
-**WhatsApp:** [Contactar soporte]  
-**Email:** [soporte@smartventa.com]
+| Token     | Valor     |
+|-----------|-----------|
+| primary   | `#1e293b` |
+| secondary | `#4a5568` |
+
+**Texto (modo oscuro):**
+
+| Token     | Valor     |
+|-----------|-----------|
+| primary   | `#e6edf3` |
+| secondary | `#8b949e` |
+
+### Gradientes
+
+Definidos en `src/theme/colors.js` (`colors.gradient`).
+
+```css
+/* Menú lateral y panel del login (la barra superior usa #04346b sólido) */
+background: linear-gradient(180deg, #04346b 0%, #022347 100%);
+
+/* Botón principal del login */
+background: linear-gradient(135deg, #04346b 0%, #065a9e 100%);
+
+/* Íconos de las tarjetas de indicadores del tablero */
+background: linear-gradient(135deg, #04346b 0%, #3b82f6 100%);
+background: linear-gradient(135deg, #047857 0%, #34d399 100%);
+background: linear-gradient(135deg, #7c5cbf 0%, #a78bfa 100%);
+background: linear-gradient(135deg, #b45309 0%, #f59e0b 100%);
+background: linear-gradient(135deg, #0369a1 0%, #38bdf8 100%);
+```
+
+### Bordes y Sombras
+
+```css
+border-radius: 12px;  /* Paper, Card y .card */
+border-radius: 8px;   /* Button, TextField, Select y Alert */
+border-radius: 16px;  /* Dialog */
+border-radius: 999px; /* Chip */
+border-radius: 6px;   /* Tooltip */
+
+/* Sombras teñidas de marino (modo claro); en modo oscuro son negras */
+box-shadow: 0 1px 2px rgba(2,35,71,0.06);   /* Ligera: .card */
+box-shadow: 0 8px 24px rgba(2,35,71,0.10);  /* Media: hover de tarjetas */
+box-shadow: 0 24px 60px rgba(2,35,71,0.18); /* Amplia */
+box-shadow: 0 4px 14px rgba(4,52,107,0.25); /* Marca: hover de botón principal */
+```
+
+### Transiciones
+
+```css
+transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.2s ease, transform 0.2s ease; /* Button; el botón principal sube 1px en hover */
+transition: box-shadow 0.2s ease; /* Card y .card */
+transition: border-color 0.15s ease, box-shadow 0.15s ease; /* TextField */
+
+/* Entrada de tarjetas de indicadores, tablas y estados vacíos (clase .fade-in-up, escalonada 60 ms) */
+animation: fade-in-up 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+
+/* Cambio de página (clase .page-enter en el contenedor de rutas) */
+animation: page-enter 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+
+/* Apertura de CustomModal (clase .modal-enter), con fondo desenfocado de 4px */
+animation: modal-enter 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
+```
+
+### Carga y efectos
+
+- **Skeletons** (`components/ui/Skeleton`): `PageSkeleton` mientras carga una ruta y `TableSkeleton` en `DataTable` cuando carga sin datos. Animación `wave`.
+- **Recarga con datos**: `DataTable` muestra una barra de progreso delgada con degradado azul → violeta.
+- **Menú lateral**: el elemento activo lleva una barra violeta de 3px a la izquierda con brillo suave.
+
+Todas las animaciones y transiciones se desactivan si el sistema del usuario pide reducir movimiento.

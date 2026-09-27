@@ -259,7 +259,7 @@ const Dashboard = () => {
       {metricType === "total" && (
         <Grid container spacing={2}>
           <Grid item xs={6} md={3}>
-            <Box className="card" sx={{ height: "100%", mb: 0 }}>
+            <Box className="card card-interactive" sx={{ height: "100%", mb: 0 }}>
               <KPICard 
                 title="Ventas"
                 value={formatCurrency(kpis.totalAmount)}
@@ -270,7 +270,7 @@ const Dashboard = () => {
             </Box>
           </Grid>
           <Grid item xs={6} md={3}>
-            <Box className="card" sx={{ height: "100%", mb: 0 }}>
+            <Box className="card card-interactive" sx={{ height: "100%", mb: 0 }}>
               <KPICard 
                 title="Ganancias"
                 value={formatCurrency(kpis.totalProfit)}
@@ -281,7 +281,7 @@ const Dashboard = () => {
             </Box>
           </Grid>
           <Grid item xs={6} md={3}>
-            <Box className="card" sx={{ height: "100%", mb: 0 }}>
+            <Box className="card card-interactive" sx={{ height: "100%", mb: 0 }}>
               <KPICard 
                 title="Margen"
                 value={`${kpis.marginPercentage}%`}
@@ -292,7 +292,7 @@ const Dashboard = () => {
             </Box>
           </Grid>
           <Grid item xs={6} md={3}>
-            <Box className="card" sx={{ height: "100%", mb: 0 }}>
+            <Box className="card card-interactive" sx={{ height: "100%", mb: 0 }}>
               <KPICard 
                 title="Ticket Promedio"
                 value={formatCurrency(kpis.totalAmount / kpis.totalSales)}
@@ -308,7 +308,7 @@ const Dashboard = () => {
       {metricType === "count" && (
         <Grid container spacing={2}>
           <Grid item xs={6} md={3}>
-            <Box className="card" sx={{ height: "100%", mb: 0 }}>
+            <Box className="card card-interactive" sx={{ height: "100%", mb: 0 }}>
               <KPICard 
                 title="Transacciones"
                 value={kpis.totalSales.toLocaleString()}
@@ -319,7 +319,7 @@ const Dashboard = () => {
             </Box>
           </Grid>
           <Grid item xs={6} md={3}>
-            <Box className="card" sx={{ height: "100%", mb: 0 }}>
+            <Box className="card card-interactive" sx={{ height: "100%", mb: 0 }}>
               <KPICard 
                 title={month === 0 ? "Promedio por Mes" : "Promedio por Día"}
                 value={month === 0 
@@ -338,7 +338,7 @@ const Dashboard = () => {
       {insights && storeComparison.length > 1 && (
         <Grid container spacing={2}>
           <Grid item xs={6} md={3}>
-            <Box className="card" sx={{ height: "100%", mb: 0 }}>
+            <Box className="card card-interactive" sx={{ height: "100%", mb: 0 }}>
               <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}>
                 <StorefrontIcon sx={{ fontSize: 18, color: "primary.main" }} />
                 <Typography variant="body2" sx={{ fontWeight: 600, color: "text.secondary" }}>Tiendas</Typography>
@@ -358,7 +358,7 @@ const Dashboard = () => {
 
           {month !== 0 && (
             <Grid item xs={6} md={3}>
-              <Box className="card" sx={{ height: "100%", mb: 0 }}>
+              <Box className="card card-interactive" sx={{ height: "100%", mb: 0 }}>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}>
                   <CalendarMonthIcon sx={{ fontSize: 18, color: "primary.main" }} />
                   <Typography variant="body2" sx={{ fontWeight: 600, color: "text.secondary" }}>Día del Mes</Typography>
@@ -379,7 +379,7 @@ const Dashboard = () => {
 
           {month !== 0 && (
             <Grid item xs={6} md={3}>
-              <Box className="card" sx={{ height: "100%", mb: 0 }}>
+              <Box className="card card-interactive" sx={{ height: "100%", mb: 0 }}>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}>
                   <CalendarMonthIcon sx={{ fontSize: 18, color: "primary.main" }} />
                   <Typography variant="body2" sx={{ fontWeight: 600, color: "text.secondary" }}>Día de Semana</Typography>
@@ -399,7 +399,7 @@ const Dashboard = () => {
           )}
 
           <Grid item xs={6} md={3}>
-            <Box className="card" sx={{ height: "100%", mb: 0 }}>
+            <Box className="card card-interactive" sx={{ height: "100%", mb: 0 }}>
               <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}>
                 <AccessTimeIcon sx={{ fontSize: 18, color: "primary.main" }} />
                 <Typography variant="body2" sx={{ fontWeight: 600, color: "text.secondary" }}>Horas</Typography>

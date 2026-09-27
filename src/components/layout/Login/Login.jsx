@@ -170,11 +170,11 @@ function Login({ onLogin }) {
               startIcon={<LoginIcon />}
               sx={{
                 py: 1.25, mt: 1, borderRadius: '10px', fontWeight: 700, fontSize: '0.95rem',
-                background: 'linear-gradient(135deg, #04346b 0%, #065a9e 100%)',
-                boxShadow: '0 4px 20px rgba(4,53,107,0.25)',
+                background: colors.gradient.brand,
+                boxShadow: colors.shadow.brand,
                 '&:hover': {
-                  background: 'linear-gradient(135deg, #022347 0%, #04346b 100%)',
-                  boxShadow: '0 8px 30px rgba(4,53,107,0.35)',
+                  background: colors.gradient.brandHover,
+                  boxShadow: colors.shadow.brandHover,
                 },
               }}
             >
