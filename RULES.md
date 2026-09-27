@@ -6,6 +6,8 @@
   - Dashboard → Tablero
   - Logs → Historial de stock
   - Stock se permite por ser término común en comercio.
+- Sucursal = tienda o almacén. Usar "Tienda" o "Almacén" cuando se refiere a un tipo; "Sucursal" solo cuando abarca ambos.
+- Montos de solo lectura (tablas, etiquetas, totales, campos deshabilitados, alertas) siempre con `formatCurrency()` → `$1,234.00`. Los inputs editables conservan el número sin formato.
 - Nombres de variables, componentes y archivos en inglés.
 - Mensajes de commit en inglés, formato convencional: `feat:`, `fix:`, `refactor:`, `docs:`, `style:`, `perf:`, `chore:`.
 - Al generar un mensaje de commit, actualizar el README si los cambios afectan funcionalidades, stack o arquitectura documentados.
@@ -45,6 +47,17 @@
 - `StatusChip` — Chip de estado Exitoso/Error. Usar en tablas de validación de importaciones.
 - `CustomSpinner` — Indicador de carga.
 - `AuditCard` — Card para tareas asíncronas con polling de progreso.
+- `CardGallery` — Cuadrícula de tarjetas con skeleton de carga, estado vacío y entrada escalonada. Recibe `items`, `loading`, `emptyText` y `renderItem`.
+- `upsertById(list, item)` (`utils/array.js`) — Reemplaza por id o agrega al final. Usar en los `onUpdate` de listas en vez de repetir `some/map`.
+
+## Animaciones (App.css)
+
+- `fade-in-up` — Entrada de tarjetas y paneles; escalonar con `animationDelay`.
+- `fade-in-left` — Campos que aparecen condicionalmente (ej: referencia de pago).
+- `dropdown-enter` — Poppers y listas desplegables.
+- `value-pop` — Énfasis breve cuando cambia un valor; cambiar el `key` del elemento para repetirla.
+- `page-enter` / `modal-enter` — Ya aplicadas en el layout y en `CustomModal`.
+- Botones, íconos y badges tienen retroalimentación al presionar/aparecer desde el tema. No usar `@keyframes` inline en `sx`.
 
 ## Roles y permisos
 
@@ -58,7 +71,10 @@
 
 - Hooks: `useModal()` para abrir/cerrar modales con datos. `useFetch`, `useFetchWithRetry`, `useCrudMutation` para datos del servidor.
 - API: usar `getApiUrl()` de `api/utils.js`. Para query params usar `buildUrlWithParams()`. El token se agrega automáticamente en el interceptor de `httpClient`.
-- Alertas: `showSuccess()`, `showError()`, `showWarning()`, `showAlert()` de `utils/alerts.js`. Nunca usar `Swal.fire` directo. Para confirmaciones personalizadas usar `showConfirm()` o Swal directo solo si se necesita input/configuración especial.
+- Alertas: `showSuccess()`, `showError()`, `showWarning()`, `showAlert()` de `utils/alerts.js`.
+  - Regla de negocio o validación (el usuario puede corregirlo): `showWarning("No se pudo <acción>", "<motivo>")`.
+  - Petición fallida: `showRequestError("<verbo> <objeto>", error)` (ej: `"eliminar la marca"`). Si el backend responde 4xx con motivo muestra "No se pudo…" como advertencia; si no, "Error al…" con `SUPPORT_HINT`.
+  - Nunca usar títulos genéricos como "Error" ni "Error desconocido". Éxito sin adverbios: "Marca eliminada". Nunca usar `Swal.fire` directo. Para confirmaciones personalizadas usar `showConfirm()` o Swal directo solo si se necesita input/configuración especial.
 - Estado global: Redux solo para carritos (`multiCartReducer`). El resto es estado local o React Query.
 - Lazy loading: todas las rutas usan `lazyRetry()` + `Suspense` con auto-reload en `ChunkLoadError`.
 - Memoización: usar `memo()` en componentes puros, `useMemo` para cálculos costosos, `useCallback` para funciones estables.
