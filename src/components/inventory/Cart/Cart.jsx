@@ -3,35 +3,28 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { selectCart, selectMovementType } from "../../../redux/cart/selectors";
 import SimpleTable from "../../ui/SimpleTable/SimpleTable";
-import {
-  cleanCart,
-  removeFromCart,
-  updateMovementType,
-  updateQuantityInCart,
-  changePrice,
-  countStockOtherStores,
-} from "../../../redux/cart/cartActions";
+import { cleanCart, removeFromCart, updateMovementType, updateQuantityInCart, changePrice } from "../../../redux/cart/cartActions";
 import CustomButton from "../../ui/Button/Button";
 import PaymentModal from "../../sales/PaymentModal/PaymentModal";
 import StockModal from "../StockModal/StockModal";
 import { getStores } from "../../../api/stores";
 import { confirmTransfers, createDistribution } from "../../../api/transfers";
-import { showSuccess, showError, showWarning } from "../../../utils/alerts";
-import { addProducts, getStockOtherStores } from "../../../api/products";
+import { showSuccess, showWarning, showRequestError } from "../../../utils/alerts";
+import { addProducts } from "../../../api/products";
 import { useUser } from "../../../context/UserContext";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { useModal } from "../../../hooks/useModal";
 import { useAvailableStock } from "../../../hooks/useAvailableStock";
-import { Grid, Select, MenuItem, Typography, useMediaQuery, useTheme, TextField, IconButton, Box, Switch, FormControlLabel, Checkbox, Tooltip } from "@mui/material";
+import { Grid, Select, MenuItem, Typography, useMediaQuery, useTheme, TextField, IconButton, Box, FormControlLabel, Checkbox } from "@mui/material";
 import PaymentIcon from "@mui/icons-material/Payment";
 import SendIcon from "@mui/icons-material/Send";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import DeleteIcon from "@mui/icons-material/Delete";
-import ViewWeekIcon from "@mui/icons-material/ViewWeek";
-import ViewAgendaIcon from "@mui/icons-material/ViewAgenda";
+import CartViewToggle from "./CartViewToggle";
 import { MOVEMENT_TYPES, STORE_TYPES } from "../../../constants";
-import { getSaleColumns, getTransferColumns, getDistributionColumns, getAddToStockColumns } from "./cartColumns";
+import { commonColumns, isKg, getNextMode, getSaleColumns, getTransferColumns, getDistributionColumns, getAddToStockColumns } from "./cartColumns";
 import noPhotoImage from "../../../assets/images/noPhoto.webp";
+import { formatCurrency } from "../../../utils/utils";
 
 const Cart = ({ searchInputRef, cartViewMode = "table", setCartViewMode }) => {
   const { user } = useUser();
@@ -127,12 +120,6 @@ const Cart = ({ searchInputRef, cartViewMode = "table", setCartViewMode }) => {
 
   const handleRemoveFromCart = (product) => dispatch(removeFromCart(product.id));
 
-  const handleStockOtherStores = async (product) => {
-    const response = await getStockOtherStores(product.id);
-    dispatch(countStockOtherStores(product, response.data));
-    stockModal.open(product);
-  };
-
   const handleChangePrice = (product) => {
     dispatch(changePrice(product));
   };
@@ -163,7 +150,7 @@ const Cart = ({ searchInputRef, cartViewMode = "table", setCartViewMode }) => {
     const availableStock = movementType === MOVEMENT_TYPES.ADD_STOCK ? Infinity : getAvailableStock(product.id, stockLimit);
     
     if (Object.keys(carts).length > 1 && newQuantity > availableStock) {
-      showWarning("Stock no disponible", `"${product.product?.name || product.name}" está reservado en otros carritos`);
+      showWarning("No se pudo cambiar la cantidad", `"${product.product?.name || product.name}" está reservado en otros carritos.`);
       return;
     }
     
@@ -194,14 +181,14 @@ const Cart = ({ searchInputRef, cartViewMode = "table", setCartViewMode }) => {
       } else if (response.status === 404) {
         dispatch(cleanCart());
         setLoading(false);
-        showError("Traspaso inexistente", "Checa cantidad y/o destino");
+        showWarning("No se pudo confirmar el traspaso", "No coincide con un traspaso pendiente. Revisa la cantidad y el destino.");
       } else {
         setLoading(false);
-        showError("Error desconocido", "Por favor llame a soporte técnico");
+        showRequestError("confirmar el traspaso", response);
       }
     } catch (error) {
       setLoading(false);
-      showError("Error en la solicitud", error.message);
+      showRequestError("confirmar el traspaso", error);
     }
   };
 
@@ -221,14 +208,14 @@ const Cart = ({ searchInputRef, cartViewMode = "table", setCartViewMode }) => {
         showSuccess("Distribución creada");
       } else if (response.status === 404) {
         setLoading(false);
-        showError("Distribución no encontrada", "Algunos productos no coinciden con la distribución solicitada, ya sea en cantidad o en código.");
+        showWarning("No se pudo crear la distribución", "Algunos productos no coinciden con la distribución solicitada, en cantidad o en código.");
       } else {
         setLoading(false);
-        showError("Error desconocido", "Por favor llame a soporte técnico");
+        showRequestError("crear la distribución", response);
       }
     } catch (error) {
       setLoading(false);
-      showError("Error en la solicitud", error.message);
+      showRequestError("crear la distribución", error);
     }
   };
 
@@ -248,47 +235,23 @@ const Cart = ({ searchInputRef, cartViewMode = "table", setCartViewMode }) => {
       if (response.status === 200) {
         dispatch(cleanCart());
         setLoading(false);
-        showSuccess("Producto añadido al inventario");
+        showSuccess("Producto agregado al inventario");
       } else {
         setLoading(false);
-        showError("Error en el inventario", "No se pudo añadir el producto");
+        showRequestError("agregar el producto al inventario", response);
       }
     } catch (error) {
-      showError("Error en la solicitud", error.message);
+      showRequestError("agregar el producto al inventario", error);
     }
   };
 
 
-  const commonColumns = [
-    { name: "Código", field: "code", selector: (row) => row.product.code },
-    {
-      name: "Marca",
-      field: "brand",
-      selector: (row) => row.product.brand_name,
-    },
-    {
-      name: "Nombre",
-      field: "name",
-      selector: (row) => row.product.name,
-      renderCell: (params) => (
-        <div className="cell-wrap">
-          {params.row.product.name}
-        </div>
-      ),
-    },
-    { name: "Stock", field: "stock", selector: (row) => row.available_stock },
-  ];
-
-  const handleStockWarning = (row) => {
-    showWarning("Stock no disponible", `"${row.product.name}" está reservado en otros carritos`);
-  };
-
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const saleColumns = useMemo(() => getSaleColumns(handleQuantityChangeToCart, handleRemoveFromCart, handleChangePrice, movementType, getAvailableStock, handleStockWarning, saleModes, setSaleModes), [movementType, getAvailableStock, saleModes]);
+  const saleColumns = useMemo(() => getSaleColumns(handleQuantityChangeToCart, handleRemoveFromCart, handleChangePrice, movementType, getAvailableStock, saleModes, setSaleModes), [movementType, getAvailableStock, saleModes]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const transferColumns = useMemo(() => getTransferColumns(handleQuantityChangeToCart, handleRemoveFromCart, getAvailableStock), []);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const distributionColumns = useMemo(() => getDistributionColumns(handleQuantityChangeToCart, handleRemoveFromCart, handleStockOtherStores, getAvailableStock, cart, searchInputRef, lastQtyRef), [cart]);
+  const distributionColumns = useMemo(() => getDistributionColumns(handleQuantityChangeToCart, handleRemoveFromCart, getAvailableStock, cart, searchInputRef, lastQtyRef), [cart]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const addToStockColumns = useMemo(() => getAddToStockColumns(handleQuantityChangeToCart, handleRemoveFromCart, cart, searchInputRef, lastQtyRef), [cart]);
 
@@ -326,41 +289,12 @@ const Cart = ({ searchInputRef, cartViewMode = "table", setCartViewMode }) => {
                   <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
                     {!isMobile && (
                       <Box sx={{ display: 'flex', gap: 1 }}>
-                        <Tooltip title="Vista de tabla">
-                          <IconButton
-                            onClick={() => setCartViewMode("table")}
-                            size="small"
-                            sx={{
-                              bgcolor: cartViewMode === "table" ? 'primary.main' : 'transparent',
-                              color: cartViewMode === "table" ? 'white' : 'text.primary',
-                              border: '1px solid',
-                              borderColor: cartViewMode === "table" ? 'primary.main' : 'divider',
-                              '&:hover': { bgcolor: cartViewMode === "table" ? 'primary.dark' : 'action.hover' },
-                            }}
-                          >
-                            <ViewAgendaIcon fontSize="small" />
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip title="Vista de cards">
-                          <IconButton
-                            onClick={() => setCartViewMode("cards")}
-                            size="small"
-                            sx={{
-                              bgcolor: cartViewMode === "cards" ? 'primary.main' : 'transparent',
-                              color: cartViewMode === "cards" ? 'white' : 'text.primary',
-                              border: '1px solid',
-                              borderColor: cartViewMode === "cards" ? 'primary.main' : 'divider',
-                              '&:hover': { bgcolor: cartViewMode === "cards" ? 'primary.dark' : 'action.hover' },
-                            }}
-                          >
-                            <ViewWeekIcon fontSize="small" />
-                          </IconButton>
-                        </Tooltip>
+                        <CartViewToggle value={cartViewMode} onChange={setCartViewMode} />
                       </Box>
                     )}
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                       <Typography variant="body2" color="text.secondary">Productos:</Typography>
-                      <Typography variant="h4" sx={{ fontWeight: 700, color: 'primary.main' }}>{totalProducts}</Typography>
+                      <Typography key={totalProducts} variant="h4" className="value-pop" sx={{ fontWeight: 700, color: 'primary.main' }}>{totalProducts}</Typography>
                     </Box>
                   </Box>
                 </Grid>
@@ -368,7 +302,7 @@ const Cart = ({ searchInputRef, cartViewMode = "table", setCartViewMode }) => {
                 <Grid item xs={6} md={5}>
                   <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
                     <Typography variant="body2" color="text.secondary">Total:</Typography>
-                    <Typography variant="h4" sx={{ fontWeight: 700, color: 'primary.main' }}>${total.toFixed(2)}</Typography>
+                    <Typography key={total} variant="h4" className="value-pop" sx={{ fontWeight: 700, color: 'primary.main' }}>{formatCurrency(total)}</Typography>
                   </Box>
                 </Grid>
                 <Grid item xs={12} md={4}>
@@ -391,41 +325,12 @@ const Cart = ({ searchInputRef, cartViewMode = "table", setCartViewMode }) => {
                   <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
                     {!isMobile && (
                       <Box sx={{ display: 'flex', gap: 1 }}>
-                        <Tooltip title="Vista de tabla">
-                          <IconButton
-                            onClick={() => setCartViewMode("table")}
-                            size="small"
-                            sx={{
-                              bgcolor: cartViewMode === "table" ? 'primary.main' : 'transparent',
-                              color: cartViewMode === "table" ? 'white' : 'text.primary',
-                              border: '1px solid',
-                              borderColor: cartViewMode === "table" ? 'primary.main' : 'divider',
-                              '&:hover': { bgcolor: cartViewMode === "table" ? 'primary.dark' : 'action.hover' },
-                            }}
-                          >
-                            <ViewAgendaIcon fontSize="small" />
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip title="Vista de cards">
-                          <IconButton
-                            onClick={() => setCartViewMode("cards")}
-                            size="small"
-                            sx={{
-                              bgcolor: cartViewMode === "cards" ? 'primary.main' : 'transparent',
-                              color: cartViewMode === "cards" ? 'white' : 'text.primary',
-                              border: '1px solid',
-                              borderColor: cartViewMode === "cards" ? 'primary.main' : 'divider',
-                              '&:hover': { bgcolor: cartViewMode === "cards" ? 'primary.dark' : 'action.hover' },
-                            }}
-                          >
-                            <ViewWeekIcon fontSize="small" />
-                          </IconButton>
-                        </Tooltip>
+                        <CartViewToggle value={cartViewMode} onChange={setCartViewMode} />
                       </Box>
                     )}
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                       <Typography variant="body2" color="text.secondary">Productos:</Typography>
-                      <Typography variant="h4" sx={{ fontWeight: 700, color: 'primary.main' }}>{totalProducts}</Typography>
+                      <Typography key={totalProducts} variant="h4" className="value-pop" sx={{ fontWeight: 700, color: 'primary.main' }}>{totalProducts}</Typography>
                     </Box>
                   </Box>
                 </Grid>
@@ -486,36 +391,7 @@ const Cart = ({ searchInputRef, cartViewMode = "table", setCartViewMode }) => {
               <>
                 {!isMobile && (
                   <Grid item md={1} sx={{ display: 'flex', gap: 1, justifyContent: 'flex-start', alignItems: 'center' }}>
-                    <Tooltip title="Vista de tabla">
-                      <IconButton
-                        onClick={() => setCartViewMode("table")}
-                        size="small"
-                        sx={{
-                          bgcolor: cartViewMode === "table" ? 'primary.main' : 'transparent',
-                          color: cartViewMode === "table" ? 'white' : 'text.primary',
-                          border: '1px solid',
-                          borderColor: cartViewMode === "table" ? 'primary.main' : 'divider',
-                          '&:hover': { bgcolor: cartViewMode === "table" ? 'primary.dark' : 'action.hover' },
-                        }}
-                      >
-                        <ViewAgendaIcon fontSize="small" />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Vista de cards">
-                      <IconButton
-                        onClick={() => setCartViewMode("cards")}
-                        size="small"
-                        sx={{
-                          bgcolor: cartViewMode === "cards" ? 'primary.main' : 'transparent',
-                          color: cartViewMode === "cards" ? 'white' : 'text.primary',
-                          border: '1px solid',
-                          borderColor: cartViewMode === "cards" ? 'primary.main' : 'divider',
-                          '&:hover': { bgcolor: cartViewMode === "cards" ? 'primary.dark' : 'action.hover' },
-                        }}
-                      >
-                        <ViewWeekIcon fontSize="small" />
-                      </IconButton>
-                    </Tooltip>
+                    <CartViewToggle value={cartViewMode} onChange={setCartViewMode} />
                   </Grid>
                 )}
                 <Grid item xs={12} md={8}></Grid>
@@ -525,7 +401,7 @@ const Cart = ({ searchInputRef, cartViewMode = "table", setCartViewMode }) => {
                     onClick={() => handleAddToStock(cart)}
                     startIcon={<AddCircleIcon />}
                   >
-                    Añadir
+                    Agregar
                   </CustomButton>
                 </Grid>
               </>
@@ -542,20 +418,15 @@ const Cart = ({ searchInputRef, cartViewMode = "table", setCartViewMode }) => {
         {!isMobile && cartViewMode === "cards" && (
           <Grid container spacing={2} sx={{ p: 2 }}>
             {cart.map((item, idx) => {
-              const isKgProduct = item.product?.unit === "KG" || item.product?.unit === "LT";
+              const isKgProduct = isKg(item);
               const currentMode = isKgProduct ? (saleModes[item.id] || "KG") : "PZ";
-              const SALE_MODES_CYCLE = ["KG", "FRAC", "$"];
-              const getNextMode = (current) => {
-                const modeIdx = SALE_MODES_CYCLE.indexOf(current);
-                return SALE_MODES_CYCLE[(modeIdx + 1) % SALE_MODES_CYCLE.length];
-              };
 
               const unitLabel = item.product?.unit === "LT" ? "Litro" : "Kilo";
               const modeLabels = { KG: unitLabel, FRAC: "Fracción", $: "Pesos", PZ: "Pieza" };
               const unitLabels = { PZ: "Pieza", CO: "Costal", KG: "Kilo", LT: "Litro" };
 
               return (
-                <Grid item xs={12} md={3} key={idx} sx={{ display: 'flex' }}>
+                <Grid item xs={12} md={3} key={item.id ?? idx} className="fade-in-up" sx={{ display: 'flex' }}>
                   <Box sx={{ width: '100%', bgcolor: 'background.paper', borderRadius: '12px', border: '1px solid', borderColor: 'divider', overflow: 'hidden', display: 'flex', flexDirection: 'column', transition: 'all 0.2s ease', '&:hover': { boxShadow: '0 2px 8px rgba(0,0,0,0.1)', borderColor: 'primary.light' } }}>
                     {/* Imagen */}
                     <Box
@@ -607,7 +478,7 @@ const Cart = ({ searchInputRef, cartViewMode = "table", setCartViewMode }) => {
                           <span style={{ fontWeight: 600 }}>{item.quantity}</span> {isKgProduct ? (unitLabels[item.product?.unit] || "Pieza") : "Pieza"}
                         </Typography>
                         <Typography variant="body2" sx={{ fontSize: '0.8rem', color: 'text.primary', lineHeight: 1.4 }}>
-                          <span style={{ fontWeight: 600 }}>Subtotal:</span> ${(item.quantity * (item.unit_price || item.product.prices.unit_price)).toFixed(2)}
+                          <span style={{ fontWeight: 600 }}>Subtotal:</span> {formatCurrency(item.quantity * (item.unit_price || item.product.prices.unit_price))}
                         </Typography>
                       </Box>
 
@@ -704,7 +575,7 @@ const Cart = ({ searchInputRef, cartViewMode = "table", setCartViewMode }) => {
                                 size="small"
                               />
                             }
-                            label={`Mayoreo $${(item.product.prices.wholesale_price).toFixed(2)}`}
+                            label={`Mayoreo ${formatCurrency(item.product.prices.wholesale_price)}`}
                             sx={{ fontSize: '0.65rem', m: 0, '& .MuiTypography-root': { fontSize: '0.65rem' } }}
                           />
                         </Box>
@@ -719,20 +590,15 @@ const Cart = ({ searchInputRef, cartViewMode = "table", setCartViewMode }) => {
         {isMobile && (
           <Grid container spacing={1}>
             {cart.map((item, idx) => {
-              const isKgProduct = item.product?.unit === "KG" || item.product?.unit === "LT";
+              const isKgProduct = isKg(item);
               const currentMode = isKgProduct ? (saleModes[item.id] || "KG") : "PZ";
-              const SALE_MODES_CYCLE = ["KG", "FRAC", "$"];
-              const getNextMode = (current) => {
-                const modeIdx = SALE_MODES_CYCLE.indexOf(current);
-                return SALE_MODES_CYCLE[(modeIdx + 1) % SALE_MODES_CYCLE.length];
-              };
 
               const unitLabel = item.product?.unit === "LT" ? "Litro" : "Kilo";
               const modeLabels = { KG: unitLabel, FRAC: "Fracción", $: "Pesos", PZ: "Pieza" };
               const unitLabels = { PZ: "Pieza", CO: "Costal", KG: "Kilo", LT: "Litro" };
 
               return (
-                <Grid item xs={12} key={idx} sx={{ bgcolor: 'background.paper', borderRadius: 2, border: '1px solid', borderColor: 'divider', p: 1.5 }}>
+                <Grid item xs={12} key={item.id ?? idx} className="fade-in-up" sx={{ bgcolor: 'background.paper', borderRadius: 2, border: '1px solid', borderColor: 'divider', p: 1.5 }}>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', mb: 1 }}>
                     <Box sx={{ flex: 1 }}>
                       <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 0.5 }}>
@@ -845,7 +711,7 @@ const Cart = ({ searchInputRef, cartViewMode = "table", setCartViewMode }) => {
                             disabled={!item.product.prices.wholesale_price}
                           />
                         }
-                        label={`Mayoreo (${item.product.prices.min_wholesale_quantity}+) - $${item.product.prices.wholesale_price.toFixed(2)}`}
+                        label={`Mayoreo (${item.product.prices.min_wholesale_quantity}+) - ${formatCurrency(item.product.prices.wholesale_price)}`}
                       />
                     </Box>
                   )}
@@ -857,7 +723,7 @@ const Cart = ({ searchInputRef, cartViewMode = "table", setCartViewMode }) => {
                     </Box>
                     <Box>
                       <Typography variant="caption" sx={{ display: 'block', color: 'text.secondary', fontWeight: 600 }}>Total</Typography>
-                      <Typography variant="body2" sx={{ fontWeight: 700 }}>${(item.quantity * (item.unit_price || item.product.prices.unit_price)).toFixed(2)}</Typography>
+                      <Typography variant="body2" sx={{ fontWeight: 700 }}>{formatCurrency(item.quantity * (item.unit_price || item.product.prices.unit_price))}</Typography>
                     </Box>
                   </Box>
                 </Grid>

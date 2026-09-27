@@ -3,7 +3,7 @@ import SimpleTable from "../../ui/SimpleTable/SimpleTable";
 import { getClients } from "../../../api/clients";
 import { useDispatch } from "react-redux";
 import { addClientToCart } from "../../../redux/cart/cartActions";
-import { showError } from "../../../utils/alerts";
+import { showWarning } from "../../../utils/alerts";
 import { TextField, Box } from "@mui/material";
 
 const SearchClient = () => {
@@ -44,7 +44,7 @@ const SearchClient = () => {
       if (client) {
         handleSelectClient(client);
       } else {
-        showError("Error al seleccionar cliente", "Fuera de rango");
+        showWarning("No se pudo seleccionar el cliente", `No hay un cliente en la posición ${event.key}.`);
       }
     }
   };
@@ -68,13 +68,7 @@ const SearchClient = () => {
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Nombre y/o número (Ctrl+J)"
         InputLabelProps={{ shrink: true }}
-        sx={{
-          animation: 'fadeIn 0.3s ease',
-          '@keyframes fadeIn': {
-            from: { opacity: 0, transform: 'translateX(-8px)' },
-            to: { opacity: 1, transform: 'translateX(0)' },
-          },
-        }}
+        className="fade-in-left"
       />
       {query && (
         <Box sx={{ position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 10, mt: 0.5 }}>

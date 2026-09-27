@@ -1,4 +1,5 @@
 import React from "react";
+import { formatCurrency } from "../../../utils/utils";
 import {
   Popper,
   Paper,
@@ -38,7 +39,7 @@ const SearchSuggestions = ({
       modifiers={[{ name: "offset", options: { offset: [0, 4] } }]}
     >
       <ClickAwayListener onClickAway={onClickAway}>
-        <Paper elevation={4} sx={{ borderRadius: 2, overflow: "hidden" }}>
+        <Paper elevation={4} className="dropdown-enter" sx={{ borderRadius: 2, overflow: "hidden" }}>
           {loading ? (
             <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", py: 2, gap: 1 }}>
               <CircularProgress size={18} />
@@ -86,7 +87,7 @@ const SearchSuggestions = ({
                     </Box>
                     {unitPrice !== undefined && (
                       <Typography variant="caption" sx={{ fontWeight: 600, color: 'primary.main', whiteSpace: 'nowrap' }}>
-                        ${unitPrice.toFixed(2)}
+                        {formatCurrency(unitPrice)}
                       </Typography>
                     )}
                   </MenuItem>

@@ -1,4 +1,5 @@
 import { useCallback, useRef } from 'react';
+import { logger } from "../utils/logger";
 
 const MERCADO_PAGO_PUBLIC_KEY = process.env.REACT_APP_MERCADO_PAGO_PUBLIC_KEY
 
@@ -37,7 +38,7 @@ export const useMercadoPago = () => {
           });
         },
         onError: (error) => {
-          console.error('Brick error:', error);
+          logger.error('Brick error:', error);
           if (onError) onError(error);
         },
       },

@@ -6,7 +6,7 @@ import CustomModal from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
 import { cleanCart, removeClientfromCart, addClientToCart } from "../../../redux/cart/cartActions";
 import { createSale, getSale } from "../../../api/sales";
-import { showSuccess, showError } from "../../../utils/alerts";
+import { showSuccess, showRequestError } from "../../../utils/alerts";
 import { useUser } from "../../../context/UserContext";
 import { handlePrintTicket } from "../../../utils/utils";
 import { usePrinterStatus } from "../../../hooks/usePrinterStatus";
@@ -14,6 +14,8 @@ import SearchClient from "../../clients/SearchClient/SearchClient";
 import ClientModal from "../../clients/ClientModal/ClientModal";
 import SearchIcon from "@mui/icons-material/Search";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
+import ReferencePaymentField from "../ReferencePaymentField/ReferencePaymentField";
+import { formatCurrency } from "../../../utils/utils";
 import { Grid, TextField, Radio, RadioGroup, FormControlLabel, Checkbox, FormLabel, Alert, Chip, Box, useMediaQuery, useTheme } from "@mui/material";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
@@ -251,7 +253,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
         throw new Error("Sale error");
       }
     } catch (error) {
-      showError("Error al finalizar la venta", "Por favor llame a soporte técnico");
+      showRequestError("finalizar la venta", error);
     } finally {
       isSubmittingRef.current = false; // 🔓 libera lock
       setIsLoading(false);
@@ -323,7 +325,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
           {movementType === MOVEMENT_TYPES.RESERVATION && (
             <Grid item xs={12} sx={{ marginBottom: '1rem' }}>
               <Alert severity="info" variant="filled">
-                El cliente paga un anticipo. El resto se liquida después.
+                El cliente deja un abono. El resto se liquida después.
               </Alert>
             </Grid>
           )}
@@ -352,7 +354,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
                   startIcon={<PersonAddIcon />}
                   color={!hideClient ? 'error' : 'primary'}
                 >
-                  {!hideClient ? 'Quitar cliente' : 'Añadir cliente'}
+                  {!hideClient ? 'Quitar cliente' : 'Agregar cliente'}
                 </CustomButton>
               </Grid>
 
@@ -413,7 +415,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
                     color="inherit"
                     sx={{ opacity: 0.8, '&:hover': { opacity: 1 } }}
                   >
-                    Borrar (Ctrl+O)
+                    Quitar (Ctrl+O)
                   </CustomButton>
                 </Grid>
               </Grid>
@@ -452,8 +454,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
                   fullWidth
                   size="small"
                   label="$ de devolución"
-                  type="number"
-                  value={saleExchange.refunded}
+                  value={formatCurrency(saleExchange.refunded)}
                   disabled
                 />
               </Grid>
@@ -463,8 +464,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
                   fullWidth
                   size="small"
                   label="Cobrar"
-                  type="number"
-                  value={saleExchange.payment}
+                  value={formatCurrency(saleExchange.payment)}
                   disabled
                 />
               </Grid>
@@ -479,10 +479,8 @@ const PaymentModal = ({ isOpen, onClose }) => {
                   fullWidth
                   size="small"
                   label="Total"
-                  type="number"
-                  value={total.toFixed(2)}
+                  value={formatCurrency(total)}
                   disabled
-                  InputProps={{ startAdornment: '$' }}
                   sx={{
                     '& .MuiInputBase-input.Mui-disabled': {
                       fontWeight: 700,
@@ -511,10 +509,8 @@ const PaymentModal = ({ isOpen, onClose }) => {
                     fullWidth
                     size="small"
                     label="Total con descuento"
-                    type="number"
-                    value={totalDiscount.toFixed(2)}
+                    value={formatCurrency(totalDiscount)}
                     disabled
-                    InputProps={{ startAdornment: '$' }}
                     sx={{
                       '& .MuiInputBase-input.Mui-disabled': {
                         fontWeight: 700,
@@ -556,40 +552,14 @@ const PaymentModal = ({ isOpen, onClose }) => {
               <Grid item xs={isMobile ? 6 : (client?.id ? 3 : 4)}>
                 {paymentMethods.methods.TA > 0 ||
                 paymentMethods.methods.TR > 0 ? (
-                  <TextField
-                    fullWidth
-                    size="small"
-                    label="Referencia de pago"
-                    type="text"
-                    color={referencePayment === "" ? "error" : "primary"}
-                    focused={referencePayment === ""}
-                    value={referencePayment}
-                    onChange={(e) => setReferencePayment(e.target.value)}
-                    InputLabelProps={{ shrink: true }}
-                    sx={{
-                      animation: 'fadeIn 0.3s ease',
-                      '@keyframes fadeIn': {
-                        from: { opacity: 0, transform: 'translateX(-8px)' },
-                        to: { opacity: 1, transform: 'translateX(0)' },
-                      },
-                      ...(referencePayment === "" && {
-                        '& .MuiOutlinedInput-root': {
-                          '& fieldset': { borderColor: 'rgba(0,0,0,0.23)' },
-                          '&:hover fieldset': { borderColor: 'rgba(0,0,0,0.87)' },
-                          '&.Mui-focused fieldset': { borderColor: 'rgba(0,0,0,0.23)' },
-                        },
-                      }),
-                    }}
-                  />
+                  <ReferencePaymentField value={referencePayment} onChange={setReferencePayment} />
                 ) : (
                   <TextField
                     fullWidth
                     size="small"
                     label="Cambio"
-                    type="number"
-                    value={payment.change}
+                    value={formatCurrency(payment.change)}
                     disabled
-                    InputProps={{ startAdornment: '$' }}
                     sx={{
                       '& .MuiInputBase-input.Mui-disabled': {
                         fontWeight: 700,

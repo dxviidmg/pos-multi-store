@@ -3,26 +3,23 @@ import DataTable from "../../ui/DataTable/DataTable";
 import { getStoreProducts } from "../../../api/products";
 import CustomButton from "../../ui/Button/Button";
 import { useUser } from "../../../context/UserContext";
-import { exportToExcel } from "../../../utils/utils";
+import { exportToExcel, upsertById } from "../../../utils/utils";
 import { useModal } from "../../../hooks/useModal";
 import StoreProductLogsModal from "../StoreProductLogsModal/StoreProductLogsModal";
 import StockUpdateRequestModal from "../../inventory/StockUpdateRequestModal/StockUpdateRequestModal";
-import StoreProductGallery from "./StoreProductGallery";
+import StoreProductGridCard from "./StoreProductGridCard";
+import CardGallery from "../../ui/CardGallery/CardGallery";
 import ProductViewToggle from "../ProductList/ProductViewToggle";
 import { useViewModePreference } from "../../../hooks/useViewModePreference";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { getBrands } from "../../../api/brands";
 import { getDepartments } from "../../../api/departments";
-import { Grid, TextField, Alert, Autocomplete, Select, MenuItem, useMediaQuery, useTheme } from "@mui/material";
+import { Grid, TextField, Autocomplete, Select, MenuItem, useMediaQuery, useTheme } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import DownloadIcon from "@mui/icons-material/Download";
-import TuneIcon from "@mui/icons-material/Tune";
-import HistoryIcon from "@mui/icons-material/History";
-import SendIcon from "@mui/icons-material/Send";
-import { Link } from "react-router-dom";
-import NotificationImportantIcon from "@mui/icons-material/NotificationImportant";
 import PageHeader from "../../ui/PageHeader";
-import CustomTooltip from "../../ui/Tooltip";
+import StoreProductActions from "../StoreProductActions/StoreProductActions";
+import StockRequestAlert from "../StockRequestAlert/StockRequestAlert";
 
 const StoreProductList = () => {
   const theme = useTheme();
@@ -30,7 +27,7 @@ const StoreProductList = () => {
   const { user } = useUser();
   const logsModal = useModal();
   const requestModal = useModal();
-  const [viewModePref, setViewModePref] = useViewModePreference("storeProductList.viewMode", "table");
+  const [viewModePref, setViewModePref] = useViewModePreference("storeProductList.viewMode");
   const viewMode = isMobile ? "gallery" : viewModePref;
   const [storeProducts, setStoreProducts] = useState([]);
   const [brands, setBrands] = useState([]);
@@ -70,12 +67,7 @@ const StoreProductList = () => {
     // Guardar posición del scroll antes de actualizar
     const scrollTop = document.querySelector('[role="grid"]')?.scrollTop || 0;
     
-    setStoreProducts((prev) => {
-      const exists = prev.some((item) => item.id === updated.id);
-      return exists
-        ? prev.map((item) => (item.id === updated.id ? updated : item))
-        : [...prev, updated];
-    });
+    setStoreProducts((prev) => upsertById(prev, updated));
 
     // Restaurar posición del scroll después de la actualización
     setTimeout(() => {
@@ -129,28 +121,7 @@ const StoreProductList = () => {
       <Grid container>
         <Grid item xs={12} className="card">
           <PageHeader title="Inventario" childrenMd={8}>
-            {showAlert && (
-            <Alert 
-              severity="info" 
-              variant="filled" 
-              sx={{ py: 0, borderRadius: 2 }}
-              icon={<NotificationImportantIcon fontSize="inherit" />}
-              onClose={() => setShowAlert(false)}
-            >
-              {user.role === "owner" ? (
-                <>
-                  <strong>Revisa y aprueba las solicitudes de stock en{" "}
-                  <Link to="/solicitudes-ajustes-stock/" style={{ color: "var(--color-primary)", fontWeight: 600 }}>
-                    Solicitudes de Ajuste
-                  </Link>.</strong>
-                </>
-              ) : (
-                <>
-                  <strong>¿Ves un stock incorrecto?</strong> Usa el icono <SendIcon sx={{ fontSize: 14, verticalAlign: "middle" }} /> para solicitar un ajuste.
-                </>
-              )}
-            </Alert>
-            )}
+            {showAlert && <StockRequestAlert role={user.role} onClose={() => setShowAlert(false)} />}
           </PageHeader>
 
           <Grid container spacing={2} sx={{ mb: 3 }}>
@@ -256,17 +227,22 @@ const StoreProductList = () => {
           </Grid>
 
           {viewMode === "gallery" ? (
-            <StoreProductGallery
-              storeProducts={storeProducts}
+            <CardGallery
+              items={storeProducts}
               loading={loading}
-              onAdjustStock={handleAdjustStockGallery}
-              onLogs={handleLogsGallery}
-              onRequest={handleRequestGallery}
-              role={user.role}
+              emptyText="Sin inventario"
+              renderItem={(storeProduct) => (
+                <StoreProductGridCard
+                  storeProduct={storeProduct}
+                  onAdjustStock={handleAdjustStockGallery}
+                  onLogs={handleLogsGallery}
+                  onRequest={handleRequestGallery}
+                  role={user.role}
+                />
+              )}
             />
           ) : (
             <DataTable
-              searcher={false}
               progressPending={loading}
               noDataComponent="Sin inventario"
               data={storeProducts}
@@ -280,29 +256,13 @@ const StoreProductList = () => {
               {
                 name: "Acciones",
                 cell: (row) => (
-                  <>
-                    {user.role === "owner" && (
-                      <CustomTooltip text="Ajustar cantidad">
-                        <CustomButton onClick={() => logsModal.open({ storeProduct: row, adjustStock: true })}>
-                          <TuneIcon />
-                        </CustomButton>
-                      </CustomTooltip>
-                    )}
-                    {user.role !== "seller" && (
-                    <CustomTooltip text="Movimientos de stock">
-                      <CustomButton onClick={() => logsModal.open({ storeProduct: row, adjustStock: false })}>
-                        <HistoryIcon />
-                      </CustomButton>
-                    </CustomTooltip>
-                    )}
-                    {user.role !== "owner" && (
-                      <CustomTooltip text="Solicitar ajuste de stock">
-                        <CustomButton onClick={() => requestModal.open(row)}>
-                          <SendIcon />
-                        </CustomButton>
-                      </CustomTooltip>
-                    )}
-                  </>
+                  <StoreProductActions
+                    row={row}
+                    role={user.role}
+                    onAdjust={handleAdjustStockGallery}
+                    onLogs={handleLogsGallery}
+                    onRequest={handleRequestGallery}
+                  />
                 ),
               },
             ]}

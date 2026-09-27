@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import DataTable from "../../ui/DataTable/DataTable";
 import CustomButton from "../../ui/Button/Button";
 import CustomTooltip from "../../ui/Tooltip";
-import { getFormattedDate, formatTimeFromDate } from "../../../utils/utils";
+import { getFormattedDate, formatTimeFromDate, formatCurrency } from "../../../utils/utils";
 import { getCashFlow, deleteCashFlow } from "../../../api/cashflow";
 import { useUser } from "../../../context/UserContext";
 import CashFlowModal from "../CashFlowModal/CashFlowModal";
@@ -13,7 +13,7 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import PageHeader from "../../ui/PageHeader";
-import { showSuccess, showError, showConfirm } from "../../../utils/alerts";
+import { showSuccess, showConfirm, showRequestError } from "../../../utils/alerts";
 
 const today = getFormattedDate();
 
@@ -47,7 +47,7 @@ const CashFlowList = () => {
   const handleDelete = async (row) => {
     const confirmed = await showConfirm(
       "¿Eliminar movimiento?",
-      `Se eliminará "${row.concept}" por $${row.amount}`
+      `Se eliminará "${row.concept}" por ${formatCurrency(row.amount)}`
     );
     if (!confirmed) return;
 
@@ -56,7 +56,7 @@ const CashFlowList = () => {
       setCashFlow((prev) => prev.filter((item) => item.id !== row.id));
       showSuccess("Movimiento eliminado");
     } else {
-      showError("Error al eliminar", "No se pudo eliminar el movimiento");
+      showRequestError("eliminar el movimiento", response);
     }
   };
 
@@ -119,7 +119,7 @@ const CashFlowList = () => {
           progressPending={loading}
           noDataComponent="Sin movimientos"
           data={cashFlow}
-          searcher={true}
+          searcher
           columns={[
             {
               name: "Hora",
@@ -127,19 +127,19 @@ const CashFlowList = () => {
             },
             { name: "Concepto", selector: (row) => row.concept },
             { name: "Tipo", selector: (row) => row.transaction_type_display },
-            { name: "Cantidad", selector: (row) => "$" + row.amount },
+            { name: "Cantidad", selector: (row) => formatCurrency(row.amount) },
             { name: "Usuario", selector: (row) => row.user_username },
             ...(user?.role === "owner" ? [{
               name: "Acciones",
               cell: (row) => (
                 <>
                   <CustomTooltip text="Editar movimiento">
-                    <CustomButton size="small" onClick={() => cashFlowModal.open(row)}>
+                    <CustomButton onClick={() => cashFlowModal.open(row)}>
                       <EditIcon />
                     </CustomButton>
                   </CustomTooltip>
                   <CustomTooltip text="Eliminar movimiento">
-                    <CustomButton size="small" onClick={() => handleDelete(row)}>
+                    <CustomButton onClick={() => handleDelete(row)}>
                       <DeleteIcon />
                     </CustomButton>
                   </CustomTooltip>

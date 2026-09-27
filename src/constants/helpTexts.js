@@ -69,7 +69,7 @@ const helpTexts = {
   },
   "/tiendas/": {
     title: "Tiendas y almacenes",
-    text: "Panel central de tu negocio. Desde aquí ves el resumen de todas tus sucursales y almacenes, y puedes entrar a administrar cada una.",
+    text: "Panel central de tu negocio. Desde aquí ves el resumen de todas tus tiendas y almacenes, y puedes entrar a administrar cada una.",
   },
   "/tablero-ventas/": {
     title: "Tablero de ventas exitosas",

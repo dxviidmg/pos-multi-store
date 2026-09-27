@@ -231,7 +231,6 @@ const StockModal = ({ isOpen, product, onClose }) => {
                         name: "Acción",
                         selector: (row) => (
                           <CustomButton
-                            size="small"
                             disabled={!requestedQuantities[row.store_id] || requestedQuantities[row.store_id] <= 0}
                             onClick={() => handleCreateTransfer(row)}
                           >

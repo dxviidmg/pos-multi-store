@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import DataTable from "../../ui/DataTable/DataTable";
 import { getPayments } from "../../../api/tenants";
 import { Grid } from "@mui/material";
+import { formatCurrency } from "../../../utils/utils";
 
 const formatDate = (dateStr) => {
   const date = new Date(dateStr + "T00:00:00");
@@ -37,7 +38,7 @@ const TenantPaymentList = () => {
               minWidth: 300,
             },
             { name: "Meses pagados", selector: (row) => row.months },
-            { name: "Total", selector: (row) => `$${row.total}` },
+            { name: "Total", selector: (row) => formatCurrency(row.total) },
           ]}
         />
       </Grid>

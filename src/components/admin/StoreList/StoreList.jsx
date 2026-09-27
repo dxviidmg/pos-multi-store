@@ -28,7 +28,7 @@ import { useModal } from "../../../hooks/useModal";
 import { useCanCreateStore } from "../../../hooks/useCanCreateStore";
 import { useQueryClient } from "@tanstack/react-query";
 import { createMercadoPagoPreference } from "../../../api/mercadopago";
-import { showError } from "../../../utils/alerts";
+import { showRequestError } from "../../../utils/alerts";
 import mercadoPagoLogo from "../../../assets/mercadopago-logo.svg";
 
 const getCashValueTotal = (value) => formatCurrency(value || 0);
@@ -87,8 +87,8 @@ const StoreList = () => {
         window.open(res.data.init_point, "_blank");
         mpModal.close();
       }
-    } catch {
-      showError("Error", "No se pudo crear el enlace de pago");
+    } catch (error) {
+      showRequestError("crear el enlace de pago", error);
     } finally {
       setMpLoading(false);
     }
@@ -185,7 +185,7 @@ const StoreList = () => {
     if (result.isConfirmed) {
       try {
         await resetStoreStock(storeId);
-        Swal.fire('Stock vaciado', 'El stock de la tienda ha sido vaciado exitosamente', 'success');
+        Swal.fire('Stock vaciado', 'Stock de la tienda vaciado', 'success');
       } catch (error) {
         Swal.fire('Error', 'No se pudo vaciar el stock de la tienda', 'error');
       }
@@ -257,8 +257,6 @@ const StoreList = () => {
                 </Box>
               )}
               <CustomButton
-                size="small"
-                variant="contained"
                 onClick={() => createStoreModal.open()}
                 startIcon={<AddBusinessIcon />}
                 disabled={canCreateData && !canCreateData.can_create}
@@ -278,19 +276,19 @@ const StoreList = () => {
               </Grid>
               <Grid item xs={12} sm={6} md={3}>
                 <Box sx={{ bgcolor: 'var(--color-primary)', p: 1, borderRadius: 1, textAlign: 'center' }}>
-                  <Typography variant="caption" sx={{ color: '#fff', fontWeight: 600 }}>Ventas Totales</Typography>
+                  <Typography variant="caption" sx={{ color: '#fff', fontWeight: 600 }}>Ventas totales</Typography>
                   <Typography variant="h5" sx={{ color: '#fff', fontWeight: 700 }}>{totals.total_sales || 0}</Typography>
                 </Box>
               </Grid>
               <Grid item xs={12} sm={6} md={3}>
                 <Box sx={{ bgcolor: 'var(--color-primary)', p: 1, borderRadius: 1, textAlign: 'center' }}>
-                  <Typography variant="caption" sx={{ color: '#fff', fontWeight: 600 }}>Monto Total</Typography>
+                  <Typography variant="caption" sx={{ color: '#fff', fontWeight: 600 }}>Monto total</Typography>
                   <Typography variant="h5" sx={{ color: '#fff', fontWeight: 700 }}>{getCashValueTotal(totals.total_day)}</Typography>
                 </Box>
               </Grid>
               <Grid item xs={12} sm={6} md={3}>
                 <Box sx={{ bgcolor: 'var(--color-primary)', p: 1, borderRadius: 1, textAlign: 'center' }}>
-                  <Typography variant="caption" sx={{ color: '#fff', fontWeight: 600 }}>Ganancia Total</Typography>
+                  <Typography variant="caption" sx={{ color: '#fff', fontWeight: 600 }}>Ganancia total</Typography>
                   <Typography variant="h5" sx={{ color: '#fff', fontWeight: 700 }}>{getCashValueTotal(totals.profit)}</Typography>
                 </Box>
               </Grid>
@@ -408,39 +406,39 @@ const StoreList = () => {
           {params.store_type === "T" && (
             <Grid container spacing={2} sx={{ mb: 2 }}>
               <Grid item md={2} xs={6}>
-                <CustomButton fullWidth variant={quickFilter === "all" ? "contained" : "outlined"} onClick={() => setQuickFilter("all")} size="small">
+                <CustomButton fullWidth variant={quickFilter === "all" ? "contained" : "outlined"} onClick={() => setQuickFilter("all")}>
                   Pagos ({stores.length})
                 </CustomButton>
               </Grid>
               <Grid item md={2} xs={6}>
-                <CustomButton fullWidth variant={quickFilter === "sales" ? "contained" : "outlined"} onClick={() => setQuickFilter("sales")} size="small">
+                <CustomButton fullWidth variant={quickFilter === "sales" ? "contained" : "outlined"} onClick={() => setQuickFilter("sales")}>
                   Ventas ({stores.length})
                 </CustomButton>
               </Grid>
               <Grid item md={2} xs={6}>
-                <CustomButton fullWidth variant={quickFilter === "managers" ? "contained" : "outlined"} onClick={() => setQuickFilter("managers")} size="small">
+                <CustomButton fullWidth variant={quickFilter === "managers" ? "contained" : "outlined"} onClick={() => setQuickFilter("managers")}>
                   Administradores
                 </CustomButton>
               </Grid>
               <Grid item md={2} xs={6}>
-                <CustomButton fullWidth variant={quickFilter === "investment" ? "contained" : "outlined"} onClick={handleShowInvestment} size="small" startIcon={<AttachMoneyIcon />}>
+                <CustomButton fullWidth variant={quickFilter === "investment" ? "contained" : "outlined"} onClick={handleShowInvestment} startIcon={<AttachMoneyIcon />}>
                   Inversión
                 </CustomButton>
               </Grid>
               <Grid item md={2} xs={6}>
-                <CustomButton fullWidth variant={quickFilter === "printer" ? "contained" : "outlined"} onClick={() => setQuickFilter("printer")} size="small">
+                <CustomButton fullWidth variant={quickFilter === "printer" ? "contained" : "outlined"} onClick={() => setQuickFilter("printer")}>
                   Impresoras ({stores.filter(s => s.printer).length})
                 </CustomButton>
               </Grid>
               {stores.filter(s => !s.has_all_products).length > 0 && (
                 <Grid item md={2} xs={6}>
-                  <CustomButton fullWidth variant={quickFilter === "synced" ? "contained" : "outlined"} onClick={() => setQuickFilter("synced")} size="small">
+                  <CustomButton fullWidth variant={quickFilter === "synced" ? "contained" : "outlined"} onClick={() => setQuickFilter("synced")}>
                     Catálogo Incompleto ({stores.filter(s => !s.has_all_products).length})
                   </CustomButton>
                 </Grid>
               )}
               <Grid item md={2} xs={6}>
-                <CustomButton fullWidth variant={quickFilter === "actions" ? "contained" : "outlined"} onClick={() => setQuickFilter("actions")} size="small">
+                <CustomButton fullWidth variant={quickFilter === "actions" ? "contained" : "outlined"} onClick={() => setQuickFilter("actions")}>
                   Acciones
                 </CustomButton>
               </Grid>
@@ -450,29 +448,29 @@ const StoreList = () => {
           {params.store_type === "A" && (
             <Grid container spacing={2} sx={{ mb: 2 }}>
               <Grid item md={3} xs={6}>
-                <CustomButton fullWidth variant={quickFilter === "all" ? "contained" : "outlined"} onClick={() => setQuickFilter("all")} size="small">
+                <CustomButton fullWidth variant={quickFilter === "all" ? "contained" : "outlined"} onClick={() => setQuickFilter("all")}>
                   Todos
                 </CustomButton>
               </Grid>
               <Grid item md={3} xs={6}>
-                <CustomButton fullWidth variant={quickFilter === "managers" ? "contained" : "outlined"} onClick={() => setQuickFilter("managers")} size="small">
+                <CustomButton fullWidth variant={quickFilter === "managers" ? "contained" : "outlined"} onClick={() => setQuickFilter("managers")}>
                   Administradores
                 </CustomButton>
               </Grid>
               <Grid item md={3} xs={6}>
-                <CustomButton fullWidth variant={quickFilter === "investment" ? "contained" : "outlined"} onClick={handleShowInvestment} size="small" startIcon={<AttachMoneyIcon />}>
+                <CustomButton fullWidth variant={quickFilter === "investment" ? "contained" : "outlined"} onClick={handleShowInvestment} startIcon={<AttachMoneyIcon />}>
                   Inversión
                 </CustomButton>
               </Grid>
               {stores.filter(s => !s.has_all_products).length > 0 && (
                 <Grid item md={3} xs={6}>
-                  <CustomButton fullWidth variant={quickFilter === "synced" ? "contained" : "outlined"} onClick={() => setQuickFilter("synced")} size="small">
+                  <CustomButton fullWidth variant={quickFilter === "synced" ? "contained" : "outlined"} onClick={() => setQuickFilter("synced")}>
                     Catálogo Incompleto ({stores.filter(s => !s.has_all_products).length})
                   </CustomButton>
                 </Grid>
               )}
               <Grid item md={3} xs={6}>
-                <CustomButton fullWidth variant={quickFilter === "actions" ? "contained" : "outlined"} onClick={() => setQuickFilter("actions")} size="small">
+                <CustomButton fullWidth variant={quickFilter === "actions" ? "contained" : "outlined"} onClick={() => setQuickFilter("actions")}>
                   Acciones
                 </CustomButton>
               </Grid>

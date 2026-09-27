@@ -6,7 +6,8 @@ import { Grid, TextField, Alert } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { updatePricesProducts } from "../../../api/products";
-import { showSuccess, showError } from "../../../utils/alerts";
+import { showSuccess, showRequestError } from "../../../utils/alerts";
+import { formatCurrency } from "../../../utils/utils";
 
 const PriceUpdateModal = ({ isOpen, onClose, selectedProducts, onSuccess }) => {
   const [formData, setFormData] = useState({
@@ -75,7 +76,7 @@ const PriceUpdateModal = ({ isOpen, onClose, selectedProducts, onSuccess }) => {
       onClose();
       onSuccess();
     } else {
-      showError("Error al actualizar precios");
+      showRequestError("actualizar los precios", response);
     }
     setIsLoading(false);
   };
@@ -104,9 +105,9 @@ const PriceUpdateModal = ({ isOpen, onClose, selectedProducts, onSuccess }) => {
                 columns={[
                   { name: "Código", selector: (row) => row.code || "" },
                   { name: "Producto", selector: (row) => row.name },
-                  { name: "Costo", selector: (row) => row.cost ? `$${row.cost}` : "" },
-                  { name: "Unitario", selector: (row) => row.unit_price ? `$${row.unit_price}` : "" },
-                  { name: "Mayoreo", selector: (row) => row.wholesale_price ? `$${row.wholesale_price}` : "" },
+                  { name: "Costo", selector: (row) => row.cost ? formatCurrency(row.cost) : "" },
+                  { name: "Unitario", selector: (row) => row.unit_price ? formatCurrency(row.unit_price) : "" },
+                  { name: "Mayoreo", selector: (row) => row.wholesale_price ? formatCurrency(row.wholesale_price) : "" },
                   { name: "Cant. mín.", selector: (row) => row.min_wholesale_quantity || "" },
                 ]}
               />

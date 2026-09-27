@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { createTenant } from "../api/registration";
-import { showSuccess, showError } from "../utils/alerts";
+import { showSuccess, showWarning, showRequestError, SUPPORT_HINT } from "../utils/alerts";
 
 const registrationErrorParser = (error) => {
   if (error.response?.status === 400) {
@@ -27,20 +27,24 @@ const registrationErrorParser = (error) => {
       return "El nombre es requerido.";
     }
   }
-  return "Error desconocido. Por favor, intente nuevamente.";
+  return null;
 };
 
 export const useCreateTenant = (options = {}) => {
   return useMutation({
     mutationFn: createTenant,
     onSuccess: (data, variables, context) => {
-      showSuccess("¡Registro exitoso!", "Tu negocio ha sido creado correctamente.");
+      showSuccess("¡Negocio registrado!", "Tu negocio ha sido creado.");
       options?.onSuccess?.(data, variables, context);
     },
     onError: (error, variables, context) => {
-      const message = registrationErrorParser(error);
-      showError("Error", message);
-      options?.onError?.(error, variables, context, message);
+      const reason = registrationErrorParser(error);
+      if (reason) {
+        showWarning("No se pudo registrar el negocio", reason);
+      } else {
+        showRequestError("registrar el negocio", error);
+      }
+      options?.onError?.(error, variables, context, reason || SUPPORT_HINT);
     },
   });
 };

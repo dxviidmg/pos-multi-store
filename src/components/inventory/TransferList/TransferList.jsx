@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import DataTable from "../../ui/DataTable/DataTable";
 import { calculateTimeAgo, formatTimeFromDate } from "../../../utils/utils";
 import CustomButton from "../../ui/Button/Button";
-import { showSuccess, showError } from "../../../utils/alerts";
+import { showSuccess, showRequestError } from "../../../utils/alerts";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { useTransfers, useDeleteTransfer } from "../../../hooks/useTransfers";
 import { Grid, MenuItem, FormControl, InputLabel, Select, TextField } from "@mui/material";
@@ -24,9 +24,9 @@ const TransferList = () => {
   const handleDelete = async (transfer) => {
     try {
       await deleteTransferMutation.mutateAsync(transfer.id);
-      showSuccess("Transferencia eliminada");
+      showSuccess("Traspaso eliminado");
     } catch (error) {
-      showError("Error al eliminar transferencia");
+      showRequestError("eliminar el traspaso", error);
     }
   };
 

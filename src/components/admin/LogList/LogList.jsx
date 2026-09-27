@@ -114,7 +114,7 @@ const LogList = () => {
             </Grid>
             <Grid item xs={12} md={3}>
               <CustomButton fullWidth onClick={handleDownload} disabled={logs.length === 0} startIcon={<DownloadIcon />}>
-                Descargar logs
+                Descargar historial
               </CustomButton>
             </Grid>
           </Grid>

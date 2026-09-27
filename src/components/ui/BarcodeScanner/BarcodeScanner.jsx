@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import { BrowserMultiFormatReader } from "@zxing/browser";
-import { NotFoundException } from "@zxing/library";
 import {
   Box,
   Dialog,
@@ -46,9 +45,6 @@ const BarcodeScanner = ({ open, onClose, onDetected }) => {
             if (result) {
               onDetected(result.getText());
               onClose();
-            }
-            if (err && !(err instanceof NotFoundException)) {
-              // NotFoundException es normal cuando no hay código en cuadro, ignorar
             }
           }
         );
