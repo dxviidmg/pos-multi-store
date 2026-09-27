@@ -1,4 +1,5 @@
 import React from "react";
+import { formatCurrency } from "../../../utils/utils";
 import {
   Popper,
   Paper,
@@ -86,7 +87,7 @@ const SearchSuggestions = ({
                     </Box>
                     {unitPrice !== undefined && (
                       <Typography variant="caption" sx={{ fontWeight: 600, color: 'primary.main', whiteSpace: 'nowrap' }}>
-                        ${unitPrice.toFixed(2)}
+                        {formatCurrency(unitPrice)}
                       </Typography>
                     )}
                   </MenuItem>

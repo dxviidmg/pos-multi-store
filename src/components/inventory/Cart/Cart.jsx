@@ -24,6 +24,7 @@ import CartViewToggle from "./CartViewToggle";
 import { MOVEMENT_TYPES, STORE_TYPES } from "../../../constants";
 import { commonColumns, isKg, getNextMode, getSaleColumns, getTransferColumns, getDistributionColumns, getAddToStockColumns } from "./cartColumns";
 import noPhotoImage from "../../../assets/images/noPhoto.webp";
+import { formatCurrency } from "../../../utils/utils";
 
 const Cart = ({ searchInputRef, cartViewMode = "table", setCartViewMode }) => {
   const { user } = useUser();
@@ -301,7 +302,7 @@ const Cart = ({ searchInputRef, cartViewMode = "table", setCartViewMode }) => {
                 <Grid item xs={6} md={5}>
                   <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
                     <Typography variant="body2" color="text.secondary">Total:</Typography>
-                    <Typography key={total} variant="h4" className="value-pop" sx={{ fontWeight: 700, color: 'primary.main' }}>${total.toFixed(2)}</Typography>
+                    <Typography key={total} variant="h4" className="value-pop" sx={{ fontWeight: 700, color: 'primary.main' }}>{formatCurrency(total)}</Typography>
                   </Box>
                 </Grid>
                 <Grid item xs={12} md={4}>
@@ -477,7 +478,7 @@ const Cart = ({ searchInputRef, cartViewMode = "table", setCartViewMode }) => {
                           <span style={{ fontWeight: 600 }}>{item.quantity}</span> {isKgProduct ? (unitLabels[item.product?.unit] || "Pieza") : "Pieza"}
                         </Typography>
                         <Typography variant="body2" sx={{ fontSize: '0.8rem', color: 'text.primary', lineHeight: 1.4 }}>
-                          <span style={{ fontWeight: 600 }}>Subtotal:</span> ${(item.quantity * (item.unit_price || item.product.prices.unit_price)).toFixed(2)}
+                          <span style={{ fontWeight: 600 }}>Subtotal:</span> {formatCurrency(item.quantity * (item.unit_price || item.product.prices.unit_price))}
                         </Typography>
                       </Box>
 
@@ -574,7 +575,7 @@ const Cart = ({ searchInputRef, cartViewMode = "table", setCartViewMode }) => {
                                 size="small"
                               />
                             }
-                            label={`Mayoreo $${(item.product.prices.wholesale_price).toFixed(2)}`}
+                            label={`Mayoreo ${formatCurrency(item.product.prices.wholesale_price)}`}
                             sx={{ fontSize: '0.65rem', m: 0, '& .MuiTypography-root': { fontSize: '0.65rem' } }}
                           />
                         </Box>
@@ -710,7 +711,7 @@ const Cart = ({ searchInputRef, cartViewMode = "table", setCartViewMode }) => {
                             disabled={!item.product.prices.wholesale_price}
                           />
                         }
-                        label={`Mayoreo (${item.product.prices.min_wholesale_quantity}+) - $${item.product.prices.wholesale_price.toFixed(2)}`}
+                        label={`Mayoreo (${item.product.prices.min_wholesale_quantity}+) - ${formatCurrency(item.product.prices.wholesale_price)}`}
                       />
                     </Box>
                   )}
@@ -722,7 +723,7 @@ const Cart = ({ searchInputRef, cartViewMode = "table", setCartViewMode }) => {
                     </Box>
                     <Box>
                       <Typography variant="caption" sx={{ display: 'block', color: 'text.secondary', fontWeight: 600 }}>Total</Typography>
-                      <Typography variant="body2" sx={{ fontWeight: 700 }}>${(item.quantity * (item.unit_price || item.product.prices.unit_price)).toFixed(2)}</Typography>
+                      <Typography variant="body2" sx={{ fontWeight: 700 }}>{formatCurrency(item.quantity * (item.unit_price || item.product.prices.unit_price))}</Typography>
                     </Box>
                   </Box>
                 </Grid>

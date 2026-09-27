@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import SimpleTable from "../../ui/SimpleTable/SimpleTable";
 import CustomButton from "../../ui/Button/Button";
 import { useUser } from "../../../context/UserContext";
-import { exportToExcel, getFormattedDate } from "../../../utils/utils";
+import { exportToExcel, getFormattedDate, formatCurrency } from "../../../utils/utils";
 import { getCashSummary } from "../../../api/sales";
 import { getCashFlow } from "../../../api/cashflow";
 import { getDuplicateSales } from "../../../api/notifications";
@@ -19,7 +19,7 @@ import ReceiptIcon from "@mui/icons-material/Receipt";
 
 const summaryColumns = [
   { name: "Tipo", selector: (row) => row.name },
-  { name: "Cantidad", selector: (row) => "$" + row.amount },
+  { name: "Cantidad", selector: (row) => formatCurrency(row.amount) },
 ];
 
 const CashSummary = () => {
@@ -91,7 +91,7 @@ const CashSummary = () => {
       name: "Cantidad",
       selector: (row) => {
         const noPrefix = ["Número de ventas", "Ventas canceladas", "Distribuciones pendientes", "Traspasos pendientes"];
-        return noPrefix.includes(row.name) ? row.amount : "$" + row.amount;
+        return noPrefix.includes(row.name) ? row.amount : formatCurrency(row.amount);
       },
     },
   ];

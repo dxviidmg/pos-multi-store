@@ -21,7 +21,7 @@ import { useUser } from "../../../context/UserContext";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { usePrinterStatus } from "../../../hooks/usePrinterStatus";
-import { handlePrintTicket } from "../../../utils/utils";
+import { handlePrintTicket, formatCurrency } from "../../../utils/utils";
 import { Grid, TextField, FormLabel, RadioGroup, FormControlLabel, Radio, InputAdornment, IconButton, CircularProgress, LinearProgress, Alert, Select, MenuItem, useMediaQuery, useTheme } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import PushPinIcon from "@mui/icons-material/PushPin";
@@ -560,8 +560,8 @@ const SearchProduct = ({ searchInputRef }) => {
                   name: "Precios",
                   cell: (row) => (
                     row.product.prices.apply_wholesale
-                      ? <>Men: ${row.product.prices.unit_price.toFixed(2)}<br />May: ${row.product.prices.wholesale_price.toFixed(2)} ({row.product.prices.min_wholesale_quantity}+)</>
-                      : `$${row.product.prices.unit_price.toFixed(2)}`
+                      ? <>Men: {formatCurrency(row.product.prices.unit_price)}<br />May: {formatCurrency(row.product.prices.wholesale_price)} ({row.product.prices.min_wholesale_quantity}+)</>
+                      : formatCurrency(row.product.prices.unit_price)
                   ),
                 },
                 {

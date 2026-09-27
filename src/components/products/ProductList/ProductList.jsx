@@ -4,7 +4,7 @@ import { deleteProducts, getProducts, updateProduct, upperCodeProducts } from ".
 import CustomButton from "../../ui/Button/Button";
 import { useModal } from "../../../hooks/useModal";
 import ProductModal from "../ProductModal/ProductModal";
-import { exportToExcel, upsertById } from "../../../utils/utils";
+import { exportToExcel, upsertById, formatCurrency } from "../../../utils/utils";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { getBrands } from "../../../api/brands";
 import { getDepartments } from "../../../api/departments";
@@ -369,8 +369,8 @@ const ProductList = () => {
                   name: "Precios",
                   cell: (row) => (
                     row.apply_wholesale
-                      ? <>Men: ${row.unit_price}<br />May: ${row.wholesale_price} ({row.min_wholesale_quantity}+)</>
-                      : `$${row.unit_price}`
+                      ? <>Men: {formatCurrency(row.unit_price)}<br />May: {formatCurrency(row.wholesale_price)} ({row.min_wholesale_quantity}+)</>
+                      : formatCurrency(row.unit_price)
                   ),
                 },
                 ...(user.role !== "seller" ? [{

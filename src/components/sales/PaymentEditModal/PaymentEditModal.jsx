@@ -10,6 +10,7 @@ import { Grid, TextField, Radio, RadioGroup, FormControlLabel, FormLabel, Chip }
 import MoneyOffIcon from "@mui/icons-material/MoneyOff";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import ReferencePaymentField from "../ReferencePaymentField/ReferencePaymentField";
+import { formatCurrency } from "../../../utils/utils";
 
 const INITIAL_PAYMENT_STATE = { paidWith: 0, change: 0 };
 
@@ -156,13 +157,13 @@ const PaymentEditModal = ({ isOpen, sale, onClose, onUpdate }) => {
                 <TextField size="small" fullWidth label="Folio" type="number" value={reservation.id || ""} disabled InputProps={{ startAdornment: '#' }} />
               </Grid>
               <Grid item xs={12} md={3}>
-                <TextField size="small" fullWidth label="Total de la compra" type="number" value={reservation.total || ""} disabled InputProps={{ startAdornment: '$' }} />
+                <TextField size="small" fullWidth label="Total de la compra" value={formatCurrency(reservation.total)} disabled />
               </Grid>
               <Grid item xs={12} md={3}>
-                <TextField size="small" fullWidth label="Pagado" type="number" value={reservation.paid || ""} disabled InputProps={{ startAdornment: '$' }} />
+                <TextField size="small" fullWidth label="Pagado" value={formatCurrency(reservation.paid)} disabled />
               </Grid>
               <Grid item xs={12} md={3}>
-                <TextField size="small" fullWidth label="Deuda" type="number" value={remaining || ""} disabled InputProps={{ startAdornment: '$' }} />
+                <TextField size="small" fullWidth label="Deuda" value={formatCurrency(remaining)} disabled />
               </Grid>
             </Grid>
           </Grid>
@@ -187,7 +188,7 @@ const PaymentEditModal = ({ isOpen, sale, onClose, onUpdate }) => {
                 {paymentMethod !== "EF" ? (
                   <ReferencePaymentField value={referencePayment} onChange={setReferencePayment} />
                 ) : (
-                  <TextField fullWidth size="small" label="Cambio" type="number" value={payment.change} disabled InputProps={{ startAdornment: '$' }} />
+                  <TextField fullWidth size="small" label="Cambio" value={formatCurrency(payment.change)} disabled />
                 )}
               </Grid>
             </Grid>

@@ -5,6 +5,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ScaleIcon from "@mui/icons-material/Scale";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import { MOVEMENT_TYPES } from "../../../constants";
+import { formatCurrency } from "../../../utils/utils";
 
 export const isKg = (row) => row.product?.unit === "KG" || row.product?.unit === "LT";
 const SALE_MODES_CYCLE = ["KG", "FRAC", "$"];
@@ -126,7 +127,7 @@ export const getSaleColumns = (handleQuantityChangeToCart, handleRemoveFromCart,
   { name: "Stock", selector: (row) => `${row.available_stock} ${row.product?.unit || "PZ"}` },
   {
     name: "Precio",
-    selector: (row) => `$${row.product_price.toFixed(2)}`,
+    selector: (row) => formatCurrency(row.product_price),
   },
   {
     name: "Subtotal",
@@ -155,7 +156,7 @@ export const getSaleColumns = (handleQuantityChangeToCart, handleRemoveFromCart,
           />
         );
       }
-      return `$${(row.product_price * row.quantity).toFixed(2)}`;
+      return formatCurrency(row.product_price * row.quantity);
     },
   },
   {

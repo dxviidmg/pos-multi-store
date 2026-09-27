@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import DataTable from "../../ui/DataTable/DataTable";
 import CustomButton from "../../ui/Button/Button";
 import CustomTooltip from "../../ui/Tooltip";
-import { getFormattedDate, formatTimeFromDate } from "../../../utils/utils";
+import { getFormattedDate, formatTimeFromDate, formatCurrency } from "../../../utils/utils";
 import { getCashFlow, deleteCashFlow } from "../../../api/cashflow";
 import { useUser } from "../../../context/UserContext";
 import CashFlowModal from "../CashFlowModal/CashFlowModal";
@@ -47,7 +47,7 @@ const CashFlowList = () => {
   const handleDelete = async (row) => {
     const confirmed = await showConfirm(
       "¿Eliminar movimiento?",
-      `Se eliminará "${row.concept}" por $${row.amount}`
+      `Se eliminará "${row.concept}" por ${formatCurrency(row.amount)}`
     );
     if (!confirmed) return;
 
@@ -127,7 +127,7 @@ const CashFlowList = () => {
             },
             { name: "Concepto", selector: (row) => row.concept },
             { name: "Tipo", selector: (row) => row.transaction_type_display },
-            { name: "Cantidad", selector: (row) => "$" + row.amount },
+            { name: "Cantidad", selector: (row) => formatCurrency(row.amount) },
             { name: "Usuario", selector: (row) => row.user_username },
             ...(user?.role === "owner" ? [{
               name: "Acciones",

@@ -3,7 +3,7 @@ import DataTable from "../../ui/DataTable/DataTable";
 import { getSellers } from "../../../api/sellers";
 import CustomButton from "../../ui/Button/Button";
 import SellerModal from "../SellerModal/SellerModal";
-import { getDateDifference, getFormattedDate, upsertById } from "../../../utils/utils";
+import { getDateDifference, getFormattedDate, upsertById, formatCurrency } from "../../../utils/utils";
 import { useModal } from "../../../hooks/useModal";
 import { useUserManagement } from "../../../hooks/useUserManagement";
 import EditUserModal from "../../ui/UserModals/EditUserModal";
@@ -160,7 +160,7 @@ const SellerList = () => {
               },
               {
                 name: "Vendido",
-                selector: (row) => `$${row.total_sales}`,
+                selector: (row) => formatCurrency(row.total_sales),
               },
               ...(user?.role === "owner" ? [{
                 name: "Acciones",

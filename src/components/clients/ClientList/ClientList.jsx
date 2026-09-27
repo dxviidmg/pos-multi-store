@@ -5,7 +5,7 @@ import ClientModal from "../ClientModal/ClientModal";
 import DiscountModal from "../DiscountModal/DiscountModal";
 import EditIcon from "@mui/icons-material/Edit";
 import { useUser } from "../../../context/UserContext";
-import { getDateDifference, getFormattedDate } from "../../../utils/utils";
+import { getDateDifference, getFormattedDate, formatCurrency } from "../../../utils/utils";
 import CustomTooltip from "../../ui/Tooltip";
 import { useClients } from "../../../hooks/useClients";
 import { useModal } from "../../../hooks/useModal";
@@ -119,7 +119,7 @@ const ClientList = () => {
               name: "Total comprado",
               field: "total_sales_amount",
               sortable: true,
-              selector: (row) => `$${Number(row.total_sales_amount).toLocaleString()}`,
+              selector: (row) => formatCurrency(row.total_sales_amount),
             },
             {
               name: "Descuento",

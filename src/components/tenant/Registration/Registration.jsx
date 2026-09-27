@@ -15,6 +15,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import Logo from "../../../assets/images/logo.webp";
 import { checkTenantExists, getAvailablePlans } from "../../../api/registration";
+import { formatCurrency } from "../../../utils/utils";
 import {
   inputSx, pageContainerSx, overlayGradientSx, formPaperSx,
   successIconSx, stepIndicatorSx, stepCountSx,
@@ -586,7 +587,7 @@ const Registration = () => {
                                   </Box>
                                   <Box sx={{ textAlign: "right" }}>
                                     <Typography sx={{ fontSize: "1.2rem", fontWeight: 700, color: "primary.main" }}>
-                                      ${plan.price}
+                                      {formatCurrency(plan.price)}
                                     </Typography>
                                     <Typography sx={{ fontSize: "0.7rem", color: "text.secondary" }}>
                                       MXN/mes
@@ -629,7 +630,7 @@ const Registration = () => {
                         </Alert>
                       )}
                       <Typography sx={{ fontSize: "0.85rem", color: "text.secondary", mb: 2 }}>
-                        Se activará cobro recurrente de <strong style={{ color: "inherit" }}>${selectedPlan?.price} MXN/mes</strong> con tu tarjeta.
+                        Se activará cobro recurrente de <strong style={{ color: "inherit" }}>{formatCurrency(selectedPlan?.price)} MXN/mes</strong> con tu tarjeta.
                       </Typography>
                       {paymentSubmitting && (
                         <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>

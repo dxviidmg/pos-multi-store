@@ -7,6 +7,7 @@ import {
   handlePrintTicket,
   getFormattedDateTime,
   upsertById,
+  formatCurrency,
 } from "../../../utils/utils";
 import { useModal } from "../../../hooks/useModal";
 import SaleModal from "../SaleModal/SaleModal";
@@ -191,11 +192,11 @@ const SaleList = () => {
               selector: (row) => <ProductsPopperButton row={row} />,
             },
             { name: "Número de productos", selector: (row) => row.products_sale?.reduce((sum, p) => sum + (p.sells_by_fraction ? 1 : p.quantity), 0) || 0, width: 80 },
-            { name: "Total", selector: (row) => `$${row.total}`, width: 80, omit: user.role === "seller" },
+            { name: "Total", selector: (row) => formatCurrency(row.total), width: 100, omit: user.role === "seller" },
             ...(params.reservation_in_progress === "true"
               ? [
-                  { name: "Pagado", selector: (row) => "$" + row.paid, width: 80 },
-                  { name: "Falta", selector: (row) => "$" + (row.total - row.paid), width: 80 },
+                  { name: "Pagado", selector: (row) => formatCurrency(row.paid), width: 100 },
+                  { name: "Falta", selector: (row) => formatCurrency(row.total - row.paid), width: 100 },
                 ]
               : []),
             { name: "Métodos de pago", selector: (row) => row.payments_methods.join(", ") },

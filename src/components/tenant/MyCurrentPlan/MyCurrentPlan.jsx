@@ -17,6 +17,7 @@ import { getApiUrl } from "../../../api/utils";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
 import { logger } from "../../../utils/logger";
+import { formatCurrency } from "../../../utils/utils";
 
 const MyCurrentPlan = () => {
   const { user, logout } = useUser();
@@ -267,7 +268,7 @@ const MyCurrentPlan = () => {
               size="small"
               sx={{ bgcolor: 'success.main', '&:hover': { bgcolor: 'success.dark' } }}
             >
-              Domiciliar (Ahorra ${plan.plan.price - equivalent.price} MXN/mes)
+              Domiciliar (Ahorra {formatCurrency(plan.plan.price - equivalent.price)} MXN/mes)
             </Button>
           ) : null}
         </Stack>
@@ -286,7 +287,7 @@ const MyCurrentPlan = () => {
                   <Grid container spacing={3}>
                     <Grid item xs={12} sm={6} md={3}>
                       <Typography variant="body2" color="textSecondary">Precio</Typography>
-                      <Typography variant="body1">${plan.plan.price} MXN/mes</Typography>
+                      <Typography variant="body1">{formatCurrency(plan.plan.price)} MXN/mes</Typography>
                     </Grid>
                     <Grid item xs={12} sm={6} md={3}>
                       <Typography variant="body2" color="textSecondary">Sucursales</Typography>
@@ -467,7 +468,7 @@ const MyCurrentPlan = () => {
           )}
           {equivalent && !result?.success && (
             <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
-              Se activará cobro recurrente de <strong>${equivalent.price} MXN/mes</strong>
+              Se activará cobro recurrente de <strong>{formatCurrency(equivalent.price)} MXN/mes</strong>
             </Typography>
           )}
           <div id="mp-bricks-container" />

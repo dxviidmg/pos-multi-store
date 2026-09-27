@@ -15,6 +15,7 @@ import ClientModal from "../../clients/ClientModal/ClientModal";
 import SearchIcon from "@mui/icons-material/Search";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import ReferencePaymentField from "../ReferencePaymentField/ReferencePaymentField";
+import { formatCurrency } from "../../../utils/utils";
 import { Grid, TextField, Radio, RadioGroup, FormControlLabel, Checkbox, FormLabel, Alert, Chip, Box, useMediaQuery, useTheme } from "@mui/material";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
@@ -453,8 +454,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
                   fullWidth
                   size="small"
                   label="$ de devolución"
-                  type="number"
-                  value={saleExchange.refunded}
+                  value={formatCurrency(saleExchange.refunded)}
                   disabled
                 />
               </Grid>
@@ -464,8 +464,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
                   fullWidth
                   size="small"
                   label="Cobrar"
-                  type="number"
-                  value={saleExchange.payment}
+                  value={formatCurrency(saleExchange.payment)}
                   disabled
                 />
               </Grid>
@@ -480,10 +479,8 @@ const PaymentModal = ({ isOpen, onClose }) => {
                   fullWidth
                   size="small"
                   label="Total"
-                  type="number"
-                  value={total.toFixed(2)}
+                  value={formatCurrency(total)}
                   disabled
-                  InputProps={{ startAdornment: '$' }}
                   sx={{
                     '& .MuiInputBase-input.Mui-disabled': {
                       fontWeight: 700,
@@ -512,10 +509,8 @@ const PaymentModal = ({ isOpen, onClose }) => {
                     fullWidth
                     size="small"
                     label="Total con descuento"
-                    type="number"
-                    value={totalDiscount.toFixed(2)}
+                    value={formatCurrency(totalDiscount)}
                     disabled
-                    InputProps={{ startAdornment: '$' }}
                     sx={{
                       '& .MuiInputBase-input.Mui-disabled': {
                         fontWeight: 700,
@@ -563,10 +558,8 @@ const PaymentModal = ({ isOpen, onClose }) => {
                     fullWidth
                     size="small"
                     label="Cambio"
-                    type="number"
-                    value={payment.change}
+                    value={formatCurrency(payment.change)}
                     disabled
-                    InputProps={{ startAdornment: '$' }}
                     sx={{
                       '& .MuiInputBase-input.Mui-disabled': {
                         fontWeight: 700,

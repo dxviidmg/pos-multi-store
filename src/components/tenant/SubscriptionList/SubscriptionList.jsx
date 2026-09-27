@@ -3,6 +3,7 @@ import DataTable from "../../ui/DataTable/DataTable";
 import { getSubscriptions } from "../../../api/subscriptions";
 import { Grid, Chip } from "@mui/material";
 import { logger } from "../../../utils/logger";
+import { formatCurrency } from "../../../utils/utils";
 
 const statusMap = {
   authorized: { label: "Autorizada", color: "success" },
@@ -66,7 +67,7 @@ const SubscriptionList = () => {
             },
             {
               name: "Monto",
-              selector: (row) => `$${row.amount}`,
+              selector: (row) => formatCurrency(row.amount),
               width: 120,
             },
             {

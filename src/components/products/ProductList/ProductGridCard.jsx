@@ -6,6 +6,7 @@ import HistoryIcon from "@mui/icons-material/History";
 import ChecklistIcon from "@mui/icons-material/Checklist";
 import CustomTooltip from "../../ui/Tooltip";
 import noPhoto from "../../../assets/images/noPhoto.webp";
+import { formatCurrency } from "../../../utils/utils";
 
 /**
  * Tarjeta de producto para la vista de galería de /productos/.
@@ -131,12 +132,12 @@ const ProductGridCard = ({ product, onEdit, onPriceLogs, onStoreStock, onCameraP
 
         {/* Precio */}
         <Typography variant="body2" sx={{ fontSize: "0.8rem", color: "text.primary", fontWeight: 600, lineHeight: 1.4, mb: 0.25 }}>
-          ${product.unit_price}
+          {formatCurrency(product.unit_price)}
         </Typography>
 
         {product.apply_wholesale && (
           <Typography variant="body2" sx={{ fontSize: "0.8rem", color: "text.primary", lineHeight: 1.4, mb: 0.25 }}>
-            <span style={{ fontWeight: 600 }}>May:</span> ${product.wholesale_price} ({product.min_wholesale_quantity}+)
+            <span style={{ fontWeight: 600 }}>May:</span> {formatCurrency(product.wholesale_price)} ({product.min_wholesale_quantity}+)
           </Typography>
         )}
 

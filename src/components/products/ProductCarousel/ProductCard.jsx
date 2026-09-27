@@ -1,6 +1,7 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
 import noPhoto from "../../../assets/images/noPhoto.webp";
+import { formatCurrency } from "../../../utils/utils";
 
 /**
  * Tarjeta visual de producto para el carrusel de búsqueda visual.
@@ -160,7 +161,7 @@ const ProductCard = ({ storeProduct, disabled = false, onClick }) => {
               lineHeight: 1.2,
             }}
           >
-            ${unitPrice.toFixed(2)}
+            {formatCurrency(unitPrice)}
           </Typography>
         )}
       </Box>
