@@ -7,13 +7,14 @@ import PrintIcon from "@mui/icons-material/Print";
 import WifiIcon from "@mui/icons-material/Wifi";
 import PeopleIcon from "@mui/icons-material/People";
 import IntegrationInstructionsIcon from "@mui/icons-material/IntegrationInstructions";
+import { formatCurrency } from "../../../utils/utils";
 
 const SERVICES = [
   {
     icon: <StorefrontIcon />,
     title: "Tienda / Almacén",
     price: 500,
-    notes: "Agrega una nueva sucursal o almacén a tu cuenta.",
+    notes: "Agrega una nueva tienda o almacén a tu cuenta.",
   },
   {
     icon: <PrintIcon />,
@@ -65,7 +66,7 @@ const ServiceList = () => {
                   {service.title}
                 </Typography>
                 <Typography variant="h5" fontWeight={700} color="primary.main" sx={{ my: 1 }}>
-                  {service.price === 0 ? "Gratis" : `$${service.price}/mes`}
+                  {service.price === 0 ? "Gratis" : `${formatCurrency(service.price)}/mes`}
                 </Typography>
                 {service.tag && (
                   <Chip label={service.tag} color="success" size="small" sx={{ mb: 1 }} />

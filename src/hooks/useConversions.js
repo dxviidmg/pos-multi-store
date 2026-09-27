@@ -21,7 +21,8 @@ export const useConversionUnits = () => {
 const { useCreate, useUpdate, useDelete } = createMutationHooks(
   'Conversión',
   'conversions',
-  { create: createConversion, update: updateConversion, delete: deleteConversion }
+  { create: createConversion, update: updateConversion, delete: deleteConversion },
+  { feminine: true }
 );
 
 export const useCreateConversion = useCreate;
@@ -31,8 +32,8 @@ export const useDeleteConversion = useDelete;
 export const useApplyConversion = (options = {}) => {
   return useCrudMutation(applyConversion, {
     queryKey: 'conversions',
-    successMessage: 'Conversión aplicada correctamente',
-    errorMessage: 'Error al aplicar la conversión',
+    successMessage: 'Conversión aplicada',
+    errorAction: 'aplicar la conversión',
     ...options,
   });
 };

@@ -3,7 +3,7 @@ import DataTable from "../../ui/DataTable/DataTable";
 import CustomButton from "../../ui/Button/Button";
 import { getFormattedDateTime } from "../../../utils/utils";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
-import { showSuccess, showError } from "../../../utils/alerts";
+import { showSuccess, showRequestError } from "../../../utils/alerts";
 import { useUser } from "../../../context/UserContext";
 import {
   confirmDistribution,
@@ -50,7 +50,7 @@ const DistributionList = () => {
       setSelected(null);
       showSuccess("Distribución realizada");
     } else {
-      showError("Error al distribuir");
+      showRequestError("confirmar la distribución", response);
     }
   };
 
@@ -70,7 +70,7 @@ const DistributionList = () => {
       }));
       setEditingRow(null);
     } else {
-      showError("Error al actualizar cantidad");
+      showRequestError("actualizar la cantidad", response);
     }
   };
 
@@ -82,7 +82,7 @@ const DistributionList = () => {
         transfers: prev.transfers.filter((t) => t.id !== row.id),
       }));
     } else {
-      showError("Error al eliminar producto");
+      showRequestError("eliminar el producto", response);
     }
   };
 
@@ -92,7 +92,7 @@ const DistributionList = () => {
       setDistributions((prev) => prev.filter((d) => d.id !== row.id));
       showSuccess("Distribución eliminada");
     } else {
-      showError("Error al eliminar distribución");
+      showRequestError("eliminar la distribución", response);
     }
   };
 
@@ -179,7 +179,7 @@ const DistributionList = () => {
                             <EditIcon />
                           </CustomButton>
                         </CustomTooltip>
-                        <CustomTooltip text="Borrar producto">
+                        <CustomTooltip text="Eliminar producto">
                           <CustomButton onClick={() => handleDeleteTransfer(row)}>
                             <DeleteIcon />
                           </CustomButton>

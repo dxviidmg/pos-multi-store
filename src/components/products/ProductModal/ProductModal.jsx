@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import CustomModal from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
 import { getBrands } from "../../../api/brands";
-import { showSuccess, showError } from "../../../utils/alerts";
+import { showSuccess, showRequestError, showWarning } from "../../../utils/alerts";
 import {
   createProduct,
   getStoreProducts,
@@ -131,7 +131,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
     const file = e.target.files[0];
     if (file) {
       // Convertir a WebP (más ligero) antes de guardar; con fallback al original
-      const webpFile = await convertImageToWebp(file, { quality: 0.85, maxWidth: 1000, maxHeight: 1000 });
+      const webpFile = await convertImageToWebp(file);
       setFormValue("image", webpFile);
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -172,7 +172,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
               }
             }
           } catch (stockError) {
-            showError("Producto creado, pero hubo error al agregar stock");
+            showWarning("Producto creado sin stock inicial", "No se pudo agregar el stock. Ajústalo desde Inventario.");
           }
         }
         onClose();
@@ -182,7 +182,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
         showSuccess(`Producto ${formData.id ? "actualizado" : "creado"}${!user.multistore && user.store_id && initialStockValue ? ` con stock de ${initialStockValue}` : ""}`);
       }
     } catch (error) {
-      showError(`Error al ${formData.id ? "actualizar" : "crear"} producto`);
+      showRequestError(`${formData.id ? "actualizar" : "crear"} el producto`, error);
     } finally {
       setIsLoading(false);
     }
@@ -221,7 +221,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
     <CustomModal
       showOut={isOpen}
       onClose={onClose}
-      title={showStoreProducts ? "Stock del producto" : formData.id ? "Actualizar producto" : "Crear producto"}
+      title={showStoreProducts ? "Stock del producto" : formData.id ? "Editar producto" : "Crear producto"}
       maxWidth={950}
     >
       <Grid container sx={{ padding: '1rem', backgroundColor: 'modalBody.main' }}>
@@ -398,7 +398,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
 
               <Grid item xs={12} sx={{ mt: -1.5 }}>
                 <CustomButton
-                  fullWidth={true}
+                  fullWidth
                   onClick={(e) => handleProductSubmit(e)}
                   disabled={isFormIncomplete() || isCostHigher || isWholesaleHigher || isLoading || codeExists}
                   startIcon={<SaveIcon />}

@@ -186,7 +186,7 @@ const Dashboard = () => {
     return (
       <Box>
         <Box className="card" sx={{ mb: 3 }}>
-          <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>Tablero de Ventas</Typography>
+          <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>Tablero de ventas</Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>Procesando datos...</Typography>
           <LinearProgress
             variant={progress > 0 ? "determinate" : "indeterminate"}
@@ -221,7 +221,7 @@ const Dashboard = () => {
     return (
       <Box>
         <Box className="card">
-          <Typography variant="h4" sx={{ fontWeight: 700, mb: 2 }}>Tablero de Ventas</Typography>
+          <Typography variant="h4" sx={{ fontWeight: 700, mb: 2 }}>Tablero de ventas</Typography>
         <Filters {...{ metricType, setMetricType, year, setYear, month, setMonth }} />
         </Box>
         <Box sx={{
@@ -249,7 +249,7 @@ const Dashboard = () => {
       <Box className="card" sx={{ mb: 0 }}>
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 1, mb: 2 }}>
           <Box>
-            <Typography variant="h4" sx={{ fontWeight: 700 }}>Tablero de Ventas</Typography>
+            <Typography variant="h4" sx={{ fontWeight: 700 }}>Tablero de ventas</Typography>
             <Typography variant="body2" color="text.secondary">{periodLabel}</Typography>
           </Box>
         </Box>
@@ -294,7 +294,7 @@ const Dashboard = () => {
           <Grid item xs={6} md={3}>
             <Box className="card card-interactive" sx={{ height: "100%", mb: 0 }}>
               <KPICard 
-                title="Ticket Promedio"
+                title="Ticket promedio"
                 value={formatCurrency(kpis.totalAmount / kpis.totalSales)}
                 subtitle={`${kpis.totalSales} ventas`}
                 icon={ShoppingCartIcon}
@@ -321,7 +321,7 @@ const Dashboard = () => {
           <Grid item xs={6} md={3}>
             <Box className="card card-interactive" sx={{ height: "100%", mb: 0 }}>
               <KPICard 
-                title={month === 0 ? "Promedio por Mes" : "Promedio por Día"}
+                title={month === 0 ? "Promedio por mes" : "Promedio por día"}
                 value={month === 0 
                   ? (kpis.totalSales / 12).toFixed(0)
                   : (kpis.totalSales / kpis.daysInPeriod).toFixed(0)
@@ -361,7 +361,7 @@ const Dashboard = () => {
               <Box className="card card-interactive" sx={{ height: "100%", mb: 0 }}>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}>
                   <CalendarMonthIcon sx={{ fontSize: 18, color: "primary.main" }} />
-                  <Typography variant="body2" sx={{ fontWeight: 600, color: "text.secondary" }}>Día del Mes</Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 600, color: "text.secondary" }}>Día del mes</Typography>
                 </Box>
                 <Box sx={{ display: "flex", flexDirection: "column", gap: 0.75 }}>
                   <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
@@ -382,7 +382,7 @@ const Dashboard = () => {
               <Box className="card card-interactive" sx={{ height: "100%", mb: 0 }}>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}>
                   <CalendarMonthIcon sx={{ fontSize: 18, color: "primary.main" }} />
-                  <Typography variant="body2" sx={{ fontWeight: 600, color: "text.secondary" }}>Día de Semana</Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 600, color: "text.secondary" }}>Día de la semana</Typography>
                 </Box>
                 <Box sx={{ display: "flex", flexDirection: "column", gap: 0.75 }}>
                   <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
@@ -421,7 +421,7 @@ const Dashboard = () => {
 
       {storeComparison.length > 1 && (
         <Box className="card">
-          <Typography variant="h6" sx={{ fontWeight: 500, mb: 2 }}>Comparación por Tienda</Typography>
+          <Typography variant="h6" sx={{ fontWeight: 500, mb: 2 }}>Comparación por tienda</Typography>
           <TableContainer component={Paper} variant="outlined">
             <Table size="small">
               <TableHead>
@@ -432,14 +432,14 @@ const Dashboard = () => {
                       <TableCell align="right" sx={{ fontWeight: 600 }}>Ventas</TableCell>
                       <TableCell align="right" sx={{ fontWeight: 600 }}>Ganancias</TableCell>
                       <TableCell align="right" sx={{ fontWeight: 600 }}>Margen %</TableCell>
-                      <TableCell align="right" sx={{ fontWeight: 600 }}>Ticket Promedio</TableCell>
+                      <TableCell align="right" sx={{ fontWeight: 600 }}>Ticket promedio</TableCell>
                       <TableCell align="right" sx={{ fontWeight: 600 }}>Transacciones</TableCell>
                     </>
                   ) : (
                     <>
                       <TableCell align="right" sx={{ fontWeight: 600 }}>Transacciones</TableCell>
                       <TableCell align="right" sx={{ fontWeight: 600 }}>
-                        {month === 0 ? "Promedio por Mes" : "Promedio por Día"}
+                        {month === 0 ? "Promedio por mes" : "Promedio por día"}
                       </TableCell>
                     </>
                   )}
@@ -595,7 +595,7 @@ const Filters = ({ metricType, setMetricType, year, setYear, month, setMonth }) 
         <InputLabel>Métrica</InputLabel>
         <Select value={metricType} label="Métrica" onChange={(e) => setMetricType(e.target.value)}>
           <MenuItem value="total">Monto</MenuItem>
-          <MenuItem value="count">Cantidad de Transacciones</MenuItem>
+          <MenuItem value="count">Cantidad de transacciones</MenuItem>
         </Select>
       </FormControl>
     </Grid>

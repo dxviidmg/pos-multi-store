@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import SimpleTable from "../../ui/SimpleTable/SimpleTable";
 import CustomButton from "../../ui/Button/Button";
 import { importSales, importSalesValidation } from "../../../api/sales";
-import { showSuccess, showError } from "../../../utils/alerts";
+import { showSuccess, showRequestError } from "../../../utils/alerts";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import PageHeader from "../../ui/PageHeader";
 import DropZone from "../../ui/DropZone";
@@ -78,7 +78,7 @@ const SaleImport = () => {
     } catch (error) {
       setLoading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
-      showError("Error al validar", error.response?.data?.error || "Error al cargar archivo");
+      showRequestError("validar el archivo", error);
     }
   };
 
@@ -95,7 +95,7 @@ const SaleImport = () => {
       showSuccess("Ventas importadas");
     } catch (error) {
       setLoading(false);
-      showError("Error al importar", error.response?.data?.error || "Error al importar");
+      showRequestError("importar las ventas", error);
     }
   };
 

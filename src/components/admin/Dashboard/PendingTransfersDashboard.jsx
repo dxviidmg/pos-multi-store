@@ -92,7 +92,7 @@ const PendingTransfersDashboard = () => {
     return (
       <Box>
         <Box className="card" sx={{ mb: 3 }}>
-          <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>Traspasos Pendientes</Typography>
+          <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>Traspasos pendientes</Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>Procesando datos...</Typography>
           <LinearProgress variant={progress > 0 ? "determinate" : "indeterminate"} value={progress} sx={{ height: 6, borderRadius: 3, mb: 1 }} />
           <CountdownTimer seconds={countdown} />
@@ -112,7 +112,7 @@ const PendingTransfersDashboard = () => {
     return (
       <Box>
         <Box className="card" sx={{ mb: 3 }}>
-          <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>Traspasos Pendientes</Typography>
+          <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>Traspasos pendientes</Typography>
           <Typography variant="body2" color="text.secondary">{DESCRIPTION}</Typography>
         </Box>
         <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: 350, gap: 2, opacity: 0.7 }}>
@@ -126,7 +126,7 @@ const PendingTransfersDashboard = () => {
   return (
     <Box>
       <Box className="card" sx={{ mb: 3 }}>
-        <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>Traspasos Pendientes</Typography>
+        <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>Traspasos pendientes</Typography>
         <Typography variant="body2" color="text.secondary">{DESCRIPTION}</Typography>
       </Box>
 
@@ -178,15 +178,15 @@ const PendingTransfersDashboard = () => {
 
       <Box className="card" sx={{ mb: 0, mt: 3 }}>
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-          <Typography variant="h6" sx={{ fontWeight: 600 }}>Traspasos Pendientes</Typography>
-          <CustomButton onClick={handleDownload} disabled={!transfers?.length} startIcon={<DownloadIcon />} size="small">
+          <Typography variant="h6" sx={{ fontWeight: 600 }}>Traspasos pendientes</Typography>
+          <CustomButton onClick={handleDownload} disabled={!transfers?.length} startIcon={<DownloadIcon />}>
             Descargar
           </CustomButton>
         </Box>
         <DataTable
           progressPending={loading}
           noDataComponent="Sin traspasos pendientes"
-          searcher={true}
+          searcher
           data={transfers || []}
           columns={COLUMNS}
         />

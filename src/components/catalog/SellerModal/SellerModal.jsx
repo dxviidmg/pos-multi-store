@@ -133,7 +133,7 @@ const SellerModal = ({ isOpen, seller, onClose, onUpdate }) => {
     <CustomModal
       showOut={isOpen}
       onClose={onClose}
-      title={formData.id ? "Actualizar vendedor" : "Crear vendedor"}
+      title={formData.id ? "Editar vendedor" : "Crear vendedor"}
     >
       <Grid container sx={{ padding: '1rem', backgroundColor: 'modalBody.main' }}>
         <Grid item xs={12} className="card">
@@ -170,7 +170,7 @@ const SellerModal = ({ isOpen, seller, onClose, onUpdate }) => {
               <TextField size="small" fullWidth label="Usuario y contraseña" disabled type="text" value={formData.worker?.username} placeholder="Usuario" name="username" error={!!usernameError} helperText={usernameError} />
             </Grid>
             <Grid item xs={12} md={12}>
-              <CustomButton fullWidth={true} onClick={handleSubmit} disabled={isFormIncomplete()} marginTop="10px" startIcon={<SaveIcon />}>
+              <CustomButton fullWidth onClick={handleSubmit} disabled={isFormIncomplete()} startIcon={<SaveIcon />}>
                 {formData.id ? "Actualizar" : "Crear"} vendedor
               </CustomButton>
             </Grid>

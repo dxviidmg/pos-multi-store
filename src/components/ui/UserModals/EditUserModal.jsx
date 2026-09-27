@@ -4,7 +4,7 @@ import CustomButton from "../Button/Button";
 
 const EditUserModal = ({ open, onClose, userData, onChange, onSave }) => {
   return (
-    <CustomModal showOut={open} onClose={onClose} title="Editar Usuario">
+    <CustomModal showOut={open} onClose={onClose} title="Editar usuario">
       <Grid container sx={{ padding: '1rem', backgroundColor: 'modalBody.main' }}>
         <Grid item xs={12} className="card">
           <Grid container spacing={2}>
@@ -51,7 +51,7 @@ const EditUserModal = ({ open, onClose, userData, onChange, onSave }) => {
               />
             </Grid>
             <Grid item xs={12}>
-              <CustomButton onClick={onSave} variant="contained" fullWidth>
+              <CustomButton onClick={onSave} fullWidth>
                 Guardar
               </CustomButton>
             </Grid>

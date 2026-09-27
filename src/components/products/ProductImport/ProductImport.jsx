@@ -6,7 +6,7 @@ import {
   importProductsValidation,
 } from "../../../api/products";
 import CustomButton from "../../ui/Button/Button";
-import { showSuccess, showError } from "../../../utils/alerts";
+import { showSuccess, showRequestError } from "../../../utils/alerts";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import PageHeader from "../../ui/PageHeader";
 import DropZone from "../../ui/DropZone";
@@ -125,8 +125,7 @@ const ProductImport = () => {
     } catch (error) {
       setLoading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
-      const message = error.response?.data?.error || error.response?.data?.message || "Error al cargar archivo";
-      showError("Error al validar", message);
+      showRequestError("validar el archivo", error);
     }
   };
 
@@ -150,8 +149,7 @@ const ProductImport = () => {
       showSuccess("Productos importados");
     } catch (error) {
       setLoading(false);
-      const message = error.response?.data?.error || "Error al importar";
-      showError("Error al importar", message);
+      showRequestError("importar los productos", error);
     }
   };
 

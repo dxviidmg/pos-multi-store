@@ -3,8 +3,7 @@ import DataTable from "../../ui/DataTable/DataTable";
 import { getSellers } from "../../../api/sellers";
 import CustomButton from "../../ui/Button/Button";
 import SellerModal from "../SellerModal/SellerModal";
-import { getDateDifference, getFormattedDate } from "../../../utils/utils";
-import { chooseIcon } from "../../ui/Icons/Icons";
+import { getDateDifference, getFormattedDate, upsertById, formatCurrency } from "../../../utils/utils";
 import { useModal } from "../../../hooks/useModal";
 import { useUserManagement } from "../../../hooks/useUserManagement";
 import EditUserModal from "../../ui/UserModals/EditUserModal";
@@ -59,12 +58,7 @@ const SellerList = () => {
   }, [params]);
 
   const handleUpdateSellerList = (updated) => {
-    setSellers((prev) => {
-      const exists = prev.some((item) => item.id === updated.id);
-      return exists
-        ? prev.map((item) => (item.id === updated.id ? updated : item))
-        : [...prev, updated];
-    });
+    setSellers((prev) => upsertById(prev, updated));
   };
 
   const handleParams = (e) => {
@@ -103,7 +97,7 @@ const SellerList = () => {
         <Grid item xs={12} className="card">
           <PageHeader title="Vendedores">
             <CustomButton fullWidth onClick={() => sellerModal.open()} startIcon={<AddIcon />}>
-              Nuevo Vendedor
+              Nuevo vendedor
             </CustomButton>
           </PageHeader>
 
@@ -148,7 +142,7 @@ const SellerList = () => {
           <DataTable
             progressPending={loading}
             noDataComponent="Sin vendedores"
-            searcher={true}
+            searcher
             data={sellers}
             columns={[
               {
@@ -166,19 +160,19 @@ const SellerList = () => {
               },
               {
                 name: "Vendido",
-                selector: (row) => `$${row.total_sales}`,
+                selector: (row) => formatCurrency(row.total_sales),
               },
               ...(user?.role === "owner" ? [{
                 name: "Acciones",
                 cell: (row) => (
                   <>
                     <CustomTooltip text="Editar usuario">
-                      <CustomButton size="small" onClick={() => handleOpenEditUser(row.worker.id)}>
+                      <CustomButton onClick={() => handleOpenEditUser(row.worker.id)}>
                         <EditIcon />
                       </CustomButton>
                     </CustomTooltip>
                     <CustomTooltip text="Cambiar contraseña">
-                      <CustomButton size="small" onClick={() => handleOpenChangePassword(row.worker.id)}>
+                      <CustomButton onClick={() => handleOpenChangePassword(row.worker.id)}>
                         <LockResetIcon />
                       </CustomButton>
                     </CustomTooltip>

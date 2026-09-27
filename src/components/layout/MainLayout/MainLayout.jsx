@@ -26,7 +26,6 @@ import ExpandMore from "@mui/icons-material/ExpandMore";
 import MenuIcon from "@mui/icons-material/Menu";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
-import NewspaperIcon from "@mui/icons-material/Newspaper";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
@@ -42,14 +41,12 @@ import InventoryIcon from "@mui/icons-material/Inventory";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import StoreIcon from "@mui/icons-material/Store";
 import EngineeringIcon from "@mui/icons-material/Engineering";
-import PaymentsIcon from "@mui/icons-material/Payments";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
 import SyncIcon from "@mui/icons-material/Sync";
 import MiscellaneousServicesIcon from "@mui/icons-material/MiscellaneousServices";
 import LogoutIcon from "@mui/icons-material/Logout";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import DescriptionIcon from "@mui/icons-material/Description";
 import PolicyIcon from "@mui/icons-material/Policy";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import HistoryIcon from "@mui/icons-material/History";
@@ -60,12 +57,12 @@ import NotificationsMenu from "../../ui/NotificationsMenu/NotificationsMenu";
 import PendingMenu from "../../ui/PendingMenu/PendingMenu";
 import DuplicateSalesMenu from "../../ui/DuplicateSalesMenu/DuplicateSalesMenu";
 import StockRequestMenu from "../../ui/StockRequestMenu/StockRequestMenu";
+import { logger } from "../../../utils/logger";
 
 const iconMap = {
   Vender: <ShoppingCartIcon />,
   Ventas: <ReceiptIcon />,
   Clientes: <PersonSearchIcon />,
-  Dashboard: <BarChartIcon />,
   Tableros: <BarChartIcon />,
   Tienda: <LocalShippingIcon />,
   Distribuciones: <LocalShippingIcon />,
@@ -75,12 +72,10 @@ const iconMap = {
   Productos: <InventoryIcon />,
   Tiendas: <StoreIcon />,
   Vendedores: <EngineeringIcon />,
-  Mensualidades: <PaymentsIcon />,
-  Logs: <DescriptionIcon />,
   Servicios: <MiscellaneousServicesIcon />,
   Sincronizar: <SyncIcon />,
   Distribuir: <LocalShippingIcon />,
-  Auditoria: <PolicyIcon />,
+  "Auditoría": <PolicyIcon />,
   Facturación: <ReceiptIcon />,
   Regresar: <ArrowBackIcon />,
   "Historial de stock": <HistoryIcon />,
@@ -169,7 +164,7 @@ const DrawerModal = styled(MuiDrawer)(({ theme }) => ({
   },
 }));
 
-export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
+export default function MainLayout({ toggleTheme, themeMode }) {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout, updateUser } = useUser();
@@ -226,7 +221,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
         const response = await getStores();
         setStores(response.data || []);
       } catch (error) {
-        console.error("Error al obtener tiendas:", error);
+        logger.error("Error al obtener tiendas:", error);
         setStores([]);
       } finally {
         setLoadingStores(false);
@@ -324,7 +319,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
           { label: "Departamentos", href: "/departamentos/", hidden: user.role === "seller" },
           { label: "Reasignación", href: "/reasignacion/", hidden: user.role === "seller" },
           { divider: true, hidden: user.role === "seller" },
-          { label: "Importar Productos", href: "/importar-productos/", hidden: user.role === "seller" },
+          { label: "Importar productos", href: "/importar-productos/", hidden: user.role === "seller" },
           { label: "Importar inventario", href: "/importar-inventario/", hidden: user.role === "seller" },
           { divider: true },
           { label: "Solicitudes de ajustes de stock", href: "/solicitudes-ajustes-stock/", hidden: user.role === "seller"},
@@ -334,7 +329,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
       },
 
       {
-        label: "Auditoria",
+        label: "Auditoría",
         dropdown: [
           { label: "Inventario a verificar", href: "/auditoria-inventario/" },
         ],
@@ -382,7 +377,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
           { label: "Marcas", href: "/marcas/" },
           { label: "Departamentos", href: "/departamentos/" },
           { divider: true },
-          { label: "Importar Productos", href: "/importar-productos/" },
+          { label: "Importar productos", href: "/importar-productos/" },
           { label: "Importar inventario", href: "/importar-inventario/" },
           { divider: true },
           { label: "Solicitudes de ajustes de stock", href: "/solicitudes-ajustes-stock/" },
@@ -390,7 +385,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
         ],
       },
       {
-        label: "Auditoria",
+        label: "Auditoría",
         dropdown: [
           { label: "Inventario a verificar", href: "/auditoria-inventario/", hidden: user.role === "seller" },
         ],
@@ -405,7 +400,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
           { label: "Ventas canceladas", href: "/tablero-ventas-ajustadas-cancelaciones/" },
           { label: "Verificación de stock", href: "/tablero-verificacion-stock/" },
           { label: "Marcas y productos", href: "/tablero-productos/" },
-          { label: "Transpasos pendientes", href: "/tablero-traspasos-pendientes/" },
+          { label: "Traspasos pendientes", href: "/tablero-traspasos-pendientes/" },
         ],
       },
       { label: "Tiendas", href: "/tiendas/" },
@@ -421,14 +416,14 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
           { label: "Departamentos", href: "/departamentos/" },
           { label: "Reasignación", href: "/reasignacion/" },
           { divider: true },
-          { label: "Importar Productos", href: "/importar-productos/" },
+          { label: "Importar productos", href: "/importar-productos/" },
           { divider: true },
           { label: "Solicitudes de ajustes de stock", href: "/solicitudes-ajustes-stock/" },
           { label: "Historial de cambio de precios", href: "/historial-precios/" },
         ],
       },
       {
-        label: "Auditoria",
+        label: "Auditoría",
         dropdown: [
           { label: "Productos", href: "/auditoria-productos/" },
           { label: "Transacciones", href: "/auditoria-transacciones/" },
@@ -438,7 +433,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
       {
         label: "Facturación",
         dropdown: [
-          { label: "Mi Plan Actual", href: "/mi-plan-actual/" },
+          { label: "Mi plan actual", href: "/mi-plan-actual/" },
           { label: "Historial de pagos", href: "/pagos/" },
           { label: "Suscripciones", href: "/suscripciones/" },
         ],

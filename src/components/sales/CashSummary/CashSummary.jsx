@@ -2,29 +2,28 @@ import React, { useEffect, useState, useCallback } from "react";
 import SimpleTable from "../../ui/SimpleTable/SimpleTable";
 import CustomButton from "../../ui/Button/Button";
 import { useUser } from "../../../context/UserContext";
-import { exportToExcel, getFormattedDate } from "../../../utils/utils";
+import { exportToExcel, getFormattedDate, formatCurrency } from "../../../utils/utils";
 import { getCashSummary } from "../../../api/sales";
 import { getCashFlow } from "../../../api/cashflow";
 import { getDuplicateSales } from "../../../api/notifications";
-import { showAlert } from "../../../utils/alerts";
-import CashFlowModal from "../../cashflow/CashFlowModal/CashFlowModal";
-import { useModal } from "../../../hooks/useModal";
+import { showWarning } from "../../../utils/alerts";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
+import PageHeader from "../../ui/PageHeader";
 import { Grid, TextField, Box, Typography, Stack } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
 import PaymentIcon from "@mui/icons-material/Payment";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
 import ReceiptIcon from "@mui/icons-material/Receipt";
+import { logger } from "../../../utils/logger";
 
 const summaryColumns = [
   { name: "Tipo", selector: (row) => row.name },
-  { name: "Cantidad", selector: (row) => "$" + row.amount },
+  { name: "Cantidad", selector: (row) => formatCurrency(row.amount) },
 ];
 
 const CashSummary = () => {
   const { user } = useUser();
-  const cashFlowModal = useModal();
   const [cashSummary, setCashSummary] = useState([]);
   const [paymentMethodsSummary, setPaymentMethodsSummary] = useState([]);
   const [salesSummary, setSalesSummary] = useState([]);
@@ -72,10 +71,10 @@ const CashSummary = () => {
         const { data } = await getDuplicateSales();
         if (data && data.length > 0 && data[0].messages && data[0].messages.length > 0) {
           const message = `${data[0].messages.join(", ")}\n\nPosiblemente no cuadren las cuentas por esas ventas duplicadas.`;
-          showAlert("Atención", message);
+          showWarning("Posibles ventas duplicadas", message);
         }
       } catch (err) {
-        console.error("Error fetching duplicate sales:", err);
+        logger.error("Error fetching duplicate sales:", err);
       }
     };
     fetchDuplicates();
@@ -86,22 +85,13 @@ const CashSummary = () => {
     exportToExcel(cashSummary, `Corte de caja ${user?.store_name} ${dateFile}`, false);
   };
 
-  const handleUpdateCashFlowList = (updated) => {
-    setCashFlow((prev) => {
-      const exists = prev.some((item) => item.id === updated.id);
-      return exists
-        ? prev.map((item) => (item.id === updated.id ? updated : item))
-        : [...prev, updated];
-    });
-  };
-
   const totalColumns = [
     { name: "Tipo", selector: (row) => row.name },
     {
       name: "Cantidad",
       selector: (row) => {
         const noPrefix = ["Número de ventas", "Ventas canceladas", "Distribuciones pendientes", "Traspasos pendientes"];
-        return noPrefix.includes(row.name) ? row.amount : "$" + row.amount;
+        return noPrefix.includes(row.name) ? row.amount : formatCurrency(row.amount);
       },
     },
   ];
@@ -109,20 +99,13 @@ const CashSummary = () => {
   return (
     <>
       <CustomSpinner isLoading={loading} />
-      <CashFlowModal
-        isOpen={cashFlowModal.isOpen}
-        cashFlow={cashFlowModal.data}
-        onClose={cashFlowModal.close}
-        onUpdate={handleUpdateCashFlowList}
-      />
 
       <Grid item xs={12} className="card">
-        <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
-          <Typography variant="h4" component="h1">Corte de caja</Typography>
-          <CustomButton onClick={handleExport} startIcon={<DownloadIcon />}>
+        <PageHeader title="Corte de caja">
+          <CustomButton fullWidth onClick={handleExport} startIcon={<DownloadIcon />}>
             Descargar corte
           </CustomButton>
-        </Stack>
+        </PageHeader>
 
         <Box sx={{ mb: 3, maxWidth: 300 }}>
           <TextField

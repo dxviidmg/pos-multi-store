@@ -16,6 +16,8 @@ import httpClient from "../../../api/httpClient";
 import { getApiUrl } from "../../../api/utils";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
+import { logger } from "../../../utils/logger";
+import { formatCurrency } from "../../../utils/utils";
 
 const MyCurrentPlan = () => {
   const { user, logout } = useUser();
@@ -88,7 +90,7 @@ const MyCurrentPlan = () => {
         const res = await httpClient.get(getApiUrl("tenant-dates"));
         if (res.status === 200) setTenantDates(res.data);
       } catch (err) {
-        console.error("Error fetching tenant dates:", err);
+        logger.error("Error fetching tenant dates:", err);
       }
     };
     fetchDates();
@@ -116,7 +118,7 @@ const MyCurrentPlan = () => {
               paymentModal.close();
               setPlan((prev) => ({ ...prev, plan: equivalent, has_plan: true }));
               setEquivalent(null);
-              showSuccess("¡Suscripción activada exitosamente!");
+              showSuccess("¡Suscripción activada!");
             } else {
               setResult({ success: false, message: "Error al crear la suscripción." });
             }
@@ -254,7 +256,7 @@ const MyCurrentPlan = () => {
 
       <Grid item xs={12} className="card">
         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
-          <h1>Mi Plan Actual</h1>
+          <h1>Mi plan actual</h1>
           {plan?.plan?.billing_type === "S" ? (
             <Chip icon={<CheckCircleIcon />} label="Domiciliación activada" color="success" variant="filled" />
           ) : equivalent ? (
@@ -266,7 +268,7 @@ const MyCurrentPlan = () => {
               size="small"
               sx={{ bgcolor: 'success.main', '&:hover': { bgcolor: 'success.dark' } }}
             >
-              Domiciliar (Ahorra ${plan.plan.price - equivalent.price} MXN/mes)
+              Domiciliar (Ahorra {formatCurrency(plan.plan.price - equivalent.price)} MXN/mes)
             </Button>
           ) : null}
         </Stack>
@@ -280,12 +282,12 @@ const MyCurrentPlan = () => {
             {plan?.has_plan && (
               <Box sx={{ mb: 2 }}>
                 <Typography variant="h6" sx={{ mb: 2 }}>
-                  Plan Actual: {plan.plan.name}
+                  Plan actual: {plan.plan.name}
                 </Typography>
                   <Grid container spacing={3}>
                     <Grid item xs={12} sm={6} md={3}>
                       <Typography variant="body2" color="textSecondary">Precio</Typography>
-                      <Typography variant="body1">${plan.plan.price} MXN/mes</Typography>
+                      <Typography variant="body1">{formatCurrency(plan.plan.price)} MXN/mes</Typography>
                     </Grid>
                     <Grid item xs={12} sm={6} md={3}>
                       <Typography variant="body2" color="textSecondary">Sucursales</Typography>
@@ -387,7 +389,7 @@ const MyCurrentPlan = () => {
 
       <Grid item xs={12} className="card" sx={{ mt: 3 }}>
         <Typography variant="h6" sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
-          <CalendarTodayIcon fontSize="small" /> Fechas del Negocio
+          <CalendarTodayIcon fontSize="small" /> Fechas del negocio
         </Typography>
         {tenantDates ? (
               <Grid container spacing={3}>
@@ -466,7 +468,7 @@ const MyCurrentPlan = () => {
           )}
           {equivalent && !result?.success && (
             <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
-              Se activará cobro recurrente de <strong>${equivalent.price} MXN/mes</strong>
+              Se activará cobro recurrente de <strong>{formatCurrency(equivalent.price)} MXN/mes</strong>
             </Typography>
           )}
           <div id="mp-bricks-container" />

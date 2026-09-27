@@ -5,6 +5,7 @@ import SimpleTable from "../../ui/SimpleTable/SimpleTable";
 import { useCancelSale } from "../../../hooks/useSaleMutations";
 import { Grid, TextField, Checkbox, FormControlLabel, Typography } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import { formatCurrency } from "../../../utils/utils";
 
 const INITIAL_FORM_DATA = {
   products_sale: [],
@@ -107,7 +108,7 @@ const SaleModal = ({ isOpen, sale, onClose, onUpdate }) => {
             />
           </Grid>
           <Grid item xs={12} md={2}>
-            <TextField size="small" fullWidth label="Total" type="text" value={formData.total} disabled />
+            <TextField size="small" fullWidth label="Total" type="text" value={formatCurrency(formData.total)} disabled />
           </Grid>
           <Grid item xs={12} md={4}>
             <TextField size="small" fullWidth label="Creación" type="text" value={formData.created_at} disabled />
@@ -122,7 +123,7 @@ const SaleModal = ({ isOpen, sale, onClose, onUpdate }) => {
           {isReservation ? (
             <Grid item xs={12} md={4}>
               <Typography variant="body2" sx={{ fontWeight: 600, mt: 1 }}>
-                Devolver al cliente: <span style={{ color: "var(--color-primary)", fontSize: "1.1rem" }}>${cashBack?.toFixed(2)}</span>
+                Devolver al cliente: <span style={{ color: "var(--color-primary)", fontSize: "1.1rem" }}>{formatCurrency(cashBack)}</span>
               </Typography>
             </Grid>
           ) : (
@@ -165,8 +166,8 @@ const SaleModal = ({ isOpen, sale, onClose, onUpdate }) => {
                     />
                   ),
                 }] : []),
-                { name: "Precio unitario", selector: (row) => `$${row.price}` },
-                { name: "Importe", selector: (row) => `$${row.price * row.quantity}` },
+                { name: "Precio unitario", selector: (row) => formatCurrency(row.price) },
+                { name: "Importe", selector: (row) => formatCurrency(row.price * row.quantity) },
               ]}
             />
           </Grid>
@@ -175,7 +176,6 @@ const SaleModal = ({ isOpen, sale, onClose, onUpdate }) => {
             <CustomButton
               fullWidth
               onClick={handleSaveClient}
-              marginTop="10px"
               disabled={disabledButton()}
               startIcon={<ShoppingCartIcon />}
             >

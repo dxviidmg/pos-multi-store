@@ -95,8 +95,6 @@ const ConversionList = () => {
       width: 130,
       cell: (row) => (
         <CustomButton
-          size="small"
-          variant="contained"
           onClick={() => handleApply(row)}
           startIcon={<UnarchiveIcon />}
           disabled={applyMutation.isPending}
@@ -111,12 +109,12 @@ const ConversionList = () => {
       cell: (row) => (
         <Box sx={{ display: "flex", gap: 0.5 }}>
           <CustomTooltip text="Editar">
-            <CustomButton size="small" onClick={() => modal.open(row)}>
+            <CustomButton onClick={() => modal.open(row)}>
               <EditIcon />
             </CustomButton>
           </CustomTooltip>
           <CustomTooltip text="Eliminar">
-            <CustomButton size="small" onClick={() => handleDelete(row.id)}>
+            <CustomButton onClick={() => handleDelete(row.id)}>
               <DeleteIcon />
             </CustomButton>
           </CustomTooltip>
@@ -129,10 +127,8 @@ const ConversionList = () => {
     <>
       <CustomSpinner isLoading={isLoading} />
       <Box className="card">
-        <PageHeader title="Conversiones de Producto">
+        <PageHeader title="Conversiones de producto">
           <CustomButton
-            size="small"
-            variant="contained"
             onClick={() => modal.open()}
             startIcon={<AddIcon />}
           >

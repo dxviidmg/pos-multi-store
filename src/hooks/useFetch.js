@@ -80,14 +80,6 @@ export const useFetch = (fetchFn, options = {}) => {
 };
 
 /**
- * Hook para fetch de listas (arrays)
- * Alias de useFetch con initialData = []
- */
-export const useFetchList = (fetchFn, options = {}) => {
-  return useFetch(fetchFn, { ...options, initialData: [] });
-};
-
-/**
  * Hook para fetch con reintentos
  * Alias de useFetch con maxRetries configurado
  */

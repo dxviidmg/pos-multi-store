@@ -43,6 +43,42 @@ h1, h2, h3 {
   animation: fade-in-up 0.45s var(--ease-out) both;
 }
 
+@keyframes fade-in-left {
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.fade-in-left {
+  animation: fade-in-left 0.3s ease both;
+}
+
+/* Brief emphasis when a value changes; remount the element (key) to replay */
+@keyframes value-pop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+.value-pop {
+  display: inline-block;
+  animation: value-pop 0.3s var(--ease-out);
+}
+
+@keyframes badge-pop {
+  0% { transform: scale(0) translate(50%, -50%); }
+  70% { transform: scale(1.2) translate(50%, -50%); }
+  100% { transform: scale(1) translate(50%, -50%); }
+}
+
+@keyframes dropdown-enter {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dropdown-enter {
+  animation: dropdown-enter 0.18s var(--ease-out) both;
+}
+
 @keyframes page-enter {
   from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: none; }
@@ -68,12 +104,6 @@ h1, h2, h3 {
 }
 
 /* Utility classes */
-.flex-between {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
 .status-dot { font-size: 18px; }
 .status-dot--success { color: #16a34a; }
 .status-dot--danger { color: #dc2626; }
@@ -99,14 +129,6 @@ h1, h2, h3 {
   word-wrap: break-word;
   line-height: 1.3;
   padding: 2px 0;
-}
-
-/* Modal content */
-.modal-content {
-  background: var(--color-paper);
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-md);
-  text-align: center;
 }
 
 /* Layout */

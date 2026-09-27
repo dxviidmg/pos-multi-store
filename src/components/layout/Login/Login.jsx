@@ -5,7 +5,6 @@ import { useUser } from "../../../context/UserContext";
 import CustomButton from "../../ui/Button/Button";
 import Logo from "../../../assets/images/logo.webp";
 import { colors } from "../../../theme/colors";
-import './Login.css';
 import {
   TextField, Box, Alert, Paper, Stack, Typography,
   IconButton, InputAdornment, Button,
@@ -15,7 +14,7 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import LoginIcon from "@mui/icons-material/Login";
 
-function Login({ onLogin }) {
+function Login() {
   const navigate = useNavigate();
   const { login } = useUser();
   const [state, setState] = useState({
@@ -53,7 +52,7 @@ function Login({ onLogin }) {
           navigate("/vender/");
         }
       } else {
-        showAlert("Usuario o contraseña incorrecta");
+        showAlert("Usuario o contraseña incorrectos.");
       }
     } catch (error) {
       const status = error.response?.status;
@@ -64,9 +63,9 @@ function Login({ onLogin }) {
       } else if (status === 403 && code === "subscription_expired") {
         showAlert("La suscripción del negocio venció. Contacta al propietario para reactivarla.");
       } else if (status === 400) {
-        showAlert("Usuario o contraseña incorrecta");
+        showAlert("Usuario o contraseña incorrectos.");
       } else {
-        showAlert("Error desconocido, intente nuevamente.");
+        showAlert("No se pudo iniciar sesión. Intenta de nuevo.");
       }
     }
   };

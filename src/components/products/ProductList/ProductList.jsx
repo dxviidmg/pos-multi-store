@@ -4,12 +4,12 @@ import { deleteProducts, getProducts, updateProduct, upperCodeProducts } from ".
 import CustomButton from "../../ui/Button/Button";
 import { useModal } from "../../../hooks/useModal";
 import ProductModal from "../ProductModal/ProductModal";
-import { exportToExcel } from "../../../utils/utils";
+import { exportToExcel, upsertById, formatCurrency } from "../../../utils/utils";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { getBrands } from "../../../api/brands";
 import { getDepartments } from "../../../api/departments";
 import { useUser } from "../../../context/UserContext";
-import { showSuccess, showError, showConfirm } from "../../../utils/alerts";
+import { showSuccess, showConfirm, showRequestError, showWarning } from "../../../utils/alerts";
 import CustomTooltip from "../../ui/Tooltip";
 import PageHeader from "../../ui/PageHeader";
 import { Grid, TextField, Autocomplete, Select, MenuItem, useMediaQuery, useTheme } from "@mui/material";
@@ -26,7 +26,8 @@ import CameraAltIcon from "@mui/icons-material/CameraAlt";
 import PriceLogsModal from "../PriceLogsModal/PriceLogsModal";
 import PriceUpdateModal from "../PriceUpdateModal/PriceUpdateModal";
 import ProductViewToggle from "./ProductViewToggle";
-import ProductGallery from "./ProductGallery";
+import ProductGridCard from "./ProductGridCard";
+import CardGallery from "../../ui/CardGallery/CardGallery";
 import { useViewModePreference } from "../../../hooks/useViewModePreference";
 import { convertImageToWebp } from "../../../utils/image";
 
@@ -41,7 +42,7 @@ const ProductList = () => {
   const [optionsLoaded, setOptionsLoaded] = useState(false);
   const [params, setParams] = useState({});
   const [selectedRows, setSelectedRows] = useState([]);
-  const [viewModePref, setViewModePref] = useViewModePreference("productList.viewMode", "table");
+  const [viewModePref, setViewModePref] = useViewModePreference("productList.viewMode");
   const viewMode = isMobile ? "gallery" : viewModePref;
   const [searchField, setSearchField] = useState("code");
   const productModal = useModal();
@@ -72,12 +73,7 @@ const ProductList = () => {
     // Guardar posición del scroll antes de actualizar
     const scrollTop = document.querySelector('[role="grid"]')?.scrollTop || 0;
     
-    setProducts((prev) => {
-      const exists = prev.some((item) => item.id === updated.id);
-      return exists
-        ? prev.map((item) => (item.id === updated.id ? updated : item))
-        : [...prev, updated];
-    });
+    setProducts((prev) => upsertById(prev, updated));
 
     // Restaurar posición del scroll después de la actualización
     setTimeout(() => {
@@ -131,7 +127,7 @@ const ProductList = () => {
   const handleDeleteProducts = async () => {
     const stockCount = selectedRows.reduce((sum, el) => sum + el.stock, 0);
     if (stockCount > 0) {
-      showError("Error al borrar productos", "Los productos no deben tener stock cero para ser borrados");
+      showWarning("No se pudo eliminar los productos", "Solo se pueden eliminar productos sin stock.");
       return;
     }
     const confirmed = await showConfirm("¿Eliminar productos seleccionados?", `Se eliminarán ${selectedRows.length} producto(s)`);
@@ -144,7 +140,7 @@ const ProductList = () => {
       setProducts((prev) => prev.filter((p) => !selectedIds.includes(p.id)));
       showSuccess("Productos eliminados");
     } else {
-      showError("Error al borrar productos");
+      showRequestError("eliminar los productos", response);
     }
   };
 
@@ -169,14 +165,14 @@ const ProductList = () => {
     if (!file || !product) return;
 
     try {
-      const webpFile = await convertImageToWebp(file, { quality: 0.85, maxWidth: 1000, maxHeight: 1000 });
+      const webpFile = await convertImageToWebp(file);
       const response = await updateProduct({ id: product.id, image: webpFile });
       if (response.status === 200) {
         handleUpdateProductList(response.data);
         showSuccess("Imagen actualizada");
       }
-    } catch {
-      showError("Error al actualizar imagen");
+    } catch (error) {
+      showRequestError("actualizar la imagen", error);
     }
   };
 
@@ -186,7 +182,7 @@ const ProductList = () => {
       await fetchProducts();
       showSuccess("Códigos pasaron a mayúsculas");
     } else {
-      showError("Error al procesar códigos de productos");
+      showRequestError("pasar los códigos a mayúsculas", response);
     }
   };
 
@@ -209,7 +205,7 @@ const ProductList = () => {
         <Grid item xs={12} className="card">
           <PageHeader title="Productos">
             <CustomButton fullWidth onClick={() => productModal.open({ product: null, showStoreProducts: false })} startIcon={<AddIcon />}>
-              Nuevo Producto
+              Nuevo producto
             </CustomButton>
           </PageHeader>
 
@@ -342,19 +338,24 @@ const ProductList = () => {
           </Grid>
 
           {viewMode === "gallery" ? (
-            <ProductGallery
-              products={products}
+            <CardGallery
+              items={products}
               loading={loading}
-              onEdit={handleEditProduct}
-              onPriceLogs={handlePriceLogs}
-              onStoreStock={handleStoreStock}
-              onCameraPhoto={handleCameraClick}
-              role={user.role}
+              emptyText="Sin productos"
+              renderItem={(product) => (
+                <ProductGridCard
+                  product={product}
+                  onEdit={handleEditProduct}
+                  onPriceLogs={handlePriceLogs}
+                  onStoreStock={handleStoreStock}
+                  onCameraPhoto={handleCameraClick}
+                  role={user.role}
+                />
+              )}
             />
           ) : (
             <DataTable
               setSelectedRows={setSelectedRows}
-              searcher={false}
               progressPending={loading}
               noDataComponent="Sin productos"
               data={products}
@@ -368,8 +369,8 @@ const ProductList = () => {
                   name: "Precios",
                   cell: (row) => (
                     row.apply_wholesale
-                      ? <>Men: ${row.unit_price}<br />May: ${row.wholesale_price} ({row.min_wholesale_quantity}+)</>
-                      : `$${row.unit_price}`
+                      ? <>Men: {formatCurrency(row.unit_price)}<br />May: {formatCurrency(row.wholesale_price)} ({row.min_wholesale_quantity}+)</>
+                      : formatCurrency(row.unit_price)
                   ),
                 },
                 ...(user.role !== "seller" ? [{

@@ -17,17 +17,17 @@ const clientErrorParser = (error) => {
       return 'El teléfono debe tener al menos 10 dígitos.';
     }
     if (phoneError === 'client with this phone number already exists.') {
-      return 'El teléfono ya existe.';
+      return 'El teléfono ya está registrado.';
     }
   }
-  return 'Error desconocido. Por favor, contacte soporte.';
+  return null;
 };
 
 export const useCreateClient = (options = {}) => {
   return useCrudMutation(createClient, {
     queryKey: 'clients',
     successMessage: 'Cliente creado',
-    errorMessage: 'Error al guardar cliente',
+    errorAction: 'crear el cliente',
     errorParser: clientErrorParser,
     ...options,
   });

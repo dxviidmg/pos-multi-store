@@ -3,7 +3,7 @@ import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { getBrands } from "../../../api/brands";
 import { getDepartments } from "../../../api/departments";
 import { reassignProducts } from "../../../api/products";
-import { showSuccess, showError } from "../../../utils/alerts";
+import { showSuccess, showRequestError } from "../../../utils/alerts";
 import { useForm } from "../../../hooks/useForm";
 import CustomButton from "../../ui/Button/Button";
 import { Grid, Select, MenuItem, FormControl, InputLabel} from "@mui/material";
@@ -55,7 +55,7 @@ const ProductReassign = () => {
       reset();
       showSuccess("Productos reasignados");
     } else {
-      showError("Error al reasignar productos");
+      showRequestError("reasignar los productos", response);
     }
   };
 
@@ -105,8 +105,8 @@ const ProductReassign = () => {
           </Grid>
           <Grid item xs={12} md={3}>
             <FormControl fullWidth size="small">
-              <InputLabel>Borrar origen</InputLabel>
-              <Select value={params.delete_origin} onChange={handleDataChange} name="delete_origin" label="Borrar origen">
+              <InputLabel>Eliminar origen</InputLabel>
+              <Select value={params.delete_origin} onChange={handleDataChange} name="delete_origin" label="Eliminar origen">
                 <MenuItem value="">Selecciona</MenuItem>
                 {DELETE_ORIGIN.map((opt) => (
                   <MenuItem key={String(opt.value)} value={opt.value}>{opt.label}</MenuItem>

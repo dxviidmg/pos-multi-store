@@ -59,15 +59,13 @@ function App({ toggleTheme, themeMode }) {
   const isLoggedIn = !!user;
   const accessBlocked = !!user?.access_blocked;
 
-  const handleLogin = () => {};
-
   return (
     <Router>
       <Routes>
         {isLoggedIn ? (
           accessBlocked ? (
             // Negocio vencido: solo rutas de pago/renovación disponibles
-            <Route element={<MainLayout toggleTheme={toggleTheme} themeMode={themeMode} onLoginSuccess={handleLogin} />}>
+            <Route element={<MainLayout toggleTheme={toggleTheme} themeMode={themeMode} />}>
               <Route path="/mi-plan-actual/" element={<Lazy><MyCurrentPlan /></Lazy>} />
               <Route path="/suscripciones/" element={<Lazy><SubscriptionList /></Lazy>} />
               <Route path="/pagos/" element={<Lazy><TenantPaymentList /></Lazy>} />
@@ -75,7 +73,7 @@ function App({ toggleTheme, themeMode }) {
               <Route path="*" element={<Navigate to="/mi-plan-actual/" replace />} />
             </Route>
           ) : (
-          <Route element={<MainLayout toggleTheme={toggleTheme} themeMode={themeMode} onLoginSuccess={handleLogin} />}>
+          <Route element={<MainLayout toggleTheme={toggleTheme} themeMode={themeMode} />}>
             <Route path="/tiendas/" element={<Lazy><StoreList /></Lazy>} />
             <Route path="/ventas/" element={<Lazy><SaleList /></Lazy>} />
             <Route path="/apartados/" element={<Lazy><ReservationList /></Lazy>} />
@@ -123,7 +121,7 @@ function App({ toggleTheme, themeMode }) {
         ) : (
           <>
           <Route path="/registrarme/" element={<Suspense fallback={<LoadingFallback />}><Registration /></Suspense>} />
-          <Route path="*" element={<Login onLogin={handleLogin} />} />
+          <Route path="*" element={<Login />} />
           </>
         )}
       </Routes>

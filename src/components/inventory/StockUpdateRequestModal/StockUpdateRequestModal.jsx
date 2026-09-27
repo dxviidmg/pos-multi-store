@@ -3,7 +3,7 @@ import CustomModal from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
 import { Grid, TextField } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
-import { showSuccess, showError } from "../../../utils/alerts";
+import { showSuccess, showRequestError } from "../../../utils/alerts";
 import httpClient from "../../../api/httpClient";
 import { getApiUrl } from "../../../api/utils";
 
@@ -23,8 +23,7 @@ const StockUpdateRequestModal = ({ isOpen, storeProduct, onClose }) => {
       setRequestedStock("");
       onClose();
     } catch (err) {
-      const msg = err.response?.data?.error || "No se pudo enviar la solicitud";
-      showError("Error", msg);
+      showRequestError("enviar la solicitud", err);
       if (err.response?.status === 400) onClose();
     }
     setLoading(false);
@@ -40,8 +39,7 @@ const StockUpdateRequestModal = ({ isOpen, storeProduct, onClose }) => {
       showSuccess("Solicitud enviada");
       onClose();
     } catch (err) {
-      const msg = err.response?.data?.error || "No se pudo enviar la solicitud";
-      showError("Error", msg);
+      showRequestError("enviar la solicitud", err);
     }
     setLoading(false);
   };

@@ -37,7 +37,7 @@ export const useCartActions = (getAvailableStock, movementType, keepListOpen, se
             setQuery("");
           }
         } else {
-          showWarning("Stock insuficiente", `Este producto ya está reservado en otros carritos. Stock disponible: ${availableStock}`);
+          showWarning("No se pudo agregar el producto", `Está reservado en otros carritos. Stock disponible: ${availableStock}`);
         }
       }
     } else {
