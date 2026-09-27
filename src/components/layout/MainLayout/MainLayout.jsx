@@ -244,9 +244,15 @@ export default function MainLayout({ toggleTheme, themeMode }) {
         updateUser({
           store_id: storeId,
           store_name: selectedStore.full_name || selectedStore.name,
-          store_type: "T"
+          store_type: selectedStore.store_type,
         });
         window.dispatchEvent(new Event("store-changed"));
+
+        // Tienda y almacén tienen menús distintos: al cambiar de tipo, la página actual
+        // puede no existir en el nuevo menú, así que vamos a la inicial de ese tipo.
+        if (selectedStore.store_type !== user.store_type) {
+          navigate(selectedStore.store_type === "A" ? "/distribuir/" : "/vender/", { replace: true });
+        }
 
         setSwitchingStore(false);
       }
