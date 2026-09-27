@@ -279,7 +279,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
   const isDashboardRestricted =
   user?.tenant_short_name !== 'demo' &&
   user &&
-  user.store_count > 1 &&
+  user.multistore &&
   currentHour >= 10 &&
   currentHour < 21;
 
