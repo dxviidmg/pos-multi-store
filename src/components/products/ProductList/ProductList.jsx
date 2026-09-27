@@ -12,7 +12,7 @@ import { useUser } from "../../../context/UserContext";
 import { showSuccess, showError, showConfirm } from "../../../utils/alerts";
 import CustomTooltip from "../../ui/Tooltip";
 import PageHeader from "../../ui/PageHeader";
-import { Grid, TextField, Autocomplete, Select, MenuItem } from "@mui/material";
+import { Grid, TextField, Autocomplete, Select, MenuItem, useMediaQuery, useTheme } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import EditIcon from "@mui/icons-material/Edit";
 import ChecklistIcon from "@mui/icons-material/Checklist";
@@ -31,6 +31,8 @@ import { useViewModePreference } from "../../../hooks/useViewModePreference";
 import { convertImageToWebp } from "../../../utils/image";
 
 const ProductList = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const { user } = useUser();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -39,7 +41,8 @@ const ProductList = () => {
   const [optionsLoaded, setOptionsLoaded] = useState(false);
   const [params, setParams] = useState({});
   const [selectedRows, setSelectedRows] = useState([]);
-  const [viewMode, setViewMode] = useViewModePreference("productList.viewMode", "table");
+  const [viewModePref, setViewModePref] = useViewModePreference("productList.viewMode", "table");
+  const viewMode = isMobile ? "gallery" : viewModePref;
   const [searchField, setSearchField] = useState("code");
   const productModal = useModal();
   const priceLogsModal = useModal();
@@ -297,9 +300,11 @@ const ProductList = () => {
                 name="max_stock"
               />
             </Grid>
-            <Grid item xs={12} md={3}>
-              <ProductViewToggle value={viewMode} onChange={setViewMode} />
-            </Grid>
+            {!isMobile && (
+              <Grid item xs={12} md={3}>
+                <ProductViewToggle value={viewModePref} onChange={setViewModePref} />
+              </Grid>
+            )}
 
             {/* Fila 3: ACCIONES */}
             <Grid item xs={12} md={3}>

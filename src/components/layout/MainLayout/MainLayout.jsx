@@ -16,6 +16,8 @@ import {
   Avatar,
   Menu,
   MenuItem,
+  Backdrop,
+  CircularProgress,
 } from "@mui/material";
 import MuiDrawer from "@mui/material/Drawer";
 import MuiAppBar from "@mui/material/AppBar";
@@ -32,6 +34,7 @@ import { useDispatch } from "react-redux";
 import { useQueryClient } from "@tanstack/react-query";
 import { cleanCart } from "../../../redux/cart/cartActions";
 import { useUser } from "../../../context/UserContext";
+import { getStores } from "../../../api/stores";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
@@ -49,6 +52,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import DescriptionIcon from "@mui/icons-material/Description";
 import PolicyIcon from "@mui/icons-material/Policy";
 import BarChartIcon from "@mui/icons-material/BarChart";
+import HistoryIcon from "@mui/icons-material/History";
 import logo from "../../../assets/images/logo.webp";
 import { colors } from "../../../theme/colors";
 import PageHelp from "../../ui/PageHelp/PageHelp";
@@ -78,6 +82,8 @@ const iconMap = {
   Distribuir: <LocalShippingIcon />,
   Auditoria: <PolicyIcon />,
   Facturación: <ReceiptIcon />,
+  Regresar: <ArrowBackIcon />,
+  "Historial de stock": <HistoryIcon />,
 };
 
 const drawerWidth = 256;
@@ -175,6 +181,9 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
   const [open, setOpen] = React.useState(false);
   const [openMenus, setOpenMenus] = React.useState({});
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [stores, setStores] = React.useState([]);
+  const [loadingStores, setLoadingStores] = React.useState(false);
+  const [switchingStore, setSwitchingStore] = React.useState(false);
 
   // Limpieza compartida por el logout manual y otros cierres de sesión: vacía la caché
   // de React Query, el carrito de Redux y borra el usuario del contexto.
@@ -210,6 +219,47 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
   };
 
 
+  const handleToggleStoreMenu = async (label, shouldToggle) => {
+    if (label === "Tienda" && stores.length === 0) {
+      setLoadingStores(true);
+      try {
+        const response = await getStores();
+        setStores(response.data || []);
+      } catch (error) {
+        console.error("Error al obtener tiendas:", error);
+        setStores([]);
+      } finally {
+        setLoadingStores(false);
+      }
+    }
+    handleToggleMenu(label, shouldToggle);
+  };
+
+  const handleSelectStore = async (storeId) => {
+    if (storeId !== user.store_id) {
+      const selectedStore = stores.find(s => s.id === storeId);
+      if (selectedStore) {
+        setSwitchingStore(true);
+        setOpenMenus({ Tienda: false });
+
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        queryClient.clear();
+        dispatch(cleanCart());
+        updateUser({
+          store_id: storeId,
+          store_name: selectedStore.full_name || selectedStore.name,
+          store_type: "T"
+        });
+        window.dispatchEvent(new Event("store-changed"));
+
+        setSwitchingStore(false);
+      }
+    } else {
+      setOpenMenus({ Tienda: false });
+    }
+  };
+
   const handleBack = () => {
     // Al salir del contexto de una tienda, la data store-scoped (productos, ventas,
     // resumen de tiendas, etc.) deja de ser válida. Limpiamos la caché para forzar
@@ -229,12 +279,21 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
   const isDashboardRestricted =
   user?.tenant_short_name !== 'demo' &&
   user &&
-  user.store_count > 1 &&
+  user.multistore &&
   currentHour >= 10 &&
   currentHour < 21;
 
   const linksByType = {
     T: [
+      ...(user.multistore ? [{
+        label: "Tienda",
+        action: "store-selector",
+        dropdown: stores.map(s => ({ label: s.full_name || s.name, storeId: s.id }))
+      }] : [{
+        label: "Regresar",
+        action: "go-back",
+        onClick: handleBack
+      }]),
       { label: "Vender", href: "/vender/" },
       {
         label: "Ventas",
@@ -297,6 +356,15 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
       { label: "Historial de stock", href: "/historial-stock/", hidden: user.role === "seller" },
     ],
     A: [
+      ...(user.multistore ? [{
+        label: "Tienda",
+        action: "store-selector",
+        dropdown: stores.map(s => ({ label: s.full_name || s.name, storeId: s.id }))
+      }] : [{
+        label: "Regresar",
+        action: "go-back",
+        onClick: handleBack
+      }]),
       { label: "Distribuir", href: "/distribuir/" },
       {
         label: "Movimientos",
@@ -606,9 +674,9 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
               </ListItemButton>
             </>
           )}
-          
+
           <Divider sx={{ backgroundColor: "rgba(255,255,255,0.06)", my: 1 }} />
-          
+
           <ListItemButton
             onClick={handleLogout}
             sx={{
@@ -653,7 +721,119 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
           {menuItems.map((item, idx) => {
             if (item.hidden) return null;
 
+            // Manejo especial para go-back (regresar a general)
+            if (item.action === "go-back") {
+              return (
+                <ListItem key={idx} disablePadding sx={{ mb: 0.3 }}>
+                  <ListItemButton
+                    onClick={item.onClick}
+                    sx={{
+                      borderRadius: "10px", py: 1,
+                      justifyContent: open ? "initial" : "center",
+                      "&:hover": { backgroundColor: "rgba(255,255,255,0.08)" },
+                    }}
+                  >
+                    <ListItemIcon sx={{
+                      color: "rgba(255,255,255,0.7)",
+                      minWidth: open ? 38 : 0, justifyContent: "center",
+                    }}>
+                      {iconMap[item.label] || <DashboardIcon />}
+                    </ListItemIcon>
+                    <ListItemText primary={item.label}
+                      primaryTypographyProps={{
+                        fontWeight: 600, fontSize: "0.8rem",
+                        color: "inherit",
+                      }}
+                      sx={{ opacity: open ? 1 : 0 }}
+                    />
+                  </ListItemButton>
+                </ListItem>
+              );
+            }
+
             if (item.dropdown) {
+              // Manejo especial para store-selector
+              if (item.action === "store-selector") {
+                return (
+                  <React.Fragment key={idx}>
+                    <ListItem disablePadding sx={{ mb: 0.3 }}>
+                      <ListItemButton
+                        onClick={() => !item.disabled && handleToggleStoreMenu(item.label, !open)}
+                        disabled={item.disabled}
+                        sx={{
+                          borderRadius: "10px", py: 1,
+                          justifyContent: open ? "initial" : "center",
+                          "&:hover": { backgroundColor: item.disabled ? "transparent" : "rgba(255,255,255,0.08)" },
+                        }}
+                      >
+                        <ListItemIcon sx={{ color: item.disabled ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.7)", minWidth: open ? 38 : 0, justifyContent: "center" }}>
+                          {iconMap[item.label] || <DashboardIcon />}
+                        </ListItemIcon>
+                        <ListItemText
+                          primary={item.label}
+                          secondary={open ? user.store_name : null}
+                          primaryTypographyProps={{ fontWeight: 600, fontSize: "0.8rem" }}
+                          secondaryTypographyProps={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.4)" }}
+                          sx={{ opacity: open ? 1 : 0 }}
+                        />
+                        {open && !item.disabled && (openMenus[item.label] ? <ExpandLess sx={{ fontSize: 18 }} /> : <ExpandMore sx={{ fontSize: 18 }} />)}
+                      </ListItemButton>
+                    </ListItem>
+                    {open && (
+                      <Collapse in={openMenus[item.label]} timeout="auto" unmountOnExit>
+                        <List component="div" disablePadding>
+                          {loadingStores ? (
+                            <Box sx={{ display: "flex", justifyContent: "center", py: 1.5, pl: 6.5 }}>
+                              <CircularProgress size={18} />
+                            </Box>
+                          ) : (
+                            <>
+                              {item.dropdown.map((sub, i) => (
+                                <ListItemButton
+                                  key={i}
+                                  onClick={() => handleSelectStore(sub.storeId)}
+                                  sx={{
+                                    pl: 6.5, py: 0.6, borderRadius: "8px", my: 0.2, mx: 0.5,
+                                    backgroundColor: sub.storeId === user.store_id ? "rgba(255, 193, 7, 0.1)" : "transparent",
+                                    "&:hover": { backgroundColor: sub.storeId === user.store_id ? "rgba(255, 193, 7, 0.15)" : "rgba(255,255,255,0.06)" },
+                                  }}
+                                >
+                                  <ListItemText
+                                    primary={sub.label}
+                                    primaryTypographyProps={{
+                                      fontSize: "0.75rem",
+                                      color: sub.storeId === user.store_id ? "rgba(255, 193, 7, 1)" : "rgba(255,255,255,0.75)",
+                                      fontWeight: sub.storeId === user.store_id ? 600 : 400,
+                                    }}
+                                  />
+                                </ListItemButton>
+                              ))}
+                              <Divider sx={{ borderColor: "rgba(255,255,255,0.1)", my: 0.2 }} />
+                              <ListItemButton
+                                onClick={handleBack}
+                                sx={{
+                                  pl: 6.5, py: 0.6, borderRadius: "8px", my: 0.2, mx: 0.5,
+                                  "&:hover": { backgroundColor: "rgba(255,255,255,0.06)" },
+                                }}
+                              >
+                                <ListItemText
+                                  primary="Regresar"
+                                  primaryTypographyProps={{
+                                    fontSize: "0.75rem",
+                                    color: "rgba(255,255,255,0.75)",
+                                  }}
+                                />
+                              </ListItemButton>
+                            </>
+                          )}
+                        </List>
+                      </Collapse>
+                    )}
+                  </React.Fragment>
+                );
+              }
+
+              // Manejo normal para otros dropdowns
               return (
                 <React.Fragment key={idx}>
                   <ListItem disablePadding sx={{ mb: 0.3 }}>
@@ -758,9 +938,9 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
               </ListItemButton>
             </>
           )}
-          
+
           <Divider sx={{ backgroundColor: "rgba(255,255,255,0.06)", my: 1 }} />
-          
+
           <ListItemButton
             onClick={handleLogout}
             sx={{
@@ -780,6 +960,13 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
         <DrawerHeader />
         <Outlet />
       </Box>
+
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={switchingStore}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </Box>
   );
 }
