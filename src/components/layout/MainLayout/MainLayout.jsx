@@ -26,7 +26,6 @@ import ExpandMore from "@mui/icons-material/ExpandMore";
 import MenuIcon from "@mui/icons-material/Menu";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
-import NewspaperIcon from "@mui/icons-material/Newspaper";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
@@ -42,14 +41,12 @@ import InventoryIcon from "@mui/icons-material/Inventory";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import StoreIcon from "@mui/icons-material/Store";
 import EngineeringIcon from "@mui/icons-material/Engineering";
-import PaymentsIcon from "@mui/icons-material/Payments";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
 import SyncIcon from "@mui/icons-material/Sync";
 import MiscellaneousServicesIcon from "@mui/icons-material/MiscellaneousServices";
 import LogoutIcon from "@mui/icons-material/Logout";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import DescriptionIcon from "@mui/icons-material/Description";
 import PolicyIcon from "@mui/icons-material/Policy";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import HistoryIcon from "@mui/icons-material/History";
@@ -60,12 +57,12 @@ import NotificationsMenu from "../../ui/NotificationsMenu/NotificationsMenu";
 import PendingMenu from "../../ui/PendingMenu/PendingMenu";
 import DuplicateSalesMenu from "../../ui/DuplicateSalesMenu/DuplicateSalesMenu";
 import StockRequestMenu from "../../ui/StockRequestMenu/StockRequestMenu";
+import { logger } from "../../../utils/logger";
 
 const iconMap = {
   Vender: <ShoppingCartIcon />,
   Ventas: <ReceiptIcon />,
   Clientes: <PersonSearchIcon />,
-  Dashboard: <BarChartIcon />,
   Tableros: <BarChartIcon />,
   Tienda: <LocalShippingIcon />,
   Distribuciones: <LocalShippingIcon />,
@@ -75,8 +72,6 @@ const iconMap = {
   Productos: <InventoryIcon />,
   Tiendas: <StoreIcon />,
   Vendedores: <EngineeringIcon />,
-  Mensualidades: <PaymentsIcon />,
-  Logs: <DescriptionIcon />,
   Servicios: <MiscellaneousServicesIcon />,
   Sincronizar: <SyncIcon />,
   Distribuir: <LocalShippingIcon />,
@@ -169,7 +164,7 @@ const DrawerModal = styled(MuiDrawer)(({ theme }) => ({
   },
 }));
 
-export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
+export default function MainLayout({ toggleTheme, themeMode }) {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout, updateUser } = useUser();
@@ -226,7 +221,7 @@ export default function MainLayout({ toggleTheme, themeMode, onLoginSuccess }) {
         const response = await getStores();
         setStores(response.data || []);
       } catch (error) {
-        console.error("Error al obtener tiendas:", error);
+        logger.error("Error al obtener tiendas:", error);
         setStores([]);
       } finally {
         setLoadingStores(false);

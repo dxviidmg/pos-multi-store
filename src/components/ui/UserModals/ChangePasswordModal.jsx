@@ -80,7 +80,6 @@ const ChangePasswordModal = ({ open, onClose, passwordData, onChange, onSave, sh
             <Grid item xs={12}>
               <CustomButton 
                 onClick={onSave} 
-                variant="contained" 
                 fullWidth
                 disabled={!passwordData.old_password || !passwordData.new_password || !passwordData.confirm_password}
               >

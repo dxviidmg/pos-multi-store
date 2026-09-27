@@ -12,16 +12,8 @@ const getNextMode = (current) => {
   const idx = SALE_MODES_CYCLE.indexOf(current);
   return SALE_MODES_CYCLE[(idx + 1) % SALE_MODES_CYCLE.length];
 };
-const getStep = (row, mode) => {
-  if (mode === "$") return 1;
-  if (mode === "FRAC") return 0.1;
-  return 1;
-};
-const getMin = (row, mode) => {
-  if (mode === "$") return 1;
-  if (mode === "FRAC") return 0.1;
-  return 1;
-};
+const getStep = (mode) => (mode === "FRAC" ? 0.1 : 1);
+const getMin = getStep;
 
 const commonColumns = [
   { name: "Código", field: "code", selector: (row) => row.product.code },
@@ -34,11 +26,6 @@ const commonColumns = [
     name: "Nombre",
     field: "name",
     selector: (row) => row.product.name,
-    renderCell: (params) => (
-      <div className="cell-wrap">
-        {params.row.product.name}
-      </div>
-    ),
   },
   { name: "Stock", field: "stock", selector: (row) => row.available_stock },
 ];
@@ -55,15 +42,10 @@ const commonColumns2 = [
     name: "Nombre",
     field: "name",
     selector: (row) => row.product.name,
-    renderCell: (params) => (
-      <div className="cell-wrap">
-        {params.row.product.name}
-      </div>
-    ),
   },
 ];
 
-export const getSaleColumns = (handleQuantityChangeToCart, handleRemoveFromCart, handleChangePrice, movementType, getAvailableStock, handleStockWarning, saleModes, setSaleModes) => [
+export const getSaleColumns = (handleQuantityChangeToCart, handleRemoveFromCart, handleChangePrice, movementType, getAvailableStock, saleModes, setSaleModes) => [
   ...commonColumns2,
   {
     name: "Venta por",
@@ -106,8 +88,8 @@ export const getSaleColumns = (handleQuantityChangeToCart, handleRemoveFromCart,
     width: 100,
     selector: (row) => {
       const mode = isKg(row) ? (saleModes[row.id] || "KG") : "PZ";
-      const step = getStep(row, mode);
-      const min = getMin(row, mode);
+      const step = getStep(mode);
+      const min = getMin(mode);
 
       if (mode === "$") {
         return <span style={{ fontSize: '0.85rem' }}>{(Math.round(row.quantity * 1000) / 1000)} kg</span>;
@@ -207,11 +189,6 @@ export const getTransferColumns = (handleQuantityChangeToCart, handleRemoveFromC
   {
     name: "Nombre",
     selector: (row) => row.product.name,
-    renderCell: (params) => (
-      <div className="cell-wrap">
-        {params.row.product.name}
-      </div>
-    ),
   },
   { name: "Stock disponible", selector: (row) => `${row.available_stock} ${row.product?.unit || "PZ"}` },
   { name: "Stock apartado", selector: (row) => `${row.reserved_stock} ${row.product?.unit || "PZ"}` },
@@ -224,7 +201,7 @@ export const getTransferColumns = (handleQuantityChangeToCart, handleRemoveFromC
         value={row.quantity}
         onChange={(e) => handleQuantityChangeToCart(e, row)}
         onKeyDown={(e) => {
-          const step = getStep(row, "KG");
+          const step = getStep("KG");
           if (e.key === "ArrowUp") {
             e.preventDefault();
             const newValue = Math.round((row.quantity + step) * 10) / 10;
@@ -234,12 +211,12 @@ export const getTransferColumns = (handleQuantityChangeToCart, handleRemoveFromC
             }
           } else if (e.key === "ArrowDown") {
             e.preventDefault();
-            const min = getMin(row, "KG");
+            const min = getMin("KG");
             const newValue = Math.max(min, Math.round((row.quantity - step) * 10) / 10);
             handleQuantityChangeToCart({ target: { value: newValue } }, row);
           }
         }}
-        inputProps={{ min: getMin(row, "KG"), step: getStep(row, "KG") }}
+        inputProps={{ min: getMin("KG"), step: getStep("KG") }}
       />
     ),
   },
@@ -253,7 +230,7 @@ export const getTransferColumns = (handleQuantityChangeToCart, handleRemoveFromC
   },
 ];
 
-export const getDistributionColumns = (handleQuantityChangeToCart, handleRemoveFromCart, handleStockOtherStores, getAvailableStock, cart, searchInputRef, lastQtyRef) => [
+export const getDistributionColumns = (handleQuantityChangeToCart, handleRemoveFromCart, getAvailableStock, cart, searchInputRef, lastQtyRef) => [
   ...commonColumns,
   {
     name: "Cantidad",
@@ -264,7 +241,7 @@ export const getDistributionColumns = (handleQuantityChangeToCart, handleRemoveF
         value={row.quantity}
         onChange={(e) => handleQuantityChangeToCart(e, row)}
         onKeyDown={(e) => {
-          const step = getStep(row, "KG");
+          const step = getStep("KG");
           if (e.key === "Enter") {
             e.preventDefault();
             searchInputRef?.current?.focus();
@@ -277,12 +254,12 @@ export const getDistributionColumns = (handleQuantityChangeToCart, handleRemoveF
             }
           } else if (e.key === "ArrowDown") {
             e.preventDefault();
-            const min = getMin(row, "KG");
+            const min = getMin("KG");
             const newValue = Math.max(min, Math.round((row.quantity - step) * 10) / 10);
             handleQuantityChangeToCart({ target: { value: newValue } }, row);
           }
         }}
-        inputProps={{ min: getMin(row, "KG"), step: getStep(row, "KG") }}
+        inputProps={{ min: getMin("KG"), step: getStep("KG") }}
       />
     ),
   },
@@ -323,7 +300,7 @@ export const getAddToStockColumns = (handleQuantityChangeToCart, handleRemoveFro
         value={row.quantity}
         onChange={(e) => handleQuantityChangeToCart(e, row)}
         onKeyDown={(e) => {
-          const step = getStep(row, "KG");
+          const step = getStep("KG");
           if (e.key === "Enter") {
             e.preventDefault();
             searchInputRef?.current?.focus();
@@ -333,12 +310,12 @@ export const getAddToStockColumns = (handleQuantityChangeToCart, handleRemoveFro
             handleQuantityChangeToCart({ target: { value: newValue } }, row);
           } else if (e.key === "ArrowDown") {
             e.preventDefault();
-            const min = getMin(row, "KG");
+            const min = getMin("KG");
             const newValue = Math.max(min, Math.round((row.quantity - step) * 10) / 10);
             handleQuantityChangeToCart({ target: { value: newValue } }, row);
           }
         }}
-        inputProps={{ min: getMin(row, "KG"), step: getStep(row, "KG") }}
+        inputProps={{ min: getMin("KG"), step: getStep("KG") }}
       />
     ),
   },

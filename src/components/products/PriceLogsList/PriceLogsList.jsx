@@ -71,7 +71,7 @@ const PriceLogsList = () => {
       <DataTable
         progressPending={isLoading}
         noDataComponent="Sin cambios de precio"
-        searcher={true}
+        searcher
         data={rows}
         columns={[
           { name: "Código", selector: (row) => row.product_code, sortable: true },

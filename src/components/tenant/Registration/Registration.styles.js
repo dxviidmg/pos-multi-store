@@ -61,13 +61,6 @@ export const successIconSx = {
   mx: "auto", mb: 2,
 };
 
-export const labelSx = {
-  fontSize: "0.8rem",
-  fontWeight: 600,
-  color: "text.primary",
-  mb: 0.5,
-};
-
 export const stepIndicatorSx = {
   fontSize: "0.75rem",
   fontWeight: 600,

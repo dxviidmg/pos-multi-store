@@ -41,7 +41,7 @@ const ProductList = () => {
   const [optionsLoaded, setOptionsLoaded] = useState(false);
   const [params, setParams] = useState({});
   const [selectedRows, setSelectedRows] = useState([]);
-  const [viewModePref, setViewModePref] = useViewModePreference("productList.viewMode", "table");
+  const [viewModePref, setViewModePref] = useViewModePreference("productList.viewMode");
   const viewMode = isMobile ? "gallery" : viewModePref;
   const [searchField, setSearchField] = useState("code");
   const productModal = useModal();
@@ -169,7 +169,7 @@ const ProductList = () => {
     if (!file || !product) return;
 
     try {
-      const webpFile = await convertImageToWebp(file, { quality: 0.85, maxWidth: 1000, maxHeight: 1000 });
+      const webpFile = await convertImageToWebp(file);
       const response = await updateProduct({ id: product.id, image: webpFile });
       if (response.status === 200) {
         handleUpdateProductList(response.data);
@@ -354,7 +354,6 @@ const ProductList = () => {
           ) : (
             <DataTable
               setSelectedRows={setSelectedRows}
-              searcher={false}
               progressPending={loading}
               noDataComponent="Sin productos"
               data={products}

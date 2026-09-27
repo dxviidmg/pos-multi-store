@@ -179,14 +179,14 @@ const PendingTransfersDashboard = () => {
       <Box className="card" sx={{ mb: 0, mt: 3 }}>
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
           <Typography variant="h6" sx={{ fontWeight: 600 }}>Traspasos Pendientes</Typography>
-          <CustomButton onClick={handleDownload} disabled={!transfers?.length} startIcon={<DownloadIcon />} size="small">
+          <CustomButton onClick={handleDownload} disabled={!transfers?.length} startIcon={<DownloadIcon />}>
             Descargar
           </CustomButton>
         </Box>
         <DataTable
           progressPending={loading}
           noDataComponent="Sin traspasos pendientes"
-          searcher={true}
+          searcher
           data={transfers || []}
           columns={COLUMNS}
         />

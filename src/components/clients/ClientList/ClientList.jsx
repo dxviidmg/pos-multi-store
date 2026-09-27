@@ -106,7 +106,7 @@ const ClientList = () => {
         <DataTable
           progressPending={loading}
           noDataComponent="Sin clientes"
-          searcher={true}
+          searcher
           data={clients}
           columns={[
             { name: "#", selector: (row) => row.id },
@@ -136,7 +136,6 @@ const ClientList = () => {
               ),
             },
           ]}
-          highlightOnHover
         />
       </Grid>
     </>

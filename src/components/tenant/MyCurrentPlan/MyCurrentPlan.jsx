@@ -16,6 +16,7 @@ import httpClient from "../../../api/httpClient";
 import { getApiUrl } from "../../../api/utils";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
+import { logger } from "../../../utils/logger";
 
 const MyCurrentPlan = () => {
   const { user, logout } = useUser();
@@ -88,7 +89,7 @@ const MyCurrentPlan = () => {
         const res = await httpClient.get(getApiUrl("tenant-dates"));
         if (res.status === 200) setTenantDates(res.data);
       } catch (err) {
-        console.error("Error fetching tenant dates:", err);
+        logger.error("Error fetching tenant dates:", err);
       }
     };
     fetchDates();

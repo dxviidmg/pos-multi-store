@@ -102,7 +102,6 @@ const ClientModal = ({ isOpen, client, onClose, onUpdate }) => {
             fullWidth
             onClick={handleSaveClient}
             disabled={isFormIncomplete || isLoading}
-            marginTop="10px"
             startIcon={<SaveIcon />}
           >
             {isLoading ? "Creando..." : values.id ? "Actualizar" : "Crear"} cliente

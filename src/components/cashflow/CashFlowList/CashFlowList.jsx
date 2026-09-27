@@ -119,7 +119,7 @@ const CashFlowList = () => {
           progressPending={loading}
           noDataComponent="Sin movimientos"
           data={cashFlow}
-          searcher={true}
+          searcher
           columns={[
             {
               name: "Hora",
@@ -134,12 +134,12 @@ const CashFlowList = () => {
               cell: (row) => (
                 <>
                   <CustomTooltip text="Editar movimiento">
-                    <CustomButton size="small" onClick={() => cashFlowModal.open(row)}>
+                    <CustomButton onClick={() => cashFlowModal.open(row)}>
                       <EditIcon />
                     </CustomButton>
                   </CustomTooltip>
                   <CustomTooltip text="Eliminar movimiento">
-                    <CustomButton size="small" onClick={() => handleDelete(row)}>
+                    <CustomButton onClick={() => handleDelete(row)}>
                       <DeleteIcon />
                     </CustomButton>
                   </CustomTooltip>

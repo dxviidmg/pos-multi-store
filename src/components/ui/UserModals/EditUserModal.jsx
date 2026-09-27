@@ -51,7 +51,7 @@ const EditUserModal = ({ open, onClose, userData, onChange, onSave }) => {
               />
             </Grid>
             <Grid item xs={12}>
-              <CustomButton onClick={onSave} variant="contained" fullWidth>
+              <CustomButton onClick={onSave} fullWidth>
                 Guardar
               </CustomButton>
             </Grid>

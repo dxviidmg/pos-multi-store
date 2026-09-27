@@ -6,7 +6,7 @@ import { showSuccess, showError } from "../../../utils/alerts";
 import { handlePrintTicket } from "../../../utils/utils";
 import { useUser } from "../../../context/UserContext";
 import { usePrinterStatus } from "../../../hooks/usePrinterStatus";
-import { Grid, TextField, Radio, RadioGroup, FormControlLabel, FormLabel, Chip, Box } from "@mui/material";
+import { Grid, TextField, Radio, RadioGroup, FormControlLabel, FormLabel, Chip } from "@mui/material";
 import MoneyOffIcon from "@mui/icons-material/MoneyOff";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 

@@ -257,8 +257,6 @@ const StoreList = () => {
                 </Box>
               )}
               <CustomButton
-                size="small"
-                variant="contained"
                 onClick={() => createStoreModal.open()}
                 startIcon={<AddBusinessIcon />}
                 disabled={canCreateData && !canCreateData.can_create}
@@ -408,39 +406,39 @@ const StoreList = () => {
           {params.store_type === "T" && (
             <Grid container spacing={2} sx={{ mb: 2 }}>
               <Grid item md={2} xs={6}>
-                <CustomButton fullWidth variant={quickFilter === "all" ? "contained" : "outlined"} onClick={() => setQuickFilter("all")} size="small">
+                <CustomButton fullWidth variant={quickFilter === "all" ? "contained" : "outlined"} onClick={() => setQuickFilter("all")}>
                   Pagos ({stores.length})
                 </CustomButton>
               </Grid>
               <Grid item md={2} xs={6}>
-                <CustomButton fullWidth variant={quickFilter === "sales" ? "contained" : "outlined"} onClick={() => setQuickFilter("sales")} size="small">
+                <CustomButton fullWidth variant={quickFilter === "sales" ? "contained" : "outlined"} onClick={() => setQuickFilter("sales")}>
                   Ventas ({stores.length})
                 </CustomButton>
               </Grid>
               <Grid item md={2} xs={6}>
-                <CustomButton fullWidth variant={quickFilter === "managers" ? "contained" : "outlined"} onClick={() => setQuickFilter("managers")} size="small">
+                <CustomButton fullWidth variant={quickFilter === "managers" ? "contained" : "outlined"} onClick={() => setQuickFilter("managers")}>
                   Administradores
                 </CustomButton>
               </Grid>
               <Grid item md={2} xs={6}>
-                <CustomButton fullWidth variant={quickFilter === "investment" ? "contained" : "outlined"} onClick={handleShowInvestment} size="small" startIcon={<AttachMoneyIcon />}>
+                <CustomButton fullWidth variant={quickFilter === "investment" ? "contained" : "outlined"} onClick={handleShowInvestment} startIcon={<AttachMoneyIcon />}>
                   Inversión
                 </CustomButton>
               </Grid>
               <Grid item md={2} xs={6}>
-                <CustomButton fullWidth variant={quickFilter === "printer" ? "contained" : "outlined"} onClick={() => setQuickFilter("printer")} size="small">
+                <CustomButton fullWidth variant={quickFilter === "printer" ? "contained" : "outlined"} onClick={() => setQuickFilter("printer")}>
                   Impresoras ({stores.filter(s => s.printer).length})
                 </CustomButton>
               </Grid>
               {stores.filter(s => !s.has_all_products).length > 0 && (
                 <Grid item md={2} xs={6}>
-                  <CustomButton fullWidth variant={quickFilter === "synced" ? "contained" : "outlined"} onClick={() => setQuickFilter("synced")} size="small">
+                  <CustomButton fullWidth variant={quickFilter === "synced" ? "contained" : "outlined"} onClick={() => setQuickFilter("synced")}>
                     Catálogo Incompleto ({stores.filter(s => !s.has_all_products).length})
                   </CustomButton>
                 </Grid>
               )}
               <Grid item md={2} xs={6}>
-                <CustomButton fullWidth variant={quickFilter === "actions" ? "contained" : "outlined"} onClick={() => setQuickFilter("actions")} size="small">
+                <CustomButton fullWidth variant={quickFilter === "actions" ? "contained" : "outlined"} onClick={() => setQuickFilter("actions")}>
                   Acciones
                 </CustomButton>
               </Grid>
@@ -450,29 +448,29 @@ const StoreList = () => {
           {params.store_type === "A" && (
             <Grid container spacing={2} sx={{ mb: 2 }}>
               <Grid item md={3} xs={6}>
-                <CustomButton fullWidth variant={quickFilter === "all" ? "contained" : "outlined"} onClick={() => setQuickFilter("all")} size="small">
+                <CustomButton fullWidth variant={quickFilter === "all" ? "contained" : "outlined"} onClick={() => setQuickFilter("all")}>
                   Todos
                 </CustomButton>
               </Grid>
               <Grid item md={3} xs={6}>
-                <CustomButton fullWidth variant={quickFilter === "managers" ? "contained" : "outlined"} onClick={() => setQuickFilter("managers")} size="small">
+                <CustomButton fullWidth variant={quickFilter === "managers" ? "contained" : "outlined"} onClick={() => setQuickFilter("managers")}>
                   Administradores
                 </CustomButton>
               </Grid>
               <Grid item md={3} xs={6}>
-                <CustomButton fullWidth variant={quickFilter === "investment" ? "contained" : "outlined"} onClick={handleShowInvestment} size="small" startIcon={<AttachMoneyIcon />}>
+                <CustomButton fullWidth variant={quickFilter === "investment" ? "contained" : "outlined"} onClick={handleShowInvestment} startIcon={<AttachMoneyIcon />}>
                   Inversión
                 </CustomButton>
               </Grid>
               {stores.filter(s => !s.has_all_products).length > 0 && (
                 <Grid item md={3} xs={6}>
-                  <CustomButton fullWidth variant={quickFilter === "synced" ? "contained" : "outlined"} onClick={() => setQuickFilter("synced")} size="small">
+                  <CustomButton fullWidth variant={quickFilter === "synced" ? "contained" : "outlined"} onClick={() => setQuickFilter("synced")}>
                     Catálogo Incompleto ({stores.filter(s => !s.has_all_products).length})
                   </CustomButton>
                 </Grid>
               )}
               <Grid item md={3} xs={6}>
-                <CustomButton fullWidth variant={quickFilter === "actions" ? "contained" : "outlined"} onClick={() => setQuickFilter("actions")} size="small">
+                <CustomButton fullWidth variant={quickFilter === "actions" ? "contained" : "outlined"} onClick={() => setQuickFilter("actions")}>
                   Acciones
                 </CustomButton>
               </Grid>

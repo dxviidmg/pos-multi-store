@@ -3,13 +3,11 @@ import { IconButton, Popover, Typography, Box } from "@mui/material";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import { useLocation } from "react-router-dom";
 import helpTexts from "../../../constants/helpTexts";
-import { useTheme } from "@mui/material/styles";
 
 const PageHelp = memo(() => {
   const { pathname } = useLocation();
   const help = helpTexts[pathname];
   const [anchorEl, setAnchorEl] = useState(null);
-  const theme = useTheme();
 
   if (!help) return null;
 

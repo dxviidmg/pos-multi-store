@@ -73,10 +73,7 @@ const DataTable = ({
             </div>
           );
         } else if (col.selector) {
-          column.renderCell = (params) => {
-            const value = col.selector(params.row);
-            return React.isValidElement(value) ? value : value;
-          };
+          column.renderCell = (params) => col.selector(params.row);
           column.valueGetter = (params) => col.selector(params.row);
         }
 

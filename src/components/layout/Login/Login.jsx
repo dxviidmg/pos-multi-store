@@ -5,7 +5,6 @@ import { useUser } from "../../../context/UserContext";
 import CustomButton from "../../ui/Button/Button";
 import Logo from "../../../assets/images/logo.webp";
 import { colors } from "../../../theme/colors";
-import './Login.css';
 import {
   TextField, Box, Alert, Paper, Stack, Typography,
   IconButton, InputAdornment, Button,
@@ -15,7 +14,7 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import LoginIcon from "@mui/icons-material/Login";
 
-function Login({ onLogin }) {
+function Login() {
   const navigate = useNavigate();
   const { login } = useUser();
   const [state, setState] = useState({

@@ -175,7 +175,6 @@ const SaleModal = ({ isOpen, sale, onClose, onUpdate }) => {
             <CustomButton
               fullWidth
               onClick={handleSaveClient}
-              marginTop="10px"
               disabled={disabledButton()}
               startIcon={<ShoppingCartIcon />}
             >

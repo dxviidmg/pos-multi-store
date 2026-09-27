@@ -148,7 +148,7 @@ const SellerList = () => {
           <DataTable
             progressPending={loading}
             noDataComponent="Sin vendedores"
-            searcher={true}
+            searcher
             data={sellers}
             columns={[
               {
@@ -173,12 +173,12 @@ const SellerList = () => {
                 cell: (row) => (
                   <>
                     <CustomTooltip text="Editar usuario">
-                      <CustomButton size="small" onClick={() => handleOpenEditUser(row.worker.id)}>
+                      <CustomButton onClick={() => handleOpenEditUser(row.worker.id)}>
                         <EditIcon />
                       </CustomButton>
                     </CustomTooltip>
                     <CustomTooltip text="Cambiar contraseña">
-                      <CustomButton size="small" onClick={() => handleOpenChangePassword(row.worker.id)}>
+                      <CustomButton onClick={() => handleOpenChangePassword(row.worker.id)}>
                         <LockResetIcon />
                       </CustomButton>
                     </CustomTooltip>

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import DataTable from "../../ui/DataTable/DataTable";
 import { getSubscriptions } from "../../../api/subscriptions";
 import { Grid, Chip } from "@mui/material";
+import { logger } from "../../../utils/logger";
 
 const statusMap = {
   authorized: { label: "Autorizada", color: "success" },
@@ -41,7 +42,7 @@ const SubscriptionList = () => {
         const response = await getSubscriptions();
         setSubscriptions(response.data);
       } catch (error) {
-        console.error("Error al obtener suscripciones:", error);
+        logger.error("Error al obtener suscripciones:", error);
       } finally {
         setLoading(false);
       }

@@ -168,7 +168,7 @@ const Profile = () => {
       setMessage({ type: 'success', text: 'Contraseña cambiada correctamente' });
       setPasswordData({ current_password: '', new_password: '', confirm_password: '' });
     } catch (error) {
-      console.error('Password change error:', error);
+      logger.error('Password change error:', error);
       setMessage({ type: 'error', text: error.response?.data?.message || 'Error al cambiar la contraseña' });
     } finally {
       setSavingPassword(false);

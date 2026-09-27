@@ -157,14 +157,14 @@ const StockVerificationDashboard = () => {
       <Box className="card" sx={{ mb: 0 }}>
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
           <Typography variant="h6" sx={{ fontWeight: 600 }}>Productos a Verificar</Typography>
-          <CustomButton onClick={handleDownload} disabled={!products?.length} startIcon={<DownloadIcon />} size="small">
+          <CustomButton onClick={handleDownload} disabled={!products?.length} startIcon={<DownloadIcon />}>
             Descargar
           </CustomButton>
         </Box>
         <DataTable
           progressPending={loading}
           noDataComponent="Sin productos a verificar"
-          searcher={true}
+          searcher
           data={products || []}
           columns={COLUMNS}
         />

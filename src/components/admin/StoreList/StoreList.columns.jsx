@@ -47,7 +47,7 @@ export const getStoreColumns = ({ user, averageSales, storeInvestments, handleSe
     omit: user?.role !== "owner",
     cell: (row) => row.manager?.username ? (
       <CustomTooltip text="Editar usuario">
-        <CustomButton size="small" onClick={() => handleOpenEditUser(row.manager.id)}><EditIcon /></CustomButton>
+        <CustomButton onClick={() => handleOpenEditUser(row.manager.id)}><EditIcon /></CustomButton>
       </CustomTooltip>
     ) : "-",
   },
@@ -56,7 +56,7 @@ export const getStoreColumns = ({ user, averageSales, storeInvestments, handleSe
     omit: user?.role !== "owner",
     cell: (row) => row.manager?.username ? (
       <CustomTooltip text="Cambiar contraseña">
-        <CustomButton size="small" onClick={() => handleOpenChangePassword(row.manager.id)}><LockResetIcon /></CustomButton>
+        <CustomButton onClick={() => handleOpenChangePassword(row.manager.id)}><LockResetIcon /></CustomButton>
       </CustomTooltip>
     ) : "-",
   },
@@ -134,7 +134,7 @@ export const getStoreColumns = ({ user, averageSales, storeInvestments, handleSe
   {
     name: "Obtener (Inversión)",
     cell: (row) => (
-      <CustomButton size="small" onClick={() => handleShowInvestmentForStore(row.id)} startIcon={<AttachMoneyIcon />} disabled={storeInvestments[row.id] !== undefined}>
+      <CustomButton onClick={() => handleShowInvestmentForStore(row.id)} startIcon={<AttachMoneyIcon />} disabled={storeInvestments[row.id] !== undefined}>
         Ver
       </CustomButton>
     ),
@@ -149,7 +149,7 @@ export const getStoreColumns = ({ user, averageSales, storeInvestments, handleSe
     name: "Vaciar stock",
     cell: (row) => (
       <CustomTooltip text="Vaciar stock de la tienda">
-        <CustomButton onClick={() => handleResetStore(row.id, row.name)} size="small"><RestartAltIcon /></CustomButton>
+        <CustomButton onClick={() => handleResetStore(row.id, row.name)}><RestartAltIcon /></CustomButton>
       </CustomTooltip>
     ),
   },
@@ -186,7 +186,7 @@ export const getStorageColumns = ({ user, storeInvestments, handleSelectStore, h
     omit: user?.role !== "owner",
     cell: (row) => row.manager?.username ? (
       <CustomTooltip text="Editar usuario">
-        <CustomButton size="small" onClick={() => handleOpenEditUser(row.manager.id)}><EditIcon /></CustomButton>
+        <CustomButton onClick={() => handleOpenEditUser(row.manager.id)}><EditIcon /></CustomButton>
       </CustomTooltip>
     ) : "-",
   },
@@ -195,7 +195,7 @@ export const getStorageColumns = ({ user, storeInvestments, handleSelectStore, h
     omit: user?.role !== "owner",
     cell: (row) => row.manager?.username ? (
       <CustomTooltip text="Cambiar contraseña">
-        <CustomButton size="small" onClick={() => handleOpenChangePassword(row.manager.id)}><LockResetIcon /></CustomButton>
+        <CustomButton onClick={() => handleOpenChangePassword(row.manager.id)}><LockResetIcon /></CustomButton>
       </CustomTooltip>
     ) : "-",
   },
@@ -216,7 +216,7 @@ export const getStorageColumns = ({ user, storeInvestments, handleSelectStore, h
   {
     name: "Obtener (Inversión)",
     cell: (row) => (
-      <CustomButton size="small" onClick={() => handleShowInvestmentForStore(row.id)} startIcon={<AttachMoneyIcon />} disabled={storeInvestments[row.id] !== undefined}>
+      <CustomButton onClick={() => handleShowInvestmentForStore(row.id)} startIcon={<AttachMoneyIcon />} disabled={storeInvestments[row.id] !== undefined}>
         Ver
       </CustomButton>
     ),
@@ -231,7 +231,7 @@ export const getStorageColumns = ({ user, storeInvestments, handleSelectStore, h
     name: "Vaciar stock",
     cell: (row) => (
       <CustomTooltip text="Vaciar stock de la tienda">
-        <CustomButton onClick={() => handleResetStore(row.id, row.name)} size="small"><RestartAltIcon /></CustomButton>
+        <CustomButton onClick={() => handleResetStore(row.id, row.name)}><RestartAltIcon /></CustomButton>
       </CustomTooltip>
     ),
   },

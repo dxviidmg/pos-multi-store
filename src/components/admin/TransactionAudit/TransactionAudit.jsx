@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AuditCard from "../../ui/AuditCard/AuditCard";
 import CustomButton from "../../ui/Button/Button";
 import { getAudit, getAudit2 } from "../../../api/audit";
@@ -7,7 +7,6 @@ import { Grid, TextField, Select, MenuItem, FormControl, InputLabel } from "@mui
 import AssessmentIcon from "@mui/icons-material/Assessment";
 import { getFormattedDate } from "../../../utils/utils";
 import { getStores } from "../../../api/stores";
-import { useEffect } from "react";
 
 const TransactionAudit = () => {
   const today = getFormattedDate();

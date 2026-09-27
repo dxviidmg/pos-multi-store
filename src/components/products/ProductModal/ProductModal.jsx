@@ -131,7 +131,7 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
     const file = e.target.files[0];
     if (file) {
       // Convertir a WebP (más ligero) antes de guardar; con fallback al original
-      const webpFile = await convertImageToWebp(file, { quality: 0.85, maxWidth: 1000, maxHeight: 1000 });
+      const webpFile = await convertImageToWebp(file);
       setFormValue("image", webpFile);
       const reader = new FileReader();
       reader.onloadend = () => {

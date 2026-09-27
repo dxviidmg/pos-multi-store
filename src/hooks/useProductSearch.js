@@ -16,7 +16,7 @@ export const useProductSearch = () => {
     { maxRetries: 1, timeout: 8000 }
   );
 
-  const logSearchTiming = (ms, queryCode, productName) => {
+  const logSearchTiming = (ms, queryCode) => {
     const stats = JSON.parse(localStorage.getItem("search_timing_stats") || '{"tiempos":{},"mas_de_8s":[]}');
     const bucket = ms <= 500 ? 0 : Math.ceil((ms - 500) / 1000);
     stats.tiempos[bucket] = (stats.tiempos[bucket] || 0) + 1;
@@ -46,8 +46,7 @@ export const useProductSearch = () => {
         searchingRef.current = false;
         setSearching(false);
 
-        const productName = fetchedData?.[0]?.product?.name || null;
-        logSearchTiming(elapsed, query, productName);
+        logSearchTiming(elapsed, query);
 
         if (!fetchedData) {
           showError("Búsqueda tardada", "La búsqueda tardó demasiado. Reintentar o buscar de manera manual");
