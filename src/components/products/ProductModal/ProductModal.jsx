@@ -214,8 +214,64 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
     return !areRequiredFieldsComplete || !areOptionalFieldsConsistent || !isInitialStockComplete;
   };
 
-  const isCostHigher = formData.cost !== "" && formData.unit_price !== "" && Number(formData.cost) >= Number(formData.unit_price);
-  const isWholesaleHigher = formData.wholesale_price !== "" && formData.unit_price !== "" && Number(formData.wholesale_price) >= Number(formData.unit_price);
+  const getPriceErrors = () => {
+    const cost = Number(formData.cost);
+    const unitPrice = Number(formData.unit_price);
+    const wholesalePrice = Number(formData.wholesale_price);
+    const minWholesaleQty = Number(formData.min_wholesale_quantity);
+
+    const errors = {
+      cost: "",
+      unitPrice: "",
+      wholesale: "",
+      minQty: "",
+      hasAnyError: false,
+    };
+
+    // Validar valores base
+    if (formData.cost !== "" && cost <= 0) {
+      errors.cost = "> 0";
+      errors.hasAnyError = true;
+    }
+    if (formData.unit_price !== "" && unitPrice <= 0) {
+      errors.unitPrice = "> 0";
+      errors.hasAnyError = true;
+    }
+
+    // Validar relación costo-unitario
+    if (formData.cost !== "" && formData.unit_price !== "" && cost >= unitPrice) {
+      errors.cost = "< precio unitario";
+      errors.hasAnyError = true;
+    }
+
+    // Validar mayoreo si existe
+    if (formData.wholesale_price !== "" || formData.min_wholesale_quantity !== "") {
+      if (formData.wholesale_price === "") {
+        errors.wholesale = "Requerido";
+        errors.hasAnyError = true;
+      } else if (formData.min_wholesale_quantity === "") {
+        errors.minQty = "Requerido";
+        errors.hasAnyError = true;
+      } else {
+        if (wholesalePrice >= unitPrice) {
+          errors.wholesale = "< precio unitario";
+          errors.hasAnyError = true;
+        }
+        if (wholesalePrice <= cost) {
+          errors.wholesale = "> costo";
+          errors.hasAnyError = true;
+        }
+        if (!Number.isInteger(minWholesaleQty) || minWholesaleQty < 2) {
+          errors.minQty = "Entero ≥ 2";
+          errors.hasAnyError = true;
+        }
+      }
+    }
+
+    return errors;
+  };
+
+  const priceErrors = getPriceErrors();
 
   return (
     <CustomModal
@@ -332,8 +388,8 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
                   name="cost"
                   onChange={handleDataChange}
                   disabled={!canEditPrices}
-                  error={isCostHigher}
-                  helperText={isCostHigher ? "Debe ser menor al precio unitario" : ""}
+                  error={!!priceErrors.cost}
+                  helperText={priceErrors.cost}
                 />
               </Grid>
               <Grid item xs={12} md={4}>
@@ -343,8 +399,8 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
                   name="unit_price"
                   onChange={handleDataChange}
                   disabled={!canEditPrices}
-                  error={isCostHigher}
-                  helperText={isCostHigher ? "Debe ser mayor al costo" : ""}
+                  error={!!priceErrors.unitPrice}
+                  helperText={priceErrors.unitPrice}
                 />
               </Grid>
               <Grid item xs={12} md={4}>
@@ -354,8 +410,8 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
                   name="wholesale_price"
                   onChange={handleDataChange}
                   disabled={!canEditPrices}
-                  error={isWholesaleHigher || (formData.wholesale_price !== "" && formData.min_wholesale_quantity === "")}
-                  helperText={isWholesaleHigher ? "Debe ser menor al precio unitario" : (formData.wholesale_price !== "" && formData.min_wholesale_quantity === "") ? "Requiere cantidad mínima mayoreo" : ""}
+                  error={!!priceErrors.wholesale}
+                  helperText={priceErrors.wholesale}
                 />
               </Grid>
 
@@ -367,8 +423,8 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
                   name="min_wholesale_quantity"
                   onChange={handleDataChange}
                   disabled={!canEditPrices}
-                  error={formData.min_wholesale_quantity !== "" && formData.wholesale_price === ""}
-                  helperText={(formData.min_wholesale_quantity !== "" && formData.wholesale_price === "") ? "Requiere precio mayoreo" : ""}
+                  error={!!priceErrors.minQty}
+                  helperText={priceErrors.minQty}
                 />
               </Grid>
               <Grid item xs={12} md={8} sx={{ display: 'flex', alignItems: 'center' }}>
@@ -400,10 +456,10 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
                 <CustomButton
                   fullWidth
                   onClick={(e) => handleProductSubmit(e)}
-                  disabled={isFormIncomplete() || isCostHigher || isWholesaleHigher || isLoading || codeExists}
+                  disabled={isFormIncomplete() || priceErrors.hasAnyError || isLoading || codeExists}
                   startIcon={<SaveIcon />}
                 >
-                  {isLoading ? "Guardando..." : formData.id ? "Actualizar" : "Crear"}
+                  {isLoading ? "Guardando..." : formData.id ? "Editar" : "Crear"}
                 </CustomButton>
               </Grid>
             </Grid>
