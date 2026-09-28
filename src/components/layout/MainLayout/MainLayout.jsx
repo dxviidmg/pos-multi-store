@@ -286,15 +286,16 @@ export default function MainLayout({ toggleTheme, themeMode }) {
 
   const linksByType = {
     T: [
-      ...(user.multistore && user.role === "owner" ? [{
+      ...(user.role === "owner" && user.multistore ? [{
         label: "Tienda",
         action: "store-selector",
         dropdown: stores.map(s => ({ label: s.full_name || s.name, storeId: s.id }))
-      }] : [{
+      }] : []),
+      ...(user.role === "owner" ? [{
         label: "Regresar",
         action: "go-back",
         onClick: handleBack
-      }]),
+      }] : []),
       { label: "Vender", href: "/vender/" },
       {
         label: "Ventas",
@@ -357,15 +358,16 @@ export default function MainLayout({ toggleTheme, themeMode }) {
       { label: "Historial de stock", href: "/historial-stock/", hidden: user.role === "seller" },
     ],
     A: [
-      ...(user.multistore && user.role === "owner" ? [{
+      ...(user.role === "owner" && user.multistore ? [{
         label: "Tienda",
         action: "store-selector",
         dropdown: stores.map(s => ({ label: s.full_name || s.name, storeId: s.id }))
-      }] : [{
+      }] : []),
+      ...(user.role === "owner" ? [{
         label: "Regresar",
         action: "go-back",
         onClick: handleBack
-      }]),
+      }] : []),
       { label: "Distribuir", href: "/distribuir/" },
       {
         label: "Movimientos",
