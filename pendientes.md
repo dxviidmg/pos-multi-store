@@ -74,6 +74,7 @@ En `DiscountModal`, el caso "Ese descuento ya existe" hoy revisa `response.respo
 | 11 | `src/components/ui/NotificationsMenu/NotificationsMenu.jsx` | La reconexión del WebSocket usa un `store_id` viejo (callback con deps `[]`), `reconnectAttempts` nunca se reinicia y el respaldo usa `fetch` directo en vez de `httpClient`. | Revisar contra la sección "Notificaciones" de RULES. |
 | 12 | `StoreProductImport.jsx` y `SaleImport.jsx` → tabla "Filas con error" | Muestra **todas** las filas, no solo las que tienen error (`ProductImport` sí filtra). | Pasar solo las filas con error. |
 | 13 | `src/hooks/useClientMutations.js` → `useUpdateClient` | Al **editar** un cliente con teléfono repetido no se usa `clientErrorParser`; el motivo solo se muestra si el backend lo manda como `message`/`error`. | Pasar `errorParser: clientErrorParser` también en la edición. |
+| 14 | `src/components/layout/MainLayout/MainLayout.jsx` → `handleSelectStore` | Al cambiar de sucursal desde el menú lateral, `store_printer` se queda con la impresora de la sucursal anterior. `getStores()` usa `StoreBaseSerializer`, que no trae la impresora; solo `stores-cash-summary` la incluye (`printer.id`), y eso es lo que usa la lista de Tiendas. | Agregar la impresora a `StoreBaseSerializer` en el backend (o consultar la sucursal al cambiar) y actualizar `store_printer` en `handleSelectStore`. |
 
 ## Código muerto que requiere decisión
 
