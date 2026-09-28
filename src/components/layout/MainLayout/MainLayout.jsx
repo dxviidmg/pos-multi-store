@@ -286,7 +286,7 @@ export default function MainLayout({ toggleTheme, themeMode }) {
 
   const linksByType = {
     T: [
-      ...(user.multistore ? [{
+      ...(user.multistore && user.role === "owner" ? [{
         label: "Tienda",
         action: "store-selector",
         dropdown: stores.map(s => ({ label: s.full_name || s.name, storeId: s.id }))
@@ -357,7 +357,7 @@ export default function MainLayout({ toggleTheme, themeMode }) {
       { label: "Historial de stock", href: "/historial-stock/", hidden: user.role === "seller" },
     ],
     A: [
-      ...(user.multistore ? [{
+      ...(user.multistore && user.role === "owner" ? [{
         label: "Tienda",
         action: "store-selector",
         dropdown: stores.map(s => ({ label: s.full_name || s.name, storeId: s.id }))
