@@ -179,9 +179,22 @@ export default function MainLayout({ toggleTheme, themeMode }) {
   const [stores, setStores] = React.useState([]);
   const [loadingStores, setLoadingStores] = React.useState(false);
   const [switchingStore, setSwitchingStore] = React.useState(false);
+  const [previousStoreId, setPreviousStoreId] = React.useState(null);
 
   // Limpieza compartida por el logout manual y otros cierres de sesión: vacía la caché
   // de React Query, el carrito de Redux y borra el usuario del contexto.
+  const previousStoreIdRef = React.useRef(null);
+
+  React.useEffect(() => {
+    if (user?.store_id && user.store_id !== previousStoreIdRef.current) {
+      const oldStoreId = previousStoreIdRef.current;
+      previousStoreIdRef.current = user.store_id;
+      if (oldStoreId) {
+        setPreviousStoreId(oldStoreId);
+      }
+    }
+  }, [user?.store_id]);
+
   const performLogout = React.useCallback(() => {
     queryClient.clear();
     dispatch(cleanCart());
@@ -215,7 +228,7 @@ export default function MainLayout({ toggleTheme, themeMode }) {
 
 
   const handleToggleStoreMenu = async (label, shouldToggle) => {
-    if (label === "Tienda" && stores.length === 0) {
+    if (label === "Tienda" && !openMenus[label]) {
       setLoadingStores(true);
       try {
         const response = await getStores();
@@ -245,6 +258,7 @@ export default function MainLayout({ toggleTheme, themeMode }) {
           store_id: storeId,
           store_name: selectedStore.full_name || selectedStore.name,
           store_type: selectedStore.store_type,
+          store_printer: selectedStore.printer?.id || null,
         });
         window.dispatchEvent(new Event("store-changed"));
 
@@ -291,7 +305,7 @@ export default function MainLayout({ toggleTheme, themeMode }) {
         action: "store-selector",
         dropdown: stores.map(s => ({ label: s.full_name || s.name, storeId: s.id }))
       }] : []),
-      ...(user.role === "owner" ? [{
+      ...(user.role === "owner" && !user.multistore ? [{
         label: "Regresar",
         action: "go-back",
         onClick: handleBack
@@ -349,12 +363,12 @@ export default function MainLayout({ toggleTheme, themeMode }) {
           { label: "Distribuciones", href: "/distribuciones/", hidden: user.role === "seller" },
           { label: "Traspasos", href: "/traspasos/", hidden: user.role === "seller" },
         ],
-        hidden: user.role === "seller",
+        hidden: user.role === "seller" || !user.multistore,
       },
       { label: "Ventas", href: "/ventas/", hidden: user.role !== "seller" },
       { label: "Apartados", href: "/apartados/", hidden: user.role !== "seller" },
       { label: "Movimientos en caja", href: "/movimientos-caja/", hidden: user.role !== "seller" },
-      { label: "Traspasos", href: "/traspasos/", hidden: user.role !== "seller" },
+      { label: "Traspasos", href: "/traspasos/", hidden: user.role !== "seller" || !user.multistore },
       { label: "Historial de stock", href: "/historial-stock/", hidden: user.role === "seller" },
     ],
     A: [
@@ -363,7 +377,7 @@ export default function MainLayout({ toggleTheme, themeMode }) {
         action: "store-selector",
         dropdown: stores.map(s => ({ label: s.full_name || s.name, storeId: s.id }))
       }] : []),
-      ...(user.role === "owner" ? [{
+      ...(user.role === "owner" && !user.multistore ? [{
         label: "Regresar",
         action: "go-back",
         onClick: handleBack
@@ -782,7 +796,7 @@ export default function MainLayout({ toggleTheme, themeMode }) {
                           {iconMap[item.label] || <DashboardIcon />}
                         </ListItemIcon>
                         <ListItemText
-                          primary={item.label}
+                          primary={open ? item.label : user.store_name}
                           secondary={open ? user.store_name : null}
                           primaryTypographyProps={{ fontWeight: 600, fontSize: "0.8rem" }}
                           secondaryTypographyProps={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.4)" }}
@@ -800,27 +814,38 @@ export default function MainLayout({ toggleTheme, themeMode }) {
                             </Box>
                           ) : (
                             <>
-                              {item.dropdown.map((sub, i) => (
-                                <ListItemButton
-                                  key={i}
-                                  onClick={() => handleSelectStore(sub.storeId)}
-                                  sx={{
-                                    pl: 6.5, py: 0.6, borderRadius: "8px", my: 0.2, mx: 0.5,
-                                    backgroundColor: sub.storeId === user.store_id ? "rgba(255, 193, 7, 0.1)" : "transparent",
-                                    "&:hover": { backgroundColor: sub.storeId === user.store_id ? "rgba(255, 193, 7, 0.15)" : "rgba(255,255,255,0.06)" },
-                                  }}
-                                >
-                                  <ListItemText
-                                    primary={sub.label}
-                                    primaryTypographyProps={{
-                                      fontSize: "0.75rem",
-                                      color: sub.storeId === user.store_id ? "rgba(255, 193, 7, 1)" : "rgba(255,255,255,0.75)",
-                                      fontWeight: sub.storeId === user.store_id ? 600 : 400,
+                              {(() => {
+                                const sortedDropdown = [...item.dropdown];
+                                if (previousStoreId) {
+                                  const prevIndex = sortedDropdown.findIndex(s => s.storeId === previousStoreId);
+                                  if (prevIndex >= 0) {
+                                    const [prev] = sortedDropdown.splice(prevIndex, 1);
+                                    sortedDropdown.unshift(prev);
+                                  }
+                                }
+                                return sortedDropdown.map((sub, i) => (
+                                  <ListItemButton
+                                    key={i}
+                                    onClick={() => handleSelectStore(sub.storeId)}
+                                    disabled={sub.storeId === user.store_id}
+                                    sx={{
+                                      pl: 6.5, py: 0.6, borderRadius: "8px", my: 0.2, mx: 0.5,
+                                      backgroundColor: sub.storeId === user.store_id ? "rgba(255, 193, 7, 0.12)" : sub.storeId === previousStoreId ? "rgba(255, 193, 7, 0.06)" : "transparent",
+                                      "&:hover": { backgroundColor: sub.storeId === user.store_id ? "rgba(255, 193, 7, 0.12)" : "rgba(255,255,255,0.06)" },
                                     }}
-                                  />
-                                </ListItemButton>
-                              ))}
-                              <Divider sx={{ borderColor: "rgba(255,255,255,0.1)", my: 0.2 }} />
+                                  >
+                                    <ListItemText
+                                      primary={sub.label}
+                                      primaryTypographyProps={{
+                                        fontSize: "0.75rem",
+                                        color: sub.storeId === user.store_id ? "rgba(255, 193, 7, 1)" : "rgba(255,255,255,0.75)",
+                                        fontWeight: sub.storeId === user.store_id ? 600 : sub.storeId === previousStoreId ? 500 : 400,
+                                      }}
+                                    />
+                                  </ListItemButton>
+                                ));
+                              })()}
+                              <Divider sx={{ borderColor: "rgba(255,255,255,0.1)", my: 0.5 }} />
                               <ListItemButton
                                 onClick={handleBack}
                                 sx={{
@@ -970,7 +995,7 @@ export default function MainLayout({ toggleTheme, themeMode }) {
 
       <Box component="main" sx={{ flexGrow: 1, p: { xs: 1.5, sm: 2, md: 3 }, minWidth: 0, overflowY: "auto", position: "relative" }}>
         <DrawerHeader />
-        <Box key={location.pathname} className="page-enter">
+        <Box key={`${location.pathname}-${user.store_id}`} className="page-enter">
           <Outlet />
         </Box>
       </Box>

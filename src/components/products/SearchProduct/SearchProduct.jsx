@@ -22,7 +22,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { usePrinterStatus } from "../../../hooks/usePrinterStatus";
 import { handlePrintTicket, formatCurrency } from "../../../utils/utils";
-import { Grid, TextField, FormLabel, RadioGroup, FormControlLabel, Radio, InputAdornment, IconButton, CircularProgress, LinearProgress, Alert, Select, MenuItem, useMediaQuery, useTheme } from "@mui/material";
+import { Grid, TextField, FormLabel, RadioGroup, FormControlLabel, Radio, InputAdornment, IconButton, CircularProgress, LinearProgress, Alert, AlertTitle, Box, Snackbar, Select, MenuItem, useMediaQuery, useTheme } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import PushPinIcon from "@mui/icons-material/PushPin";
 import PushPinOutlinedIcon from "@mui/icons-material/PushPinOutlined";
@@ -54,6 +54,7 @@ const SearchProduct = ({ searchInputRef }) => {
   
   const { user } = useUser();
   const storeType = user?.store_type;
+  const allowTransfer = !!user?.multistore;
   const storePrinter = user?.store_printer;
 
   const { connected: printerConnected } = usePrinterStatus(storePrinter);
@@ -90,6 +91,7 @@ const SearchProduct = ({ searchInputRef }) => {
 
   // Usar hook de atajos de teclado
   useKeyboardShortcuts(inputRef, dispatch, {
+    allowTransfer,
     onVisualSearch: () => {
       setQueryType(QUERY_TYPES.VISUAL);
       setQuery("");
@@ -278,17 +280,38 @@ const SearchProduct = ({ searchInputRef }) => {
         }} 
       />
 
-      <PageHeader title="Vender">
-        {stockVerificationSnackbar.open && user?.role !== "seller" && (storeType === "T" || storeType === "A") && (
-          <Alert 
-            severity="success" 
-            variant="filled" 
-            sx={{ py: 0 }}
-            onClose={() => setStockVerificationSnackbar({ ...stockVerificationSnackbar, open: false })}
-          >
+      <Snackbar
+        open={stockVerificationSnackbar.open && user?.role !== "seller" && (storeType === "T" || storeType === "A")}
+        autoHideDuration={3000}
+        onClose={() => setStockVerificationSnackbar({ ...stockVerificationSnackbar, open: false })}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        sx={{ top: { xs: 8, sm: 16 }, px: { xs: 1, sm: 0 } }}
+      >
+        <Alert
+          severity="success"
+          variant="filled"
+          icon={<CheckCircleIcon />}
+          onClose={() => setStockVerificationSnackbar({ ...stockVerificationSnackbar, open: false })}
+          sx={{
+            width: "100%",
+            maxWidth: { xs: "100%", sm: 480 },
+            minHeight: 64,
+            boxShadow: "0 4px 20px rgba(0,0,0,0.12)",
+            borderRadius: "10px",
+            alignItems: "center",
+            fontWeight: 600,
+          }}
+        >
+          <AlertTitle sx={{ fontWeight: 700, mb: 0.25 }}>
+            Verificación de stock requerida
+          </AlertTitle>
+          <Box component="span" sx={{ fontSize: "0.8rem" }}>
             El producto {stockVerificationSnackbar.productCode} necesita verificación de stock
-          </Alert>
-        )}
+          </Box>
+        </Alert>
+      </Snackbar>
+
+      <PageHeader title="Vender">
         {!isMobile && (
           <CustomButton
             fullWidth
@@ -342,7 +365,9 @@ const SearchProduct = ({ searchInputRef }) => {
                 {storeType !== "T" && (
                   <MenuItem value={MOVEMENT_TYPES.DISTRIBUTION}>Distribución</MenuItem>
                 )}
-                <MenuItem value={MOVEMENT_TYPES.TRANSFER}>Confirmar traspaso</MenuItem>
+                {allowTransfer && (
+                  <MenuItem value={MOVEMENT_TYPES.TRANSFER}>Confirmar traspaso</MenuItem>
+                )}
                 <MenuItem value={MOVEMENT_TYPES.ADD_STOCK}>Agregar a inventario</MenuItem>
                 <MenuItem value={MOVEMENT_TYPES.CHECK_STOCK}>Checar precio</MenuItem>
                 {storeType !== "A" && (
@@ -395,12 +420,14 @@ const SearchProduct = ({ searchInputRef }) => {
                     sx={{ mr: 4 }}
                   />
                 )}
-                <FormControlLabel 
-                  value={MOVEMENT_TYPES.TRANSFER} 
-                  control={<Radio size="small" sx={{ py: 0.5 }} />} 
-                  label="Confirmar traspaso (Ctrl+R)"
-                  sx={{ mr: 4 }}
-                />
+                {allowTransfer && (
+                  <FormControlLabel 
+                    value={MOVEMENT_TYPES.TRANSFER} 
+                    control={<Radio size="small" sx={{ py: 0.5 }} />} 
+                    label="Confirmar traspaso (Ctrl+R)"
+                    sx={{ mr: 4 }}
+                  />
+                )}
                 <FormControlLabel 
                   value={MOVEMENT_TYPES.ADD_STOCK} 
                   control={<Radio size="small" />} 
