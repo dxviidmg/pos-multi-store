@@ -54,6 +54,7 @@ const SearchProduct = ({ searchInputRef }) => {
   
   const { user } = useUser();
   const storeType = user?.store_type;
+  const allowTransfer = !!user?.multistore;
   const storePrinter = user?.store_printer;
 
   const { connected: printerConnected } = usePrinterStatus(storePrinter);
@@ -90,6 +91,7 @@ const SearchProduct = ({ searchInputRef }) => {
 
   // Usar hook de atajos de teclado
   useKeyboardShortcuts(inputRef, dispatch, {
+    allowTransfer,
     onVisualSearch: () => {
       setQueryType(QUERY_TYPES.VISUAL);
       setQuery("");
@@ -363,7 +365,9 @@ const SearchProduct = ({ searchInputRef }) => {
                 {storeType !== "T" && (
                   <MenuItem value={MOVEMENT_TYPES.DISTRIBUTION}>Distribución</MenuItem>
                 )}
-                <MenuItem value={MOVEMENT_TYPES.TRANSFER}>Confirmar traspaso</MenuItem>
+                {allowTransfer && (
+                  <MenuItem value={MOVEMENT_TYPES.TRANSFER}>Confirmar traspaso</MenuItem>
+                )}
                 <MenuItem value={MOVEMENT_TYPES.ADD_STOCK}>Agregar a inventario</MenuItem>
                 <MenuItem value={MOVEMENT_TYPES.CHECK_STOCK}>Checar precio</MenuItem>
                 {storeType !== "A" && (
@@ -416,12 +420,14 @@ const SearchProduct = ({ searchInputRef }) => {
                     sx={{ mr: 4 }}
                   />
                 )}
-                <FormControlLabel 
-                  value={MOVEMENT_TYPES.TRANSFER} 
-                  control={<Radio size="small" sx={{ py: 0.5 }} />} 
-                  label="Confirmar traspaso (Ctrl+R)"
-                  sx={{ mr: 4 }}
-                />
+                {allowTransfer && (
+                  <FormControlLabel 
+                    value={MOVEMENT_TYPES.TRANSFER} 
+                    control={<Radio size="small" sx={{ py: 0.5 }} />} 
+                    label="Confirmar traspaso (Ctrl+R)"
+                    sx={{ mr: 4 }}
+                  />
+                )}
                 <FormControlLabel 
                   value={MOVEMENT_TYPES.ADD_STOCK} 
                   control={<Radio size="small" />} 

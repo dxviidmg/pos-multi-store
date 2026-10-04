@@ -30,6 +30,8 @@ const EVENT_CONFIG = {
   reservation_created: { icon: <ShoppingCartIcon fontSize="small" />, href: "/ventas/" },
 };
 
+const MULTISTORE_EVENTS = ["transfer_created", "transfer_confirmed", "distribution_created", "distribution_confirmed"];
+
 let reconnectAttempts = 0;
 const maxReconnectAttempts = 5;
 let pollingInterval = null;
@@ -56,6 +58,7 @@ const NotificationsMenu = memo(() => {
 
     ws.onmessage = (event) => {
       const msg = JSON.parse(event.data);
+      if (!user.multistore && MULTISTORE_EVENTS.includes(msg.event)) return;
       const config = EVENT_CONFIG[msg.event] || { icon: <NotificationsIcon fontSize="small" />, href: "/" };
       setNotifications((prev) => [
         { id: `${msg.event}-${Date.now()}`, icon: config.icon, text: msg.message, storeName: msg.store_name, href: config.href },
@@ -85,7 +88,7 @@ const NotificationsMenu = memo(() => {
         }
       }
     };
-  }, []);
+  }, [user.multistore]);
 
   useEffect(() => {
     if (!isWithinAllowedHours()) return;
