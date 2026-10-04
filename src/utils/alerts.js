@@ -38,15 +38,23 @@ export const showRequestError = (action, source) => {
   }
 };
 
-export const showConfirm = async (title, text = "") => {
+/**
+ * Confirmación con botones Confirmar/Cancelar. Por defecto es de eliminación.
+ * `options` permite personalizar los textos de los botones, el color de confirmar y el ícono.
+ */
+export const showConfirm = async (
+  title,
+  text = "",
+  { confirmText = "Eliminar", cancelText = "Cancelar", confirmColor = "#d33", icon = "warning" } = {}
+) => {
   const result = await Swal.fire({
-    icon: "warning",
+    icon,
     title,
     text,
     showCancelButton: true,
-    confirmButtonText: "Eliminar",
-    cancelButtonText: "Cancelar",
-    confirmButtonColor: "#d33",
+    confirmButtonText: confirmText,
+    cancelButtonText: cancelText,
+    confirmButtonColor: confirmColor,
   });
   return result.isConfirmed;
 };

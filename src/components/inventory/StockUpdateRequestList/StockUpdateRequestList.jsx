@@ -10,9 +10,8 @@ import httpClient from "../../../api/httpClient";
 import { getApiUrl } from "../../../api/utils";
 import { useUser } from "../../../context/UserContext";
 import { getFormattedDateTime } from "../../../utils/utils";
-import { showSuccess, showRequestError } from "../../../utils/alerts";
+import { showSuccess, showRequestError, showConfirm } from "../../../utils/alerts";
 import { getStockUpdateRequests } from "../../../api/notifications";
-import Swal from "sweetalert2";
 import { colors } from "../../../theme/colors";
 import PageHeader from "../../ui/PageHeader";
 
@@ -31,14 +30,11 @@ const StockUpdateRequestList = () => {
   }, []);
 
   const handleApply = async (row) => {
-    const { isConfirmed } = await Swal.fire({
-      title: "¿Confirmar ajuste?",
-      text: `${row.product_name} — Cantidad: ${row.requested_stock}`,
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonText: "Confirmar",
-      cancelButtonText: "Cancelar",
-    });
+    const isConfirmed = await showConfirm(
+      "¿Confirmar ajuste?",
+      `${row.product_name} — Cantidad: ${row.requested_stock}`,
+      { confirmText: "Confirmar", confirmColor: colors.primary, icon: "question" }
+    );
     if (!isConfirmed) return;
     try {
       await httpClient.post(getApiUrl(`stock-update-request/${row.id}/approve`), {});
@@ -50,15 +46,11 @@ const StockUpdateRequestList = () => {
   };
 
   const handleDelete = async (row) => {
-    const { isConfirmed } = await Swal.fire({
-      title: "¿Eliminar solicitud?",
-      text: `${row.product_name} — Cantidad: ${row.requested_stock}`,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Eliminar",
-      cancelButtonText: "Cancelar",
-      confirmButtonColor: colors.primary,
-    });
+    const isConfirmed = await showConfirm(
+      "¿Eliminar solicitud?",
+      `${row.product_name} — Cantidad: ${row.requested_stock}`,
+      { confirmColor: colors.primary }
+    );
     if (!isConfirmed) return;
     try {
       await httpClient.delete(getApiUrl(`stock-update-request/${row.id}`));

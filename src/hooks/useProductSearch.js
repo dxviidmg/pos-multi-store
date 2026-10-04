@@ -1,8 +1,8 @@
 import { useCallback, useRef, useState } from "react";
 import { useFetchWithRetry } from "./useFetch";
 import { getStoreProducts } from "../api/products";
-import { showError, showWarning } from "../utils/alerts";
-import Swal from "sweetalert2";
+import { showError, showWarning, showConfirm } from "../utils/alerts";
+import { colors } from "../theme/colors";
 
 export const useProductSearch = () => {
   const [query, setQuery] = useState("");
@@ -55,16 +55,12 @@ export const useProductSearch = () => {
 
         if (fetchedData.length === 0) {
           if (createProductsOnSale) {
-            const confirm = await Swal.fire({
-              icon: "question",
-              title: "Producto no encontrado",
-              text: `No se encontró ningún producto con el código "${query}". ¿Desea crear uno nuevo con este código?`,
-              showCancelButton: true,
-              confirmButtonText: "Sí, crear producto",
-              cancelButtonText: "No, gracias",
-              confirmButtonColor: "#04346b",
-            });
-            if (confirm.isConfirmed) {
+            const confirmed = await showConfirm(
+              "Producto no encontrado",
+              `No se encontró ningún producto con el código "${query}". ¿Desea crear uno nuevo con este código?`,
+              { confirmText: "Sí, crear producto", cancelText: "No, gracias", confirmColor: colors.primary, icon: "question" }
+            );
+            if (confirmed) {
               productModal.open({ code: query, createFromSearch: true });
             } else {
               // Si cancela, limpiar la búsqueda para evitar que se re-abra el diálogo
