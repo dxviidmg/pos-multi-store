@@ -17,6 +17,7 @@ const DataTable = ({
   noDataComponent = "Sin datos que mostrar",
   searcher = false,
   setSelectedRows,
+  conditionalRowStyles,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [paginationModel, setPaginationModel] = useState({
@@ -87,6 +88,23 @@ const DataTable = ({
     [filteredData]
   );
 
+  const getRowClassName = useMemo(
+    () => conditionalRowStyles?.length
+      ? ({ row }) => conditionalRowStyles
+          .map((rule, index) => (rule.when(row) ? `conditional-row-${index}` : null))
+          .filter(Boolean)
+          .join(" ")
+      : undefined,
+    [conditionalRowStyles]
+  );
+
+  const conditionalRowSx = useMemo(
+    () => Object.fromEntries(
+      (conditionalRowStyles || []).map((rule, index) => [`& .conditional-row-${index}`, rule.style])
+    ),
+    [conditionalRowStyles]
+  );
+
   return (
     <Box sx={{ width: "100%", mt: 1 }}>
       {searcher && (
@@ -133,6 +151,7 @@ const DataTable = ({
           }}
           disableRowSelectionOnClick
           getRowHeight={() => 'auto'}
+          getRowClassName={getRowClassName}
           localeText={{ noRowsLabel: noDataComponent }}
           hideFooter={data.length <= 10}
           density="compact"
@@ -167,6 +186,7 @@ const DataTable = ({
               '&:hover': { backgroundColor: 'action.hover' },
             },
             "& .MuiDataGrid-cell:focus, & .MuiDataGrid-columnHeader:focus": { outline: 'none' },
+            ...conditionalRowSx,
           }}
         />
         )}
