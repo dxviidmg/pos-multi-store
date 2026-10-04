@@ -36,6 +36,13 @@ export const useCartActions = (getAvailableStock, movementType, keepListOpen, se
             setData([]);
             setQuery("");
           }
+        } else if (!(Number(stock) > 0)) {
+          showWarning(
+            "No se pudo agregar el producto",
+            movementType === MOVEMENT_TYPES.TRANSFER
+              ? "No está incluido en ningún traspaso pendiente."
+              : "No hay stock disponible en esta tienda"
+          );
         } else {
           showWarning("No se pudo agregar el producto", `Está reservado en otros carritos. Stock disponible: ${availableStock}`);
         }
