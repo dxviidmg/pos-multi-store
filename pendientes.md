@@ -1,80 +1,20 @@
 # Pendientes
 
-## Alertas que no aparecen cuando falla el servidor
+> Última revisión: 2026-10-04. Formato: archivo:línea, qué pasa, corrección sugerida. Al corregir algo, quítalo de aquí.
 
-**Problema:** `httpClient` rechaza la petición ante cualquier error HTTP (4xx, 5xx o sin conexión). Los flujos siguientes validan `if (response.status === …) … else showRequestError(…)` sin `try/catch`. Por eso, cuando algo falla, la ejecución se detiene en el `await` y el `else` nunca corre.
+## Requiere backend (`pos_multi_store`)
 
-**Lo que ve el usuario:** hace clic (por ejemplo en "Eliminar") y no pasa nada. No aparece ningún mensaje, así que no sabe si la acción se hizo o no. En los flujos marcados con ⏳ la barra de carga además se queda encendida.
+| # | Qué pasa | Corrección sugerida |
+|---|---|---|
+| 1 | **Los permisos solo se aplican en el frontend.** `src/constants/routeAccess.js` bloquea rutas y menú por rol y tipo de sucursal, pero la API acepta cualquier llamada con token válido (por ejemplo, un vendedor puede pedir `products/update-prices` o los tableros con una herramienta HTTP). | Replicar la matriz de `ROUTE_ACCESS` como permisos DRF por endpoint. |
+| 2 | **Devolución parcial fraccionada falla.** El frontend ya permite devolver 0.5 kg (`SaleModal`), pero `SaleCancelView._return_partial` (`sales/views.py:626`) hace `ps.quantity -= qty` con un float → `TypeError` Decimal − float → 500. | Usar `Decimal(str(qty))` en la resta y en `sp.stock += qty`. |
+| 3 | **No existe `GET /api/audit/notifications/`.** El respaldo por polling de `NotificationsMenu` (`src/api/notifications.js:20`) recibe 404 y se detiene. | Crear el endpoint con `[{id, event, message, store_id, store_name, created_at}]`, con el mismo alcance que el consumer. Devolver solo no leídas o recientes para no marcar todo el historial como nuevo. |
+| 4 | **Impresora al cambiar de sucursal.** `getStores()` (`StoreBaseSerializer`) no incluye `printer`, así que `MainLayout.handleSelectStore` deja `store_printer = null` y no se imprimen tickets hasta volver a entrar desde la lista de Tiendas. | Agregar `printer: {id, …}` al serializer de la lista de sucursales. |
+| 5 | **Editar vendedor.** `StoreWorkerSerializer` tiene `worker = UserSerializer()` anidado y escribible sin `update()`, y el campo es `store` (write-only), no `store_id`. Un `PATCH store-worker/{id}/` falla con 400/500. | Implementar `update()` o aceptar un payload plano. |
 
-**Corrección:** envolver cada flujo en `try/catch/finally`, como pide `RULES.md` ("Usar `try/catch/finally` en llamadas async para garantizar que loading se desactive"):
+## Decisiones de producto abiertas
 
-```js
-// Antes
-const response = await deleteBrands(ids);
-if (response.status === 200) {
-  showSuccess("Marcas eliminadas");
-} else {
-  showRequestError("eliminar las marcas", response);
-}
-
-// Después
-try {
-  await deleteBrands(ids);
-  showSuccess("Marcas eliminadas");
-} catch (error) {
-  showRequestError("eliminar las marcas", error);
-} finally {
-  setLoading(false); // solo donde hay estado de carga
-}
-```
-
-Cuando la acción sale bien, el comportamiento no cambia. Cuando falla, el usuario ve el aviso correspondiente y la carga se apaga.
-
-### Flujos afectados (15)
-
-| # | Archivo | Función | Acción |
-|---|---|---|---|
-| 1 | `src/components/catalog/CatalogList/CatalogList.jsx` | `handleDelete` | Eliminar marcas / departamentos |
-| 2 | `src/components/products/ProductList/ProductList.jsx` | `handleDeleteProducts` | Eliminar productos |
-| 3 | `src/components/products/ProductList/ProductList.jsx` | `handleUpperCodeProducts` | Pasar códigos a mayúsculas |
-| 4 | `src/components/products/PriceUpdateModal/PriceUpdateModal.jsx` | `handleSubmit` ⏳ | Actualizar precios |
-| 5 | `src/components/products/ProductReassign/ProductReassign.jsx` | `handleReassignProducts` | Reasignar productos |
-| 6 | `src/components/products/StoreProductLogsModal/StoreProductLogsModal.jsx` | `handleCreateAdjustStock` | Ajustar stock |
-| 7 | `src/components/inventory/DistributionList/DistributionList.jsx` | `handleSubmit` ⏳ | Confirmar distribución |
-| 8 | `src/components/inventory/DistributionList/DistributionList.jsx` | `handleSaveClick` | Editar cantidad |
-| 9 | `src/components/inventory/DistributionList/DistributionList.jsx` | `handleDeleteTransfer` | Eliminar producto de la distribución |
-| 10 | `src/components/inventory/DistributionList/DistributionList.jsx` | `handleDeleteDistribution` | Eliminar distribución |
-| 11 | `src/components/cashflow/CashFlowList/CashFlowList.jsx` | `handleDelete` | Eliminar movimiento de caja |
-| 12 | `src/components/cashflow/CashFlowModal/CashFlowModal.jsx` | `handleSubmit` ⏳ | Crear / editar movimiento de caja |
-| 13 | `src/components/admin/StoreList/CreateStoreModal.jsx` | `handleSubmit` ⏳ | Crear tienda |
-| 14 | `src/components/clients/DiscountModal/DiscountModal.jsx` | `handleSave` | Crear descuento |
-
-⏳ = además deja la carga encendida si falla.
-
-En `DiscountModal`, el caso "Ese descuento ya existe" hoy revisa `response.response?.status === 400`, lo cual nunca se cumple porque la petición se rechaza antes. Al moverlo al `catch` hay que leerlo de `error.response`.
-
-**Caso relacionado (15):** `src/components/inventory/Cart/Cart.jsx` → `handleAddToStock`. Este sí tiene `try/catch`, pero el `catch` no llama a `setLoading(false)`, así que la carga se queda encendida si falla.
-
----
-
-## Bugs encontrados (no corregidos porque cambian comportamiento)
-
-| # | Dónde | Qué pasa | Corrección sugerida |
-|---|---|---|---|
-| 1 | `src/components/catalog/SellerModal/SellerModal.jsx` → `handleSubmit` | Al **editar** un vendedor se llama a `updateProduct` (API de productos) en vez de la API de vendedores. | Usar la función de actualizar vendedor de `api/sellers.js` (crearla si no existe). |
-| 2 | `src/components/products/SearchProduct/SearchProduct.jsx` → botón con `onClick={handleBarcodeSearch}` | `handleBarcodeSearch` solo actúa si `event.key === "Enter"`, y un clic no tiene tecla, así que **el botón de buscar código no hace nada**. | Separar un handler para el clic que ejecute la búsqueda directamente. |
-| 3 | `src/components/admin/StoreList/StoreList.columns.jsx` → columna "Vaciar stock" | No revisa el rol. RULES dice que **solo el owner** puede vaciar stock, y la ruta `/tiendas/` no está restringida por rol. | Mostrar la columna solo con `user.role === "owner"` (spread condicional) y confirmar qué roles entran a `/tiendas/`. |
-| 4 | `src/components/admin/StoreList/StoreList.jsx` → `conditionalRowStyles` | `DataTable` no soporta ese prop, así que **el resaltado de la tienda actual nunca se ve**. | Agregar soporte en `DataTable` (vía `getRowClassName` de DataGrid) o quitar el prop. |
-| 5 | `src/components/layout/MainLayout/MainLayout.jsx` → menú móvil | En móvil, "Regresar" navega a `undefined` y "Tienda" no carga la lista de tiendas. Solo el menú de escritorio maneja `go-back` y `store-selector`. | Unificar el render del menú (ver fusiones abajo) para que móvil use la misma lógica. |
-| 6 | `src/components/admin/Dashboard/Dashboard.jsx` → `periodLabel` | Con "Todo el año" (mes 0) muestra **"Enero"** (`MONTH_NAMES[0]`). Los otros tableros muestran "Todo el año". | Usar `"Todo el año"` como en `ProductsDashboard` y `CancellationsDashboard`. |
-| 7 | `src/components/admin/Profile/Profile.jsx` | `<CustomSpinner />` sin `isLoading`, así que **no se ve nada mientras carga**. | `<PageSkeleton />` o `<CustomSpinner isLoading />`. |
-| 8 | `src/components/ui/Button/Button.jsx` | `sx={{ minWidth: 0, ...props.sx }}` y luego `{...props}` sobrescribe `sx`; cuando alguien pasa `sx`, se pierde `minWidth: 0`. | Sacar `sx` del spread: `({ sx, ...props })` y `sx={{ minWidth: 0, ...sx }}`. |
-| 9 | `src/components/products/StoreProductList/StoreProductList.jsx` → `handleSearchFieldChange` | Al cambiar de "Nombre" a "Código" borra `params.name`, pero el nombre se guarda en `params.q`, así que la búsqueda anterior queda activa. | Borrar `q` en vez de `name`. |
-| 10 | `src/api/plans.js` → `getPlanEquivalent(id)` | Recibe `id` pero no lo usa en la URL. | Confirmar con backend si el endpoint necesita el id. |
-| 11 | `src/components/ui/NotificationsMenu/NotificationsMenu.jsx` | La reconexión del WebSocket usa un `store_id` viejo (callback con deps `[]`), `reconnectAttempts` nunca se reinicia y el respaldo usa `fetch` directo en vez de `httpClient`. | Revisar contra la sección "Notificaciones" de RULES. |
-| 12 | `StoreProductImport.jsx` y `SaleImport.jsx` → tabla "Filas con error" | Muestra **todas** las filas, no solo las que tienen error (`ProductImport` sí filtra). | Pasar solo las filas con error. |
-| 13 | `src/hooks/useClientMutations.js` → `useUpdateClient` | Al **editar** un cliente con teléfono repetido no se usa `clientErrorParser`; el motivo solo se muestra si el backend lo manda como `message`/`error`. | Pasar `errorParser: clientErrorParser` también en la edición. |
-| 14 | `src/components/layout/MainLayout/MainLayout.jsx` → `handleSelectStore` | Al cambiar de sucursal desde el menú lateral, `store_printer` se queda con la impresora de la sucursal anterior. `getStores()` usa `StoreBaseSerializer`, que no trae la impresora; solo `stores-cash-summary` la incluye (`printer.id`), y eso es lo que usa la lista de Tiendas. | Agregar la impresora a `StoreBaseSerializer` en el backend (o consultar la sucursal al cambiar) y actualizar `store_printer` en `handleSelectStore`. |
+- **Usuarios sin sucursal que no son dueños** (rol `manager` o "Sin definir" en vista general) aterrizan en `/perfil/` con el menú vacío.
 
 ## Código muerto que requiere decisión
 
@@ -83,14 +23,14 @@ En `DiscountModal`, el caso "Ese descuento ya existe" hoy revisa `response.respo
 - **`PriceLogsList` y `TransferList`:** `useEffect(() => refetch(), [refetch])` repite la consulta que React Query ya hace al montar.
 - **`MyCurrentPlan`:** `result.success` nunca es verdadero; las ramas que lo revisan no se ejecutan.
 - **`StoreList`:** el filtro rápido `"pending"` no se puede seleccionar (no hay botón), así que sus ramas y varias columnas (Distribuciones, Traspasos, Acciones) no se muestran nunca.
-- **Carpetas vacías sin versionar:** `src/application/sales`, `src/infrastructure/sales` y `src/domain/sales/__tests__`. ¿Son para una reestructura planeada?
+- **Carpetas vacías sin versionar:** `src/application/sales`, `src/infrastructure/sales` y `src/domain/sales/__tests__`. Vienen de la migración a Next.js (rama `migration-to-next`). ¿Se eliminan?
+- **`SellerModal` en modo edición:** `SellerList` edita vendedores con `EditUserModal`, así que la rama de edición de `SellerModal` (`updateSeller`) no se usa. Además el backend no la soporta (ver abajo). ¿Se elimina la rama?
 
 ## Fusiones sugeridas (reducen duplicación sin cambiar funcionalidad)
 
 | Propuesta | Archivos | Ahorro aprox. |
 |---|---|---|
 | Hook `useFileImport` + componentes `ImportStepper` / `ImportActions` | `ProductImport`, `StoreProductImport`, `SaleImport` | ~150–200 líneas |
-| Componente `SidebarNav` compartido entre menú móvil y escritorio (arregla el bug 5) | `MainLayout.jsx` | ~250 líneas |
 | `DashboardLoading`, `DashboardEmpty`, `PeriodFilters`, `StoreBarChart`, `StatTile` | 5 tableros de `admin/Dashboard` | ~350 líneas |
 | Fábricas de columnas (`cashCol`, `countCol`, columnas de administrador) y un mapa de filtros | `StoreList.columns.jsx` | ~150 líneas |
 | `HeaderPopoverMenu` + hook `useStoreScopedList` | `PendingMenu`, `DuplicateSalesMenu`, `StockRequestMenu`, `NotificationsMenu` | ~130 líneas |
@@ -100,7 +40,6 @@ En `DiscountModal`, el caso "Ese descuento ya existe" hoy revisa `response.respo
 | `SaleSearchFilters` + `SaleActionsCell` | `SaleList`, `ReservationList` | ~75 líneas |
 | `QuantityInput` + `deleteColumn()` | `cartColumns.js` | ~60 líneas |
 | `DateRangeFilter` | `SellerList`, `ClientList`, `CashFlowList` | ~30 líneas |
-| `showConfirm(title, text, { confirmText, confirmColor })` para no usar `Swal.fire` directo | `ConversionList`, `StockUpdateRequestList`, `StoreList` | — |
 
 ## Colores hardcodeados pendientes de pasar a tokens del tema
 
