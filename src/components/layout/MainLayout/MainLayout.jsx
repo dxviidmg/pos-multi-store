@@ -58,6 +58,13 @@ import PendingMenu from "../../ui/PendingMenu/PendingMenu";
 import DuplicateSalesMenu from "../../ui/DuplicateSalesMenu/DuplicateSalesMenu";
 import StockRequestMenu from "../../ui/StockRequestMenu/StockRequestMenu";
 import { logger } from "../../../utils/logger";
+import {
+  canAccessRoute,
+  getViewType,
+  isSalesDashboardRestricted,
+  SALES_DASHBOARD_PATH,
+  SALES_DASHBOARD_RESTRICTION_MESSAGE,
+} from "../../../constants/routeAccess";
 
 const iconMap = {
   Vender: <ShoppingCartIcon />,
@@ -281,7 +288,7 @@ export default function MainLayout({ toggleTheme, themeMode }) {
     // un refetch y evitar mostrar datos de la tienda anterior o resúmenes vencidos.
     queryClient.clear();
     dispatch(cleanCart());
-    updateUser({ store_type: "", store_name: "", store_id: null });
+    updateUser({ store_type: "", store_name: "", store_id: null, store_printer: null });
     window.dispatchEvent(new Event("store-changed"));
     navigate("/tiendas/", { replace: true });
   };
@@ -290,35 +297,35 @@ export default function MainLayout({ toggleTheme, themeMode }) {
 
   const isActive = (href) => location.pathname === href;
 
-  const currentHour = new Date().getHours();
-  const isDashboardRestricted =
-  user?.tenant_short_name !== 'demo' &&
-  user &&
-  user.multistore &&
-  currentHour >= 10 &&
-  currentHour < 21;
+  const isSeller = user.role === "seller";
 
+  const storeSwitcher = [
+    ...(user.role === "owner" && user.multistore ? [{
+      label: "Tienda",
+      action: "store-selector",
+      dropdown: stores.map(s => ({ label: s.full_name || s.name, storeId: s.id }))
+    }] : []),
+    ...(user.role === "owner" && !user.multistore ? [{
+      label: "Regresar",
+      action: "go-back",
+    }] : []),
+  ];
+
+  // Qué rutas ve cada rol se define en constants/routeAccess.js (filterMenu).
+  // Aquí solo vive la estructura del menú; `hidden` decide la presentación
+  // (el vendedor ve accesos directos en lugar de submenús).
   const linksByType = {
     T: [
-      ...(user.role === "owner" && user.multistore ? [{
-        label: "Tienda",
-        action: "store-selector",
-        dropdown: stores.map(s => ({ label: s.full_name || s.name, storeId: s.id }))
-      }] : []),
-      ...(user.role === "owner" && !user.multistore ? [{
-        label: "Regresar",
-        action: "go-back",
-        onClick: handleBack
-      }] : []),
+      ...storeSwitcher,
       { label: "Vender", href: "/vender/" },
       {
         label: "Ventas",
         dropdown: [
           { label: "Ventas", href: "/ventas/" },
           { label: "Apartados", href: "/apartados/" },
-          { label: "Importar ventas", href: "/importar-ventas/"},
+          { label: "Importar ventas", href: "/importar-ventas/" },
         ],
-        hidden: user.role === "seller"
+        hidden: isSeller,
       },
       {
         label: "Caja",
@@ -326,62 +333,46 @@ export default function MainLayout({ toggleTheme, themeMode }) {
           { label: "Corte de caja", href: "/corte-caja/" },
           { label: "Movimientos en caja", href: "/movimientos-caja/" },
         ],
-        hidden: user.role === "seller"
+        hidden: isSeller,
       },
-      { label: "Clientes", href: "/clientes/", hidden: user.role === "seller" },
+      { label: "Clientes", href: "/clientes/" },
       {
         label: "Productos",
         dropdown: [
-          { label: "Productos", href: "/productos/", hidden: user.role === "seller" },
+          { label: "Productos", href: "/productos/" },
           { label: "Inventario", href: "/inventario/" },
-          { label: "Conversiones", href: "/conversiones/", hidden: user.role === "seller" },
-          { divider: true, hidden: user.role === "seller" },
-          { label: "Marcas", href: "/marcas/", hidden: user.role === "seller" },
-          { label: "Departamentos", href: "/departamentos/", hidden: user.role === "seller" },
-          { label: "Reasignación", href: "/reasignacion/", hidden: user.role === "seller" },
-          { divider: true, hidden: user.role === "seller" },
-          { label: "Importar productos", href: "/importar-productos/", hidden: user.role === "seller" },
-          { label: "Importar inventario", href: "/importar-inventario/", hidden: user.role === "seller" },
-          { divider: true },
-          { label: "Solicitudes de ajustes de stock", href: "/solicitudes-ajustes-stock/", hidden: user.role === "seller"},
-          { label: "Historial de cambio de precios", href: "/historial-precios/", hidden: user.role === "seller" },
+          { label: "Conversiones", href: "/conversiones/" },
+          { label: "Marcas", href: "/marcas/" },
+          { label: "Departamentos", href: "/departamentos/" },
+          { label: "Reasignación", href: "/reasignacion/" },
+          { label: "Importar productos", href: "/importar-productos/" },
+          { label: "Importar inventario", href: "/importar-inventario/" },
+          { label: "Solicitudes de ajustes de stock", href: "/solicitudes-ajustes-stock/" },
+          { label: "Historial de cambio de precios", href: "/historial-precios/" },
         ],
-        hidden: user.role === "seller"
       },
-
       {
         label: "Auditoría",
         dropdown: [
           { label: "Inventario a verificar", href: "/auditoria-inventario/" },
         ],
-        hidden: user.role === "seller",
       },
-      
       {
         label: "Movimientos",
         dropdown: [
-          { label: "Distribuciones", href: "/distribuciones/", hidden: user.role === "seller" },
-          { label: "Traspasos", href: "/traspasos/", hidden: user.role === "seller" },
+          { label: "Distribuciones", href: "/distribuciones/" },
+          { label: "Traspasos", href: "/traspasos/" },
         ],
-        hidden: user.role === "seller" || !user.multistore,
+        hidden: isSeller,
       },
-      { label: "Ventas", href: "/ventas/", hidden: user.role !== "seller" },
-      { label: "Apartados", href: "/apartados/", hidden: user.role !== "seller" },
-      { label: "Movimientos en caja", href: "/movimientos-caja/", hidden: user.role !== "seller" },
-      { label: "Traspasos", href: "/traspasos/", hidden: user.role !== "seller" || !user.multistore },
-      { label: "Historial de stock", href: "/historial-stock/", hidden: user.role === "seller" },
+      { label: "Ventas", href: "/ventas/", hidden: !isSeller },
+      { label: "Apartados", href: "/apartados/", hidden: !isSeller },
+      { label: "Movimientos en caja", href: "/movimientos-caja/", hidden: !isSeller },
+      { label: "Traspasos", href: "/traspasos/", hidden: !isSeller },
+      { label: "Historial de stock", href: "/historial-stock/" },
     ],
     A: [
-      ...(user.role === "owner" && user.multistore ? [{
-        label: "Tienda",
-        action: "store-selector",
-        dropdown: stores.map(s => ({ label: s.full_name || s.name, storeId: s.id }))
-      }] : []),
-      ...(user.role === "owner" && !user.multistore ? [{
-        label: "Regresar",
-        action: "go-back",
-        onClick: handleBack
-      }] : []),
+      ...storeSwitcher,
       { label: "Distribuir", href: "/distribuir/" },
       {
         label: "Movimientos",
@@ -395,13 +386,10 @@ export default function MainLayout({ toggleTheme, themeMode }) {
         dropdown: [
           { label: "Productos", href: "/productos/" },
           { label: "Inventario", href: "/inventario/" },
-          { divider: true },
           { label: "Marcas", href: "/marcas/" },
           { label: "Departamentos", href: "/departamentos/" },
-          { divider: true },
           { label: "Importar productos", href: "/importar-productos/" },
           { label: "Importar inventario", href: "/importar-inventario/" },
-          { divider: true },
           { label: "Solicitudes de ajustes de stock", href: "/solicitudes-ajustes-stock/" },
           { label: "Historial de cambio de precios", href: "/historial-precios/" },
         ],
@@ -409,16 +397,16 @@ export default function MainLayout({ toggleTheme, themeMode }) {
       {
         label: "Auditoría",
         dropdown: [
-          { label: "Inventario a verificar", href: "/auditoria-inventario/", hidden: user.role === "seller" },
+          { label: "Inventario a verificar", href: "/auditoria-inventario/" },
         ],
       },
-      { label: "Historial de stock", href: "/historial-stock/", hidden: user.role === "seller" },
+      { label: "Historial de stock", href: "/historial-stock/" },
     ],
     G: [
       {
         label: "Tableros",
         dropdown: [
-          { label: "Ventas exitosas", href: "/tablero-ventas/", disabled: isDashboardRestricted, disabledMessage: "Antes de 10 AM o después de 9 PM" },
+          { label: "Ventas exitosas", href: SALES_DASHBOARD_PATH, disabled: isSalesDashboardRestricted(user), disabledMessage: SALES_DASHBOARD_RESTRICTION_MESSAGE },
           { label: "Ventas canceladas", href: "/tablero-ventas-ajustadas-cancelaciones/" },
           { label: "Verificación de stock", href: "/tablero-verificacion-stock/" },
           { label: "Marcas y productos", href: "/tablero-productos/" },
@@ -433,13 +421,10 @@ export default function MainLayout({ toggleTheme, themeMode }) {
         dropdown: [
           { label: "Productos", href: "/productos/" },
           { label: "Conversiones", href: "/conversiones/" },
-          { divider: true },
           { label: "Marcas", href: "/marcas/" },
           { label: "Departamentos", href: "/departamentos/" },
           { label: "Reasignación", href: "/reasignacion/" },
-          { divider: true },
           { label: "Importar productos", href: "/importar-productos/" },
-          { divider: true },
           { label: "Solicitudes de ajustes de stock", href: "/solicitudes-ajustes-stock/" },
           { label: "Historial de cambio de precios", href: "/historial-precios/" },
         ],
@@ -451,7 +436,6 @@ export default function MainLayout({ toggleTheme, themeMode }) {
           { label: "Transacciones", href: "/auditoria-transacciones/" },
         ],
       },
-
       {
         label: "Facturación",
         dropdown: [
@@ -465,8 +449,18 @@ export default function MainLayout({ toggleTheme, themeMode }) {
     ],
   };
 
-  const type = user.store_type === "T" ? "T" : user.store_type === "A" ? "A" : "G";
-  const menuItems = linksByType[type];
+  // Quita lo que el usuario no puede abrir y los submenús que quedan vacíos.
+  const filterMenu = (items) => items.flatMap((item) => {
+    if (item.hidden) return [];
+    if (item.action) return [item];
+    if (item.dropdown) {
+      const dropdown = item.dropdown.filter((sub) => canAccessRoute(user, sub.href));
+      return dropdown.length ? [{ ...item, dropdown }] : [];
+    }
+    return canAccessRoute(user, item.href) ? [item] : [];
+  });
+
+  const menuItems = filterMenu(linksByType[getViewType(user)]);
 
   const activeSx = {
     position: "relative",
@@ -481,6 +475,210 @@ export default function MainLayout({ toggleTheme, themeMode }) {
       boxShadow: `0 0 12px ${accent}`,
     },
   };
+
+  const itemButtonSx = (expanded, active = false) => ({
+    borderRadius: "10px", py: 1,
+    justifyContent: expanded ? "initial" : "center",
+    ...(active ? activeSx : {}),
+    "&:hover": { backgroundColor: "rgba(255,255,255,0.08)" },
+  });
+
+  const itemIconSx = (expanded, active = false) => ({
+    color: active ? accent : "rgba(255,255,255,0.7)",
+    minWidth: expanded ? 38 : 0, justifyContent: "center",
+  });
+
+  const subItemSx = { pl: 6.5, py: 0.6, borderRadius: "8px", my: 0.2, mx: 0.5 };
+
+  const renderExpandIcon = (label) =>
+    openMenus[label] ? <ExpandLess sx={{ fontSize: 18 }} /> : <ExpandMore sx={{ fontSize: 18 }} />;
+
+  // La tienda anterior va primero para regresar rápido a ella.
+  const sortStoresByPrevious = (dropdown) => {
+    const sorted = [...dropdown];
+    const prevIndex = sorted.findIndex(s => s.storeId === previousStoreId);
+    if (previousStoreId && prevIndex >= 0) {
+      const [prev] = sorted.splice(prevIndex, 1);
+      sorted.unshift(prev);
+    }
+    return sorted;
+  };
+
+  const renderStoreOptions = (item) => {
+    if (loadingStores) {
+      return (
+        <Box sx={{ display: "flex", justifyContent: "center", py: 1.5, pl: 6.5 }}>
+          <CircularProgress size={18} />
+        </Box>
+      );
+    }
+    return (
+      <>
+        {sortStoresByPrevious(item.dropdown).map((sub) => {
+          const isCurrent = sub.storeId === user.store_id;
+          const isPrevious = sub.storeId === previousStoreId;
+          return (
+            <ListItemButton
+              key={sub.storeId}
+              onClick={() => handleSelectStore(sub.storeId)}
+              disabled={isCurrent}
+              sx={{
+                ...subItemSx,
+                backgroundColor: isCurrent ? "rgba(255, 193, 7, 0.12)" : isPrevious ? "rgba(255, 193, 7, 0.06)" : "transparent",
+                "&:hover": { backgroundColor: isCurrent ? "rgba(255, 193, 7, 0.12)" : "rgba(255,255,255,0.06)" },
+              }}
+            >
+              <ListItemText
+                primary={sub.label}
+                primaryTypographyProps={{
+                  fontSize: "0.75rem",
+                  color: isCurrent ? "rgba(255, 193, 7, 1)" : "rgba(255,255,255,0.75)",
+                  fontWeight: isCurrent ? 600 : isPrevious ? 500 : 400,
+                }}
+              />
+            </ListItemButton>
+          );
+        })}
+        <Divider sx={{ borderColor: "rgba(255,255,255,0.1)", my: 0.5 }} />
+        <ListItemButton
+          onClick={handleBack}
+          sx={{ ...subItemSx, "&:hover": { backgroundColor: "rgba(255,255,255,0.06)" } }}
+        >
+          <ListItemText
+            primary="Regresar"
+            primaryTypographyProps={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.75)" }}
+          />
+        </ListItemButton>
+      </>
+    );
+  };
+
+  const renderSubItems = (item, expanded) =>
+    item.dropdown.map((sub) => (
+      <ListItemButton key={sub.href} onClick={() => !sub.disabled && navigate(sub.href)} disabled={sub.disabled}
+        sx={{
+          ...subItemSx,
+          ...(isActive(sub.href) ? activeSx : {}),
+          "&:hover": { backgroundColor: sub.disabled ? "transparent" : "rgba(255,255,255,0.06)" },
+        }}
+      >
+        <ListItemText primary={sub.label}
+          secondary={sub.disabled && expanded ? sub.disabledMessage : null}
+          primaryTypographyProps={{
+            fontSize: "0.75rem",
+            color: sub.disabled ? "rgba(255,255,255,0.3)" : isActive(sub.href) ? accent : "rgba(255,255,255,0.75)",
+            fontWeight: isActive(sub.href) ? 600 : 400,
+          }}
+          secondaryTypographyProps={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.4)" }}
+        />
+      </ListItemButton>
+    ));
+
+  // Mismo render para el drawer móvil (siempre expandido) y el de escritorio.
+  const renderMenuItems = (expanded) => menuItems.map((item, idx) => {
+    if (item.action === "go-back") {
+      return (
+        <ListItem key={idx} disablePadding sx={{ mb: 0.3 }}>
+          <ListItemButton onClick={handleBack} sx={itemButtonSx(expanded)}>
+            <ListItemIcon sx={itemIconSx(expanded)}>
+              {iconMap[item.label] || <DashboardIcon />}
+            </ListItemIcon>
+            <ListItemText primary={item.label}
+              primaryTypographyProps={{ fontWeight: 600, fontSize: "0.8rem", color: "inherit" }}
+              sx={{ opacity: expanded ? 1 : 0 }}
+            />
+          </ListItemButton>
+        </ListItem>
+      );
+    }
+
+    if (item.dropdown) {
+      const isStoreSelector = item.action === "store-selector";
+      return (
+        <React.Fragment key={idx}>
+          <ListItem disablePadding sx={{ mb: 0.3 }}>
+            <ListItemButton
+              onClick={() => (isStoreSelector ? handleToggleStoreMenu : handleToggleMenu)(item.label, !expanded)}
+              sx={itemButtonSx(expanded)}
+            >
+              <ListItemIcon sx={itemIconSx(expanded)}>
+                {iconMap[item.label] || <DashboardIcon />}
+              </ListItemIcon>
+              <ListItemText
+                primary={isStoreSelector && !expanded ? user.store_name : item.label}
+                secondary={isStoreSelector && expanded ? user.store_name : null}
+                primaryTypographyProps={{ fontWeight: 600, fontSize: "0.8rem" }}
+                secondaryTypographyProps={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.4)" }}
+                sx={{ opacity: expanded ? 1 : 0 }}
+              />
+              {expanded && renderExpandIcon(item.label)}
+            </ListItemButton>
+          </ListItem>
+          {expanded && (
+            <Collapse in={openMenus[item.label]} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                {isStoreSelector ? renderStoreOptions(item) : renderSubItems(item, expanded)}
+              </List>
+            </Collapse>
+          )}
+        </React.Fragment>
+      );
+    }
+
+    return (
+      <ListItem key={idx} disablePadding sx={{ mb: 0.3 }}>
+        <ListItemButton onClick={() => navigate(item.href)} sx={itemButtonSx(expanded, isActive(item.href))}>
+          <ListItemIcon sx={itemIconSx(expanded, isActive(item.href))}>
+            {iconMap[item.label] || <DashboardIcon />}
+          </ListItemIcon>
+          <ListItemText primary={item.label}
+            primaryTypographyProps={{
+              fontWeight: 600, fontSize: "0.8rem",
+              color: isActive(item.href) ? accent : "inherit",
+            }}
+            sx={{ opacity: expanded ? 1 : 0 }}
+          />
+        </ListItemButton>
+      </ListItem>
+    );
+  });
+
+  const renderFooter = (expanded) => (
+    <Box sx={{ mt: "auto", p: 1 }}>
+      {!isSeller && (
+        <ListItemButton
+          component="a"
+          href={`https://api.whatsapp.com/send/?phone=${process.env.REACT_APP_WHATSAPP_NUMBER}&text=${encodeURIComponent(`Soporte SmartVenta\nTenant: ${user.tenant_name}\nTienda: ${user.store_name || "General"}`)}&type=phone_number&app_absent=0`}
+          target="_blank"
+          rel="noopener noreferrer"
+          sx={{
+            borderRadius: 2, justifyContent: expanded ? "initial" : "center",
+            "&:hover": { backgroundColor: "rgba(37, 211, 102, 0.12)" },
+          }}
+        >
+          <ListItemIcon sx={{ color: "#25D366", minWidth: expanded ? 38 : 0, justifyContent: "center" }}>
+            <WhatsAppIcon />
+          </ListItemIcon>
+          <ListItemText primary="Soporte" primaryTypographyProps={{ fontWeight: 600, fontSize: "0.8rem" }} sx={{ opacity: expanded ? 1 : 0 }} />
+        </ListItemButton>
+      )}
+
+      <Divider sx={{ backgroundColor: "rgba(255,255,255,0.06)", my: 1 }} />
+
+      <ListItemButton
+        onClick={handleLogout}
+        sx={{
+          borderRadius: 2, justifyContent: expanded ? "initial" : "center",
+          "&:hover": { backgroundColor: "rgba(244, 67, 54, 0.12)" },
+        }}
+      >
+        <ListItemIcon sx={{ color: "rgba(244, 67, 54, 0.8)", minWidth: expanded ? 38 : 0, justifyContent: "center" }}>
+          <LogoutIcon />
+        </ListItemIcon>
+        <ListItemText primary="Cerrar sesión" primaryTypographyProps={{ fontWeight: 600, fontSize: "0.8rem", color: "rgba(244, 67, 54, 0.8)" }} sx={{ opacity: expanded ? 1 : 0 }} />
+      </ListItemButton>
+    </Box>
+  );
 
   return (
     <Box sx={{ display: "flex", overflowX: "hidden", height: "100vh" }}>
@@ -596,126 +794,9 @@ export default function MainLayout({ toggleTheme, themeMode }) {
           "&::-webkit-scrollbar-thumb": { backgroundColor: "rgba(255,255,255,0.4)", borderRadius: "4px" },
           "&::-webkit-scrollbar-thumb:hover": { backgroundColor: "rgba(255,255,255,0.6)" },
         }}>
-          {menuItems.map((item, idx) => {
-            if (item.hidden) return null;
-
-            if (item.dropdown) {
-              return (
-                <React.Fragment key={idx}>
-                  <ListItem disablePadding sx={{ mb: 0.3 }}>
-                    <ListItemButton
-                      onClick={() => !item.disabled && handleToggleMenu(item.label, !open)}
-                      disabled={item.disabled}
-                      sx={{
-                        borderRadius: "10px", py: 1,
-                        justifyContent: "initial",
-                        "&:hover": { backgroundColor: item.disabled ? "transparent" : "rgba(255,255,255,0.08)" },
-                      }}
-                    >
-                      <ListItemIcon sx={{ color: item.disabled ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.7)", minWidth: 38, justifyContent: "center" }}>
-                        {iconMap[item.label] || <DashboardIcon />}
-                      </ListItemIcon>
-                      <ListItemText
-                        primary={item.label}
-                        secondary={item.disabled ? item.disabledMessage : null}
-                        primaryTypographyProps={{ fontWeight: 600, fontSize: "0.8rem" }}
-                        secondaryTypographyProps={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.4)" }}
-                      />
-                      {!item.disabled && (openMenus[item.label] ? <ExpandLess sx={{ fontSize: 18 }} /> : <ExpandMore sx={{ fontSize: 18 }} />)}
-                    </ListItemButton>
-                  </ListItem>
-                  <Collapse in={openMenus[item.label]} timeout="auto" unmountOnExit>
-                    <List component="div" disablePadding>
-                      {item.dropdown.map((sub, i) =>
-                        sub.divider || sub.hidden ? null : (
-                          <ListItemButton key={i} onClick={() => !sub.disabled && navigate(sub.href)} disabled={sub.disabled}
-                            sx={{
-                              pl: 6.5, py: 0.6, borderRadius: "8px", my: 0.2, mx: 0.5,
-                              ...(isActive(sub.href) ? activeSx : {}),
-                              "&:hover": { backgroundColor: sub.disabled ? "transparent" : "rgba(255,255,255,0.06)" },
-                            }}
-                          >
-                            <ListItemText primary={sub.label}
-                              secondary={sub.disabled ? sub.disabledMessage : null}
-                              primaryTypographyProps={{
-                                fontSize: "0.75rem",
-                                color: sub.disabled ? "rgba(255,255,255,0.3)" : isActive(sub.href) ? accent : "rgba(255,255,255,0.75)",
-                                fontWeight: isActive(sub.href) ? 600 : 400,
-                              }}
-                              secondaryTypographyProps={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.4)" }}
-                            />
-                          </ListItemButton>
-                        )
-                      )}
-                    </List>
-                  </Collapse>
-                </React.Fragment>
-              );
-            }
-
-            return (
-              <ListItem key={idx} disablePadding sx={{ mb: 0.3 }}>
-                <ListItemButton onClick={() => navigate(item.href)}
-                  sx={{
-                    borderRadius: "10px", py: 1,
-                    justifyContent: "initial",
-                    ...(isActive(item.href) ? activeSx : {}),
-                    "&:hover": { backgroundColor: "rgba(255,255,255,0.08)" },
-                  }}
-                >
-                  <ListItemIcon sx={{
-                    color: isActive(item.href) ? accent : "rgba(255,255,255,0.7)",
-                    minWidth: 38, justifyContent: "center",
-                  }}>
-                    {iconMap[item.label] || <DashboardIcon />}
-                  </ListItemIcon>
-                  <ListItemText primary={item.label}
-                    primaryTypographyProps={{
-                      fontWeight: 600, fontSize: "0.8rem",
-                      color: isActive(item.href) ? accent : "inherit",
-                    }}
-                  />
-                </ListItemButton>
-              </ListItem>
-            );
-          })}
+          {renderMenuItems(true)}
         </List>
-        <Box sx={{ mt: "auto", p: 1 }}>
-          {user.role !== "seller" && (
-            <>
-              <ListItemButton
-                component="a"
-                href={`https://api.whatsapp.com/send/?phone=${process.env.REACT_APP_WHATSAPP_NUMBER}&text=${encodeURIComponent(`Soporte SmartVenta\nTenant: ${user.tenant_name}\nTienda: ${user.store_name || "General"}`)}&type=phone_number&app_absent=0`}
-                target="_blank"
-                rel="noopener noreferrer"
-                sx={{
-                  borderRadius: 2, justifyContent: "initial",
-                  "&:hover": { backgroundColor: "rgba(37, 211, 102, 0.12)" },
-                }}
-              >
-                <ListItemIcon sx={{ color: "#25D366", minWidth: 38, justifyContent: "center" }}>
-                  <WhatsAppIcon />
-                </ListItemIcon>
-                <ListItemText primary="Soporte" primaryTypographyProps={{ fontWeight: 600, fontSize: "0.8rem" }} />
-              </ListItemButton>
-            </>
-          )}
-
-          <Divider sx={{ backgroundColor: "rgba(255,255,255,0.06)", my: 1 }} />
-
-          <ListItemButton
-            onClick={handleLogout}
-            sx={{
-              borderRadius: 2, justifyContent: "initial",
-              "&:hover": { backgroundColor: "rgba(244, 67, 54, 0.12)" },
-            }}
-          >
-            <ListItemIcon sx={{ color: "rgba(244, 67, 54, 0.8)", minWidth: 38, justifyContent: "center" }}>
-              <LogoutIcon />
-            </ListItemIcon>
-            <ListItemText primary="Cerrar sesión" primaryTypographyProps={{ fontWeight: 600, fontSize: "0.8rem", color: "rgba(244, 67, 54, 0.8)" }} />
-          </ListItemButton>
-        </Box>
+        {renderFooter(true)}
       </DrawerModal>
 
       {/* Drawer permanente para desktop */}
@@ -744,253 +825,9 @@ export default function MainLayout({ toggleTheme, themeMode }) {
           "&::-webkit-scrollbar-thumb": { backgroundColor: "rgba(255,255,255,0.4)", borderRadius: "4px" },
           "&::-webkit-scrollbar-thumb:hover": { backgroundColor: "rgba(255,255,255,0.6)" },
         }}>
-          {menuItems.map((item, idx) => {
-            if (item.hidden) return null;
-
-            // Manejo especial para go-back (regresar a general)
-            if (item.action === "go-back") {
-              return (
-                <ListItem key={idx} disablePadding sx={{ mb: 0.3 }}>
-                  <ListItemButton
-                    onClick={item.onClick}
-                    sx={{
-                      borderRadius: "10px", py: 1,
-                      justifyContent: open ? "initial" : "center",
-                      "&:hover": { backgroundColor: "rgba(255,255,255,0.08)" },
-                    }}
-                  >
-                    <ListItemIcon sx={{
-                      color: "rgba(255,255,255,0.7)",
-                      minWidth: open ? 38 : 0, justifyContent: "center",
-                    }}>
-                      {iconMap[item.label] || <DashboardIcon />}
-                    </ListItemIcon>
-                    <ListItemText primary={item.label}
-                      primaryTypographyProps={{
-                        fontWeight: 600, fontSize: "0.8rem",
-                        color: "inherit",
-                      }}
-                      sx={{ opacity: open ? 1 : 0 }}
-                    />
-                  </ListItemButton>
-                </ListItem>
-              );
-            }
-
-            if (item.dropdown) {
-              // Manejo especial para store-selector
-              if (item.action === "store-selector") {
-                return (
-                  <React.Fragment key={idx}>
-                    <ListItem disablePadding sx={{ mb: 0.3 }}>
-                      <ListItemButton
-                        onClick={() => !item.disabled && handleToggleStoreMenu(item.label, !open)}
-                        disabled={item.disabled}
-                        sx={{
-                          borderRadius: "10px", py: 1,
-                          justifyContent: open ? "initial" : "center",
-                          "&:hover": { backgroundColor: item.disabled ? "transparent" : "rgba(255,255,255,0.08)" },
-                        }}
-                      >
-                        <ListItemIcon sx={{ color: item.disabled ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.7)", minWidth: open ? 38 : 0, justifyContent: "center" }}>
-                          {iconMap[item.label] || <DashboardIcon />}
-                        </ListItemIcon>
-                        <ListItemText
-                          primary={open ? item.label : user.store_name}
-                          secondary={open ? user.store_name : null}
-                          primaryTypographyProps={{ fontWeight: 600, fontSize: "0.8rem" }}
-                          secondaryTypographyProps={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.4)" }}
-                          sx={{ opacity: open ? 1 : 0 }}
-                        />
-                        {open && !item.disabled && (openMenus[item.label] ? <ExpandLess sx={{ fontSize: 18 }} /> : <ExpandMore sx={{ fontSize: 18 }} />)}
-                      </ListItemButton>
-                    </ListItem>
-                    {open && (
-                      <Collapse in={openMenus[item.label]} timeout="auto" unmountOnExit>
-                        <List component="div" disablePadding>
-                          {loadingStores ? (
-                            <Box sx={{ display: "flex", justifyContent: "center", py: 1.5, pl: 6.5 }}>
-                              <CircularProgress size={18} />
-                            </Box>
-                          ) : (
-                            <>
-                              {(() => {
-                                const sortedDropdown = [...item.dropdown];
-                                if (previousStoreId) {
-                                  const prevIndex = sortedDropdown.findIndex(s => s.storeId === previousStoreId);
-                                  if (prevIndex >= 0) {
-                                    const [prev] = sortedDropdown.splice(prevIndex, 1);
-                                    sortedDropdown.unshift(prev);
-                                  }
-                                }
-                                return sortedDropdown.map((sub, i) => (
-                                  <ListItemButton
-                                    key={i}
-                                    onClick={() => handleSelectStore(sub.storeId)}
-                                    disabled={sub.storeId === user.store_id}
-                                    sx={{
-                                      pl: 6.5, py: 0.6, borderRadius: "8px", my: 0.2, mx: 0.5,
-                                      backgroundColor: sub.storeId === user.store_id ? "rgba(255, 193, 7, 0.12)" : sub.storeId === previousStoreId ? "rgba(255, 193, 7, 0.06)" : "transparent",
-                                      "&:hover": { backgroundColor: sub.storeId === user.store_id ? "rgba(255, 193, 7, 0.12)" : "rgba(255,255,255,0.06)" },
-                                    }}
-                                  >
-                                    <ListItemText
-                                      primary={sub.label}
-                                      primaryTypographyProps={{
-                                        fontSize: "0.75rem",
-                                        color: sub.storeId === user.store_id ? "rgba(255, 193, 7, 1)" : "rgba(255,255,255,0.75)",
-                                        fontWeight: sub.storeId === user.store_id ? 600 : sub.storeId === previousStoreId ? 500 : 400,
-                                      }}
-                                    />
-                                  </ListItemButton>
-                                ));
-                              })()}
-                              <Divider sx={{ borderColor: "rgba(255,255,255,0.1)", my: 0.5 }} />
-                              <ListItemButton
-                                onClick={handleBack}
-                                sx={{
-                                  pl: 6.5, py: 0.6, borderRadius: "8px", my: 0.2, mx: 0.5,
-                                  "&:hover": { backgroundColor: "rgba(255,255,255,0.06)" },
-                                }}
-                              >
-                                <ListItemText
-                                  primary="Regresar"
-                                  primaryTypographyProps={{
-                                    fontSize: "0.75rem",
-                                    color: "rgba(255,255,255,0.75)",
-                                  }}
-                                />
-                              </ListItemButton>
-                            </>
-                          )}
-                        </List>
-                      </Collapse>
-                    )}
-                  </React.Fragment>
-                );
-              }
-
-              // Manejo normal para otros dropdowns
-              return (
-                <React.Fragment key={idx}>
-                  <ListItem disablePadding sx={{ mb: 0.3 }}>
-                    <ListItemButton
-                      onClick={() => !item.disabled && handleToggleMenu(item.label, !open)}
-                      disabled={item.disabled}
-                      sx={{
-                        borderRadius: "10px", py: 1,
-                        justifyContent: open ? "initial" : "center",
-                        "&:hover": { backgroundColor: item.disabled ? "transparent" : "rgba(255,255,255,0.08)" },
-                      }}
-                    >
-                      <ListItemIcon sx={{ color: item.disabled ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.7)", minWidth: open ? 38 : 0, justifyContent: "center" }}>
-                        {iconMap[item.label] || <DashboardIcon />}
-                      </ListItemIcon>
-                      <ListItemText
-                        primary={item.label}
-                        secondary={item.disabled && open ? item.disabledMessage : null}
-                        primaryTypographyProps={{ fontWeight: 600, fontSize: "0.8rem" }}
-                        secondaryTypographyProps={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.4)" }}
-                        sx={{ opacity: open ? 1 : 0 }}
-                      />
-                      {open && !item.disabled && (openMenus[item.label] ? <ExpandLess sx={{ fontSize: 18 }} /> : <ExpandMore sx={{ fontSize: 18 }} />)}
-                    </ListItemButton>
-                  </ListItem>
-                  {open && (
-                    <Collapse in={openMenus[item.label]} timeout="auto" unmountOnExit>
-                      <List component="div" disablePadding>
-                        {item.dropdown.map((sub, i) =>
-                          sub.divider || sub.hidden ? null : (
-                            <ListItemButton key={i} onClick={() => !sub.disabled && navigate(sub.href)} disabled={sub.disabled}
-                              sx={{
-                                pl: 6.5, py: 0.6, borderRadius: "8px", my: 0.2, mx: 0.5,
-                                ...(isActive(sub.href) ? activeSx : {}),
-                                "&:hover": { backgroundColor: sub.disabled ? "transparent" : "rgba(255,255,255,0.06)" },
-                              }}
-                            >
-                              <ListItemText primary={sub.label}
-                                secondary={sub.disabled && open ? sub.disabledMessage : null}
-                                primaryTypographyProps={{
-                                  fontSize: "0.75rem",
-                                  color: sub.disabled ? "rgba(255,255,255,0.3)" : isActive(sub.href) ? accent : "rgba(255,255,255,0.75)",
-                                  fontWeight: isActive(sub.href) ? 600 : 400,
-                                }}
-                                secondaryTypographyProps={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.4)" }}
-                              />
-                            </ListItemButton>
-                          )
-                        )}
-                      </List>
-                    </Collapse>
-                  )}
-                </React.Fragment>
-              );
-            }
-
-            return (
-              <ListItem key={idx} disablePadding sx={{ mb: 0.3 }}>
-                <ListItemButton onClick={() => navigate(item.href)}
-                  sx={{
-                    borderRadius: "10px", py: 1,
-                    justifyContent: open ? "initial" : "center",
-                    ...(isActive(item.href) ? activeSx : {}),
-                    "&:hover": { backgroundColor: "rgba(255,255,255,0.08)" },
-                  }}
-                >
-                  <ListItemIcon sx={{
-                    color: isActive(item.href) ? accent : "rgba(255,255,255,0.7)",
-                    minWidth: open ? 38 : 0, justifyContent: "center",
-                  }}>
-                    {iconMap[item.label] || <DashboardIcon />}
-                  </ListItemIcon>
-                  <ListItemText primary={item.label}
-                    primaryTypographyProps={{
-                      fontWeight: 600, fontSize: "0.8rem",
-                      color: isActive(item.href) ? accent : "inherit",
-                    }}
-                    sx={{ opacity: open ? 1 : 0 }}
-                  />
-                </ListItemButton>
-              </ListItem>
-            );
-          })}
+          {renderMenuItems(open)}
         </List>
-        <Box sx={{ mt: "auto", p: 1 }}>
-          {user.role !== "seller" && (
-            <>
-              <ListItemButton
-                component="a"
-                href={`https://api.whatsapp.com/send/?phone=${process.env.REACT_APP_WHATSAPP_NUMBER}&text=${encodeURIComponent(`Soporte SmartVenta\nTenant: ${user.tenant_name}\nTienda: ${user.store_name || "General"}`)}&type=phone_number&app_absent=0`}
-                target="_blank"
-                rel="noopener noreferrer"
-                sx={{
-                  borderRadius: 2, justifyContent: open ? "initial" : "center",
-                  "&:hover": { backgroundColor: "rgba(37, 211, 102, 0.12)" },
-                }}
-              >
-                <ListItemIcon sx={{ color: "#25D366", minWidth: open ? 38 : 0, justifyContent: "center" }}>
-                  <WhatsAppIcon />
-                </ListItemIcon>
-                <ListItemText primary="Soporte" primaryTypographyProps={{ fontWeight: 600, fontSize: "0.8rem" }} sx={{ opacity: open ? 1 : 0 }} />
-              </ListItemButton>
-            </>
-          )}
-
-          <Divider sx={{ backgroundColor: "rgba(255,255,255,0.06)", my: 1 }} />
-
-          <ListItemButton
-            onClick={handleLogout}
-            sx={{
-              borderRadius: 2, justifyContent: open ? "initial" : "center",
-              "&:hover": { backgroundColor: "rgba(244, 67, 54, 0.12)" },
-            }}
-          >
-            <ListItemIcon sx={{ color: "rgba(244, 67, 54, 0.8)", minWidth: open ? 38 : 0, justifyContent: "center" }}>
-              <LogoutIcon />
-            </ListItemIcon>
-            <ListItemText primary="Cerrar sesión" primaryTypographyProps={{ fontWeight: 600, fontSize: "0.8rem", color: "rgba(244, 67, 54, 0.8)" }} sx={{ opacity: open ? 1 : 0 }} />
-          </ListItemButton>
-        </Box>
+        {renderFooter(open)}
       </Drawer>
 
       <Box component="main" sx={{ flexGrow: 1, p: { xs: 1.5, sm: 2, md: 3 }, minWidth: 0, overflowY: "auto", position: "relative" }}>

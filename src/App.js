@@ -4,6 +4,8 @@ import { lazy, Suspense } from "react";
 import { useUser } from "./context/UserContext";
 import LoadingFallback from "./components/ui/LoadingFallback";
 import ErrorBoundary from "./components/ui/ErrorBoundary";
+import RequireAccess from "./components/ui/RequireAccess";
+import { getHomeRoute } from "./constants/routeAccess";
 
 // Componentes críticos (carga inmediata)
 import Login from "./components/layout/Login/Login";
@@ -74,48 +76,47 @@ function App({ toggleTheme, themeMode }) {
             </Route>
           ) : (
           <Route element={<MainLayout toggleTheme={toggleTheme} themeMode={themeMode} />}>
-            <Route path="/tiendas/" element={<Lazy><StoreList /></Lazy>} />
-            <Route path="/ventas/" element={<Lazy><SaleList /></Lazy>} />
-            <Route path="/apartados/" element={<Lazy><ReservationList /></Lazy>} />
-            <Route path="/vender/" element={<Lazy><SaleCreate /></Lazy>} />
-            <Route path="/distribuir/" element={<Lazy><SaleCreate /></Lazy>} />
-            <Route path="/importar-ventas/" element={<Lazy><SaleImport /></Lazy>} />
-            <Route path="/corte-caja/" element={<Lazy><CashSummary /></Lazy>} />
-            <Route path="/movimientos-caja/" element={<Lazy><CashFlowList /></Lazy>} />
-            <Route path="/distribuciones/" element={<Lazy><DistributionList /></Lazy>} />
-            <Route path="/conversiones/" element={<Lazy><ConversionList /></Lazy>} />
-            <Route path="/traspasos/" element={<Lazy><TransferList /></Lazy>} />
-            <Route path="/solicitudes-ajustes-stock/" element={<Lazy><StockUpdateRequestList /></Lazy>} />
-            <Route path="/historial-precios/" element={<Lazy><PriceLogsList /></Lazy>} />
-            <Route path="/clientes/" element={<Lazy><ClientList /></Lazy>} />
-            <Route path="/productos/" element={<Lazy><ProductList /></Lazy>} />
-            <Route path="/inventario/" element={<Lazy><StoreProductList /></Lazy>} />
-            <Route path="/auditoria-inventario/" element={<Lazy><ProductAuditList /></Lazy>} />
-            <Route path="/marcas/" element={<Lazy><BrandList /></Lazy>} />
-            <Route path="/departamentos/" element={<Lazy><DepartmentList /></Lazy>} />
-            <Route path="/historial-stock/" element={<Lazy><LogList /></Lazy>} />
-            <Route path="/pagos/" element={<Lazy><TenantPaymentList /></Lazy>} />
-            <Route path="/suscripciones/" element={<Lazy><SubscriptionList /></Lazy>} />
-            <Route path="/mi-plan-actual/" element={<Lazy><MyCurrentPlan /></Lazy>} />
-            <Route path="/vendedores/" element={<Lazy><SellerList /></Lazy>} />
-            <Route path="/servicios/" element={<Lazy><ServiceList /></Lazy>} />
-            <Route path="/tablero-ventas/" element={<Lazy><Dashboard /></Lazy>} />
-            <Route path="/tablero-ventas-ajustadas-cancelaciones/" element={<Lazy><CancellationsDashboard /></Lazy>} />
-            <Route path="/tablero-verificacion-stock/" element={<Lazy><StockVerificationDashboard /></Lazy>} />
-            <Route path="/tablero-traspasos-pendientes/" element={<Lazy><PendingTransfersDashboard /></Lazy>} />
-            <Route path="/tablero-productos/" element={<Lazy><ProductsDashboard /></Lazy>} />
-            <Route path="/reasignacion/" element={<Lazy><ProductReassign /></Lazy>} />
-            <Route path="/importar-productos/" element={<Lazy><ProductImport /></Lazy>} />
-            <Route path="/importar-inventario/" element={<Lazy><StoreProductImport /></Lazy>} />
-            <Route path="/auditoria-transacciones/" element={<Lazy><TransactionAudit /></Lazy>} />
-            <Route path="/auditoria-productos/" element={<Lazy><ProductAudit /></Lazy>} />
-            <Route path="/sincronizar/" element={<Lazy><RestartService /></Lazy>} />
-            <Route path="/perfil/" element={<Lazy><Profile /></Lazy>} />
-            {user?.store_id ? (
-              <Route path="*" element={<Lazy><SaleCreate /></Lazy>} />
-            ) : (
-              <Route path="*" element={<Lazy><StoreList /></Lazy>} />
-            )}
+            {/* Permisos por rol, tipo de sucursal y plan: constants/routeAccess.js */}
+            <Route element={<RequireAccess />}>
+              <Route path="/tiendas/" element={<Lazy><StoreList /></Lazy>} />
+              <Route path="/ventas/" element={<Lazy><SaleList /></Lazy>} />
+              <Route path="/apartados/" element={<Lazy><ReservationList /></Lazy>} />
+              <Route path="/vender/" element={<Lazy><SaleCreate /></Lazy>} />
+              <Route path="/distribuir/" element={<Lazy><SaleCreate /></Lazy>} />
+              <Route path="/importar-ventas/" element={<Lazy><SaleImport /></Lazy>} />
+              <Route path="/corte-caja/" element={<Lazy><CashSummary /></Lazy>} />
+              <Route path="/movimientos-caja/" element={<Lazy><CashFlowList /></Lazy>} />
+              <Route path="/distribuciones/" element={<Lazy><DistributionList /></Lazy>} />
+              <Route path="/conversiones/" element={<Lazy><ConversionList /></Lazy>} />
+              <Route path="/traspasos/" element={<Lazy><TransferList /></Lazy>} />
+              <Route path="/solicitudes-ajustes-stock/" element={<Lazy><StockUpdateRequestList /></Lazy>} />
+              <Route path="/historial-precios/" element={<Lazy><PriceLogsList /></Lazy>} />
+              <Route path="/clientes/" element={<Lazy><ClientList /></Lazy>} />
+              <Route path="/productos/" element={<Lazy><ProductList /></Lazy>} />
+              <Route path="/inventario/" element={<Lazy><StoreProductList /></Lazy>} />
+              <Route path="/auditoria-inventario/" element={<Lazy><ProductAuditList /></Lazy>} />
+              <Route path="/marcas/" element={<Lazy><BrandList /></Lazy>} />
+              <Route path="/departamentos/" element={<Lazy><DepartmentList /></Lazy>} />
+              <Route path="/historial-stock/" element={<Lazy><LogList /></Lazy>} />
+              <Route path="/pagos/" element={<Lazy><TenantPaymentList /></Lazy>} />
+              <Route path="/suscripciones/" element={<Lazy><SubscriptionList /></Lazy>} />
+              <Route path="/mi-plan-actual/" element={<Lazy><MyCurrentPlan /></Lazy>} />
+              <Route path="/vendedores/" element={<Lazy><SellerList /></Lazy>} />
+              <Route path="/servicios/" element={<Lazy><ServiceList /></Lazy>} />
+              <Route path="/tablero-ventas/" element={<Lazy><Dashboard /></Lazy>} />
+              <Route path="/tablero-ventas-ajustadas-cancelaciones/" element={<Lazy><CancellationsDashboard /></Lazy>} />
+              <Route path="/tablero-verificacion-stock/" element={<Lazy><StockVerificationDashboard /></Lazy>} />
+              <Route path="/tablero-traspasos-pendientes/" element={<Lazy><PendingTransfersDashboard /></Lazy>} />
+              <Route path="/tablero-productos/" element={<Lazy><ProductsDashboard /></Lazy>} />
+              <Route path="/reasignacion/" element={<Lazy><ProductReassign /></Lazy>} />
+              <Route path="/importar-productos/" element={<Lazy><ProductImport /></Lazy>} />
+              <Route path="/importar-inventario/" element={<Lazy><StoreProductImport /></Lazy>} />
+              <Route path="/auditoria-transacciones/" element={<Lazy><TransactionAudit /></Lazy>} />
+              <Route path="/auditoria-productos/" element={<Lazy><ProductAudit /></Lazy>} />
+              <Route path="/sincronizar/" element={<Lazy><RestartService /></Lazy>} />
+              <Route path="/perfil/" element={<Lazy><Profile /></Lazy>} />
+            </Route>
+            <Route path="*" element={<Navigate to={getHomeRoute(user)} replace />} />
           </Route>
           )
         ) : (
