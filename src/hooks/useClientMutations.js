@@ -33,4 +33,5 @@ export const useCreateClient = (options = {}) => {
   });
 };
 
-export const useUpdateClient = useUpdate;
+export const useUpdateClient = (options = {}) =>
+  useUpdate({ errorParser: clientErrorParser, ...options });

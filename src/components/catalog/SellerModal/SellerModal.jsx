@@ -1,11 +1,10 @@
 import React, { useEffect, useState, useMemo } from "react";
 import CustomModal from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
-import { showSuccess } from "../../../utils/alerts";
-import { updateProduct } from "../../../api/products";
+import { showSuccess, showRequestError } from "../../../utils/alerts";
 import { getStores } from "../../../api/stores";
 import { useUser } from "../../../context/UserContext";
-import { createSeller } from "../../../api/sellers";
+import { createSeller, updateSeller } from "../../../api/sellers";
 import { Grid, TextField, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 
@@ -14,7 +13,7 @@ const SellerModal = ({ isOpen, seller, onClose, onUpdate }) => {
   const short_name = user.tenant_short_name;
   const INITIAL_FORM_DATA = useMemo(() => ({
     role: "V",
-    store_id: "",
+    store_id: null,
     worker: {
       username: "",
       first_name: "",
@@ -29,7 +28,7 @@ const SellerModal = ({ isOpen, seller, onClose, onUpdate }) => {
 
   useEffect(() => {
     if (seller) {
-      setFormData(seller);
+      setFormData({ ...seller, store_id: seller.store_id ?? seller.store_detail?.id ?? null });
     } else {
       setFormData(INITIAL_FORM_DATA);
     }
@@ -51,7 +50,7 @@ const SellerModal = ({ isOpen, seller, onClose, onUpdate }) => {
       if (!updatedData.worker) updatedData.worker = {};
 
       if (name === "store_id") {
-        updatedData.store_id = value;
+        updatedData.store_id = value || null;
         const store = stores.find((s) => s.id === value);
         if (store) {
           const storeName = store.name.toLowerCase();
@@ -108,7 +107,7 @@ const SellerModal = ({ isOpen, seller, onClose, onUpdate }) => {
   };
 
   const handleSubmit = async () => {
-    const apiCall = formData.id ? updateProduct : createSeller;
+    const apiCall = formData.id ? updateSeller : createSeller;
     try {
       const response = await apiCall(formData);
       if ([200, 201].includes(response.status)) {
@@ -121,12 +120,16 @@ const SellerModal = ({ isOpen, seller, onClose, onUpdate }) => {
         setUsernameError("Usuario existente");
       }
     } catch (error) {
-      setUsernameError("Usuario existente");
+      if (formData.id) {
+        showRequestError("actualizar el vendedor", error);
+      } else {
+        setUsernameError("Usuario existente");
+      }
     }
   };
 
   const isFormIncomplete = () => {
-    return formData.store_id === "" || formData.worker?.first_name === "" || formData.worker?.last_name === "";
+    return !formData.store_id || formData.worker?.first_name === "" || formData.worker?.last_name === "";
   };
 
   return (
@@ -141,7 +144,7 @@ const SellerModal = ({ isOpen, seller, onClose, onUpdate }) => {
             <Grid item xs={12} md={6}>
               <FormControl fullWidth size="small">
                 <InputLabel>Tienda</InputLabel>
-                <Select fullWidth size="small" value={formData.store_id} onChange={handleDataChange} name="store_id" label="Tienda">
+                <Select fullWidth size="small" value={formData.store_id ?? ""} onChange={handleDataChange} name="store_id" label="Tienda">
                   <MenuItem value="">Selecciona una tienda</MenuItem>
                   {stores.map((store) => (
                     <MenuItem key={store.id} value={store.id}>{store.name}</MenuItem>

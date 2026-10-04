@@ -215,7 +215,7 @@ const StoreProductImport = () => {
           <h1>Filas con error</h1>
           <SimpleTable
             noDataComponent="Sin filas con error"
-            data={products}
+            data={productsError}
             columns={[
               ...productColumns,
                 { name: "Estado", cell: (row) => <StatusChip status={row.status} /> },

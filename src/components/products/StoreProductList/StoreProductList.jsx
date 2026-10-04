@@ -91,7 +91,7 @@ const StoreProductList = () => {
     setParams((prev) => {
       const newParams = { ...prev };
       delete newParams.code;
-      delete newParams.name;
+      delete newParams.q;
       return newParams;
     });
   };

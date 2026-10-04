@@ -179,7 +179,7 @@ const Dashboard = () => {
     return { bestStore, worstStore, bestDay, worstDay, bestDayOfWeek, worstDayOfWeek, bestHour, worstHour };
   }, [dashboardData, month, metricType]);
 
-  const periodLabel = month === 0 ? MONTH_NAMES[month] : `${MONTH_NAMES[month - 1]} ${year}`;
+  const periodLabel = month === 0 ? `Todo el año ${year}` : `${MONTH_NAMES[month - 1]} ${year}`;
 
   // --- LOADING STATE ---
   if (loading) {

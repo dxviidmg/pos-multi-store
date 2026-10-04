@@ -17,7 +17,7 @@ import { Save, Business, Settings, Person, Lock, Visibility, VisibilityOff } fro
 import { useUser } from "../../../context/UserContext";
 import { getTenant, updateTenant } from '../../../api/tenants';
 import { getUser, updateUser, changePassword } from '../../../api/users';
-import { CustomSpinner } from '../../ui/Spinner/Spinner';
+import { PageSkeleton } from '../../ui/Skeleton/Skeleton';
 
 const Profile = () => {
   const { user } = useUser();
@@ -175,7 +175,7 @@ const Profile = () => {
     }
   };
 
-  if (loading) return <CustomSpinner />;
+  if (loading) return <PageSkeleton />;
 
   return (
     <Grid container>

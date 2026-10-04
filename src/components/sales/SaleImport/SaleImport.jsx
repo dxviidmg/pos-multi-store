@@ -190,7 +190,7 @@ const SaleImport = () => {
           <h1>Filas con error</h1>
           <SimpleTable
             noDataComponent="Sin filas con error"
-            data={sales}
+            data={salesError}
             columns={[
               ...saleColumns,
                 { name: "Estado", cell: (row) => <StatusChip status={row.status} /> },
