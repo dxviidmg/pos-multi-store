@@ -58,6 +58,8 @@ const PaymentEditModal = ({ isOpen, sale, onClose, onUpdate }) => {
           payment_method: paymentMethod,
           sale_id: reservation.id,
           amount: payment.paidWith - payment.change,
+          // El backend crea el Payment directo con este objeto (campo `reference` del modelo)
+          ...(paymentMethod !== "EF" && { reference: referencePayment }),
         },
         reservation_in_progress,
       };
@@ -92,25 +94,24 @@ const PaymentEditModal = ({ isOpen, sale, onClose, onUpdate }) => {
     }
   };
 
+  const handleCreatePaymentRef = useRef(null);
+  handleCreatePaymentRef.current = handleCreatePayment;
+  const isSubmitDisabledRef = useRef(true);
+
   useEffect(() => {
     const handleShortcut = (event) => {
-      if (event.ctrlKey && event.key === "g") {
-        event.preventDefault();
-        if (isOpen && !handleDisableButton()) {
-          handleCreatePayment(!!printer);
-        }
-      }
-      if (event.ctrlKey && event.key === "f") {
-        event.preventDefault();
-        if (isOpen && !handleDisableButton()) {
-          handleCreatePayment(false);
-        }
-      }
+      if (!isOpen || !event.ctrlKey) return;
+      const key = event.key.toLowerCase();
+      if (key !== "g" && key !== "f") return;
+      event.preventDefault();
+      // Los atajos respetan la misma validación que el botón Cobrar
+      if (isSubmitDisabledRef.current) return;
+      handleCreatePaymentRef.current?.(key === "g" ? !!printer : false);
     };
 
     window.addEventListener("keydown", handleShortcut);
     return () => window.removeEventListener("keydown", handleShortcut);
-  }, [isOpen, printer, payment, action, paymentMethod, remaining]);
+  }, [isOpen, printer]);
 
   const handlePaidWithChange = (e) => {
     let value = Number(e.target.value);
@@ -139,6 +140,8 @@ const PaymentEditModal = ({ isOpen, sale, onClose, onUpdate }) => {
     }
     return payment.paidWith < remaining;
   };
+
+  isSubmitDisabledRef.current = handleDisableButton();
 
   return (
     <>

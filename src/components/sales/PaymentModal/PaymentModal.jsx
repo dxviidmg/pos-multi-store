@@ -24,16 +24,7 @@ import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
 import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
 import { MOVEMENT_TYPES } from "../../../constants";
 import { useModal } from "../../../hooks/useModal";
-
-
-function roundUpCustom(value) {
-  const intPart = Math.floor(value); // Parte entera
-  const decimalPart = value - intPart; // Parte decimal
-
-  if (decimalPart === 0) return value; // Si es entero, se queda igual
-  if (decimalPart <= 0.5) return intPart + 0.5; // Si es hasta 0.5, sube a 0.5
-  return Math.ceil(value); // Si es mayor a 0.5, sube al siguiente entero
-}
+import { roundUpCustom } from "../../../utils/currency";
 
 const INITIAL_PAYMENT_STATE = { paidWith: 0, change: 0 };
 const INITIAL_SALE_EXCHANGE_STATE = { refunded: 0, payment: 0 };
@@ -90,12 +81,17 @@ const PaymentModal = ({ isOpen, onClose }) => {
   }, [cart, client]);
 
   const handleCreateSaleRef = useRef(null);
+  const isSubmitDisabledRef = useRef(true);
 
   useEffect(() => {
     const handleShortcut = (event) => {
-      if (event.ctrlKey && event.key === "g") {
+      if (event.ctrlKey && (event.key === "g" || event.key === "G")) {
         event.preventDefault();
-        if (isOpen && (movementType === MOVEMENT_TYPES.SALE || movementType === MOVEMENT_TYPES.RESERVATION)) {
+        if (
+          isOpen &&
+          !isSubmitDisabledRef.current &&
+          (movementType === MOVEMENT_TYPES.SALE || movementType === MOVEMENT_TYPES.RESERVATION)
+        ) {
           handleCreateSaleRef.current?.(!!printer);
         }
       }
@@ -291,16 +287,23 @@ const PaymentModal = ({ isOpen, onClose }) => {
   };
 
   const handleSearchSaleForChange = async () => {
-    const response = await getSale(saleExchange.id);
-    setSaleExchange({
-      ...response.data,
-      payment: totalDiscount - response.data.refunded,
-    });
+    setIsLoading(true);
+    try {
+      const response = await getSale(saleExchange.id);
+      setSaleExchange({
+        ...response.data,
+        payment: totalDiscount - response.data.refunded,
+      });
+    } catch (error) {
+      showRequestError("buscar la venta", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleDisableButton = () => {
     if (movementType === MOVEMENT_TYPES.RESERVATION) {
-      return payment.paidWith < 1 || Object.values(paymentMethods.methods).every((amount) => amount === 0) || !client;
+      return payment.paidWith < 1 || Object.values(paymentMethods.methods).every((amount) => amount === 0) || !client?.id;
     }
     return (
       (paymentMethods.type === "checkbox" &&
@@ -312,6 +315,9 @@ const PaymentModal = ({ isOpen, onClose }) => {
       (paymentMethods.methods.TR > 0 && referencePayment === "")
     );
   };
+
+  // El atajo Ctrl+G respeta la misma validación que el botón Cobrar/Apartar
+  isSubmitDisabledRef.current = handleDisableButton();
 
   return (
     <>

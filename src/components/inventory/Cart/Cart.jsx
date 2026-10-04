@@ -25,6 +25,7 @@ import { MOVEMENT_TYPES, STORE_TYPES } from "../../../constants";
 import { commonColumns, isKg, getNextMode, getSaleColumns, getTransferColumns, getDistributionColumns, getAddToStockColumns } from "./cartColumns";
 import noPhotoImage from "../../../assets/images/noPhoto.webp";
 import { formatCurrency } from "../../../utils/utils";
+import { roundUpCustom } from "../../../utils/currency";
 
 const Cart = ({ searchInputRef, cartViewMode = "table", setCartViewMode }) => {
   const { user } = useUser();
@@ -101,10 +102,10 @@ const Cart = ({ searchInputRef, cartViewMode = "table", setCartViewMode }) => {
     }
   }, [store_type, dispatch, movementType]);
 
+  // Mismo redondeo que PaymentModal para que el total coincida al cobrar
   const { total } = useMemo(() => {
-    const total = cart.reduce(
-      (acc, item) => acc + item.product_price * item.quantity,
-      0
+    const total = roundUpCustom(
+      cart.reduce((acc, item) => acc + item.product_price * item.quantity, 0)
     );
     return { total };
   }, [cart]);
@@ -176,19 +177,19 @@ const Cart = ({ searchInputRef, cartViewMode = "table", setCartViewMode }) => {
       const response = await confirmTransfers(data);
       if (response.status === 200) {
         dispatch(cleanCart());
-        setLoading(false);
         showSuccess("Traspaso confirmado");
-      } else if (response.status === 404) {
-        dispatch(cleanCart());
-        setLoading(false);
-        showWarning("No se pudo confirmar el traspaso", "No coincide con un traspaso pendiente. Revisa la cantidad y el destino.");
       } else {
-        setLoading(false);
         showRequestError("confirmar el traspaso", response);
       }
     } catch (error) {
+      if (error.response?.status === 404) {
+        dispatch(cleanCart());
+        showWarning("No se pudo confirmar el traspaso", "No coincide con un traspaso pendiente. Revisa la cantidad y el destino.");
+      } else {
+        showRequestError("confirmar el traspaso", error);
+      }
+    } finally {
       setLoading(false);
-      showRequestError("confirmar el traspaso", error);
     }
   };
 
@@ -200,22 +201,23 @@ const Cart = ({ searchInputRef, cartViewMode = "table", setCartViewMode }) => {
       const response = await createDistribution(data);
       if (response.status === 201) {
         dispatch(cleanCart());
-      setSelectedStore("")
-      setConfirmedStore("");
-      setTimeout(() => {
-        setLoading(false);
-      }, 200);
+        setSelectedStore("");
+        setConfirmedStore("");
+        setTimeout(() => {
+          setLoading(false);
+        }, 200);
         showSuccess("Distribución creada");
-      } else if (response.status === 404) {
-        setLoading(false);
-        showWarning("No se pudo crear la distribución", "Algunos productos no coinciden con la distribución solicitada, en cantidad o en código.");
       } else {
         setLoading(false);
         showRequestError("crear la distribución", response);
       }
     } catch (error) {
       setLoading(false);
-      showRequestError("crear la distribución", error);
+      if (error.response?.status === 404) {
+        showWarning("No se pudo crear la distribución", "Algunos productos no coinciden con la distribución solicitada, en cantidad o en código.");
+      } else {
+        showRequestError("crear la distribución", error);
+      }
     }
   };
 
@@ -234,14 +236,14 @@ const Cart = ({ searchInputRef, cartViewMode = "table", setCartViewMode }) => {
       const response = await addProducts(data);
       if (response.status === 200) {
         dispatch(cleanCart());
-        setLoading(false);
         showSuccess("Producto agregado al inventario");
       } else {
-        setLoading(false);
         showRequestError("agregar el producto al inventario", response);
       }
     } catch (error) {
       showRequestError("agregar el producto al inventario", error);
+    } finally {
+      setLoading(false);
     }
   };
 
