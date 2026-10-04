@@ -11,6 +11,8 @@ const INITIAL_FORM_DATA = {
   products_sale: [],
 };
 
+const toQuantity = (value) => Number(value) || 0;
+
 const SaleModal = ({ isOpen, sale, onClose, onUpdate }) => {
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
   const [quantitiesToCancel, setQuantitiesToCancel] = useState({});
@@ -36,14 +38,18 @@ const SaleModal = ({ isOpen, sale, onClose, onUpdate }) => {
     }
   }, [sale]);
 
-  const handleQuantityChange = (rowId, max, value) => {
-    const quantity = Math.min(parseInt(value) || 0, max);
-    const updated = { ...quantitiesToCancel, [rowId]: quantity };
+  // Productos por kg/lt aceptan hasta 3 decimales; por pieza solo enteros
+  const handleQuantityChange = (row, value) => {
+    const pattern = row.sells_by_fraction ? /^\d*\.?\d{0,3}$/ : /^\d*$/;
+    if (!pattern.test(value)) return;
+    const max = Number(row.quantity);
+    const quantity = Number(value) > max ? String(max) : value;
+    const updated = { ...quantitiesToCancel, [row.id]: quantity };
     setQuantitiesToCancel(updated);
 
     // Auto-marcar cancelación total si se devuelve todo
     const allReturned = formData.products_sale.every(
-      (p) => (updated[p.id] || 0) >= p.quantity
+      (p) => toQuantity(updated[p.id]) >= Number(p.quantity)
     );
     setTotalCancel(allReturned);
   };
@@ -51,7 +57,7 @@ const SaleModal = ({ isOpen, sale, onClose, onUpdate }) => {
   const disabledButton = () => {
     if (reason.trim() === "") return true;
     if (totalCancel) return false;
-    const total = Object.values(quantitiesToCancel).reduce((sum, qty) => sum + qty, 0);
+    const total = Object.values(quantitiesToCancel).reduce((sum, qty) => sum + toQuantity(qty), 0);
     return total === 0;
   };
 
@@ -70,7 +76,13 @@ const SaleModal = ({ isOpen, sale, onClose, onUpdate }) => {
   const handleSaveClient = async () => {
     const payload = totalCancel
       ? { id: sale.id, is_canceled: true, reason_cancel: reason }
-      : { id: sale.id, products_to_return: quantitiesToCancel, reason_return: reason };
+      : {
+          id: sale.id,
+          products_to_return: Object.fromEntries(
+            Object.entries(quantitiesToCancel).map(([id, qty]) => [id, toQuantity(qty)])
+          ),
+          reason_return: reason,
+        };
 
     cancelMutation.mutate(payload, {
       onSuccess: () => {
@@ -158,11 +170,11 @@ const SaleModal = ({ isOpen, sale, onClose, onUpdate }) => {
                   name: "Devolver",
                   width: 100,
                   cell: (row) => (
-                    <TextField size="small" type="number"
-                      inputProps={{ min: 0, max: row.quantity }}
-                      value={quantitiesToCancel[row.id] || 0}
+                    <TextField size="small" type="text"
+                      inputProps={{ inputMode: row.sells_by_fraction ? "decimal" : "numeric" }}
+                      value={quantitiesToCancel[row.id] ?? 0}
                       disabled={totalCancel}
-                      onChange={(e) => handleQuantityChange(row.id, row.quantity, e.target.value)}
+                      onChange={(e) => handleQuantityChange(row, e.target.value)}
                     />
                   ),
                 }] : []),
