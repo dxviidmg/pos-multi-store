@@ -89,13 +89,24 @@ const SearchProduct = ({ searchInputRef }) => {
   // "q" (por marca o nombre) y "visual" (búsqueda visual) comparten el mismo flujo de texto
   const isTextMode = queryType === "q" || queryType === "visual";
 
-  // Usar hook de atajos de teclado
+  const changeQueryType = (newQueryType) => {
+    setQueryType(newQueryType);
+    setQuery("");
+    setData([]);
+  };
+
+  // Atajos de teclado: las opciones habilitadas coinciden con las visibles en "Tipo de operación"
   useKeyboardShortcuts(inputRef, dispatch, {
     allowTransfer,
+    allowSale: storeType !== "A",
+    allowReservation: storeType !== "A",
+    allowDistribution: storeType !== "T",
+    onQueryTypeChange: (newQueryType) => {
+      changeQueryType(newQueryType);
+      inputRef.current?.focus();
+    },
     onVisualSearch: () => {
-      setQueryType(QUERY_TYPES.VISUAL);
-      setQuery("");
-      setData([]);
+      changeQueryType(QUERY_TYPES.VISUAL);
       inputRef.current?.focus();
     },
   });
@@ -174,9 +185,7 @@ const SearchProduct = ({ searchInputRef }) => {
   }, [query, queryType]);
 
   const handleQueryTypeChange = (e) => {
-    setQueryType(e.target.value);
-    setQuery("");
-    setData([]);
+    changeQueryType(e.target.value);
   };
 
   const handleMovementTypeChange = (e) => {
@@ -184,11 +193,14 @@ const SearchProduct = ({ searchInputRef }) => {
     setData([]);
   };
 
+  const runBarcodeSearch = () => {
+    if (!barcode) return;
+    setQuery(barcode);
+    setBarcode("");
+  };
+
   const handleBarcodeSearch = (event) => {
-    if (event.key === "Enter") {
-      setQuery(barcode);
-      setBarcode("");
-    }
+    if (event.key === "Enter") runBarcodeSearch();
   };
 
   const handleScanDetected = (code) => {
@@ -390,7 +402,7 @@ const SearchProduct = ({ searchInputRef }) => {
                 <FormControlLabel 
                   value="q" 
                   control={<Radio size="small" sx={{ py: 0.5 }} />} 
-                  label="Nombre o marca (Ctrl+W)"
+                  label="Nombre o marca (Ctrl+L)"
                   sx={{ mr: 4 }}
                 />
                 <FormControlLabel 
@@ -416,7 +428,7 @@ const SearchProduct = ({ searchInputRef }) => {
                   <FormControlLabel 
                     value={MOVEMENT_TYPES.DISTRIBUTION} 
                     control={<Radio size="small" sx={{ py: 0.5 }} />} 
-                    label="Distribución (Ctrl+T)"
+                    label="Distribución (Ctrl+D)"
                     sx={{ mr: 4 }}
                   />
                 )}
@@ -493,7 +505,7 @@ const SearchProduct = ({ searchInputRef }) => {
           {queryType === "code" && (
             <IconButton 
               size="small" 
-              onClick={handleBarcodeSearch}
+              onClick={runBarcodeSearch}
               disabled={searching}
               sx={{ width: 36, height: 36, bgcolor: 'primary.main', color: 'white', borderRadius: 1 }}
             >
@@ -607,15 +619,17 @@ const SearchProduct = ({ searchInputRef }) => {
                         </CustomButton>
                       </CustomTooltip>
 
-                      <CustomTooltip text="Ver stock en todas las tiendas">
-                        <CustomButton
-                          onClick={() =>
-                            handleOpenModal({ ...row, onlyRead: true })
-                          }
-                        >
-                          <InventoryIcon />
-                        </CustomButton>
-                      </CustomTooltip>
+                      {allowTransfer && (
+                        <CustomTooltip text="Ver stock en todas las tiendas">
+                          <CustomButton
+                            onClick={() =>
+                              handleOpenModal({ ...row, onlyRead: true })
+                            }
+                          >
+                            <InventoryIcon />
+                          </CustomButton>
+                        </CustomTooltip>
+                      )}
 
                       <CustomTooltip text="Ver imagen del producto">
                         <CustomButton

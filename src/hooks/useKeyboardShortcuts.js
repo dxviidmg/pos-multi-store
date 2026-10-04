@@ -3,49 +3,59 @@ import { updateMovementType } from "../redux/cart/cartActions";
 import { MOVEMENT_TYPES, QUERY_TYPES } from "../constants";
 
 export const useKeyboardShortcuts = (inputRef, dispatch, options = {}) => {
-  const { onVisualSearch, allowTransfer = true } = options;
+  const {
+    onVisualSearch,
+    onQueryTypeChange,
+    allowTransfer = true,
+    allowSale = true,
+    allowReservation = true,
+    allowDistribution = true,
+  } = options;
   const handleShortcut = useCallback((event) => {
-    if (event.ctrlKey && (event.key === "q" || event.key === "Q")) {
+    if (!event.ctrlKey) return;
+    const key = event.key.toLowerCase();
+
+    if (key === "q") {
       event.preventDefault();
-      dispatch(updateMovementType(QUERY_TYPES.CODE));
+      onQueryTypeChange?.(QUERY_TYPES.CODE);
     }
-    if (event.ctrlKey && (event.key === "w" || event.key === "W")) {
+    if (key === "l") {
       event.preventDefault();
-      dispatch(updateMovementType(QUERY_TYPES.NAME));
+      onQueryTypeChange?.(QUERY_TYPES.NAME);
     }
-    if (event.ctrlKey && (event.key === "e" || event.key === "E")) {
+    if (allowSale && key === "e") {
       event.preventDefault();
       dispatch(updateMovementType(MOVEMENT_TYPES.SALE));
     }
-    if (allowTransfer && event.ctrlKey && (event.key === "r" || event.key === "R")) {
+    if (allowTransfer && key === "r") {
       event.preventDefault();
       dispatch(updateMovementType(MOVEMENT_TYPES.TRANSFER));
     }
-    if (event.ctrlKey && (event.key === "t" || event.key === "T")) {
+    if (allowDistribution && key === "d") {
       event.preventDefault();
       dispatch(updateMovementType(MOVEMENT_TYPES.DISTRIBUTION));
     }
-    if (event.ctrlKey && (event.key === "y" || event.key === "Y")) {
+    if (key === "y") {
       event.preventDefault();
       dispatch(updateMovementType(MOVEMENT_TYPES.ADD_STOCK));
     }
-    if (event.ctrlKey && (event.key === "u" || event.key === "U")) {
+    if (key === "u") {
       event.preventDefault();
       dispatch(updateMovementType(MOVEMENT_TYPES.CHECK_STOCK));
     }
-    if (event.ctrlKey && (event.key === "i" || event.key === "I")) {
+    if (allowReservation && key === "i") {
       event.preventDefault();
       dispatch(updateMovementType(MOVEMENT_TYPES.RESERVATION));
     }
-    if (event.ctrlKey && (event.key === "b" || event.key === "B")) {
+    if (key === "b") {
       event.preventDefault();
       inputRef?.current?.focus();
     }
-    if (event.ctrlKey && (event.key === "k" || event.key === "K")) {
+    if (key === "k") {
       event.preventDefault();
       onVisualSearch?.();
     }
-  }, [dispatch, inputRef, onVisualSearch, allowTransfer]);
+  }, [dispatch, inputRef, onVisualSearch, onQueryTypeChange, allowTransfer, allowSale, allowReservation, allowDistribution]);
 
   useEffect(() => {
     window.addEventListener("keydown", handleShortcut);
