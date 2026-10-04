@@ -10,7 +10,12 @@ import SendIcon from "@mui/icons-material/Send";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import InboxIcon from "@mui/icons-material/Inbox";
+import { useNavigate } from "react-router-dom";
 import { useUser } from "../../../context/UserContext";
+import { getNotifications } from "../../../api/notifications";
+import { canAccessRoute } from "../../../constants/routeAccess";
+import { showWarning } from "../../../utils/alerts";
+import { logger } from "../../../utils/logger";
 
 const WS_BASE = process.env.REACT_APP_API_URL?.replace(/^http/, "ws");
 
@@ -32,77 +37,133 @@ const EVENT_CONFIG = {
 
 const MULTISTORE_EVENTS = ["transfer_created", "transfer_confirmed", "distribution_created", "distribution_confirmed"];
 
-let reconnectAttempts = 0;
-const maxReconnectAttempts = 5;
-let pollingInterval = null;
+const MAX_RECONNECT_ATTEMPTS = 5;
+const POLLING_INTERVAL_MS = 60000;
+
+// Mismo formato para mensajes del WebSocket y del respaldo HTTP.
+const buildNotification = (msg) => {
+  const config = EVENT_CONFIG[msg.event] || { icon: <NotificationsIcon fontSize="small" />, href: null };
+  return { id: msg.id, icon: config.icon, text: msg.message, storeName: msg.store_name, href: config.href };
+};
 
 const NotificationsMenu = memo(() => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [notifications, setNotifications] = useState([]);
   const [seen, setSeen] = useState(true);
-  const wsRef = useRef(null);
-  const reconnectRef = useRef(null);
+  const knownIdsRef = useRef(new Set());
+  const sequenceRef = useRef(0);
+  const navigate = useNavigate();
   const { user } = useUser();
+  const token = user?.token;
+  const storeId = user?.store_id;
+  const multistore = !!user?.multistore;
 
-  const connectWs = useCallback(() => {
-    if (!user?.token || !WS_BASE) return;
+  const addNotifications = useCallback((messages) => {
+    const fresh = messages
+      .filter((msg) => multistore || !MULTISTORE_EVENTS.includes(msg.event))
+      .filter((msg) => !knownIdsRef.current.has(msg.id))
+      .map(buildNotification);
+    if (!fresh.length) return;
+    fresh.forEach((n) => knownIdsRef.current.add(n.id));
+    setNotifications((prev) => [...fresh, ...prev]);
+    setSeen(false);
+  }, [multistore]);
 
-    if (wsRef.current) wsRef.current.close();
-    if (reconnectRef.current) clearTimeout(reconnectRef.current);
+  // Se reconecta con token y tienda actuales cada vez que cambian (incluye cambio de tienda).
+  useEffect(() => {
+    if (!token || !WS_BASE || !isWithinAllowedHours()) return;
 
-    let url = `${WS_BASE}/ws/notifications/?token=${user.token}`;
-    if (user.store_id) url += `&store_id=${user.store_id}`;
+    let disposed = false;
+    let ws = null;
+    let attempts = 0;
+    let reconnectTimer = null;
+    let pollingTimer = null;
 
-    const ws = new WebSocket(url);
-    wsRef.current = ws;
-
-    ws.onmessage = (event) => {
-      const msg = JSON.parse(event.data);
-      if (!user.multistore && MULTISTORE_EVENTS.includes(msg.event)) return;
-      const config = EVENT_CONFIG[msg.event] || { icon: <NotificationsIcon fontSize="small" />, href: "/" };
-      setNotifications((prev) => [
-        { id: `${msg.event}-${Date.now()}`, icon: config.icon, text: msg.message, storeName: msg.store_name, href: config.href },
-        ...prev,
-      ]);
-      setSeen(false);
+    const stopPolling = () => {
+      clearInterval(pollingTimer);
+      pollingTimer = null;
     };
 
-    ws.onerror = () => {
-      reconnectAttempts++;
-      ws.close();
-    };
-
-    ws.onclose = () => {
-      if (reconnectAttempts < maxReconnectAttempts) {
-        const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 30000);
-        reconnectAttempts++;
-        reconnectRef.current = setTimeout(connectWs, delay);
-      } else {
-        // Fallback a polling cada 60s
-        if (!pollingInterval) {
-          pollingInterval = setInterval(() => {
-            fetch('/api/audit/notifications/')
-              .then(r => r.json())
-              .then(data => setNotifications(data));
-          }, 60000);
-        }
+    const poll = async () => {
+      try {
+        const { data } = await getNotifications();
+        const items = Array.isArray(data) ? data : data?.results || [];
+        if (disposed) return;
+        addNotifications(items.map((msg) => ({
+          ...msg,
+          id: msg.id ? `api-${msg.id}` : `api-${msg.event}-${msg.created_at}-${msg.message}`,
+        })));
+      } catch (error) {
+        logger.error("Error al obtener notificaciones:", error);
+        if (error.response?.status === 404) stopPolling();
       }
     };
-  }, [user.multistore]);
 
-  useEffect(() => {
-    if (!isWithinAllowedHours()) return;
-
-    connectWs();
-    const onStoreChange = () => connectWs();
-    window.addEventListener("store-changed", onStoreChange);
-    return () => {
-      if (wsRef.current) wsRef.current.close();
-      if (reconnectRef.current) clearTimeout(reconnectRef.current);
-      if (pollingInterval) clearInterval(pollingInterval);
-      window.removeEventListener("store-changed", onStoreChange);
+    const startPolling = () => {
+      if (pollingTimer) return;
+      poll();
+      pollingTimer = setInterval(poll, POLLING_INTERVAL_MS);
     };
-  }, [connectWs]);
+
+    const connect = () => {
+      let url = `${WS_BASE}/ws/notifications/?token=${token}`;
+      if (storeId) url += `&store_id=${storeId}`;
+
+      ws = new WebSocket(url);
+
+      ws.onopen = () => {
+        attempts = 0;
+        stopPolling();
+      };
+
+      ws.onmessage = (event) => {
+        try {
+          const msg = JSON.parse(event.data);
+          sequenceRef.current += 1;
+          addNotifications([{ ...msg, id: `ws-${sequenceRef.current}` }]);
+        } catch (error) {
+          logger.error("Notificación inválida:", error);
+        }
+      };
+
+      // onclose siempre llega después de onerror: el intento fallido se cuenta solo ahí.
+      ws.onclose = () => {
+        if (disposed) return;
+        if (attempts < MAX_RECONNECT_ATTEMPTS) {
+          const delay = Math.min(1000 * 2 ** attempts, 30000);
+          attempts += 1;
+          reconnectTimer = setTimeout(connect, delay);
+        } else {
+          startPolling();
+        }
+      };
+    };
+
+    connect();
+
+    return () => {
+      disposed = true;
+      clearTimeout(reconnectTimer);
+      stopPolling();
+      if (ws) {
+        ws.onclose = null;
+        ws.close();
+      }
+    };
+  }, [token, storeId, addNotifications]);
+
+  const handleOpenNotification = (notification) => {
+    setAnchorEl(null);
+    if (!notification.href) return;
+    if (!canAccessRoute(user, notification.href)) {
+      showWarning(
+        "No se pudo abrir la notificación",
+        notification.storeName ? `Entra a ${notification.storeName} para ver el detalle.` : "No tienes acceso a esa sección desde esta vista."
+      );
+      return;
+    }
+    navigate(notification.href);
+  };
 
   const count = notifications.length;
 
@@ -137,7 +198,7 @@ const NotificationsMenu = memo(() => {
         ) : (
           <List dense sx={{ maxHeight: 340, overflow: "auto", py: 0 }}>
             {notifications.map((n) => (
-              <ListItemButton key={n.id} onClick={() => setAnchorEl(null)} sx={{ py: 1.2 }}>
+              <ListItemButton key={n.id} onClick={() => handleOpenNotification(n)} sx={{ py: 1.2 }}>
                 <ListItemIcon sx={{ minWidth: 36, color: "primary.main" }}>{n.icon}</ListItemIcon>
                 <ListItemText
                   primary={n.text}
