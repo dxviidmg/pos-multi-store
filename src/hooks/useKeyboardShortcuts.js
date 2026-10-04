@@ -3,7 +3,7 @@ import { updateMovementType } from "../redux/cart/cartActions";
 import { MOVEMENT_TYPES, QUERY_TYPES } from "../constants";
 
 export const useKeyboardShortcuts = (inputRef, dispatch, options = {}) => {
-  const { onVisualSearch } = options;
+  const { onVisualSearch, allowTransfer = true } = options;
   const handleShortcut = useCallback((event) => {
     if (event.ctrlKey && (event.key === "q" || event.key === "Q")) {
       event.preventDefault();
@@ -17,7 +17,7 @@ export const useKeyboardShortcuts = (inputRef, dispatch, options = {}) => {
       event.preventDefault();
       dispatch(updateMovementType(MOVEMENT_TYPES.SALE));
     }
-    if (event.ctrlKey && (event.key === "r" || event.key === "R")) {
+    if (allowTransfer && event.ctrlKey && (event.key === "r" || event.key === "R")) {
       event.preventDefault();
       dispatch(updateMovementType(MOVEMENT_TYPES.TRANSFER));
     }
@@ -45,7 +45,7 @@ export const useKeyboardShortcuts = (inputRef, dispatch, options = {}) => {
       event.preventDefault();
       onVisualSearch?.();
     }
-  }, [dispatch, inputRef, onVisualSearch]);
+  }, [dispatch, inputRef, onVisualSearch, allowTransfer]);
 
   useEffect(() => {
     window.addEventListener("keydown", handleShortcut);

@@ -13,6 +13,7 @@ import { getStockOtherStores } from "../../../api/products";
 import { addToCart, updateMovementType, updateQuantityInCart } from "../../../redux/cart/cartActions";
 import { Grid, TextField, Box, Alert, Chip, Tabs, Tab } from "@mui/material";
 import { MOVEMENT_TYPES } from "../../../constants";
+import { useUser } from "../../../context/UserContext";
 
 
 const StockModal = ({ isOpen, product, onClose }) => {
@@ -20,6 +21,8 @@ const StockModal = ({ isOpen, product, onClose }) => {
   const carts = useSelector(selectCarts);
   const activeCartId = useSelector(selectActiveCartId);
   const dispatch = useDispatch();
+  const { user } = useUser();
+  const canRequestFromOtherStores = !!user?.multistore;
 
   const [requestedQuantities, setRequestedQuantities] = useState({});
   const [isLoading, setIsLoading] = useState(false)
@@ -43,14 +46,16 @@ const StockModal = ({ isOpen, product, onClose }) => {
   const storesWithStock = stockOtherStores.filter(s => (s.available_stock || 0) > 0).length;
 
   useEffect(() => {
-    if (storesWithStock > 0) {
+    if (!canRequestFromOtherStores) {
+      setTabValue(1);
+    } else if (storesWithStock > 0) {
       setTabValue(0);
     } else if (stockOtherStores.length > 0) {
       setTabValue(0);
     } else {
       setTabValue(1);
     }
-  }, [storesWithStock, stockOtherStores.length]);
+  }, [canRequestFromOtherStores, storesWithStock, stockOtherStores.length]);
 
 
   const handleTabChange = (event, newValue) => {
@@ -70,10 +75,10 @@ const StockModal = ({ isOpen, product, onClose }) => {
       }
     };
   
-    if (isOpen && storeProduct?.product?.code) {
+    if (canRequestFromOtherStores && isOpen && storeProduct?.product?.code) {
       fetchData();
     }
-  }, [isOpen, storeProduct?.product?.code]);
+  }, [canRequestFromOtherStores, isOpen, storeProduct?.product?.code]);
 
 
   const handleQuantityChange = (rowId, max, value) => {
@@ -90,9 +95,10 @@ const StockModal = ({ isOpen, product, onClose }) => {
         store_products: [{ id: storeProduct.id, quantity }],
       });
       showSuccess(`Stock agregado: ${quantity} unidades`);
-      dispatch(updateMovementType(MOVEMENT_TYPES.SALE));
-      
       const activeCart = carts.find(c => c.id === activeCartId);
+      if (activeCart?.movementType !== MOVEMENT_TYPES.SALE) {
+        dispatch(updateMovementType(MOVEMENT_TYPES.SALE));
+      }
       const existingItem = activeCart?.cart.find(item => item.id === storeProduct.id);
       
       if (existingItem) {
@@ -187,14 +193,16 @@ const StockModal = ({ isOpen, product, onClose }) => {
           </Grid>
         ) : (
           <Grid item xs={12}>
-            <Tabs value={tabValue} onChange={handleTabChange} variant="fullWidth" sx={{ mb: 2 }}>
-              <Tab 
-                label="Solicitar producto a otra tienda"
-              />
-              <Tab label="Agregar y vender" />
-            </Tabs>
+            {canRequestFromOtherStores && (
+              <Tabs value={tabValue} onChange={handleTabChange} variant="fullWidth" sx={{ mb: 2 }}>
+                <Tab 
+                  label="Solicitar producto a otra tienda"
+                />
+                <Tab label="Agregar y vender" />
+              </Tabs>
+            )}
 
-            {tabValue === 0 && (
+            {canRequestFromOtherStores && tabValue === 0 && (
               <Box>
                 {storesWithStock > 0 ? (
                   <SimpleTable

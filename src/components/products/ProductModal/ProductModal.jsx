@@ -16,7 +16,7 @@ import noPhoto from "../../../assets/images/noPhoto.webp";
 import { convertImageToWebp } from "../../../utils/image";
 import { getDepartments } from "../../../api/departments";
 import SimpleTable from "../../ui/SimpleTable/SimpleTable";
-import { Grid, TextField, Box, Checkbox, FormControlLabel, Autocomplete, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import { Grid, TextField, Box, Checkbox, FormControlLabel, Autocomplete, FormControl, InputLabel, Select, MenuItem, Alert } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import VisuallyHiddenInput from "../../ui/VisuallyHiddenInput";
 import { useConversionUnits } from "../../../hooks/useConversions";
@@ -283,6 +283,12 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
       <Grid container sx={{ padding: '1rem', backgroundColor: 'modalBody.main' }}>
         <Grid item xs={12} className="card">
         
+        {!showStoreProducts && !user.multistore && !user.store_id && !formData.id && (
+          <Alert severity="warning" variant="filled" sx={{ mb: 2 }}>
+            Para crear un producto con stock inicial, entra primero a tu tienda y hazlo desde ahí.
+          </Alert>
+        )}
+
         {!showStoreProducts && (
         <Grid container spacing={2}>
           <Grid item xs={12} md={4}>
