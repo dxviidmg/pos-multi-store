@@ -78,12 +78,16 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
         setPreviewImage(productData.image || noPhoto);
 
         if (showStoreProducts) {
-          const [r, s] = await Promise.all([
-            getStoreProducts({ code: productData.code, all_stores: "Y" }),
-            getStores(),
-          ]);
-          const storeMap = Object.fromEntries(s.data.map((st) => [st.id, st.full_name]));
-          setStoreProduct(r.data.map((sp) => ({ ...sp, store_name: storeMap[sp.store] || `Tienda #${sp.store}` })));
+          try {
+            const [r, s] = await Promise.all([
+              getStoreProducts({ code: productData.code, all_stores: "Y" }),
+              getStores(),
+            ]);
+            const storeMap = Object.fromEntries(s.data.map((st) => [st.id, st.full_name]));
+            setStoreProduct(r.data.map((sp) => ({ ...sp, store_name: storeMap[sp.store] || `Tienda #${sp.store}` })));
+          } catch (error) {
+            showRequestError("cargar el stock del producto", error);
+          }
         }
       } else {
         setFormData({
@@ -95,12 +99,16 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
         setStoreProduct([]);
       }
 
-      const response = await getBrands();
-      setBrands(response.data);
+      try {
+        const response = await getBrands();
+        setBrands(response.data);
 
-      const response2 = await getDepartments();
-      setDepartments(response2.data);
-      setOptionsLoaded(true);
+        const response2 = await getDepartments();
+        setDepartments(response2.data);
+        setOptionsLoaded(true);
+      } catch (error) {
+        showRequestError("cargar las marcas y departamentos", error);
+      }
     };
 
     fetchData();

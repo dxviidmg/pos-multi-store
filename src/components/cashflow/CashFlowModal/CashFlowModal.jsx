@@ -54,18 +54,18 @@ const CashFlowModal = ({ isOpen, cashFlow, onClose, onUpdate }) => {
   const handleSubmit = async () => {
     if (loading) return;
     setLoading(true);
-    const response = formData.id
-      ? await updateCashFlow(formData)
-      : await createCashFlow(formData);
-    setLoading(false);
-
-    if (response.status === 200 || response.status === 201) {
+    try {
+      const response = formData.id
+        ? await updateCashFlow(formData)
+        : await createCashFlow(formData);
       onUpdate(response.data, !!formData.id);
       onClose();
       setFormData(INITIAL_FORM);
       showSuccess(formData.id ? "Movimiento actualizado" : "Movimiento creado");
-    } else {
-      showRequestError("guardar el movimiento", response);
+    } catch (error) {
+      showRequestError("guardar el movimiento", error);
+    } finally {
+      setLoading(false);
     }
   };
 

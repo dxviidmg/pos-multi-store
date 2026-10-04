@@ -12,19 +12,18 @@ const DiscountModal = ({ isOpen, onClose }) => {
   const queryClient = useQueryClient();
 
   const handleSave = async () => {
-    const response = await createDiscount({ discount_percentage: discountPercentage });
-
-    if (response.status === 201) {
+    try {
+      await createDiscount({ discount_percentage: discountPercentage });
       setDiscountPercentage("");
       queryClient.invalidateQueries({ queryKey: ["discounts"] });
       showSuccess("Descuento creado");
       onClose();
-    } else {
-      const err = response.response?.status === 400 && response.response.data.discount_percentage?.[0];
+    } catch (error) {
+      const err = error.response?.status === 400 && error.response.data?.discount_percentage?.[0];
       if (err === "discount with this discount percentage already exists.") {
         showWarning("No se pudo crear el descuento", "Ese descuento ya existe.");
       } else {
-        showRequestError("crear el descuento", response);
+        showRequestError("crear el descuento", error);
       }
     }
   };

@@ -50,12 +50,12 @@ const ProductReassign = () => {
   }, [params.reassign_type]);
 
   const handleReassignProducts = async () => {
-    const response = await reassignProducts(params);
-    if (response.status === 200) {
+    try {
+      await reassignProducts(params);
       reset();
       showSuccess("Productos reasignados");
-    } else {
-      showRequestError("reasignar los productos", response);
+    } catch (error) {
+      showRequestError("reasignar los productos", error);
     }
   };
 

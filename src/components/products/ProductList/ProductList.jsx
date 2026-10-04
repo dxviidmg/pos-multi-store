@@ -53,20 +53,28 @@ const ProductList = () => {
 
   useEffect(() => {
     const fetchOptions = async () => {
-      const [brandsRes, deptsRes] = await Promise.all([getBrands(), getDepartments()]);
-      setBrands(brandsRes.data);
-      setDepartments(deptsRes.data);
-      setOptionsLoaded(true);
+      try {
+        const [brandsRes, deptsRes] = await Promise.all([getBrands(), getDepartments()]);
+        setBrands(brandsRes.data);
+        setDepartments(deptsRes.data);
+        setOptionsLoaded(true);
+      } catch (error) {
+        showRequestError("cargar las marcas y departamentos", error);
+      }
     };
     fetchOptions();
   }, []);
 
   const fetchProducts = async () => {
     setLoading(true);
-    const response = await getProducts(params);
-    const data = response.data;
-    setProducts(data);
-    setLoading(false);
+    try {
+      const response = await getProducts(params);
+      setProducts(response.data);
+    } catch (error) {
+      showRequestError("cargar los productos", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleUpdateProductList = (updated) => {
@@ -134,13 +142,12 @@ const ProductList = () => {
     if (!confirmed) return;
 
     const selectedIds = selectedRows.map((el) => el.id);
-    const response = await deleteProducts(selectedIds);
-
-    if (response.status === 200) {
+    try {
+      await deleteProducts(selectedIds);
       setProducts((prev) => prev.filter((p) => !selectedIds.includes(p.id)));
       showSuccess("Productos eliminados");
-    } else {
-      showRequestError("eliminar los productos", response);
+    } catch (error) {
+      showRequestError("eliminar los productos", error);
     }
   };
 
@@ -177,13 +184,15 @@ const ProductList = () => {
   };
 
   const handleUpperCodeProducts = async () => {
-    const response = await upperCodeProducts();
-    if (response.status === 200) {
-      await fetchProducts();
-      showSuccess("Códigos pasaron a mayúsculas");
-    } else {
-      showRequestError("pasar los códigos a mayúsculas", response);
+    if (user.role !== "owner") return;
+    try {
+      await upperCodeProducts();
+    } catch (error) {
+      showRequestError("pasar los códigos a mayúsculas", error);
+      return;
     }
+    showSuccess("Códigos pasaron a mayúsculas");
+    fetchProducts();
   };
 
   return (
@@ -318,13 +327,15 @@ const ProductList = () => {
                 Eliminar
               </CustomButton>
             </Grid>
-            <Grid item xs={12} md={3}>
-              <CustomTooltip text="Formatea a mayúsculas y reemplaza la comilla simple (') por guión medio (-)" fullWidth>
-                <CustomButton fullWidth onClick={handleUpperCodeProducts} startIcon={<TextFormatIcon />}>
-                  Formatear códigos
-                </CustomButton>
-              </CustomTooltip>
-            </Grid>
+            {user.role === "owner" && (
+              <Grid item xs={12} md={3}>
+                <CustomTooltip text="Formatea a mayúsculas y reemplaza la comilla simple (') por guión medio (-)" fullWidth>
+                  <CustomButton fullWidth onClick={handleUpperCodeProducts} startIcon={<TextFormatIcon />}>
+                    Formatear códigos
+                  </CustomButton>
+                </CustomTooltip>
+              </Grid>
+            )}
             <Grid item xs={12} md={3}>
               <CustomButton
                 fullWidth

@@ -31,12 +31,12 @@ const CatalogList = ({ useData, deleteFn, useCreate, useUpdate, labels }) => {
     const confirmed = await showConfirm(labels.confirmTitle, `Se eliminarán ${selectedRows.length} ${labels.countUnit}`);
     if (!confirmed) return;
     const selectedIds = selectedRows.map((el) => el.id);
-    const response = await deleteFn(selectedIds);
-    if (response.status === 200) {
+    try {
+      await deleteFn(selectedIds);
       showSuccess(labels.deleted);
       refetch();
-    } else {
-      showRequestError(labels.deleteAction, response);
+    } catch (error) {
+      showRequestError(labels.deleteAction, error);
     }
   };
 

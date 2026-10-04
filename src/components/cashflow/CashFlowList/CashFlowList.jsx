@@ -51,12 +51,12 @@ const CashFlowList = () => {
     );
     if (!confirmed) return;
 
-    const response = await deleteCashFlow(row.id);
-    if (response.status === 200 || response.status === 204) {
+    try {
+      await deleteCashFlow(row.id);
       setCashFlow((prev) => prev.filter((item) => item.id !== row.id));
       showSuccess("Movimiento eliminado");
-    } else {
-      showRequestError("eliminar el movimiento", response);
+    } catch (error) {
+      showRequestError("eliminar el movimiento", error);
     }
   };
 

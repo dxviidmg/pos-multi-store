@@ -32,9 +32,14 @@ const DistributionList = () => {
   useEffect(() => {
     const fetchDistributions = async () => {
       setLoading(true);
-      const res = await getDistributions();
-      setDistributions(res.data);
-      setLoading(false);
+      try {
+        const res = await getDistributions();
+        setDistributions(res.data);
+      } catch (error) {
+        showRequestError("cargar las distribuciones", error);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchDistributions();
   }, []);
@@ -42,15 +47,15 @@ const DistributionList = () => {
   const handleSubmit = async () => {
     if (loading) return;
     setLoading(true);
-    const response = await confirmDistribution({ id: selected.id });
-    setLoading(false);
-
-    if (response.status === 200) {
+    try {
+      await confirmDistribution({ id: selected.id });
       setDistributions((prev) => prev.filter((d) => d.id !== selected.id));
       setSelected(null);
       showSuccess("Distribución realizada");
-    } else {
-      showRequestError("confirmar la distribución", response);
+    } catch (error) {
+      showRequestError("confirmar la distribución", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -60,8 +65,8 @@ const DistributionList = () => {
   };
 
   const handleSaveClick = async (row) => {
-    const response = await updateTransfer({ ...row, quantity: editedQuantity });
-    if (response.status === 200) {
+    try {
+      await updateTransfer({ ...row, quantity: editedQuantity });
       setSelected((prev) => ({
         ...prev,
         transfers: prev.transfers.map((t) =>
@@ -69,30 +74,30 @@ const DistributionList = () => {
         ),
       }));
       setEditingRow(null);
-    } else {
-      showRequestError("actualizar la cantidad", response);
+    } catch (error) {
+      showRequestError("actualizar la cantidad", error);
     }
   };
 
   const handleDeleteTransfer = async (row) => {
-    const response = await deleteTransfer(row);
-    if (response.status === 204) {
+    try {
+      await deleteTransfer(row);
       setSelected((prev) => ({
         ...prev,
         transfers: prev.transfers.filter((t) => t.id !== row.id),
       }));
-    } else {
-      showRequestError("eliminar el producto", response);
+    } catch (error) {
+      showRequestError("eliminar el producto", error);
     }
   };
 
   const handleDeleteDistribution = async (row) => {
-    const response = await deleteDistribution(row.id);
-    if (response.status === 204) {
+    try {
+      await deleteDistribution(row.id);
       setDistributions((prev) => prev.filter((d) => d.id !== row.id));
       showSuccess("Distribución eliminada");
-    } else {
-      showRequestError("eliminar la distribución", response);
+    } catch (error) {
+      showRequestError("eliminar la distribución", error);
     }
   };
 

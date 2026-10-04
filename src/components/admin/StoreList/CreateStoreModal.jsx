@@ -33,16 +33,16 @@ const CreateStoreModal = ({ isOpen, onClose, onCreated }) => {
   const handleSubmit = async () => {
     if (loading) return;
     setLoading(true);
-    const response = await createStore(formData);
-    setLoading(false);
-
-    if (response.status === 200 || response.status === 201) {
+    try {
+      const response = await createStore(formData);
       onCreated(response.data);
       onClose();
       setFormData(INITIAL_FORM);
       showSuccess("Tienda creada");
-    } else {
-      showRequestError("crear la tienda", response);
+    } catch (error) {
+      showRequestError("crear la tienda", error);
+    } finally {
+      setLoading(false);
     }
   };
 

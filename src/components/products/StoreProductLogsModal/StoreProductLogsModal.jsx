@@ -12,6 +12,7 @@ import SaveIcon from "@mui/icons-material/Save";
 
 const INITIAL_FORM_DATA = { stock: "" };
 const MAX_STOCK = 99999999;
+const MAX_MONTHS = 12;
 
 const StoreProductLogsModal = ({ isOpen, logs: logsData, onClose, onUpdate }) => {
   const storeProduct = logsData?.storeProduct || {};
@@ -56,15 +57,14 @@ const StoreProductLogsModal = ({ isOpen, logs: logsData, onClose, onUpdate }) =>
 
 
   const handleCreateAdjustStock = async () => {
-    const response = await updateStoreProduct(formData);
-
-    if (response.status === 200) {
+    try {
+      const response = await updateStoreProduct(formData);
       resetForm();
       onClose();
       onUpdate(response.data);
       showSuccess("Stock ajustado");
-    } else {
-      showRequestError("ajustar el stock", response);
+    } catch (error) {
+      showRequestError("ajustar el stock", error);
     }
   };
 
@@ -113,8 +113,8 @@ const StoreProductLogsModal = ({ isOpen, logs: logsData, onClose, onUpdate }) =>
             label="Meses anteriores (iniciar desde cuántos meses atrás)"
             type="number"
             value={months}
-            onChange={(e) => setMonths(Number(e.target.value))}
-            inputProps={{ min: 1, max: 12 }}
+            onChange={(e) => setMonths(Math.min(MAX_MONTHS, Math.max(1, Math.trunc(Number(e.target.value)) || 1)))}
+            inputProps={{ min: 1, max: MAX_MONTHS }}
             sx={{ width: '100%', mb: 2 }}
           />
           <h1>Últimos movimientos</h1>

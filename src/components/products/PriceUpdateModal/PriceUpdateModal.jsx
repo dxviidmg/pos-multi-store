@@ -67,18 +67,18 @@ const PriceUpdateModal = ({ isOpen, onClose, selectedProducts, onSuccess }) => {
     if (formData.wholesale_price !== "") prices.wholesale_price = formData.wholesale_price;
     if (formData.min_wholesale_quantity !== "") prices.min_wholesale_quantity = formData.min_wholesale_quantity;
 
-    const response = await updatePricesProducts({ product_ids: selectedIds, ...prices });
-
-    if (response.status === 200) {
+    try {
+      await updatePricesProducts({ product_ids: selectedIds, ...prices });
       showSuccess("Precios actualizados");
       setFormData({ cost: "", unit_price: "", wholesale_price: "", min_wholesale_quantity: "" });
       setConfirmedDifferentPrices(false);
       onClose();
       onSuccess();
-    } else {
-      showRequestError("actualizar los precios", response);
+    } catch (error) {
+      showRequestError("actualizar los precios", error);
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   const isFormEmpty = !formData.cost && !formData.unit_price && !formData.wholesale_price && !formData.min_wholesale_quantity;
