@@ -90,9 +90,10 @@ const StockModal = ({ isOpen, product, onClose }) => {
         store_products: [{ id: storeProduct.id, quantity }],
       });
       showSuccess(`Stock agregado: ${quantity} unidades`);
-      dispatch(updateMovementType(MOVEMENT_TYPES.SALE));
-      
       const activeCart = carts.find(c => c.id === activeCartId);
+      if (activeCart?.movementType !== MOVEMENT_TYPES.SALE) {
+        dispatch(updateMovementType(MOVEMENT_TYPES.SALE));
+      }
       const existingItem = activeCart?.cart.find(item => item.id === storeProduct.id);
       
       if (existingItem) {
