@@ -14,11 +14,12 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import UnarchiveIcon from "@mui/icons-material/Unarchive";
 import CustomTooltip from "../../ui/Tooltip";
-import Swal from "sweetalert2";
+import { showConfirm } from "../../../utils/alerts";
 import { useUser } from "../../../context/UserContext";
 
 const ConversionList = () => {
   const { user } = useUser();
+  const isOwner = user.role === "owner";
   const isStore = user.store_type === "T";
   const { data: conversions = [], isLoading } = useConversions();
   const deleteMutation = useDeleteConversion();
@@ -26,34 +27,25 @@ const ConversionList = () => {
   const modal = useModal();
 
   const handleDelete = async (id) => {
-    const result = await Swal.fire({
-      title: "¿Eliminar conversión?",
-      text: "Esta acción no se puede deshacer",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Sí, eliminar",
-      cancelButtonText: "Cancelar",
-      confirmButtonColor: colors.primary,
-    });
+    const confirmed = await showConfirm(
+      "¿Eliminar conversión?",
+      "Esta acción no se puede deshacer",
+      { confirmText: "Sí, eliminar", confirmColor: colors.primary }
+    );
 
-    if (result.isConfirmed) {
+    if (confirmed) {
       deleteMutation.mutate(id);
     }
   };
 
   const handleApply = async (row) => {
-    const result = await Swal.fire({
-      title: "¿Desempacar producto?",
-      html: `<p>Se restará <strong>1 ${row.source_unit_display}</strong> de <strong>${row.source_product_name}</strong></p>
-             <p>Se sumarán <strong>${row.factor} ${row.target_unit_display}</strong> a <strong>${row.target_product_name}</strong></p>`,
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonText: "Sí, desempacar",
-      cancelButtonText: "Cancelar",
-      confirmButtonColor: colors.primary,
-    });
+    const confirmed = await showConfirm(
+      "¿Desempacar producto?",
+      `Se restará 1 ${row.source_unit_display} de ${row.source_product_name} y se sumarán ${row.factor} ${row.target_unit_display} a ${row.target_product_name}.`,
+      { confirmText: "Sí, desempacar", confirmColor: colors.primary, icon: "question" }
+    );
 
-    if (result.isConfirmed) {
+    if (confirmed) {
       applyMutation.mutate(row.id);
     }
   };
@@ -103,7 +95,7 @@ const ConversionList = () => {
         </CustomButton>
       ),
     }] : []),
-    ...(user.role === "owner" ? [{
+    ...(isOwner ? [{
       name: "Acciones",
       width: 120,
       cell: (row) => (
@@ -128,17 +120,21 @@ const ConversionList = () => {
       <CustomSpinner isLoading={isLoading} />
       <Box className="card">
         <PageHeader title="Conversiones de producto">
-          <CustomButton
-            onClick={() => modal.open()}
-            startIcon={<AddIcon />}
-          >
-            Nueva conversión
-          </CustomButton>
+          {isOwner && (
+            <CustomButton
+              onClick={() => modal.open()}
+              startIcon={<AddIcon />}
+            >
+              Nueva conversión
+            </CustomButton>
+          )}
         </PageHeader>
 
         <Typography variant="body2" sx={{ mb: 2, color: "text.secondary" }}>
-          Configura equivalencias entre productos. Ejemplo: 1 Costal = 10 Kilogramos.
-          Después podrás desempacar directamente desde el inventario.
+          Configura equivalencias entre productos. Ejemplo: 1 Costal = 10 Kilogramos.{" "}
+          {isStore
+            ? "Para desempacar, usa el botón \"Aplicar\" de esta tabla."
+            : "Para desempacar, entra a una tienda y usa el botón \"Aplicar\" en esta página."}
         </Typography>
 
         <DataTable
@@ -151,15 +147,19 @@ const ConversionList = () => {
               <Typography variant="body1" color="text.secondary">
                 No hay conversiones configuradas
               </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                Crea una para poder desempacar productos
-              </Typography>
-              <CustomButton
-                onClick={() => modal.open()}
-                startIcon={<AddIcon />}
-              >
-                Crear primera conversión
-              </CustomButton>
+              {isOwner && (
+                <>
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                    Crea una para poder desempacar productos
+                  </Typography>
+                  <CustomButton
+                    onClick={() => modal.open()}
+                    startIcon={<AddIcon />}
+                  >
+                    Crear primera conversión
+                  </CustomButton>
+                </>
+              )}
             </Box>
           }
         />

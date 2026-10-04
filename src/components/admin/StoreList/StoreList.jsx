@@ -28,7 +28,7 @@ import { useModal } from "../../../hooks/useModal";
 import { useCanCreateStore } from "../../../hooks/useCanCreateStore";
 import { useQueryClient } from "@tanstack/react-query";
 import { createMercadoPagoPreference } from "../../../api/mercadopago";
-import { showRequestError } from "../../../utils/alerts";
+import { showRequestError, showSuccess } from "../../../utils/alerts";
 import mercadoPagoLogo from "../../../assets/mercadopago-logo.svg";
 
 const getCashValueTotal = (value) => formatCurrency(value || 0);
@@ -39,6 +39,7 @@ const StoreList = () => {
   const dispatch = useDispatch();
   const today = getFormattedDate();
   const { user, updateUser } = useUser();
+  const isOwner = user?.role === "owner";
   const queryClient = useQueryClient();
 
   const [storeInvestments, setStoreInvestments] = useState({});
@@ -185,9 +186,9 @@ const StoreList = () => {
     if (result.isConfirmed) {
       try {
         await resetStoreStock(storeId);
-        Swal.fire('Stock vaciado', 'Stock de la tienda vaciado', 'success');
+        showSuccess("Stock vaciado", "Stock de la tienda vaciado");
       } catch (error) {
-        Swal.fire('Error', 'No se pudo vaciar el stock de la tienda', 'error');
+        showRequestError("vaciar el stock de la tienda", error);
       }
     }
   };
@@ -238,6 +239,16 @@ const StoreList = () => {
     return filterTotalColumns(allColumns, quickFilter, hasDepartment);
   }, [quickFilter, storeInvestments, hasDepartment]);
 
+  const currentStoreRowStyles = useMemo(() => [
+    {
+      when: (row) => row.id === user?.store_id,
+      style: {
+        backgroundColor: 'info.light',
+        fontWeight: 500,
+      },
+    },
+  ], [user?.store_id]);
+
   return (
     <>
       <CustomSpinner isLoading={loading} />
@@ -256,14 +267,16 @@ const StoreList = () => {
                   ))}
                 </Box>
               )}
-              <CustomButton
-                onClick={() => createStoreModal.open()}
-                startIcon={<AddBusinessIcon />}
-                disabled={canCreateData && !canCreateData.can_create}
-                title={canCreateData && !canCreateData.can_create ? "Has alcanzado el límite de tiendas de tu plan" : ""}
-              >
-                Crear tienda
-              </CustomButton>
+              {isOwner && (
+                <CustomButton
+                  onClick={() => createStoreModal.open()}
+                  startIcon={<AddBusinessIcon />}
+                  disabled={canCreateData && !canCreateData.can_create}
+                  title={canCreateData && !canCreateData.can_create ? "Has alcanzado el límite de tiendas de tu plan" : ""}
+                >
+                  Crear tienda
+                </CustomButton>
+              )}
             </Box>
           </PageHeader>
 
@@ -480,7 +493,7 @@ const StoreList = () => {
           <Box sx={{ mb: 2 }}>
             <DataTable
               progressPending={loading}
-              noDataComponent={
+              noDataComponent={isOwner ? (
                 <Box sx={{ py: 6, textAlign: 'center' }}>
                   <CustomButton
                     onClick={() => createStoreModal.open()}
@@ -502,20 +515,12 @@ const StoreList = () => {
                     Crear mi primera tienda
                   </CustomButton>
                 </Box>
-              }
+              ) : "No hay sucursales registradas"}
               data={memoStores}
               columns={
                 params.store_type === "T" ? columnsStore : columnsStorages
               }
-              conditionalRowStyles={[
-                {
-                  when: row => row.id === user?.store_id,
-                  style: {
-                    backgroundColor: 'info.light',
-                    fontWeight: 500,
-                  },
-                },
-              ]}
+              conditionalRowStyles={currentStoreRowStyles}
             />
           </Box>
 

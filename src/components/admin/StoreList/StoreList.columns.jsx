@@ -145,14 +145,14 @@ export const getStoreColumns = ({ user, averageSales, storeInvestments, handleSe
       ? <span>{getCashValueTotal(storeInvestments[row.id])}</span>
       : <span className="text-muted">Pendiente</span>,
   },
-  {
+  ...(user?.role === "owner" ? [{
     name: "Vaciar stock",
     cell: (row) => (
       <CustomTooltip text="Vaciar stock de la tienda">
         <CustomButton onClick={() => handleResetStore(row.id, row.name)}><RestartAltIcon /></CustomButton>
       </CustomTooltip>
     ),
-  },
+  }] : []),
   {
     name: "Entrar",
     cell: (row) => (
@@ -227,14 +227,14 @@ export const getStorageColumns = ({ user, storeInvestments, handleSelectStore, h
       ? <span>{getCashValueTotal(storeInvestments[row.id])}</span>
       : <span className="text-muted">Pendiente</span>,
   },
-  {
+  ...(user?.role === "owner" ? [{
     name: "Vaciar stock",
     cell: (row) => (
       <CustomTooltip text="Vaciar stock de la tienda">
         <CustomButton onClick={() => handleResetStore(row.id, row.name)}><RestartAltIcon /></CustomButton>
       </CustomTooltip>
     ),
-  },
+  }] : []),
   {
     name: "Entrar",
     cell: (row) => (
@@ -337,10 +337,10 @@ export const getTotalColumns = ({ user, hasDepartment }) => [
     style: alignTdStyles,
     selector: ({ cash }) => getCashValueTotal(cash),
   },
-  {
+  ...(user?.role === "owner" ? [{
     name: "Vaciar stock",
     selector: () => "",
-  },
+  }] : []),
   {
     name: "Entrar",
     selector: () => "",

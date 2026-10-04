@@ -9,7 +9,7 @@ import noPhoto from "../../../assets/images/noPhoto.webp";
 /**
  * Tarjeta de store-product (inventario de tienda) para la vista de galería.
  * Muestra datos anidados (product.*) e inventario. Diseño uniforme, serio y elegante.
- * Clic abre ajuste de cantidad (no logs).
+ * Clic abre ajuste de cantidad (owner) o historial de stock (admin); el vendedor no tiene acción.
  */
 const StoreProductGridCard = ({ storeProduct, onAdjustStock, onLogs, onRequest, role }) => {
   if (!storeProduct) return null;
@@ -17,6 +17,9 @@ const StoreProductGridCard = ({ storeProduct, onAdjustStock, onLogs, onRequest, 
   const product = storeProduct.product || {};
   const isOwner = role === "owner";
   const isSeller = role === "seller";
+  const handleCardClick = isOwner
+    ? () => onAdjustStock?.(storeProduct)
+    : isSeller ? undefined : () => onLogs?.(storeProduct);
 
   return (
     <Box
@@ -36,16 +39,16 @@ const StoreProductGridCard = ({ storeProduct, onAdjustStock, onLogs, onRequest, 
         },
       }}
     >
-      {/* Imagen - clickeable para ajustar stock (owner) o ver logs (no-seller) */}
+      {/* Imagen - clickeable para ajustar stock (owner) o ver historial de stock (admin) */}
       <Box
-        onClick={() => isOwner ? onAdjustStock?.(storeProduct) : onLogs?.(storeProduct)}
+        onClick={handleCardClick}
         sx={{
           position: "relative",
           width: "100%",
           height: 140,
           overflow: "hidden",
           bgcolor: "action.hover",
-          cursor: "pointer",
+          cursor: handleCardClick ? "pointer" : "default",
           transition: "all 0.2s ease",
           "&:hover": {
             "& .spgc-image": { transform: "scale(1.04)" },
@@ -71,17 +74,19 @@ const StoreProductGridCard = ({ storeProduct, onAdjustStock, onLogs, onRequest, 
 
       {/* Info */}
       <Box 
-        onClick={() => isOwner ? onAdjustStock?.(storeProduct) : onLogs?.(storeProduct)}
+        onClick={handleCardClick}
         sx={{ 
           px: 1.5, 
           pt: 1.25, 
           pb: 0.75, 
           flex: 1,
-          cursor: "pointer",
+          cursor: handleCardClick ? "pointer" : "default",
           transition: "all 0.2s ease",
-          "&:hover": {
-            bgcolor: "action.hover",
-          },
+          ...(handleCardClick && {
+            "&:hover": {
+              bgcolor: "action.hover",
+            },
+          }),
         }}
       >
         {/* Marca (gris secundario) */}

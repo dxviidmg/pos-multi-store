@@ -9,7 +9,7 @@ import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import CustomModal from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
 import { Grid, Stack, Typography, Box, Chip, Button, Alert, TextField, MenuItem } from "@mui/material";
-import { showSuccess } from "../../../utils/alerts";
+import { showRequestError, showSuccess } from "../../../utils/alerts";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import httpClient from "../../../api/httpClient";
@@ -71,15 +71,18 @@ const MyCurrentPlan = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await getCurrentPlan();
-      if (res.status === 200) {
+      try {
+        const res = await getCurrentPlan();
         setPlan(res.data);
         if (res.data?.plan?.stores) {
-          const eqRes = await getPlanEquivalent(res.data.plan.id).catch(() => null);
+          const eqRes = await getPlanEquivalent().catch(() => null);
           if (eqRes?.status === 200) setEquivalent(eqRes.data);
         }
+      } catch (error) {
+        showRequestError("cargar tu plan", error);
+      } finally {
+        setPlanLoading(false);
       }
-      setPlanLoading(false);
     };
     fetchData();
   }, []);
@@ -259,7 +262,7 @@ const MyCurrentPlan = () => {
           <h1>Mi plan actual</h1>
           {plan?.plan?.billing_type === "S" ? (
             <Chip icon={<CheckCircleIcon />} label="Domiciliación activada" color="success" variant="filled" />
-          ) : equivalent ? (
+          ) : isOwner && equivalent ? (
             <Button
               onClick={handleOpenPayment}
               startIcon={<AddCircleIcon />}
