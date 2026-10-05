@@ -1,7 +1,6 @@
 import { memo } from 'react';
 import Modal from '@mui/material/Modal';
 import { Box, IconButton, Typography } from '@mui/material';
-import { alpha } from '@mui/material/styles';
 import { colors } from '../../../theme/colors';
 import CustomTooltip from '../Tooltip';
 import CloseIcon from '@mui/icons-material/Close';
@@ -30,12 +29,12 @@ function CustomModal({ showOut, onClose, title, children, maxWidth = 800 }) {
       slotProps={{ backdrop: { sx: { backgroundColor: colors.backdrop, backdropFilter: 'blur(4px)' } } }}
     >
       <Box className="modal-enter" sx={{ ...style, maxWidth }}>
-        <Box className="modal__header" sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Typography variant="h6" sx={{ flexGrow: 1, textAlign: 'center', fontWeight: 600 }}>
+        <Box className="modal__header" sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid', borderColor: 'divider' }}>
+          <Typography variant="h6" sx={{ flexGrow: 1, textAlign: 'center', fontWeight: 600, color: 'text.primary' }}>
             {title}
           </Typography>
           <CustomTooltip text="Cerrar" position="bottom">
-            <IconButton onClick={onClose} size="small" aria-label="Cerrar" sx={{ color: 'common.white', '&:hover': { bgcolor: alpha(colors.white, 0.1) } }}>
+            <IconButton onClick={onClose} size="small" aria-label="Cerrar" sx={{ color: 'text.primary', '&:hover': { bgcolor: 'action.hover' } }}>
               <CloseIcon />
             </IconButton>
           </CustomTooltip>

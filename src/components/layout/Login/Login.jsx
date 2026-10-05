@@ -87,7 +87,7 @@ function Login() {
         background: colors.gradient.sidebar,
       }}>
         <Box sx={{ position: 'relative', zIndex: 1, textAlign: 'center', px: 6 }}>
-          <Box component="img" src={Logo} alt="SmartVenta" sx={{
+          <Box component="img" src={Logo} alt="SmartVenta" width={260} height="auto" sx={{
             maxWidth: 260, width: '100%', height: 'auto', mb: 4,
             filter: colors.shadow.logo,
           }} />
@@ -122,7 +122,7 @@ function Login() {
         }}>
           {/* Logo visible solo en móvil */}
           <Box sx={{ display: { xs: 'flex', md: 'none' }, justifyContent: 'center', mb: 3 }}>
-            <Box component="img" src={Logo} alt="SmartVenta" sx={{ maxWidth: 180, height: 'auto' }} />
+            <Box component="img" src={Logo} alt="SmartVenta" width={180} height="auto" sx={{ maxWidth: 180, height: 'auto' }} />
           </Box>
 
           <Typography variant="h4" sx={{ fontWeight: 700, color: 'text.primary', mb: 0.5 }}>
@@ -142,14 +142,12 @@ function Login() {
             <TextField fullWidth name="username" label="Usuario" placeholder="Ingresa tu usuario"
               value={formData.username} onChange={handleChange}
               required autoFocus autoComplete="username" size="small"
-              sx={{ '& .MuiOutlinedInput-root': { borderRadius: '10px' } }}
             />
 
             <TextField fullWidth name="password" label="Contraseña" placeholder="Ingresa tu contraseña"
               type={showPassword ? "text" : "password"}
               value={formData.password} onChange={handleChange}
               required autoComplete="current-password" size="small"
-              sx={{ '& .MuiOutlinedInput-root': { borderRadius: '10px' } }}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">

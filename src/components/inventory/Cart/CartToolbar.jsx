@@ -84,6 +84,7 @@ const CartToolbar = ({
           </Grid>
           <Grid item xs={12} md={3}>
             <StoreSelect
+              label="Destino"
               value={destination.selectedStore}
               onChange={(e) => destination.setSelectedStore(e.target.value)}
               placeholder="Selecciona un destino"
@@ -92,6 +93,7 @@ const CartToolbar = ({
           </Grid>
           <Grid item xs={12} md={3}>
             <StoreSelect
+              label="Confirmar destino"
               value={destination.confirmedStore}
               onChange={(e) => destination.setConfirmedStore(e.target.value)}
               placeholder="Confirma el destino"

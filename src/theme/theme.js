@@ -1,4 +1,4 @@
-import { createTheme } from '@mui/material/styles';
+import { createTheme, alpha } from '@mui/material/styles';
 import { colors } from './colors';
 
 const DISPLAY = "'Plus Jakarta Sans', 'Inter', sans-serif";
@@ -84,9 +84,10 @@ export const getTheme = (mode) => createTheme({
           padding: '6px 16px',
           fontWeight: 600,
           fontSize: '0.8125rem',
+          lineHeight: 1.4,
           transition: 'background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.2s ease, transform 0.2s ease',
           '&:active': { transform: 'translateY(0) scale(0.98)' },
-          '&.Mui-focusVisible': { boxShadow: '0 0 0 3px rgba(167,139,250,0.45)' },
+          '&.Mui-focusVisible': { boxShadow: `0 0 0 3px ${alpha(colors.accent, 0.7)}` },
         },
         contained: {
           background: colors.primary,

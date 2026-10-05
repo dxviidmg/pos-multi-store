@@ -78,7 +78,7 @@ const PaymentMethodsSection = ({
                   key={method}
                   size="small"
                   type="number"
-                  placeholder={label}
+                  label={label}
                   fullWidth
                   disabled={!methods[method]}
                   onChange={(e) => onAmountChange(method, e.target.value)}
