@@ -5,13 +5,14 @@ import ClientModal from "../ClientModal/ClientModal";
 import DiscountModal from "../DiscountModal/DiscountModal";
 import EditIcon from "@mui/icons-material/Edit";
 import { useUser } from "../../../context/UserContext";
-import { getDateDifference, getFormattedDate, formatCurrency } from "../../../utils/utils";
+import { isOwner } from "../../../constants/routeAccess";
+import { getFormattedDate, formatCurrency } from "../../../utils/utils";
 import CustomTooltip from "../../ui/Tooltip";
 import { useClients } from "../../../hooks/useClients";
 import { useModal } from "../../../hooks/useModal";
 import Grid from "@mui/material/Grid";
 import PageHeader from "../../ui/PageHeader";
-import { TextField } from "@mui/material";
+import DateRangeFilter from "../../ui/DateRangeFilter/DateRangeFilter";
 import AddIcon from "@mui/icons-material/Add";
 import DiscountIcon from "@mui/icons-material/Discount";
 
@@ -26,8 +27,7 @@ const ClientList = () => {
     start_date: today,
   });
 
-  const { data: clients = [], isLoading: loading, refetch } = useClients(params);
-  const range = getDateDifference(params.start_date, params.end_date);
+  const { data: clients = [], isLoading: loading } = useClients(params);
 
   const handleParams = (e) => {
     const { name, value } = e.target;
@@ -36,11 +36,10 @@ const ClientList = () => {
 
   return (
     <>
-      <ClientModal 
+      <ClientModal
         isOpen={clientModal.isOpen}
         client={clientModal.data}
         onClose={clientModal.close}
-        onUpdate={refetch}
       />
       <DiscountModal
         isOpen={discountModal.isOpen}
@@ -50,7 +49,7 @@ const ClientList = () => {
       <Grid item xs={12} className="card">
         <PageHeader title="Clientes" childrenMd={6}>
           <Grid container spacing={2}>
-            {user?.role === "owner" && (
+            {isOwner(user) && (
               <Grid item xs={12} md={6}>
                 <CustomButton fullWidth onClick={() => discountModal.open()} startIcon={<DiscountIcon />}>
                   Crear descuento
@@ -66,41 +65,12 @@ const ClientList = () => {
         </PageHeader>
 
         <Grid container spacing={2} sx={{ mb: 2 }}>
-          <Grid item xs={12} md={4}>
-            <TextField
-              size="small"
-              fullWidth
-              label="Fecha de inicio"
-              name="start_date"
-              type="date"
-              value={params.start_date}
-              onChange={handleParams}
-              inputProps={{ max: today }}
-            />
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <TextField
-              size="small"
-              fullWidth
-              label="Fecha de fin"
-              name="end_date"
-              type="date"
-              value={params.end_date}
-              onChange={handleParams}
-              inputProps={{ max: today }}
-            />
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <TextField
-              size="small"
-              fullWidth
-              label="Rango"
-              name="range"
-              type="text"
-              value={range}
-              disabled
-            />
-          </Grid>
+          <DateRangeFilter
+            startDate={params.start_date}
+            endDate={params.end_date}
+            onChange={handleParams}
+            showRange
+          />
         </Grid>
 
         <DataTable

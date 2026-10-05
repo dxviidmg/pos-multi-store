@@ -1,12 +1,14 @@
 import React, { useEffect } from "react";
-import CustomModal from "../../ui/Modal/Modal";
+import CustomModal, { ModalBody } from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
 import { useForm } from "../../../hooks/useForm";
 import { Grid, TextField } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 
-const CatalogModal = ({ isOpen, item, onClose, onUpdate, useCreate, useUpdate, entityLabel }) => {
-  const { values, handleChange, reset, setValues } = useForm({ name: "" });
+const INITIAL_VALUES = { name: "" };
+
+const CatalogModal = ({ isOpen, item, onClose, useCreate, useUpdate, entityLabel }) => {
+  const { values, handleChange, reset, setValues } = useForm(INITIAL_VALUES);
 
   const createMutation = useCreate();
   const updateMutation = useUpdate();
@@ -14,7 +16,7 @@ const CatalogModal = ({ isOpen, item, onClose, onUpdate, useCreate, useUpdate, e
 
   useEffect(() => {
     if (isOpen) {
-      setValues(item ? { id: item.id || "", name: item.name || "" } : { name: "" });
+      setValues(item ? { id: item.id || "", name: item.name || "" } : INITIAL_VALUES);
     }
   }, [isOpen, item, setValues]);
 
@@ -23,7 +25,6 @@ const CatalogModal = ({ isOpen, item, onClose, onUpdate, useCreate, useUpdate, e
     mutation.mutate(values, {
       onSuccess: () => {
         onClose();
-        onUpdate();
         reset();
       },
     });
@@ -35,7 +36,7 @@ const CatalogModal = ({ isOpen, item, onClose, onUpdate, useCreate, useUpdate, e
       onClose={onClose}
       title={values.id ? `Editar ${entityLabel}` : `Crear ${entityLabel}`}
     >
-      <Grid container sx={{ padding: '1rem', backgroundColor: 'modalBody.main' }}>
+      <ModalBody>
         <Grid item xs={12} className="card">
           <Grid container spacing={2}>
             <Grid item xs={12} md={6}>
@@ -63,7 +64,7 @@ const CatalogModal = ({ isOpen, item, onClose, onUpdate, useCreate, useUpdate, e
             </Grid>
           </Grid>
         </Grid>
-      </Grid>
+      </ModalBody>
     </CustomModal>
   );
 };

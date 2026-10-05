@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import DataTable from "../../ui/DataTable/DataTable";
 import CustomButton from "../../ui/Button/Button";
 import CatalogModal from "../CatalogModal/CatalogModal";
-import { showSuccess, showConfirm, showRequestError, showWarning } from "../../../utils/alerts";
+import { showConfirm, showWarning } from "../../../utils/alerts";
 import { useUser } from "../../../context/UserContext";
+import { isOwner } from "../../../constants/routeAccess";
+import { useCrudMutation } from "../../../hooks/useCrudMutation";
 import EditIcon from "@mui/icons-material/Edit";
 import CustomTooltip from "../../ui/Tooltip";
 import { useModal } from "../../../hooks/useModal";
@@ -14,13 +16,19 @@ import DeleteIcon from "@mui/icons-material/Delete";
 
 /**
  * Listado de catálogos que solo tienen nombre (marcas, departamentos).
- * `labels` contiene los textos en español de cada entidad.
+ * `labels` contiene los textos en español de cada entidad; `queryKey` es la raíz
+ * del query de `useData` que se invalida al eliminar.
  */
-const CatalogList = ({ useData, deleteFn, useCreate, useUpdate, labels }) => {
+const CatalogList = ({ useData, queryKey, deleteFn, useCreate, useUpdate, labels }) => {
   const { user } = useUser();
   const [selectedRows, setSelectedRows] = useState([]);
   const modal = useModal();
-  const { data = [], isLoading: loading, refetch } = useData();
+  const { data = [], isLoading: loading } = useData();
+  const deleteMutation = useCrudMutation(deleteFn, {
+    queryKey,
+    successMessage: labels.deleted,
+    errorAction: labels.deleteAction,
+  });
 
   const handleDelete = async () => {
     const productsCount = selectedRows.reduce((sum, el) => sum + el.product_count, 0);
@@ -30,14 +38,7 @@ const CatalogList = ({ useData, deleteFn, useCreate, useUpdate, labels }) => {
     }
     const confirmed = await showConfirm(labels.confirmTitle, `Se eliminarán ${selectedRows.length} ${labels.countUnit}`);
     if (!confirmed) return;
-    const selectedIds = selectedRows.map((el) => el.id);
-    try {
-      await deleteFn(selectedIds);
-      showSuccess(labels.deleted);
-      refetch();
-    } catch (error) {
-      showRequestError(labels.deleteAction, error);
-    }
+    deleteMutation.mutate(selectedRows.map((el) => el.id));
   };
 
   return (
@@ -46,7 +47,6 @@ const CatalogList = ({ useData, deleteFn, useCreate, useUpdate, labels }) => {
         isOpen={modal.isOpen}
         item={modal.data}
         onClose={modal.close}
-        onUpdate={refetch}
         useCreate={useCreate}
         useUpdate={useUpdate}
         entityLabel={labels.singular}
@@ -59,18 +59,20 @@ const CatalogList = ({ useData, deleteFn, useCreate, useUpdate, labels }) => {
           </CustomButton>
         </PageHeader>
 
-        <Grid container spacing={2} alignItems="center" sx={{ mb: 2 }}>
-          <Grid item xs={12} md={3}>
-            <CustomButton
-              fullWidth
-              onClick={handleDelete}
-              disabled={selectedRows.length === 0 || user.role !== "owner"}
-              startIcon={<DeleteIcon />}
-            >
-              {labels.deleteSelected}
-            </CustomButton>
+        {isOwner(user) && (
+          <Grid container spacing={2} alignItems="center" sx={{ mb: 2 }}>
+            <Grid item xs={12} md={3}>
+              <CustomButton
+                fullWidth
+                onClick={handleDelete}
+                disabled={selectedRows.length === 0 || deleteMutation.isPending}
+                startIcon={<DeleteIcon />}
+              >
+                {labels.deleteSelected}
+              </CustomButton>
+            </Grid>
           </Grid>
-        </Grid>
+        )}
 
         <DataTable
           progressPending={loading}

@@ -12,6 +12,7 @@ import {
 import SaveIcon from "@mui/icons-material/Save";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import { useCreateConversion, useUpdateConversion } from "../../../hooks/useConversions";
+import { useDebouncedSearch } from "../../../hooks/useDebouncedSearch";
 import { getProducts } from "../../../api/products";
 
 const INITIAL_FORM = {
@@ -20,14 +21,19 @@ const INITIAL_FORM = {
   factor: "",
 };
 
+const searchProducts = async (name, config) => {
+  const res = await getProducts({ name }, config);
+  const products = res.data || res;
+  return (Array.isArray(products) ? products : []).map((p) => ({
+    id: p.id,
+    label: p.name || `Producto ${p.id}`,
+  }));
+};
+
 const ConversionModal = ({ isOpen, onClose, conversion }) => {
   const [formData, setFormData] = useState(INITIAL_FORM);
   const [sourceSearch, setSourceSearch] = useState("");
   const [targetSearch, setTargetSearch] = useState("");
-  const [sourceOptions, setSourceOptions] = useState([]);
-  const [targetOptions, setTargetOptions] = useState([]);
-  const [sourceLoading, setSourceLoading] = useState(false);
-  const [targetLoading, setTargetLoading] = useState(false);
   const [selectedSource, setSelectedSource] = useState(null);
   const [selectedTarget, setSelectedTarget] = useState(null);
 
@@ -52,55 +58,8 @@ const ConversionModal = ({ isOpen, onClose, conversion }) => {
     }
   }, [conversion, isOpen]);
 
-  // Buscar productos origen
-  useEffect(() => {
-    if (!sourceSearch || sourceSearch.length < 2) {
-      setSourceOptions([]);
-      return;
-    }
-    const timer = setTimeout(async () => {
-      setSourceLoading(true);
-      try {
-        const res = await getProducts({ name: sourceSearch });
-        const products = res.data || res;
-        setSourceOptions(
-          (Array.isArray(products) ? products : []).map((p) => ({
-            id: p.id,
-            label: p.name || `Producto ${p.id}`,
-          }))
-        );
-      } catch {
-        setSourceOptions([]);
-      }
-      setSourceLoading(false);
-    }, 300);
-    return () => clearTimeout(timer);
-  }, [sourceSearch]);
-
-  // Buscar productos destino
-  useEffect(() => {
-    if (!targetSearch || targetSearch.length < 2) {
-      setTargetOptions([]);
-      return;
-    }
-    const timer = setTimeout(async () => {
-      setTargetLoading(true);
-      try {
-        const res = await getProducts({ name: targetSearch });
-        const products = res.data || res;
-        setTargetOptions(
-          (Array.isArray(products) ? products : []).map((p) => ({
-            id: p.id,
-            label: p.name || `Producto ${p.id}`,
-          }))
-        );
-      } catch {
-        setTargetOptions([]);
-      }
-      setTargetLoading(false);
-    }, 300);
-    return () => clearTimeout(timer);
-  }, [targetSearch]);
+  const { results: sourceOptions, loading: sourceLoading } = useDebouncedSearch(sourceSearch, searchProducts);
+  const { results: targetOptions, loading: targetLoading } = useDebouncedSearch(targetSearch, searchProducts);
 
   const handleSubmit = () => {
     const payload = {

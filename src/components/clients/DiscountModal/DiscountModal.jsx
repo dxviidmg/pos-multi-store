@@ -2,30 +2,37 @@ import React, { useState } from "react";
 import CustomModal from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
 import { createDiscount } from "../../../api/discounts";
-import { showSuccess, showRequestError, showWarning } from "../../../utils/alerts";
+import { useCrudMutation } from "../../../hooks/useCrudMutation";
 import { TextField, Box } from "@mui/material";
 import DiscountIcon from "@mui/icons-material/Discount";
-import { useQueryClient } from "@tanstack/react-query";
+
+const DUPLICATE_DISCOUNT_ERROR = "discount with this discount percentage already exists.";
+
+const discountErrorParser = (error) =>
+  error.response?.status === 400 &&
+  error.response.data?.discount_percentage?.[0] === DUPLICATE_DISCOUNT_ERROR
+    ? "Ese descuento ya existe."
+    : null;
 
 const DiscountModal = ({ isOpen, onClose }) => {
   const [discountPercentage, setDiscountPercentage] = useState("");
-  const queryClient = useQueryClient();
+  const createMutation = useCrudMutation(createDiscount, {
+    queryKey: "discounts",
+    successMessage: "Descuento creado",
+    errorAction: "crear el descuento",
+    errorParser: discountErrorParser,
+  });
 
-  const handleSave = async () => {
-    try {
-      await createDiscount({ discount_percentage: discountPercentage });
-      setDiscountPercentage("");
-      queryClient.invalidateQueries({ queryKey: ["discounts"] });
-      showSuccess("Descuento creado");
-      onClose();
-    } catch (error) {
-      const err = error.response?.status === 400 && error.response.data?.discount_percentage?.[0];
-      if (err === "discount with this discount percentage already exists.") {
-        showWarning("No se pudo crear el descuento", "Ese descuento ya existe.");
-      } else {
-        showRequestError("crear el descuento", error);
+  const handleSave = () => {
+    createMutation.mutate(
+      { discount_percentage: discountPercentage },
+      {
+        onSuccess: () => {
+          setDiscountPercentage("");
+          onClose();
+        },
       }
-    }
+    );
   };
 
   return (
@@ -39,7 +46,11 @@ const DiscountModal = ({ isOpen, onClose }) => {
           value={discountPercentage}
           onChange={(e) => setDiscountPercentage(e.target.value)}
         />
-        <CustomButton onClick={handleSave} disabled={!discountPercentage} startIcon={<DiscountIcon />}>
+        <CustomButton
+          onClick={handleSave}
+          disabled={!discountPercentage || createMutation.isPending}
+          startIcon={<DiscountIcon />}
+        >
           Crear descuento
         </CustomButton>
       </Box>

@@ -28,8 +28,12 @@ const CashFlowModal = ({ isOpen, cashFlow, onClose, onUpdate }) => {
 
   useEffect(() => {
     const fetchChoices = async () => {
-      const res = await getCashFlowChoices();
-      setOptions(res.data);
+      try {
+        const res = await getCashFlowChoices();
+        setOptions(res.data);
+      } catch (error) {
+        showRequestError("cargar los tipos de movimiento", error);
+      }
     };
     fetchChoices();
   }, []);
@@ -48,7 +52,8 @@ const CashFlowModal = ({ isOpen, cashFlow, onClose, onUpdate }) => {
   }, [cashFlow]);
 
   const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async () => {
@@ -58,7 +63,7 @@ const CashFlowModal = ({ isOpen, cashFlow, onClose, onUpdate }) => {
       const response = formData.id
         ? await updateCashFlow(formData)
         : await createCashFlow(formData);
-      onUpdate(response.data, !!formData.id);
+      onUpdate(response.data, Boolean(formData.id));
       onClose();
       setFormData(INITIAL_FORM);
       showSuccess(formData.id ? "Movimiento actualizado" : "Movimiento creado");
@@ -164,11 +169,7 @@ const CashFlowModal = ({ isOpen, cashFlow, onClose, onUpdate }) => {
               startIcon={<SaveIcon />}
               sx={{ height: "40px" }}
             >
-              {loading
-                ? "Guardando..."
-                : formData.id
-                ? "Actualizar"
-                : "Crear"}
+              {loading ? "Guardando..." : formData.id ? "Actualizar" : "Crear"}
             </CustomButton>
           </Grid>
         </Grid>

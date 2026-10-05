@@ -1,55 +1,52 @@
 import React, { useState } from "react";
-import CustomModal from "../../ui/Modal/Modal";
+import CustomModal, { ModalBody } from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
 import { Grid, TextField } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import { showSuccess, showRequestError } from "../../../utils/alerts";
-import httpClient from "../../../api/httpClient";
-import { getApiUrl } from "../../../api/utils";
+import { createStockUpdateRequest } from "../../../api/stockRequests";
+
+const MAX_STOCK = 99999999;
 
 const StockUpdateRequestModal = ({ isOpen, storeProduct, onClose }) => {
-  const MAX_STOCK = 99999999;
   const [requestedStock, setRequestedStock] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async () => {
+  /** Envía la solicitud; `isAdjustment` = la cantidad la capturó el usuario. */
+  const submitRequest = async (requested_stock, isAdjustment) => {
     setLoading(true);
     try {
-      await httpClient.post(getApiUrl("stock-update-request"), {
-        store_product: storeProduct.id,
-        requested_stock: Number(requestedStock),
-      });
+      await createStockUpdateRequest({ store_product: storeProduct.id, requested_stock });
       showSuccess("Solicitud enviada");
-      setRequestedStock("");
+      if (isAdjustment) setRequestedStock("");
       onClose();
     } catch (err) {
       showRequestError("enviar la solicitud", err);
-      if (err.response?.status === 400) onClose();
+      if (isAdjustment && err.response?.status === 400) onClose();
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
-  const handleSubmit2 = async () => {
-    setLoading(true);
-    try {
-      await httpClient.post(getApiUrl("stock-update-request"), {
-        store_product: storeProduct.id,
-        requested_stock: storeProduct.stock,
-      });
-      showSuccess("Solicitud enviada");
-      onClose();
-    } catch (err) {
-      showRequestError("enviar la solicitud", err);
+  const handleSubmit = () => submitRequest(Number(requestedStock), true);
+  const handleConfirmCurrent = () => submitRequest(storeProduct.stock, false);
+
+  const handleRequestedStockChange = (e) => {
+    const raw = e.target.value;
+    if (raw === "") {
+      setRequestedStock("");
+      return;
     }
-    setLoading(false);
+    const num = Math.max(0, Math.min(Number(raw), MAX_STOCK));
+    setRequestedStock(num.toString());
   };
 
   return (
     <CustomModal showOut={isOpen} onClose={onClose} title="Solicitar ajuste de stock">
-      <Grid container sx={{ padding: '1rem', backgroundColor: 'modalBody.main' }}>
+      <ModalBody>
         <Grid item xs={12} className="card">
           <Grid container spacing={2}>
-          <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={6}>
               <TextField size="small" fullWidth label="Código" value={storeProduct?.product?.code || ""} disabled />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -59,15 +56,10 @@ const StockUpdateRequestModal = ({ isOpen, storeProduct, onClose }) => {
               <TextField size="small" fullWidth label="Stock actual" value={storeProduct?.stock ?? ""} disabled />
             </Grid>
             <Grid item xs={12} md={6}>
-              <TextField size="small" fullWidth label="Cantidad correcta" type="number" value={requestedStock} onChange={(e) => {
-                const raw = e.target.value;
-                if (raw === "") { setRequestedStock(""); return; }
-                const num = Math.max(0, Math.min(Number(raw), MAX_STOCK));
-                setRequestedStock(num.toString());
-              }} inputProps={{ min: 0, max: MAX_STOCK }} />
+              <TextField size="small" fullWidth label="Cantidad correcta" type="number" value={requestedStock} onChange={handleRequestedStockChange} inputProps={{ min: 0, max: MAX_STOCK }} />
             </Grid>
             <Grid item xs={12} md={6}>
-              <CustomButton fullWidth onClick={handleSubmit2} disabled={requestedStock !== "" ||loading} startIcon={<SendIcon />}>
+              <CustomButton fullWidth onClick={handleConfirmCurrent} disabled={requestedStock !== "" || loading} startIcon={<SendIcon />}>
                 {loading ? "Enviando..." : "La cantidad es correcta"}
               </CustomButton>
             </Grid>
@@ -78,7 +70,7 @@ const StockUpdateRequestModal = ({ isOpen, storeProduct, onClose }) => {
             </Grid>
           </Grid>
         </Grid>
-      </Grid>
+      </ModalBody>
     </CustomModal>
   );
 };

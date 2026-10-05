@@ -5,6 +5,7 @@ import { getFormattedDateTime } from "../../../utils/utils";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { showSuccess, showRequestError } from "../../../utils/alerts";
 import { useUser } from "../../../context/UserContext";
+import { isOwner as isOwnerUser } from "../../../constants/routeAccess";
 import {
   confirmDistribution,
   deleteDistribution,
@@ -13,7 +14,7 @@ import {
   updateTransfer,
 } from "../../../api/transfers";
 import CustomTooltip from "../../ui/Tooltip";
-import { Grid, TextField} from "@mui/material";
+import { Grid, TextField } from "@mui/material";
 import ChecklistIcon from "@mui/icons-material/Checklist";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -23,9 +24,11 @@ import PageHeader from "../../ui/PageHeader";
 
 const DistributionList = () => {
   const { user } = useUser();
+  const isOwner = isOwnerUser(user);
   const [distributions, setDistributions] = useState([]);
   const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [editingRow, setEditingRow] = useState(null);
   const [editedQuantity, setEditedQuantity] = useState("");
 
@@ -45,8 +48,8 @@ const DistributionList = () => {
   }, []);
 
   const handleSubmit = async () => {
-    if (loading) return;
-    setLoading(true);
+    if (submitting) return;
+    setSubmitting(true);
     try {
       await confirmDistribution({ id: selected.id });
       setDistributions((prev) => prev.filter((d) => d.id !== selected.id));
@@ -55,7 +58,7 @@ const DistributionList = () => {
     } catch (error) {
       showRequestError("confirmar la distribución", error);
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
   };
 
@@ -103,7 +106,7 @@ const DistributionList = () => {
 
   return (
     <>
-      <CustomSpinner isLoading={loading} />
+      <CustomSpinner isLoading={submitting} />
 
       <Grid item xs={12} className="card" sx={{ mb: '1.5rem' }}>
         <PageHeader title="Distribuciones" />
@@ -125,7 +128,7 @@ const DistributionList = () => {
                       <ChecklistIcon />
                     </CustomButton>
                   </CustomTooltip>
-                  {user.role === "owner" && (
+                  {isOwner && (
                     <CustomTooltip text="Eliminar distribución">
                       <CustomButton onClick={() => handleDeleteDistribution(row)}>
                         <DeleteIcon />
@@ -141,9 +144,9 @@ const DistributionList = () => {
 
       {selected && (
         <Grid item xs={12} className="card">
-          <h1>Distribución #{selected.id}</h1>
+          <PageHeader title={`Distribución #${selected.id}`} />
 
-          <CustomButton fullWidth onClick={handleSubmit} startIcon={<SendIcon />} sx={{ mb: 2 }}>
+          <CustomButton fullWidth onClick={handleSubmit} disabled={submitting} startIcon={<SendIcon />} sx={{ mb: 2 }}>
             Confirmar distribución
           </CustomButton>
 
@@ -172,7 +175,7 @@ const DistributionList = () => {
               {
                 name: "Acciones",
                 cell: (row) =>
-                  user.role === "owner" ? (
+                  isOwner ? (
                     editingRow === row.product_code ? (
                       <CustomButton onClick={() => handleSaveClick(row)} startIcon={<SaveIcon />}>
                         Guardar
