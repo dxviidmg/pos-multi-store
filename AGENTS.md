@@ -55,7 +55,7 @@ Todos los scripts usan `react-app-rewired` (`config-overrides.js` solo pone `res
 | `REACT_APP_API_URL` | URL base de la API; el cliente agrega `/api/`. El WebSocket de notificaciones se deriva cambiando `http` por `ws`. |
 | `REACT_APP_PRINTER_URL` | URL HTTP del servicio local de impresión |
 | `REACT_APP_PRINTER_WS_URL` | WebSocket del servicio de impresión (opcional; si falta se deriva de `REACT_APP_PRINTER_URL`) |
-| `REACT_APP_WHATSAPP_NUMBER` | Número del enlace de soporte |
+| `REACT_APP_WHATSAPP_NUMBER` | Número del enlace de soporte (se lee con `getSupportWhatsAppUrl` en `api/utils.js`) |
 | `REACT_APP_MERCADO_PAGO_PUBLIC_KEY` | Clave pública del formulario de pago |
 | `REACT_APP_API_URL_KEY` | Clave `X-API-Key` para el registro público (planes, alta de negocio) |
 
@@ -102,23 +102,23 @@ src/
 │   ├── products/       # Catálogo, inventario por tienda, búsqueda, importaciones, precios
 │   ├── sales/          # Pantalla de venta, cobro, ventas, apartados, corte de caja
 │   ├── tenant/         # Registro, plan actual, pagos, suscripciones
-│   └── ui/             # Componentes compartidos (ver §8)
-├── constants/          # index.js (MOVEMENT_TYPES, QUERY_TYPES, STORE_TYPES, CANCELLATION_REASONS, UI_TEXT),
-│                       # helpTexts.js (ayuda por ruta), routeAccess.js (permisos)
+│   └── ui/             # Componentes compartidos por varios dominios (ver §8)
+├── constants/          # index.js (MOVEMENT_TYPES, QUERY_TYPES, STORE_TYPES, PAYMENT_METHODS, SALE_TYPES,
+│                       # UNIT_LABELS/isWeightedUnit, CANCELLATION_REASONS, UI_TEXT, PRODUCT_VIEW_OPTIONS), helpTexts.js (ayuda por ruta),
+│                       # routeAccess.js (permisos, ROLES, isOwner/isSeller/isAdmin, isStoreView…), storageKeys.js
 ├── context/            # UserContext: useUser() / updateUser()
 ├── hooks/              # Hooks reutilizables (ver §7)
 ├── redux/cart/         # multiCartReducer, cartActions, selectors
 ├── theme/              # theme.js, colors.js, variables.css
-└── utils/              # alerts, array, chart, currency, date, excel, image, logger, print; utils.js re-exporta
+└── utils/              # alerts, apiErrors, array, chart, currency, date, excel, image, logger, print, storage; utils.js re-exporta
 ```
-
-`src/application/`, `src/domain/` e `src/infrastructure/` existen vacías (sin seguimiento en git; restos de la migración a Next.js). No las uses hasta que una spec defina esa arquitectura.
 
 ### Convenciones de archivos
 
-- Componente: `src/components/{dominio}/{Nombre}/{Nombre}.jsx`. Tablas grandes separan columnas en `{Nombre}.columns.jsx`; modales hijos pueden vivir en la misma carpeta.
+- Componente: `src/components/{dominio}/{Nombre}/{Nombre}.jsx`. En la misma carpeta viven sus partes: subcomponentes (`PaymentTotals.jsx`), hooks propios (`usePaymentMethods.js`), columnas (`{Nombre}.columns.jsx`), estilos (`{Nombre}.styles.js`), configuración pura (`menuConfig.js`), validaciones (`productValidation.js`) y diálogos (`resetStoreDialog.js`).
+- Código compartido **dentro de un dominio**: `components/{dominio}/shared/` (por ejemplo `products/shared/`, `sales/shared/`). Si lo usa más de un dominio, va en `components/ui/` o en `src/hooks/`.
 - En `ui/` hay componentes en carpeta y archivos sueltos (`PageHeader.jsx`, `DropZone.jsx`…). Varias carpetas no coinciden con el export (`Button/` → `CustomButton`, `Modal/` → `CustomModal`, `Tooltip/` → `CustomTooltip`, `Spinner/` → `CustomSpinner`). Respeta lo que existe; no renombres sin una spec.
-- API: `src/api/{recurso}.js`. Hooks: `src/hooks/use{Algo}.js`.
+- API: `src/api/{recurso}.js`. Hooks reutilizables: `src/hooks/use{Algo}.js` (export nombrado).
 - Nombres de variables, componentes y archivos en inglés; textos de UI en español.
 
 ---
@@ -127,7 +127,7 @@ src/
 
 ### Roles
 
-El código solo compara contra `"owner"` y `"seller"`. **Cualquier otro rol se trata como administrador.**
+Usa siempre los helpers de `src/constants/routeAccess.js`: `isOwner(user)`, `isSeller(user)`, `isAdmin(user)` y `getRole(user)`. Nunca compares `user.role` contra un literal. **Cualquier rol distinto de `owner` y `seller` se trata como administrador.** Para la vista: `isStoreView`, `isWarehouseView` e `isGeneralView`, o `STORE_TYPES`.
 
 | Rol | En UI | Alcance |
 |---|---|---|
@@ -142,15 +142,16 @@ El código solo compara contra `"owner"` y `"seller"`. **Cualquier otro rol se t
 - El menú de `MainLayout` filtra sus enlaces con `canAccessRoute`, así que **menú y rutas no pueden desincronizarse**.
 - `isSalesDashboardRestricted(user)`: con varias sucursales (excepto el tenant `demo`), `/tablero-ventas/` solo abre antes de las 10:00 y desde las 21:00 (reloj local).
 
-**Al agregar una ruta:** agrégala en `App.js` **y** en `ROUTE_ACCESS`; una ruta que no está en el mapa no abre para nadie. Las acciones dentro de una página (botones, columnas) se ocultan por rol con spread condicional: `...(user.role === "owner" ? [{...}] : [])`. No uses `omit`.
+**Al agregar una ruta:** agrégala en `App.js` **y** en `ROUTE_ACCESS`; una ruta que no está en el mapa no abre para nadie. Las acciones dentro de una página (botones, columnas) se ocultan por rol con spread condicional: `...(isOwner(user) ? [{...}] : [])`. `DataTable` ya no soporta `omit`.
 
 **Los permisos se aplican solo en el frontend.** El backend no valida rol ni tipo de sucursal por endpoint (ver `pendientes.md`). No asumas que una llamada a la API está protegida.
 
 ### Sesión y sucursal activa
 
 - `useUser()` / `updateUser()` (`src/context/UserContext.js`) es la fuente del usuario y la sucursal activa. Se refleja en `localStorage.user`.
-- Al cambiar de sucursal se actualizan `store_id`, `store_name`, `store_type` y `store_printer`, se limpia la caché de React Query y el carrito, y se emite el evento `store-changed`. Si cambia el tipo, se navega a `/vender/` o `/distribuir/`. Las páginas se remontan con `key={pathname-store_id}`.
+- **Cambiar de sucursal solo con `useSwitchStore()`** (`switchStore(store, { withOverlay })`, `backToGeneral()`). El hook actualiza `store_id`, `store_name`, `store_type` y `store_printer`, limpia la caché de React Query y el carrito, emite `store-changed` y navega a `/vender/` o `/distribuir/` si cambia el tipo. No repitas esa secuencia a mano. Las páginas se remontan con `key={pathname-store_id}`.
 - Al volver a la vista general: `store_id = null` (nunca `""`) y `store_printer = null`.
+- El menú lateral se arma en `layout/MainLayout/menuConfig.js` (`buildMenu(user, { stores })`), filtrado con `canAccessRoute`.
 - El selector de sucursal es solo para el dueño con varias sucursales; el dueño con una sola sucursal ve "Regresar".
 
 ### HTTP (`src/api/httpClient.js`)
@@ -167,18 +168,41 @@ El código solo compara contra `"owner"` y `"seller"`. **Cualquier otro rol se t
 
 ### Datos del servidor
 
-- URLs con `getApiUrl(endpoint)` y `buildUrlWithParams(url, params)` de `src/api/utils.js`. No concatenes la URL base a mano.
+- URLs con `getApiUrl(endpoint)` y `buildUrlWithParams(url, params)` de `src/api/utils.js`; archivos estáticos con `getStaticUrl(path)`, WebSocket con `getApiWsUrl(path)` y cuerpos multipart con `toFormData(data)`. No concatenes la URL base a mano ni pongas `Content-Type` (axios lo resuelve).
+- Las llamadas HTTP van en `src/api/{recurso}.js`; no llames a `httpClient` desde componentes nuevos.
+- Lecturas cacheables simples con `createQueryHook(key, fetchFn)` (`src/hooks/createQueryHook.js`): devuelve `response.data`.
 - CRUD estándar con `createApiService(resource)` (`src/api/apiFactory.js`) y `createMutationHooks(resource, plural, api, { feminine })` (`src/hooks/useCrudMutation.js`). Estos generan mensajes de éxito y error consistentes.
 - React Query para lecturas cacheables (`useQuery`) y mutaciones (`useCrudMutation`). `useFetch` y `useFetchWithRetry` (`src/hooks/useFetch.js`) para lecturas simples o con reintento.
 - Toda llamada async con `try { … } catch (error) { showRequestError(…) } finally { setLoading(false) }`.
 
 ### Hooks existentes (reutiliza antes de crear)
 
-`useAvailableStock`, `useBrands`, `useBrandMutations`, `useCanCreateStore`, `useCartActions`, `useClients`, `useClientMutations`, `useConversions`, `useCrudMutation`, `useDepartments`, `useDepartmentMutations`, `useDiscounts`, `useFetch`, `useFetchWithRetry`, `useForm`, `useKeyboardShortcuts`, `useMercadoPago`, `useModal`, `useOnlineStatus`, `usePrinterStatus`, `useProductSearch`, `useProductSuggestions`, `useRegistration`, `useSaleMutations`, `useStores`, `useTaskPolling`, `useTenantInfo`, `useThemeMode`, `useTransfers`, `useUserManagement`, `useViewModePreference`.
+| Hook | Para qué |
+|---|---|
+| `createQueryHook(key, fetchFn)` | Fábrica de lecturas cacheables (`useBrands`, `useDepartments`, `useDiscounts`, `useClients`, `useConversions`, `useTenantInfo`, `useStores`…) |
+| `useStoreOptions(params)` | Lista de sucursales cacheada (selects); `useStores` es el resumen de caja por sucursal |
+| `useCrudMutation`, `createMutationHooks`, `useCatalogMutations`, `useClientMutations`, `useSaleMutations` | Mutaciones con mensajes e invalidación |
+| `useModal`, `useForm` | Abrir/cerrar modales con datos; estado de formularios |
+| `useSwitchStore` | Cambio de sucursal / volver a vista general |
+| `useCtrlShortcut(keys, handler, { enabled })` | Atajo Ctrl+tecla con un solo listener y el handler en ref |
+| `useKeyboardShortcuts` | Atajos de la pantalla de venta (tabla tecla → acción) |
+| `useDebouncedSearch(query, searchFn, { minChars, delay })` | Autocompletar con espera, `AbortController` y descarte de respuestas viejas |
+| `useProductSearch`, `useProductSuggestions` | Búsqueda de productos por código y sugerencias |
+| `useCodeNameSearch(setParams)` | Filtro código/nombre de listas de productos |
+| `useScrollPreservingUpsert(setList)` | Actualizar una fila sin perder el scroll de `DataTable` |
+| `useImportFlow({ initialForm, validate, importFile, … })` | Flujo de importación Excel: archivo → validar → importar |
+| `useTaskPolling(startTask, { errorAction })` | Tareas Celery con progreso y cuenta regresiva |
+| `useCardFormModal({ containerId, amount, submit, onSuccess })` | Modal con formulario de tarjeta de Mercado Pago |
+| `useUserManagement` | Editar usuario / cambiar contraseña (con `UserManagementModals`) |
+| `useCartActions`, `useAvailableStock` | Agregar al carrito respetando stock reservado entre carritos |
+| `useViewModePreference(key)` | Preferencia tabla/galería persistida |
+| `useFetch`, `useFetchWithRetry` | Lecturas con timeout y reintento (búsqueda por código) |
+| `useMercadoPago`, `usePrinterStatus`, `useOnlineStatus`, `useThemeMode`, `useCanCreateStore`, `useTransfers`, `useRegistration` | Integraciones y estado puntual |
 
 ### Estado
 
-- **Redux solo para carritos** (`multiCartReducer`): carritos ilimitados, cada uno con `movementType`, `cart` y `client`. `UPDATE_MOVEMENT_TYPE` vacía el carrito y el cliente. El último carrito no se cierra desde la UI.
+- **Redux solo para carritos** (`multiCartReducer`): carritos ilimitados, cada uno con `movementType`, `cart` y `client`. `UPDATE_MOVEMENT_TYPE` vacía el carrito y el cliente. El último carrito no se cierra desde la UI. Acciones en `cartActions.js`; lee el estado con `selectors.js` (no `state.multiCartReducer` directo).
+- `localStorage` solo a través de `src/utils/storage.js` (`readJSON`, `writeJSON`, `readString`, `writeString`, `removeKey`; nunca lanzan) con claves de `STORAGE_KEYS` (`src/constants/storageKeys.js`).
 - Todo lo demás: estado local, `UserContext` o React Query.
 
 ### Alertas (`src/utils/alerts.js`)
@@ -192,11 +216,12 @@ El código solo compara contra `"owner"` y `"seller"`. **Cualquier otro rol se t
 | `showAlert`, `showError` | Casos generales |
 
 - Nunca uses títulos genéricos ("Error", "Error desconocido").
-- No llames `Swal.fire` directo. Excepción: diálogos con input, validador o `didOpen` (por ejemplo "Vaciar stock" en `StoreList`).
+- No llames `Swal.fire` directo. Excepción: diálogos con input, validador o `didOpen`; van en un archivo propio junto al componente y escapan el texto del usuario (ejemplo: `admin/StoreList/resetStoreDialog.js`).
+- `showConfirm` usa por defecto "Eliminar" en rojo (`colors.error`). Todas las eliminaciones se ven igual: no cambies el color ni el texto.
 
 ### Rutas y carga
 
-- Todas las rutas: `<Lazy>` = `ErrorBoundary` + `Suspense` + `LoadingFallback`, con componentes cargados por `lazyRetry()` (`App.js`), que recarga la página si falla el chunk.
+- Todas las rutas: `<Lazy>` = `ErrorBoundary` + `Suspense` + `LoadingFallback`, con componentes cargados por `lazyRetry()` (`App.js`), que recarga la página si falla un chunk, como máximo una vez cada 10 s (hora guardada en `sessionStorage`); si vuelve a fallar dentro de esa ventana, lo muestra `ErrorBoundary`.
 - Carga: `PageSkeleton` (página), `TableSkeleton` (en `DataTable`) y `CustomSpinner isLoading`.
 
 ### Otros
@@ -217,11 +242,11 @@ Revisa esta lista antes de crear un componente. Si un patrón se repite en dos a
 
 | Componente | Uso |
 |---|---|
-| `CustomModal` (`Modal/`) | Todos los modales. Props: `showOut`, `onClose`, `title`, `maxWidth` (800). Fondo desenfocado, header con cierre, animación `modal-enter`. |
+| `CustomModal` (`Modal/`) | Todos los modales. Props: `showOut`, `onClose`, `title`, `maxWidth` (800). Fondo desenfocado, header con cierre, animación `modal-enter`. **`ModalBody`** (export nombrado) es el cuerpo con padding y fondo `modalBody.main`; no repitas ese `sx`. |
 | `CustomButton` (`Button/`) | Botón MUI con `variant="contained"`, `size="small"`, `minWidth: 0`; respeta el `sx` recibido. |
 | `CustomTooltip` (`Tooltip/`) | Props `text`, `position`, `fullWidth`. **Obligatorio en botones de solo ícono.** |
 | `CustomSpinner` (`Spinner/`) | Requiere `isLoading`. |
-| `DataTable` | DataGrid con búsqueda, orden, paginación, selección y carga. Columnas con `selector` (valor) o `cell` (render); soporta `conditionalRowStyles=[{ when, style }]`. |
+| `DataTable` | DataGrid con búsqueda, orden, paginación, selección y carga. Columnas con `selector` (valor) o `cell` (render); soporta `conditionalRowStyles=[{ when, style }]`. No soporta `omit` ni `style` por columna. |
 | `SimpleTable` | Tabla HTML de solo lectura (modales, importaciones). |
 | `PageHeader` | Título + acciones de página. No armes `Stack` + `<h1>` a mano. |
 | `PageHelp` | Botón de ayuda que lee `helpTexts.js` según la ruta. |
@@ -233,9 +258,25 @@ Revisa esta lista antes de crear un componente. Si un patrón se repite en dos a
 | `BarcodeScanner` | Escáner con cámara (móvil). |
 | `ConnectionStatusBanner` | Aviso de conexión perdida/restaurada (eventos del navegador). |
 | `CountdownTimer`, `ErrorBoundary`, `LoadingFallback`, `Icons` | Utilitarios. |
-| `UserModals` | `EditUserModal`, `ChangePasswordModal`. |
-| `NotificationsMenu`, `PendingMenu`, `DuplicateSalesMenu`, `StockRequestMenu` | Menús del header; se recargan con `store-changed`. |
+| `UserModals` | `EditUserModal`, `ChangePasswordModal` y `UserManagementModals` (ambos conectados a `useUserManagement()` vía prop `management`). |
+| `NotificationsMenu`, `PendingMenu`, `DuplicateSalesMenu`, `StockRequestMenu` | Menús del header construidos sobre `HeaderPopoverMenu`; se recargan con `store-changed`. |
+| `HeaderPopoverMenu` | Base de los menús del header: botón con badge + `CustomTooltip`, Popover con título, lista con scroll y estado vacío. `autoHideBadge={false}` si el badge lo controla el padre. |
+| `DateRangeFilter` | "Fecha de inicio" / "Fecha de fin" (+ "Rango" con `showRange`) como `Grid item`s; `onChange` recibe el evento con `name` `start_date`/`end_date`. |
+| `StoreSelect` | Select de sucursales con `useStoreOptions` (`params`, `allLabel`, `placeholder`, `getOptionLabel`). |
+| `ViewModeToggle` | Selector de vista: `variant="select"` (opciones `PRODUCT_VIEW_OPTIONS`) o `"buttons"` (íconos). |
+| `EmptyState` | Ícono + mensaje centrado (tableros); `compact` para menús. |
+| `LabelValue` | Línea "Etiqueta: valor" de tarjetas. |
+| `Import/` | `ImportStepper`, `ImportFileDrop`, `ImportValidateButton`, `ImportSubmitButton`, `ImportErrorRows`; se usan con `useImportFlow`. |
 | `RequireAccess` | Guard de rutas (ver §6). |
+
+Componentes compartidos dentro de un dominio:
+
+| Carpeta | Contenido |
+|---|---|
+| `products/shared/` | `CodeNameSearchBar`, `ProductFilterFields`, `CatalogAutocomplete`, `GridCardBase`, `storeProductColumns`, `StoreProductModals`, `useStoreProductActions`, `useStoreProductList`, `useFilteredList`, `useCatalogOptions` (+ `useInvalidateCatalogOptions` tras cambiar productos), `usePriceLogTable` |
+| `sales/shared/` | `PaymentSubmitPanel` (botón de cobro + estado de impresora), `PrintTicketButton`, `SaleSearchFields` |
+| `admin/Dashboard/` | `Filters`, `MainBarChart`, `KPICard`, `StatCard`, `InsightCard`, `DashboardLoading`, `TodayReferenceLine`, `StoreComparisonTable`, `chartStyles.js`, `chartData.js` |
+| `inventory/Cart/` | `quantityRules.js` + `QuantityInput` (reglas de cantidad por modo de venta), `CartItemCard`, `CartToolbar`, `useCartSubmit` |
 
 ### Tablas
 
@@ -294,9 +335,11 @@ Pantalla de venta:
 | Ctrl+1…5 | Elegir cliente de la lista |
 | Ctrl+P | Cobrar |
 
-En el cobro: Ctrl+G confirma y Ctrl+O quita el cliente. En el abono: Ctrl+G cobra con ticket y Ctrl+F sin ticket. Los atajos de cobro respetan las mismas validaciones que el botón.
+En el cobro: Ctrl+G confirma y Ctrl+O quita el cliente (solo con el cobro abierto). En el abono: Ctrl+G cobra con ticket y Ctrl+F sin ticket. Los atajos de cobro respetan las mismas validaciones que el botón.
 
-**No uses Ctrl+W, Ctrl+T ni Ctrl+N:** Chrome y Edge no permiten interceptarlos.
+- Atajos nuevos con `useCtrlShortcut`; nunca `window.addEventListener("keydown")` en un componente.
+- Si la tecla debe quedar bloqueada aunque no actúe (como Ctrl+P), deja `enabled` y revisa la condición dentro del handler. Si el navegador debe recuperar la tecla cuando no aplica (Ctrl+F en el abono), usa `{ enabled: isOpen }`.
+- **No uses Ctrl+W, Ctrl+T ni Ctrl+N:** Chrome y Edge no permiten interceptarlos.
 
 ---
 
@@ -313,7 +356,14 @@ En el cobro: Ctrl+G confirma y Ctrl+O quita el cliente. En el abono: Ctrl+G cobr
 
 Fuente de valores: `src/theme/theme.js`, `src/theme/colors.js`, `src/theme/variables.css`.
 
-- **Nunca hardcodear hex** en componentes: usa tokens del tema (`primary`, `secondary`, `accent`, `text.primary`, `text.secondary`, `divider`, `info.light`…) o `colors` de `src/theme/colors.js`.
+- **Nunca hardcodear hex ni rgba** en componentes. Usa tokens del tema (`primary`, `secondary`, `accent`, `success`, `error`, `text.*`, `divider`, `common.white`…), `alpha(theme.palette.x.main, o)` para transparencias, o `colors` de `src/theme/colors.js`.
+- `colors.js` tiene las primitivas que no son tokens de MUI:
+  - `error` (= `error.main`), `whatsapp`, `backdrop`, `appbar`.
+  - `shadow.{light, medium, brand, brandHover, appbar, card, toast, dialog, logo}`.
+  - `gradient.{sidebar, brand, brandHover, kpi[]}`.
+- Si un valor se repite y no existe, agrégalo a `colors.js`; no lo dejes en el componente.
+- Gráficas (`@mui/x-charts`): el texto SVG no acepta rutas del tema como `'text.secondary'`. Usa los estilos de `admin/Dashboard/chartStyles.js`, que leen variables CSS (`var(--color-text-secondary)`) y siguen el modo oscuro. La paleta de series es `CHART_COLORS` (`utils/chart.js`).
+- Inputs: nunca fondo fijo (`#fff`); usa `background.paper`, o rompe el modo oscuro.
 - Layouts con `Box`/`Stack` y `sx`, no `style` inline. Estados con clases `text-success`, `text-danger` y `text-warning`. Patrones repetidos van como clase en `App.css`.
 - Sin `@keyframes` inline en `sx`.
 
@@ -346,7 +396,7 @@ Texto `Inter`; títulos h1–h4 `Plus Jakarta Sans` (700–800); números `tabul
 | text.primary | `#1e293b` | `#e6edf3` |
 | text.secondary | `#4a5568` | `#8b949e` |
 
-Degradados en `colors.gradient`:
+`colors.js` define las primitivas que consume `theme.js` (no repitas hex en el tema). Degradados en `colors.gradient`:
 - Sidebar y login: `180deg #04346b → #022347`.
 - Botón de login: `135deg #04346b → #065a9e`.
 - Íconos de KPI: azul, verde, violeta, ámbar y cian.
@@ -372,17 +422,85 @@ Degradados en `colors.gradient`:
 
 ---
 
-## 12. Código limpio
+## 12. Reglas de código (checklist)
 
+Reglas derivadas de la auditoría del 2026-10-04. Revísalas antes de terminar un cambio.
+
+**Datos y API**
+1. Toda petición HTTP y toda URL del backend (plantillas, WebSocket, WhatsApp) sale de una función en `src/api/`. Los componentes y hooks no importan `httpClient`, `apiFactory` ni `process.env`.
+2. Query params con `buildUrlWithParams`; multipart con `toFormData`. Las funciones de `api/` no mutan sus argumentos.
+3. Lecturas cacheables con `createQueryHook` o `useQuery`. Los catálogos compartidos (sucursales, marcas, departamentos) se leen con su hook (`useStoreOptions`, `useBrands`, `useDepartments`), nunca con `useEffect` + `getX()`.
+4. Mutaciones con `useCrudMutation` / `createMutationHooks`: invalidan la query. No pases `onUpdate={refetch}` además.
+   - No asumas que un `PATCH` devuelve el objeto completo. Varios endpoints solo devuelven los campos enviados, sin `id`; por ejemplo, el update de `cashflow` devuelve `CashFlowCreateSerializer`. Antes de usar `upsertById` con la respuesta, verifica que traiga `id`; si no, recarga.
+   - Si los datos de una query cambian por acciones que no la invalidan (traspasos creados desde la venta o desde otra sucursal), usa `refetchOnMount: "always"` en su hook.
+5. Un fetch dentro de `useEffect` lleva guard de respuesta vieja (`let ignore = false` + cleanup) y `try/catch/finally`. Ejemplo: `cashflow/CashFlowList/CashFlowList.jsx`.
+6. Nunca `response.status === 200/201`: si no lanzó, salió bien. Los casos 400/404 se leen de `error.response?.status`.
+7. Nunca `.then()` sin `.catch`, ni `catch {}` vacío. En acciones del usuario: `showRequestError`. En cargas de fondo (menús del header): `logger.error`.
+8. Búsquedas mientras se escribe: `useDebouncedSearch` (o el patrón de `useProductSuggestions`), siempre con `AbortController`.
+
+**Constantes y helpers**
+9. Sin literales de dominio. Usa:
+   - `STORE_TYPES`, `QUERY_TYPES`, `MOVEMENT_TYPES`
+   - `PAYMENT_METHODS` / `PAYMENT_METHOD_OPTIONS`, `SALE_TYPES`
+   - `UNIT_LABELS` / `isWeightedUnit`
+   - `ROLES` con `isOwner` / `isSeller` / `isAdmin`
+
+   Ojo: `SALE_TYPES.RESERVATION` y `STORE_TYPES.WAREHOUSE` valen ambos `"A"`.
+10. `localStorage` solo con `utils/storage.js` y claves de `STORAGE_KEYS`.
+11. Fechas largas con `formatLongDate`, conteos con `formatNumber`, dinero con `formatCurrency`, años con `getYearOptions`. Nada de `toLocaleString` suelto.
+12. Reglas de negocio puras fuera del componente, en un archivo junto a él. Ejemplos: `productValidation.js` (precios) y `quantityRules.js` (cantidades del carrito). Un modal que comparte reglas con otro importa el mismo archivo.
+
+**Componentes**
+13. Máximo ~300 líneas por componente. Si crece, separa en hooks `use<Feature>.js` y subcomponentes en la misma carpeta antes de agregar más.
+14. Si el mismo bloque JSX aparece dos veces (escritorio/móvil, tarjeta/tabla), es un componente con prop `variant`. Ejemplo: `inventory/Cart/CartItemCard.jsx`.
+15. Constantes que no dependen de props o estado (columnas fijas, opciones, `INITIAL_FORM`) van a nivel de módulo, no en `useMemo([])`. Las dependencias de `useMemo`/`useEffect` van completas. Para llamar al handler más reciente sin re-suscribir, usa una ref (`handlerRef.current = handler`), no `eslint-disable`.
+16. Colores por estado con un mapa (`STATUS_TONE`), no con ternarios encadenados. Filtros rápidos con un mapa `QUICK_FILTERS` de predicados. Columnas por filtro con un mapa `FILTER_COLUMNS`.
+17. Títulos de página con `PageHeader`, cuerpo de modal con `ModalBody`, estados vacíos con `EmptyState`, "Etiqueta: valor" con `LabelValue`. Nada de `<h1>`, `<p style>` ni `style={{}}`.
+18. Botones de solo ícono siempre con `CustomTooltip`. Elementos clicables son `Button`/`IconButton`, no `Typography` con `onClick`.
+19. Un solo indicador de carga por vista: `progressPending` en `DataTable` **o** `CustomSpinner`, no ambos.
+20. Si un modal recibe el resultado de un hook como prop (`management`, `cardForm`), el hook vive en el padre y el modal solo renderiza.
+
+**Limpieza**
 - Sin imports, variables, exports ni props sin usar. Si un prop o export no se usa en ningún archivo, elimínalo.
 - Sin código comentado ni JSX muerto. Sin `console.log`.
-- No dupliques componentes ni styled components: extráelos a `components/ui/`.
 - No pases props que ya son el default del componente receptor.
 - Comentarios solo donde aportan; escribe como el código que lo rodea.
 
+**Verificación**: `npx eslint --ext .js,.jsx src` sin errores ni warnings (sin `--ext` no revisa nada) y `npm run build`.
+
 ---
 
-## 13. Flujo de trabajo
+## 13. Patrones de referencia
+
+Antes de escribir algo nuevo, copia el ejemplo correspondiente.
+
+| Necesito… | Copia de | Clave del patrón |
+|---|---|---|
+| Página de lista CRUD | `inventory/ConversionList/ConversionList.jsx` | Lectura con hook de query, `useModal`, borrado `showConfirm` → mutation, columnas por rol con spread, `noDataComponent` con llamada a la acción |
+| Lista genérica para varias entidades | `catalog/CatalogList/CatalogList.jsx` + `BrandList`/`DepartmentList` | Un componente; cada entidad le pasa `useData`, `queryKey`, `deleteFn`, `useCreate`/`useUpdate` y `labels` |
+| API + hooks de un recurso | `api/conversions.js` + `hooks/useConversions.js` | `createApiService`, `createQueryHook`, `createMutationHooks`; acciones extra con `useCrudMutation` y el mismo `queryKey` |
+| Modal de formulario simple | `catalog/CatalogModal/CatalogModal.jsx` | `useForm(INITIAL)` de módulo, sincroniza al abrir, `(id ? update : create).mutate` |
+| Validación por campo | `products/ProductModal/productValidation.js` | Función pura → objeto de errores → `error`/`helperText` por campo; botón deshabilitado si hay errores |
+| Lista con filtros y fechas | `cashflow/CashFlowList/CashFlowList.jsx` | `params` en estado, `DateRangeFilter`, fetch con guard, `upsertById` al editar |
+| Lista bajo demanda por filtros | `products/shared/useFilteredList.js` | Lista + params + loading con guard de respuesta vieja |
+| Tabla ↔ galería | `products/ProductList/ProductList.jsx` | `useViewModePreference` + `ViewModeToggle` + `CardGallery`; en móvil siempre galería |
+| Columnas en archivo aparte | `admin/StoreList/StoreList.columns.jsx` | Fábricas `getXColumns({ … })`, helpers `cashCol`/`countCol`, `FILTER_COLUMNS` |
+| Tablero con tarea Celery | `admin/Dashboard/ProductsDashboard.jsx` + `api/dashboards.js` | `startTask` memoizado → `useTaskPolling`, `Filters`, `DashboardLoading`, `EmptyState`, `chartStyles` |
+| Importación Excel | `sales/SaleImport/SaleImport.jsx` | `useImportFlow` + `ui/Import/*` + `getStaticUrl` para la plantilla |
+| Exportación Excel | `products/ProductList` (`handleDownload`) | Filas con encabezados en español → `exportToExcel(data, "Nombre")` |
+| Atajo de teclado en modal | `sales/PaymentEditModal/PaymentEditModal.jsx` | `useCtrlShortcut` con la misma regla de deshabilitado que el botón |
+| Botón de cobro con impresora | `sales/shared/PaymentSubmitPanel.jsx` | Estado de impresora + texto con/sin ticket |
+| Menú del header | `ui/PendingMenu/PendingMenu.jsx` | `HeaderPopoverMenu` + fetch con `logger.error` + escucha `store-changed` |
+| WebSocket con reconexión | `hooks/usePrinterStatus.js` | Backoff, heartbeat, guard `activeRef`, `closeSocket()` anula handlers antes de cerrar, respaldo HTTP |
+| Autocompletar | `hooks/useDebouncedSearch.js` (uso: `inventory/ConversionModal`) | Espera, `AbortController`, `minChars` |
+| Formulario de tarjeta Mercado Pago | `hooks/useCardFormModal.js` (uso: `tenant/MyCurrentPlan`) | Monta el Brick al abrir, desmonta al cerrar o desmontar |
+| Foto con la cámara | `products/ProductList/useProductImageCapture.js` + `utils/image.js` | Input oculto `capture="environment"` → `convertImageToWebp` → `upsertById` |
+| Partir un componente grande | `layout/MainLayout/` y `sales/PaymentModal/` | `.styles.js`, config pura, subcomponentes y hooks en la misma carpeta |
+| Diálogo Swal especial | `admin/StoreList/resetStoreDialog.js` | Archivo propio, escapa el texto del usuario, colores de `colors.js` |
+
+---
+
+## 14. Flujo de trabajo
 
 ### Git
 
