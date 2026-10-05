@@ -5,11 +5,11 @@ const DISPLAY = "'Plus Jakarta Sans', 'Inter', sans-serif";
 
 const lightShadows = [
   'none',
-  '0 1px 2px rgba(2,35,71,0.06)',
+  colors.shadow.light,
   '0 1px 3px rgba(2,35,71,0.08)',
   '0 2px 6px rgba(2,35,71,0.08)',
   '0 4px 12px rgba(2,35,71,0.08)',
-  '0 8px 24px rgba(2,35,71,0.10)',
+  colors.shadow.medium,
   ...Array(19).fill('0 12px 32px rgba(2,35,71,0.14)'),
 ];
 
@@ -26,18 +26,18 @@ const darkShadows = [
 export const getTheme = (mode) => createTheme({
   palette: {
     mode,
-    primary: { main: '#04346b', light: '#065a9e', dark: '#022347' },
-    secondary: { main: '#e94560' },
-    accent: { main: '#a78bfa', dark: '#7c5cbf' },
+    primary: { main: colors.primary, light: colors.primaryLight, dark: colors.primaryDark },
+    secondary: { main: colors.secondary },
+    accent: { main: colors.accent, dark: colors.accentDark },
     success: { main: '#16a34a', light: '#dcfce7', dark: '#15803d' },
     warning: { main: '#d97706', light: '#fef3c7', dark: '#b45309' },
-    error: { main: '#dc2626', light: '#fee2e2', dark: '#b91c1c' },
+    error: { main: colors.error, light: '#fee2e2', dark: '#b91c1c' },
     info: { main: '#0284c7', light: '#e0f2fe', dark: '#0369a1' },
     modalBody: { main: 'rgba(4, 53, 107, 0.2)' },
     ...(mode === 'light' ? {
-      background: { default: '#e8eef6', paper: '#ffffff' },
-      text: { primary: '#1e293b', secondary: '#4a5568' },
-      divider: '#e2e8f0',
+      background: { default: colors.background.main, paper: colors.background.paper },
+      text: { primary: colors.text.primary, secondary: colors.text.secondary },
+      divider: colors.border,
     } : {
       background: { default: '#0d1117', paper: '#161b22' },
       text: { primary: '#e6edf3', secondary: '#8b949e' },
@@ -90,7 +90,7 @@ export const getTheme = (mode) => createTheme({
         },
         contained: {
           background: colors.primary,
-          color: '#fff',
+          color: colors.white,
           '&:hover': {
             background: colors.primaryLight,
             boxShadow: colors.shadow.brand,
@@ -100,7 +100,7 @@ export const getTheme = (mode) => createTheme({
         outlined: {
           borderColor: mode === 'light' ? '#d1d5db' : '#30363d',
           '&:hover': {
-            borderColor: '#04346b',
+            borderColor: colors.primary,
             backgroundColor: 'rgba(4,52,107,0.04)',
           },
         },
@@ -129,7 +129,7 @@ export const getTheme = (mode) => createTheme({
       styleOverrides: {
         root: {
           borderRadius: 12,
-          border: `1px solid ${mode === 'light' ? '#e2e8f0' : '#30363d'}`,
+          border: `1px solid ${mode === 'light' ? colors.border : '#30363d'}`,
           backgroundImage: 'none',
         },
       },
@@ -139,7 +139,7 @@ export const getTheme = (mode) => createTheme({
       styleOverrides: {
         root: {
           borderRadius: 12,
-          border: `1px solid ${mode === 'light' ? '#e2e8f0' : '#30363d'}`,
+          border: `1px solid ${mode === 'light' ? colors.border : '#30363d'}`,
           transition: 'box-shadow 0.2s ease',
           '&:hover': {
             boxShadow: mode === 'light' ? lightShadows[4] : darkShadows[4],
@@ -169,7 +169,7 @@ export const getTheme = (mode) => createTheme({
               borderColor: mode === 'light' ? '#94a3b8' : '#484f58',
             },
             '&.Mui-focused fieldset': {
-              borderColor: '#04346b',
+              borderColor: colors.primary,
               borderWidth: '1.5px',
               boxShadow: '0 0 0 3px rgba(4,52,107,0.12)',
             },
@@ -189,7 +189,7 @@ export const getTheme = (mode) => createTheme({
       styleOverrides: {
         paper: {
           borderRadius: 16,
-          border: `1px solid ${mode === 'light' ? '#e2e8f0' : '#30363d'}`,
+          border: `1px solid ${mode === 'light' ? colors.border : '#30363d'}`,
         },
       },
     },
@@ -198,8 +198,8 @@ export const getTheme = (mode) => createTheme({
         tooltip: {
           borderRadius: 6,
           fontSize: '0.75rem',
-          backgroundColor: mode === 'light' ? '#1e293b' : '#e2e8f0',
-          color: mode === 'light' ? '#fff' : '#1e293b',
+          backgroundColor: mode === 'light' ? colors.text.primary : colors.border,
+          color: mode === 'light' ? colors.white : colors.text.primary,
           padding: '4px 8px',
         },
       },
@@ -210,8 +210,8 @@ export const getTheme = (mode) => createTheme({
           '& .MuiTableCell-head': {
             fontWeight: 600,
             fontSize: '0.8125rem',
-            color: '#fff',
-            backgroundColor: '#04346b',
+            color: colors.white,
+            backgroundColor: colors.primary,
             borderBottom: 'none',
             padding: '8px 12px',
           },
