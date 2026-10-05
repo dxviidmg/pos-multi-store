@@ -9,10 +9,6 @@ export const getDuplicateSales = async () => {
   return httpClient.get(getApiUrl("duplicate-sales"));
 };
 
-export const getStockUpdateRequests = async () => {
-  return httpClient.get(getApiUrl("stock-update-request"));
-};
-
 /**
  * Notificaciones recientes (respaldo cuando el WebSocket no logra conectarse).
  * Mismo formato que los mensajes del WebSocket: { event, message, store_id, store_name }.

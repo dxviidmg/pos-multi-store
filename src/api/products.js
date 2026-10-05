@@ -1,6 +1,6 @@
 import { logger } from "../utils/logger";
 import httpClient from "./httpClient";
-import { getApiUrl, buildUrlWithParams } from "./utils";
+import { getApiUrl, buildUrlWithParams, toFormData } from "./utils";
 
 const timedRequest = async (axiosCall, meta = {}) => {
   const start = performance.now();
@@ -13,27 +13,6 @@ const timedRequest = async (axiosCall, meta = {}) => {
     logger.warn(`[FAIL] ${meta.name || "request"}: ${duration} s`);
     throw error;
   }
-};
-
-/**
- * Construye un FormData para crear/actualizar producto cuando incluye imagen (File).
- * Omite valores nulos/indefinidos y serializa booleanos como "true"/"false".
- * @param {Object} data - Datos del producto (con image: File)
- * @returns {FormData}
- */
-const buildProductFormData = (data) => {
-  const formData = new FormData();
-  Object.entries(data).forEach(([key, value]) => {
-    if (value === null || value === undefined || value === "") return;
-    if (value instanceof File) {
-      formData.append(key, value);
-    } else if (typeof value === "boolean") {
-      formData.append(key, value ? "true" : "false");
-    } else {
-      formData.append(key, value);
-    }
-  });
-  return formData;
 };
 
 /**
@@ -64,11 +43,12 @@ export const getStoreProductSuggestions = async (q, config = {}) => {
 /**
  * Get products with optional filters
  * @param {Object} params - Query parameters
+ * @param {Object} config - Axios config (ej. { signal } para cancelación)
  * @returns {Promise<Object>} Products list response
  */
-export const getProducts = async (params) => {
+export const getProducts = async (params, config = {}) => {
   const url = buildUrlWithParams(getApiUrl("product"), params);
-  return httpClient.get(url);
+  return httpClient.get(url, config);
 };
 
 /**
@@ -76,13 +56,17 @@ export const getProducts = async (params) => {
  * @param {Object} data - Product data
  * @returns {Promise<Object>} Created product response
  */
+// Normaliza campos de mayoreo vacíos a null sin mutar el objeto recibido
+const normalizeProductPayload = (data) => ({
+  ...data,
+  ...(data.min_wholesale_quantity === "" && { min_wholesale_quantity: null }),
+  ...(data.wholesale_price === "" && { wholesale_price: null }),
+});
+
 export const createProduct = async (data) => {
-  if (data.min_wholesale_quantity === "") data.min_wholesale_quantity = null;
-  if (data.wholesale_price === "") data.wholesale_price = null;
-  if (data.image instanceof File) {
-    return httpClient.post(getApiUrl("product"), buildProductFormData(data));
-  }
-  return httpClient.post(getApiUrl("product"), data);
+  const payload = normalizeProductPayload(data);
+  const body = payload.image instanceof File ? toFormData(payload) : payload;
+  return httpClient.post(getApiUrl("product"), body);
 };
 
 /**
@@ -91,15 +75,11 @@ export const createProduct = async (data) => {
  * @returns {Promise<Object>} Updated product response
  */
 export const updateProduct = async (data) => {
-  if (typeof data.image === "string") {
-    delete data.image;
-  }
-  if (data.min_wholesale_quantity === "") data.min_wholesale_quantity = null;
-  if (data.wholesale_price === "") data.wholesale_price = null;
-  if (data.image instanceof File) {
-    return httpClient.patch(getApiUrl(`product/${data.id}`), buildProductFormData(data));
-  }
-  return httpClient.patch(getApiUrl(`product/${data.id}`), data);
+  const payload = normalizeProductPayload(data);
+  // Una imagen string es la URL ya guardada: no se reenvía
+  if (typeof payload.image === "string") delete payload.image;
+  const body = payload.image instanceof File ? toFormData(payload) : payload;
+  return httpClient.patch(getApiUrl(`product/${payload.id}`), body);
 };
 
 /**
@@ -144,15 +124,7 @@ export const updateStoreProduct = async (data) => {
  * @returns {Promise<Object>} Validation results
  */
 export const importProductsValidation = async (data) => {
-  const formData = new FormData();
-  Object.entries(data).forEach(([key, value]) => {
-    if (value !== "" && value !== null && value !== undefined) {
-      formData.append(key, value);
-    }
-  });
-  return httpClient.post(getApiUrl("products/import-validation"), formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
+  return httpClient.post(getApiUrl("products/import-validation"), toFormData(data));
 };
 
 /**
@@ -161,15 +133,7 @@ export const importProductsValidation = async (data) => {
  * @returns {Promise<Object>} Import results
  */
 export const importProducts = async (data) => {
-  const formData = new FormData();
-  Object.entries(data).forEach(([key, value]) => {
-    if (value !== "" && value !== null && value !== undefined) {
-      formData.append(key, value);
-    }
-  });
-  return httpClient.post(getApiUrl("products/import"), formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
+  return httpClient.post(getApiUrl("products/import"), toFormData(data));
 };
 
 /**
@@ -249,11 +213,17 @@ export const getTaskResult = async (id) => {
  * @returns {Promise<Object>} Stock information response
  */
 export const getStockOtherStores = async (storeProductId) => {
-  return httpClient.get(getApiUrl(`products/stock-other-stores/?store-product=${storeProductId}`, false));
+  const url = buildUrlWithParams(getApiUrl("products/stock-other-stores"), { "store-product": storeProductId });
+  return httpClient.get(url);
 };
 
-export const getProductPriceLogs = async (productId) => {
-  const url = buildUrlWithParams(getApiUrl("product-price-logs"), { product_id: productId });
+/**
+ * Get product price change logs
+ * @param {Object} params - { productId?, months? }
+ * @returns {Promise<Object>} Price logs response
+ */
+export const getProductPriceLogs = async ({ productId, months } = {}) => {
+  const url = buildUrlWithParams(getApiUrl("product-price-logs"), { product_id: productId, months });
   return httpClient.get(url);
 };
 

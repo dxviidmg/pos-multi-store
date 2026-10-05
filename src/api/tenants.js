@@ -10,6 +10,10 @@ export const getTenantInfo = async () => {
   return httpClient.get(getApiUrl("tenant-info"));
 };
 
+export const getTenantDates = async () => {
+  return httpClient.get(getApiUrl("tenant-dates"));
+};
+
 export const getTenant = async (tenantId) => {
   return httpClient.get(getApiUrl(`tenant/${tenantId}`));
 };
