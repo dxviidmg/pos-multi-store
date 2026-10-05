@@ -9,15 +9,23 @@
  * `multistore: true` además exige que el negocio tenga varias sucursales.
  */
 
-const ALL = ["owner", "admin", "seller"];
-const STAFF = ["owner", "admin"];
-const OWNER = ["owner"];
+import { STORE_TYPES } from "./index";
+
+export const ROLES = {
+  OWNER: "owner",
+  SELLER: "seller",
+  ADMIN: "admin",
+};
+
+const ALL = [ROLES.OWNER, ROLES.ADMIN, ROLES.SELLER];
+const STAFF = [ROLES.OWNER, ROLES.ADMIN];
+const OWNER = [ROLES.OWNER];
 
 const multistore = (roles) => ({ roles, multistore: true });
 
 export const SALES_DASHBOARD_PATH = "/tablero-ventas/";
 
-export const ROUTE_ACCESS = {
+const ROUTE_ACCESS = {
   // Tienda
   "/vender/": { T: ALL },
   "/ventas/": { T: ALL },
@@ -71,10 +79,21 @@ export const ROUTE_ACCESS = {
 };
 
 export const getViewType = (user) =>
-  user?.store_type === "T" || user?.store_type === "A" ? user.store_type : "G";
+  user?.store_type === STORE_TYPES.STORE || user?.store_type === STORE_TYPES.WAREHOUSE
+    ? user.store_type
+    : STORE_TYPES.GENERAL;
 
-const getRole = (user) =>
-  user?.role === "owner" || user?.role === "seller" ? user.role : "admin";
+export const isStoreView = (user) => getViewType(user) === STORE_TYPES.STORE;
+export const isWarehouseView = (user) => getViewType(user) === STORE_TYPES.WAREHOUSE;
+export const isGeneralView = (user) => getViewType(user) === STORE_TYPES.GENERAL;
+
+/** Cualquier rol distinto de owner/seller se trata como admin. */
+export const getRole = (user) =>
+  user?.role === ROLES.OWNER || user?.role === ROLES.SELLER ? user.role : ROLES.ADMIN;
+
+export const isOwner = (user) => getRole(user) === ROLES.OWNER;
+export const isSeller = (user) => getRole(user) === ROLES.SELLER;
+export const isAdmin = (user) => getRole(user) === ROLES.ADMIN;
 
 export const normalizePath = (path) => (path.endsWith("/") ? path : `${path}/`);
 
@@ -89,9 +108,9 @@ export const canAccessRoute = (user, path) => {
 
 export const getHomeRoute = (user) => {
   const view = getViewType(user);
-  if (view === "A") return "/distribuir/";
-  if (view === "T") return "/vender/";
-  return getRole(user) === "owner" ? "/tiendas/" : "/perfil/";
+  if (view === STORE_TYPES.WAREHOUSE) return "/distribuir/";
+  if (view === STORE_TYPES.STORE) return "/vender/";
+  return isOwner(user) ? "/tiendas/" : "/perfil/";
 };
 
 /**

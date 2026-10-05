@@ -15,11 +15,44 @@ export const QUERY_TYPES = {
   VISUAL: 'visual',
 };
 
-// Tipos de tienda
+// Tipos de sucursal (user.store_type); GENERAL = vista general sin sucursal
 export const STORE_TYPES = {
+  STORE: 'T',
   WAREHOUSE: 'A',
-  STORE: 'B'
+  GENERAL: 'G',
 };
+
+// Métodos de pago (deben coincidir con el backend)
+export const PAYMENT_METHODS = {
+  CASH: 'EF',
+  CARD: 'TA',
+  TRANSFER: 'TR',
+};
+
+// Medios de pago en el orden en que se muestran (cobro, abono y columnas de caja)
+export const PAYMENT_METHOD_OPTIONS = [
+  { value: PAYMENT_METHODS.CASH, label: 'Efectivo' },
+  { value: PAYMENT_METHODS.CARD, label: 'Tarjeta' },
+  { value: PAYMENT_METHODS.TRANSFER, label: 'Transferencia' },
+];
+
+// Tipos de venta (sale.sale_type en el backend)
+export const SALE_TYPES = {
+  SALE: 'V',
+  RESERVATION: 'A',
+};
+
+// Unidades de medida del producto (product.unit)
+export const UNIT_LABELS = {
+  PZ: 'Pieza',
+  CO: 'Costal',
+  BO: 'Bote',
+  KG: 'Kilo',
+  LT: 'Litro',
+};
+
+// Unidades que se venden por fracción (kilos o litros)
+export const isWeightedUnit = (unit) => unit === 'KG' || unit === 'LT';
 
 // Motivos de cancelación de suscripción (deben coincidir con el backend)
 export const CANCELLATION_REASONS = [
@@ -35,17 +68,10 @@ export const CANCELLATION_REASONS = [
 // Textos de UI comunes
 export const UI_TEXT = {
   ALL: "Todos",
-  ALL_DEPARTMENTS: "Todos los departamentos",
-  ALL_BRANDS: "Todas las marcas",
-  ALL_STORES: "Todas las tiendas",
-  LOADING: "Cargando...",
-  NO_DATA: "No hay datos disponibles",
-  ERROR: "Error",
-  SUCCESS: "Éxito",
-  CANCEL: "Cancelar",
-  SAVE: "Guardar",
-  DELETE: "Eliminar",
-  EDIT: "Editar",
-  ADD: "Agregar",
-  SEARCH: "Buscar",
 };
+
+// Modos de visualización de listas de productos (ver useViewModePreference)
+export const PRODUCT_VIEW_OPTIONS = [
+  { value: "table", label: "Tabla" },
+  { value: "gallery", label: "Galería" },
+];

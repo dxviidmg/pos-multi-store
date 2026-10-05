@@ -1,6 +1,10 @@
 export const formatCurrency = (value, decimals = 2) =>
   `$${(Number(value) || 0).toLocaleString("es-MX", { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}`;
 
+// Número entero con separador de miles es-MX: 1234 → "1,234"
+export const formatNumber = (value) =>
+  (Number(value) || 0).toLocaleString("es-MX", { maximumFractionDigits: 0 });
+
 // Redondeo de totales de venta/apartado: hasta .50 sube a .50, arriba de .50 sube al siguiente entero
 export const roundUpCustom = (value) => {
   const cents = Math.round(value * 100) / 100;
