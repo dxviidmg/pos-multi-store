@@ -5,6 +5,7 @@ import { addToCart, countStockOtherStores } from "../redux/cart/cartActions";
 import { getStockOtherStores } from "../api/products";
 import { showWarning } from "../utils/alerts";
 import { MOVEMENT_TYPES } from "../constants";
+import { logger } from "../utils/logger";
 
 export const useCartActions = (getAvailableStock, movementType, keepListOpen, setData, setQuery) => {
   const dispatch = useDispatch();
@@ -71,14 +72,16 @@ export const useCartActions = (getAvailableStock, movementType, keepListOpen, se
           setQuery("");
         }
       } else {
-        stockModal.open(cart[existingProductIndex]);
+        stockModal?.open(cart[existingProductIndex]);
       }
     }
 
     if (added && movementType === MOVEMENT_TYPES.DISTRIBUTION) {
-      getStockOtherStores(storeProduct.id).then((response) => {
-        dispatch(countStockOtherStores(storeProduct, response.data));
-      });
+      getStockOtherStores(storeProduct.id)
+        .then((response) => {
+          dispatch(countStockOtherStores(storeProduct, response.data));
+        })
+        .catch((error) => logger.warn("No se pudo cargar el stock de otras sucursales:", error?.message || error));
     }
 
     if (added && storeProduct.requires_stock_verification) {

@@ -1,6 +1,20 @@
-import { useEffect, useCallback } from "react";
+import { useEffect, useRef } from "react";
 import { updateMovementType } from "../redux/cart/cartActions";
 import { MOVEMENT_TYPES, QUERY_TYPES } from "../constants";
+
+// Ctrl+<tecla> → acción. `enabledBy` es la opción que habilita el atajo (si aplica).
+const SHORTCUTS = {
+  q: { run: ({ onQueryTypeChange }) => onQueryTypeChange?.(QUERY_TYPES.CODE) },
+  l: { run: ({ onQueryTypeChange }) => onQueryTypeChange?.(QUERY_TYPES.NAME) },
+  e: { enabledBy: "allowSale", movementType: MOVEMENT_TYPES.SALE },
+  r: { enabledBy: "allowTransfer", movementType: MOVEMENT_TYPES.TRANSFER },
+  d: { enabledBy: "allowDistribution", movementType: MOVEMENT_TYPES.DISTRIBUTION },
+  y: { movementType: MOVEMENT_TYPES.ADD_STOCK },
+  u: { movementType: MOVEMENT_TYPES.CHECK_STOCK },
+  i: { enabledBy: "allowReservation", movementType: MOVEMENT_TYPES.RESERVATION },
+  b: { run: ({ inputRef }) => inputRef?.current?.focus() },
+  k: { run: ({ onVisualSearch }) => onVisualSearch?.() },
+};
 
 export const useKeyboardShortcuts = (inputRef, dispatch, options = {}) => {
   const {
@@ -11,56 +25,35 @@ export const useKeyboardShortcuts = (inputRef, dispatch, options = {}) => {
     allowReservation = true,
     allowDistribution = true,
   } = options;
-  const handleShortcut = useCallback((event) => {
-    if (!event.ctrlKey) return;
-    const key = event.key.toLowerCase();
 
-    if (key === "q") {
-      event.preventDefault();
-      onQueryTypeChange?.(QUERY_TYPES.CODE);
-    }
-    if (key === "l") {
-      event.preventDefault();
-      onQueryTypeChange?.(QUERY_TYPES.NAME);
-    }
-    if (allowSale && key === "e") {
-      event.preventDefault();
-      dispatch(updateMovementType(MOVEMENT_TYPES.SALE));
-    }
-    if (allowTransfer && key === "r") {
-      event.preventDefault();
-      dispatch(updateMovementType(MOVEMENT_TYPES.TRANSFER));
-    }
-    if (allowDistribution && key === "d") {
-      event.preventDefault();
-      dispatch(updateMovementType(MOVEMENT_TYPES.DISTRIBUTION));
-    }
-    if (key === "y") {
-      event.preventDefault();
-      dispatch(updateMovementType(MOVEMENT_TYPES.ADD_STOCK));
-    }
-    if (key === "u") {
-      event.preventDefault();
-      dispatch(updateMovementType(MOVEMENT_TYPES.CHECK_STOCK));
-    }
-    if (allowReservation && key === "i") {
-      event.preventDefault();
-      dispatch(updateMovementType(MOVEMENT_TYPES.RESERVATION));
-    }
-    if (key === "b") {
-      event.preventDefault();
-      inputRef?.current?.focus();
-    }
-    if (key === "k") {
-      event.preventDefault();
-      onVisualSearch?.();
-    }
-  }, [dispatch, inputRef, onVisualSearch, onQueryTypeChange, allowTransfer, allowSale, allowReservation, allowDistribution]);
+  // Los callbacks y opciones viven en un ref para registrar el listener una sola vez
+  const contextRef = useRef();
+  contextRef.current = {
+    inputRef,
+    dispatch,
+    onVisualSearch,
+    onQueryTypeChange,
+    allowTransfer,
+    allowSale,
+    allowReservation,
+    allowDistribution,
+  };
 
   useEffect(() => {
-    window.addEventListener("keydown", handleShortcut);
-    return () => {
-      window.removeEventListener("keydown", handleShortcut);
+    const handleShortcut = (event) => {
+      if (!event.ctrlKey || typeof event.key !== "string") return;
+      const shortcut = SHORTCUTS[event.key.toLowerCase()];
+      const context = contextRef.current;
+      if (!shortcut || (shortcut.enabledBy && !context[shortcut.enabledBy])) return;
+      event.preventDefault();
+      if (shortcut.movementType) {
+        context.dispatch(updateMovementType(shortcut.movementType));
+      } else {
+        shortcut.run(context);
+      }
     };
-  }, [handleShortcut]);
+
+    window.addEventListener("keydown", handleShortcut);
+    return () => window.removeEventListener("keydown", handleShortcut);
+  }, []);
 };

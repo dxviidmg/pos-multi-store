@@ -4,7 +4,7 @@ import { showError, showRequestError, SUPPORT_HINT } from "../utils/alerts";
 
 const POLL_INTERVAL = 10;
 
-const useTaskPolling = (startTask) => {
+export const useTaskPolling = (startTask, { errorAction = "cargar el tablero" } = {}) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
@@ -64,10 +64,10 @@ const useTaskPolling = (startTask) => {
         startCountdown();
       }, POLL_INTERVAL * 1000);
     } catch (error) {
-      showRequestError("cargar el tablero", error);
+      showRequestError(errorAction, error);
       setLoading(false);
     }
-  }, [startTask]);
+  }, [startTask, errorAction]);
 
   useEffect(() => {
     return () => clearTimers();

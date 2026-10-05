@@ -1,15 +1,16 @@
 import { useState, useEffect } from 'react';
+import { STORAGE_KEYS } from '../constants/storageKeys';
+import { readString, writeString } from '../utils/storage';
 
 export const useThemeMode = () => {
-  const [mode, setMode] = useState(() => localStorage.getItem('themeMode') || 'light');
+  const [mode, setMode] = useState(() => readString(STORAGE_KEYS.THEME_MODE) || 'light');
 
   useEffect(() => {
-    localStorage.setItem('themeMode', mode);
+    writeString(STORAGE_KEYS.THEME_MODE, mode);
     document.documentElement.setAttribute('data-theme', mode);
   }, [mode]);
 
   const toggleMode = () => {
-    localStorage.setItem('hasSeenUpdates', 'true');
     setMode(prev => prev === 'light' ? 'dark' : 'light');
   };
 

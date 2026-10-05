@@ -47,7 +47,11 @@ export const useMercadoPago = () => {
 
   const unmountCardForm = useCallback(() => {
     if (bricksControllerRef.current) {
-      bricksControllerRef.current.unmount();
+      try {
+        bricksControllerRef.current.unmount();
+      } catch (error) {
+        logger.warn("No se pudo desmontar el formulario de pago", error);
+      }
       bricksControllerRef.current = null;
     }
   }, []);

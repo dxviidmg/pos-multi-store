@@ -1,22 +1,10 @@
-import { useQuery } from '@tanstack/react-query';
 import { getConversions, getConversionUnits, createConversion, updateConversion, deleteConversion, applyConversion } from '../api/conversions';
 import { createMutationHooks, useCrudMutation } from './useCrudMutation';
+import { createQueryHook } from './createQueryHook';
 
-export const useConversions = () => {
-  return useQuery({
-    queryKey: ['conversions'],
-    queryFn: getConversions,
-    select: (response) => response.data,
-  });
-};
+export const useConversions = createQueryHook('conversions', getConversions);
 
-export const useConversionUnits = () => {
-  return useQuery({
-    queryKey: ['conversionUnits'],
-    queryFn: getConversionUnits,
-    select: (response) => response.data,
-  });
-};
+export const useConversionUnits = createQueryHook('conversionUnits', getConversionUnits);
 
 const { useCreate, useUpdate, useDelete } = createMutationHooks(
   'Conversión',

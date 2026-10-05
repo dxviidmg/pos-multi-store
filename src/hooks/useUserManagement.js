@@ -1,32 +1,37 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { getUser, updateUser, changePassword } from "../api/users";
 import { showSuccess, showRequestError } from "../utils/alerts";
 
-export const useUserManagement = () => {
-  const [editUserModal, setEditUserModal] = useState({ open: false, userId: null, data: {} });
-  const [changePasswordModal, setChangePasswordModal] = useState({ open: false, userId: null });
-  const [passwordData, setPasswordData] = useState({ old_password: '', new_password: '', confirm_password: '' });
-  const [showPasswords, setShowPasswords] = useState({ current: false, new: false, confirm: false });
+const CLOSED_EDIT_MODAL = { open: false, userId: null, data: {} };
+const CLOSED_PASSWORD_MODAL = { open: false, userId: null };
+const EMPTY_PASSWORDS = { old_password: '', new_password: '', confirm_password: '' };
+const HIDDEN_PASSWORDS = { current: false, new: false, confirm: false };
 
-  const handleOpenEditUser = async (userId) => {
+export const useUserManagement = () => {
+  const [editUserModal, setEditUserModal] = useState(CLOSED_EDIT_MODAL);
+  const [changePasswordModal, setChangePasswordModal] = useState(CLOSED_PASSWORD_MODAL);
+  const [passwordData, setPasswordData] = useState(EMPTY_PASSWORDS);
+  const [showPasswords, setShowPasswords] = useState(HIDDEN_PASSWORDS);
+
+  const handleOpenEditUser = useCallback(async (userId) => {
     try {
       const response = await getUser(userId);
       setEditUserModal({ open: true, userId, data: response.data });
     } catch (error) {
       showRequestError('cargar el usuario', error);
     }
-  };
+  }, []);
 
-  const handleCloseEditUser = () => {
-    setEditUserModal({ open: false, userId: null, data: {} });
-  };
+  const handleCloseEditUser = useCallback(() => {
+    setEditUserModal(CLOSED_EDIT_MODAL);
+  }, []);
 
-  const handleEditUserChange = (e) => {
+  const handleEditUserChange = useCallback((e) => {
     const { name, value } = e.target;
     setEditUserModal(prev => ({ ...prev, data: { ...prev.data, [name]: value } }));
-  };
+  }, []);
 
-  const handleSaveUser = async () => {
+  const handleSaveUser = useCallback(async () => {
     try {
       await updateUser(editUserModal.userId, editUserModal.data);
       showSuccess('Guardado', 'Usuario actualizado');
@@ -34,31 +39,31 @@ export const useUserManagement = () => {
     } catch (error) {
       showRequestError('actualizar el usuario', error);
     }
-  };
+  }, [editUserModal.userId, editUserModal.data, handleCloseEditUser]);
 
-  const handleOpenChangePassword = (userId) => {
+  const handleOpenChangePassword = useCallback((userId) => {
     setChangePasswordModal({ open: true, userId });
-    setPasswordData({ old_password: '', new_password: '', confirm_password: '' });
-  };
+    setPasswordData(EMPTY_PASSWORDS);
+  }, []);
 
-  const handleCloseChangePassword = () => {
-    setChangePasswordModal({ open: false, userId: null });
-    setPasswordData({ old_password: '', new_password: '', confirm_password: '' });
-    setShowPasswords({ current: false, new: false, confirm: false });
-  };
+  const handleCloseChangePassword = useCallback(() => {
+    setChangePasswordModal(CLOSED_PASSWORD_MODAL);
+    setPasswordData(EMPTY_PASSWORDS);
+    setShowPasswords(HIDDEN_PASSWORDS);
+  }, []);
 
-  const handlePasswordChange = (e) => {
+  const handlePasswordChange = useCallback((e) => {
     const { name, value } = e.target;
     setPasswordData(prev => ({ ...prev, [name]: value }));
-  };
+  }, []);
 
-  const togglePasswordVisibility = (field) => {
+  const togglePasswordVisibility = useCallback((field) => {
     setShowPasswords(prev => ({ ...prev, [field]: !prev[field] }));
-  };
+  }, []);
 
-  const handleSavePassword = async () => {
+  const handleSavePassword = useCallback(async () => {
     try {
-      await changePassword(changePasswordModal.userId, { 
+      await changePassword(changePasswordModal.userId, {
         old_password: passwordData.old_password,
         new_password: passwordData.new_password,
         confirm_password: passwordData.confirm_password,
@@ -69,7 +74,7 @@ export const useUserManagement = () => {
     } catch (error) {
       showRequestError('cambiar la contraseña', error);
     }
-  };
+  }, [changePasswordModal.userId, passwordData, handleCloseChangePassword]);
 
   return {
     editUserModal,
