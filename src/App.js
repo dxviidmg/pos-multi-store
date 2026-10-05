@@ -11,8 +11,30 @@ import { getHomeRoute } from "./constants/routeAccess";
 import Login from "./components/layout/Login/Login";
 import MainLayout from "./components/layout/MainLayout/MainLayout";
 
+// Si falla la descarga de un chunk (nuevo deploy), recarga la página una sola vez.
+// Si vuelve a fallar tras recargar, se propaga el error para que lo muestre ErrorBoundary.
+const CHUNK_RELOAD_KEY = "chunk_reload_attempted";
+
+// Recarga una sola vez por ventana de tiempo si falla un chunk (deploy nuevo).
+// Se guarda la hora de la última recarga para no entrar en bucle si un chunk está roto.
+const RELOAD_WINDOW_MS = 10000;
+const getLastReload = () => {
+  try { return Number(sessionStorage.getItem(CHUNK_RELOAD_KEY)) || 0; } catch { return Date.now(); }
+};
+const markReload = () => {
+  try { sessionStorage.setItem(CHUNK_RELOAD_KEY, String(Date.now())); return true; } catch { return false; }
+};
+
 const lazyRetry = (importFn) =>
-  lazy(() => importFn().catch(() => { window.location.reload(); return new Promise(() => {}); }));
+  lazy(() =>
+    importFn().catch((error) => {
+      if (Date.now() - getLastReload() > RELOAD_WINDOW_MS && markReload()) {
+        window.location.reload();
+        return new Promise(() => {});
+      }
+      throw error;
+    })
+  );
 
 // Wrapper para Suspense
 const Lazy = ({ children }) => <ErrorBoundary><Suspense fallback={<LoadingFallback />}>{children}</Suspense></ErrorBoundary>;
@@ -121,7 +143,7 @@ function App({ toggleTheme, themeMode }) {
           )
         ) : (
           <>
-          <Route path="/registrarme/" element={<Suspense fallback={<LoadingFallback />}><Registration /></Suspense>} />
+          <Route path="/registrarme/" element={<Lazy><Registration /></Lazy>} />
           <Route path="*" element={<Login />} />
           </>
         )}

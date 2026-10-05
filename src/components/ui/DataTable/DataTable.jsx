@@ -30,14 +30,9 @@ const DataTable = ({
     [data, searchTerm]
   );
 
-  const visibleColumns = useMemo(
-    () => columns.filter((col) => !col.omit),
-    [columns]
-  );
-
   const muiColumns = useMemo(
     () =>
-      visibleColumns.map((col, index) => {
+      columns.map((col, index) => {
         const getCellAlignment = (row) => {
           const value = col.selector ? col.selector(row) : row[col.field];
           if (typeof value === 'string' && value.includes('$')) {
@@ -60,18 +55,18 @@ const DataTable = ({
 
         if (col.cell) {
           column.renderCell = (params) => (
-            <div
-              style={{
+            <Box
+              sx={{
                 display: 'flex',
                 gap: '2px',
                 alignItems: 'center',
                 justifyContent: getCellAlignment(params.row),
                 width: '100%',
-                paddingRight: isRightAligned(params.row) ? '12px' : '2px'
+                pr: isRightAligned(params.row) ? '12px' : '2px',
               }}
             >
               {col.cell(params.row)}
-            </div>
+            </Box>
           );
         } else if (col.selector) {
           column.renderCell = (params) => col.selector(params.row);
@@ -123,7 +118,7 @@ const DataTable = ({
 
       <Box sx={{ width: "100%", maxWidth: "100%", overflowX: "auto" }}>
         {data.length === 0 && progressPending ? (
-          <TableSkeleton columns={Math.min(Math.max(visibleColumns.length, 3), 6)} />
+          <TableSkeleton columns={Math.min(Math.max(columns.length, 3), 6)} />
         ) : data.length === 0 ? (
           <Paper className="fade-in-up" sx={{ p: 4, textAlign: 'center' }}>
             <InboxOutlinedIcon sx={{ fontSize: 36, color: 'text.disabled', mb: 1 }} />

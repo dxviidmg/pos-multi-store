@@ -1,4 +1,5 @@
 import Swal from "sweetalert2";
+import { colors } from "../theme/colors";
 
 export const showAlert = (icon, title, text = "", timer = 5000) => {
   Swal.fire({ icon, title, text, timer });
@@ -45,7 +46,7 @@ export const showRequestError = (action, source) => {
 export const showConfirm = async (
   title,
   text = "",
-  { confirmText = "Eliminar", cancelText = "Cancelar", confirmColor = "#d33", icon = "warning" } = {}
+  { confirmText = "Eliminar", cancelText = "Cancelar", confirmColor = colors.error, icon = "warning" } = {}
 ) => {
   const result = await Swal.fire({
     icon,
