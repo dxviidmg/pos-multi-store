@@ -16,34 +16,12 @@
 
 - **Usuarios sin sucursal que no son dueños** (rol `manager` o "Sin definir" en vista general) aterrizan en `/perfil/` con el menú vacío.
 
-## Código muerto que requiere decisión
+## Deuda técnica restante (frontend)
 
-- **`SaleList` / reservas:** `TYPE_OPTIONS` tiene una sola opción (`Ventas`), así que las columnas Pagado/Falta, el botón "Editar pago" y `PaymentEditModal` dentro de `SaleList` nunca se usan (~40 líneas). ¿Se va a reactivar el filtro "Tipo" o se elimina?
-- **`CashSummary`:** el estado `cashFlow` solo sirve para disparar otra consulta de `getCashSummary`, lo que hace ~3 peticiones al abrir y ~2 al cambiar de fecha. Quitarlo reduce peticiones sin cambiar lo que se muestra.
-- **`PriceLogsList` y `TransferList`:** `useEffect(() => refetch(), [refetch])` repite la consulta que React Query ya hace al montar.
-- **`MyCurrentPlan`:** `result.success` nunca es verdadero; las ramas que lo revisan no se ejecutan.
-- **`StoreList`:** el filtro rápido `"pending"` no se puede seleccionar (no hay botón), así que sus ramas y varias columnas (Distribuciones, Traspasos, Acciones) no se muestran nunca.
-- **Carpetas vacías sin versionar:** `src/application/sales`, `src/infrastructure/sales` y `src/domain/sales/__tests__`. Vienen de la migración a Next.js (rama `migration-to-next`). ¿Se eliminan?
-- **`SellerModal` en modo edición:** `SellerList` edita vendedores con `EditUserModal`, así que la rama de edición de `SellerModal` (`updateSeller`) no se usa. Además el backend no la soporta (ver abajo). ¿Se elimina la rama?
-
-## Fusiones sugeridas (reducen duplicación sin cambiar funcionalidad)
-
-| Propuesta | Archivos | Ahorro aprox. |
-|---|---|---|
-| Hook `useFileImport` + componentes `ImportStepper` / `ImportActions` | `ProductImport`, `StoreProductImport`, `SaleImport` | ~150–200 líneas |
-| `DashboardLoading`, `DashboardEmpty`, `PeriodFilters`, `StoreBarChart`, `StatTile` | 5 tableros de `admin/Dashboard` | ~350 líneas |
-| Fábricas de columnas (`cashCol`, `countCol`, columnas de administrador) y un mapa de filtros | `StoreList.columns.jsx` | ~150 líneas |
-| `HeaderPopoverMenu` + hook `useStoreScopedList` | `PendingMenu`, `DuplicateSalesMenu`, `StockRequestMenu`, `NotificationsMenu` | ~130 líneas |
-| `GridCardBase` para tarjetas de producto | `ProductGridCard`, `StoreProductGridCard` | ~90 líneas |
-| `CountAutocomplete` para selector de marca/departamento con conteo | `ProductList`, `StoreProductList`, `StoreProductAuditList`, `ProductModal` | ~60 líneas |
-| `PasswordField` + `UserInfoFields` | `Profile.jsx`, `UserModals/*` | ~80 líneas |
-| `SaleSearchFilters` + `SaleActionsCell` | `SaleList`, `ReservationList` | ~75 líneas |
-| `QuantityInput` + `deleteColumn()` | `cartColumns.js` | ~60 líneas |
-| `DateRangeFilter` | `SellerList`, `ClientList`, `CashFlowList` | ~30 líneas |
-
-## Colores hardcodeados pendientes de pasar a tokens del tema
-
-- `#64748b` en ejes de gráficas (8 veces) → constante `CHART_TICK_STYLE` en `utils/chart.js`.
-- `rgba(244, 67, 54, …)`, `rgba(255, 193, 7, …)` y `#fff` en `MainLayout.jsx` → `error.main`, `warning.main`, `common.white`.
-- Degradado `#04346b → #065a9e` repetido en `Registration.styles.js` y `MyCurrentPlan.jsx` → `colors.gradient.brand`.
-- Campos resaltados de `PaymentModal` (`#04346b`, `#065a9e`, `#11998e`).
+- **`SaleList`:** el select "Tipo" tiene una sola opción (`Ventas`) y sigue visible. ¿Se quita o se reactiva el filtro de apartados?
+- **`NotificationsMenu` montado dos veces** en `MainLayout` (cajas de escritorio y móvil), así que abre dos WebSocket. Dejar una sola instancia.
+- **`PasswordField` + `UserInfoFields`:** `admin/Profile/PasswordSection.jsx` y `ui/UserModals/*` repiten campos de contraseña y datos de usuario.
+- **Modales con `Box p:3` en lugar de `ModalBody`:** `CashFlowModal`, `ConversionModal`, `DiscountModal`. Cambiarlos modifica su fondo; decidir si se unifican.
+- **`App.css`:** `.status-dot--danger` e `.icon-danger` tienen `#dc2626` fijo (mismo valor que `colors.error`); pasarlo a variable CSS.
+- **`useProductSearch`:** en modo texto `fetchData` solo limpia resultados; `SearchProduct` podría llamar `setData([])` directo.
+- **`eslint-disable` justificados:** `hooks/useFetch.js` (deps del llamador) y `hooks/usePrinterStatus.js` (cambiar deps altera la reconexión).
