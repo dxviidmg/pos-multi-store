@@ -1,90 +1,31 @@
-import React, { useState, useEffect } from 'react';
-import { logger } from '../../../utils/logger';
-import {
-  Box,
-  Grid,
-  TextField,
-  Typography,
-  Button,
-  Divider,
-  Switch,
-  FormControlLabel,
-  Alert,
-  IconButton,
-  InputAdornment,
-} from '@mui/material';
-import { Save, Business, Settings, Person, Lock, Visibility, VisibilityOff } from '@mui/icons-material';
+import React, { useState, useEffect } from "react";
+import { Alert, Grid } from "@mui/material";
 import { useUser } from "../../../context/UserContext";
-import { getTenant, updateTenant } from '../../../api/tenants';
-import { getUser, updateUser, changePassword } from '../../../api/users';
-import { PageSkeleton } from '../../ui/Skeleton/Skeleton';
+import { isOwner } from "../../../constants/routeAccess";
+import { getTenant } from "../../../api/tenants";
+import { getUser } from "../../../api/users";
+import { logger } from "../../../utils/logger";
+import { PageSkeleton } from "../../ui/Skeleton/Skeleton";
+import TenantSection from "./TenantSection";
+import UserSection from "./UserSection";
+import PasswordSection from "./PasswordSection";
 
 const Profile = () => {
   const { user } = useUser();
-  const isOwner = user?.role === "owner";
-  const [tenantData, setTenantData] = useState({
-    name: '',
-    short_name: '',
-    created_at: '',
-  });
-
-  const [userData, setUserData] = useState({
-    username: '',
-    email: '',
-    first_name: '',
-    last_name: '',
-  });
-
-  const [passwordData, setPasswordData] = useState({
-    current_password: '',
-    new_password: '',
-    confirm_password: '',
-  });
-
-  const [showPasswords, setShowPasswords] = useState({
-    current: false,
-    new: false,
-    confirm: false,
-  });
-
-  const [settings, setSettings] = useState({
-    displays_stock_in_storages: false,
-    create_products_on_sale: false,
-  });
-
+  const [tenant, setTenant] = useState(null);
+  const [userInfo, setUserInfo] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [savingTenant, setSavingTenant] = useState(false);
-  const [savingUser, setSavingUser] = useState(false);
-  const [savingPassword, setSavingPassword] = useState(false);
-  const [message, setMessage] = useState(null);
+  const [loadFailed, setLoadFailed] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const promises = [getTenant(user.tenant_id), getUser(user.user_id)];
-        const results = await Promise.all(promises);
-        
-        const tenantInfo = results[0].data;
-        setTenantData({
-          name: tenantInfo.name || '',
-          short_name: tenantInfo.short_name || '',
-          created_at: tenantInfo.created_at || '',
-        });
-        setSettings({
-          displays_stock_in_storages: tenantInfo.displays_stock_in_storages || false,
-          create_products_on_sale: tenantInfo.create_products_on_sale || false,
-        });
-
-        const userInfo = results[1].data;
-        setUserData({
-          username: userInfo.username || '',
-          email: userInfo.email || '',
-          first_name: userInfo.first_name || '',
-          last_name: userInfo.last_name || '',
-        });
+        const [tenantResponse, userResponse] = await Promise.all([getTenant(user.tenant_id), getUser(user.user_id)]);
+        setTenant(tenantResponse.data);
+        setUserInfo(userResponse.data);
       } catch (error) {
-        logger.error('Fetch error:', error);
-        setMessage({ type: 'error', text: 'Error al cargar los datos' });
+        logger.error("Profile fetch error:", error);
+        setLoadFailed(true);
       } finally {
         setLoading(false);
       }
@@ -92,361 +33,22 @@ const Profile = () => {
     fetchData();
   }, [user.tenant_id, user.user_id]);
 
-  const handleTenantChange = (e) => {
-    const { name, value } = e.target;
-    setTenantData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleUserChange = (e) => {
-    const { name, value } = e.target;
-    setUserData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handlePasswordChange = (e) => {
-    const { name, value } = e.target;
-    setPasswordData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const togglePasswordVisibility = (field) => {
-    setShowPasswords(prev => ({ ...prev, [field]: !prev[field] }));
-  };
-
-  const handleSettingChange = (e) => {
-    const { name, checked } = e.target;
-    setSettings(prev => ({ ...prev, [name]: checked }));
-  };
-
-  const handleSaveTenant = async () => {
-    setSavingTenant(true);
-    setMessage(null);
-    
-    try {
-      await updateTenant(user.tenant_id, { ...tenantData, ...settings });
-      setMessage({ type: 'success', text: 'Datos del negocio guardados' });
-    } catch (error) {
-      logger.error('Save error:', error);
-      setMessage({ type: 'error', text: 'Error al guardar los datos del negocio' });
-    } finally {
-      setSavingTenant(false);
-    }
-  };
-
-  const handleSaveUser = async () => {
-    setSavingUser(true);
-    setMessage(null);
-    
-    try {
-      await updateUser(user.user_id, userData);
-      setMessage({ type: 'success', text: 'Datos del usuario guardados' });
-    } catch (error) {
-      logger.error('Save error:', error);
-      setMessage({ type: 'error', text: 'Error al guardar los datos del usuario' });
-    } finally {
-      setSavingUser(false);
-    }
-  };
-
-  const handleChangePassword = async () => {
-    if (passwordData.new_password !== passwordData.confirm_password) {
-      setMessage({ type: 'error', text: 'Las contraseñas no coinciden' });
-      return;
-    }
-
-    if (passwordData.new_password.length < 6) {
-      setMessage({ type: 'error', text: 'La contraseña debe tener al menos 6 caracteres' });
-      return;
-    }
-
-    setSavingPassword(true);
-    setMessage(null);
-    
-    try {
-      await changePassword(user.user_id, {
-        current_password: passwordData.current_password,
-        new_password: passwordData.new_password,
-      });
-      setMessage({ type: 'success', text: 'Contraseña actualizada' });
-      setPasswordData({ current_password: '', new_password: '', confirm_password: '' });
-    } catch (error) {
-      logger.error('Password change error:', error);
-      setMessage({ type: 'error', text: error.response?.data?.message || 'Error al cambiar la contraseña' });
-    } finally {
-      setSavingPassword(false);
-    }
-  };
-
   if (loading) return <PageSkeleton />;
 
   return (
     <Grid container>
       <Grid item xs={12} className="card">
-
-        {message && (
-          <Alert severity={message.type} sx={{ mb: 3 }} onClose={() => setMessage(null)}>
-            {message.text}
+        {loadFailed && (
+          <Alert severity="error" sx={{ mb: 3 }}>
+            Error al cargar los datos
           </Alert>
         )}
 
         <Grid container spacing={3}>
-          {isOwner && (
-            <>
-              <Grid item xs={12} md={6}>
-                <Box sx={{ mb: 3 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                    <Business sx={{ mr: 1 }} />
-                    <Typography variant="h6" fontWeight={600}>
-                      Información del negocio
-                    </Typography>
-                  </Box>
-                  <Divider sx={{ mb: 2 }} />
-                  
-                  <Grid container spacing={2}>
-                    <Grid item xs={12}>
-                      <TextField
-                        fullWidth
-                        label="Nombre del negocio"
-                        name="name"
-                        value={tenantData.name}
-                        onChange={handleTenantChange}
-                        size="small"
-                      />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <TextField
-                        fullWidth
-                        label="Nombre corto"
-                        name="short_name"
-                        value={tenantData.short_name}
-                        size="small"
-                        disabled
-                      />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <TextField
-                        fullWidth
-                        label="Fecha de creación"
-                        name="created_at"
-                        value={tenantData.created_at ? new Date(tenantData.created_at).toLocaleDateString('es-MX') : ''}
-                        size="small"
-                        disabled
-                      />
-                    </Grid>
-                  </Grid>
-                </Box>
-              </Grid>
-
-              <Grid item xs={12} md={6}>
-                <Box sx={{ mb: 3 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                    <Settings sx={{ mr: 1 }} />
-                    <Typography variant="h6" fontWeight={600}>
-                      Configuraciones
-                    </Typography>
-                  </Box>
-                  <Divider sx={{ mb: 2 }} />
-                  
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          name="displays_stock_in_storages"
-                          checked={settings.displays_stock_in_storages}
-                          onChange={handleSettingChange}
-                        />
-                      }
-                      label="Mostrar stock en almacenes"
-                    />
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          name="create_products_on_sale"
-                          checked={settings.create_products_on_sale}
-                          onChange={handleSettingChange}
-                        />
-                      }
-                      label="Permitir crear productos desde venta"
-                    />
-                  </Box>
-            </Box>
-
-            <Button
-              fullWidth
-              variant="contained"
-              startIcon={<Save />}
-              onClick={handleSaveTenant}
-              disabled={savingTenant}
-            >
-              Guardar datos del negocio
-            </Button>
-          </Grid>
-            </>
-          )}
-
-          <Grid item xs={12} md={6}>
-            <Box sx={{ mb: 3 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <Person sx={{ mr: 1 }} />
-                <Typography variant="h6" fontWeight={600}>
-                  Información del usuario
-                </Typography>
-              </Box>
-              <Divider sx={{ mb: 2 }} />
-              
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Usuario"
-                    name="username"
-                    value={userData.username}
-                    size="small"
-                    disabled
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Nombre"
-                    name="first_name"
-                    value={userData.first_name}
-                    onChange={handleUserChange}
-                    size="small"
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Apellido"
-                    name="last_name"
-                    value={userData.last_name}
-                    onChange={handleUserChange}
-                    size="small"
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Email"
-                    name="email"
-                    value={userData.email}
-                    onChange={handleUserChange}
-                    size="small"
-                    type="email"
-                  />
-                </Grid>
-              </Grid>
-            </Box>
-
-            <Button
-              fullWidth
-              variant="contained"
-              startIcon={<Save />}
-              onClick={handleSaveUser}
-              disabled={savingUser}
-            >
-              Guardar datos del usuario
-            </Button>
-          </Grid>
-
-          <Grid item xs={12} md={6}>
-            <Box sx={{ mb: 3 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <Lock sx={{ mr: 1 }} />
-                <Typography variant="h6" fontWeight={600}>
-                  Cambiar contraseña
-                </Typography>
-              </Box>
-              <Divider sx={{ mb: 2 }} />
-              
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Contraseña actual"
-                    name="current_password"
-                    value={passwordData.current_password}
-                    onChange={handlePasswordChange}
-                    size="small"
-                    type={showPasswords.current ? "text" : "password"}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton
-                            onClick={() => togglePasswordVisibility('current')}
-                            edge="end"
-                            size="small"
-                          >
-                            {showPasswords.current ? <VisibilityOff /> : <Visibility />}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Nueva contraseña"
-                    name="new_password"
-                    value={passwordData.new_password}
-                    onChange={handlePasswordChange}
-                    size="small"
-                    type={showPasswords.new ? "text" : "password"}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton
-                            onClick={() => togglePasswordVisibility('new')}
-                            edge="end"
-                            size="small"
-                          >
-                            {showPasswords.new ? <VisibilityOff /> : <Visibility />}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Confirmar nueva contraseña"
-                    name="confirm_password"
-                    value={passwordData.confirm_password}
-                    onChange={handlePasswordChange}
-                    size="small"
-                    type={showPasswords.confirm ? "text" : "password"}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton
-                            onClick={() => togglePasswordVisibility('confirm')}
-                            edge="end"
-                            size="small"
-                          >
-                            {showPasswords.confirm ? <VisibilityOff /> : <Visibility />}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Grid>
-              </Grid>
-            </Box>
-
-            <Button
-              fullWidth
-              variant="contained"
-              startIcon={<Lock />}
-              onClick={handleChangePassword}
-              disabled={savingPassword || !passwordData.current_password || !passwordData.new_password || !passwordData.confirm_password}
-            >
-              Cambiar contraseña
-            </Button>
-          </Grid>
+          {isOwner(user) && <TenantSection tenantId={user.tenant_id} tenant={tenant || {}} />}
+          <UserSection userId={user.user_id} initialUser={userInfo || {}} />
+          <PasswordSection userId={user.user_id} />
         </Grid>
-
-
       </Grid>
     </Grid>
   );

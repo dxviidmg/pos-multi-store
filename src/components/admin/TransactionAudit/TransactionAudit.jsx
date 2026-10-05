@@ -1,23 +1,25 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import AuditCard from "../../ui/AuditCard/AuditCard";
 import CustomButton from "../../ui/Button/Button";
-import { getAudit, getAudit2 } from "../../../api/audit";
+import { getAudit, getStockAudit } from "../../../api/audit";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
-import { Grid, TextField, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
+import { Grid } from "@mui/material";
 import AssessmentIcon from "@mui/icons-material/Assessment";
-import { getFormattedDate } from "../../../utils/utils";
-import { getStores } from "../../../api/stores";
+import { getFormattedDate } from "../../../utils/date";
+import { showRequestError } from "../../../utils/alerts";
+import PageHeader from "../../ui/PageHeader";
+import StoreSelect from "../../ui/StoreSelect/StoreSelect";
+import DateRangeFilter from "../../ui/DateRangeFilter/DateRangeFilter";
+
+const DATE_ITEM_PROPS = { xs: 12, md: 6, lg: 4 };
 
 const TransactionAudit = () => {
-  const today = getFormattedDate();
   const [tasks, setTasks] = useState({});
-  const [params, setParams] = useState({ end_date: today, start_date: today });
-  const [stores, setStores] = useState([]);
+  const [params, setParams] = useState(() => {
+    const today = getFormattedDate();
+    return { end_date: today, start_date: today };
+  });
   const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    getStores().then((res) => setStores(res.data));
-  }, []);
 
   const handleParams = (e) => {
     setParams((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -25,55 +27,46 @@ const TransactionAudit = () => {
 
   const runAudit = async (apiFn) => {
     setIsLoading(true);
-    const { data } = await apiFn(params);
-    setTasks((prev) => ({ ...prev, ...data }));
-    setIsLoading(false);
+    try {
+      const { data } = await apiFn(params);
+      setTasks((prev) => ({ ...prev, ...data }));
+    } catch (error) {
+      showRequestError("iniciar la auditoría", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <div>
       <CustomSpinner isLoading={isLoading} />
       <Grid className="card">
-        <h1>Auditoría de transacciones</h1>
+        <PageHeader title="Auditoría de transacciones" />
         <Grid container spacing={2}>
           <Grid item xs={12} md={6} lg={4}>
-            <FormControl fullWidth size="small">
-              <InputLabel>Tienda o almacén</InputLabel>
-              <Select
-                size="small"
-                value={params.store_id || ""}
-                onChange={handleParams}
-                name="store_id"
-                label="Tienda o almacén"
-              >
-                <MenuItem value="">Todas</MenuItem>
-                {stores.map((s) => (
-                  <MenuItem key={s.id} value={s.id}>{s.full_name}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
-          <Grid item xs={12} md={6} lg={4}>
-            <TextField
-              size="small" fullWidth label="Fecha de inicio" name="start_date"
-              type="date" value={params.start_date} onChange={handleParams}
-              InputLabelProps={{ shrink: true }}
+            <StoreSelect
+              value={params.store_id || ""}
+              onChange={handleParams}
+              name="store_id"
+              label="Sucursal"
+              allLabel="Todas"
             />
           </Grid>
-          <Grid item xs={12} md={6} lg={4}>
-            <TextField
-              size="small" fullWidth label="Fecha de fin" name="end_date"
-              type="date" value={params.end_date} onChange={handleParams}
-              InputLabelProps={{ shrink: true }}
-            />
-          </Grid>
+          <DateRangeFilter
+            startDate={params.start_date}
+            endDate={params.end_date}
+            onChange={handleParams}
+            max={null}
+            shrinkLabels
+            itemProps={DATE_ITEM_PROPS}
+          />
           <Grid item xs={12} md={6}>
             <CustomButton fullWidth onClick={() => runAudit(getAudit)} startIcon={<AssessmentIcon />}>
               Auditar ventas y logs
             </CustomButton>
           </Grid>
           <Grid item xs={12} md={6}>
-            <CustomButton fullWidth onClick={() => runAudit(getAudit2)} startIcon={<AssessmentIcon />}>
+            <CustomButton fullWidth onClick={() => runAudit(getStockAudit)} startIcon={<AssessmentIcon />}>
               Auditar stock
             </CustomButton>
           </Grid>
