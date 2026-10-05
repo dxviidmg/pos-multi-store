@@ -1,331 +1,185 @@
 import React from "react";
-import { TextField, Checkbox, IconButton } from "@mui/material";
-import CustomButton from "../../ui/Button/Button";
+import { Box, Checkbox } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import ScaleIcon from "@mui/icons-material/Scale";
-import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import CustomButton from "../../ui/Button/Button";
 import { MOVEMENT_TYPES } from "../../../constants";
-import { formatCurrency } from "../../../utils/utils";
+import { formatCurrency } from "../../../utils/currency";
+import QuantityInput from "./QuantityInput";
+import SaleModeButton from "./SaleModeButton";
+import {
+  QUANTITY_MODES,
+  formatWeightedQuantity,
+  getQuantityMode,
+  getUnitLabel,
+  isWeightedItem,
+} from "./quantityRules";
 
-export const isKg = (row) => row.product?.unit === "KG" || row.product?.unit === "LT";
-const SALE_MODES_CYCLE = ["KG", "FRAC", "$"];
-export const getNextMode = (current) => {
-  const idx = SALE_MODES_CYCLE.indexOf(current);
-  return SALE_MODES_CYCLE[(idx + 1) % SALE_MODES_CYCLE.length];
-};
-const getStep = (mode) => (mode === "FRAC" ? 0.1 : 1);
-const getMin = getStep;
+const QUANTITY_INPUT_SX = { width: 80 };
 
-export const commonColumns = [
-  { name: "Código", field: "code", selector: (row) => row.product.code },
-  {
-    name: "Marca",
-    field: "brand",
-    selector: (row) => row.product.brand_name,
-  },
-  {
-    name: "Nombre",
-    field: "name",
-    selector: (row) => row.product.name,
-  },
+const unitStock = (value, row) => `${value} ${row.product?.unit || "PZ"}`;
+
+const codeColumn = { name: "Código", field: "code", selector: (row) => row.product.code };
+const brandColumn = { name: "Marca", field: "brand", selector: (row) => row.product.brand_name };
+const nameColumn = { name: "Nombre", field: "name", selector: (row) => row.product.name };
+
+const commonColumns = [
+  codeColumn,
+  brandColumn,
+  nameColumn,
   { name: "Stock", field: "stock", selector: (row) => row.available_stock },
 ];
 
-const commonColumns2 = [
-  { name: "Código", field: "code", selector: (row) => row.product.code, width: 100 },
-  {
-    name: "Marca",
-    field: "brand",
-    selector: (row) => row.product.brand_name,
-    width: 100,
-  },
-  {
-    name: "Nombre",
-    field: "name",
-    selector: (row) => row.product.name,
-  },
-];
+const removeColumn = (onRemove) => ({
+  name: "Quitar",
+  selector: (row) => (
+    <CustomButton onClick={() => onRemove(row)}>
+      <DeleteIcon />
+    </CustomButton>
+  ),
+});
 
-export const getSaleColumns = (handleQuantityChangeToCart, handleRemoveFromCart, handleChangePrice, movementType, getAvailableStock, saleModes, setSaleModes) => [
-  ...commonColumns2,
+/**
+ * Columna "Cantidad" de traspaso, distribución y agregar inventario.
+ * En distribución y agregar, el último input recibe `lastQtyRef` y Enter regresa a la búsqueda.
+ */
+const stockQuantityColumn = (movementType, ctx, { focusable = false } = {}) => ({
+  name: "Cantidad",
+  width: 100,
+  selector: (row, index) => (
+    <QuantityInput
+      item={row}
+      mode={getQuantityMode(row, movementType, ctx.saleModes)}
+      onChange={ctx.onQuantityChange}
+      maxQuantity={ctx.getMaxQuantity(row)}
+      sx={QUANTITY_INPUT_SX}
+      {...(focusable && {
+        inputRef: index === ctx.cartLength - 1 ? ctx.lastQtyRef : undefined,
+        onEnter: () => ctx.searchInputRef?.current?.focus(),
+      })}
+    />
+  ),
+});
+
+const getSaleColumns = (movementType, ctx) => [
+  { ...codeColumn, width: 100 },
+  { ...brandColumn, width: 100 },
+  nameColumn,
   {
     name: "Venta por",
     width: 100,
     selector: (row) => {
-      const mode = isKg(row) ? (saleModes[row.id] || "KG") : "PZ";
-      if (!isKg(row)) {
-        const unitLabels = { PZ: "Pieza", CO: "Costal" };
-        return <span style={{ fontSize: '0.8rem', fontWeight: 600 }}>{unitLabels[row.product?.unit] || "Pieza"}</span>;
+      if (!isWeightedItem(row)) {
+        return <Box component="span" sx={{ fontSize: "0.8rem", fontWeight: 600 }}>{getUnitLabel(row)}</Box>;
       }
-
-      const unitLabel = row.product?.unit === "LT" ? "Litro" : "Kilo";
-      const labels = { KG: unitLabel, FRAC: "Fracción", $: "Pesos" };
-      const icons = { KG: <ScaleIcon sx={{ fontSize: 14, mr: 0.3 }} />, FRAC: <ScaleIcon sx={{ fontSize: 14, mr: 0.3 }} />, $: <AttachMoneyIcon sx={{ fontSize: 14, mr: 0.3 }} /> };
-      const isActive = mode === "$" || mode === "FRAC";
-
-      return (
-        <IconButton
-          size="small"
-          onClick={() => setSaleModes((prev) => ({ ...prev, [row.id]: getNextMode(mode) }))}
-          sx={{ 
-            border: '1px solid', 
-            borderColor: isActive ? 'primary.main' : 'divider',
-            bgcolor: isActive ? 'primary.main' : 'transparent',
-            color: isActive ? '#fff' : 'text.secondary',
-            borderRadius: '8px',
-            px: 1,
-            width: 'auto', height: 28,
-            fontSize: '0.7rem', fontWeight: 600,
-            '&:hover': { bgcolor: isActive ? 'primary.dark' : 'action.hover' }
-          }}
-        >
-          {icons[mode]}{labels[mode]}
-        </IconButton>
-      );
+      return <SaleModeButton item={row} mode={getQuantityMode(row, movementType, ctx.saleModes)} onToggle={ctx.onToggleSaleMode} />;
     },
   },
   {
     name: "Cantidad",
     width: 100,
     selector: (row) => {
-      const mode = isKg(row) ? (saleModes[row.id] || "KG") : "PZ";
-      const step = getStep(mode);
-      const min = getMin(mode);
-
-      if (mode === "$") {
-        return <span style={{ fontSize: '0.85rem' }}>{(Math.round(row.quantity * 1000) / 1000)} kg</span>;
+      const mode = getQuantityMode(row, movementType, ctx.saleModes);
+      if (mode === QUANTITY_MODES.AMOUNT) {
+        return <Box component="span" sx={{ fontSize: "0.85rem" }}>{formatWeightedQuantity(row)}</Box>;
       }
-
       return (
-        <TextField size="small" type="number" sx={{ width: 80 }}
-          value={row.quantity}
-          onChange={(e) => {
-            const val = e.target.value;
-            if (mode === "FRAC" && val.includes('.') && val.split('.')[1]?.length > 3) return;
-            if (mode === "KG" && val.includes('.')) return;
-            handleQuantityChangeToCart(e, row);
-          }}
-          onKeyDown={(e) => {
-            if (e.key === "ArrowUp") {
-              e.preventDefault();
-              const newValue = Math.round((row.quantity + step) * 1000) / 1000;
-              const availableStock = movementType === MOVEMENT_TYPES.ADD_STOCK ? Infinity : getAvailableStock(row.id, row.available_stock);
-              if (newValue <= availableStock) {
-                handleQuantityChangeToCart({ target: { value: newValue } }, row);
-              }
-            } else if (e.key === "ArrowDown") {
-              e.preventDefault();
-              const newValue = Math.max(min, Math.round((row.quantity - step) * 1000) / 1000);
-              handleQuantityChangeToCart({ target: { value: newValue } }, row);
-            }
-          }}
-          inputProps={{ min, step }}
+        <QuantityInput
+          item={row}
+          mode={mode}
+          onChange={ctx.onQuantityChange}
+          maxQuantity={ctx.getMaxQuantity(row)}
+          sx={QUANTITY_INPUT_SX}
         />
       );
     },
   },
-  { name: "Stock", selector: (row) => `${row.available_stock} ${row.product?.unit || "PZ"}` },
-  {
-    name: "Precio",
-    selector: (row) => formatCurrency(row.product_price),
-  },
+  { name: "Stock", selector: (row) => unitStock(row.available_stock, row) },
+  { name: "Precio", selector: (row) => formatCurrency(row.product_price) },
   {
     name: "Subtotal",
     width: 100,
     selector: (row) => {
-      const mode = isKg(row) ? (saleModes[row.id] || "KG") : "PZ";
-      if (mode === "$") {
-        const pesoValue = Math.round(row.quantity * row.product_price * 10) / 10;
-        return (
-          <TextField size="small" type="number" sx={{ width: 80 }}
-            value={pesoValue}
-            onChange={(e) => handleQuantityChangeToCart(e, row)}
-            onKeyDown={(e) => {
-              if (e.key === "ArrowUp") {
-                e.preventDefault();
-                const newValue = Math.round((pesoValue + 1) * 10) / 10;
-                handleQuantityChangeToCart({ target: { value: newValue } }, row);
-              } else if (e.key === "ArrowDown") {
-                e.preventDefault();
-                const newValue = Math.max(1, Math.round((pesoValue - 1) * 10) / 10);
-                handleQuantityChangeToCart({ target: { value: newValue } }, row);
-              }
-            }}
-            inputProps={{ min: 1, step: 1 }}
-            InputProps={{ startAdornment: '$' }}
-          />
-        );
-      }
-      return formatCurrency(row.product_price * row.quantity);
+      const mode = getQuantityMode(row, movementType, ctx.saleModes);
+      if (mode !== QUANTITY_MODES.AMOUNT) return formatCurrency(row.product_price * row.quantity);
+      return (
+        <QuantityInput
+          item={row}
+          mode={mode}
+          onChange={ctx.onQuantityChange}
+          maxQuantity={ctx.getMaxQuantity(row)}
+          sx={QUANTITY_INPUT_SX}
+        />
+      );
     },
   },
   {
     name: "Aplicar mayoreo",
     selector: (row) => (
-      <Checkbox size="small"
-        type="switch"
-        id="custom-switch"
+      <Checkbox
+        size="small"
         checked={row.product_price === row.product.prices.wholesale_price}
-        onClick={() => handleChangePrice(row)}
+        onClick={() => ctx.onChangePrice(row)}
         disabled={!row.product.prices.wholesale_price}
       />
     ),
   },
-  {
-    name: "Quitar",
-    selector: (row) => (
-      <CustomButton onClick={() => handleRemoveFromCart(row)}>
-        <DeleteIcon />
-      </CustomButton>
-    ),
-  },
+  removeColumn(ctx.onRemove),
 ];
 
-export const getTransferColumns = (handleQuantityChangeToCart, handleRemoveFromCart, getAvailableStock) => [
+const getTransferColumns = (movementType, ctx) => [
   { name: "Código", selector: (row) => row.product.code },
-  {
-    name: "Marca",
-    selector: (row) => row.product.brand_name,
-  },
-  {
-    name: "Nombre",
-    selector: (row) => row.product.name,
-  },
-  { name: "Stock disponible", selector: (row) => `${row.available_stock} ${row.product?.unit || "PZ"}` },
-  { name: "Stock apartado", selector: (row) => `${row.reserved_stock} ${row.product?.unit || "PZ"}` },
-  { name: "Stock total", selector: (row) => `${row.available_stock + row.reserved_stock} ${row.product?.unit || "PZ"}` },
-  {
-    name: "Cantidad",
-    width: 100,
-    selector: (row) => (
-      <TextField size="small" type="number" sx={{ width: 80 }}
-        value={row.quantity}
-        onChange={(e) => handleQuantityChangeToCart(e, row)}
-        onKeyDown={(e) => {
-          const step = getStep("KG");
-          if (e.key === "ArrowUp") {
-            e.preventDefault();
-            const newValue = Math.round((row.quantity + step) * 10) / 10;
-            const availableStock = getAvailableStock(row.id, row.available_stock);
-            if (newValue <= availableStock) {
-              handleQuantityChangeToCart({ target: { value: newValue } }, row);
-            }
-          } else if (e.key === "ArrowDown") {
-            e.preventDefault();
-            const min = getMin("KG");
-            const newValue = Math.max(min, Math.round((row.quantity - step) * 10) / 10);
-            handleQuantityChangeToCart({ target: { value: newValue } }, row);
-          }
-        }}
-        inputProps={{ min: getMin("KG"), step: getStep("KG") }}
-      />
-    ),
-  },
-  {
-    name: "Quitar",
-    selector: (row) => (
-      <CustomButton onClick={() => handleRemoveFromCart(row)}>
-        <DeleteIcon />
-      </CustomButton>
-    ),
-  },
+  { name: "Marca", selector: (row) => row.product.brand_name },
+  { name: "Nombre", selector: (row) => row.product.name },
+  { name: "Stock disponible", selector: (row) => unitStock(row.available_stock, row) },
+  { name: "Stock apartado", selector: (row) => unitStock(row.reserved_stock, row) },
+  { name: "Stock total", selector: (row) => unitStock(row.available_stock + row.reserved_stock, row) },
+  stockQuantityColumn(movementType, ctx),
+  removeColumn(ctx.onRemove),
 ];
 
-export const getDistributionColumns = (handleQuantityChangeToCart, handleRemoveFromCart, getAvailableStock, cart, searchInputRef, lastQtyRef) => [
+const getDistributionColumns = (movementType, ctx) => [
   ...commonColumns,
-  {
-    name: "Cantidad",
-    width: 100,
-    selector: (row, index) => (
-      <TextField size="small" type="number" sx={{ width: 80 }}
-        inputRef={index === cart.length - 1 ? lastQtyRef : undefined}
-        value={row.quantity}
-        onChange={(e) => handleQuantityChangeToCart(e, row)}
-        onKeyDown={(e) => {
-          const step = getStep("KG");
-          if (e.key === "Enter") {
-            e.preventDefault();
-            searchInputRef?.current?.focus();
-          } else if (e.key === "ArrowUp") {
-            e.preventDefault();
-            const newValue = Math.round((row.quantity + step) * 10) / 10;
-            const availableStock = getAvailableStock(row.id, row.available_stock);
-            if (newValue <= availableStock) {
-              handleQuantityChangeToCart({ target: { value: newValue } }, row);
-            }
-          } else if (e.key === "ArrowDown") {
-            e.preventDefault();
-            const min = getMin("KG");
-            const newValue = Math.max(min, Math.round((row.quantity - step) * 10) / 10);
-            handleQuantityChangeToCart({ target: { value: newValue } }, row);
-          }
-        }}
-        inputProps={{ min: getMin("KG"), step: getStep("KG") }}
-      />
-    ),
-  },
+  stockQuantityColumn(movementType, ctx, { focusable: true }),
   {
     name: "Stock general",
     cell: (row) => (
       <div>
-        {row.stockOtherStores && row.stockOtherStores.length > 0 && (
-          <ul style={{ paddingLeft: "1rem", margin: "0.5rem 0 0 0" }}>
+        {row.stockOtherStores?.length > 0 && (
+          <Box component="ul" sx={{ pl: "1rem", m: "0.5rem 0 0 0" }}>
             {row.stockOtherStores.map((s) => (
               <li key={s.store_id}>
                 {s.store_name}: {s.available_stock}
               </li>
             ))}
-          </ul>
+          </Box>
         )}
       </div>
     ),
   },
-  {
-    name: "Quitar",
-    selector: (row) => (
-      <CustomButton onClick={() => handleRemoveFromCart(row)}>
-        <DeleteIcon />
-      </CustomButton>
-    ),
-  },
+  removeColumn(ctx.onRemove),
 ];
 
-export const getAddToStockColumns = (handleQuantityChangeToCart, handleRemoveFromCart, cart, searchInputRef, lastQtyRef) => [
+const getAddToStockColumns = (movementType, ctx) => [
   ...commonColumns,
-  {
-    name: "Cantidad",
-    width: 100,
-    selector: (row, index) => (
-      <TextField size="small" type="number" sx={{ width: 80 }}
-        inputRef={index === cart.length - 1 ? lastQtyRef : undefined}
-        value={row.quantity}
-        onChange={(e) => handleQuantityChangeToCart(e, row)}
-        onKeyDown={(e) => {
-          const step = getStep("KG");
-          if (e.key === "Enter") {
-            e.preventDefault();
-            searchInputRef?.current?.focus();
-          } else if (e.key === "ArrowUp") {
-            e.preventDefault();
-            const newValue = Math.round((row.quantity + step) * 10) / 10;
-            handleQuantityChangeToCart({ target: { value: newValue } }, row);
-          } else if (e.key === "ArrowDown") {
-            e.preventDefault();
-            const min = getMin("KG");
-            const newValue = Math.max(min, Math.round((row.quantity - step) * 10) / 10);
-            handleQuantityChangeToCart({ target: { value: newValue } }, row);
-          }
-        }}
-        inputProps={{ min: getMin("KG"), step: getStep("KG") }}
-      />
-    ),
-  },
-  {
-    name: "Quitar",
-    selector: (row) => (
-      <CustomButton onClick={() => handleRemoveFromCart(row)}>
-        <DeleteIcon />
-      </CustomButton>
-    ),
-  },
+  stockQuantityColumn(movementType, ctx, { focusable: true }),
+  removeColumn(ctx.onRemove),
 ];
+
+const COLUMN_BUILDERS = {
+  [MOVEMENT_TYPES.SALE]: getSaleColumns,
+  [MOVEMENT_TYPES.RESERVATION]: getSaleColumns,
+  [MOVEMENT_TYPES.TRANSFER]: getTransferColumns,
+  [MOVEMENT_TYPES.DISTRIBUTION]: getDistributionColumns,
+  [MOVEMENT_TYPES.ADD_STOCK]: getAddToStockColumns,
+};
+
+/**
+ * Columnas de la tabla del carrito según el tipo de movimiento.
+ *
+ * `ctx`: { saleModes, onToggleSaleMode(item), onQuantityChange(item, text, mode), getMaxQuantity(item),
+ *          onChangePrice(item), onRemove(item), cartLength, lastQtyRef, searchInputRef }
+ */
+export const getCartColumns = (movementType, ctx) => {
+  const build = COLUMN_BUILDERS[movementType];
+  return build ? build(movementType, ctx) : commonColumns;
+};

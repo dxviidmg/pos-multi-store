@@ -1,35 +1,27 @@
 import React, { useEffect, useState } from "react";
-import DataTable from "../../ui/DataTable/DataTable";
-import { getSales } from "../../../api/sales";
-import CustomButton from "../../ui/Button/Button";
-import {
-  getFormattedDate,
-  handlePrintTicket,
-  getFormattedDateTime,
-  upsertById,
-  formatCurrency,
-} from "../../../utils/utils";
-import { useModal } from "../../../hooks/useModal";
-import SaleModal from "../SaleModal/SaleModal";
-import { CustomSpinner } from "../../ui/Spinner/Spinner";
-import PrintIcon from "@mui/icons-material/Print";
+import { Grid } from "@mui/material";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import BlockIcon from "@mui/icons-material/Block";
 import UndoIcon from "@mui/icons-material/Undo";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import { Grid, TextField, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
-import { useUser } from "../../../context/UserContext";
-import PaymentEditModal from "../PaymentEditModal/PaymentEditModal";
+import DataTable from "../../ui/DataTable/DataTable";
+import CustomButton from "../../ui/Button/Button";
 import CustomTooltip from "../../ui/Tooltip";
 import PageHeader from "../../ui/PageHeader";
+import { CustomSpinner } from "../../ui/Spinner/Spinner";
+import { getSales } from "../../../api/sales";
+import { getFormattedDate, getFormattedDateTime } from "../../../utils/date";
+import { formatCurrency } from "../../../utils/currency";
+import { upsertById } from "../../../utils/array";
+import { showRequestError } from "../../../utils/alerts";
+import { useModal } from "../../../hooks/useModal";
+import { useUser } from "../../../context/UserContext";
+import SaleModal from "../SaleModal/SaleModal";
+import PaymentEditModal from "../PaymentEditModal/PaymentEditModal";
 import ProductsPopperButton from "../ProductsPopperButton/ProductsPopperButton";
-
-const SEARCH_BY_OPTIONS = [
-  { value: "date", label: "Fecha" },
-  { value: "sale_id", label: "Id" },
-  { value: "client", label: "Cliente" },
-];
+import SaleSearchFields from "../shared/SaleSearchFields";
+import PrintTicketButton from "../shared/PrintTicketButton";
 
 const ReservationList = () => {
   const { user } = useUser();
@@ -43,16 +35,20 @@ const ReservationList = () => {
   const [loading, setLoading] = useState(false);
   const [showAllFields, setShowAllFields] = useState(false);
   const [quickFilter, setQuickFilter] = useState("all");
-  const [searchBy, setSearchBy] = useState("date");
   const saleModal = useModal();
   const paymentEditModal = useModal();
 
   useEffect(() => {
     const fetchSalesData = async () => {
       setLoading(true);
-      const salesResponse = await getSales(params);
-      setSales(salesResponse.data);
-      setLoading(false);
+      try {
+        const salesResponse = await getSales(params);
+        setSales(salesResponse.data);
+      } catch (error) {
+        showRequestError("cargar los apartados", error);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchSalesData();
   }, [params]);
@@ -84,35 +80,7 @@ const ReservationList = () => {
         <PageHeader title="Apartados" />
 
         <Grid container spacing={2} sx={{ mb: 2 }}>
-          <Grid item xs={12} md={3}>
-            <FormControl fullWidth size="small">
-              <InputLabel>Búsqueda por</InputLabel>
-              <Select value={searchBy} onChange={(e) => setSearchBy(e.target.value)} label="Búsqueda por">
-                {SEARCH_BY_OPTIONS.map((opt) => (
-                  <MenuItem key={opt.value} value={opt.value}>{opt.label}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
-
-          {searchBy === "date" ? (
-            <Grid item xs={12} md={3}>
-              <TextField size="small" fullWidth label="Fecha" type="date" value={params.date} onChange={handleDataChange} name="date" inputProps={{ max: today }} />
-            </Grid>
-          ) : searchBy === "sale_id" ? (
-            <Grid item xs={12} md={3}>
-              <TextField size="small" fullWidth label="#" type="number" value={params.sale_id} onChange={handleDataChange} name="sale_id" />
-            </Grid>
-          ) : searchBy === "client" ? (
-            <>
-              <Grid item xs={12} md={3}>
-                <TextField size="small" fullWidth label="Nombre" type="text" value={params.first_name} onChange={handleDataChange} name="first_name" />
-              </Grid>
-              <Grid item xs={12} md={3}>
-                <TextField size="small" fullWidth label="Apellidos" type="text" value={params.last_name} onChange={handleDataChange} name="last_name" />
-              </Grid>
-            </>
-          ) : null}
+          <SaleSearchFields params={params} onChange={handleDataChange} maxDate={today} />
 
           <Grid item xs={12} md={3}>
             <CustomButton
@@ -176,38 +144,27 @@ const ReservationList = () => {
                     <CustomTooltip text={row.reason_cancel || "Sin motivo"}>
                       <CustomButton disabled><BlockIcon color="error" /></CustomButton>
                     </CustomTooltip>
-                  ) : row.has_return ? (
-                    <>
-                      {printer && (
-                        <CustomTooltip text="Imprimir ticket">
-                          <CustomButton onClick={() => handlePrintTicket("ticket", row)}>
-                            <PrintIcon />
-                          </CustomButton>
-                        </CustomTooltip>
-                      )}
-                      <CustomTooltip text={row.reason_return || "Sin motivo"}>
-                        <CustomButton disabled><UndoIcon color="info" /></CustomButton>
-                      </CustomTooltip>
-                    </>
                   ) : (
                     <>
-                      {printer && (
-                        <CustomTooltip text="Imprimir ticket">
-                          <CustomButton onClick={() => handlePrintTicket("ticket", row)}>
-                            <PrintIcon />
-                          </CustomButton>
+                      {printer && <PrintTicketButton sale={row} />}
+                      {row.has_return ? (
+                        <CustomTooltip text={row.reason_return || "Sin motivo"}>
+                          <CustomButton disabled><UndoIcon color="info" /></CustomButton>
                         </CustomTooltip>
+                      ) : (
+                        <>
+                          <CustomTooltip text="Cobrar abono">
+                            <CustomButton onClick={() => paymentEditModal.open(row)}>
+                              <AttachMoneyIcon />
+                            </CustomButton>
+                          </CustomTooltip>
+                          <CustomTooltip text="Cancelar apartado">
+                            <CustomButton onClick={() => saleModal.open(row)}>
+                              <BlockIcon />
+                            </CustomButton>
+                          </CustomTooltip>
+                        </>
                       )}
-                      <CustomTooltip text="Cobrar abono">
-                        <CustomButton onClick={() => paymentEditModal.open(row)}>
-                          <AttachMoneyIcon />
-                        </CustomButton>
-                      </CustomTooltip>
-                      <CustomTooltip text="Cancelar apartado">
-                        <CustomButton onClick={() => saleModal.open(row)}>
-                          <BlockIcon />
-                        </CustomButton>
-                      </CustomTooltip>
                     </>
                   )}
                 </>

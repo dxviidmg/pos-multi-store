@@ -5,6 +5,18 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ProductCard from "./ProductCard";
 import { MOVEMENT_TYPES } from "../../../constants";
 
+const ARROW_SX = {
+  position: "absolute",
+  top: "50%",
+  transform: "translateY(-50%)",
+  zIndex: 2,
+  bgcolor: "background.paper",
+  border: "1px solid",
+  borderColor: "divider",
+  boxShadow: 2,
+  "&:hover": { bgcolor: "action.hover" },
+};
+
 /**
  * Carrusel horizontal de tarjetas de producto para la búsqueda visual.
  * - Desplazamiento por flechas laterales, swipe táctil y scroll horizontal.
@@ -59,18 +71,7 @@ const ProductCarousel = ({ products = [], onSelect, movementType }) => {
         disabled={!canScrollLeft}
         size="small"
         aria-label="Anterior"
-        sx={{
-          position: "absolute",
-          left: -6,
-          top: "50%",
-          transform: "translateY(-50%)",
-          zIndex: 2,
-          bgcolor: "background.paper",
-          border: "1px solid",
-          borderColor: "divider",
-          boxShadow: "0 1px 3px rgba(0,0,0,0.12)",
-          "&:hover": { bgcolor: "action.hover" },
-        }}
+        sx={{ ...ARROW_SX, left: -6 }}
       >
         <ChevronLeftIcon />
       </IconButton>
@@ -107,18 +108,7 @@ const ProductCarousel = ({ products = [], onSelect, movementType }) => {
         disabled={!canScrollRight}
         size="small"
         aria-label="Siguiente"
-        sx={{
-          position: "absolute",
-          right: -6,
-          top: "50%",
-          transform: "translateY(-50%)",
-          zIndex: 2,
-          bgcolor: "background.paper",
-          border: "1px solid",
-          borderColor: "divider",
-          boxShadow: "0 1px 3px rgba(0,0,0,0.12)",
-          "&:hover": { bgcolor: "action.hover" },
-        }}
+        sx={{ ...ARROW_SX, right: -6 }}
       >
         <ChevronRightIcon />
       </IconButton>
