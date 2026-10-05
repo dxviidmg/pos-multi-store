@@ -8,18 +8,12 @@ import {
   UPDATE_MOVEMENT_TYPE,
   UPDATE_QUANTITY_IN_CART,
   CHANGE_PRICE,
-  COUNT_STOCK_OTHER_STORES
+  COUNT_STOCK_OTHER_STORES,
+  CREATE_NEW_CART,
+  SWITCH_CART,
+  CLOSE_CART,
 } from "./cartActions";
 import { MOVEMENT_TYPES } from "../../constants";
-
-// Nuevas acciones para multi-cart
-export const CREATE_NEW_CART = "CREATE_NEW_CART";
-export const SWITCH_CART = "SWITCH_CART";
-export const CLOSE_CART = "CLOSE_CART";
-
-export const createNewCart = () => ({ type: CREATE_NEW_CART });
-export const switchCart = (cartId) => ({ type: SWITCH_CART, payload: cartId });
-export const closeCart = (cartId) => ({ type: CLOSE_CART, payload: cartId });
 
 const createEmptyCart = (id) => ({
   id,
@@ -61,13 +55,54 @@ const updateCartWithPrice = (cart, clientSelected) => {
   }));
 };
 
-// Función para calcular stock reservado de un producto en todos los carritos
-const getReservedStock = (carts, productId, excludeCartId = null) => {
+/**
+ * Cantidad de un producto ya agregada en los carritos (excepto `excludeCartId`).
+ * La usan el reducer y useAvailableStock.
+ */
+export const getReservedStock = (carts, productId, excludeCartId = null) => {
   return carts.reduce((total, cart) => {
     if (cart.id === excludeCartId) return total;
     const item = cart.cart.find(item => item.id === productId);
     return total + (item ? item.quantity : 0);
   }, 0);
+};
+
+// Stock disponible para el carrito activo: traspasos usan el stock reservado,
+// el resto el disponible; se descuenta lo que ya está en otros carritos.
+const getAvailableStockForActiveCart = (state, activeCart, product) => {
+  const productStock = activeCart.movementType === MOVEMENT_TYPES.TRANSFER
+    ? (product.reserved_stock || 0)
+    : (product.available_stock || 0);
+  return productStock - getReservedStock(state.carts, product.id, state.activeCartId);
+};
+
+// Agrega un producto nuevo al carrito con el precio que le corresponde
+const appendNewItem = (activeCart, payload) => {
+  const product_price = calculateProductPrice(
+    payload.quantity,
+    payload.product.prices,
+    aClientIsSelected(activeCart.client)
+  );
+  return [...activeCart.cart, { ...payload, product_price }];
+};
+
+// Suma `quantity` al producto que ya está en el carrito
+const incrementItemAt = (cart, index, quantity) =>
+  cart.map((item, i) => (i === index ? { ...item, quantity: item.quantity + quantity } : item));
+
+// Cambia la cantidad de un producto del carrito y recalcula su precio
+const setItemQuantity = (activeCart, product, quantity) => {
+  const clientSelected = aClientIsSelected(activeCart.client);
+  return activeCart.cart.map((item) =>
+    item.id === product.id
+      ? {
+          ...item,
+          quantity,
+          product_price: calculateProductPrice(quantity, item.product.prices, clientSelected),
+          available_stock: product.available_stock || item.available_stock,
+        }
+      : item
+  );
 };
 
 const updateActiveCart = (state, updates) => ({
@@ -127,71 +162,37 @@ const multiCartReducer = (state = initialState, action) => {
       const existingProductIndex = activeCart.cart.findIndex(
         (item) => item.id === action.payload.id
       );
+      const exists = existingProductIndex !== -1;
 
       // Si es "agregar", no validar stock
       if (activeCart.movementType === MOVEMENT_TYPES.ADD_STOCK) {
-        let updatedCart;
-        if (existingProductIndex !== -1) {
-          const currentQuantity = activeCart.cart[existingProductIndex].quantity;
-          const newQuantity = currentQuantity + action.payload.quantity;
-          
-          updatedCart = activeCart.cart.map((item, index) =>
-            index === existingProductIndex
-              ? { ...item, quantity: newQuantity }
-              : item
-          );
-        } else {
-          const clientSelected = aClientIsSelected(activeCart.client);
-          const product_price = calculateProductPrice(
-            action.payload.quantity,
-            action.payload.product.prices,
-            clientSelected
-          );
-          updatedCart = [...activeCart.cart, { ...action.payload, product_price }];
-        }
-
+        const updatedCart = exists
+          ? incrementItemAt(activeCart.cart, existingProductIndex, action.payload.quantity)
+          : appendNewItem(activeCart, action.payload);
         return updateActiveCart(state, { cart: updatedCart });
       }
 
-      // Calcular stock ya reservado en otros carritos
-      const reservedInOtherCarts = getReservedStock(state.carts, action.payload.id, state.activeCartId);
-      const productStock = activeCart.movementType === MOVEMENT_TYPES.TRANSFER 
-        ? (action.payload.reserved_stock || 0)
-        : (action.payload.available_stock || 0);
-      const availableStock = productStock - reservedInOtherCarts;
+      const availableStock = getAvailableStockForActiveCart(state, activeCart, action.payload);
+      const isSale = activeCart.movementType === MOVEMENT_TYPES.SALE;
 
-      let updatedCart;
-      if (existingProductIndex !== -1) {
-        const currentQuantity = activeCart.cart[existingProductIndex].quantity;
-        const newQuantity = currentQuantity + action.payload.quantity;
-        
+      if (exists) {
+        const newQuantity = activeCart.cart[existingProductIndex].quantity + action.payload.quantity;
         // En ventas permitir exceder stock; en traspasos/distribuciones validar
-        if (activeCart.movementType !== MOVEMENT_TYPES.SALE && newQuantity > availableStock) {
+        if (!isSale && newQuantity > availableStock) {
           return state;
         }
-        
-        updatedCart = activeCart.cart.map((item, index) =>
-          index === existingProductIndex
-            ? { ...item, quantity: newQuantity }
-            : item
-        );
-      } else {
-        // En ventas permitir exceder stock
-        if (activeCart.movementType !== MOVEMENT_TYPES.SALE && action.payload.quantity > availableStock) {
-          logger.warn(`Stock insuficiente. Disponible: ${availableStock}, Intentando agregar: ${action.payload.quantity}`);
-          return state;
-        }
-        
-        const clientSelected = aClientIsSelected(activeCart.client);
-        const product_price = calculateProductPrice(
-          action.payload.quantity,
-          action.payload.product.prices,
-          clientSelected
-        );
-        updatedCart = [...activeCart.cart, { ...action.payload, product_price }];
+        return updateActiveCart(state, {
+          cart: incrementItemAt(activeCart.cart, existingProductIndex, action.payload.quantity),
+        });
       }
 
-      return updateActiveCart(state, { cart: updatedCart });
+      // En ventas permitir exceder stock
+      if (!isSale && action.payload.quantity > availableStock) {
+        logger.warn(`Stock insuficiente. Disponible: ${availableStock}, Intentando agregar: ${action.payload.quantity}`);
+        return state;
+      }
+
+      return updateActiveCart(state, { cart: appendNewItem(activeCart, action.payload) });
     }
 
     case REMOVE_FROM_CART: {
@@ -208,65 +209,26 @@ const multiCartReducer = (state = initialState, action) => {
     }
 
     case UPDATE_QUANTITY_IN_CART: {
+      const { product, newQuantity } = action.payload;
+
       // Si es "agregar", no validar stock
       if (activeCart.movementType === MOVEMENT_TYPES.ADD_STOCK) {
-        const updatedCart = activeCart.cart.map((item) => {
-          if (item.id === action.payload.product.id) {
-            const clientSelected = aClientIsSelected(activeCart.client);
-            const product_price = calculateProductPrice(
-              action.payload.newQuantity,
-              item.product.prices,
-              clientSelected
-            );
-            return { 
-              ...item, 
-              quantity: action.payload.newQuantity, 
-              product_price,
-              available_stock: action.payload.product.available_stock || item.available_stock
-            };
-          }
-          return item;
-        });
-
-        return updateActiveCart(state, { cart: updatedCart });
+        return updateActiveCart(state, { cart: setItemQuantity(activeCart, product, newQuantity) });
       }
 
-      // Calcular stock reservado en otros carritos
-      const reservedInOtherCarts = getReservedStock(state.carts, action.payload.product.id, state.activeCartId);
-      const productStock = activeCart.movementType === MOVEMENT_TYPES.TRANSFER 
-        ? (action.payload.product.reserved_stock || 0)
-        : (action.payload.product.available_stock || 0);
-      const availableStock = productStock - reservedInOtherCarts;
-      
+      const availableStock = getAvailableStockForActiveCart(state, activeCart, product);
+
       // En ventas permitir exceder stock; en otros tipos, limitar
-      const requestedQuantity = action.payload.newQuantity;
-      const clampedQuantity = (activeCart.movementType === MOVEMENT_TYPES.SALE || requestedQuantity <= availableStock)
-        ? requestedQuantity
+      const isSale = activeCart.movementType === MOVEMENT_TYPES.SALE;
+      const clampedQuantity = (isSale || newQuantity <= availableStock)
+        ? newQuantity
         : Math.max(1, availableStock);
-      
-      if (activeCart.movementType !== MOVEMENT_TYPES.SALE && requestedQuantity > availableStock) {
-        logger.warn(`Stock insuficiente. Disponible: ${availableStock}, Solicitado: ${requestedQuantity}`);
-      }
-      
-      const updatedCart = activeCart.cart.map((item) => {
-        if (item.id === action.payload.product.id) {
-          const clientSelected = aClientIsSelected(activeCart.client);
-          const product_price = calculateProductPrice(
-            clampedQuantity,
-            item.product.prices,
-            clientSelected
-          );
-          return { 
-            ...item, 
-            quantity: clampedQuantity, 
-            product_price,
-            available_stock: action.payload.product.available_stock || item.available_stock
-          };
-        }
-        return item;
-      });
 
-      return updateActiveCart(state, { cart: updatedCart });
+      if (!isSale && newQuantity > availableStock) {
+        logger.warn(`Stock insuficiente. Disponible: ${availableStock}, Solicitado: ${newQuantity}`);
+      }
+
+      return updateActiveCart(state, { cart: setItemQuantity(activeCart, product, clampedQuantity) });
     }
 
     case CHANGE_PRICE: {
