@@ -3,8 +3,11 @@ import { loginUser } from "../../../api/login";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../../context/UserContext";
 import CustomButton from "../../ui/Button/Button";
+import CustomTooltip from "../../ui/Tooltip";
 import Logo from "../../../assets/images/logo.webp";
 import { colors } from "../../../theme/colors";
+import { isOwner } from "../../../constants/routeAccess";
+import { alpha } from "@mui/material/styles";
 import {
   TextField, Box, Alert, Paper, Stack, Typography,
   IconButton, InputAdornment, Button,
@@ -40,19 +43,15 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await loginUser(state.formData);
-      if (response.status === 200) {
-        login(response.data);
-        if (response.data.access_blocked) {
-          // Negocio vencido: el dueño entra solo para renovar/pagar
-          navigate("/mi-plan-actual/");
-        } else if (response.data.role === "owner") {
-          navigate("/tiendas/");
-        } else {
-          navigate("/vender/");
-        }
+      const { data } = await loginUser(state.formData);
+      login(data);
+      if (data.access_blocked) {
+        // Negocio vencido: el dueño entra solo para renovar/pagar
+        navigate("/mi-plan-actual/");
+      } else if (isOwner(data)) {
+        navigate("/tiendas/");
       } else {
-        showAlert("Usuario o contraseña incorrectos.");
+        navigate("/vender/");
       }
     } catch (error) {
       const status = error.response?.status;
@@ -90,15 +89,15 @@ function Login() {
         <Box sx={{ position: 'relative', zIndex: 1, textAlign: 'center', px: 6 }}>
           <Box component="img" src={Logo} alt="SmartVenta" sx={{
             maxWidth: 260, width: '100%', height: 'auto', mb: 4,
-            filter: 'drop-shadow(0 8px 30px rgba(0,0,0,0.25))',
+            filter: colors.shadow.logo,
           }} />
           <Typography variant="h4" sx={{
-            color: '#fff', fontWeight: 700, mb: 1.5, letterSpacing: '-0.01em',
+            color: 'common.white', fontWeight: 700, mb: 1.5, letterSpacing: '-0.01em',
           }}>
             Punto de venta multi-tienda
           </Typography>
           <Typography variant="body1" sx={{
-            color: 'rgba(255,255,255,0.82)', maxWidth: 380, mx: 'auto', lineHeight: 1.6,
+            color: alpha(colors.white, 0.82), maxWidth: 380, mx: 'auto', lineHeight: 1.6,
           }}>
             Gestiona ventas, inventario y traspasos de todas tus tiendas desde un solo lugar.
           </Typography>
@@ -118,7 +117,7 @@ function Login() {
           bgcolor: 'background.paper',
           border: '1px solid',
           borderColor: 'divider',
-          boxShadow: '0 8px 30px rgba(0,0,0,0.08)',
+          boxShadow: colors.shadow.card,
           p: { xs: 3, sm: 4 },
         }}>
           {/* Logo visible solo en móvil */}
@@ -154,12 +153,15 @@ function Login() {
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
-                    <IconButton size="small"
-                      onClick={() => setState(prev => ({ ...prev, showPassword: !prev.showPassword }))}
-                      edge="end"
-                    >
-                      {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
-                    </IconButton>
+                    <CustomTooltip text={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"} position="top">
+                      <IconButton size="small"
+                        onClick={() => setState(prev => ({ ...prev, showPassword: !prev.showPassword }))}
+                        edge="end"
+                        aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                      >
+                        {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
+                      </IconButton>
+                    </CustomTooltip>
                   </InputAdornment>
                 ),
               }}
