@@ -4,7 +4,6 @@ import { getApiUrl } from "./utils";
 const API_KEY = process.env.REACT_APP_API_URL_KEY;
 
 const tenantHeaders = {
-  "Content-Type": "application/json",
   "X-API-Key": API_KEY,
 };
 
