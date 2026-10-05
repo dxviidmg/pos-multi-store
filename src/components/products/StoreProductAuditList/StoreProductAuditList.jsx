@@ -1,87 +1,56 @@
-import React, { useEffect, useState } from "react";
-import DataTable from "../../ui/DataTable/DataTable";
-import { getStoreProducts } from "../../../api/products";
-import CustomButton from "../../ui/Button/Button";
-import { useUser } from "../../../context/UserContext";
-import { exportToExcel } from "../../../utils/utils";
-import { useModal } from "../../../hooks/useModal";
-import StoreProductLogsModal from "../StoreProductLogsModal/StoreProductLogsModal";
-import StockUpdateRequestModal from "../../inventory/StockUpdateRequestModal/StockUpdateRequestModal";
-import { CustomSpinner } from "../../ui/Spinner/Spinner";
-import { getBrands } from "../../../api/brands";
-import { getDepartments } from "../../../api/departments";
-import { Grid, TextField, Autocomplete } from "@mui/material";
+import React, { useCallback, useMemo, useState } from "react";
+import { Grid, TextField } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import DownloadIcon from "@mui/icons-material/Download";
+import DataTable from "../../ui/DataTable/DataTable";
+import CustomButton from "../../ui/Button/Button";
+import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import PageHeader from "../../ui/PageHeader";
-import StoreProductActions from "../StoreProductActions/StoreProductActions";
 import StockRequestAlert from "../StockRequestAlert/StockRequestAlert";
+import ProductFilterFields from "../shared/ProductFilterFields";
+import StoreProductModals from "../shared/StoreProductModals";
+import { STORE_PRODUCT_BASE_COLUMNS, getStoreProductActionsColumn } from "../shared/storeProductColumns";
+import { useCatalogOptions } from "../shared/useCatalogOptions";
+import { useStoreProductActions } from "../shared/useStoreProductActions";
+import { useStoreProductList, downloadStoreProducts } from "../shared/useStoreProductList";
+import { useUser } from "../../../context/UserContext";
 
+const INITIAL_PARAMS = { only_stock: true, requires_stock_verification: true };
+const CATALOG_PARAMS = { audit: true };
 
 const StoreProductAuditList = () => {
   const { user } = useUser();
-  const logsModal = useModal();
-  const requestModal = useModal();
-  const [storeProducts, setStoreProducts] = useState([]);
-  const [brands, setBrands] = useState([]);
-  const [departments, setDepartments] = useState([]);
-  const [optionsLoaded, setOptionsLoaded] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [params, setParams] = useState({ only_stock: true, requires_stock_verification: true });
+  const {
+    items: storeProducts, setItems: setStoreProducts, params, setParams, loading, fetchItems: fetchStoreProducts,
+  } = useStoreProductList(INITIAL_PARAMS);
+  const { brands, departments, loaded } = useCatalogOptions(CATALOG_PARAMS);
+  const { logsModal, requestModal, onAdjust, onLogs, onRequest } = useStoreProductActions();
   const [showAlert, setShowAlert] = useState(true);
 
-  useEffect(() => {
-    const fetchOptions = async () => {
-      const [brandsRes, deptsRes] = await Promise.all([
-        getBrands({ audit: true }),
-        getDepartments({ audit: true })
-      ]);
-      setBrands(brandsRes.data);
-      setDepartments(deptsRes.data);
-      setOptionsLoaded(true);
-    };
-    fetchOptions();
-  }, []);
-
-  const fetchStoreProducts = async () => {
-    setLoading(true);
-    const response = await getStoreProducts(params);
-    const data = response.data;
-    setStoreProducts(data);
-    setLoading(false);
-  };
-
-  const handleDownload = () => {
-    const data = storeProducts.map(({ product: { code, brand_name, name }, stock }) => ({
-      Código: code, Marca: brand_name, Nombre: name, Stock: stock,
-    }));
-    exportToExcel(data, "Reporte Inventario a verificar " + user.store_name);
-  };
-
-  const handleUpdateStoreProductList = (updated) => {
+  // Un producto ajustado ya quedó verificado: sale de la lista
+  const handleUpdateStoreProductList = useCallback((updated) => {
     setStoreProducts((prev) => prev.filter((item) => item.id !== updated.id));
-  };
+  }, [setStoreProducts]);
 
   const handleDataChange = (e) => {
     const { name, value } = e.target;
     setParams((prev) => ({ ...prev, [name]: value }));
   };
 
+  const columns = useMemo(() => [
+    ...STORE_PRODUCT_BASE_COLUMNS,
+    getStoreProductActionsColumn({ onAdjust, onLogs, onRequest }),
+  ], [onAdjust, onLogs, onRequest]);
+
   return (
     <>
       <CustomSpinner isLoading={loading} />
-      <StoreProductLogsModal
-        isOpen={logsModal.isOpen}
-        logs={logsModal.data}
-        onClose={logsModal.close}
-        onUpdate={handleUpdateStoreProductList}
-      />
-      <StockUpdateRequestModal isOpen={requestModal.isOpen} storeProduct={requestModal.data} onClose={requestModal.close} />
+      <StoreProductModals logsModal={logsModal} requestModal={requestModal} onUpdate={handleUpdateStoreProductList} />
 
       <Grid container>
         <Grid item xs={12} className="card">
           <PageHeader title="Inventario a verificar" childrenMd={8}>
-            {showAlert && <StockRequestAlert role={user.role} onClose={() => setShowAlert(false)} />}
+            {showAlert && <StockRequestAlert onClose={() => setShowAlert(false)} />}
           </PageHeader>
 
           <Grid container spacing={2} sx={{ mb: 2 }}>
@@ -91,50 +60,25 @@ const StoreProductAuditList = () => {
                 onKeyDown={(e) => e.key === "Enter" && fetchStoreProducts()}
               />
             </Grid>
-            <Grid item xs={12} md={3}>
-              <Autocomplete
-                size="small"
-                options={brands}
-                getOptionLabel={(option) => `${option.name} (${option.product_count})`}
-                value={brands.find((b) => b.id === params.brand_id) || null}
-                onChange={(_, newValue) => {
-                  setParams((prev) => ({ ...prev, brand_id: newValue?.id || "" }));
-                }}
-                isOptionEqualToValue={(option, value) => option.id === value.id}
-                disabled={optionsLoaded && brands.length === 0}
-                renderInput={(inputProps) => (
-                  <TextField {...inputProps} label="Marca" />
-                )}
-              />
-            </Grid>
-            <Grid item xs={12} md={3}>
-              <Autocomplete
-                size="small"
-                options={departments}
-                getOptionLabel={(option) => `${option.name} (${option.product_count})`}
-                value={departments.find((d) => d.id === params.department_id) || null}
-                onChange={(_, newValue) => {
-                  setParams((prev) => ({ ...prev, department_id: newValue?.id || "" }));
-                }}
-                isOptionEqualToValue={(option, value) => option.id === value.id}
-                disabled={optionsLoaded && departments.length === 0}
-                renderInput={(inputProps) => (
-                  <TextField {...inputProps} label="Departamento" />
-                )}
-              />
-            </Grid>
-            <Grid item xs={12} md={3}>
-              <TextField size="small" fullWidth label="Stock máximo" type="number"
-                value={params.max_stock || ""} onChange={handleDataChange} name="max_stock"
-              />
-            </Grid>
+            <ProductFilterFields
+              params={params}
+              setParams={setParams}
+              brands={brands}
+              departments={departments}
+              loaded={loaded}
+            />
             <Grid item xs={12} md={3}>
               <CustomButton fullWidth onClick={fetchStoreProducts} startIcon={<SearchIcon />}>
                 Buscar
               </CustomButton>
             </Grid>
             <Grid item xs={12} md={3}>
-              <CustomButton fullWidth onClick={handleDownload} disabled={storeProducts.length === 0} startIcon={<DownloadIcon />}>
+              <CustomButton
+                fullWidth
+                onClick={() => downloadStoreProducts(storeProducts, "Reporte Inventario a verificar " + user.store_name)}
+                disabled={storeProducts.length === 0}
+                startIcon={<DownloadIcon />}
+              >
                 Descargar inventario
               </CustomButton>
             </Grid>
@@ -145,25 +89,7 @@ const StoreProductAuditList = () => {
             progressPending={loading}
             noDataComponent="Sin productos"
             data={storeProducts}
-            columns={[
-              { name: "Código", selector: (row) => row.product.code },
-              { name: "Marca", selector: (row) => row.product.brand_name },
-              { name: "Departamento", selector: (row) => row.product.department_name },
-              { name: "Nombre", selector: (row) => row.product.name },
-              { name: "Stock", selector: (row) => row.stock },
-              {
-                name: "Acciones",
-                cell: (row) => (
-                  <StoreProductActions
-                    row={row}
-                    role={user.role}
-                    onAdjust={(storeProduct) => logsModal.open({ storeProduct, adjustStock: true })}
-                    onLogs={(storeProduct) => logsModal.open({ storeProduct, adjustStock: false })}
-                    onRequest={requestModal.open}
-                  />
-                ),
-              },
-            ]}
+            columns={columns}
           />
         </Grid>
       </Grid>
