@@ -117,17 +117,17 @@ export const progressBarSx = {
   },
 };
 
-// Botón primario con el gradiente azul de marca
+// Botón de acción principal en ámbar, igual que en la landing
 export const primaryButtonSx = {
   py: 1.3,
   borderRadius: "10px",
   fontSize: "0.9rem",
   fontWeight: 700,
-  background: colors.gradient.brand,
-  color: colors.white,
+  background: colors.accent,
+  color: colors.onAccent,
   boxShadow: colors.shadow.brand,
   "&:hover": {
-    background: colors.gradient.brandHover,
+    background: colors.accentDark,
     boxShadow: colors.shadow.brandHover,
   },
   "&.Mui-disabled": {

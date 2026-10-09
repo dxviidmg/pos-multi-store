@@ -11,12 +11,12 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: '90%',
-  maxHeight: '90vh',
+  width: { xs: 'calc(100% - 24px)', sm: '90%' },
+  maxHeight: { xs: 'calc(100dvh - 24px)', sm: '90vh' },
   overflow: 'auto',
   bgcolor: 'background.paper',
   boxShadow: 24,
-  borderRadius: 2,
+  borderRadius: { xs: 2, sm: 3 },
   border: '1px solid',
   borderColor: 'divider',
 };
@@ -29,12 +29,12 @@ function CustomModal({ showOut, onClose, title, children, maxWidth = 800 }) {
       slotProps={{ backdrop: { sx: { backgroundColor: colors.backdrop, backdropFilter: 'blur(4px)' } } }}
     >
       <Box className="modal-enter" sx={{ ...style, maxWidth }}>
-        <Box className="modal__header" sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid', borderColor: 'divider' }}>
-          <Typography variant="h6" sx={{ flexGrow: 1, textAlign: 'center', fontWeight: 600, color: 'text.primary' }}>
+        <Box className="modal__header" sx={{ px: { xs: 2, sm: 3 }, py: 1.75, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, borderBottom: '1px solid', borderColor: 'divider', position: 'sticky', top: 0, zIndex: 2 }}>
+          <Typography variant="h6" sx={{ flexGrow: 1, fontSize: '1.0625rem', fontWeight: 700, color: 'text.primary', fontFamily: "'Plus Jakarta Sans', 'Inter', sans-serif" }}>
             {title}
           </Typography>
           <CustomTooltip text="Cerrar" position="bottom">
-            <IconButton onClick={onClose} size="small" aria-label="Cerrar" sx={{ color: 'text.primary', '&:hover': { bgcolor: 'action.hover' } }}>
+            <IconButton onClick={onClose} size="small" aria-label="Cerrar" sx={{ color: 'text.secondary', '&:hover': { bgcolor: 'action.hover', color: 'text.primary' } }}>
               <CloseIcon />
             </IconButton>
           </CustomTooltip>
@@ -52,7 +52,7 @@ function CustomModal({ showOut, onClose, title, children, maxWidth = 800 }) {
  * `sx` se combina al final; el resto de props pasa al Box.
  */
 export const ModalBody = ({ children, sx, ...props }) => (
-  <Box sx={{ padding: '1rem', backgroundColor: 'modalBody.main', ...sx }} {...props}>
+  <Box sx={{ padding: { xs: '1rem', sm: '1.25rem 1.5rem' }, backgroundColor: 'modalBody.main', ...sx }} {...props}>
     {children}
   </Box>
 );

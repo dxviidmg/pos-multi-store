@@ -50,8 +50,10 @@ export const AppBar = styled(MuiAppBar, {
 })(({ theme, open }) => ({
   zIndex: theme.zIndex.drawer + 1,
   transition: theme.transitions.create(["width", "margin"], { duration: 200, easing: theme.transitions.easing.sharp }),
-  background: colors.appbar,
-  boxShadow: colors.shadow.appbar,
+  background: colors.sidebar,
+  color: colors.white,
+  boxShadow: "none",
+  borderBottom: `1px solid ${whiteAlpha(0.06)}`,
   ...(open && {
     marginLeft: DRAWER_WIDTH,
     width: `calc(100% - ${DRAWER_WIDTH}px)`,
@@ -108,15 +110,14 @@ export const menuListSx = (scrollbarWidth) => ({
 
 export const activeSx = {
   position: "relative",
-  background: alpha(colors.accent, 0.15),
-  "&:hover": { background: alpha(colors.accent, 0.2) },
+  background: whiteAlpha(0.09),
+  "&:hover": { background: whiteAlpha(0.12) },
   "&::before": {
     content: '""',
     position: "absolute",
     left: 0, top: 8, bottom: 8, width: 3,
     borderRadius: 3,
-    background: colors.accent,
-    boxShadow: `0 0 12px ${colors.accent}`,
+    background: colors.sidebarActive,
   },
 };
 
@@ -128,7 +129,7 @@ export const itemButtonSx = (expanded, active = false) => ({
 });
 
 export const itemIconSx = (expanded, active = false) => ({
-  color: active ? colors.accent : whiteAlpha(0.7),
+  color: active ? colors.sidebarActive : whiteAlpha(0.7),
   minWidth: expanded ? 38 : 0, justifyContent: "center",
 });
 
@@ -139,12 +140,7 @@ export const subItemTextColor = whiteAlpha(0.75);
 export const secondaryTextProps = { fontSize: "0.65rem", color: whiteAlpha(0.4) };
 
 export const userMenuPaperSx = {
-  bgcolor: "primary.main",
-  color: "common.white",
-  border: "none",
-  "& .MuiMenuItem-root": {
-    fontSize: "0.8125rem",
-    "&:hover": { bgcolor: whiteAlpha(0.08) },
-  },
-  "& .MuiListItemIcon-root": { color: whiteAlpha(0.7) },
+  minWidth: 180,
+  "& .MuiMenuItem-root": { fontSize: "0.8125rem" },
+  "& .MuiListItemIcon-root": { color: "text.secondary" },
 };

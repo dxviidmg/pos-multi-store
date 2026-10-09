@@ -144,7 +144,7 @@ const DistributionList = () => {
 
       {selected && (
         <Grid item xs={12} className="card">
-          <PageHeader title={`Distribución #${selected.id}`} />
+          <PageHeader title={`Distribución #${selected.id}`} plain />
 
           <CustomButton fullWidth onClick={handleSubmit} disabled={submitting} startIcon={<SendIcon />} sx={{ mb: 2 }}>
             Confirmar distribución

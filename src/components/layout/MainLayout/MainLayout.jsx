@@ -231,7 +231,7 @@ export default function MainLayout({ toggleTheme, themeMode }) {
             sx={{
               width: 34, height: 34,
               bgcolor: alpha(colors.accent, 0.85),
-              color: "common.white",
+              color: colors.onAccent,
               fontSize: "0.85rem", fontWeight: 700, mr: 1, cursor: "pointer",
               transition: "all 0.2s",
               "&:hover": { transform: "scale(1.1)", bgcolor: colors.accent },

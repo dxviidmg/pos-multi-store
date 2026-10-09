@@ -1,8 +1,9 @@
 import React from "react";
 import { Box, Grid, Typography } from "@mui/material";
+import { alpha } from "@mui/material/styles";
 import { colors } from "../../../theme";
 
-const gradients = colors.gradient.kpi;
+const tones = colors.kpiTones;
 
 const KPI_ITEM_PROPS = { xs: 6, md: 3 };
 
@@ -25,10 +26,9 @@ const KPICard = ({ title, value, subtitle, icon: Icon, index = 0, itemProps = KP
           </Box>
           {Icon && (
             <Box sx={{
-              background: gradients[index % gradients.length],
-              color: "common.white", p: 1.5, borderRadius: 1.5,
+              bgcolor: alpha(tones[index % tones.length], 0.12),
+              color: tones[index % tones.length], p: 1.25, borderRadius: 1.5,
               display: "flex", alignItems: "center", justifyContent: "center",
-              boxShadow: colors.shadow.brand,
             }}>
               <Icon sx={{ fontSize: 26 }} />
             </Box>

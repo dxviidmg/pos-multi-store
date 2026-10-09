@@ -1,7 +1,6 @@
 import React, { memo } from "react";
-import { Grid } from "@mui/material";
+import { Box, ButtonBase } from "@mui/material";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
-import CustomButton from "../../ui/Button/Button";
 import { STORE_TYPES } from "../../../constants";
 
 const managersFilter = { value: "managers", label: () => "Administradores" };
@@ -42,22 +41,43 @@ const StoreQuickFilters = ({ storeType, stores, value, onChange }) => {
   };
 
   return (
-    <Grid container spacing={2} sx={{ mb: 2 }}>
+    <Box
+      role="tablist"
+      aria-label="Vista de la tabla"
+      sx={{
+        display: "flex", gap: 0.5, p: 0.5, mb: 2,
+        bgcolor: "tableHead.main", border: "1px solid", borderColor: "divider", borderRadius: 1.5,
+        overflowX: "auto", scrollbarWidth: "none", "&::-webkit-scrollbar": { display: "none" },
+      }}
+    >
       {filters
         .filter(({ isVisible }) => !isVisible || isVisible(counts))
-        .map(({ value: filter, label, Icon }) => (
-          <Grid item md={isStore ? 2 : 3} xs={6} key={filter}>
-            <CustomButton
-              fullWidth
-              variant={value === filter ? "contained" : "outlined"}
+        .map(({ value: filter, label, Icon }) => {
+          const selected = value === filter;
+          return (
+            <ButtonBase
+              key={filter}
+              role="tab"
+              aria-selected={selected}
               onClick={() => onChange(filter)}
-              startIcon={Icon && <Icon />}
+              sx={{
+                flex: { xs: "0 0 auto", md: "1 1 0" }, gap: 0.75, px: 1.75, py: 0.9,
+                borderRadius: 1.25, whiteSpace: "nowrap",
+                fontSize: "0.8125rem", fontWeight: 600,
+                color: selected ? "primary.main" : "text.secondary",
+                bgcolor: selected ? "background.paper" : "transparent",
+                boxShadow: selected ? (theme) => theme.shadows[1] : "none",
+                transition: "background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease",
+                "&:hover": { color: selected ? "primary.main" : "text.primary" },
+                "&.Mui-focusVisible": { outline: "2px solid", outlineColor: "primary.main", outlineOffset: 1 },
+              }}
             >
+              {Icon && <Icon sx={{ fontSize: 18 }} />}
               {label(counts)}
-            </CustomButton>
-          </Grid>
-        ))}
-    </Grid>
+            </ButtonBase>
+          );
+        })}
+    </Box>
   );
 };
 

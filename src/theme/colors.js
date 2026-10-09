@@ -1,58 +1,111 @@
-const PRIMARY = '#04346b';
-const PRIMARY_LIGHT = '#065a9e';
-const PRIMARY_DARK = '#022347';
-const ACCENT = '#a78bfa';
-const ACCENT_DARK = '#7c5cbf';
+// Paleta del POS, alineada con smartventa-landing pero en clave SaaS:
+// superficies neutras y descansadas, y el azul de marca solo en acciones y estados activos.
+const PRIMARY = '#1d4ed8';
+const PRIMARY_LIGHT = '#3b82f6';
+const PRIMARY_DARK = '#1e40af';
+const ACCENT = '#ffb020';
+const ACCENT_DARK = '#f59e0b';
+
+// Navy del landing (footer y textos) para el sidebar
+const SIDEBAR = '#0b1b4d';
+const SIDEBAR_DARK = '#08143a';
+
+const PRIMARY_RGB = '29,78,216';
+const SHADOW_TINT = '15,23,42';
+const STATUS_ERROR = '#dc2626';
 
 export const colors = {
   primary: PRIMARY,
   primaryLight: PRIMARY_LIGHT,
   primaryDark: PRIMARY_DARK,
-  secondary: '#e94560',
+  secondary: '#00a4db',
   accent: ACCENT,
   accentDark: ACCENT_DARK,
-  error: '#dc2626',
+  error: STATUS_ERROR,
+  onAccent: '#0b1b4d',
+  sidebar: SIDEBAR,
+  sidebarActive: '#00e0d8',
   whatsapp: '#25D366',
   white: '#fff',
-  appbar: PRIMARY,
-
-  background: {
-    main: '#e8eef6',
-    paper: '#ffffff',
-  },
-
-  text: {
-    primary: '#1e293b',
-    secondary: '#4a5568',
-  },
-
-  border: '#e2e8f0',
 
   // Fondo detrás de los modales
-  backdrop: 'rgba(2,17,38,0.45)',
+  backdrop: 'rgba(8,20,58,0.45)',
 
   shadow: {
-    light: '0 1px 2px rgba(2,35,71,0.06)',
-    medium: '0 8px 24px rgba(2,35,71,0.10)',
-    brand: '0 4px 14px rgba(4,52,107,0.25)',
-    brandHover: '0 8px 24px rgba(4,52,107,0.32)',
-    appbar: '0 1px 0 rgba(0,0,0,0.08)',
-    card: '0 8px 30px rgba(0,0,0,0.08)',
-    toast: '0 4px 20px rgba(0,0,0,0.12)',
-    dialog: '0 24px 80px rgba(0,0,0,0.2)',
+    brand: `0 4px 14px rgba(${PRIMARY_RGB},0.22)`,
+    brandHover: `0 8px 24px rgba(${PRIMARY_RGB},0.28)`,
+    appbar: 'none',
+    card: '0 8px 30px rgba(15,23,42,0.06)',
+    toast: '0 4px 20px rgba(15,23,42,0.12)',
+    dialog: '0 24px 80px rgba(15,23,42,0.2)',
     logo: 'drop-shadow(0 8px 30px rgba(0,0,0,0.25))',
   },
 
   gradient: {
-    sidebar: `linear-gradient(180deg, ${PRIMARY} 0%, ${PRIMARY_DARK} 100%)`,
+    sidebar: `linear-gradient(180deg, ${SIDEBAR} 0%, ${SIDEBAR_DARK} 100%)`,
     brand: `linear-gradient(135deg, ${PRIMARY} 0%, ${PRIMARY_LIGHT} 100%)`,
     brandHover: `linear-gradient(135deg, ${PRIMARY_DARK} 0%, ${PRIMARY} 100%)`,
-    kpi: [
-      `linear-gradient(135deg, ${PRIMARY} 0%, #3b82f6 100%)`,
-      'linear-gradient(135deg, #047857 0%, #34d399 100%)',
-      `linear-gradient(135deg, ${ACCENT_DARK} 0%, ${ACCENT} 100%)`,
-      'linear-gradient(135deg, #b45309 0%, #f59e0b 100%)',
-      'linear-gradient(135deg, #0369a1 0%, #38bdf8 100%)',
-    ],
+  },
+
+  // Tono de cada indicador (ícono sobre un fondo del mismo color al 12%)
+  kpiTones: ['#1d4ed8', '#059669', '#0284c7', '#b45309', '#0f766e'],
+
+  status: {
+    success: { main: '#16a34a', light: '#dcfce7', dark: '#15803d' },
+    warning: { main: '#d97706', light: '#fef3c7', dark: '#b45309' },
+    error: { main: STATUS_ERROR, light: '#fee2e2', dark: '#b91c1c' },
+    info: { main: '#0284c7', light: '#e0f2fe', dark: '#0369a1' },
+  },
+
+  // Tokens semánticos por modo: los consumen theme.js y cssVariables.js
+  modes: {
+    light: {
+      primary: PRIMARY,
+      primaryHover: PRIMARY_DARK,
+      background: '#f5f7fb',
+      paper: '#ffffff',
+      text: '#0f172a',
+      textSecondary: '#475569',
+      caption: '#64748b',
+      border: '#e4e8ef',
+      borderStrong: '#d5dbe5',
+      borderHover: '#94a3b8',
+      rowHover: '#f8fafc',
+      rowDivider: '#eef1f5',
+      tableHead: '#f8fafc',
+      tableHeadText: '#475569',
+      shadowSm: `0 1px 2px rgba(${SHADOW_TINT},0.05)`,
+      shadowMd: `0 8px 24px rgba(${SHADOW_TINT},0.08)`,
+      shadows: [
+        `0 1px 3px rgba(${SHADOW_TINT},0.06)`,
+        `0 2px 6px rgba(${SHADOW_TINT},0.06)`,
+        `0 4px 12px rgba(${SHADOW_TINT},0.07)`,
+        `0 12px 32px rgba(${SHADOW_TINT},0.12)`,
+      ],
+    },
+    dark: {
+      primary: '#5b8cff',
+      primaryHover: '#7aa2ff',
+      background: '#0f1420',
+      paper: '#161c2a',
+      text: '#e6eaf2',
+      textSecondary: '#a3adc2',
+      caption: '#7f8aa3',
+      border: '#262f42',
+      borderStrong: '#2f3a50',
+      borderHover: '#4a5670',
+      rowHover: 'rgba(255,255,255,0.03)',
+      rowDivider: '#1f2738',
+      tableHead: '#1b2232',
+      tableHeadText: '#a3adc2',
+      shadowSm: '0 1px 2px rgba(0,0,0,0.3)',
+      shadowMd: '0 8px 24px rgba(0,0,0,0.4)',
+      shadows: [
+        '0 1px 3px rgba(0,0,0,0.35)',
+        '0 2px 6px rgba(0,0,0,0.4)',
+        '0 4px 12px rgba(0,0,0,0.4)',
+        '0 12px 32px rgba(0,0,0,0.5)',
+      ],
+    },
   },
 };

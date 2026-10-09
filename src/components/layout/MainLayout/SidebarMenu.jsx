@@ -32,7 +32,7 @@ const SubItems = ({ items, expanded, isActive, onNavigate }) =>
           secondary={sub.disabled && expanded ? sub.disabledMessage : null}
           primaryTypographyProps={{
             fontSize: "0.75rem",
-            color: sub.disabled ? whiteAlpha(0.3) : active ? colors.accent : subItemTextColor,
+            color: sub.disabled ? whiteAlpha(0.3) : active ? colors.sidebarActive : subItemTextColor,
             fontWeight: active ? 600 : 400,
           }}
           secondaryTypographyProps={secondaryTextProps}
@@ -112,7 +112,7 @@ const SidebarMenu = ({
         <ListItemText primary={item.label}
           primaryTypographyProps={{
             fontWeight: 600, fontSize: "0.8rem",
-            color: active ? colors.accent : "inherit",
+            color: active ? colors.sidebarActive : "inherit",
           }}
           sx={textSx}
         />

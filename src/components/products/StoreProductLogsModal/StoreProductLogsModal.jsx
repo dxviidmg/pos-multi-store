@@ -133,7 +133,7 @@ const StoreProductLogsModal = ({ isOpen, logs: logsData, onClose, onUpdate }) =>
                 inputProps={{ min: 1, max: MAX_MONTHS }}
                 sx={{ width: "100%", mb: 2 }}
               />
-              <PageHeader title="Últimos movimientos" />
+              <PageHeader title="Últimos movimientos" plain />
               <DataTable noDataComponent="Sin movimientos" data={logs} columns={COLUMNS} />
             </>
           )}

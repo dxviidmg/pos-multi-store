@@ -2,7 +2,7 @@
 
 Instrucciones para cualquier agente de código (Claude Code, Kiro, Codex, Cursor, etc.) y para personas que trabajen en este repositorio. **Este archivo es la única fuente de reglas técnicas.** `CLAUDE.md` y `.kiro/steering/project.md` solo lo importan; no dupliques reglas en ellos.
 
-> Última revisión: 2026-10-04
+> Última revisión: 2026-10-09
 
 ---
 
@@ -109,7 +109,7 @@ src/
 ├── context/            # UserContext: useUser() / updateUser()
 ├── hooks/              # Hooks reutilizables (ver §7)
 ├── redux/cart/         # multiCartReducer, cartActions, selectors
-├── theme/              # theme.js, colors.js, variables.css
+├── theme/              # colors.js (fuente de colores), theme.js, cssVariables.js, variables.css
 └── utils/              # alerts, apiErrors, array, chart, currency, date, excel, image, logger, print, storage; utils.js re-exporta
 ```
 
@@ -354,7 +354,7 @@ En el cobro: Ctrl+G confirma y Ctrl+O quita el cliente (solo con el cobro abiert
 
 ## 11. Estilo visual
 
-Fuente de valores: `src/theme/theme.js`, `src/theme/colors.js`, `src/theme/variables.css`.
+Fuente única de colores y sombras: `src/theme/colors.js` (primitivas, `status` y `modes.light/dark`). `theme.js` y `cssVariables.js` solo los leen: `theme.js` arma el tema MUI y `cssVariables.js` publica las variables CSS (`--color-*`, `--shadow-*`) al cambiar de modo desde `useThemeMode`. `variables.css` solo guarda radio, espaciado, fuente y easing. **No repitas un valor de color en estos archivos**: agrégalo a `colors.js`.
 
 - **Nunca hardcodear hex ni rgba** en componentes. Usa tokens del tema (`primary`, `secondary`, `accent`, `success`, `error`, `text.*`, `divider`, `common.white`…), `alpha(theme.palette.x.main, o)` para transparencias, o `colors` de `src/theme/colors.js`.
 - `colors.js` tiene las primitivas que no son tokens de MUI:
@@ -387,36 +387,36 @@ Texto `Inter`; títulos h1–h4 `Plus Jakarta Sans` (700–800); números `tabul
 
 | Token | Claro | Oscuro |
 |---|---|---|
-| primary | `#04346b` (light `#065a9e`, dark `#022347`) | igual |
-| secondary | `#e94560` | igual |
-| accent | `#a78bfa` | igual |
-| background.default | `#e8eef6` | `#0d1117` |
+| primary | `#0030cc` (light `#0079be`, dark `#00269e`) | igual |
+| secondary | `#00a4db` | igual |
+| accent | `#ffb020` (ámbar, solo botón principal del registro y detalles; dark `#f59e0b`; texto sobre ámbar `onAccent` `#0b1b4d`; el sidebar activo usa `sidebarActive` `#00e0d8`) | igual |
+| background.default | `#f5f9ff` | `#0d1117` |
 | background.paper | `#ffffff` | `#161b22` |
 | divider | `#e2e8f0` | `#30363d` |
-| text.primary | `#1e293b` | `#e6edf3` |
-| text.secondary | `#4a5568` | `#8b949e` |
+| text.primary | `#0f172a` | `#e6edf3` |
+| text.secondary | `#475569` | `#8b949e` |
 
 `colors.js` define las primitivas que consume `theme.js` (no repitas hex en el tema). Degradados en `colors.gradient`:
-- Sidebar y login: `180deg #04346b → #022347`.
-- Botón de login: `135deg #04346b → #065a9e`.
-- Íconos de KPI: azul, verde, violeta, ámbar y cian.
+- Sidebar y login: `180deg #0079be → #00269e`.
+- Botón de login: `135deg #0030cc → #0079be`.
+- Íconos de KPI: azul, verde, verde azulado, ámbar y cian.
 
 ### Formas, sombras y movimiento
 
 - **Radios:** Paper/Card/.card 12px · Button/TextField/Select/Alert 8px · Dialog 16px · Chip 999px · Tooltip 6px.
-- **Sombras teñidas de marino en modo claro** (negras en oscuro):
-  - Ligera: `0 1px 2px rgba(2,35,71,.06)`
-  - Media: `0 8px 24px rgba(2,35,71,.10)`
-  - Amplia: `0 24px 60px rgba(2,35,71,.18)`
-  - Marca: `0 4px 14px rgba(4,52,107,.25)`
+- **Sombras teñidas de azul en modo claro** (negras en oscuro):
+  - Ligera: `0 1px 2px rgba(0,38,158,.06)`
+  - Media: `0 8px 24px rgba(0,38,158,.10)`
+  - Amplia: `0 24px 60px rgba(0,38,158,.18)`
+  - Marca: `0 4px 14px rgba(0,48,204,.25)`
 - **Animaciones en `App.css`:**
   - `fade-in-up`: tarjetas y paneles; escalonar con `animationDelay`, 60 ms.
   - `fade-in-left`: campos condicionales.
   - `dropdown-enter`: poppers.
   - `value-pop`: cambio de valor; cambia el `key` para repetirla.
   - `page-enter` y `modal-enter`: ya aplicadas en el layout y en `CustomModal`.
-- Sidebar activo: barra violeta de 3px.
-- `DataTable` recargando: barra de progreso azul → violeta.
+- Sidebar activo: barra turquesa de 3px.
+- `DataTable` recargando: barra de progreso azul → ámbar.
 - Todo se desactiva con `prefers-reduced-motion`.
 - Modo oscuro/claro guardado en `localStorage` (`useThemeMode`).
 

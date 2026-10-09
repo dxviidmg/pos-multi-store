@@ -1,5 +1,5 @@
 import { Box, Divider, List } from "@mui/material";
-import logo from "../../../assets/images/logo.webp";
+import logo from "../../../assets/images/logo-white.svg";
 import {
   Drawer,
   DrawerHeader,
@@ -14,7 +14,7 @@ const LANDING_URL = "https://smartventa-pos.vercel.app/";
 const Logo = () => (
   <a href={LANDING_URL} target="_blank" rel="noopener noreferrer">
     <Box component="img" src={logo} alt="SmartVenta"
-      sx={{ height: "38px", width: "auto", objectFit: "contain", borderRadius: 1, cursor: "pointer" }}
+      sx={{ height: "38px", width: "auto", objectFit: "contain", cursor: "pointer" }}
     />
   </a>
 );

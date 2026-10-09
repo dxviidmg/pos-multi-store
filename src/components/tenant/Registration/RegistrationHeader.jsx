@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Typography, LinearProgress } from "@mui/material";
-import Logo from "../../../assets/images/logo.webp";
+import Logo from "../../../assets/images/logo-white.svg";
 import {
   headerBannerSx, headerTitleSx, headerSubtitleSx,
   stepIndicatorSx, stepCountSx, progressBarSx,

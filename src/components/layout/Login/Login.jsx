@@ -4,7 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { useUser } from "../../../context/UserContext";
 import CustomButton from "../../ui/Button/Button";
 import CustomTooltip from "../../ui/Tooltip";
-import Logo from "../../../assets/images/logo.webp";
+import LogoWhite from "../../../assets/images/logo-white.svg";
+import LogoBlue from "../../../assets/images/logo-blue.svg";
 import { colors } from "../../../theme/colors";
 import { isOwner } from "../../../constants/routeAccess";
 import { alpha } from "@mui/material/styles";
@@ -87,7 +88,7 @@ function Login() {
         background: colors.gradient.sidebar,
       }}>
         <Box sx={{ position: 'relative', zIndex: 1, textAlign: 'center', px: 6 }}>
-          <Box component="img" src={Logo} alt="SmartVenta" width={260} height="auto" sx={{
+          <Box component="img" src={LogoWhite} alt="SmartVenta" width={260} height="auto" sx={{
             maxWidth: 260, width: '100%', height: 'auto', mb: 4,
             filter: colors.shadow.logo,
           }} />
@@ -122,7 +123,7 @@ function Login() {
         }}>
           {/* Logo visible solo en móvil */}
           <Box sx={{ display: { xs: 'flex', md: 'none' }, justifyContent: 'center', mb: 3 }}>
-            <Box component="img" src={Logo} alt="SmartVenta" width={180} height="auto" sx={{ maxWidth: 180, height: 'auto' }} />
+            <Box component="img" src={LogoBlue} alt="SmartVenta" width={180} height="auto" sx={{ maxWidth: 180, height: 'auto' }} />
           </Box>
 
           <Typography variant="h4" sx={{ fontWeight: 700, color: 'text.primary', mb: 0.5 }}>
