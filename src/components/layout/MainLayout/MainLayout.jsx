@@ -230,11 +230,11 @@ export default function MainLayout({ toggleTheme, themeMode }) {
             onClick={(e) => setAnchorEl(e.currentTarget)}
             sx={{
               width: 34, height: 34,
-              bgcolor: alpha(colors.accent, 0.85),
-              color: colors.onAccent,
+              bgcolor: alpha(colors.googleBlue, 0.85),
+              color: colors.white,
               fontSize: "0.85rem", fontWeight: 700, mr: 1, cursor: "pointer",
               transition: "all 0.2s",
-              "&:hover": { transform: "scale(1.1)", bgcolor: colors.accent },
+              "&:hover": { transform: "scale(1.1)", bgcolor: colors.googleBlue },
               display: { xs: "none", sm: "flex" },
             }}
           >
