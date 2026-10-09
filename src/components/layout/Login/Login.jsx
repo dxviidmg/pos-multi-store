@@ -193,7 +193,7 @@ function Login() {
                 },
               }}
             >
-              Registrar nuevo cliente
+              Crear mi negocio
             </Button>
           </Stack>
         </Paper>
