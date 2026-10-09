@@ -72,10 +72,10 @@ export const getTheme = (mode) => {
             '&.Mui-focusVisible': { boxShadow: `0 0 0 3px ${alpha(colors.secondary, 0.6)}` },
           },
           contained: {
-            background: t.primary,
+            background: t.buttonBg,
             color: colors.white,
             '&:hover': {
-              background: t.primaryHover,
+              background: t.buttonHover,
               boxShadow: colors.shadow.brand,
               transform: 'translateY(-1px)',
             },
