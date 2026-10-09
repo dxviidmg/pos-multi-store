@@ -2,13 +2,13 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCreateTenant } from "../../../hooks/useRegistration";
 import { useMercadoPago } from "../../../hooks/useMercadoPago";
+import AuthLayout from "../../layout/AuthLayout/AuthLayout";
 import CustomButton from "../../ui/Button/Button";
-import { Box, Typography, Paper, CircularProgress, Alert } from "@mui/material";
+import { Box, Typography, CircularProgress, Alert } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { checkTenantExists, getAvailablePlans } from "../../../api/registration";
 import { formatCurrency } from "../../../utils/utils";
-import { pageContainerSx, overlayGradientSx, formPaperSx, secondaryButtonSx } from "./Registration.styles";
-import RegistrationHeader from "./RegistrationHeader";
+import { secondaryButtonSx } from "./Registration.styles";
 import RegistrationSuccess from "./RegistrationSuccess";
 import BusinessStep from "./BusinessStep";
 import OwnerStep from "./OwnerStep";
@@ -157,10 +157,13 @@ const Registration = () => {
   const isFormIncomplete = !isStep1Valid || !isStep2Valid || !selectedPlan;
 
   return (
-    <Box sx={pageContainerSx}>
-      <Box sx={overlayGradientSx} />
-
-      <Paper elevation={0} sx={formPaperSx}>
+    <AuthLayout
+      headline="Crear tu negocio"
+      subtitle="Punto de venta multi-tienda para vender, controlar inventario y traspasar producto."
+      activeStep={activeStep}
+      stepLabels={STEP_LABELS}
+    >
+      <Box sx={{ width: "100%", maxWidth: 440 }}>
         {registered ? (
           <RegistrationSuccess
             ownerUsername={ownerUsername}
@@ -169,8 +172,6 @@ const Registration = () => {
           />
         ) : (
           <>
-            <RegistrationHeader activeStep={activeStep} stepLabels={STEP_LABELS} />
-
             <Box sx={{ px: 4, pt: 2.5, pb: 2.5 }}>
               {activeStep === 0 && (
                 <BusinessStep
@@ -255,8 +256,8 @@ const Registration = () => {
             </Box>
           </>
         )}
-      </Paper>
-    </Box>
+      </Box>
+    </AuthLayout>
   );
 };
 
