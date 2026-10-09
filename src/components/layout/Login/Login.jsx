@@ -170,10 +170,11 @@ function Login() {
               startIcon={<LoginIcon />}
               sx={{
                 py: 1.25, mt: 1, borderRadius: '10px', fontWeight: 700, fontSize: '0.95rem',
-                background: colors.gradient.brand,
+                background: colors.accent,
+                color: colors.onAccent,
                 boxShadow: colors.shadow.brand,
                 '&:hover': {
-                  background: colors.gradient.brandHover,
+                  background: colors.accentDark,
                   boxShadow: colors.shadow.brandHover,
                 },
               }}
