@@ -7,7 +7,11 @@ export const inputSx = {
   "& .MuiOutlinedInput-root": {
     borderRadius: "10px",
     fontSize: "0.9rem",
-    backgroundColor: "background.paper",
+    backgroundColor: colors.white,
+    // Input text always dark in auth pages (light mode only)
+    "& input": {
+      color: (theme) => theme.palette.text.primary,
+    },
     "&.Mui-focused fieldset": {
       borderColor: colors.primaryLight,
       borderWidth: "1px",
@@ -29,8 +33,12 @@ export const getShortNameInputSx = (status) => (theme) => {
     "& .MuiOutlinedInput-root": {
       borderRadius: "10px",
       fontSize: "0.9rem",
-      backgroundColor: "background.paper",
+      backgroundColor: colors.white,
       transition: "all 0.2s ease",
+      // Input text always dark in auth pages (light mode only)
+      "& input": {
+        color: (theme) => theme.palette.text.primary,
+      },
       "& fieldset": {
         borderColor: main ? alpha(main, 0.6) : undefined,
         transition: "border-color 0.2s ease",
