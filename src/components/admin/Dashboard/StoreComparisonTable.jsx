@@ -1,8 +1,9 @@
 import React from "react";
 import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import { formatCurrency } from "../../../utils/currency";
+import { colors } from "../../../theme/colors";
 
-const HEAD_CELL_SX = { fontWeight: 600 };
+const HEAD_CELL_SX = { fontWeight: 600, color: "common.white", backgroundColor: colors.sidebar };
 
 const getMarginColor = (margin) => {
   if (margin > 20) return "success.main";
@@ -22,7 +23,7 @@ const StoreComparisonTable = ({ stores, metricType, month, daysInPeriod }) => {
       <TableContainer component={Paper} variant="outlined">
         <Table size="small">
           <TableHead>
-            <TableRow sx={{ backgroundColor: "action.hover" }}>
+            <TableRow sx={{ backgroundColor: colors.sidebar }}>
               <TableCell sx={HEAD_CELL_SX}>Tienda</TableCell>
               {isAmount ? (
                 <>

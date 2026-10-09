@@ -2,6 +2,7 @@ import React, { memo } from "react";
 import { Box, ButtonBase } from "@mui/material";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import { STORE_TYPES } from "../../../constants";
+import { colors } from "../../../theme/colors";
 
 const managersFilter = { value: "managers", label: () => "Administradores" };
 const investmentFilter = { value: "investment", label: () => "Inversión", Icon: AttachMoneyIcon };
@@ -64,12 +65,12 @@ const StoreQuickFilters = ({ storeType, stores, value, onChange }) => {
                 flex: { xs: "0 0 auto", md: "1 1 0" }, gap: 0.75, px: 1.75, py: 0.9,
                 borderRadius: 1.25, whiteSpace: "nowrap",
                 fontSize: "0.8125rem", fontWeight: 600,
-                color: selected ? "primary.main" : "text.secondary",
-                bgcolor: selected ? "background.paper" : "transparent",
+                color: selected ? "common.white" : "text.secondary",
+                bgcolor: selected ? colors.sidebar : "transparent",
                 boxShadow: selected ? (theme) => theme.shadows[1] : "none",
                 transition: "background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease",
-                "&:hover": { color: selected ? "primary.main" : "text.primary" },
-                "&.Mui-focusVisible": { outline: "2px solid", outlineColor: "primary.main", outlineOffset: 1 },
+                "&:hover": { color: selected ? "common.white" : "text.primary" },
+                "&.Mui-focusVisible": { outline: "2px solid", outlineColor: colors.sidebar, outlineOffset: 1 },
               }}
             >
               {Icon && <Icon sx={{ fontSize: 18 }} />}

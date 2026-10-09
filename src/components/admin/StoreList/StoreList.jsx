@@ -37,7 +37,7 @@ const firstStoreButtonSx = {
   px: 4,
   py: 1.2,
   fontSize: "1rem",
-  bgcolor: "primary.main",
+  bgcolor: colors.sidebar,
   boxShadow: colors.shadow.brand,
   "&:hover": {
     boxShadow: colors.shadow.brandHover,
