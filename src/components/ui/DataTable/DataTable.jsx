@@ -1,8 +1,10 @@
 import React, { memo, useState, useMemo } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { Box, TextField, Typography, Paper, LinearProgress } from "@mui/material";
+import { alpha } from "@mui/material/styles";
 import InboxOutlinedIcon from "@mui/icons-material/InboxOutlined";
 import { TableSkeleton } from "../Skeleton/Skeleton";
+import { colors } from "../../../theme/colors";
 
 const searchInObject = (obj, search) => {
   if (typeof obj === "string") return obj.toLowerCase().includes(search.toLowerCase());
@@ -157,10 +159,10 @@ const DataTable = ({
             borderRadius: 1.5,
             overflow: 'hidden',
             "& .MuiDataGrid-columnHeaders": {
-              backgroundColor: 'tableHead.main',
-              color: 'tableHead.contrastText',
+              backgroundColor: colors.sidebar,
+              color: 'common.white',
               borderBottom: '1px solid',
-              borderColor: 'divider',
+              borderColor: alpha(colors.white, 0.12),
               minHeight: '36px !important',
               maxHeight: '36px !important',
             },
@@ -174,6 +176,9 @@ const DataTable = ({
               py: 0.5, px: 1, fontSize: '0.8125rem',
               whiteSpace: 'normal !important', lineHeight: '1.4 !important',
               justifyContent: 'center', textAlign: 'center',
+              color: 'text.primary',
+              borderBottom: '1px solid',
+              borderColor: 'divider',
               '& .MuiButtonBase-root': { transform: 'scale(0.85)', minWidth: 0, px: 0.5 },
             },
             "& .MuiDataGrid-row": {
