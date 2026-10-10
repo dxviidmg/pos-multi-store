@@ -6,6 +6,7 @@ import AuthLayout from "../../layout/AuthLayout/AuthLayout";
 import CustomButton from "../../ui/Button/Button";
 import { Box, Typography, CircularProgress, Alert } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import LogoWhite from "../../../assets/images/logo-white.svg";
 import { checkTenantExists, getAvailablePlans } from "../../../api/registration";
 import { formatCurrency } from "../../../utils/utils";
 import { secondaryButtonSx } from "./Registration.styles";
@@ -172,6 +173,11 @@ const Registration = () => {
           />
         ) : (
           <>
+            {/* Logo solo en móvil */}
+            <Box sx={{ display: { xs: 'flex', md: 'none' }, justifyContent: 'center', mb: 4, pt: 2 }}>
+              <Box component="img" src={LogoWhite} alt="SmartVenta" width={120} height="auto" sx={{ maxWidth: 120, height: 'auto' }} />
+            </Box>
+
             <Box sx={{ px: 4, pt: 2.5, pb: 2.5 }}>
               {activeStep === 0 && (
                 <BusinessStep
