@@ -24,6 +24,11 @@ import {
   getReservedStock,
   getAvailableStockForActiveCart,
 } from "./stockCalculators";
+import {
+  appendNewItem,
+  incrementItemAt,
+  setItemQuantity,
+} from "./itemManipulators";
 
 const createEmptyCart = (id) => ({
   id,
@@ -44,35 +49,6 @@ const initialState = {
  * La implementación está en stockCalculators.js
  */
 export { getReservedStock };
-
-// Agrega un producto nuevo al carrito con el precio que le corresponde
-const appendNewItem = (activeCart, payload) => {
-  const product_price = calculateProductPrice(
-    payload.quantity,
-    payload.product.prices,
-    aClientIsSelected(activeCart.client)
-  );
-  return [...activeCart.cart, { ...payload, product_price }];
-};
-
-// Suma `quantity` al producto que ya está en el carrito
-const incrementItemAt = (cart, index, quantity) =>
-  cart.map((item, i) => (i === index ? { ...item, quantity: item.quantity + quantity } : item));
-
-// Cambia la cantidad de un producto del carrito y recalcula su precio
-const setItemQuantity = (activeCart, product, quantity) => {
-  const clientSelected = aClientIsSelected(activeCart.client);
-  return activeCart.cart.map((item) =>
-    item.id === product.id
-      ? {
-          ...item,
-          quantity,
-          product_price: calculateProductPrice(quantity, item.product.prices, clientSelected),
-          available_stock: product.available_stock || item.available_stock,
-        }
-      : item
-  );
-};
 
 const updateActiveCart = (state, updates) => ({
   ...state,
@@ -137,7 +113,7 @@ const multiCartReducer = (state = initialState, action) => {
       if (activeCart.movementType === MOVEMENT_TYPES.ADD_STOCK) {
         const updatedCart = exists
           ? incrementItemAt(activeCart.cart, existingProductIndex, action.payload.quantity)
-          : appendNewItem(activeCart, action.payload);
+          : appendNewItem(activeCart, action.payload, calculateProductPrice, aClientIsSelected);
         return updateActiveCart(state, { cart: updatedCart });
       }
 
@@ -161,7 +137,7 @@ const multiCartReducer = (state = initialState, action) => {
         return state;
       }
 
-      return updateActiveCart(state, { cart: appendNewItem(activeCart, action.payload) });
+      return updateActiveCart(state, { cart: appendNewItem(activeCart, action.payload, calculateProductPrice, aClientIsSelected) });
     }
 
     case REMOVE_FROM_CART: {
@@ -182,7 +158,7 @@ const multiCartReducer = (state = initialState, action) => {
 
       // Si es "agregar", no validar stock
       if (activeCart.movementType === MOVEMENT_TYPES.ADD_STOCK) {
-        return updateActiveCart(state, { cart: setItemQuantity(activeCart, product, newQuantity) });
+        return updateActiveCart(state, { cart: setItemQuantity(activeCart, product, newQuantity, calculateProductPrice, aClientIsSelected) });
       }
 
       const availableStock = getAvailableStockForActiveCart(state, activeCart, product);
@@ -197,7 +173,7 @@ const multiCartReducer = (state = initialState, action) => {
         logger.warn(`Stock insuficiente. Disponible: ${availableStock}, Solicitado: ${newQuantity}`);
       }
 
-      return updateActiveCart(state, { cart: setItemQuantity(activeCart, product, clampedQuantity) });
+      return updateActiveCart(state, { cart: setItemQuantity(activeCart, product, clampedQuantity, calculateProductPrice, aClientIsSelected) });
     }
 
     case CHANGE_PRICE: {
