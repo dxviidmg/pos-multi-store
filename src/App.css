@@ -102,6 +102,7 @@ h1, h2, h3 {
   font-size: 1.25rem;
   font-weight: 600;
   color: var(--color-primary, #0030cc);
+  text-align: center;
 }
 
 /* Card titles (Typography variant h5/subtitle2) */
@@ -111,12 +112,23 @@ h1, h2, h3 {
 .card h5,
 .card h6 {
   color: var(--color-primary, #0030cc);
+  text-align: center;
+}
+
+/* Modal titles centered */
+.MuiDialogTitle-root {
+  text-align: center !important;
+  font-weight: 600 !important;
 }
 
 /* DataGrid header cells */
 .MuiDataGrid-columnHeaderTitle {
-  color: var(--color-primary, #0030cc) !important;
+  color: white !important;
   font-weight: 600 !important;
+}
+
+.MuiDataGrid-columnHeader {
+  background-color: #0B1B4D !important;
 }
 
 /* Utility classes */
