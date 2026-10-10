@@ -101,6 +101,22 @@ h1, h2, h3 {
   margin: 0 0 0.25rem 0;
   font-size: 1.25rem;
   font-weight: 600;
+  color: var(--color-primary, #0030cc);
+}
+
+/* Card titles (Typography variant h5/subtitle2) */
+.card h2,
+.card h3,
+.card h4,
+.card h5,
+.card h6 {
+  color: var(--color-primary, #0030cc);
+}
+
+/* DataGrid header cells */
+.MuiDataGrid-columnHeaderTitle {
+  color: var(--color-primary, #0030cc) !important;
+  font-weight: 600 !important;
 }
 
 /* Utility classes */
