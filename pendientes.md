@@ -46,18 +46,23 @@
 
 - **Usuarios sin sucursal que no son dueños** (rol `manager` o "Sin definir" en vista general) aterrizan en `/perfil/` con el menú vacío.
 
-## Deuda técnica restante (frontend)
+---
 
-| # | Qué pasa | Archivo | Prioridad |
-|---|---|---|---|
-| 1 | **`NotificationsMenu` montado dos veces** en `MainLayout` (cajas de escritorio y móvil), así que abre dos WebSocket. | `src/components/layout/MainLayout/MainLayout.jsx` | Media |
-| 2 | **`SaleList`:** el select "Tipo" tiene una sola opción (`Ventas`) y sigue visible. ¿Se quita o se reactiva el filtro de apartados? | `src/components/sales/SaleList/SaleList.jsx` | Baja |
-| 3 | **`PasswordField` + `UserInfoFields` repetidas** en `admin/Profile/PasswordSection.jsx` y `ui/UserModals/*`. | Consolidar en `src/components/ui/UserModals/` | Baja |
-| 4 | **Modales con `Box p:3` en lugar de `ModalBody`** (`CashFlowModal`, `ConversionModal`, `DiscountModal`). | Migrar a `ModalBody` para consistencia | Baja |
-| 5 | **`App.css`:** `.status-dot--danger` e `.icon-danger` tienen `#dc2626` fijo. | Pasar a variable CSS `--color-error` | Baja |
-| 6 | **`useProductSearch`:** en modo texto `fetchData` solo limpia resultados. | `src/components/products/SearchProduct/useProductSearch.js` | Baja |
+## Frontend Polish — Mejoras opcionales (sin impacto en backend)
 
-### `eslint-disable` justificados
+**⚠️ IMPORTANTE:** Estos cambios son SOLO frontend, NO afectan API ni backend.  
+**Cuándo hacer:** Al final, próxima sprint. El proyecto funciona perfectamente sin ellos.
+
+| # | Qué pasa | Archivo | Tipo | Impacto |
+|---|---|---|---|---|
+| 1 | **`NotificationsMenu` montado 2x** en `MainLayout` (cajas escritorio + móvil) → abre dos WebSocket | `src/components/layout/MainLayout/MainLayout.jsx` | Consolidación | Rendimiento |
+| 2 | **`SaleList` select "Tipo" con 1 opción** (`Ventas`). ¿Quitar o reactivar filtro apartados? | `src/components/sales/SaleList/SaleList.jsx` | UI/UX | Visual |
+| 3 | **`PasswordField` + `UserInfoFields` repetidas** en `admin/Profile/PasswordSection.jsx` + `ui/UserModals/*` | Consolidar en `src/components/ui/UserModals/` | DRY | Mantenibilidad |
+| 4 | **Modales con `Box p:3`** en lugar de `ModalBody` (`CashFlowModal`, `ConversionModal`, `DiscountModal`) | Migrar a `ModalBody` para consistencia | Refactor UI | Consistencia |
+| 5 | **`App.css` hardcoded `#dc2626`** en `.status-dot--danger` e `.icon-danger` | Pasar a variable CSS `--color-error` | CSS | Mantenibilidad |
+| 6 | **`useProductSearch` limpieza manual** en modo texto (podría optimizarse) | `src/components/products/SearchProduct/useProductSearch.js` | Optimización | Pequeña |
+
+### `eslint-disable` justificados (no tocar)
 
 - **`hooks/useFetch.js`:** deps del llamador (necesario para refetch manual)
 - **`hooks/usePrinterStatus.js`:** cambiar deps altera la reconexión WebSocket
