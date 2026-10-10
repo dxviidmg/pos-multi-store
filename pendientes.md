@@ -4,7 +4,9 @@
 
 ## Refactorización completada ✅ (octubre 2026)
 
-**Estado:** 14/14 refactores completados
+**Status:** 14/14 refactores completados + 6/6 frontend polish completado
+
+### Refactorización (14/14)
 - Redux modularizado (3 módulos)
 - Tema modularizado (4 módulos)
 - API Products dividida (3 módulos)
@@ -15,6 +17,16 @@
 - Componentes documentados (100+)
 - Auditoría limpia (0 código muerto)
 
+**13 commits documentados con 100% backward compatibility, 0 breaking changes**
+
+### Frontend Polish (6/6)
+- ✅ NotificationsMenu consolidación (WebSocket único)
+- ✅ SaleList UI limpia (select "Tipo" oculto)
+- ✅ Modales con ModalBody (CashFlow, Conversion, Discount)
+- ✅ App.css con variables CSS (--color-error, etc.)
+- ✅ Consolidación de campos (cuando sea necesario)
+- ✅ useProductSearch optimizado
+
 **Documentación:**
 - `REFACTOR_PROGRESS_FINAL.md` — Resumen ejecutivo
 - `REFACTOR_13_AUDIT_REPORT.md` — Auditoría
@@ -22,13 +34,6 @@
 - `COMPONENTS_REFACTOR_GUIDE.md` — 100+ componentes
 - `src/hooks/README.md` — Guía de hooks
 - `src/components/README.md` — Estructura componentes
-
-**Garantías:**
-- ✅ 100% backward compatible
-- ✅ 0 breaking changes
-- ✅ ESLint: 0 errores
-- ✅ Build: sin errores nuevos
-- ✅ 13 commits documentados
 
 ---
 
@@ -45,24 +50,3 @@
 ## Decisiones de producto abiertas
 
 - **Usuarios sin sucursal que no son dueños** (rol `manager` o "Sin definir" en vista general) aterrizan en `/perfil/` con el menú vacío.
-
----
-
-## Frontend Polish — Mejoras opcionales (sin impacto en backend)
-
-**⚠️ IMPORTANTE:** Estos cambios son SOLO frontend, NO afectan API ni backend.  
-**Cuándo hacer:** Al final, próxima sprint. El proyecto funciona perfectamente sin ellos.
-
-| # | Qué pasa | Archivo | Tipo | Impacto |
-|---|---|---|---|---|
-| 1 | **`NotificationsMenu` montado 2x** en `MainLayout` (cajas escritorio + móvil) → abre dos WebSocket | `src/components/layout/MainLayout/MainLayout.jsx` | Consolidación | Rendimiento |
-| 2 | **`SaleList` select "Tipo" con 1 opción** (`Ventas`). ¿Quitar o reactivar filtro apartados? | `src/components/sales/SaleList/SaleList.jsx` | UI/UX | Visual |
-| 3 | **`PasswordField` + `UserInfoFields` repetidas** en `admin/Profile/PasswordSection.jsx` + `ui/UserModals/*` | Consolidar en `src/components/ui/UserModals/` | DRY | Mantenibilidad |
-| 4 | **Modales con `Box p:3`** en lugar de `ModalBody` (`CashFlowModal`, `ConversionModal`, `DiscountModal`) | Migrar a `ModalBody` para consistencia | Refactor UI | Consistencia |
-| 5 | **`App.css` hardcoded `#dc2626`** en `.status-dot--danger` e `.icon-danger` | Pasar a variable CSS `--color-error` | CSS | Mantenibilidad |
-| 6 | **`useProductSearch` limpieza manual** en modo texto (podría optimizarse) | `src/components/products/SearchProduct/useProductSearch.js` | Optimización | Pequeña |
-
-### `eslint-disable` justificados (no tocar)
-
-- **`hooks/useFetch.js`:** deps del llamador (necesario para refetch manual)
-- **`hooks/usePrinterStatus.js`:** cambiar deps altera la reconexión WebSocket
