@@ -1,9 +1,15 @@
 import React, { useMemo } from "react";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { Box, Typography } from "@mui/material";
-import { CHART_COLORS, DAY_NAMES_SHORT } from "../../../utils/utils";
+import { CHART_COLORS } from "../../../utils/chart";
+import { DAY_NAMES_SHORT } from "../../../utils/date";
+import { CHART_LEGEND_TOP, CHART_TICK_STYLE } from "./chartStyles";
+
+const AVG_TICKET_MARGIN = { top: 50, bottom: 40, left: 70, right: 10 };
 
 const AvgTicketChart = ({ data, metricType }) => {
+  const isPrimaryAmount = metricType === "total";
+
   const series = useMemo(() => {
     if (!data?.sales?.length || !data?.stores?.length) return [];
 
@@ -17,41 +23,34 @@ const AvgTicketChart = ({ data, metricType }) => {
       grouped[s.store_name][day].count += 1;
     });
 
-    const isPrimaryAmount = metricType === "total";
+    const weeks = Math.ceil(new Date(data.sales[0].created_at).getDate() / 7);
 
     return data.stores.map((store, i) => ({
       data: grouped[store.name].map((d) => {
-        if (isPrimaryAmount) {
-          return d.count ? Math.round((d.total / d.count) * 100) / 100 : 0;
-        } else {
-          return d.count ? Math.round((d.count / Math.ceil(new Date(data.sales[0].created_at).getDate() / 7)) * 100) / 100 : 0;
-        }
+        if (!d.count) return 0;
+        const value = isPrimaryAmount ? d.total / d.count : d.count / weeks;
+        return Math.round(value * 100) / 100;
       }),
       label: store.name,
       color: CHART_COLORS[i % CHART_COLORS.length],
     }));
-  }, [data, metricType]);
+  }, [data, isPrimaryAmount]);
 
   if (!series.length) return null;
-
-  const isPrimaryAmount = metricType === "total";
-  const title = isPrimaryAmount ? "Ticket promedio" : "Transacciones";
 
   return (
     <Box sx={{ width: "100%", height: "100%" }}>
       <Typography variant="h6" sx={{ mb: 2, fontWeight: 500, color: "text.primary" }}>
-        {title} por día de la semana
+        {isPrimaryAmount ? "Ticket promedio" : "Transacciones"} por día de la semana
       </Typography>
       <BarChart
-        xAxis={[{ data: DAY_NAMES_SHORT, scaleType: "band", tickLabelStyle: { fontSize: 11, fill: "#64748b" } }]}
-        yAxis={[{ tickLabelStyle: { fontSize: 11, fill: "#64748b" } }]}
+        xAxis={[{ data: DAY_NAMES_SHORT, scaleType: "band", tickLabelStyle: CHART_TICK_STYLE }]}
+        yAxis={[{ tickLabelStyle: CHART_TICK_STYLE }]}
         series={series}
         height={300}
-        margin={{ top: 50, bottom: 40, left: 70, right: 10 }}
+        margin={AVG_TICKET_MARGIN}
         borderRadius={4}
-        slotProps={{
-          legend: { direction: "row", position: { vertical: "top", horizontal: "middle" }, padding: 0 },
-        }}
+        slotProps={{ legend: CHART_LEGEND_TOP }}
         grid={{ horizontal: true }}
       />
     </Box>

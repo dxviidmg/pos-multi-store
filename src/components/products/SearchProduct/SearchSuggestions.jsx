@@ -35,7 +35,7 @@ const SearchSuggestions = ({
       open={open}
       anchorEl={anchorEl}
       placement="bottom-start"
-      style={{ zIndex: 1300, width }}
+      sx={{ zIndex: (theme) => theme.zIndex.modal, width }}
       modifiers={[{ name: "offset", options: { offset: [0, 4] } }]}
     >
       <ClickAwayListener onClickAway={onClickAway}>

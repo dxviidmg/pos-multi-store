@@ -1,41 +1,28 @@
-import { logger } from "../../../utils/logger";
 import React, { useMemo, useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { selectCart, selectMovementType, selectClient } from "../../../redux/cart/selectors";
-import CustomModal from "../../ui/Modal/Modal";
-import CustomButton from "../../ui/Button/Button";
-import { cleanCart, removeClientfromCart, addClientToCart } from "../../../redux/cart/cartActions";
-import { createSale, getSale } from "../../../api/sales";
-import { showSuccess, showRequestError } from "../../../utils/alerts";
-import { useUser } from "../../../context/UserContext";
-import { handlePrintTicket } from "../../../utils/utils";
-import { usePrinterStatus } from "../../../hooks/usePrinterStatus";
-import SearchClient from "../../clients/SearchClient/SearchClient";
-import ClientModal from "../../clients/ClientModal/ClientModal";
-import SearchIcon from "@mui/icons-material/Search";
-import { CustomSpinner } from "../../ui/Spinner/Spinner";
-import ReferencePaymentField from "../ReferencePaymentField/ReferencePaymentField";
-import { formatCurrency } from "../../../utils/utils";
-import { Grid, TextField, Radio, RadioGroup, FormControlLabel, Checkbox, FormLabel, Alert, Chip, Box, useMediaQuery, useTheme } from "@mui/material";
+import { Grid, Alert, useMediaQuery, useTheme } from "@mui/material";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
-import MoneyOffIcon from "@mui/icons-material/MoneyOff";
-import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
-import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
+import { selectCart, selectMovementType, selectClient } from "../../../redux/cart/selectors";
+import { cleanCart, removeClientFromCart } from "../../../redux/cart/cartActions";
+import CustomModal, { ModalBody } from "../../ui/Modal/Modal";
+import CustomButton from "../../ui/Button/Button";
+import { CustomSpinner } from "../../ui/Spinner/Spinner";
+import { createSale, getSale } from "../../../api/sales";
+import { showSuccess, showRequestError } from "../../../utils/alerts";
+import { handlePrintTicket } from "../../../utils/print";
+import { roundUpCustom } from "../../../utils/currency";
+import { useUser } from "../../../context/UserContext";
+import { useCtrlShortcut } from "../../../hooks/useCtrlShortcut";
 import { MOVEMENT_TYPES } from "../../../constants";
-import { useModal } from "../../../hooks/useModal";
+import PaymentSubmitPanel from "../shared/PaymentSubmitPanel";
+import { usePaymentMethods } from "./usePaymentMethods";
+import PaymentCard from "./PaymentCard";
+import PaymentClientSection from "./PaymentClientSection";
+import SaleExchangeSection from "./SaleExchangeSection";
+import PaymentTotals from "./PaymentTotals";
+import PaymentMethodsSection from "./PaymentMethodsSection";
 
-
-function roundUpCustom(value) {
-  const intPart = Math.floor(value); // Parte entera
-  const decimalPart = value - intPart; // Parte decimal
-
-  if (decimalPart === 0) return value; // Si es entero, se queda igual
-  if (decimalPart <= 0.5) return intPart + 0.5; // Si es hasta 0.5, sube a 0.5
-  return Math.ceil(value); // Si es mayor a 0.5, sube al siguiente entero
-}
-
-const INITIAL_PAYMENT_STATE = { paidWith: 0, change: 0 };
 const INITIAL_SALE_EXCHANGE_STATE = { refunded: 0, payment: 0 };
 
 const PaymentModal = ({ isOpen, onClose }) => {
@@ -48,667 +35,207 @@ const PaymentModal = ({ isOpen, onClose }) => {
   const client = useSelector(selectClient);
   const { user } = useUser();
   const printer = user?.store_printer;
-  const [payment, setPayment] = useState(INITIAL_PAYMENT_STATE);
-  const [referencePayment, setReferencePayment] = useState("");
-  const [hideClient, setHideClient] = useState(true);
-  const [errorMessage, setErrorMessage] = useState("");
-  const clientModal = useModal();
+  const isReservation = movementType === MOVEMENT_TYPES.RESERVATION;
+  const canCharge = movementType === MOVEMENT_TYPES.SALE || isReservation;
 
+  const [hideClient, setHideClient] = useState(true);
   const [hideExchange, setHideExchange] = useState(true);
   const [saleExchange, setSaleExchange] = useState(INITIAL_SALE_EXCHANGE_STATE);
-
-  const [paymentMethods, setPaymentMethods] = useState({
-    type: "radio", // Tipo de pago inicial.
-    methods: { EF: 0, TA: 0, TR: 0 }, // Valores iniciales de los métodos de pago.
-  });
-
+  const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const isSubmittingRef = useRef(false);
-  const { connected: printerConnected, error: printerError } = usePrinterStatus(printer, { triggerDep: isOpen });
-
-  useEffect(() => {
-    if (isOpen) {
-      setTimeout(() => {
-        inputPaymentRef.current?.focus();
-      }, 100);
-      if (movementType === MOVEMENT_TYPES.RESERVATION) {
-        setHideClient(false);
-      }
-    }
-  }, [isOpen, movementType]);
 
   const { total, totalDiscount } = useMemo(() => {
-    const total = roundUpCustom(
-      cart.reduce((acc, item) => acc + item.product_price * item.quantity, 0)
-    );
-
+    const total = roundUpCustom(cart.reduce((acc, item) => acc + item.product_price * item.quantity, 0));
     const totalDiscount = client?.discount_percentage_complement
       ? roundUpCustom(total * (client.discount_percentage_complement / 100))
       : total;
-
     return { total, totalDiscount };
   }, [cart, client]);
 
-  const handleCreateSaleRef = useRef(null);
+  const {
+    payment,
+    resetPayment,
+    paymentMethods,
+    referencePayment,
+    setReferencePayment,
+    needsReference,
+    selectedMethod,
+    isSubmitDisabled,
+    paymentList,
+    handleChangePayments,
+    handlePaymentValueChange,
+    handlePaidWithChange,
+  } = usePaymentMethods({ totalDiscount, movementType, refunded: saleExchange.refunded, clientId: client?.id });
 
   useEffect(() => {
-    const handleShortcut = (event) => {
-      if (event.ctrlKey && event.key === "g") {
-        event.preventDefault();
-        if (isOpen && (movementType === MOVEMENT_TYPES.SALE || movementType === MOVEMENT_TYPES.RESERVATION)) {
-          handleCreateSaleRef.current?.(!!printer);
-        }
-      }
-    };
-  
-    window.addEventListener("keydown", handleShortcut);
-    return () => window.removeEventListener("keydown", handleShortcut);
-  }, [printer, isOpen, movementType]);
-
-  useEffect(() => {
-    const handleRemoveClient = (event) => {
-      if (event.ctrlKey && (event.key === "o" || event.key === "O")) {
-        event.preventDefault();
-        dispatch(removeClientfromCart());
-      }
-    };
-    window.addEventListener("keydown", handleRemoveClient);
-    return () => window.removeEventListener("keydown", handleRemoveClient);
-  }, [dispatch]);
-
-
-  useEffect(() => {
-    if (movementType === MOVEMENT_TYPES.RESERVATION) {
-      setPaymentMethods({
-        type: "radio",
-        methods: { EF: payment.paidWith || 1, TA: 0, TR: 0 },
-      });
-    } else {
-      setPaymentMethods({
-        type: "radio", // Por defecto, "Único".
-        methods: { EF: totalDiscount, TA: 0, TR: 0 }, // Efectivo seleccionado.
-      });
-    }
-  }, [totalDiscount, movementType]);
-
-  const handleChangePayments = (e) => {
-    const { name, value } = e.target;
-
-    if (name === "paymentType") {
-      const newMethods =
-        value === "radio"
-          ? { EF: totalDiscount, TA: 0, TR: 0 }
-          : { EF: 0, TA: 0, TR: 0 };
-      setPaymentMethods({
-        type: value,
-        methods: newMethods,
-      });
-      setPayment({
-        paidWith: totalDiscount - saleExchange.refunded,
-        change: 0,
-      });
-    } else {
-      const updatedMethods =
-        paymentMethods.type === "radio"
-          ? { [value]: totalDiscount }
-          : {
-              ...paymentMethods.methods,
-              [value]: paymentMethods.methods[value] ? 0 : 0.01,
-            };
-
-      if (!("EF" in updatedMethods)) {
-        const value = updatedMethods.TA || updatedMethods.TR;
-        setPayment({ paidWith: value - saleExchange.refunded, change: 0 });
-      }
-      setPaymentMethods((prev) => ({
-        ...prev,
-        methods: updatedMethods,
-      }));
-    }
-  };
-
-  const handlePaymentValueChange = (method, value) => {
-    setPaymentMethods((prev) => ({
-      ...prev,
-      methods: {
-        ...prev.methods,
-        [method]: parseFloat(value) || 0,
-      },
-    }));
-  };
-
-  const totalPaymentInput =
-    (Object.values(paymentMethods.methods).reduce(
-      (acc, curr) => acc + curr,
-      0
-    ) *
-      100) /
-    100;
-
-  const convertPaymentMethodsToList = () => {
-    return Object.entries(paymentMethods.methods)
-      .filter(([method, amount]) => amount > 0)
-      .map(([method, amount]) => ({
-        payment_method: method,
-        amount: amount,
-      }));
-  };
+    if (!isOpen) return undefined;
+    const timer = setTimeout(() => inputPaymentRef.current?.focus(), 100);
+    if (isReservation) setHideClient(false);
+    return () => clearTimeout(timer);
+  }, [isOpen, movementType, isReservation]);
 
   const handleCreateSale = async (printTicket = false) => {
-    if (isSubmittingRef.current) return; // 🔒 lock inmediato
+    if (isSubmittingRef.current) return;
+
+    if (movementType === MOVEMENT_TYPES.SALE && (payment.paidWith === 0 || payment.change < 0)) {
+      setErrorMessage("Pago debe ser igual o mayor a la cantidad a cobrar");
+      return;
+    }
+
     isSubmittingRef.current = true;
     setIsLoading(true);
-
     try {
-      logger.log(payment)
-      if (
-        movementType === MOVEMENT_TYPES.SALE &&
-        (payment.paidWith === 0 || payment.change < 0)
-      ) {
-        setErrorMessage("Pago debe ser igual o mayor a la cantidad a cobrar");
-        setIsLoading(false);
-        return;
-      }
-
-      const paymentList = convertPaymentMethodsToList();
-
       const data = {
         client: client?.id,
         total: totalDiscount,
-        store_products: cart.map((store_product) => ({
-          id: store_product.id,
-          quantity: store_product.quantity,
-          name: store_product.product.name,
-          code: store_product.product.code,
-          price:
-            store_product.product_price *
-            ((client?.discount_percentage_complement ?? 100) * 0.01),
+        store_products: cart.map((storeProduct) => ({
+          id: storeProduct.id,
+          quantity: storeProduct.quantity,
+          name: storeProduct.product.name,
+          code: storeProduct.product.code,
+          price: storeProduct.product_price * ((client?.discount_percentage_complement ?? 100) * 0.01),
         })),
         payments: paymentList,
         reference_payment: referencePayment,
         sale_exchange: saleExchange,
-        reservation_in_progress: movementType === MOVEMENT_TYPES.RESERVATION,
+        reservation_in_progress: isReservation,
       };
 
       const response = await createSale(data);
 
-      if (response.status === 201) {
-        if (printer && printTicket) {
-          handlePrintTicket("ticket", {
-            ...data,
-            id: response.data.id,
-            payment,
-          });
-        }
-
-        dispatch(removeClientfromCart());
-        dispatch(cleanCart());
-        onClose();
-        setPayment(INITIAL_PAYMENT_STATE);
-        setHideClient(true);
-        setSaleExchange(INITIAL_SALE_EXCHANGE_STATE);
-
-        showSuccess(movementType === MOVEMENT_TYPES.RESERVATION ? "Apartado registrado. Folio " + response.data.id : "Venta exitosa. Folio " + response.data.id, "", 3000);
-      } else {
-        throw new Error("Sale error");
+      if (printer && printTicket) {
+        handlePrintTicket("ticket", { ...data, id: response.data.id, payment });
       }
+
+      dispatch(removeClientFromCart());
+      dispatch(cleanCart());
+      onClose();
+      resetPayment();
+      setHideClient(true);
+      setSaleExchange(INITIAL_SALE_EXCHANGE_STATE);
+
+      showSuccess(`${isReservation ? "Apartado registrado" : "Venta exitosa"}. Folio ${response.data.id}`);
     } catch (error) {
       showRequestError("finalizar la venta", error);
     } finally {
-      isSubmittingRef.current = false; // 🔓 libera lock
+      isSubmittingRef.current = false;
       setIsLoading(false);
     }
   };
 
-  handleCreateSaleRef.current = handleCreateSale;
-
-  const handlePaidWithChange = (e) => {
-    let value = Number(e.target.value);
-
-    if (isNaN(value)) {
-      setPayment({
-        paidWith: 0,
-        change: 0,
-      });
-  } else {
-    // En apartado, máximo total - 1 (redondeado hacia abajo)
-    if (movementType === MOVEMENT_TYPES.RESERVATION) {
-      const maxReservation = Math.floor(totalDiscount) - 1;
-      value = Math.min(value, maxReservation);
-    }
-    setPayment({
-      paidWith: value,
-      change: value + saleExchange.refunded - totalDiscount,
-    });
-  }
-    if (movementType === MOVEMENT_TYPES.RESERVATION) {
-      const currentMethod = Object.entries(paymentMethods.methods).find(([, v]) => v > 0)?.[0] || "EF";
-      setPaymentMethods({
-        type: "radio",
-        methods: { EF: 0, TA: 0, TR: 0, [currentMethod]: value || 1 },
-      });
-    }
-  };
-
   const handleSearchSaleForChange = async () => {
-    const response = await getSale(saleExchange.id);
-    setSaleExchange({
-      ...response.data,
-      payment: totalDiscount - response.data.refunded,
-    });
+    setIsLoading(true);
+    try {
+      const response = await getSale(saleExchange.id);
+      setSaleExchange({ ...response.data, payment: totalDiscount - response.data.refunded });
+    } catch (error) {
+      showRequestError("buscar la venta", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleDisableButton = () => {
-    if (movementType === MOVEMENT_TYPES.RESERVATION) {
-      return payment.paidWith < 1 || Object.values(paymentMethods.methods).every((amount) => amount === 0) || !client;
-    }
-    return (
-      (paymentMethods.type === "checkbox" &&
-        totalPaymentInput !== totalDiscount) ||
-      Object.values(paymentMethods.methods).every((amount) => amount === 0) ||
-      (paymentMethods.type === "radio" &&
-        paymentMethods.methods.EF > payment.paidWith + saleExchange.refunded) ||
-      (paymentMethods.methods.TA > 0 && referencePayment === "") ||
-      (paymentMethods.methods.TR > 0 && referencePayment === "")
-    );
+  const handleToggleClient = () => {
+    // Si la sección está abierta, se cierra y se quita el cliente
+    if (!hideClient) dispatch(removeClientFromCart());
+    setHideClient((prev) => !prev);
   };
+
+  // Ctrl+G cobra con las mismas validaciones que el botón; la tecla se bloquea siempre en la pantalla de venta
+  useCtrlShortcut("g", () => {
+    if (isOpen && canCharge && !isSubmitDisabled) handleCreateSale(!!printer);
+  });
+
+  // Ctrl+O quita el cliente solo con el cobro abierto
+  useCtrlShortcut("o", () => {
+    if (isOpen) dispatch(removeClientFromCart());
+  });
 
   return (
     <>
-      <CustomSpinner isLoading={isLoading}></CustomSpinner>
-      <CustomModal 
-        showOut={isOpen} 
-        onClose={onClose}
-        title={movementType === MOVEMENT_TYPES.RESERVATION ? "Registrar apartado" : "Finalizar venta"}
-      >
-        <Grid container sx={{ padding: '1rem', backgroundColor: 'modalBody.main' }}>
-          {movementType === MOVEMENT_TYPES.RESERVATION && (
-            <Grid item xs={12} sx={{ marginBottom: '1rem' }}>
-              <Alert severity="info" variant="filled">
-                El cliente deja un abono. El resto se liquida después.
-              </Alert>
-            </Grid>
-          )}
-          {errorMessage && (
-            <Grid item xs={12} sx={{ marginBottom: '1rem' }}>
-              <Alert severity="error" variant="filled" onClose={() => setErrorMessage("")}>
-                {errorMessage}
-              </Alert>
-            </Grid>
-          )}
-          {movementType !== MOVEMENT_TYPES.RESERVATION && (
-          <Grid item xs={12} className="card" sx={{ padding: '0.75rem !important', marginBottom: '1rem !important' }}>
-            <Grid container spacing={2}>
-              <Grid item xs={12} md={6}>
-                <CustomButton
-                  fullWidth
-                  onClick={() => {
-                    if (!hideClient) {
-                      // Está abierto → cerrar y limpiar
-                      setHideClient(true);
-                      dispatch(removeClientfromCart());
-                    } else {
-                      setHideClient(false);
-                    }
-                  }}
-                  startIcon={<PersonAddIcon />}
-                  color={!hideClient ? 'error' : 'primary'}
-                >
-                  {!hideClient ? 'Quitar cliente' : 'Agregar cliente'}
-                </CustomButton>
-              </Grid>
-
-              <Grid item xs={12} md={6}>
-                <CustomButton
-                  fullWidth
-                  onClick={(e) => setHideExchange((prevState) => !prevState)}
-                  startIcon={<SwapHorizIcon />}
-                >
-                  Intercambio de mercancia
-                </CustomButton>
-              </Grid>
-            </Grid>
-          </Grid>
-          )}
-
-          <Grid item xs={12} className="card" hidden={movementType === MOVEMENT_TYPES.RESERVATION ? false : hideClient} sx={{ padding: '0.75rem !important', marginBottom: '1rem !important' }}>
-            {/* Encabezado */}
-            <p style={{ marginBottom: '0.5rem', fontWeight: 'bold'}}>{client?.id ? 'Cliente seleccionado' : 'Seleccionar cliente'}</p>
-
-            {/* Búsqueda + Crear cliente — solo si no hay cliente seleccionado */}
-            {!client?.id && (
-              <Grid container spacing={1}>
-                <Grid item xs={12}>
-                  <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-                    <Box sx={{ flex: 1 }}>
-                      <SearchClient />
-                    </Box>
-                    <CustomButton
-                      onClick={() => clientModal.open()}
-                      startIcon={<PersonAddAltIcon />}
-                      sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}
-                    >
-                      Crear cliente
-                    </CustomButton>
-                  </Box>
-                </Grid>
+      <CustomSpinner isLoading={isLoading} />
+      <CustomModal showOut={isOpen} onClose={onClose} title={isReservation ? "Registrar apartado" : "Finalizar venta"}>
+        <ModalBody>
+          <Grid container>
+            {isReservation && (
+              <Grid item xs={12} sx={{ marginBottom: "1rem" }}>
+                <Alert severity="info" variant="filled">
+                  El cliente deja un abono. El resto se liquida después.
+                </Alert>
               </Grid>
             )}
-
-            {/* Info del cliente seleccionado */}
-            {client?.id && (
-              <Grid container spacing={2} sx={{ alignItems: 'center' }}>
-                <Grid item xs={12} md={3}>
-                  <TextField size="small" fullWidth label="Nombre" value={client.full_name || ""} disabled />
-                </Grid>
-                <Grid item xs={12} md={3}>
-                  <TextField size="small" fullWidth label="Teléfono" value={client.phone_number || ""} disabled />
-                </Grid>
-                <Grid item xs={12} md={3}>
-                  <TextField size="small" fullWidth label="Descuento" value={client.discount_percentage != null ? `${client.discount_percentage}%` : ""} disabled />
-                </Grid>
-                <Grid item xs={12} md={3}>
-                  <CustomButton
-                    fullWidth
-                    onClick={() => dispatch(removeClientfromCart())}
-                    startIcon={<PersonRemoveIcon />}
-                    color="inherit"
-                    sx={{ opacity: 0.8, '&:hover': { opacity: 1 } }}
-                  >
-                    Quitar (Ctrl+O)
-                  </CustomButton>
-                </Grid>
+            {errorMessage && (
+              <Grid item xs={12} sx={{ marginBottom: "1rem" }}>
+                <Alert severity="error" variant="filled" onClose={() => setErrorMessage("")}>
+                  {errorMessage}
+                </Alert>
               </Grid>
             )}
-
-            <ClientModal isOpen={clientModal.isOpen} client={null} onClose={clientModal.close} onUpdate={(newClient) => { if (newClient) dispatch(addClientToCart(newClient)); }} />
-          </Grid>
-
-          <Grid item xs={12} className="card" hidden={hideExchange} sx={{ padding: '0.75rem !important', marginBottom: '1rem !important' }}>
-            <p style={{ marginBottom: '0.5rem', fontWeight: 'bold'}}>Cambio de mercancia</p>
-            <Grid container spacing={2}>
-              <Grid item xs={12} md={3}>
-                <TextField
-                  fullWidth
-                  size="small"
-                  label="# Venta"
-                  type="number"
-                  value={saleExchange.id}
-                  onChange={(e) =>
-                    setSaleExchange({
-                      ...saleExchange,
-                      id: Number(e.target.value),
-                    })
-                  }
-                />
-              </Grid>
-
-              <Grid item xs={12} md={3}>
-                <CustomButton fullWidth onClick={handleSearchSaleForChange}>
-                  <SearchIcon /> Buscar
-                </CustomButton>
-              </Grid>
-
-              <Grid item xs={12} md={3}>
-                <TextField
-                  fullWidth
-                  size="small"
-                  label="$ de devolución"
-                  value={formatCurrency(saleExchange.refunded)}
-                  disabled
-                />
-              </Grid>
-
-              <Grid item xs={12} md={3}>
-                <TextField
-                  fullWidth
-                  size="small"
-                  label="Cobrar"
-                  value={formatCurrency(saleExchange.payment)}
-                  disabled
-                />
-              </Grid>
-            </Grid>
-          </Grid>
-
-          <Grid item xs={12} className="card" sx={{ padding: '0.75rem !important', marginBottom: '1rem !important' }}>
-            <p style={{ marginBottom: '0.5rem', fontWeight: 'bold'}}>Totales</p>
-            <Grid container spacing={isMobile ? 1.5 : 2}>
-              <Grid item xs={isMobile ? 6 : (client?.id ? 3 : 4)}>
-                <TextField
-                  fullWidth
-                  size="small"
-                  label="Total"
-                  value={formatCurrency(total)}
-                  disabled
-                  sx={{
-                    '& .MuiInputBase-input.Mui-disabled': {
-                      fontWeight: 700,
-                      WebkitTextFillColor: '#04346b',
-                    },
-                    '& .MuiInputAdornment-root p': {
-                      fontWeight: 700,
-                      color: '#04346b',
-                      WebkitTextFillColor: '#04346b',
-                    },
-                    '& .MuiOutlinedInput-root.Mui-disabled': {
-                      backgroundColor: 'rgba(4, 52, 107, 0.06)',
-                      '& fieldset': { borderColor: '#04346b', borderWidth: 2 },
-                    },
-                    '& .MuiInputLabel-root.Mui-disabled': {
-                      color: '#04346b',
-                      fontWeight: 600,
-                    },
-                  }}
-                />
-              </Grid>
-
-              {client?.id && (
-                <Grid item xs={isMobile ? 6 : 3}>
-                  <TextField
-                    fullWidth
-                    size="small"
-                    label="Total con descuento"
-                    value={formatCurrency(totalDiscount)}
-                    disabled
-                    sx={{
-                      '& .MuiInputBase-input.Mui-disabled': {
-                        fontWeight: 700,
-                        WebkitTextFillColor: '#065a9e',
-                      },
-                      '& .MuiInputAdornment-root p': {
-                        fontWeight: 700,
-                        color: '#065a9e',
-                        WebkitTextFillColor: '#065a9e',
-                      },
-                      '& .MuiOutlinedInput-root.Mui-disabled': {
-                        backgroundColor: 'rgba(6, 90, 158, 0.08)',
-                        '& fieldset': { borderColor: '#065a9e', borderWidth: 2 },
-                      },
-                      '& .MuiInputLabel-root.Mui-disabled': {
-                        color: '#065a9e',
-                        fontWeight: 600,
-                      },
-                    }}
-                  />
-                </Grid>
-              )}
-              <Grid item xs={isMobile ? 6 : (client?.id ? 3 : 4)}>
-                <TextField
-                  fullWidth
-                  size="small"
-                  label="Pago con"
-                  type="text"
-                  value={payment.paidWith}
-                  onChange={handlePaidWithChange}
-                  inputRef={inputPaymentRef}
-                  InputProps={{ startAdornment: '$' }}
-                  sx={{
-                    '& .MuiInputBase-input': { fontWeight: 700 },
-                    '& .MuiInputAdornment-root p': { fontWeight: 700 },
-                  }}
-                />
-              </Grid>
-              <Grid item xs={isMobile ? 6 : (client?.id ? 3 : 4)}>
-                {paymentMethods.methods.TA > 0 ||
-                paymentMethods.methods.TR > 0 ? (
-                  <ReferencePaymentField value={referencePayment} onChange={setReferencePayment} />
-                ) : (
-                  <TextField
-                    fullWidth
-                    size="small"
-                    label="Cambio"
-                    value={formatCurrency(payment.change)}
-                    disabled
-                    sx={{
-                      '& .MuiInputBase-input.Mui-disabled': {
-                        fontWeight: 700,
-                        WebkitTextFillColor: payment.change > 0 ? '#11998e' : '#04346b',
-                      },
-                      '& .MuiInputAdornment-root p': {
-                        fontWeight: 700,
-                        color: payment.change > 0 ? '#11998e' : '#04346b',
-                        WebkitTextFillColor: payment.change > 0 ? '#11998e' : '#04346b',
-                      },
-                      '& .MuiOutlinedInput-root.Mui-disabled': {
-                        backgroundColor: payment.change > 0 ? 'rgba(17, 153, 142, 0.08)' : 'rgba(4, 52, 107, 0.06)',
-                        '& fieldset': {
-                          borderColor: payment.change > 0 ? '#11998e' : '#04346b',
-                          borderWidth: 2,
-                        },
-                      },
-                      '& .MuiInputLabel-root.Mui-disabled': {
-                        color: payment.change > 0 ? '#11998e' : '#04346b',
-                        fontWeight: 600,
-                      },
-                    }}
-                  />
-                )}
-              </Grid>
-            </Grid>
-          </Grid>
-
-          <Grid item xs={12} className="card" sx={{ padding: '0.75rem !important' }}>
-            <Grid container spacing={isMobile ? 1.5 : 2}>
-              <Grid item xs={isMobile ? 12 : (paymentMethods.type === "checkbox" ? 3 : 4)}>
-                <FormLabel>Tipo de pago:</FormLabel>
-                <RadioGroup
-                  value={paymentMethods.type}
-                  onChange={handleChangePayments}
-                  name="paymentType"
-                >
-                  <FormControlLabel value="radio" control={<Radio size="small" />} label="Único" />
-                  {movementType !== MOVEMENT_TYPES.RESERVATION && (
-                    <FormControlLabel value="checkbox" control={<Radio size="small" />} label="Mixto" />
-                  )}
-                </RadioGroup>
-              </Grid>
-
-              <Grid item xs={isMobile ? 6 : (paymentMethods.type === "checkbox" ? 3 : 4)}>
-                <FormLabel>Medios de pago:</FormLabel>
-                <RadioGroup
-                  value={
-                    movementType === MOVEMENT_TYPES.RESERVATION
-                      ? Object.entries(paymentMethods.methods).find(([, v]) => v > 0)?.[0] || "EF"
-                      : Object.entries(paymentMethods.methods).find(([, v]) => v === totalDiscount)?.[0] || ""
-                  }
-                  onChange={handleChangePayments}
-                  name="paymentMethod"
-                >
-                  {["EF", "TA", "TR"].map((method) => (
-                    <FormControlLabel
-                      key={method}
-                      value={method}
-                      control={
-                        paymentMethods.type === "radio" ? (
-                          <Radio size="small" />
-                        ) : (
-                          <Checkbox
-                            size="small"
-                            checked={
-                              (movementType === MOVEMENT_TYPES.RESERVATION && method === "EF") ||
-                              paymentMethods.methods[method] > 0
-                            }
-                            disabled={
-                              (method === "TR" && paymentMethods.methods.TA > 0) ||
-                              (method === "TA" && paymentMethods.methods.TR > 0)
-                            }
-                            onChange={handleChangePayments}
-                            value={method}
-                            name="paymentMethod"
-                          />
-                        )
-                      }
-                      label={
-                        method === "EF"
-                          ? "Efectivo"
-                          : method === "TA"
-                          ? "Tarjeta"
-                          : "Transferencia"
-                      }
-                    />
-                  ))}
-                </RadioGroup>
-              </Grid>
-
-              {paymentMethods.type === "checkbox" && (
-                <Grid item xs={isMobile ? 6 : 3}>
-                  <FormLabel>Cantidades:</FormLabel>
-                  <RadioGroup>
-                  {["EF", "TA", "TR"].map((method, index) => (
-                      <TextField
-                        key={method}
-                        size="small"
-                        type="number"
-                        placeholder={method === "EF" ? "Efectivo" : method === "TA" ? "Tarjeta" : "Transferencia"}
-                        fullWidth
-                        disabled={!paymentMethods.methods[method]}
-                        onChange={(e) => handlePaymentValueChange(method, e.target.value)}
-                        sx={{ mt: 1, '& .MuiInputBase-root': { height: 28 }, '& .MuiInputBase-input': { padding: '4px 8px', textAlign: 'center' }, visibility: paymentMethods.methods[method] > 0 ? 'visible' : 'hidden' }}
-                      />
-                  ))}
-                  </RadioGroup>
-                </Grid>
-              )}
-
-              <Grid item xs={isMobile ? 12 : (paymentMethods.type === "checkbox" ? 3 : 4)}>
-                {!isMobile && (
-                  <>
-                    <FormLabel sx={{ display: 'block', textAlign: 'center' }}>{printer ? 'Con impresión de ticket' : 'Sin impresión de ticket'}</FormLabel>
+            {!isReservation && (
+              <PaymentCard>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} md={6}>
                     <CustomButton
-                      disabled={handleDisableButton()}
                       fullWidth
-                      onClick={() => handleCreateSale(!!printer)}
-                      startIcon={<MoneyOffIcon />}
-                      sx={{ mt: 1 }}
+                      onClick={handleToggleClient}
+                      startIcon={<PersonAddIcon />}
+                      color={!hideClient ? "error" : "primary"}
                     >
-                      {movementType === MOVEMENT_TYPES.RESERVATION ? "Apartar" : "Cobrar"}<br />(Ctrl + G)
+                      {!hideClient ? "Quitar cliente" : "Agregar cliente"}
                     </CustomButton>
-                    {printer && (
-                      <Chip
-                        label={printerError || (printerConnected ? "Impresora conectada" : "Impresora desconectada")}
-                        color={printerConnected ? "success" : "error"}
-                        variant="filled"
-                        size="small"
-                        sx={{ mt: 1, width: '100%' }}
-                      />
-                    )}
-                  </>
-                )}
-                {isMobile && (
-                  <CustomButton
-                    disabled={handleDisableButton()}
-                    fullWidth
-                    onClick={() => handleCreateSale(false)}
-                    startIcon={<MoneyOffIcon />}
-                  >
-                    {movementType === MOVEMENT_TYPES.RESERVATION ? "Apartar" : "Cobrar"}<br />(Ctrl + G)
-                  </CustomButton>
-                )}
-              </Grid>
-            </Grid>
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <CustomButton fullWidth onClick={() => setHideExchange((prev) => !prev)} startIcon={<SwapHorizIcon />}>
+                      Intercambio de mercancia
+                    </CustomButton>
+                  </Grid>
+                </Grid>
+              </PaymentCard>
+            )}
+
+            <PaymentClientSection hidden={isReservation ? false : hideClient} client={client} />
+
+            <SaleExchangeSection
+              hidden={hideExchange}
+              saleExchange={saleExchange}
+              onSaleIdChange={(id) => setSaleExchange((prev) => ({ ...prev, id }))}
+              onSearch={handleSearchSaleForChange}
+            />
+
+            <PaymentTotals
+              total={total}
+              totalDiscount={totalDiscount}
+              hasClient={Boolean(client?.id)}
+              payment={payment}
+              onPaidWithChange={handlePaidWithChange}
+              paidWithRef={inputPaymentRef}
+              needsReference={needsReference}
+              referencePayment={referencePayment}
+              onReferenceChange={setReferencePayment}
+              isMobile={isMobile}
+            />
+
+            <PaymentMethodsSection
+              paymentMethods={paymentMethods}
+              selectedMethod={selectedMethod}
+              isReservation={isReservation}
+              isMobile={isMobile}
+              onPaymentsChange={handleChangePayments}
+              onAmountChange={handlePaymentValueChange}
+            >
+              {/* En móvil no se imprime ticket */}
+              <PaymentSubmitPanel
+                printer={printer}
+                compact={isMobile}
+                disabled={isSubmitDisabled}
+                onSubmit={() => handleCreateSale(!isMobile && !!printer)}
+              >
+                {isReservation ? "Apartar" : "Cobrar"}<br />(Ctrl + G)
+              </PaymentSubmitPanel>
+            </PaymentMethodsSection>
           </Grid>
-        </Grid>
+        </ModalBody>
       </CustomModal>
     </>
   );

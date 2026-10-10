@@ -1,25 +1,22 @@
-import React, { useEffect, useState, useRef } from "react";
-import CustomModal from "../../ui/Modal/Modal";
+import React, { useEffect, useMemo, useState } from "react";
+import { Grid, TextField, FormControl, InputLabel, Select, MenuItem, Alert } from "@mui/material";
+import SaveIcon from "@mui/icons-material/Save";
+import CustomModal, { ModalBody } from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
-import { getBrands } from "../../../api/brands";
-import { showSuccess, showRequestError, showWarning } from "../../../utils/alerts";
-import {
-  createProduct,
-  getStoreProducts,
-  updateProduct,
-  addProducts,
-} from "../../../api/products";
-import { getStores } from "../../../api/stores";
+import CatalogAutocomplete from "../shared/CatalogAutocomplete";
+import { useCatalogOptions, useInvalidateCatalogOptions } from "../shared/useCatalogOptions";
+import ProductImageField from "./ProductImageField";
+import ProductPriceFields from "./ProductPriceFields";
+import ProductStockByStore from "./ProductStockByStore";
+import { getPriceErrors, isProductFormIncomplete } from "./productValidation";
+import { createProduct, getStoreProducts, updateProduct, addProducts } from "../../../api/products";
 import { useUser } from "../../../context/UserContext";
 import { useForm } from "../../../hooks/useForm";
-import noPhoto from "../../../assets/images/noPhoto.webp";
-import { convertImageToWebp } from "../../../utils/image";
-import { getDepartments } from "../../../api/departments";
-import SimpleTable from "../../ui/SimpleTable/SimpleTable";
-import { Grid, TextField, Box, Checkbox, FormControlLabel, Autocomplete, FormControl, InputLabel, Select, MenuItem, Alert } from "@mui/material";
-import SaveIcon from "@mui/icons-material/Save";
-import VisuallyHiddenInput from "../../ui/VisuallyHiddenInput";
 import { useConversionUnits } from "../../../hooks/useConversions";
+import { isOwner } from "../../../constants/routeAccess";
+import { convertImageToWebp } from "../../../utils/image";
+import { showSuccess, showRequestError, showWarning } from "../../../utils/alerts";
+import noPhoto from "../../../assets/images/noPhoto.webp";
 
 const INITIAL_FORM_DATA = {
   brand: "",
@@ -36,108 +33,105 @@ const INITIAL_FORM_DATA = {
   initial_stock: "",
 };
 
+const CODE_CHECK_DELAY = 500;
+
+/** Lee un archivo como data URL para la vista previa. */
+const readAsDataUrl = (file, onLoad) => {
+  const reader = new FileReader();
+  reader.onloadend = () => onLoad(reader.result);
+  reader.readAsDataURL(file);
+};
+
+/**
+ * Alta/edición de producto o, con `showStoreProducts`, su stock por sucursal.
+ * `product` puede ser el producto, `{ product, showStoreProducts }` o `{ code, createFromSearch }`.
+ */
 const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
-  const productData = product?.product || product || {};
+  const productData = useMemo(() => product?.product || product || {}, [product]);
   const showStoreProducts = product?.showStoreProducts || false;
   const createFromSearch = product?.createFromSearch || false;
   const { user } = useUser();
 
-  const isCreating = !productData?.id;
+  const isCreating = !productData.id;
+  const canEditPrices = createFromSearch || isCreating || isOwner(user);
+  const isSingleStoreInside = !user.multistore && !!user.store_id;
 
-  const isOwner = user?.role === "owner";
-  const canEditPrices = createFromSearch || isCreating || isOwner;
-
-  const [brands, setBrands] = useState([]);
-  const [departments, setDepartments] = useState([]);
-  const [optionsLoaded, setOptionsLoaded] = useState(false);
+  const { brands, departments, loaded: optionsLoaded } = useCatalogOptions();
+  const invalidateCatalogOptions = useInvalidateCatalogOptions();
   const { values: formData, handleChange: handleDataChange, setValues: setFormData, setValue: setFormValue } = useForm(INITIAL_FORM_DATA);
-
-  const [previewImage, setPreviewImage] = useState(null);
-  const [storeProduct, setStoreProduct] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [codeExists, setCodeExists] = useState(false);
-  const codeDebounceRef = useRef(null);
   const { data: units = [] } = useConversionUnits();
 
+  const [previewImage, setPreviewImage] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [codeExists, setCodeExists] = useState(false);
+
   useEffect(() => {
-    const fetchData = async () => {
-      if (productData.id) {
-        setFormData({
-          ...INITIAL_FORM_DATA,
-          ...productData,
-          brand: productData.brand || "",
-          department: productData.department || "",
-          code: productData.code || "",
-          name: productData.name || "",
-          unit: productData.unit || "PZ",
-          cost: productData.cost || "",
-          unit_price: productData.unit_price || "",
-          wholesale_price: productData.wholesale_price || "",
-          min_wholesale_quantity: productData.min_wholesale_quantity || "",
-        });
-        setPreviewImage(productData.image || noPhoto);
+    if (productData.id) {
+      setFormData({
+        ...INITIAL_FORM_DATA,
+        ...productData,
+        brand: productData.brand || "",
+        department: productData.department || "",
+        code: productData.code || "",
+        name: productData.name || "",
+        unit: productData.unit || "PZ",
+        cost: productData.cost || "",
+        unit_price: productData.unit_price || "",
+        wholesale_price: productData.wholesale_price || "",
+        min_wholesale_quantity: productData.min_wholesale_quantity || "",
+      });
+      setPreviewImage(productData.image || noPhoto);
+    } else {
+      setFormData({
+        ...INITIAL_FORM_DATA,
+        code: productData.code || "",
+        initial_stock: createFromSearch ? "1" : "",
+      });
+      setPreviewImage(noPhoto);
+    }
+  }, [productData, createFromSearch, setFormData]);
 
-        if (showStoreProducts) {
-          const [r, s] = await Promise.all([
-            getStoreProducts({ code: productData.code, all_stores: "Y" }),
-            getStores(),
-          ]);
-          const storeMap = Object.fromEntries(s.data.map((st) => [st.id, st.full_name]));
-          setStoreProduct(r.data.map((sp) => ({ ...sp, store_name: storeMap[sp.store] || `Tienda #${sp.store}` })));
-        }
-      } else {
-        setFormData({
-          ...INITIAL_FORM_DATA,
-          code: productData.code || "",
-          initial_stock: createFromSearch ? "1" : "",
-        });
-        setPreviewImage(noPhoto);
-        setStoreProduct([]);
-      }
-
-      const response = await getBrands();
-      setBrands(response.data);
-
-      const response2 = await getDepartments();
-      setDepartments(response2.data);
-      setOptionsLoaded(true);
-    };
-
-    fetchData();
-  }, [product, showStoreProducts, createFromSearch]);
-
-  // Validar si el código ya existe (solo al crear)
+  // Validar si el código ya existe (solo al crear); se descarta la respuesta si el código cambió
   useEffect(() => {
     if (!isCreating || !formData.code) {
       setCodeExists(false);
-      return;
+      return undefined;
     }
 
-    clearTimeout(codeDebounceRef.current);
-    codeDebounceRef.current = setTimeout(async () => {
+    const controller = new AbortController();
+    const timer = setTimeout(async () => {
       try {
-        const response = await getStoreProducts({ code: formData.code, all_stores: "Y" });
-        setCodeExists(response.data.length > 0);
+        const response = await getStoreProducts({ code: formData.code, all_stores: "Y" }, { signal: controller.signal });
+        if (!controller.signal.aborted) setCodeExists(response.data.length > 0);
       } catch {
-        setCodeExists(false);
+        if (!controller.signal.aborted) setCodeExists(false);
       }
-    }, 500);
+    }, CODE_CHECK_DELAY);
 
-    return () => clearTimeout(codeDebounceRef.current);
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
   }, [formData.code, isCreating]);
-
 
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
-    if (file) {
-      // Convertir a WebP (más ligero) antes de guardar; con fallback al original
-      const webpFile = await convertImageToWebp(file);
-      setFormValue("image", webpFile);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewImage(reader.result);
-      };
-      reader.readAsDataURL(webpFile);
+    if (!file) return;
+    // Convertir a WebP (más ligero) antes de guardar; con fallback al original
+    const webpFile = await convertImageToWebp(file);
+    setFormValue("image", webpFile);
+    readAsDataUrl(webpFile, setPreviewImage);
+  };
+
+  const addInitialStock = async (createdProduct, quantity) => {
+    try {
+      const storeProducts = await getStoreProducts({ code: formData.code });
+      if (storeProducts.data.length > 0) {
+        await addProducts({ store_products: [{ id: storeProducts.data[0].id, quantity }] });
+        createdProduct.stock = (createdProduct.stock || 0) + quantity;
+      }
+    } catch {
+      showWarning("Producto creado sin stock inicial", "No se pudo agregar el stock. Ajústalo desde Inventario.");
     }
   };
 
@@ -145,42 +139,23 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
     setIsLoading(true);
     const apiCall = formData.id ? updateProduct : createProduct;
 
-    // Filtrar department si es "0" o vacío, e initial_stock del producto (no se envía al backend)
-    const cleanFormData = { ...formData };
+    // department "0" o vacío no se envía; initial_stock tampoco (se agrega aparte)
+    const { initial_stock: initialStockValue, ...cleanFormData } = formData;
     if (cleanFormData.department === "0" || !cleanFormData.department) {
       delete cleanFormData.department;
     }
-    const initialStockValue = cleanFormData.initial_stock;
-    delete cleanFormData.initial_stock;
 
     try {
       const response = await apiCall(cleanFormData);
-
-      if ([200, 201].includes(response.status)) {
-        // Agregar stock si: no es multistore, está dentro de tienda, es creación, y hay stock > 0
-        if (!formData.id && !user.multistore && user.store_id && initialStockValue && parseInt(initialStockValue) > 0) {
-          try {
-            const storeProducts = await getStoreProducts({ code: formData.code });
-            if (storeProducts.data.length > 0) {
-              const sp = storeProducts.data[0];
-              const addResponse = await addProducts({
-                store_products: [{ id: sp.id, quantity: parseInt(initialStockValue) }],
-              });
-              // Si add retorna 200, actualizar el stock en la respuesta del producto
-              if (addResponse.status === 200) {
-                response.data.stock = (response.data.stock || 0) + parseInt(initialStockValue);
-              }
-            }
-          } catch (stockError) {
-            showWarning("Producto creado sin stock inicial", "No se pudo agregar el stock. Ajústalo desde Inventario.");
-          }
-        }
-        onClose();
-        onUpdate(response.data);
-        setFormData(INITIAL_FORM_DATA);
-        setPreviewImage(null);
-        showSuccess(`Producto ${formData.id ? "actualizado" : "creado"}${!user.multistore && user.store_id && initialStockValue ? ` con stock de ${initialStockValue}` : ""}`);
+      if (!formData.id && isSingleStoreInside && initialStockValue && parseInt(initialStockValue) > 0) {
+        await addInitialStock(response.data, parseInt(initialStockValue));
       }
+      onClose();
+      onUpdate(response.data);
+      invalidateCatalogOptions();
+      setFormData(INITIAL_FORM_DATA);
+      setPreviewImage(null);
+      showSuccess(`Producto ${formData.id ? "actualizado" : "creado"}${isSingleStoreInside && initialStockValue ? ` con stock de ${initialStockValue}` : ""}`);
     } catch (error) {
       showRequestError(`${formData.id ? "actualizar" : "crear"} el producto`, error);
     } finally {
@@ -188,90 +163,9 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
     }
   };
 
-  const isFormIncomplete = () => {
-    const {
-      wholesale_price,
-      min_wholesale_quantity,
-      wholesale_price_on_client_discount,
-      image,
-      department,
-      department_name,
-      initial_stock,
-      ...requiredFields
-    } = formData;
-
-    const areRequiredFieldsComplete = !Object.values(requiredFields).some(
-      (value) => value === ""
-    );
-
-    const areOptionalFieldsConsistent =
-      (wholesale_price === "") === (min_wholesale_quantity === "");
-
-    // Para single-store en creación, initial_stock es requerido
-    const isInitialStockRequired = !formData.id && !user.multistore && user.store_id;
-    const isInitialStockComplete = !isInitialStockRequired || (initial_stock !== "" && parseInt(initial_stock) > 0);
-
-    return !areRequiredFieldsComplete || !areOptionalFieldsConsistent || !isInitialStockComplete;
-  };
-
-  const getPriceErrors = () => {
-    const cost = Number(formData.cost);
-    const unitPrice = Number(formData.unit_price);
-    const wholesalePrice = Number(formData.wholesale_price);
-    const minWholesaleQty = Number(formData.min_wholesale_quantity);
-
-    const errors = {
-      cost: "",
-      unitPrice: "",
-      wholesale: "",
-      minQty: "",
-      hasAnyError: false,
-    };
-
-    // Validar valores base
-    if (formData.cost !== "" && cost <= 0) {
-      errors.cost = "> 0";
-      errors.hasAnyError = true;
-    }
-    if (formData.unit_price !== "" && unitPrice <= 0) {
-      errors.unitPrice = "> 0";
-      errors.hasAnyError = true;
-    }
-
-    // Validar relación costo-unitario
-    if (formData.cost !== "" && formData.unit_price !== "" && cost >= unitPrice) {
-      errors.cost = "< precio unitario";
-      errors.hasAnyError = true;
-    }
-
-    // Validar mayoreo si existe
-    if (formData.wholesale_price !== "" || formData.min_wholesale_quantity !== "") {
-      if (formData.wholesale_price === "") {
-        errors.wholesale = "Requerido";
-        errors.hasAnyError = true;
-      } else if (formData.min_wholesale_quantity === "") {
-        errors.minQty = "Requerido";
-        errors.hasAnyError = true;
-      } else {
-        if (wholesalePrice >= unitPrice) {
-          errors.wholesale = "< precio unitario";
-          errors.hasAnyError = true;
-        }
-        if (wholesalePrice <= cost) {
-          errors.wholesale = "> costo";
-          errors.hasAnyError = true;
-        }
-        if (!Number.isInteger(minWholesaleQty) || minWholesaleQty < 2) {
-          errors.minQty = "Entero ≥ 2";
-          errors.hasAnyError = true;
-        }
-      }
-    }
-
-    return errors;
-  };
-
-  const priceErrors = getPriceErrors();
+  const priceErrors = getPriceErrors(formData);
+  const isFormIncomplete = isProductFormIncomplete(formData, { requiresInitialStock: !formData.id && isSingleStoreInside });
+  const setCatalogValue = (name) => (value) => setFormValue(name, value);
 
   return (
     <CustomModal
@@ -280,221 +174,108 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
       title={showStoreProducts ? "Stock del producto" : formData.id ? "Editar producto" : "Crear producto"}
       maxWidth={950}
     >
-      <Grid container sx={{ padding: '1rem', backgroundColor: 'modalBody.main' }}>
+      <ModalBody>
         <Grid item xs={12} className="card">
-        
-        {!showStoreProducts && !user.multistore && !user.store_id && !formData.id && (
-          <Alert severity="warning" variant="filled" sx={{ mb: 2 }}>
-            Para crear un producto con stock inicial, entra primero a tu tienda y hazlo desde ahí.
-          </Alert>
-        )}
+          {!showStoreProducts && !user.multistore && !user.store_id && !formData.id && (
+            <Alert severity="warning" variant="filled" sx={{ mb: 2 }}>
+              Para crear un producto con stock inicial, entra primero a tu tienda y hazlo desde ahí.
+            </Alert>
+          )}
 
-        {!showStoreProducts && (
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={4}>
-            <Box
-              component="label"
-              sx={{ display: 'block', cursor: 'pointer', '&:hover': { opacity: 0.8 }, transition: 'opacity 0.2s' }}
-            >
-              <Box
-                component="img"
-                src={previewImage}
-                alt="Producto"
-                sx={{
-                  width: '100%',
-                  height: 'auto',
-                  borderRadius: 2
-                }}
-              />
-              <VisuallyHiddenInput
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-              />
-            </Box>
-          </Grid>
-
-          <Grid item xs={12} md={8}>
+          {showStoreProducts ? (
+            <ProductStockByStore code={productData.code} />
+          ) : (
             <Grid container spacing={2}>
-              {/* Fila 1: Identificación del producto */}
-              <Grid item xs={12} md={6}>
-                <TextField size="small" fullWidth label="Código" type="text"
-                  value={formData.code}
-                  placeholder="Código"
-                  name="code"
-                  onChange={handleDataChange}
-                  error={codeExists}
-                  helperText={codeExists ? "El código ya existe" : ""}
-                />
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <TextField size="small" fullWidth label="Nombre" type="text"
-                  value={formData.name}
-                  placeholder="Nombre"
-                  name="name"
-                  onChange={handleDataChange}
-                />
+              <Grid item xs={12} md={4}>
+                <ProductImageField src={previewImage} onChange={handleImageChange} />
               </Grid>
 
-              {/* Fila 2: Clasificación */}
-              <Grid item xs={12} md={4}>
-                <Autocomplete
-                  size="small"
-                  options={brands}
-                  getOptionLabel={(option) => `${option.name} (${option.product_count})`}
-                  value={brands.find((b) => b.id === formData.brand) || null}
-                  onChange={(_, newValue) => {
-                    setFormData((prev) => ({ ...prev, brand: newValue?.id || "" }));
-                  }}
-                  isOptionEqualToValue={(option, value) => option.id === value.id}
-                  disabled={optionsLoaded && brands.length === 0}
-                  renderInput={(inputProps) => (
-                    <TextField {...inputProps} label="Marca" />
-                  )}
-                />
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <Autocomplete
-                  size="small"
-                  options={departments}
-                  getOptionLabel={(option) => `${option.name} (${option.product_count})`}
-                  value={departments.find((d) => d.id === formData.department) || null}
-                  onChange={(_, newValue) => {
-                    setFormData((prev) => ({ ...prev, department: newValue?.id || "" }));
-                  }}
-                  isOptionEqualToValue={(option, value) => option.id === value.id}
-                  disabled={optionsLoaded && departments.length === 0}
-                  renderInput={(inputProps) => (
-                    <TextField {...inputProps} label="Departamento" />
-                  )}
-                />
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <FormControl fullWidth size="small">
-                  <InputLabel>Unidad</InputLabel>
-                  <Select
-                    value={formData.unit}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, unit: e.target.value }))}
-                    label="Unidad"
-                  >
-                    {units.map((u) => (
-                      <MenuItem key={u.value} value={u.value}>
-                        {u.label}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-
-              {/* Fila 3: Precios */}
-              <Grid item xs={12} md={4}>
-                <TextField size="small" fullWidth label="Costo" type="number"
-                  value={formData.cost}
-                  placeholder="Costo"
-                  name="cost"
-                  onChange={handleDataChange}
-                  disabled={!canEditPrices}
-                  error={!!priceErrors.cost}
-                  helperText={priceErrors.cost}
-                />
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <TextField size="small" fullWidth label="Precio unitario" type="number"
-                  value={formData.unit_price}
-                  placeholder="Precio unitario"
-                  name="unit_price"
-                  onChange={handleDataChange}
-                  disabled={!canEditPrices}
-                  error={!!priceErrors.unitPrice}
-                  helperText={priceErrors.unitPrice}
-                />
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <TextField size="small" fullWidth label="Precio mayoreo" type="number"
-                  value={formData.wholesale_price}
-                  placeholder="Precio de mayoreo"
-                  name="wholesale_price"
-                  onChange={handleDataChange}
-                  disabled={!canEditPrices}
-                  error={!!priceErrors.wholesale}
-                  helperText={priceErrors.wholesale}
-                />
-              </Grid>
-
-              {/* Fila 4: Mayoreo config */}
-              <Grid item xs={12} md={4}>
-                <TextField size="small" fullWidth label="Cantidad mínima mayoreo" type="number"
-                  value={formData.min_wholesale_quantity}
-                  placeholder="Cantidad mínima"
-                  name="min_wholesale_quantity"
-                  onChange={handleDataChange}
-                  disabled={!canEditPrices}
-                  error={!!priceErrors.minQty}
-                  helperText={priceErrors.minQty}
-                />
-              </Grid>
-              <Grid item xs={12} md={8} sx={{ display: 'flex', alignItems: 'center' }}>
-                <FormControlLabel
-                  control={
-                    <Checkbox size="small"
-                      checked={formData.wholesale_price_on_client_discount === true}
+              <Grid item xs={12} md={8}>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} md={6}>
+                    <TextField size="small" fullWidth label="Código" type="text"
+                      value={formData.code}
+                      placeholder="Código"
+                      name="code"
                       onChange={handleDataChange}
-                      name="wholesale_price_on_client_discount"
-                      disabled={!canEditPrices}
+                      error={codeExists}
+                      helperText={codeExists ? "El código ya existe" : ""}
                     />
-                  }
-                  label="Aplicar mayoreo aún con descuento de cliente"
-                />
-              </Grid>
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <TextField size="small" fullWidth label="Nombre" type="text"
+                      value={formData.name}
+                      placeholder="Nombre"
+                      name="name"
+                      onChange={handleDataChange}
+                    />
+                  </Grid>
 
-              {!user.multistore && user.store_id && !formData.id && (
-                <Grid item xs={12}>
-                  <TextField size="small" fullWidth label="Stock inicial" type="number"
-                    value={formData.initial_stock}
-                    placeholder="Stock"
-                    name="initial_stock"
+                  <Grid item xs={12} md={4}>
+                    <CatalogAutocomplete
+                      label="Marca"
+                      options={brands}
+                      value={formData.brand}
+                      onChange={setCatalogValue("brand")}
+                      loaded={optionsLoaded}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={4}>
+                    <CatalogAutocomplete
+                      label="Departamento"
+                      options={departments}
+                      value={formData.department}
+                      onChange={setCatalogValue("department")}
+                      loaded={optionsLoaded}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={4}>
+                    <FormControl fullWidth size="small">
+                      <InputLabel>Unidad</InputLabel>
+                      <Select value={formData.unit} onChange={handleDataChange} name="unit" label="Unidad">
+                        {units.map((u) => (
+                          <MenuItem key={u.value} value={u.value}>
+                            {u.label}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Grid>
+
+                  <ProductPriceFields
+                    values={formData}
                     onChange={handleDataChange}
+                    errors={priceErrors}
+                    disabled={!canEditPrices}
                   />
-                </Grid>
-              )}
 
-              <Grid item xs={12} sx={{ mt: -1.5 }}>
-                <CustomButton
-                  fullWidth
-                  onClick={(e) => handleProductSubmit(e)}
-                  disabled={isFormIncomplete() || priceErrors.hasAnyError || isLoading || codeExists}
-                  startIcon={<SaveIcon />}
-                >
-                  {isLoading ? "Guardando..." : formData.id ? "Editar" : "Crear"}
-                </CustomButton>
+                  {isSingleStoreInside && !formData.id && (
+                    <Grid item xs={12}>
+                      <TextField size="small" fullWidth label="Stock inicial" type="number"
+                        value={formData.initial_stock}
+                        placeholder="Stock"
+                        name="initial_stock"
+                        onChange={handleDataChange}
+                      />
+                    </Grid>
+                  )}
+
+                  <Grid item xs={12} sx={{ mt: -1.5 }}>
+                    <CustomButton
+                      fullWidth
+                      onClick={handleProductSubmit}
+                      disabled={isFormIncomplete || priceErrors.hasAnyError || isLoading || codeExists}
+                      startIcon={<SaveIcon />}
+                    >
+                      {isLoading ? "Guardando..." : formData.id ? "Editar" : "Crear"}
+                    </CustomButton>
+                  </Grid>
+                </Grid>
               </Grid>
             </Grid>
-          </Grid>
+          )}
         </Grid>
-        )}
-
-        {showStoreProducts && (
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <SimpleTable
-                noDataComponent="Sin stock"
-                data={storeProduct}
-                columns={[
-                  {
-                    name: "Nombre",
-                    selector: (row) => row.store_name,
-                  },
-                  {
-                    name: "Stock",
-                    selector: (row) => row.stock,
-                  },
-                ]}
-              />
-            </Grid>
-          </Grid>
-        )}
-        </Grid>
-      </Grid>
+      </ModalBody>
     </CustomModal>
   );
 };

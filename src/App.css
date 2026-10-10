@@ -105,17 +105,17 @@ h1, h2, h3 {
 
 /* Utility classes */
 .status-dot { font-size: 18px; }
-.status-dot--success { color: #16a34a; }
-.status-dot--danger { color: #dc2626; }
-.status-dot--warning { color: #d97706; }
+.status-dot--success { color: var(--color-success, #16a34a); }
+.status-dot--danger { color: var(--color-error, #dc2626); }
+.status-dot--warning { color: var(--color-warning, #d97706); }
 
-.text-success { color: #16a34a; }
-.text-danger { color: #dc2626; }
-.text-warning { color: #d97706; }
+.text-success { color: var(--color-success, #16a34a); }
+.text-danger { color: var(--color-error, #dc2626); }
+.text-warning { color: var(--color-warning, #d97706); }
 .text-muted { color: #94a3b8; }
 
-.icon-success { color: #16a34a; }
-.icon-danger { color: #dc2626; }
+.icon-success { color: var(--color-success, #16a34a); }
+.icon-danger { color: var(--color-error, #dc2626); }
 
 /* Aligned numbers in grids */
 .MuiDataGrid-cell,

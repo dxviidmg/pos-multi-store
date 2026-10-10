@@ -1,36 +1,17 @@
-import { createMutationHooks, useCrudMutation } from './useCrudMutation';
-import { createClient, updateClient, deleteClient } from '../api/clients';
+import { createMutationHooks } from './useCrudMutation';
+import { createClient, updateClient } from '../api/clients';
+import { parsePhoneError } from '../utils/apiErrors';
 
-const api = {
+const { useCreate, useUpdate } = createMutationHooks('Cliente', 'clients', {
   create: createClient,
   update: updateClient,
-  delete: deleteClient
-};
+});
 
-const { useUpdate } = createMutationHooks('Cliente', 'clients', api);
+const clientErrorParser = (error) =>
+  error.response?.status === 400 ? parsePhoneError(error.response.data?.phone_number) : null;
 
-// Parser personalizado para errores de cliente
-const clientErrorParser = (error) => {
-  if (error.response?.status === 400 && error.response.data.phone_number) {
-    const phoneError = error.response.data.phone_number[0];
-    if (phoneError === 'Ensure this field has at least 10 characters.') {
-      return 'El teléfono debe tener al menos 10 dígitos.';
-    }
-    if (phoneError === 'client with this phone number already exists.') {
-      return 'El teléfono ya está registrado.';
-    }
-  }
-  return null;
-};
+export const useCreateClient = (options = {}) =>
+  useCreate({ errorParser: clientErrorParser, ...options });
 
-export const useCreateClient = (options = {}) => {
-  return useCrudMutation(createClient, {
-    queryKey: 'clients',
-    successMessage: 'Cliente creado',
-    errorAction: 'crear el cliente',
-    errorParser: clientErrorParser,
-    ...options,
-  });
-};
-
-export const useUpdateClient = useUpdate;
+export const useUpdateClient = (options = {}) =>
+  useUpdate({ errorParser: clientErrorParser, ...options });

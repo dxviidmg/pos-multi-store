@@ -1,41 +1,39 @@
 import React, { useEffect, useState } from "react";
-import DataTable from "../../ui/DataTable/DataTable";
-import { getSales } from "../../../api/sales";
-import CustomButton from "../../ui/Button/Button";
-import {
-  getFormattedDate,
-  handlePrintTicket,
-  getFormattedDateTime,
-  upsertById,
-  formatCurrency,
-} from "../../../utils/utils";
-import { useModal } from "../../../hooks/useModal";
-import SaleModal from "../SaleModal/SaleModal";
-import { CustomSpinner } from "../../ui/Spinner/Spinner";
-import PrintIcon from "@mui/icons-material/Print";
-import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import { Grid, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 import BlockIcon from "@mui/icons-material/Block";
 import UndoIcon from "@mui/icons-material/Undo";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ErrorIcon from "@mui/icons-material/Error";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import { Grid, TextField, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
-import { useUser } from "../../../context/UserContext";
-import PaymentEditModal from "../PaymentEditModal/PaymentEditModal";
+import DataTable from "../../ui/DataTable/DataTable";
+import CustomButton from "../../ui/Button/Button";
 import CustomTooltip from "../../ui/Tooltip";
 import PageHeader from "../../ui/PageHeader";
+import { CustomSpinner } from "../../ui/Spinner/Spinner";
+import { getSales } from "../../../api/sales";
+import { getFormattedDate, getFormattedDateTime } from "../../../utils/date";
+import { formatCurrency } from "../../../utils/currency";
+import { showRequestError } from "../../../utils/alerts";
+import { useModal } from "../../../hooks/useModal";
+import { useUser } from "../../../context/UserContext";
+import { isSeller } from "../../../constants/routeAccess";
+import SaleModal from "../SaleModal/SaleModal";
 import ProductsPopperButton from "../ProductsPopperButton/ProductsPopperButton";
+import SaleSearchFields from "../shared/SaleSearchFields";
+import PrintTicketButton from "../shared/PrintTicketButton";
 
+// Los apartados en curso viven en ReservationList; aquí solo se listan ventas
 const TYPE_OPTIONS = [
   { value: false, label: "Ventas" },
 ];
 
-const SEARCH_BY_OPTIONS = [
-  { value: "date", label: "Fecha" },
-  { value: "sale_id", label: "Id" },
-  { value: "client", label: "Cliente" },
-];
+const QUICK_FILTERS = {
+  all: () => true,
+  duplicated: (sale) => sale.is_repeated,
+  canceled: (sale) => sale.is_canceled,
+  returned: (sale) => sale.has_return,
+};
 
 const SaleList = () => {
   const { user } = useUser();
@@ -49,16 +47,19 @@ const SaleList = () => {
   const [loading, setLoading] = useState(false);
   const [showAllFields, setShowAllFields] = useState(false);
   const [quickFilter, setQuickFilter] = useState("all");
-  const [searchBy, setSearchBy] = useState("date");
   const saleModal = useModal();
-  const paymentEditModal = useModal();
 
   useEffect(() => {
     const fetchSalesData = async () => {
       setLoading(true);
-      const salesResponse = await getSales(params);
-      setSales(salesResponse.data);
-      setLoading(false);
+      try {
+        const salesResponse = await getSales(params);
+        setSales(salesResponse.data);
+      } catch (error) {
+        showRequestError("cargar las ventas", error);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchSalesData();
   }, [params]);
@@ -68,25 +69,36 @@ const SaleList = () => {
     setParams((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleUpdateSaleList = (updated) => {
-    if (!updated) {
-      setParams((prev) => ({ ...prev }));
-      return;
-    }
-    setSales((prev) => upsertById(prev, updated));
-  };
+  // Tras una devolución o cancelación se vuelve a consultar la lista
+  const refreshSales = () => setParams((prev) => ({ ...prev }));
+
+  const duplicatedCount = sales.filter(QUICK_FILTERS.duplicated).length;
+
+  const renderQuickFilter = (value, label, extraProps) => (
+    <Grid item xs={6} md={3}>
+      <CustomButton
+        fullWidth
+        variant={quickFilter === value ? "contained" : "outlined"}
+        onClick={() => setQuickFilter(value)}
+        {...extraProps}
+      >
+        {label} ({sales.filter(QUICK_FILTERS[value]).length})
+      </CustomButton>
+    </Grid>
+  );
 
   return (
     <>
       <CustomSpinner isLoading={loading} />
-      <PaymentEditModal isOpen={paymentEditModal.isOpen} sale={paymentEditModal.data} onClose={paymentEditModal.close} onUpdate={handleUpdateSaleList} />
-      <SaleModal isOpen={saleModal.isOpen} sale={saleModal.data} onClose={saleModal.close} onUpdate={handleUpdateSaleList} />
+      <SaleModal isOpen={saleModal.isOpen} sale={saleModal.data} onClose={saleModal.close} onUpdate={refreshSales} />
 
       <Grid className="card">
         <PageHeader title="Ventas" />
 
         <Grid container spacing={2} sx={{ mb: 2 }}>
-          <Grid item xs={12} md={3}>
+          {/* Select "Tipo" oculto — solo tiene 1 opción (Ventas).
+              Descomentar si se reactiva el filtro de apartados. */}
+          {/* <Grid item xs={12} md={3}>
             <FormControl fullWidth size="small">
               <InputLabel>Tipo</InputLabel>
               <Select value={params.reservation_in_progress} onChange={handleDataChange} name="reservation_in_progress" label="Tipo">
@@ -95,37 +107,9 @@ const SaleList = () => {
                 ))}
               </Select>
             </FormControl>
-          </Grid>
+          </Grid> */}
 
-          <Grid item xs={12} md={3}>
-            <FormControl fullWidth size="small">
-              <InputLabel>Búsqueda por</InputLabel>
-              <Select value={searchBy} onChange={(e) => setSearchBy(e.target.value)} label="Búsqueda por">
-                {SEARCH_BY_OPTIONS.map((opt) => (
-                  <MenuItem key={opt.value} value={opt.value}>{opt.label}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
-
-          {searchBy === "date" ? (
-            <Grid item xs={12} md={3}>
-              <TextField size="small" fullWidth label="Fecha" type="date" value={params.date} onChange={handleDataChange} name="date" inputProps={{ max: today }} />
-            </Grid>
-          ) : searchBy === "sale_id" ? (
-            <Grid item xs={12} md={3}>
-              <TextField size="small" fullWidth label="#" type="number" value={params.sale_id} onChange={handleDataChange} name="sale_id" />
-            </Grid>
-          ) : searchBy === "client" ? (
-            <>
-              <Grid item xs={12} md={3}>
-                <TextField size="small" fullWidth label="Nombre" type="text" value={params.first_name} onChange={handleDataChange} name="first_name" />
-              </Grid>
-              <Grid item xs={12} md={3}>
-                <TextField size="small" fullWidth label="Apellidos" type="text" value={params.last_name} onChange={handleDataChange} name="last_name" />
-              </Grid>
-            </>
-          ) : null}
+          <SaleSearchFields params={params} onChange={handleDataChange} maxDate={today} />
 
           <Grid item xs={12} md={3}>
             <CustomButton
@@ -139,36 +123,19 @@ const SaleList = () => {
         </Grid>
 
         <Grid container spacing={2} sx={{ mb: 1 }}>
-          <Grid item xs={6} md={3}>
-            <CustomButton fullWidth variant={quickFilter === "all" ? "contained" : "outlined"} onClick={() => setQuickFilter("all")}>
-              Todas ({sales.length})
-            </CustomButton>
-          </Grid>
-          <Grid item xs={6} md={3}>
-            <CustomButton fullWidth variant={quickFilter === "duplicated" ? "contained" : "outlined"} onClick={() => setQuickFilter("duplicated")} color={sales.filter(s => s.is_repeated).length > 0 && quickFilter !== "duplicated" ? "error" : "primary"}>
-              Duplicadas ({sales.filter(s => s.is_repeated).length})
-            </CustomButton>
-          </Grid>
-          <Grid item xs={6} md={3}>
-            <CustomButton fullWidth variant={quickFilter === "canceled" ? "contained" : "outlined"} onClick={() => setQuickFilter("canceled")}>
-              Canceladas ({sales.filter(s => s.is_canceled).length})
-            </CustomButton>
-          </Grid>
-          <Grid item xs={6} md={3}>
-            <CustomButton fullWidth variant={quickFilter === "returned" ? "contained" : "outlined"} onClick={() => setQuickFilter("returned")}>
-              Con devolución ({sales.filter(s => s.has_return).length})
-            </CustomButton>
-          </Grid>
+          {renderQuickFilter("all", "Todas")}
+          {renderQuickFilter("duplicated", "Duplicadas", {
+            color: duplicatedCount > 0 && quickFilter !== "duplicated" ? "error" : "primary",
+          })}
+          {renderQuickFilter("canceled", "Canceladas")}
+          {renderQuickFilter("returned", "Con devolución")}
         </Grid>
 
         <DataTable
           progressPending={loading}
           noDataComponent="Sin ventas"
           searcher
-          data={quickFilter === "all" ? sales
-            : quickFilter === "duplicated" ? sales.filter(s => s.is_repeated)            : quickFilter === "canceled" ? sales.filter(s => s.is_canceled)
-            : sales.filter(s => s.has_return)
-          }
+          data={sales.filter(QUICK_FILTERS[quickFilter])}
           columns={[
             { name: "#", selector: (row) => row.id, width: 70 },
             {
@@ -192,13 +159,7 @@ const SaleList = () => {
               selector: (row) => <ProductsPopperButton row={row} />,
             },
             { name: "Número de productos", selector: (row) => row.products_sale?.reduce((sum, p) => sum + (p.sells_by_fraction ? 1 : p.quantity), 0) || 0, width: 80 },
-            { name: "Total", selector: (row) => formatCurrency(row.total), width: 100, omit: user.role === "seller" },
-            ...(params.reservation_in_progress === "true"
-              ? [
-                  { name: "Pagado", selector: (row) => formatCurrency(row.paid), width: 100 },
-                  { name: "Falta", selector: (row) => formatCurrency(row.total - row.paid), width: 100 },
-                ]
-              : []),
+            ...(isSeller(user) ? [] : [{ name: "Total", selector: (row) => formatCurrency(row.total), width: 100 }]),
             { name: "Métodos de pago", selector: (row) => row.payments_methods.join(", ") },
             ...(showAllFields
               ? [
@@ -214,36 +175,14 @@ const SaleList = () => {
                     <CustomTooltip text={row.reason_cancel || "Sin motivo"}>
                       <CustomButton disabled><BlockIcon color="error" /></CustomButton>
                     </CustomTooltip>
-                  ) : row.has_return ? (
-                    <>
-                      {printer && (
-                        <CustomTooltip text="Imprimir ticket">
-                          <CustomButton onClick={() => handlePrintTicket("ticket", row)}>
-                            <PrintIcon />
-                          </CustomButton>
-                        </CustomTooltip>
-                      )}
-                      <CustomTooltip text={row.reason_return || "Sin motivo"}>
-                        <CustomButton disabled><UndoIcon color="info" /></CustomButton>
-                      </CustomTooltip>
-                    </>
                   ) : (
                     <>
-                      {printer && (
-                        <CustomTooltip text="Imprimir ticket">
-                          <CustomButton onClick={() => handlePrintTicket("ticket", row)}>
-                            <PrintIcon />
-                          </CustomButton>
+                      {printer && <PrintTicketButton sale={row} />}
+                      {row.has_return ? (
+                        <CustomTooltip text={row.reason_return || "Sin motivo"}>
+                          <CustomButton disabled><UndoIcon color="info" /></CustomButton>
                         </CustomTooltip>
-                      )}
-                      {params.reservation_in_progress === "true" && (
-                        <CustomTooltip text="Editar pago">
-                          <CustomButton onClick={() => paymentEditModal.open(row)}>
-                            <AttachMoneyIcon />
-                          </CustomButton>
-                        </CustomTooltip>
-                      )}
-                      {row.is_cancelable && (
+                      ) : row.is_cancelable && (
                         <CustomTooltip text="Devolución">
                           <CustomButton onClick={() => saleModal.open(row)}>
                             <UndoIcon />

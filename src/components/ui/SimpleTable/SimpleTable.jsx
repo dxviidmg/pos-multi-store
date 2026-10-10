@@ -9,6 +9,7 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
+import { colors } from "../../../theme/colors";
 
 const SimpleTable = ({ data, columns, noDataComponent, onRowClicked }) => {
   const getCellAlignment = (row, col) => {
@@ -27,7 +28,7 @@ const SimpleTable = ({ data, columns, noDataComponent, onRowClicked }) => {
             {columns.map((col, idx) => (
               <TableCell
                 key={idx}
-                sx={{ textAlign: "center" }}
+                sx={{ textAlign: "center", color: "common.white", backgroundColor: colors.sidebar }}
               >
                 {col.name}
               </TableCell>

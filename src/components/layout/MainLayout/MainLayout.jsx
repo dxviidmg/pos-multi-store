@@ -1,191 +1,65 @@
-import * as React from "react";
-import { styled } from "@mui/material/styles";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Box,
   CssBaseline,
   Toolbar,
   IconButton,
   Typography,
-  Divider,
-  List,
-  ListItem,
-  ListItemButton,
   ListItemIcon,
-  ListItemText,
-  Collapse,
   Avatar,
   Menu,
   MenuItem,
   Backdrop,
   CircularProgress,
 } from "@mui/material";
-import MuiDrawer from "@mui/material/Drawer";
-import MuiAppBar from "@mui/material/AppBar";
-import ExpandLess from "@mui/icons-material/ExpandLess";
-import ExpandMore from "@mui/icons-material/ExpandMore";
+import { alpha } from "@mui/material/styles";
 import MenuIcon from "@mui/icons-material/Menu";
-import DashboardIcon from "@mui/icons-material/Dashboard";
-import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
+import PersonSearchIcon from "@mui/icons-material/PersonSearch";
+import LogoutIcon from "@mui/icons-material/Logout";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useQueryClient } from "@tanstack/react-query";
 import { cleanCart } from "../../../redux/cart/cartActions";
 import { useUser } from "../../../context/UserContext";
+import { useSwitchStore } from "../../../hooks/useSwitchStore";
 import { getStores } from "../../../api/stores";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import PersonSearchIcon from "@mui/icons-material/PersonSearch";
-import LocalShippingIcon from "@mui/icons-material/LocalShipping";
-import InventoryIcon from "@mui/icons-material/Inventory";
-import ReceiptIcon from "@mui/icons-material/Receipt";
-import StoreIcon from "@mui/icons-material/Store";
-import EngineeringIcon from "@mui/icons-material/Engineering";
-import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
-import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
-import SyncIcon from "@mui/icons-material/Sync";
-import MiscellaneousServicesIcon from "@mui/icons-material/MiscellaneousServices";
-import LogoutIcon from "@mui/icons-material/Logout";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import PolicyIcon from "@mui/icons-material/Policy";
-import BarChartIcon from "@mui/icons-material/BarChart";
-import HistoryIcon from "@mui/icons-material/History";
-import logo from "../../../assets/images/logo.webp";
 import { colors } from "../../../theme/colors";
 import PageHelp from "../../ui/PageHelp/PageHelp";
+import CustomTooltip from "../../ui/Tooltip";
 import NotificationsMenu from "../../ui/NotificationsMenu/NotificationsMenu";
 import PendingMenu from "../../ui/PendingMenu/PendingMenu";
 import DuplicateSalesMenu from "../../ui/DuplicateSalesMenu/DuplicateSalesMenu";
 import StockRequestMenu from "../../ui/StockRequestMenu/StockRequestMenu";
 import { logger } from "../../../utils/logger";
-
-const iconMap = {
-  Vender: <ShoppingCartIcon />,
-  Ventas: <ReceiptIcon />,
-  Clientes: <PersonSearchIcon />,
-  Tableros: <BarChartIcon />,
-  Tienda: <LocalShippingIcon />,
-  Distribuciones: <LocalShippingIcon />,
-  Traspasos: <SwapHorizIcon />,
-  Movimientos: <SwapHorizIcon />,
-  Caja: <PointOfSaleIcon />,
-  Productos: <InventoryIcon />,
-  Tiendas: <StoreIcon />,
-  Vendedores: <EngineeringIcon />,
-  Servicios: <MiscellaneousServicesIcon />,
-  Sincronizar: <SyncIcon />,
-  Distribuir: <LocalShippingIcon />,
-  "Auditoría": <PolicyIcon />,
-  Facturación: <ReceiptIcon />,
-  Regresar: <ArrowBackIcon />,
-  "Historial de stock": <HistoryIcon />,
-};
-
-const drawerWidth = 256;
-
-const openedMixin = (theme) => ({
-  width: drawerWidth,
-  transition: theme.transitions.create("width", {
-    easing: theme.transitions.easing.sharp,
-    duration: 200,
-  }),
-  overflowX: "hidden",
-});
-
-const closedMixin = (theme) => ({
-  transition: theme.transitions.create("width", {
-    easing: theme.transitions.easing.sharp,
-    duration: 200,
-  }),
-  overflowX: "hidden",
-  width: `calc(${theme.spacing(8)} + 1px)`,
-});
-
-const DrawerHeader = styled("div")(({ theme }) => ({
-  ...theme.mixins.toolbar,
-}));
-
-const AppBar = styled(MuiAppBar, {
-  shouldForwardProp: (prop) => prop !== "open",
-})(({ theme, open }) => ({
-  zIndex: theme.zIndex.drawer + 1,
-  transition: theme.transitions.create(["width", "margin"], { duration: 200, easing: theme.transitions.easing.sharp }),
-  background: colors.gradient.appbar,
-  boxShadow: "0 1px 0 rgba(0,0,0,0.08)",
-  ...(open && {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
-  }),
-}));
-
-const Drawer = styled(MuiDrawer, {
-  shouldForwardProp: (prop) => prop !== "open",
-})(({ theme, open }) => {
-  const paperBase = {
-    background: colors.gradient.sidebar,
-    color: "#fff",
-    borderRight: "none",
-    display: "flex",
-    flexDirection: "column",
-  };
-  return {
-    width: drawerWidth,
-    flexShrink: 0,
-    whiteSpace: "nowrap",
-    boxSizing: "border-box",
-    [theme.breakpoints.up("md")]: {
-      ...(open && {
-        ...openedMixin(theme),
-        "& .MuiDrawer-paper": { ...openedMixin(theme), ...paperBase },
-      }),
-      ...(!open && {
-        ...closedMixin(theme),
-        "& .MuiDrawer-paper": { ...closedMixin(theme), ...paperBase },
-      }),
-    },
-    [theme.breakpoints.down("md")]: {
-      display: "none",
-    },
-  };
-});
-
-const DrawerModal = styled(MuiDrawer)(({ theme }) => ({
-  [theme.breakpoints.up("md")]: {
-    display: "none",
-  },
-  "& .MuiDrawer-paper": {
-    width: drawerWidth,
-    background: colors.gradient.sidebar,
-    color: "#fff",
-    borderRight: "none",
-    display: "flex",
-    flexDirection: "column",
-    boxSizing: "border-box",
-  },
-}));
+import { isOwner, isSeller } from "../../../constants/routeAccess";
+import { buildMenu, MENU_ACTIONS, STORE_SELECTOR_LABEL } from "./menuConfig";
+import { AppBar, DrawerHeader, userMenuPaperSx } from "./MainLayout.styles";
+import SidebarDrawer from "./SidebarDrawer";
+import SidebarMenu from "./SidebarMenu";
+import SidebarFooter from "./SidebarFooter";
 
 export default function MainLayout({ toggleTheme, themeMode }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, logout, updateUser } = useUser();
+  const { user, logout } = useUser();
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
+  const { switchStore, backToGeneral, switching } = useSwitchStore();
 
-  const accent = colors.accent;
+  const [open, setOpen] = useState(false);
+  const [openMenus, setOpenMenus] = useState({});
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [stores, setStores] = useState([]);
+  const [loadingStores, setLoadingStores] = useState(false);
+  const [previousStoreId, setPreviousStoreId] = useState(null);
 
-  const [open, setOpen] = React.useState(false);
-  const [openMenus, setOpenMenus] = React.useState({});
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const [stores, setStores] = React.useState([]);
-  const [loadingStores, setLoadingStores] = React.useState(false);
-  const [switchingStore, setSwitchingStore] = React.useState(false);
-  const [previousStoreId, setPreviousStoreId] = React.useState(null);
+  // Recuerda la sucursal anterior para mostrarla primero en el selector.
+  const previousStoreIdRef = useRef(null);
 
-  // Limpieza compartida por el logout manual y otros cierres de sesión: vacía la caché
-  // de React Query, el carrito de Redux y borra el usuario del contexto.
-  const previousStoreIdRef = React.useRef(null);
-
-  React.useEffect(() => {
+  useEffect(() => {
     if (user?.store_id && user.store_id !== previousStoreIdRef.current) {
       const oldStoreId = previousStoreIdRef.current;
       previousStoreIdRef.current = user.store_id;
@@ -195,7 +69,9 @@ export default function MainLayout({ toggleTheme, themeMode }) {
     }
   }, [user?.store_id]);
 
-  const performLogout = React.useCallback(() => {
+  // Limpieza del cierre de sesión: vacía la caché de React Query, el carrito de
+  // Redux y borra el usuario del contexto.
+  const performLogout = useCallback(() => {
     queryClient.clear();
     dispatch(cleanCart());
     logout();
@@ -206,19 +82,23 @@ export default function MainLayout({ toggleTheme, themeMode }) {
     return null;
   }
 
+  const menuItems = buildMenu(user, { stores });
+
+  const seller = isSeller(user);
+
   const handleDrawerToggle = () => {
     setOpen(!open);
     if (open) setOpenMenus({});
   };
 
-  const toggleDrawer = (newOpen) => (event) => {
-    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+  const handleDrawerClose = (event) => {
+    if (event?.type === "keydown" && (event.key === "Tab" || event.key === "Shift")) {
       return;
     }
-    setOpen(newOpen);
+    setOpen(false);
   };
 
-  const handleToggleMenu = (label, shouldOpenDrawer = false) => {
+  const toggleSubmenu = (label, shouldOpenDrawer = false) => {
     if (shouldOpenDrawer) {
       setOpen(true);
     } else {
@@ -226,260 +106,69 @@ export default function MainLayout({ toggleTheme, themeMode }) {
     }
   };
 
-
-  const handleToggleStoreMenu = async (label, shouldToggle) => {
-    if (label === "Tienda" && !openMenus[label]) {
-      setLoadingStores(true);
-      try {
-        const response = await getStores();
-        setStores(response.data || []);
-      } catch (error) {
-        logger.error("Error al obtener tiendas:", error);
-        setStores([]);
-      } finally {
-        setLoadingStores(false);
-      }
+  const loadStores = async () => {
+    setLoadingStores(true);
+    try {
+      const response = await getStores();
+      setStores(response.data || []);
+    } catch (error) {
+      logger.error("Error al obtener tiendas:", error);
+      setStores([]);
+    } finally {
+      setLoadingStores(false);
     }
-    handleToggleMenu(label, shouldToggle);
+  };
+
+  const handleToggleMenu = async (item, shouldOpenDrawer) => {
+    if (item.action === MENU_ACTIONS.STORE_SELECTOR && !openMenus[item.label]) {
+      await loadStores();
+    }
+    toggleSubmenu(item.label, shouldOpenDrawer);
   };
 
   const handleSelectStore = async (storeId) => {
-    if (storeId !== user.store_id) {
-      const selectedStore = stores.find(s => s.id === storeId);
-      if (selectedStore) {
-        setSwitchingStore(true);
-        setOpenMenus({ Tienda: false });
-
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        queryClient.clear();
-        dispatch(cleanCart());
-        updateUser({
-          store_id: storeId,
-          store_name: selectedStore.full_name || selectedStore.name,
-          store_type: selectedStore.store_type,
-          store_printer: selectedStore.printer?.id || null,
-        });
-        window.dispatchEvent(new Event("store-changed"));
-
-        // Tienda y almacén tienen menús distintos: al cambiar de tipo, la página actual
-        // puede no existir en el nuevo menú, así que vamos a la inicial de ese tipo.
-        if (selectedStore.store_type !== user.store_type) {
-          navigate(selectedStore.store_type === "A" ? "/distribuir/" : "/vender/", { replace: true });
-        }
-
-        setSwitchingStore(false);
-      }
-    } else {
-      setOpenMenus({ Tienda: false });
+    const closeStoreMenu = () => setOpenMenus({ [STORE_SELECTOR_LABEL]: false });
+    if (storeId === user.store_id) {
+      closeStoreMenu();
+      return;
     }
+    const selectedStore = stores.find((s) => s.id === storeId);
+    if (!selectedStore) return;
+    closeStoreMenu();
+    await switchStore(selectedStore, { withOverlay: true });
   };
-
-  const handleBack = () => {
-    // Al salir del contexto de una tienda, la data store-scoped (productos, ventas,
-    // resumen de tiendas, etc.) deja de ser válida. Limpiamos la caché para forzar
-    // un refetch y evitar mostrar datos de la tienda anterior o resúmenes vencidos.
-    queryClient.clear();
-    dispatch(cleanCart());
-    updateUser({ store_type: "", store_name: "", store_id: null });
-    window.dispatchEvent(new Event("store-changed"));
-    navigate("/tiendas/", { replace: true });
-  };
-
-  const handleLogout = () => performLogout();
 
   const isActive = (href) => location.pathname === href;
 
-  const currentHour = new Date().getHours();
-  const isDashboardRestricted =
-  user?.tenant_short_name !== 'demo' &&
-  user &&
-  user.multistore &&
-  currentHour >= 10 &&
-  currentHour < 21;
+  const closeUserMenu = () => setAnchorEl(null);
 
-  const linksByType = {
-    T: [
-      ...(user.role === "owner" && user.multistore ? [{
-        label: "Tienda",
-        action: "store-selector",
-        dropdown: stores.map(s => ({ label: s.full_name || s.name, storeId: s.id }))
-      }] : []),
-      ...(user.role === "owner" && !user.multistore ? [{
-        label: "Regresar",
-        action: "go-back",
-        onClick: handleBack
-      }] : []),
-      { label: "Vender", href: "/vender/" },
-      {
-        label: "Ventas",
-        dropdown: [
-          { label: "Ventas", href: "/ventas/" },
-          { label: "Apartados", href: "/apartados/" },
-          { label: "Importar ventas", href: "/importar-ventas/"},
-        ],
-        hidden: user.role === "seller"
-      },
-      {
-        label: "Caja",
-        dropdown: [
-          { label: "Corte de caja", href: "/corte-caja/" },
-          { label: "Movimientos en caja", href: "/movimientos-caja/" },
-        ],
-        hidden: user.role === "seller"
-      },
-      { label: "Clientes", href: "/clientes/", hidden: user.role === "seller" },
-      {
-        label: "Productos",
-        dropdown: [
-          { label: "Productos", href: "/productos/", hidden: user.role === "seller" },
-          { label: "Inventario", href: "/inventario/" },
-          { label: "Conversiones", href: "/conversiones/", hidden: user.role === "seller" },
-          { divider: true, hidden: user.role === "seller" },
-          { label: "Marcas", href: "/marcas/", hidden: user.role === "seller" },
-          { label: "Departamentos", href: "/departamentos/", hidden: user.role === "seller" },
-          { label: "Reasignación", href: "/reasignacion/", hidden: user.role === "seller" },
-          { divider: true, hidden: user.role === "seller" },
-          { label: "Importar productos", href: "/importar-productos/", hidden: user.role === "seller" },
-          { label: "Importar inventario", href: "/importar-inventario/", hidden: user.role === "seller" },
-          { divider: true },
-          { label: "Solicitudes de ajustes de stock", href: "/solicitudes-ajustes-stock/", hidden: user.role === "seller"},
-          { label: "Historial de cambio de precios", href: "/historial-precios/", hidden: user.role === "seller" },
-        ],
-        hidden: user.role === "seller"
-      },
-
-      {
-        label: "Auditoría",
-        dropdown: [
-          { label: "Inventario a verificar", href: "/auditoria-inventario/" },
-        ],
-        hidden: user.role === "seller",
-      },
-      
-      {
-        label: "Movimientos",
-        dropdown: [
-          { label: "Distribuciones", href: "/distribuciones/", hidden: user.role === "seller" },
-          { label: "Traspasos", href: "/traspasos/", hidden: user.role === "seller" },
-        ],
-        hidden: user.role === "seller" || !user.multistore,
-      },
-      { label: "Ventas", href: "/ventas/", hidden: user.role !== "seller" },
-      { label: "Apartados", href: "/apartados/", hidden: user.role !== "seller" },
-      { label: "Movimientos en caja", href: "/movimientos-caja/", hidden: user.role !== "seller" },
-      { label: "Traspasos", href: "/traspasos/", hidden: user.role !== "seller" || !user.multistore },
-      { label: "Historial de stock", href: "/historial-stock/", hidden: user.role === "seller" },
-    ],
-    A: [
-      ...(user.role === "owner" && user.multistore ? [{
-        label: "Tienda",
-        action: "store-selector",
-        dropdown: stores.map(s => ({ label: s.full_name || s.name, storeId: s.id }))
-      }] : []),
-      ...(user.role === "owner" && !user.multistore ? [{
-        label: "Regresar",
-        action: "go-back",
-        onClick: handleBack
-      }] : []),
-      { label: "Distribuir", href: "/distribuir/" },
-      {
-        label: "Movimientos",
-        dropdown: [
-          { label: "Distribuciones", href: "/distribuciones/" },
-          { label: "Traspasos", href: "/traspasos/" },
-        ],
-      },
-      {
-        label: "Productos",
-        dropdown: [
-          { label: "Productos", href: "/productos/" },
-          { label: "Inventario", href: "/inventario/" },
-          { divider: true },
-          { label: "Marcas", href: "/marcas/" },
-          { label: "Departamentos", href: "/departamentos/" },
-          { divider: true },
-          { label: "Importar productos", href: "/importar-productos/" },
-          { label: "Importar inventario", href: "/importar-inventario/" },
-          { divider: true },
-          { label: "Solicitudes de ajustes de stock", href: "/solicitudes-ajustes-stock/" },
-          { label: "Historial de cambio de precios", href: "/historial-precios/" },
-        ],
-      },
-      {
-        label: "Auditoría",
-        dropdown: [
-          { label: "Inventario a verificar", href: "/auditoria-inventario/", hidden: user.role === "seller" },
-        ],
-      },
-      { label: "Historial de stock", href: "/historial-stock/", hidden: user.role === "seller" },
-    ],
-    G: [
-      {
-        label: "Tableros",
-        dropdown: [
-          { label: "Ventas exitosas", href: "/tablero-ventas/", disabled: isDashboardRestricted, disabledMessage: "Antes de 10 AM o después de 9 PM" },
-          { label: "Ventas canceladas", href: "/tablero-ventas-ajustadas-cancelaciones/" },
-          { label: "Verificación de stock", href: "/tablero-verificacion-stock/" },
-          { label: "Marcas y productos", href: "/tablero-productos/" },
-          { label: "Traspasos pendientes", href: "/tablero-traspasos-pendientes/" },
-        ],
-      },
-      { label: "Tiendas", href: "/tiendas/" },
-      { label: "Clientes", href: "/clientes/" },
-      { label: "Vendedores", href: "/vendedores/" },
-      {
-        label: "Productos",
-        dropdown: [
-          { label: "Productos", href: "/productos/" },
-          { label: "Conversiones", href: "/conversiones/" },
-          { divider: true },
-          { label: "Marcas", href: "/marcas/" },
-          { label: "Departamentos", href: "/departamentos/" },
-          { label: "Reasignación", href: "/reasignacion/" },
-          { divider: true },
-          { label: "Importar productos", href: "/importar-productos/" },
-          { divider: true },
-          { label: "Solicitudes de ajustes de stock", href: "/solicitudes-ajustes-stock/" },
-          { label: "Historial de cambio de precios", href: "/historial-precios/" },
-        ],
-      },
-      {
-        label: "Auditoría",
-        dropdown: [
-          { label: "Productos", href: "/auditoria-productos/" },
-          { label: "Transacciones", href: "/auditoria-transacciones/" },
-        ],
-      },
-
-      {
-        label: "Facturación",
-        dropdown: [
-          { label: "Mi plan actual", href: "/mi-plan-actual/" },
-          { label: "Historial de pagos", href: "/pagos/" },
-          { label: "Suscripciones", href: "/suscripciones/" },
-        ],
-      },
-      { label: "Servicios", href: "/servicios/" },
-      { label: "Sincronizar", href: "/sincronizar/" },
-    ],
-  };
-
-  const type = user.store_type === "T" ? "T" : user.store_type === "A" ? "A" : "G";
-  const menuItems = linksByType[type];
-
-  const activeSx = {
-    position: "relative",
-    background: `${accent}26`,
-    "&:hover": { background: `${accent}33` },
-    "&::before": {
-      content: '""',
-      position: "absolute",
-      left: 0, top: 8, bottom: 8, width: 3,
-      borderRadius: 3,
-      background: accent,
-      boxShadow: `0 0 12px ${accent}`,
-    },
+  const renderSidebar = (mobile) => {
+    const expanded = mobile || open;
+    return (
+      <SidebarDrawer
+        mobile={mobile}
+        open={open}
+        onClose={handleDrawerClose}
+        footer={<SidebarFooter user={user} expanded={expanded} showSupport={!seller} onLogout={performLogout} />}
+      >
+        <SidebarMenu
+          items={menuItems}
+          expanded={expanded}
+          openMenus={openMenus}
+          isActive={isActive}
+          storeName={user.store_name}
+          storeSwitcher={{
+            loading: loadingStores,
+            currentStoreId: user.store_id,
+            previousStoreId,
+            onSelect: handleSelectStore,
+          }}
+          onToggleMenu={handleToggleMenu}
+          onNavigate={navigate}
+          onBack={backToGeneral}
+        />
+      </SidebarDrawer>
+    );
   };
 
   return (
@@ -488,36 +177,38 @@ export default function MainLayout({ toggleTheme, themeMode }) {
 
       <AppBar position="fixed" open={open}>
         <Toolbar sx={{ minHeight: "60px !important", gap: { xs: 0.5, sm: 1 } }}>
-          <IconButton color="inherit" edge="start" onClick={handleDrawerToggle} sx={{ mr: 2 }}>
-            <MenuIcon />
-          </IconButton>
+          <CustomTooltip text="Menú" position="bottom">
+            <IconButton color="inherit" edge="start" onClick={handleDrawerToggle} sx={{ mr: 2 }} aria-label="Menú">
+              <MenuIcon />
+            </IconButton>
+          </CustomTooltip>
           <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 700, letterSpacing: "-0.01em", fontSize: { xs: "0.95rem", sm: "1.25rem" }, display: { xs: open ? "none" : "block", sm: "block" } }}>
             {user.store_name ? `${user.tenant_name} - ${user.store_name}` : user.tenant_name}
           </Typography>
-          
+
           {/* Mobile: Solo flecha regreso (si aplica) - ocultar cuando drawer abierto */}
-          {user.role === "owner" && user.store_id && (
-            <IconButton color="inherit" onClick={handleBack} sx={{ display: { xs: open ? "none" : "inline-flex", sm: "inline-flex" } }}>
-              <ArrowBackIcon />
-            </IconButton>
+          {isOwner(user) && user.store_id && (
+            <Box sx={{ display: { xs: open ? "none" : "inline-flex", sm: "inline-flex" } }}>
+              <CustomTooltip text="Regresar" position="bottom">
+                <IconButton color="inherit" onClick={backToGeneral} aria-label="Regresar">
+                  <ArrowBackIcon />
+                </IconButton>
+              </CustomTooltip>
+            </Box>
           )}
 
-          {/* Desktop: todos los menus */}
-          <Box sx={{ display: { xs: "none", lg: "flex" }, alignItems: "center", gap: 0.5 }}>
+          {/* Desktop + Mobile: menú de notificaciones unificado */}
+          <Box sx={{ display: { xs: open ? "none" : "flex", lg: "flex" }, alignItems: "center", gap: { xs: 0, lg: 0.5 } }}>
             <PendingMenu />
-            {user.role !== "seller" && (
+            {!seller && (
               <>
-                <DuplicateSalesMenu />
-                <StockRequestMenu />
+                {/* Estos solo se muestran en desktop */}
+                <Box sx={{ display: { xs: "none", lg: "flex" }, gap: 0.5 }}>
+                  <DuplicateSalesMenu />
+                  <StockRequestMenu />
+                </Box>
                 <NotificationsMenu />
               </>
-            )}
-          </Box>
-
-          {/* Mobile: solo NotificationsMenu - ocultar cuando drawer abierto */}
-          <Box sx={{ display: { xs: open ? "none" : "flex", lg: "none" }, alignItems: "center" }}>
-            {user.role !== "seller" && (
-              <NotificationsMenu />
             )}
           </Box>
 
@@ -526,45 +217,38 @@ export default function MainLayout({ toggleTheme, themeMode }) {
             <PageHelp />
           </Box>
 
-          <IconButton color="inherit" onClick={toggleTheme} sx={{ mr: 1, display: { xs: "none", sm: "inline-flex" } }}>
-            {themeMode === "dark" ? <Brightness7Icon /> : <Brightness4Icon />}
-          </IconButton>
+          <Box sx={{ mr: 1, display: { xs: "none", sm: "inline-flex" } }}>
+            <CustomTooltip text="Cambiar tema" position="bottom">
+              <IconButton color="inherit" onClick={toggleTheme} aria-label="Cambiar tema">
+                {themeMode === "dark" ? <Brightness7Icon /> : <Brightness4Icon />}
+              </IconButton>
+            </CustomTooltip>
+          </Box>
           <Avatar
             onClick={(e) => setAnchorEl(e.currentTarget)}
             sx={{
               width: 34, height: 34,
-              bgcolor: `${accent}d9`,
-              color: "#fff",
+              bgcolor: alpha(colors.googleBlue, 0.85),
+              color: colors.white,
               fontSize: "0.85rem", fontWeight: 700, mr: 1, cursor: "pointer",
               transition: "all 0.2s",
-              "&:hover": { transform: "scale(1.1)", bgcolor: accent },
-              display: { xs: "none", sm: "flex" }
+              "&:hover": { transform: "scale(1.1)", bgcolor: colors.googleBlue },
+              display: { xs: "none", sm: "flex" },
             }}
           >
-            {(user?.store_name || user?.tenant_name || "U").charAt(0).toUpperCase()}
+            {(user.store_name || user.tenant_name || "U").charAt(0).toUpperCase()}
           </Avatar>
           <Menu
             anchorEl={anchorEl}
             open={Boolean(anchorEl)}
-            onClose={() => setAnchorEl(null)}
-            PaperProps={{
-              sx: {
-                bgcolor: 'primary.main',
-                color: '#fff',
-                border: 'none',
-                '& .MuiMenuItem-root': {
-                  fontSize: '0.8125rem',
-                  '&:hover': { bgcolor: 'rgba(255,255,255,0.08)' },
-                },
-                '& .MuiListItemIcon-root': { color: 'rgba(255,255,255,0.7)' },
-              },
-            }}
+            onClose={closeUserMenu}
+            PaperProps={{ sx: userMenuPaperSx }}
           >
-            <MenuItem onClick={() => { setAnchorEl(null); navigate("/perfil"); }}>
+            <MenuItem onClick={() => { closeUserMenu(); navigate("/perfil"); }}>
               <ListItemIcon><PersonSearchIcon fontSize="small" /></ListItemIcon>
               Perfil
             </MenuItem>
-            <MenuItem onClick={() => { setAnchorEl(null); handleLogout(); }}>
+            <MenuItem onClick={() => { closeUserMenu(); performLogout(); }}>
               <ListItemIcon><LogoutIcon fontSize="small" /></ListItemIcon>
               Cerrar sesión
             </MenuItem>
@@ -573,425 +257,10 @@ export default function MainLayout({ toggleTheme, themeMode }) {
       </AppBar>
 
       {/* Drawer modal para mobile/tablets */}
-      <DrawerModal anchor="left" open={open} onClose={toggleDrawer(false)}>
-        <DrawerHeader
-          sx={{
-            display: "flex", alignItems: "center", justifyContent: "center",
-            minHeight: "60px !important",
-            borderBottom: "1px solid rgba(255,255,255,0.06)",
-          }}
-        >
-          <a href="https://smartventa-pos.vercel.app/" target="_blank" rel="noopener noreferrer">
-            <Box component="img" src={logo} alt="SmartVenta"
-              sx={{ height: "38px", width: "auto", objectFit: "contain", borderRadius: 1, cursor: "pointer" }}
-            />
-          </a>
-        </DrawerHeader>
-
-        <Divider sx={{ backgroundColor: "rgba(255,255,255,0.06)" }} />
-
-        <List sx={{
-          pt: 1.5, px: 1, flex: 1, overflowY: "auto", overflowX: "hidden",
-          "&::-webkit-scrollbar": { width: "12px" },
-          "&::-webkit-scrollbar-thumb": { backgroundColor: "rgba(255,255,255,0.4)", borderRadius: "4px" },
-          "&::-webkit-scrollbar-thumb:hover": { backgroundColor: "rgba(255,255,255,0.6)" },
-        }}>
-          {menuItems.map((item, idx) => {
-            if (item.hidden) return null;
-
-            if (item.dropdown) {
-              return (
-                <React.Fragment key={idx}>
-                  <ListItem disablePadding sx={{ mb: 0.3 }}>
-                    <ListItemButton
-                      onClick={() => !item.disabled && handleToggleMenu(item.label, !open)}
-                      disabled={item.disabled}
-                      sx={{
-                        borderRadius: "10px", py: 1,
-                        justifyContent: "initial",
-                        "&:hover": { backgroundColor: item.disabled ? "transparent" : "rgba(255,255,255,0.08)" },
-                      }}
-                    >
-                      <ListItemIcon sx={{ color: item.disabled ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.7)", minWidth: 38, justifyContent: "center" }}>
-                        {iconMap[item.label] || <DashboardIcon />}
-                      </ListItemIcon>
-                      <ListItemText
-                        primary={item.label}
-                        secondary={item.disabled ? item.disabledMessage : null}
-                        primaryTypographyProps={{ fontWeight: 600, fontSize: "0.8rem" }}
-                        secondaryTypographyProps={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.4)" }}
-                      />
-                      {!item.disabled && (openMenus[item.label] ? <ExpandLess sx={{ fontSize: 18 }} /> : <ExpandMore sx={{ fontSize: 18 }} />)}
-                    </ListItemButton>
-                  </ListItem>
-                  <Collapse in={openMenus[item.label]} timeout="auto" unmountOnExit>
-                    <List component="div" disablePadding>
-                      {item.dropdown.map((sub, i) =>
-                        sub.divider || sub.hidden ? null : (
-                          <ListItemButton key={i} onClick={() => !sub.disabled && navigate(sub.href)} disabled={sub.disabled}
-                            sx={{
-                              pl: 6.5, py: 0.6, borderRadius: "8px", my: 0.2, mx: 0.5,
-                              ...(isActive(sub.href) ? activeSx : {}),
-                              "&:hover": { backgroundColor: sub.disabled ? "transparent" : "rgba(255,255,255,0.06)" },
-                            }}
-                          >
-                            <ListItemText primary={sub.label}
-                              secondary={sub.disabled ? sub.disabledMessage : null}
-                              primaryTypographyProps={{
-                                fontSize: "0.75rem",
-                                color: sub.disabled ? "rgba(255,255,255,0.3)" : isActive(sub.href) ? accent : "rgba(255,255,255,0.75)",
-                                fontWeight: isActive(sub.href) ? 600 : 400,
-                              }}
-                              secondaryTypographyProps={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.4)" }}
-                            />
-                          </ListItemButton>
-                        )
-                      )}
-                    </List>
-                  </Collapse>
-                </React.Fragment>
-              );
-            }
-
-            return (
-              <ListItem key={idx} disablePadding sx={{ mb: 0.3 }}>
-                <ListItemButton onClick={() => navigate(item.href)}
-                  sx={{
-                    borderRadius: "10px", py: 1,
-                    justifyContent: "initial",
-                    ...(isActive(item.href) ? activeSx : {}),
-                    "&:hover": { backgroundColor: "rgba(255,255,255,0.08)" },
-                  }}
-                >
-                  <ListItemIcon sx={{
-                    color: isActive(item.href) ? accent : "rgba(255,255,255,0.7)",
-                    minWidth: 38, justifyContent: "center",
-                  }}>
-                    {iconMap[item.label] || <DashboardIcon />}
-                  </ListItemIcon>
-                  <ListItemText primary={item.label}
-                    primaryTypographyProps={{
-                      fontWeight: 600, fontSize: "0.8rem",
-                      color: isActive(item.href) ? accent : "inherit",
-                    }}
-                  />
-                </ListItemButton>
-              </ListItem>
-            );
-          })}
-        </List>
-        <Box sx={{ mt: "auto", p: 1 }}>
-          {user.role !== "seller" && (
-            <>
-              <ListItemButton
-                component="a"
-                href={`https://api.whatsapp.com/send/?phone=${process.env.REACT_APP_WHATSAPP_NUMBER}&text=${encodeURIComponent(`Soporte SmartVenta\nTenant: ${user.tenant_name}\nTienda: ${user.store_name || "General"}`)}&type=phone_number&app_absent=0`}
-                target="_blank"
-                rel="noopener noreferrer"
-                sx={{
-                  borderRadius: 2, justifyContent: "initial",
-                  "&:hover": { backgroundColor: "rgba(37, 211, 102, 0.12)" },
-                }}
-              >
-                <ListItemIcon sx={{ color: "#25D366", minWidth: 38, justifyContent: "center" }}>
-                  <WhatsAppIcon />
-                </ListItemIcon>
-                <ListItemText primary="Soporte" primaryTypographyProps={{ fontWeight: 600, fontSize: "0.8rem" }} />
-              </ListItemButton>
-            </>
-          )}
-
-          <Divider sx={{ backgroundColor: "rgba(255,255,255,0.06)", my: 1 }} />
-
-          <ListItemButton
-            onClick={handleLogout}
-            sx={{
-              borderRadius: 2, justifyContent: "initial",
-              "&:hover": { backgroundColor: "rgba(244, 67, 54, 0.12)" },
-            }}
-          >
-            <ListItemIcon sx={{ color: "rgba(244, 67, 54, 0.8)", minWidth: 38, justifyContent: "center" }}>
-              <LogoutIcon />
-            </ListItemIcon>
-            <ListItemText primary="Cerrar sesión" primaryTypographyProps={{ fontWeight: 600, fontSize: "0.8rem", color: "rgba(244, 67, 54, 0.8)" }} />
-          </ListItemButton>
-        </Box>
-      </DrawerModal>
+      {renderSidebar(true)}
 
       {/* Drawer permanente para desktop */}
-      <Drawer variant="permanent" open={open}>
-        <DrawerHeader
-          sx={{
-            display: "flex", alignItems: "center", justifyContent: "center",
-            minHeight: "60px !important",
-            borderBottom: "1px solid rgba(255,255,255,0.06)",
-          }}
-        >
-          {open && (
-            <a href="https://smartventa-pos.vercel.app/" target="_blank" rel="noopener noreferrer">
-              <Box component="img" src={logo} alt="SmartVenta"
-                sx={{ height: "38px", width: "auto", objectFit: "contain", borderRadius: 1, cursor: "pointer" }}
-              />
-            </a>
-          )}
-        </DrawerHeader>
-
-        <Divider sx={{ backgroundColor: "rgba(255,255,255,0.06)" }} />
-
-        <List sx={{
-          pt: 1.5, px: 1, flex: 1, overflowY: "auto", overflowX: "hidden",
-          "&::-webkit-scrollbar": { width: "10px" },
-          "&::-webkit-scrollbar-thumb": { backgroundColor: "rgba(255,255,255,0.4)", borderRadius: "4px" },
-          "&::-webkit-scrollbar-thumb:hover": { backgroundColor: "rgba(255,255,255,0.6)" },
-        }}>
-          {menuItems.map((item, idx) => {
-            if (item.hidden) return null;
-
-            // Manejo especial para go-back (regresar a general)
-            if (item.action === "go-back") {
-              return (
-                <ListItem key={idx} disablePadding sx={{ mb: 0.3 }}>
-                  <ListItemButton
-                    onClick={item.onClick}
-                    sx={{
-                      borderRadius: "10px", py: 1,
-                      justifyContent: open ? "initial" : "center",
-                      "&:hover": { backgroundColor: "rgba(255,255,255,0.08)" },
-                    }}
-                  >
-                    <ListItemIcon sx={{
-                      color: "rgba(255,255,255,0.7)",
-                      minWidth: open ? 38 : 0, justifyContent: "center",
-                    }}>
-                      {iconMap[item.label] || <DashboardIcon />}
-                    </ListItemIcon>
-                    <ListItemText primary={item.label}
-                      primaryTypographyProps={{
-                        fontWeight: 600, fontSize: "0.8rem",
-                        color: "inherit",
-                      }}
-                      sx={{ opacity: open ? 1 : 0 }}
-                    />
-                  </ListItemButton>
-                </ListItem>
-              );
-            }
-
-            if (item.dropdown) {
-              // Manejo especial para store-selector
-              if (item.action === "store-selector") {
-                return (
-                  <React.Fragment key={idx}>
-                    <ListItem disablePadding sx={{ mb: 0.3 }}>
-                      <ListItemButton
-                        onClick={() => !item.disabled && handleToggleStoreMenu(item.label, !open)}
-                        disabled={item.disabled}
-                        sx={{
-                          borderRadius: "10px", py: 1,
-                          justifyContent: open ? "initial" : "center",
-                          "&:hover": { backgroundColor: item.disabled ? "transparent" : "rgba(255,255,255,0.08)" },
-                        }}
-                      >
-                        <ListItemIcon sx={{ color: item.disabled ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.7)", minWidth: open ? 38 : 0, justifyContent: "center" }}>
-                          {iconMap[item.label] || <DashboardIcon />}
-                        </ListItemIcon>
-                        <ListItemText
-                          primary={open ? item.label : user.store_name}
-                          secondary={open ? user.store_name : null}
-                          primaryTypographyProps={{ fontWeight: 600, fontSize: "0.8rem" }}
-                          secondaryTypographyProps={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.4)" }}
-                          sx={{ opacity: open ? 1 : 0 }}
-                        />
-                        {open && !item.disabled && (openMenus[item.label] ? <ExpandLess sx={{ fontSize: 18 }} /> : <ExpandMore sx={{ fontSize: 18 }} />)}
-                      </ListItemButton>
-                    </ListItem>
-                    {open && (
-                      <Collapse in={openMenus[item.label]} timeout="auto" unmountOnExit>
-                        <List component="div" disablePadding>
-                          {loadingStores ? (
-                            <Box sx={{ display: "flex", justifyContent: "center", py: 1.5, pl: 6.5 }}>
-                              <CircularProgress size={18} />
-                            </Box>
-                          ) : (
-                            <>
-                              {(() => {
-                                const sortedDropdown = [...item.dropdown];
-                                if (previousStoreId) {
-                                  const prevIndex = sortedDropdown.findIndex(s => s.storeId === previousStoreId);
-                                  if (prevIndex >= 0) {
-                                    const [prev] = sortedDropdown.splice(prevIndex, 1);
-                                    sortedDropdown.unshift(prev);
-                                  }
-                                }
-                                return sortedDropdown.map((sub, i) => (
-                                  <ListItemButton
-                                    key={i}
-                                    onClick={() => handleSelectStore(sub.storeId)}
-                                    disabled={sub.storeId === user.store_id}
-                                    sx={{
-                                      pl: 6.5, py: 0.6, borderRadius: "8px", my: 0.2, mx: 0.5,
-                                      backgroundColor: sub.storeId === user.store_id ? "rgba(255, 193, 7, 0.12)" : sub.storeId === previousStoreId ? "rgba(255, 193, 7, 0.06)" : "transparent",
-                                      "&:hover": { backgroundColor: sub.storeId === user.store_id ? "rgba(255, 193, 7, 0.12)" : "rgba(255,255,255,0.06)" },
-                                    }}
-                                  >
-                                    <ListItemText
-                                      primary={sub.label}
-                                      primaryTypographyProps={{
-                                        fontSize: "0.75rem",
-                                        color: sub.storeId === user.store_id ? "rgba(255, 193, 7, 1)" : "rgba(255,255,255,0.75)",
-                                        fontWeight: sub.storeId === user.store_id ? 600 : sub.storeId === previousStoreId ? 500 : 400,
-                                      }}
-                                    />
-                                  </ListItemButton>
-                                ));
-                              })()}
-                              <Divider sx={{ borderColor: "rgba(255,255,255,0.1)", my: 0.5 }} />
-                              <ListItemButton
-                                onClick={handleBack}
-                                sx={{
-                                  pl: 6.5, py: 0.6, borderRadius: "8px", my: 0.2, mx: 0.5,
-                                  "&:hover": { backgroundColor: "rgba(255,255,255,0.06)" },
-                                }}
-                              >
-                                <ListItemText
-                                  primary="Regresar"
-                                  primaryTypographyProps={{
-                                    fontSize: "0.75rem",
-                                    color: "rgba(255,255,255,0.75)",
-                                  }}
-                                />
-                              </ListItemButton>
-                            </>
-                          )}
-                        </List>
-                      </Collapse>
-                    )}
-                  </React.Fragment>
-                );
-              }
-
-              // Manejo normal para otros dropdowns
-              return (
-                <React.Fragment key={idx}>
-                  <ListItem disablePadding sx={{ mb: 0.3 }}>
-                    <ListItemButton
-                      onClick={() => !item.disabled && handleToggleMenu(item.label, !open)}
-                      disabled={item.disabled}
-                      sx={{
-                        borderRadius: "10px", py: 1,
-                        justifyContent: open ? "initial" : "center",
-                        "&:hover": { backgroundColor: item.disabled ? "transparent" : "rgba(255,255,255,0.08)" },
-                      }}
-                    >
-                      <ListItemIcon sx={{ color: item.disabled ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.7)", minWidth: open ? 38 : 0, justifyContent: "center" }}>
-                        {iconMap[item.label] || <DashboardIcon />}
-                      </ListItemIcon>
-                      <ListItemText
-                        primary={item.label}
-                        secondary={item.disabled && open ? item.disabledMessage : null}
-                        primaryTypographyProps={{ fontWeight: 600, fontSize: "0.8rem" }}
-                        secondaryTypographyProps={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.4)" }}
-                        sx={{ opacity: open ? 1 : 0 }}
-                      />
-                      {open && !item.disabled && (openMenus[item.label] ? <ExpandLess sx={{ fontSize: 18 }} /> : <ExpandMore sx={{ fontSize: 18 }} />)}
-                    </ListItemButton>
-                  </ListItem>
-                  {open && (
-                    <Collapse in={openMenus[item.label]} timeout="auto" unmountOnExit>
-                      <List component="div" disablePadding>
-                        {item.dropdown.map((sub, i) =>
-                          sub.divider || sub.hidden ? null : (
-                            <ListItemButton key={i} onClick={() => !sub.disabled && navigate(sub.href)} disabled={sub.disabled}
-                              sx={{
-                                pl: 6.5, py: 0.6, borderRadius: "8px", my: 0.2, mx: 0.5,
-                                ...(isActive(sub.href) ? activeSx : {}),
-                                "&:hover": { backgroundColor: sub.disabled ? "transparent" : "rgba(255,255,255,0.06)" },
-                              }}
-                            >
-                              <ListItemText primary={sub.label}
-                                secondary={sub.disabled && open ? sub.disabledMessage : null}
-                                primaryTypographyProps={{
-                                  fontSize: "0.75rem",
-                                  color: sub.disabled ? "rgba(255,255,255,0.3)" : isActive(sub.href) ? accent : "rgba(255,255,255,0.75)",
-                                  fontWeight: isActive(sub.href) ? 600 : 400,
-                                }}
-                                secondaryTypographyProps={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.4)" }}
-                              />
-                            </ListItemButton>
-                          )
-                        )}
-                      </List>
-                    </Collapse>
-                  )}
-                </React.Fragment>
-              );
-            }
-
-            return (
-              <ListItem key={idx} disablePadding sx={{ mb: 0.3 }}>
-                <ListItemButton onClick={() => navigate(item.href)}
-                  sx={{
-                    borderRadius: "10px", py: 1,
-                    justifyContent: open ? "initial" : "center",
-                    ...(isActive(item.href) ? activeSx : {}),
-                    "&:hover": { backgroundColor: "rgba(255,255,255,0.08)" },
-                  }}
-                >
-                  <ListItemIcon sx={{
-                    color: isActive(item.href) ? accent : "rgba(255,255,255,0.7)",
-                    minWidth: open ? 38 : 0, justifyContent: "center",
-                  }}>
-                    {iconMap[item.label] || <DashboardIcon />}
-                  </ListItemIcon>
-                  <ListItemText primary={item.label}
-                    primaryTypographyProps={{
-                      fontWeight: 600, fontSize: "0.8rem",
-                      color: isActive(item.href) ? accent : "inherit",
-                    }}
-                    sx={{ opacity: open ? 1 : 0 }}
-                  />
-                </ListItemButton>
-              </ListItem>
-            );
-          })}
-        </List>
-        <Box sx={{ mt: "auto", p: 1 }}>
-          {user.role !== "seller" && (
-            <>
-              <ListItemButton
-                component="a"
-                href={`https://api.whatsapp.com/send/?phone=${process.env.REACT_APP_WHATSAPP_NUMBER}&text=${encodeURIComponent(`Soporte SmartVenta\nTenant: ${user.tenant_name}\nTienda: ${user.store_name || "General"}`)}&type=phone_number&app_absent=0`}
-                target="_blank"
-                rel="noopener noreferrer"
-                sx={{
-                  borderRadius: 2, justifyContent: open ? "initial" : "center",
-                  "&:hover": { backgroundColor: "rgba(37, 211, 102, 0.12)" },
-                }}
-              >
-                <ListItemIcon sx={{ color: "#25D366", minWidth: open ? 38 : 0, justifyContent: "center" }}>
-                  <WhatsAppIcon />
-                </ListItemIcon>
-                <ListItemText primary="Soporte" primaryTypographyProps={{ fontWeight: 600, fontSize: "0.8rem" }} sx={{ opacity: open ? 1 : 0 }} />
-              </ListItemButton>
-            </>
-          )}
-
-          <Divider sx={{ backgroundColor: "rgba(255,255,255,0.06)", my: 1 }} />
-
-          <ListItemButton
-            onClick={handleLogout}
-            sx={{
-              borderRadius: 2, justifyContent: open ? "initial" : "center",
-              "&:hover": { backgroundColor: "rgba(244, 67, 54, 0.12)" },
-            }}
-          >
-            <ListItemIcon sx={{ color: "rgba(244, 67, 54, 0.8)", minWidth: open ? 38 : 0, justifyContent: "center" }}>
-              <LogoutIcon />
-            </ListItemIcon>
-            <ListItemText primary="Cerrar sesión" primaryTypographyProps={{ fontWeight: 600, fontSize: "0.8rem", color: "rgba(244, 67, 54, 0.8)" }} sx={{ opacity: open ? 1 : 0 }} />
-          </ListItemButton>
-        </Box>
-      </Drawer>
+      {renderSidebar(false)}
 
       <Box component="main" sx={{ flexGrow: 1, p: { xs: 1.5, sm: 2, md: 3 }, minWidth: 0, overflowY: "auto", position: "relative" }}>
         <DrawerHeader />
@@ -1001,8 +270,8 @@ export default function MainLayout({ toggleTheme, themeMode }) {
       </Box>
 
       <Backdrop
-        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={switchingStore}
+        sx={{ color: "common.white", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={switching}
       >
         <CircularProgress color="inherit" />
       </Backdrop>

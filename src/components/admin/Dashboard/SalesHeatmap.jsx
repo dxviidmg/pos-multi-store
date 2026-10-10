@@ -1,19 +1,21 @@
 import React, { useMemo } from "react";
-import { Box, Typography, Tooltip, useTheme } from "@mui/material";
-import { DAY_NAMES_SHORT, formatCurrency } from "../../../utils/utils";
+import { Box, Typography, Tooltip, useTheme, alpha } from "@mui/material";
+import { DAY_NAMES_SHORT } from "../../../utils/date";
+import { formatCurrency } from "../../../utils/currency";
+import { CHART_COLORS } from "../../../utils/chart";
 
 const HOUR_LABELS = Array.from({ length: 24 }, (_, i) => `${i}:00`);
-const STORE_COLORS = [
-  { base: [37, 99, 235], label: "#2563eb" },
-  { base: [16, 185, 129], label: "#10b981" },
-  { base: [245, 158, 11], label: "#f59e0b" },
-  { base: [139, 92, 246], label: "#8b5cf6" },
-  { base: [239, 68, 68], label: "#ef4444" },
-];
+const LEGEND_STEPS = [0, 0.25, 0.5, 0.75, 1];
+
+// Mismo color por sucursal que el resto de las gráficas del tablero
+const getStoreColor = (index) => CHART_COLORS[index % CHART_COLORS.length];
+
 
 const SalesHeatmap = ({ data, metricType = "count" }) => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
+  // Celdas vacías y leyenda: blanco translúcido en oscuro, negro translúcido en claro
+  const neutral = isDark ? theme.palette.common.white : theme.palette.common.black;
 
   const { storeGrids, globalMax } = useMemo(() => {
     if (!data?.sales?.length || !data?.stores?.length) return { storeGrids: [], globalMax: 0 };
@@ -39,12 +41,12 @@ const SalesHeatmap = ({ data, metricType = "count" }) => {
     metricType === "total" ? formatCurrency(v, 0) : v;
 
   const getColor = (value, colorIdx) => {
-    if (!globalMax || !value) return isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.04)";
+    if (!globalMax || !value) return alpha(neutral, 0.04);
     const intensity = value / globalMax;
-    const [r, g, b] = STORE_COLORS[colorIdx % STORE_COLORS.length].base;
+    const color = getStoreColor(colorIdx);
     return isDark
-      ? `rgba(${r},${g},${b},${0.12 + intensity * 0.88})`
-      : `rgba(${r},${g},${b},${0.08 + intensity * 0.82})`;
+      ? alpha(color, 0.12 + intensity * 0.88)
+      : alpha(color, 0.08 + intensity * 0.82);
   };
 
   if (!storeGrids.length) return null;
@@ -58,7 +60,7 @@ const SalesHeatmap = ({ data, metricType = "count" }) => {
         {storeGrids.map((store, si) => (
           <Box key={store.name}>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
-              <Box sx={{ width: 10, height: 10, borderRadius: "50%", bgcolor: STORE_COLORS[si % STORE_COLORS.length].label }} />
+              <Box sx={{ width: 10, height: 10, borderRadius: "50%", bgcolor: getStoreColor(si) }} />
               <Typography variant="body2" sx={{ fontWeight: 600 }}>{store.name}</Typography>
             </Box>
             <Box sx={{ overflowX: "auto" }}>
@@ -97,12 +99,10 @@ const SalesHeatmap = ({ data, metricType = "count" }) => {
       </Box>
       <Box sx={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 0.5, mt: 2 }}>
         <Typography variant="caption" sx={{ color: "text.secondary", fontSize: 10, mr: 0.5 }}>Menos</Typography>
-        {[0, 0.25, 0.5, 0.75, 1].map((intensity) => (
+        {LEGEND_STEPS.map((intensity) => (
           <Box key={intensity} sx={{
             width: 12, height: 12, borderRadius: "2px",
-            bgcolor: isDark
-              ? `rgba(255,255,255,${0.04 + intensity * 0.5})`
-              : `rgba(0,0,0,${0.04 + intensity * 0.4})`,
+            bgcolor: alpha(neutral, 0.04 + intensity * (isDark ? 0.5 : 0.4)),
           }} />
         ))}
         <Typography variant="caption" sx={{ color: "text.secondary", fontSize: 10, ml: 0.5 }}>Más</Typography>

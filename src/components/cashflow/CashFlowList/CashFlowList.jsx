@@ -2,46 +2,54 @@ import React, { useEffect, useState } from "react";
 import DataTable from "../../ui/DataTable/DataTable";
 import CustomButton from "../../ui/Button/Button";
 import CustomTooltip from "../../ui/Tooltip";
-import { getFormattedDate, formatTimeFromDate, formatCurrency } from "../../../utils/utils";
+import { getFormattedDate, formatTimeFromDate, formatCurrency, upsertById } from "../../../utils/utils";
 import { getCashFlow, deleteCashFlow } from "../../../api/cashflow";
 import { useUser } from "../../../context/UserContext";
 import CashFlowModal from "../CashFlowModal/CashFlowModal";
 import { useModal } from "../../../hooks/useModal";
-import { CustomSpinner } from "../../ui/Spinner/Spinner";
-import { Grid, TextField } from "@mui/material";
+import { isOwner, isSeller as isSellerUser } from "../../../constants/routeAccess";
+import DateRangeFilter from "../../ui/DateRangeFilter/DateRangeFilter";
+import { Grid } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import PageHeader from "../../ui/PageHeader";
 import { showSuccess, showConfirm, showRequestError } from "../../../utils/alerts";
 
-const today = getFormattedDate();
-
 const CashFlowList = () => {
   const [cashFlow, setCashFlow] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [params, setParams] = useState({ start_date: today, end_date: today });
+  const [params, setParams] = useState(() => {
+    const today = getFormattedDate();
+    return { start_date: today, end_date: today };
+  });
   const cashFlowModal = useModal();
   const { user } = useUser();
-  const isSeller = user?.role === "seller";
-
-  const fetchData = async () => {
-    setLoading(true);
-    const res = await getCashFlow(params);
-    setCashFlow(res.data);
-    setLoading(false);
-  };
+  const isSeller = isSellerUser(user);
 
   useEffect(() => {
+    let ignore = false;
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const res = await getCashFlow(params);
+        if (!ignore) setCashFlow(res.data);
+      } catch (error) {
+        if (!ignore) showRequestError("cargar los movimientos", error);
+      } finally {
+        if (!ignore) setLoading(false);
+      }
+    };
     fetchData();
+    return () => {
+      ignore = true;
+    };
   }, [params]);
 
+  // Crear devuelve el movimiento completo; editar (PATCH) solo los campos enviados, así que se recarga la lista.
   const handleUpdateCashFlowList = (updated, isEdit) => {
-    if (isEdit) {
-      fetchData();
-    } else {
-      setCashFlow((prev) => [...prev, updated]);
-    }
+    if (isEdit) setParams((prev) => ({ ...prev }));
+    else setCashFlow((prev) => upsertById(prev, updated));
   };
 
   const handleDelete = async (row) => {
@@ -51,12 +59,12 @@ const CashFlowList = () => {
     );
     if (!confirmed) return;
 
-    const response = await deleteCashFlow(row.id);
-    if (response.status === 200 || response.status === 204) {
+    try {
+      await deleteCashFlow(row.id);
       setCashFlow((prev) => prev.filter((item) => item.id !== row.id));
       showSuccess("Movimiento eliminado");
-    } else {
-      showRequestError("eliminar el movimiento", response);
+    } catch (error) {
+      showRequestError("eliminar el movimiento", error);
     }
   };
 
@@ -67,7 +75,6 @@ const CashFlowList = () => {
 
   return (
     <>
-      <CustomSpinner isLoading={loading} />
       <CashFlowModal
         isOpen={cashFlowModal.isOpen}
         cashFlow={cashFlowModal.data}
@@ -87,32 +94,12 @@ const CashFlowList = () => {
         </PageHeader>
 
         <Grid container spacing={2} sx={{ mb: 2 }}>
-          <Grid item xs={12} md={4}>
-            <TextField
-              size="small"
-              fullWidth
-              label="Fecha de inicio"
-              type="date"
-              value={params.start_date}
-              name="start_date"
-              onChange={handleParamsChange}
-              inputProps={{ max: today }}
-              disabled={isSeller}
-            />
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <TextField
-              size="small"
-              fullWidth
-              label="Fecha de fin"
-              type="date"
-              value={params.end_date}
-              name="end_date"
-              onChange={handleParamsChange}
-              inputProps={{ max: today }}
-              disabled={isSeller}
-            />
-          </Grid>
+          <DateRangeFilter
+            startDate={params.start_date}
+            endDate={params.end_date}
+            onChange={handleParamsChange}
+            disabled={isSeller}
+          />
         </Grid>
 
         <DataTable
@@ -129,7 +116,7 @@ const CashFlowList = () => {
             { name: "Tipo", selector: (row) => row.transaction_type_display },
             { name: "Cantidad", selector: (row) => formatCurrency(row.amount) },
             { name: "Usuario", selector: (row) => row.user_username },
-            ...(user?.role === "owner" ? [{
+            ...(isOwner(user) ? [{
               name: "Acciones",
               cell: (row) => (
                 <>

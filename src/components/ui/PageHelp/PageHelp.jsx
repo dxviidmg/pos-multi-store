@@ -3,6 +3,7 @@ import { IconButton, Popover, Typography, Box } from "@mui/material";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import { useLocation } from "react-router-dom";
 import helpTexts from "../../../constants/helpTexts";
+import CustomTooltip from "../Tooltip";
 
 const PageHelp = memo(() => {
   const { pathname } = useLocation();
@@ -13,9 +14,11 @@ const PageHelp = memo(() => {
 
   return (
     <>
-      <IconButton color="inherit" onClick={(e) => setAnchorEl(e.currentTarget)} size="small">
-        <HelpOutlineIcon />
-      </IconButton>
+      <CustomTooltip text="Ayuda" position="bottom">
+        <IconButton color="inherit" onClick={(e) => setAnchorEl(e.currentTarget)} size="small" aria-label="Ayuda">
+          <HelpOutlineIcon />
+        </IconButton>
+      </CustomTooltip>
       <Popover
         open={Boolean(anchorEl)}
         anchorEl={anchorEl}

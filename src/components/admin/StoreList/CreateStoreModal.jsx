@@ -3,6 +3,7 @@ import CustomModal from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
 import { showSuccess, showRequestError } from "../../../utils/alerts";
 import { createStore } from "../../../api/stores";
+import { STORE_TYPES } from "../../../constants";
 import {
   Box,
   Grid,
@@ -20,7 +21,7 @@ import WarehouseIcon from "@mui/icons-material/Warehouse";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import PhoneIcon from "@mui/icons-material/Phone";
 
-const INITIAL_FORM = { name: "", store_type: "T", address: "", phone_number: "" };
+const INITIAL_FORM = { name: "", store_type: STORE_TYPES.STORE, address: "", phone_number: "" };
 
 const CreateStoreModal = ({ isOpen, onClose, onCreated }) => {
   const [formData, setFormData] = useState(INITIAL_FORM);
@@ -33,16 +34,16 @@ const CreateStoreModal = ({ isOpen, onClose, onCreated }) => {
   const handleSubmit = async () => {
     if (loading) return;
     setLoading(true);
-    const response = await createStore(formData);
-    setLoading(false);
-
-    if (response.status === 200 || response.status === 201) {
+    try {
+      const response = await createStore(formData);
       onCreated(response.data);
       onClose();
       setFormData(INITIAL_FORM);
       showSuccess("Tienda creada");
-    } else {
-      showRequestError("crear la tienda", response);
+    } catch (error) {
+      showRequestError("crear la tienda", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -74,8 +75,8 @@ const CreateStoreModal = ({ isOpen, onClose, onCreated }) => {
                   </InputAdornment>
                 }
               >
-                <MenuItem value="T">Tienda</MenuItem>
-                <MenuItem value="A">Almacén</MenuItem>
+                <MenuItem value={STORE_TYPES.STORE}>Tienda</MenuItem>
+                <MenuItem value={STORE_TYPES.WAREHOUSE}>Almacén</MenuItem>
               </Select>
             </FormControl>
           </Grid>

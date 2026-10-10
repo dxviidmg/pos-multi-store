@@ -1,37 +1,30 @@
 import { useCallback, useState } from "react";
-import { logger } from "../utils/logger";
+import { readString, writeString } from "../utils/storage";
+import { PRODUCT_VIEW_OPTIONS } from "../constants";
 
-const VALID_MODES = ["table", "gallery"];
+const DEFAULT_MODES = PRODUCT_VIEW_OPTIONS.map((option) => option.value);
 
 /**
  * Hook para persistir la preferencia de modo de visualización (tabla/galería) en localStorage.
  *
- * @param {string} storageKey - Clave de localStorage (ej. "productList.viewMode")
+ * @param {string} storageKey - Clave de localStorage (ver STORAGE_KEYS.VIEW_MODE)
  * @param {string} [defaultMode="table"] - Modo por defecto si no hay preferencia válida
+ * @param {string[]} [validModes] - Modos aceptados (por defecto los valores de PRODUCT_VIEW_OPTIONS)
  * @returns {[string, (mode: string) => void]} Tupla [mode, setMode]
  */
-export const useViewModePreference = (storageKey, defaultMode = "table") => {
+export const useViewModePreference = (storageKey, defaultMode = "table", validModes = DEFAULT_MODES) => {
   const [mode, setModeState] = useState(() => {
-    try {
-      const stored = localStorage.getItem(storageKey);
-      return VALID_MODES.includes(stored) ? stored : defaultMode;
-    } catch (err) {
-      // localStorage puede no estar disponible (modo privado); usar el valor por defecto.
-      return defaultMode;
-    }
+    const stored = readString(storageKey);
+    return validModes.includes(stored) ? stored : defaultMode;
   });
 
   const setMode = useCallback(
     (nextMode) => {
-      if (!VALID_MODES.includes(nextMode)) return;
+      if (!validModes.includes(nextMode)) return;
       setModeState(nextMode);
-      try {
-        localStorage.setItem(storageKey, nextMode);
-      } catch (err) {
-        logger.warn("No se pudo guardar la preferencia de vista:", err?.message || err);
-      }
+      writeString(storageKey, nextMode);
     },
-    [storageKey]
+    [storageKey, validModes]
   );
 
   return [mode, setMode];

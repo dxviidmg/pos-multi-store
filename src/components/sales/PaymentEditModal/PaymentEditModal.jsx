@@ -1,48 +1,44 @@
 import React, { useState, useEffect, useRef } from "react";
-import CustomModal from "../../ui/Modal/Modal";
-import CustomButton from "../../ui/Button/Button";
+import { Grid, TextField, Radio, RadioGroup, FormControlLabel, FormLabel, Typography } from "@mui/material";
+import CustomModal, { ModalBody } from "../../ui/Modal/Modal";
+import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { updateSale } from "../../../api/sales";
 import { showSuccess, showRequestError } from "../../../utils/alerts";
-import { handlePrintTicket } from "../../../utils/utils";
+import { handlePrintTicket } from "../../../utils/print";
+import { formatCurrency } from "../../../utils/currency";
 import { useUser } from "../../../context/UserContext";
-import { usePrinterStatus } from "../../../hooks/usePrinterStatus";
-import { Grid, TextField, Radio, RadioGroup, FormControlLabel, FormLabel, Chip } from "@mui/material";
-import MoneyOffIcon from "@mui/icons-material/MoneyOff";
-import { CustomSpinner } from "../../ui/Spinner/Spinner";
+import { useCtrlShortcut } from "../../../hooks/useCtrlShortcut";
+import { PAYMENT_METHODS, PAYMENT_METHOD_OPTIONS } from "../../../constants";
 import ReferencePaymentField from "../ReferencePaymentField/ReferencePaymentField";
-import { formatCurrency } from "../../../utils/utils";
+import PaymentSubmitPanel from "../shared/PaymentSubmitPanel";
 
 const INITIAL_PAYMENT_STATE = { paidWith: 0, change: 0 };
+const ACTIONS = { SETTLE: "Liquidar", PARTIAL: "Abonar" };
+const SECTION_TITLE_SX = { mb: 1 };
 
 const PaymentEditModal = ({ isOpen, sale, onClose, onUpdate }) => {
   const inputPaymentRef = useRef(null);
   const { user } = useUser();
+  const printer = user?.store_printer;
   const reservation = sale || {};
 
-  const [action, setAction] = useState("Liquidar");
+  const [action, setAction] = useState(ACTIONS.SETTLE);
   const [payment, setPayment] = useState(INITIAL_PAYMENT_STATE);
   const [referencePayment, setReferencePayment] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState("EF");
+  const [paymentMethod, setPaymentMethod] = useState(PAYMENT_METHODS.CASH);
   const [isLoading, setIsLoading] = useState(false);
   const isSubmittingRef = useRef(false);
   const remaining = reservation.total - reservation.paid;
-
-  const printer = user?.store_printer;
-  const { connected: printerConnected, error: printerError } = usePrinterStatus(printer, { triggerDep: isOpen });
+  const isCash = paymentMethod === PAYMENT_METHODS.CASH;
 
   useEffect(() => {
-    if (isOpen) {
-      setTimeout(() => inputPaymentRef.current?.focus(), 100);
-    }
-  }, [isOpen]);
-
-  useEffect(() => {
-    if (isOpen) {
-      setAction("Liquidar");
-      setPayment(INITIAL_PAYMENT_STATE);
-      setReferencePayment("");
-      setPaymentMethod("EF");
-    }
+    if (!isOpen) return undefined;
+    setAction(ACTIONS.SETTLE);
+    setPayment(INITIAL_PAYMENT_STATE);
+    setReferencePayment("");
+    setPaymentMethod(PAYMENT_METHODS.CASH);
+    const timer = setTimeout(() => inputPaymentRef.current?.focus(), 100);
+    return () => clearTimeout(timer);
   }, [isOpen]);
 
   const handleCreatePayment = async (printTicket = false) => {
@@ -51,38 +47,36 @@ const PaymentEditModal = ({ isOpen, sale, onClose, onUpdate }) => {
     setIsLoading(true);
 
     try {
-      const reservation_in_progress = action === "Abonar";
+      const reservation_in_progress = action === ACTIONS.PARTIAL;
       const data = {
         id: reservation.id,
         payment: {
           payment_method: paymentMethod,
           sale_id: reservation.id,
           amount: payment.paidWith - payment.change,
+          // El backend crea el Payment directo con este objeto (campo `reference` del modelo)
+          ...(!isCash && { reference: referencePayment }),
         },
         reservation_in_progress,
       };
 
       const response = await updateSale(data);
 
-      if (response.status === 200) {
-        setPaymentMethod("EF");
-        setReferencePayment("");
-        onClose();
-        setPayment(INITIAL_PAYMENT_STATE);
+      setPaymentMethod(PAYMENT_METHODS.CASH);
+      setReferencePayment("");
+      onClose();
+      setPayment(INITIAL_PAYMENT_STATE);
 
-        if (reservation_in_progress) {
-          onUpdate(response.data);
-          showSuccess("Abono registrado");
-        } else {
-          showSuccess("Apartado liquidado");
-          onUpdate({ ...response.data, delete: true });
-        }
-
-        if (printer && printTicket) {
-          handlePrintTicket("ticket", response.data);
-        }
+      if (reservation_in_progress) {
+        onUpdate(response.data);
+        showSuccess("Abono registrado");
       } else {
-        showRequestError("registrar el abono", response);
+        showSuccess("Apartado liquidado");
+        onUpdate({ ...response.data, delete: true });
+      }
+
+      if (printer && printTicket) {
+        handlePrintTicket("ticket", response.data);
       }
     } catch (error) {
       showRequestError("registrar el abono", error);
@@ -92,160 +86,112 @@ const PaymentEditModal = ({ isOpen, sale, onClose, onUpdate }) => {
     }
   };
 
-  useEffect(() => {
-    const handleShortcut = (event) => {
-      if (event.ctrlKey && event.key === "g") {
-        event.preventDefault();
-        if (isOpen && !handleDisableButton()) {
-          handleCreatePayment(!!printer);
-        }
-      }
-      if (event.ctrlKey && event.key === "f") {
-        event.preventDefault();
-        if (isOpen && !handleDisableButton()) {
-          handleCreatePayment(false);
-        }
-      }
-    };
-
-    window.addEventListener("keydown", handleShortcut);
-    return () => window.removeEventListener("keydown", handleShortcut);
-  }, [isOpen, printer, payment, action, paymentMethod, remaining]);
-
   const handlePaidWithChange = (e) => {
     let value = Number(e.target.value);
     if (isNaN(value)) {
-      setPayment({ paidWith: 0, change: 0 });
+      setPayment(INITIAL_PAYMENT_STATE);
       return;
     }
     // En abono, máximo remaining - 1
-    if (action === "Abonar") {
-      const maxAbono = Math.floor(remaining) - 1;
-      value = Math.min(value, maxAbono);
+    if (action === ACTIONS.PARTIAL) {
+      value = Math.min(value, Math.floor(remaining) - 1);
     }
-    setPayment({
-      paidWith: value,
-      change: Math.max(0, value - remaining),
-    });
+    setPayment({ paidWith: value, change: Math.max(0, value - remaining) });
   };
 
-  const handleDisableButton = () => {
-    if (action === "Abonar") {
-      return payment.paidWith < 1 || payment.paidWith >= remaining;
-    }
-    // Liquidar
-    if (paymentMethod !== "EF") {
-      return payment.paidWith < remaining || referencePayment === "";
-    }
-    return payment.paidWith < remaining;
-  };
+  const isSubmitDisabled =
+    action === ACTIONS.PARTIAL
+      ? payment.paidWith < 1 || payment.paidWith >= remaining
+      : payment.paidWith < remaining || (!isCash && referencePayment === "");
+
+  // Ctrl+G cobra con ticket y Ctrl+F sin ticket; respetan la misma validación que el botón
+  useCtrlShortcut(
+    ["g", "f"],
+    (_event, key) => {
+      if (isSubmitDisabled) return;
+      handleCreatePayment(key === "g" ? !!printer : false);
+    },
+    { enabled: isOpen }
+  );
 
   return (
     <>
       <CustomSpinner isLoading={isLoading} />
-      <CustomModal
-        showOut={isOpen}
-        onClose={onClose}
-        title="Cobrar apartado"
-      >
-        <Grid container sx={{ padding: '1rem', backgroundColor: 'modalBody.main' }}>
-          {/* Información del apartado */}
-          <Grid item xs={12} className="card" sx={{ marginBottom: '1rem' }}>
-            <h2 style={{ marginBottom: '0.5rem' }}>Información</h2>
-            <Grid container spacing={2}>
-              <Grid item xs={12} md={3}>
-                <TextField size="small" fullWidth label="Folio" type="number" value={reservation.id || ""} disabled InputProps={{ startAdornment: '#' }} />
-              </Grid>
-              <Grid item xs={12} md={3}>
-                <TextField size="small" fullWidth label="Total de la compra" value={formatCurrency(reservation.total)} disabled />
-              </Grid>
-              <Grid item xs={12} md={3}>
-                <TextField size="small" fullWidth label="Pagado" value={formatCurrency(reservation.paid)} disabled />
-              </Grid>
-              <Grid item xs={12} md={3}>
-                <TextField size="small" fullWidth label="Deuda" value={formatCurrency(remaining)} disabled />
+      <CustomModal showOut={isOpen} onClose={onClose} title="Cobrar apartado">
+        <ModalBody>
+          <Grid container>
+            <Grid item xs={12} className="card" sx={{ marginBottom: "1rem" }}>
+              <Typography variant="h2" sx={SECTION_TITLE_SX}>Información</Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={3}>
+                  <TextField size="small" fullWidth label="Folio" type="number" value={reservation.id || ""} disabled InputProps={{ startAdornment: "#" }} />
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <TextField size="small" fullWidth label="Total de la compra" value={formatCurrency(reservation.total)} disabled />
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <TextField size="small" fullWidth label="Pagado" value={formatCurrency(reservation.paid)} disabled />
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <TextField size="small" fullWidth label="Deuda" value={formatCurrency(remaining)} disabled />
+                </Grid>
               </Grid>
             </Grid>
-          </Grid>
 
-          {/* Totales y pago */}
-          <Grid item xs={12} className="card" sx={{ marginBottom: '1rem' }}>
-            <h2 style={{ marginBottom: '0.5rem' }}>Totales</h2>
-            <Grid container spacing={2}>
-              <Grid item xs={12} md={3}>
-                <TextField
-                  fullWidth
-                  size="small"
-                  label="Pago con"
-                  type="text"
-                  value={payment.paidWith}
-                  onChange={handlePaidWithChange}
-                  inputRef={inputPaymentRef}
-                  InputProps={{ startAdornment: '$' }}
-                />
-              </Grid>
-              <Grid item xs={12} md={3}>
-                {paymentMethod !== "EF" ? (
-                  <ReferencePaymentField value={referencePayment} onChange={setReferencePayment} />
-                ) : (
-                  <TextField fullWidth size="small" label="Cambio" value={formatCurrency(payment.change)} disabled />
-                )}
-              </Grid>
-            </Grid>
-          </Grid>
-
-          {/* Método de pago y acción */}
-          <Grid item xs={12} className="card">
-            <Grid container spacing={2}>
-              <Grid item xs={12} md={4}>
-                <FormLabel>Acción:</FormLabel>
-                <RadioGroup
-                  value={action}
-                  onChange={(e) => setAction(e.target.value)}
-                  name="action"
-                >
-                  <FormControlLabel value="Liquidar" control={<Radio size="small" />} label="Liquidar" />
-                  <FormControlLabel value="Abonar" control={<Radio size="small" />} label="Abonar" />
-                </RadioGroup>
-              </Grid>
-
-              <Grid item xs={12} md={4}>
-                <FormLabel>Medio de pago:</FormLabel>
-                <RadioGroup
-                  value={paymentMethod}
-                  onChange={(e) => setPaymentMethod(e.target.value)}
-                  name="paymentMethod"
-                >
-                  <FormControlLabel value="EF" control={<Radio size="small" />} label="Efectivo" />
-                  <FormControlLabel value="TA" control={<Radio size="small" />} label="Tarjeta" />
-                  <FormControlLabel value="TR" control={<Radio size="small" />} label="Transferencia" />
-                </RadioGroup>
-              </Grid>
-
-              <Grid item xs={12} md={4}>
-                <FormLabel sx={{ display: 'block', textAlign: 'center' }}>{printer ? 'Con impresión de ticket' : 'Sin impresión de ticket'}</FormLabel>
-                <CustomButton
-                  disabled={handleDisableButton()}
-                  fullWidth
-                  onClick={() => handleCreatePayment(!!printer)}
-                  startIcon={<MoneyOffIcon />}
-                  sx={{ mt: 1 }}
-                >
-                  Cobrar (Ctrl + G)
-                </CustomButton>
-                {printer && (
-                  <Chip
-                    label={printerError || (printerConnected ? "Impresora conectada" : "Impresora desconectada")}
-                    color={printerConnected ? "success" : "error"}
-                    variant="filled"
+            <Grid item xs={12} className="card" sx={{ marginBottom: "1rem" }}>
+              <Typography variant="h2" sx={SECTION_TITLE_SX}>Totales</Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={3}>
+                  <TextField
+                    fullWidth
                     size="small"
-                    sx={{ mt: 1, width: '100%' }}
+                    label="Pago con"
+                    type="text"
+                    value={payment.paidWith}
+                    onChange={handlePaidWithChange}
+                    inputRef={inputPaymentRef}
+                    InputProps={{ startAdornment: "$" }}
                   />
-                )}
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  {isCash ? (
+                    <TextField fullWidth size="small" label="Cambio" value={formatCurrency(payment.change)} disabled />
+                  ) : (
+                    <ReferencePaymentField value={referencePayment} onChange={setReferencePayment} />
+                  )}
+                </Grid>
+              </Grid>
+            </Grid>
+
+            <Grid item xs={12} className="card">
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={4}>
+                  <FormLabel>Acción:</FormLabel>
+                  <RadioGroup value={action} onChange={(e) => setAction(e.target.value)} name="action">
+                    {Object.values(ACTIONS).map((value) => (
+                      <FormControlLabel key={value} value={value} control={<Radio size="small" />} label={value} />
+                    ))}
+                  </RadioGroup>
+                </Grid>
+
+                <Grid item xs={12} md={4}>
+                  <FormLabel>Medio de pago:</FormLabel>
+                  <RadioGroup value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)} name="paymentMethod">
+                    {PAYMENT_METHOD_OPTIONS.map(({ value, label }) => (
+                      <FormControlLabel key={value} value={value} control={<Radio size="small" />} label={label} />
+                    ))}
+                  </RadioGroup>
+                </Grid>
+
+                <Grid item xs={12} md={4}>
+                  <PaymentSubmitPanel printer={printer} disabled={isSubmitDisabled} onSubmit={() => handleCreatePayment(!!printer)}>
+                    Cobrar (Ctrl + G)
+                  </PaymentSubmitPanel>
+                </Grid>
               </Grid>
             </Grid>
           </Grid>
-        </Grid>
+        </ModalBody>
       </CustomModal>
     </>
   );

@@ -3,18 +3,22 @@ import DataTable from "../../ui/DataTable/DataTable";
 import { getSellers } from "../../../api/sellers";
 import CustomButton from "../../ui/Button/Button";
 import SellerModal from "../SellerModal/SellerModal";
-import { getDateDifference, getFormattedDate, upsertById, formatCurrency } from "../../../utils/utils";
+import { getFormattedDate, upsertById, formatCurrency } from "../../../utils/utils";
+import { showRequestError } from "../../../utils/alerts";
+import { isOwner } from "../../../constants/routeAccess";
 import { useModal } from "../../../hooks/useModal";
 import { useUserManagement } from "../../../hooks/useUserManagement";
-import EditUserModal from "../../ui/UserModals/EditUserModal";
-import ChangePasswordModal from "../../ui/UserModals/ChangePasswordModal";
+import UserManagementModals from "../../ui/UserModals/UserManagementModals";
 import PageHeader from "../../ui/PageHeader";
-import { Grid, TextField } from "@mui/material";
+import DateRangeFilter from "../../ui/DateRangeFilter/DateRangeFilter";
+import { Grid } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import LockResetIcon from "@mui/icons-material/LockReset";
 import { useUser } from "../../../context/UserContext";
 import CustomTooltip from "../../ui/Tooltip";
+
+const DATE_ITEM_PROPS = { xs: 12, sm: 6, md: 4 };
 
 const SellerList = () => {
   const today = getFormattedDate();
@@ -22,23 +26,9 @@ const SellerList = () => {
   const sellerModal = useModal();
   const [sellers, setSellers] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [range, setRange] = useState("");
 
-  const {
-    editUserModal,
-    changePasswordModal,
-    passwordData,
-    showPasswords,
-    handleOpenEditUser,
-    handleCloseEditUser,
-    handleEditUserChange,
-    handleSaveUser,
-    handleOpenChangePassword,
-    handleCloseChangePassword,
-    handlePasswordChange,
-    togglePasswordVisibility,
-    handleSavePassword,
-  } = useUserManagement();
+  const userManagement = useUserManagement();
+  const { handleOpenEditUser, handleOpenChangePassword } = userManagement;
 
   const [params, setParams] = useState({
     end_date: today,
@@ -46,15 +36,23 @@ const SellerList = () => {
   });
 
   useEffect(() => {
+    let ignore = false;
     const fetchSellersData = async () => {
       setLoading(true);
-      const sellersResponse = await getSellers(params);
-      setSellers(sellersResponse.data);
-      setRange(getDateDifference(params.start_date, params.end_date));
-      setLoading(false);
+      try {
+        const sellersResponse = await getSellers(params);
+        if (!ignore) setSellers(sellersResponse.data);
+      } catch (error) {
+        if (!ignore) showRequestError("cargar los vendedores", error);
+      } finally {
+        if (!ignore) setLoading(false);
+      }
     };
 
     fetchSellersData();
+    return () => {
+      ignore = true;
+    };
   }, [params]);
 
   const handleUpdateSellerList = (updated) => {
@@ -68,30 +66,13 @@ const SellerList = () => {
 
   return (
     <>
-      <SellerModal 
+      <SellerModal
         isOpen={sellerModal.isOpen}
-        seller={sellerModal.data}
         onClose={sellerModal.close}
         onUpdate={handleUpdateSellerList}
       />
 
-      <EditUserModal
-        open={editUserModal.open}
-        onClose={handleCloseEditUser}
-        userData={editUserModal.data}
-        onChange={handleEditUserChange}
-        onSave={handleSaveUser}
-      />
-
-      <ChangePasswordModal
-        open={changePasswordModal.open}
-        onClose={handleCloseChangePassword}
-        passwordData={passwordData}
-        onChange={handlePasswordChange}
-        onSave={handleSavePassword}
-        showPasswords={showPasswords}
-        onToggleVisibility={togglePasswordVisibility}
-      />
+      <UserManagementModals management={userManagement} />
       
       <Grid container>
         <Grid item xs={12} className="card">
@@ -102,41 +83,13 @@ const SellerList = () => {
           </PageHeader>
 
           <Grid container spacing={2} sx={{ mb: 2 }}>
-            <Grid item xs={12} sm={6} md={4}>
-              <TextField
-                size="small"
-                fullWidth
-                label="Fecha de inicio"
-                name="start_date"
-                type="date"
-                value={params.start_date}
-                onChange={handleParams}
-                inputProps={{ max: today }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <TextField
-                size="small"
-                fullWidth
-                label="Fecha de fin"
-                name="end_date"
-                type="date"
-                value={params.end_date}
-                onChange={handleParams}
-                inputProps={{ max: today }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <TextField
-                size="small"
-                fullWidth
-                label="Rango"
-                name="range"
-                type="text"
-                value={range}
-                disabled
-              />
-            </Grid>
+            <DateRangeFilter
+              startDate={params.start_date}
+              endDate={params.end_date}
+              onChange={handleParams}
+              showRange
+              itemProps={DATE_ITEM_PROPS}
+            />
           </Grid>
 
           <DataTable
@@ -162,7 +115,7 @@ const SellerList = () => {
                 name: "Vendido",
                 selector: (row) => formatCurrency(row.total_sales),
               },
-              ...(user?.role === "owner" ? [{
+              ...(isOwner(user) ? [{
                 name: "Acciones",
                 cell: (row) => (
                   <>

@@ -1,16 +1,17 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { selectMovementType } from "../../../redux/cart/selectors";
+import { selectActiveCartId, selectCarts, selectMovementType } from "../../../redux/cart/selectors";
 import { Tabs, Tab, IconButton, Box } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { MOVEMENT_TYPES } from "../../../constants";
 import CloseIcon from "@mui/icons-material/Close";
 import Cart from "./Cart";
-import { createNewCart, switchCart, closeCart } from "../../../redux/cart/multiCartReducer";
+import { createNewCart, switchCart, closeCart } from "../../../redux/cart/cartActions";
 
 const MultiCart = ({ searchInputRef, cartViewMode, setCartViewMode }) => {
   const dispatch = useDispatch();
-  const { carts, activeCartId } = useSelector((state) => state.multiCartReducer);
+  const carts = useSelector(selectCarts);
+  const activeCartId = useSelector(selectActiveCartId);
   const movementType = useSelector(selectMovementType);
 
   const handleTabChange = (event, newValue) => {

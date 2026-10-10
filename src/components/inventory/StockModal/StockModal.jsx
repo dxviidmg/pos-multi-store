@@ -1,5 +1,4 @@
-import { logger } from "../../../utils/logger";
-import { showSuccess } from "../../../utils/alerts";
+import { showSuccess, showRequestError } from "../../../utils/alerts";
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { selectCarts, selectActiveCartId } from "../../../redux/cart/selectors";
@@ -7,14 +6,12 @@ import CustomModal from "../../ui/Modal/Modal";
 import SimpleTable from "../../ui/SimpleTable/SimpleTable";
 import CustomButton from "../../ui/Button/Button";
 import { createTransfer } from "../../../api/transfers";
-import { addProducts } from "../../../api/products";
+import { addProducts, getStockOtherStores } from "../../../api/products";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
-import { getStockOtherStores } from "../../../api/products";
 import { addToCart, updateMovementType, updateQuantityInCart } from "../../../redux/cart/cartActions";
 import { Grid, TextField, Box, Alert, Chip, Tabs, Tab } from "@mui/material";
 import { MOVEMENT_TYPES } from "../../../constants";
 import { useUser } from "../../../context/UserContext";
-
 
 const StockModal = ({ isOpen, product, onClose }) => {
   const storeProduct = product || {};
@@ -25,61 +22,49 @@ const StockModal = ({ isOpen, product, onClose }) => {
   const canRequestFromOtherStores = !!user?.multistore;
 
   const [requestedQuantities, setRequestedQuantities] = useState({});
-  const [isLoading, setIsLoading] = useState(false)
-  const [stockOtherStores, setStockOtherStores] = useState([])
-  const [initialStock, setInitialStock] = useState("1")
+  const [isLoading, setIsLoading] = useState(false);
+  const [stockOtherStores, setStockOtherStores] = useState([]);
+  const [initialStock, setInitialStock] = useState("1");
   const [tabValue, setTabValue] = useState(0);
 
   // Calcular stock reservado en otros carritos
   const getReservedInOtherCarts = () => {
     if (carts.length <= 1) return 0;
-    
     return carts.reduce((total, cart) => {
       if (cart.id === activeCartId) return total;
       const item = cart.cart.find(item => item.id === storeProduct.id);
       return total + (item ? item.quantity : 0);
     }, 0);
   };
-  
+
   const reservedInOtherCarts = getReservedInOtherCarts();
 
   const storesWithStock = stockOtherStores.filter(s => (s.available_stock || 0) > 0).length;
 
+  // Pestaña inicial: "Solicitar a otra tienda" si hay tiendas con datos; si no, "Agregar y vender"
   useEffect(() => {
-    if (!canRequestFromOtherStores) {
-      setTabValue(1);
-    } else if (storesWithStock > 0) {
-      setTabValue(0);
-    } else if (stockOtherStores.length > 0) {
-      setTabValue(0);
-    } else {
-      setTabValue(1);
-    }
-  }, [canRequestFromOtherStores, storesWithStock, stockOtherStores.length]);
+    setTabValue(canRequestFromOtherStores && stockOtherStores.length > 0 ? 0 : 1);
+  }, [canRequestFromOtherStores, stockOtherStores.length]);
 
-
-  const handleTabChange = (event, newValue) => {
-    setTabValue(newValue);
-  };
-
-
-  
+  const storeProductId = storeProduct.id;
+  const productCode = storeProduct.product?.code;
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const response = await getStockOtherStores(storeProduct.id);
+        const response = await getStockOtherStores(storeProductId);
         setStockOtherStores(response.data);
+      } catch (error) {
+        showRequestError("consultar el stock en otras tiendas", error);
       } finally {
         setIsLoading(false);
       }
     };
-  
-    if (canRequestFromOtherStores && isOpen && storeProduct?.product?.code) {
+
+    if (canRequestFromOtherStores && isOpen && productCode) {
       fetchData();
     }
-  }, [canRequestFromOtherStores, isOpen, storeProduct?.product?.code]);
-
+  }, [canRequestFromOtherStores, isOpen, storeProductId, productCode]);
 
   const handleQuantityChange = (rowId, max, value) => {
     const quantity = Math.min(parseInt(value) || 0, max);
@@ -120,16 +105,14 @@ const StockModal = ({ isOpen, product, onClose }) => {
       setInitialStock("1");
       onClose();
     } catch (error) {
-      logger.error("Error adding stock:", error);
+      showRequestError("agregar el stock", error);
     } finally {
       setIsLoading(false);
     }
   };
 
-
-
   const handleCreateTransfer = async (row) => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
       const quantity = requestedQuantities[row.store_id];
       const data = {
@@ -139,160 +122,139 @@ const StockModal = ({ isOpen, product, onClose }) => {
         product: storeProduct.product.id,
       };
 
-      const response = await createTransfer(data);
-      if ([201, 202].includes(response.status)) {
-        showSuccess("Traspaso creado, esperando confirmación");
-        setRequestedQuantities({});
-        onClose();
-        setIsLoading(false)
-      }
+      await createTransfer(data);
+      showSuccess("Traspaso creado, esperando confirmación");
+      setRequestedQuantities({});
+      onClose();
     } catch (error) {
-      setIsLoading(false)
-      logger.error("Error creating transfer:", error);
+      showRequestError("solicitar el traspaso", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const renderStockInfo = () => {
-      if (!storeProduct.onlyRead) {
-        return (
-          <Box sx={{ mb: 0, width: "100%" }}>
-            {reservedInOtherCarts > 0 && (
-              <Alert severity="warning" variant="filled" sx={{ my: 0 }}>
-                {`${reservedInOtherCarts} unidad${reservedInOtherCarts > 1 ? 'es' : ''} apartada${reservedInOtherCarts > 1 ? 's' : ''} en otro carrito`}
-              </Alert>
-            )}
-          </Box>
-        );
-    }
-    return null;
-  };
+  const plural = reservedInOtherCarts > 1;
+
+  const stockColumns = [
+    { name: "Tienda", selector: (row) => row.store_name },
+    {
+      name: "Stock",
+      selector: (row) => (
+        <Chip
+          label={row.available_stock}
+          color={row.available_stock > 0 ? "success" : "default"}
+          size="small"
+          variant="outlined"
+        />
+      ),
+    },
+    {
+      name: "Cantidad",
+      width: 100,
+      cell: (row) => (
+        <TextField size="small" fullWidth type="number"
+          name="quantity"
+          inputProps={{ min: 1, max: row.available_stock }}
+          placeholder="Cant"
+          onChange={(e) => handleQuantityChange(row.store_id, row.available_stock, e.target.value)}
+          value={requestedQuantities[row.store_id] || ""}
+        />
+      ),
+    },
+    {
+      name: "Acción",
+      selector: (row) => (
+        <CustomButton
+          disabled={!requestedQuantities[row.store_id] || requestedQuantities[row.store_id] <= 0}
+          onClick={() => handleCreateTransfer(row)}
+        >
+          Solicitar
+        </CustomButton>
+      ),
+    },
+  ];
 
   return (
-   <>
-
-   
-        <CustomSpinner isLoading={isLoading}></CustomSpinner>
-       <CustomModal 
-         showOut={isOpen} 
-         onClose={onClose}
-         title={`${storeProduct.product?.code} - ${storeProduct.product?.brand_name} ${storeProduct.product?.name}`}
-         maxWidth="sm"
-       >
-        <CustomSpinner isLoading={isLoading} />
-        <Box sx={{ p: 2, bgcolor: "background.paper"}}>
+    <>
+      <CustomSpinner isLoading={isLoading} />
+      <CustomModal
+        showOut={isOpen}
+        onClose={onClose}
+        title={`${storeProduct.product?.code} - ${storeProduct.product?.brand_name} ${storeProduct.product?.name}`}
+        maxWidth="sm"
+      >
+        <Box sx={{ p: 2, bgcolor: "background.paper" }}>
           <Grid container>
-            {renderStockInfo()}
-
-        {storeProduct.showImage ? (
-          <Grid item xs={12} sx={{ textAlign: "center" }}>
-            <img
-              src={storeProduct.product?.image}
-              alt="Producto"
-              style={{ maxWidth: 200, borderRadius: 8 }}
-            />
-          </Grid>
-        ) : (
-          <Grid item xs={12}>
-            {canRequestFromOtherStores && (
-              <Tabs value={tabValue} onChange={handleTabChange} variant="fullWidth" sx={{ mb: 2 }}>
-                <Tab 
-                  label="Solicitar producto a otra tienda"
-                />
-                <Tab label="Agregar y vender" />
-              </Tabs>
-            )}
-
-            {canRequestFromOtherStores && tabValue === 0 && (
-              <Box>
-                {storesWithStock > 0 ? (
-                  <SimpleTable
-                    noDataComponent="Sin acceso a otras tiendas"
-                    data={stockOtherStores}
-                    columns={[
-                      { name: "Tienda", selector: (row) => row.store_name },
-                      { 
-                        name: "Stock", 
-                        selector: (row) => (
-                          <Chip 
-                            label={row.available_stock} 
-                            color={row.available_stock > 0 ? "success" : "default"} 
-                            size="small" 
-                            variant="outlined"
-                          />
-                        )
-                      },
-                      {
-                        name: "Cantidad",
-                        width: 100,
-                        cell: (row) => (
-                          <TextField size="small" fullWidth type="number"
-                            name="quantity"
-                            min={1}
-                            max={row.available_stock}
-                            placeholder="Cant"
-                            onChange={(e) => handleQuantityChange(row.store_id, row.available_stock, e.target.value)}
-                            value={requestedQuantities[row.store_id] || ""}
-                          />
-                        ),
-                      },
-                      {
-                        name: "Acción",
-                        selector: (row) => (
-                          <CustomButton
-                            disabled={!requestedQuantities[row.store_id] || requestedQuantities[row.store_id] <= 0}
-                            onClick={() => handleCreateTransfer(row)}
-                          >
-                            Solicitar
-                          </CustomButton>
-                        ),
-                      },
-                    ]}
-                  />
-                ) : (
-                  <Alert severity="warning" sx={{ py: 2 }}>
-                    No hay stock disponible en ninguna otra tienda
+            {!storeProduct.onlyRead && (
+              <Box sx={{ mb: 0, width: "100%" }}>
+                {reservedInOtherCarts > 0 && (
+                  <Alert severity="warning" variant="filled" sx={{ my: 0 }}>
+                    {`${reservedInOtherCarts} unidad${plural ? "es" : ""} apartada${plural ? "s" : ""} en otro carrito`}
                   </Alert>
                 )}
               </Box>
             )}
 
-            {tabValue === 1 && (
-              <Box sx={{ pt: 0, pb: 2 }}>
-                <Alert severity="info" variant="filled" sx={{ mb: 2 }} >
-                  Para productos que existen físicamente en tienda pero su stock en sistema está en cero.
-                </Alert>
-                <Grid container spacing={2} alignItems="center">
-                  <Grid item xs={6}>
-                    <TextField
-                      size="small"
-                      fullWidth
-                      type="number"
-                      label="Cantidad"
-                      value={initialStock}
-                      onChange={(e) => setInitialStock(e.target.value)}
-                      inputProps={{ min: 1 }}
-                    />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <CustomButton 
-                      onClick={handleAddStock} 
-                      disabled={isLoading || !initialStock || parseInt(initialStock) <= 0}
-                      fullWidth
-                    >
-                      Agregar y vender
-                    </CustomButton>
-                  </Grid>
-                </Grid>
-              </Box>
+            {storeProduct.showImage ? (
+              <Grid item xs={12} sx={{ textAlign: "center" }}>
+                <Box component="img" src={storeProduct.product?.image} alt="Producto" sx={{ maxWidth: 200, borderRadius: "8px" }} />
+              </Grid>
+            ) : (
+              <Grid item xs={12}>
+                {canRequestFromOtherStores && (
+                  <Tabs value={tabValue} onChange={(_event, value) => setTabValue(value)} variant="fullWidth" sx={{ mb: 2 }}>
+                    <Tab label="Solicitar producto a otra tienda" />
+                    <Tab label="Agregar y vender" />
+                  </Tabs>
+                )}
+
+                {canRequestFromOtherStores && tabValue === 0 && (
+                  <Box>
+                    {storesWithStock > 0 ? (
+                      <SimpleTable noDataComponent="Sin acceso a otras tiendas" data={stockOtherStores} columns={stockColumns} />
+                    ) : (
+                      <Alert severity="warning" sx={{ py: 2 }}>
+                        No hay stock disponible en ninguna otra tienda
+                      </Alert>
+                    )}
+                  </Box>
+                )}
+
+                {tabValue === 1 && (
+                  <Box sx={{ pt: 0, pb: 2 }}>
+                    <Alert severity="info" variant="filled" sx={{ mb: 2 }}>
+                      Para productos que existen físicamente en tienda pero su stock en sistema está en cero.
+                    </Alert>
+                    <Grid container spacing={2} alignItems="center">
+                      <Grid item xs={6}>
+                        <TextField
+                          size="small"
+                          fullWidth
+                          type="number"
+                          label="Cantidad"
+                          value={initialStock}
+                          onChange={(e) => setInitialStock(e.target.value)}
+                          inputProps={{ min: 1 }}
+                        />
+                      </Grid>
+                      <Grid item xs={6}>
+                        <CustomButton
+                          onClick={handleAddStock}
+                          disabled={isLoading || !initialStock || parseInt(initialStock) <= 0}
+                          fullWidth
+                        >
+                          Agregar y vender
+                        </CustomButton>
+                      </Grid>
+                    </Grid>
+                  </Box>
+                )}
+              </Grid>
             )}
           </Grid>
-        )}
-
-      </Grid>
         </Box>
-    </CustomModal>
-    </> 
-
+      </CustomModal>
+    </>
   );
 };
 

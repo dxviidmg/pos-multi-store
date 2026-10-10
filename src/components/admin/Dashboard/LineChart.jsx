@@ -1,165 +1,57 @@
-import React from "react";
-import { LineChart as MuiLineChart } from '@mui/x-charts/LineChart';
-import { ChartsReferenceLine } from '@mui/x-charts/ChartsReferenceLine';
-import { Box, Typography } from '@mui/material';
-import { CHART_COLORS } from '../../../utils/utils';
+import React, { useMemo } from "react";
+import { LineChart as MuiLineChart } from "@mui/x-charts/LineChart";
+import { Box, Typography } from "@mui/material";
+import TodayReferenceLine from "./TodayReferenceLine";
+import { getStoreSeries } from "./chartData";
+import { CHART_AXIS_LABEL_STYLE, CHART_LEGEND_TOP, CHART_MARGIN, CHART_TICK_STYLE } from "./chartStyles";
 
-const processData = (result, dataType, metricType, daysInMonth = 31) => {
-  if (!result || !result.sales || result.sales.length === 0) return [];
-
-  const { stores, sales } = result;
-
-  switch (dataType) {
-    case 'monthly': {
-      const storeData = {};
-      
-      stores.forEach(store => {
-        storeData[store.name] = Array(12).fill(0);
-      });
-      
-      sales.forEach(item => {
-        const date = new Date(item.created_at);
-        const month = date.getMonth();
-        const storeName = item.store_name;
-        if (storeData[storeName]) {
-          storeData[storeName][month] += metricType === 'total' ? (item.total || 0) : 1;
-        }
-      });
-      
-      return Object.entries(storeData).map(([storeName, monthlyData], index) => ({
-        data: monthlyData,
-        label: storeName,
-        color: CHART_COLORS[index % CHART_COLORS.length],
-      }));
-    }
-    
-    case 'daily': {
-      const storeData = {};
-      
-      stores.forEach(store => {
-        storeData[store.name] = Array(7).fill(0);
-      });
-      
-      sales.forEach(item => {
-        const date = new Date(item.created_at);
-        const day = date.getDay();
-        const storeName = item.store_name;
-        if (storeData[storeName]) {
-          storeData[storeName][day] += metricType === 'total' ? (item.total || 0) : 1;
-        }
-      });
-      
-      return Object.entries(storeData).map(([storeName, dailyData], index) => ({
-        data: dailyData,
-        label: storeName,
-        color: CHART_COLORS[index % CHART_COLORS.length],
-      }));
-    }
-    
-    case 'hourly': {
-      const storeData = {};
-      
-      stores.forEach(store => {
-        storeData[store.name] = Array(24).fill(0);
-      });
-      
-      sales.forEach(item => {
-        const date = new Date(item.created_at);
-        const hour = date.getHours();
-        const storeName = item.store_name;
-        if (storeData[storeName]) {
-          storeData[storeName][hour] += metricType === 'total' ? (item.total || 0) : 1;
-        }
-      });
-      
-      return Object.entries(storeData).map(([storeName, hourlyData], index) => ({
-        data: hourlyData,
-        label: storeName,
-        color: CHART_COLORS[index % CHART_COLORS.length],
-      }));
-    }
-    
-    case 'day_of_month': {
-      const storeData = {};
-      
-      stores.forEach(store => {
-        storeData[store.name] = Array(daysInMonth).fill(0);
-      });
-      
-      sales.forEach(item => {
-        const date = new Date(item.created_at);
-        const day = date.getDate() - 1;
-        const storeName = item.store_name;
-        if (storeData[storeName] && day >= 0 && day < daysInMonth) {
-          storeData[storeName][day] += metricType === 'total' ? (item.total || 0) : 1;
-        }
-      });
-      
-      return Object.entries(storeData).map(([storeName, dayData], index) => ({
-        data: dayData,
-        label: storeName,
-        color: CHART_COLORS[index % CHART_COLORS.length],
-      }));
-    }
-    
-    default:
-      return [];
-  }
+const LINE_SX = {
+  "& .MuiLineElement-root": {
+    strokeWidth: 2.5,
+  },
+  "& .MuiMarkElement-root": {
+    scale: "0.8",
+    strokeWidth: 2,
+  },
 };
 
-const LineChart = ({ title, data, labels, xText, yText, dataType, metricType = 'count', todayLabel }) => {
-  const series = React.useMemo(() => {
+const LineChart = ({ title, data, labels, xText, dataType, metricType = "count", todayLabel }) => {
+  const series = useMemo(() => {
     if (!data) return [];
-    const daysInMonth = labels?.length || 31;
-    const processedData = processData(data, dataType, metricType, daysInMonth);
-    return processedData;
+    return getStoreSeries(data, dataType, metricType, labels?.length || 31).map((s) => ({
+      ...s,
+      curve: "catmullRom",
+      showMark: true,
+      area: false,
+    }));
   }, [data, dataType, metricType, labels]);
 
   return (
-    <Box sx={{ width: '100%', height: '100%' }}>
-      <Typography variant="h6" sx={{ mb: 2, fontWeight: 500, color: 'text.primary' }}>
+    <Box sx={{ width: "100%", height: "100%" }}>
+      <Typography variant="h6" sx={{ mb: 2, fontWeight: 500, color: "text.primary" }}>
         {title}
       </Typography>
       <MuiLineChart
-        xAxis={[{ 
+        xAxis={[{
           data: labels || [],
-          scaleType: 'point',
+          scaleType: "point",
           label: xText,
-          labelStyle: { fontSize: 12, fill: 'text.secondary' },
-          tickLabelStyle: { fontSize: 11, fill: 'text.secondary' },
+          labelStyle: CHART_AXIS_LABEL_STYLE,
+          tickLabelStyle: CHART_TICK_STYLE,
         }]}
-        yAxis={[{ 
+        yAxis={[{
           min: 0,
-          labelStyle: { fontSize: 12, fill: 'text.secondary' },
-          tickLabelStyle: { fontSize: 11, fill: 'text.secondary' },
+          labelStyle: CHART_AXIS_LABEL_STYLE,
+          tickLabelStyle: CHART_TICK_STYLE,
         }]}
-        series={series.map(s => ({
-          ...s,
-          curve: 'catmullRom',
-          showMark: true,
-          area: false,
-        }))}
+        series={series}
         height={300}
-        margin={{ top: 50, bottom: 50, left: 70, right: 10 }}
-        slotProps={{
-          legend: {
-            direction: 'row',
-            position: { vertical: 'top', horizontal: 'middle' },
-            padding: 0,
-          }
-        }}
+        margin={CHART_MARGIN}
+        slotProps={{ legend: CHART_LEGEND_TOP }}
         grid={{ vertical: true, horizontal: true }}
-        sx={{
-          '& .MuiLineElement-root': {
-            strokeWidth: 2.5,
-          },
-          '& .MuiMarkElement-root': {
-            scale: '0.8',
-            strokeWidth: 2,
-          },
-        }}
+        sx={LINE_SX}
       >
-        {todayLabel && <ChartsReferenceLine x={todayLabel} lineStyle={{ stroke: '#ef4444', strokeWidth: 2, strokeDasharray: '6 3' }} labelStyle={{ fill: '#ef4444', fontSize: 11, fontWeight: 600 }} label="Hoy" />}
+        {todayLabel && <TodayReferenceLine x={todayLabel} />}
       </MuiLineChart>
     </Box>
   );

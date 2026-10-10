@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
-import CustomModal from "../../ui/Modal/Modal";
+import CustomModal, { ModalBody } from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
 import { showSuccess, showRequestError } from "../../../utils/alerts";
 import { createCashFlow, updateCashFlow, getCashFlowChoices } from "../../../api/cashflow";
 import {
-  Box,
   Grid,
   TextField,
   Select,
@@ -28,8 +27,12 @@ const CashFlowModal = ({ isOpen, cashFlow, onClose, onUpdate }) => {
 
   useEffect(() => {
     const fetchChoices = async () => {
-      const res = await getCashFlowChoices();
-      setOptions(res.data);
+      try {
+        const res = await getCashFlowChoices();
+        setOptions(res.data);
+      } catch (error) {
+        showRequestError("cargar los tipos de movimiento", error);
+      }
     };
     fetchChoices();
   }, []);
@@ -48,24 +51,25 @@ const CashFlowModal = ({ isOpen, cashFlow, onClose, onUpdate }) => {
   }, [cashFlow]);
 
   const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async () => {
     if (loading) return;
     setLoading(true);
-    const response = formData.id
-      ? await updateCashFlow(formData)
-      : await createCashFlow(formData);
-    setLoading(false);
-
-    if (response.status === 200 || response.status === 201) {
-      onUpdate(response.data, !!formData.id);
+    try {
+      const response = formData.id
+        ? await updateCashFlow(formData)
+        : await createCashFlow(formData);
+      onUpdate(response.data, Boolean(formData.id));
       onClose();
       setFormData(INITIAL_FORM);
       showSuccess(formData.id ? "Movimiento actualizado" : "Movimiento creado");
-    } else {
-      showRequestError("guardar el movimiento", response);
+    } catch (error) {
+      showRequestError("guardar el movimiento", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -78,7 +82,7 @@ const CashFlowModal = ({ isOpen, cashFlow, onClose, onUpdate }) => {
       onClose={onClose}
       title={formData.id ? "Editar movimiento" : "Crear movimiento"}
     >
-      <Box sx={{ p: 3 }}>
+      <ModalBody>
         <Typography
           variant="body2"
           sx={{ mb: 2.5, color: "text.secondary" }}
@@ -164,15 +168,11 @@ const CashFlowModal = ({ isOpen, cashFlow, onClose, onUpdate }) => {
               startIcon={<SaveIcon />}
               sx={{ height: "40px" }}
             >
-              {loading
-                ? "Guardando..."
-                : formData.id
-                ? "Actualizar"
-                : "Crear"}
+              {loading ? "Guardando..." : formData.id ? "Actualizar" : "Crear"}
             </CustomButton>
           </Grid>
         </Grid>
-      </Box>
+      </ModalBody>
     </CustomModal>
   );
 };

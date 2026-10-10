@@ -1,737 +1,181 @@
-import { logger } from "../../../utils/logger";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { selectCart, selectMovementType } from "../../../redux/cart/selectors";
+import { Grid, useMediaQuery, useTheme } from "@mui/material";
+import { selectCart, selectCarts, selectMovementType } from "../../../redux/cart/selectors";
+import { removeFromCart, updateMovementType, updateQuantityInCart, changePrice } from "../../../redux/cart/cartActions";
 import SimpleTable from "../../ui/SimpleTable/SimpleTable";
-import { cleanCart, removeFromCart, updateMovementType, updateQuantityInCart, changePrice } from "../../../redux/cart/cartActions";
-import CustomButton from "../../ui/Button/Button";
+import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import PaymentModal from "../../sales/PaymentModal/PaymentModal";
 import StockModal from "../StockModal/StockModal";
-import { getStores } from "../../../api/stores";
-import { confirmTransfers, createDistribution } from "../../../api/transfers";
-import { showSuccess, showWarning, showRequestError } from "../../../utils/alerts";
-import { addProducts } from "../../../api/products";
+import { showWarning } from "../../../utils/alerts";
+import { roundUpCustom } from "../../../utils/currency";
 import { useUser } from "../../../context/UserContext";
-import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { useModal } from "../../../hooks/useModal";
 import { useAvailableStock } from "../../../hooks/useAvailableStock";
-import { Grid, Select, MenuItem, Typography, useMediaQuery, useTheme, TextField, IconButton, Box, FormControlLabel, Checkbox } from "@mui/material";
-import PaymentIcon from "@mui/icons-material/Payment";
-import SendIcon from "@mui/icons-material/Send";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
-import DeleteIcon from "@mui/icons-material/Delete";
-import CartViewToggle from "./CartViewToggle";
-import { MOVEMENT_TYPES, STORE_TYPES } from "../../../constants";
-import { commonColumns, isKg, getNextMode, getSaleColumns, getTransferColumns, getDistributionColumns, getAddToStockColumns } from "./cartColumns";
-import noPhotoImage from "../../../assets/images/noPhoto.webp";
-import { formatCurrency } from "../../../utils/utils";
+import { useCtrlShortcut } from "../../../hooks/useCtrlShortcut";
+import { MOVEMENT_TYPES } from "../../../constants";
+import { isWarehouseView } from "../../../constants/routeAccess";
+import { getCartColumns } from "./cartColumns";
+import { countCartProducts, getNextSaleMode, getQuantityMode, parseQuantity, QUANTITY_MODES } from "./quantityRules";
+import { CART_VIEW } from "./cartViewModes";
+import { useCartSubmit } from "./useCartSubmit";
+import CartToolbar from "./CartToolbar";
+import CartItemCard from "./CartItemCard";
 
-const Cart = ({ searchInputRef, cartViewMode = "table", setCartViewMode }) => {
+const Cart = ({ searchInputRef, cartViewMode = CART_VIEW.TABLE, setCartViewMode }) => {
   const { user } = useUser();
-  const store_type = user?.store_type;
   const dispatch = useDispatch();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const stockModal = useModal();
   const paymentModal = useModal();
-  const [stores, setStores] = useState([]);
-  const [selectedStore, setSelectedStore] = useState("");
-  const [confirmedStore, setConfirmedStore] = useState("");
-  const [loading, setLoading] = useState(false);
   const [saleModes, setSaleModes] = useState({});
   const lastQtyRef = useRef(null);
   const prevCartLenRef = useRef(0);
-  
+  const submit = useCartSubmit();
+
   const { getAvailableStock } = useAvailableStock();
-  
   const cart = useSelector(selectCart);
   const movementType = useSelector(selectMovementType);
-  const { carts } = useSelector((state) => state.multiCartReducer);
+  const carts = useSelector(selectCarts);
+  const isWarehouse = isWarehouseView(user);
+  const canCharge = movementType === MOVEMENT_TYPES.SALE || movementType === MOVEMENT_TYPES.RESERVATION;
 
   // Auto-focus cantidad del último producto agregado en distribución o agregar inventario
   useEffect(() => {
+    let timer;
     if ((movementType === MOVEMENT_TYPES.DISTRIBUTION || movementType === MOVEMENT_TYPES.ADD_STOCK) && cart.length > prevCartLenRef.current) {
-      setTimeout(() => {
-        if (lastQtyRef.current) {
-          lastQtyRef.current.focus();
-          lastQtyRef.current.select();
-        }
+      timer = setTimeout(() => {
+        lastQtyRef.current?.focus();
+        lastQtyRef.current?.select();
       }, 50);
     }
     prevCartLenRef.current = cart.length;
+    return () => clearTimeout(timer);
   }, [cart.length, movementType]);
 
+  // Ctrl+P abre el cobro en venta y apartado; la tecla se bloquea siempre en la pantalla de venta
+  useCtrlShortcut("p", () => {
+    if (canCharge) paymentModal.open();
+  });
+
+  // En almacén no se vende: el movimiento por defecto es distribución
   useEffect(() => {
-    const handleShortcut = (event) => {
-      if (event.ctrlKey && (event.key === "p" || event.key === "P")) {
-        event.preventDefault();
-        if (movementType === MOVEMENT_TYPES.SALE || movementType === MOVEMENT_TYPES.RESERVATION) {
-          paymentModal.open();
-        }
-      }
-    };
-    window.addEventListener("keydown", handleShortcut);
-    return () => window.removeEventListener("keydown", handleShortcut);
-  }, [movementType, paymentModal]);
-
-  const handleDestinationStoreChange = (event) => {
-    setSelectedStore(event.target.value);
-  };
-
-  const handleConfirmStoreChange = (event) => {
-    setConfirmedStore(event.target.value);
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await getStores();
-        setStores(response.data);
-      } catch (error) {
-        logger.error("Error fetching stores:", error);
-      }
-    };
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    // Si el tipo de tienda es "A", se establece el movimiento como "distribucion"
-    if (store_type === STORE_TYPES.WAREHOUSE && movementType === MOVEMENT_TYPES.SALE) {
+    if (isWarehouse && movementType === MOVEMENT_TYPES.SALE) {
       dispatch(updateMovementType(MOVEMENT_TYPES.DISTRIBUTION));
     }
-  }, [store_type, dispatch, movementType]);
+  }, [isWarehouse, dispatch, movementType]);
 
-  const { total } = useMemo(() => {
-    const total = cart.reduce(
-      (acc, item) => acc + item.product_price * item.quantity,
-      0
-    );
-    return { total };
-  }, [cart]);
+  // Mismo redondeo que PaymentModal para que el total coincida al cobrar
+  const total = useMemo(
+    () => roundUpCustom(cart.reduce((acc, item) => acc + item.product_price * item.quantity, 0)),
+    [cart]
+  );
+  const totalProducts = useMemo(() => countCartProducts(cart), [cart]);
 
-  const { totalProducts } = useMemo(() => {
-    const totalProducts = cart.reduce((acc, item) => {
-      // Productos KG y LT cuentan como 1 sin importar la cantidad
-      if (item.product?.unit === "KG" || item.product?.unit === "LT") return acc + 1;
-      return acc + item.quantity;
-    }, 0);
-    return { totalProducts };
-  }, [cart]);
+  const handleRemoveFromCart = useCallback((item) => dispatch(removeFromCart(item.id)), [dispatch]);
+  const handleChangePrice = useCallback((item) => dispatch(changePrice(item)), [dispatch]);
+  const handleToggleSaleMode = useCallback((item) => {
+    setSaleModes((prev) => ({ ...prev, [item.id]: getNextSaleMode(prev[item.id] || QUANTITY_MODES.KG) }));
+  }, []);
 
-  const handleRemoveFromCart = (product) => dispatch(removeFromCart(product.id));
+  // Tope de las flechas ↑: stock disponible considerando otros carritos (sin tope al agregar inventario)
+  const getMaxQuantity = useCallback(
+    (item) => (movementType === MOVEMENT_TYPES.ADD_STOCK ? Infinity : getAvailableStock(item.id, item.available_stock)),
+    [movementType, getAvailableStock]
+  );
 
-  const handleChangePrice = (product) => {
-    dispatch(changePrice(product));
-  };
+  const openStockModal = stockModal.open;
+  const handleQuantityChange = useCallback((item, text, mode) => {
+    const newQuantity = parseQuantity(text, item, mode);
+    if (newQuantity === null) return;
 
-  const handleQuantityChangeToCart = (e, product) => {
-    const rawValue = Number(e.target.value);
-    const productIsKg = product.product?.unit === "KG" || product.product?.unit === "LT";
-    const mode = saleModes[product.id] || "KG";
-    const minQty = productIsKg ? (mode === "$" ? 1 : (mode === "FRAC" ? 0.1 : 1)) : 1;
+    const stockLimit = movementType === MOVEMENT_TYPES.TRANSFER ? item.stock : item.available_stock;
+    const availableStock = movementType === MOVEMENT_TYPES.ADD_STOCK ? Infinity : getAvailableStock(item.id, stockLimit);
 
-    // En modo $, el valor es pesos, calcular kg/lt
-    let newQuantity;
-    if (mode === "$" && productIsKg) {
-      if (e.target.value === "" || rawValue < 1) return;
-      newQuantity = rawValue / product.product_price;
-    } else {
-      if (e.target.value === "" || rawValue < minQty) return;
-      newQuantity = rawValue;
-    }
-  
-    // --- Control de límites según movimiento ---
-    const stockLimit =
-      movementType === MOVEMENT_TYPES.TRANSFER
-        ? product.stock
-        : product.available_stock;
-  
-    // Verificar stock disponible considerando otros carritos
-    const availableStock = movementType === MOVEMENT_TYPES.ADD_STOCK ? Infinity : getAvailableStock(product.id, stockLimit);
-    
-    if (Object.keys(carts).length > 1 && newQuantity > availableStock) {
-      showWarning("No se pudo cambiar la cantidad", `"${product.product?.name || product.name}" está reservado en otros carritos.`);
+    if (carts.length > 1 && newQuantity > availableStock) {
+      showWarning("No se pudo cambiar la cantidad", `"${item.product?.name || item.name}" está reservado en otros carritos.`);
       return;
     }
-    
-    const quantity = Math.min(newQuantity, availableStock);
-  
-    // --- Mostrar modal si se excede el stock (excepto agregar) ---
-    if (movementType !== MOVEMENT_TYPES.ADD_STOCK && newQuantity > product.available_stock) {
-      stockModal.open(product);
+
+    // Si se excede el stock se ofrece pedirlo a otra tienda o agregarlo (excepto al agregar inventario)
+    if (movementType !== MOVEMENT_TYPES.ADD_STOCK && newQuantity > item.available_stock) {
+      openStockModal(item);
     }
-  
-    dispatch(updateQuantityInCart(product, quantity));
-  };
-  
 
+    dispatch(updateQuantityInCart(item, Math.min(newQuantity, availableStock)));
+  }, [movementType, getAvailableStock, carts.length, openStockModal, dispatch]);
 
+  const columns = useMemo(
+    () =>
+      getCartColumns(movementType, {
+        saleModes,
+        onToggleSaleMode: handleToggleSaleMode,
+        onQuantityChange: handleQuantityChange,
+        getMaxQuantity,
+        onChangePrice: handleChangePrice,
+        onRemove: handleRemoveFromCart,
+        cartLength: cart.length,
+        lastQtyRef,
+        searchInputRef,
+      }),
+    [movementType, saleModes, handleToggleSaleMode, handleQuantityChange, getMaxQuantity, handleChangePrice, handleRemoveFromCart, cart.length, searchInputRef]
+  );
 
-  const handleTransferFromCart = async (cart) => {
-    if (loading) return;
-    setLoading(true);
-
-    const data = { transfers: cart, destination_store: selectedStore };
-    try {
-      const response = await confirmTransfers(data);
-      if (response.status === 200) {
-        dispatch(cleanCart());
-        setLoading(false);
-        showSuccess("Traspaso confirmado");
-      } else if (response.status === 404) {
-        dispatch(cleanCart());
-        setLoading(false);
-        showWarning("No se pudo confirmar el traspaso", "No coincide con un traspaso pendiente. Revisa la cantidad y el destino.");
-      } else {
-        setLoading(false);
-        showRequestError("confirmar el traspaso", response);
-      }
-    } catch (error) {
-      setLoading(false);
-      showRequestError("confirmar el traspaso", error);
-    }
+  const handleClosePayment = () => {
+    paymentModal.close();
+    setTimeout(() => searchInputRef?.current?.focus(), 100);
   };
 
-  const handleDistributionFromCart = async (cart) => {
-    if (loading) return; // Previene reenvío
-    setLoading(true)
-    const data = { products: cart, destination_store: selectedStore };
-    try {
-      const response = await createDistribution(data);
-      if (response.status === 201) {
-        dispatch(cleanCart());
-      setSelectedStore("")
-      setConfirmedStore("");
-      setTimeout(() => {
-        setLoading(false);
-      }, 200);
-        showSuccess("Distribución creada");
-      } else if (response.status === 404) {
-        setLoading(false);
-        showWarning("No se pudo crear la distribución", "Algunos productos no coinciden con la distribución solicitada, en cantidad o en código.");
-      } else {
-        setLoading(false);
-        showRequestError("crear la distribución", response);
-      }
-    } catch (error) {
-      setLoading(false);
-      showRequestError("crear la distribución", error);
-    }
-  };
-
-  const handleAddToStock = async (cart) => {
-    if (loading) return;
-    setLoading(true);
-
-    const products_to_add = cart.map(item => ({
-      id: item.id,
-      stock: item.stock,
-      quantity: item.quantity
-    }));
-
-    const data = { store_products: products_to_add };
-    try {
-      const response = await addProducts(data);
-      if (response.status === 200) {
-        dispatch(cleanCart());
-        setLoading(false);
-        showSuccess("Producto agregado al inventario");
-      } else {
-        setLoading(false);
-        showRequestError("agregar el producto al inventario", response);
-      }
-    } catch (error) {
-      showRequestError("agregar el producto al inventario", error);
-    }
-  };
-
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const saleColumns = useMemo(() => getSaleColumns(handleQuantityChangeToCart, handleRemoveFromCart, handleChangePrice, movementType, getAvailableStock, saleModes, setSaleModes), [movementType, getAvailableStock, saleModes]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const transferColumns = useMemo(() => getTransferColumns(handleQuantityChangeToCart, handleRemoveFromCart, getAvailableStock), []);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const distributionColumns = useMemo(() => getDistributionColumns(handleQuantityChangeToCart, handleRemoveFromCart, getAvailableStock, cart, searchInputRef, lastQtyRef), [cart]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const addToStockColumns = useMemo(() => getAddToStockColumns(handleQuantityChangeToCart, handleRemoveFromCart, cart, searchInputRef, lastQtyRef), [cart]);
-
-  const getColumns = () => {
-    switch (movementType) {
-      case MOVEMENT_TYPES.SALE:
-      case MOVEMENT_TYPES.RESERVATION:
-        return saleColumns;
-
-      case MOVEMENT_TYPES.TRANSFER:
-        return transferColumns;
-
-      case MOVEMENT_TYPES.DISTRIBUTION:
-        return distributionColumns;
-
-      case MOVEMENT_TYPES.ADD_STOCK:
-        return addToStockColumns;
-
-      default:
-        return commonColumns;
-    }
-  };
+  const renderCards = (variant) =>
+    cart.map((item, idx) => (
+      <CartItemCard
+        key={item.id ?? idx}
+        item={item}
+        variant={variant}
+        mode={getQuantityMode(item, movementType, saleModes)}
+        movementType={movementType}
+        maxQuantity={getMaxQuantity(item)}
+        onQuantityChange={handleQuantityChange}
+        onToggleSaleMode={handleToggleSaleMode}
+        onChangePrice={handleChangePrice}
+        onRemove={handleRemoveFromCart}
+      />
+    ));
 
   return (
     <div>
-      <CustomSpinner isLoading={loading} />
-      <PaymentModal isOpen={paymentModal.isOpen} onClose={() => { paymentModal.close(); setTimeout(() => searchInputRef?.current?.focus(), 100); }} />
+      <CustomSpinner isLoading={submit.loading} />
+      <PaymentModal isOpen={paymentModal.isOpen} onClose={handleClosePayment} />
       <StockModal isOpen={stockModal.isOpen} product={stockModal.data} onClose={stockModal.close} />
-      <div>
-        {cart.length !== 0 && (
-          <Grid container spacing={1} sx={{ mb: 1, alignItems: 'center' }}>
-            {(movementType === MOVEMENT_TYPES.SALE || movementType === MOVEMENT_TYPES.RESERVATION) && (
-              <>
-                <Grid item xs={6} md={3}>
-                  <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-                    {!isMobile && (
-                      <Box sx={{ display: 'flex', gap: 1 }}>
-                        <CartViewToggle value={cartViewMode} onChange={setCartViewMode} />
-                      </Box>
-                    )}
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <Typography variant="body2" color="text.secondary">Productos:</Typography>
-                      <Typography key={totalProducts} variant="h4" className="value-pop" sx={{ fontWeight: 700, color: 'primary.main' }}>{totalProducts}</Typography>
-                    </Box>
-                  </Box>
-                </Grid>
-
-                <Grid item xs={6} md={5}>
-                  <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-                    <Typography variant="body2" color="text.secondary">Total:</Typography>
-                    <Typography key={total} variant="h4" className="value-pop" sx={{ fontWeight: 700, color: 'primary.main' }}>{formatCurrency(total)}</Typography>
-                  </Box>
-                </Grid>
-                <Grid item xs={12} md={4}>
-                  <CustomButton
-                    fullWidth
-                    onClick={() => paymentModal.open()}
-                    startIcon={<PaymentIcon />}
-                    sx={{ py: 1.2, fontSize: '0.875rem' }}
-                  >
-                    Cobrar (Ctrl+P)
-                  </CustomButton>
-                </Grid>
-              </>
-            )}
-
-            {(movementType === MOVEMENT_TYPES.TRANSFER ||
-              movementType === MOVEMENT_TYPES.DISTRIBUTION) && (
-              <>
-                <Grid item xs={12} md={3}>
-                  <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-                    {!isMobile && (
-                      <Box sx={{ display: 'flex', gap: 1 }}>
-                        <CartViewToggle value={cartViewMode} onChange={setCartViewMode} />
-                      </Box>
-                    )}
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <Typography variant="body2" color="text.secondary">Productos:</Typography>
-                      <Typography key={totalProducts} variant="h4" className="value-pop" sx={{ fontWeight: 700, color: 'primary.main' }}>{totalProducts}</Typography>
-                    </Box>
-                  </Box>
-                </Grid>
-                <Grid item xs={12} md={3}>
-                  <Select fullWidth size="small" value={selectedStore}
-                    onChange={handleDestinationStoreChange}
-                    displayEmpty
-                    renderValue={(value) => {
-                      if (!value) return <span style={{ color: "#999" }}>Selecciona un destino</span>;
-                      const store = stores.find((s) => s.id === value);
-                      return store ? <b>{store.name} ({store.store_type_display})</b> : value;
-                    }}
-                  >
-                    <MenuItem value="" disabled>Selecciona un destino</MenuItem>
-                    {stores.map((store) => (
-                      <MenuItem key={store.id} value={store.id}>
-                        <b>{store.name} ({store.store_type_display})</b>
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </Grid>
-                <Grid item xs={12} md={3}>
-                  <Select fullWidth size="small" value={confirmedStore}
-                    onChange={handleConfirmStoreChange}
-                    displayEmpty
-                    renderValue={(value) => {
-                      if (!value) return <span style={{ color: "#999" }}>Confirma el destino</span>;
-                      const store = stores.find((s) => s.id === value);
-                      return store ? `${store.name} (${store.store_type_display})` : value;
-                    }}
-                  >
-                    <MenuItem value="" disabled>Confirma el destino</MenuItem>
-                    {stores.map((store) => (
-                      <MenuItem key={store.id} value={store.id}>
-                        {store.name} ({store.store_type_display})
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </Grid>
-                <Grid item xs={12} md={3}>
-                  <CustomButton
-                    onClick={() =>
-                      movementType === MOVEMENT_TYPES.TRANSFER
-                        ? handleTransferFromCart(cart)
-                        : handleDistributionFromCart(cart)
-                    }
-                    disabled={!selectedStore || selectedStore !== confirmedStore}
-                    fullWidth
-                    startIcon={<SendIcon />}
-                  >
-                    {movementType === MOVEMENT_TYPES.TRANSFER ? "Transferir" : "Distribuir"}
-                  </CustomButton>
-                </Grid>
-              </>
-            )}
-
-            {movementType === MOVEMENT_TYPES.ADD_STOCK && (
-              <>
-                {!isMobile && (
-                  <Grid item md={1} sx={{ display: 'flex', gap: 1, justifyContent: 'flex-start', alignItems: 'center' }}>
-                    <CartViewToggle value={cartViewMode} onChange={setCartViewMode} />
-                  </Grid>
-                )}
-                <Grid item xs={12} md={8}></Grid>
-                <Grid item xs={12} md={3}>
-                  <CustomButton
-                    fullWidth
-                    onClick={() => handleAddToStock(cart)}
-                    startIcon={<AddCircleIcon />}
-                  >
-                    Agregar
-                  </CustomButton>
-                </Grid>
-              </>
-            )}
-          </Grid>
-        )}
-        {!isMobile && cartViewMode === "table" && (
-          <SimpleTable
-            noDataComponent="Sin productos"
-            data={cart}
-            columns={getColumns()}
-          />
-        )}
-        {!isMobile && cartViewMode === "cards" && (
-          <Grid container spacing={2} sx={{ p: 2 }}>
-            {cart.map((item, idx) => {
-              const isKgProduct = isKg(item);
-              const currentMode = isKgProduct ? (saleModes[item.id] || "KG") : "PZ";
-
-              const unitLabel = item.product?.unit === "LT" ? "Litro" : "Kilo";
-              const modeLabels = { KG: unitLabel, FRAC: "Fracción", $: "Pesos", PZ: "Pieza" };
-              const unitLabels = { PZ: "Pieza", CO: "Costal", KG: "Kilo", LT: "Litro" };
-
-              return (
-                <Grid item xs={12} md={3} key={item.id ?? idx} className="fade-in-up" sx={{ display: 'flex' }}>
-                  <Box sx={{ width: '100%', bgcolor: 'background.paper', borderRadius: '12px', border: '1px solid', borderColor: 'divider', overflow: 'hidden', display: 'flex', flexDirection: 'column', transition: 'all 0.2s ease', '&:hover': { boxShadow: '0 2px 8px rgba(0,0,0,0.1)', borderColor: 'primary.light' } }}>
-                    {/* Imagen */}
-                    <Box
-                      component="img"
-                      src={item.product.image || noPhotoImage}
-                      alt={item.product.name}
-                      sx={{
-                        width: '100%',
-                        height: 140,
-                        objectFit: 'cover',
-                        borderBottom: '1px solid',
-                        borderColor: 'divider',
-                        transition: 'transform 0.3s ease',
-                        cursor: 'pointer',
-                        display: 'block',
-                        '&:hover': { transform: 'scale(1.04)' }
-                      }}
-                    />
-
-                    {/* Contenido */}
-                    <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', flex: 1, gap: 1.5 }}>
-                      {/* Encabezado: Marca y Nombre + Botón Eliminar */}
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 1 }}>
-                        <Box sx={{ flex: 1, minWidth: 0 }}>
-                          <Typography sx={{ color: 'text.secondary', fontSize: '0.75rem', fontWeight: 500, lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', mb: 0.5 }}>
-                            {item.product.brand_name}
-                          </Typography>
-                          <Typography sx={{ fontWeight: 700, fontSize: '0.95rem', color: 'text.primary', lineHeight: 1.35, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                            {item.product.name}
-                          </Typography>
-                        </Box>
-                        <IconButton 
-                          size="small" 
-                          onClick={() => handleRemoveFromCart(item)}
-                          sx={{ color: 'error.main', flexShrink: 0, width: 32, height: 32 }}
-                        >
-                          <DeleteIcon sx={{ fontSize: '1rem' }} />
-                        </IconButton>
-                      </Box>
-
-                      {/* Código */}
-                      <Typography variant="body2" sx={{ fontSize: '0.8rem', color: 'text.primary', lineHeight: 1.4 }}>
-                        <span style={{ fontWeight: 600 }}>Código:</span> {item.product.code}
-                      </Typography>
-
-                      {/* Unidad y Subtotal */}
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <Typography variant="body2" sx={{ fontSize: '0.8rem', color: 'text.primary', lineHeight: 1.4 }}>
-                          <span style={{ fontWeight: 600 }}>{item.quantity}</span> {isKgProduct ? (unitLabels[item.product?.unit] || "Pieza") : "Pieza"}
-                        </Typography>
-                        <Typography variant="body2" sx={{ fontSize: '0.8rem', color: 'text.primary', lineHeight: 1.4 }}>
-                          <span style={{ fontWeight: 600 }}>Subtotal:</span> {formatCurrency(item.quantity * (item.unit_price || item.product.prices.unit_price))}
-                        </Typography>
-                      </Box>
-
-                      {/* Modo de venta - solo para KG/LT */}
-                      {movementType === MOVEMENT_TYPES.SALE && isKgProduct && (
-                        <Box>
-                          <IconButton
-                            size="small"
-                            onClick={() => setSaleModes((prev) => ({ ...prev, [item.id]: getNextMode(currentMode) }))}
-                            sx={{ 
-                              border: '1px solid', 
-                              borderColor: currentMode === "$" || currentMode === "FRAC" ? 'primary.main' : 'divider',
-                              bgcolor: currentMode === "$" || currentMode === "FRAC" ? 'primary.main' : 'transparent',
-                              color: currentMode === "$" || currentMode === "FRAC" ? '#fff' : 'text.secondary',
-                              borderRadius: '4px',
-                              px: 0.75,
-                              py: 0.4,
-                              fontSize: '0.6rem', 
-                              fontWeight: 600,
-                              width: '100%',
-                              justifyContent: 'center',
-                              '&:hover': { bgcolor: currentMode === "$" || currentMode === "FRAC" ? 'primary.dark' : 'action.hover' }
-                            }}
-                          >
-                            {modeLabels[currentMode]}
-                          </IconButton>
-                        </Box>
-                      )}
-
-                      {/* Cantidad y Precio */}
-                      <Grid container spacing={1}>
-                        <Grid item xs={6}>
-                          <Typography variant="caption" sx={{ display: 'block', mb: 0.5, fontWeight: 600, fontSize: '0.6rem', textTransform: 'uppercase' }}>
-                            {currentMode === "$" ? 'Monto' : currentMode === "FRAC" ? 'Frac' : currentMode === "KG" ? 'Kg' : 'Cant'}
-                          </Typography>
-                          <TextField
-                            size="small"
-                            type="number"
-                            value={item.quantity}
-                            onChange={(e) => {
-                              const val = e.target.value;
-                              if ((currentMode === "KG" || currentMode === "PZ") && val.includes('.')) return;
-                              if (currentMode === "FRAC" && val.includes('.') && val.split('.')[1]?.length > 3) return;
-                              handleQuantityChangeToCart(e, item);
-                            }}
-                            onKeyDown={(e) => {
-                              const step = currentMode === "FRAC" ? 0.1 : 1;
-                              const min = currentMode === "FRAC" ? 0.1 : 1;
-                              const availableStock = getAvailableStock(item.id, item.available_stock);
-                              
-                              if (e.key === "ArrowUp") {
-                                e.preventDefault();
-                                const newValue = Math.round((item.quantity + step) * 1000) / 1000;
-                                if (newValue <= availableStock) {
-                                  handleQuantityChangeToCart({ target: { value: newValue } }, item);
-                                }
-                              } else if (e.key === "ArrowDown") {
-                                e.preventDefault();
-                                const newValue = Math.max(min, Math.round((item.quantity - step) * 1000) / 1000);
-                                handleQuantityChangeToCart({ target: { value: newValue } }, item);
-                              }
-                            }}
-                            inputProps={{ step: currentMode === "FRAC" ? 0.1 : 1, min: currentMode === "FRAC" ? 0.1 : 1 }}
-                            fullWidth
-                            sx={{ '& input': { fontSize: '0.75rem', py: 0.4, textAlign: 'center' } }}
-                          />
-                        </Grid>
-                        <Grid item xs={6}>
-                          <Typography variant="caption" sx={{ display: 'block', mb: 0.5, fontWeight: 600, fontSize: '0.6rem', textTransform: 'uppercase' }}>
-                            Precio
-                          </Typography>
-                          <TextField
-                            size="small"
-                            type="number"
-                            value={item.unit_price || item.product.prices.unit_price}
-                            disabled
-                            inputProps={{ step: 0.01, min: 0 }}
-                            fullWidth
-                            sx={{ '& input': { fontSize: '0.75rem', py: 0.4, textAlign: 'center' } }}
-                          />
-                        </Grid>
-                      </Grid>
-
-                      {/* Mayoreo */}
-                      {item.product.prices.apply_wholesale && movementType === MOVEMENT_TYPES.SALE && currentMode === "KG" && (
-                        <Box>
-                          <FormControlLabel
-                            control={
-                              <Checkbox
-                                checked={item.apply_wholesale || false}
-                                onChange={(e) => {
-                                  dispatch(changePrice(item));
-                                }}
-                                size="small"
-                              />
-                            }
-                            label={`Mayoreo ${formatCurrency(item.product.prices.wholesale_price)}`}
-                            sx={{ fontSize: '0.65rem', m: 0, '& .MuiTypography-root': { fontSize: '0.65rem' } }}
-                          />
-                        </Box>
-                      )}
-                    </Box>
-                  </Box>
-                </Grid>
-              );
-            })}
-          </Grid>
-        )}
-        {isMobile && (
-          <Grid container spacing={1}>
-            {cart.map((item, idx) => {
-              const isKgProduct = isKg(item);
-              const currentMode = isKgProduct ? (saleModes[item.id] || "KG") : "PZ";
-
-              const unitLabel = item.product?.unit === "LT" ? "Litro" : "Kilo";
-              const modeLabels = { KG: unitLabel, FRAC: "Fracción", $: "Pesos", PZ: "Pieza" };
-              const unitLabels = { PZ: "Pieza", CO: "Costal", KG: "Kilo", LT: "Litro" };
-
-              return (
-                <Grid item xs={12} key={item.id ?? idx} className="fade-in-up" sx={{ bgcolor: 'background.paper', borderRadius: 2, border: '1px solid', borderColor: 'divider', p: 1.5 }}>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', mb: 1 }}>
-                    <Box sx={{ flex: 1 }}>
-                      <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 0.5 }}>
-                        {item.product.name}
-                      </Typography>
-                      <Typography variant="caption" display="block" sx={{ color: 'text.secondary', mb: 0.3 }}>
-                        Código: {item.product.code}
-                      </Typography>
-                      <Typography variant="caption" display="block" sx={{ color: 'text.secondary' }}>
-                        Marca: {item.product.brand_name}
-                      </Typography>
-                    </Box>
-                    <IconButton 
-                      size="small" 
-                      onClick={() => handleRemoveFromCart(item)}
-                      sx={{ color: 'error.main' }}
-                    >
-                      <DeleteIcon fontSize="small" />
-                    </IconButton>
-                  </Box>
-
-                  {/* Modo de venta (solo para SALE) */}
-                  {movementType === MOVEMENT_TYPES.SALE && (
-                    <Box sx={{ mb: 1 }}>
-                      {isKgProduct ? (
-                        <IconButton
-                          size="small"
-                          onClick={() => setSaleModes((prev) => ({ ...prev, [item.id]: getNextMode(currentMode) }))}
-                          sx={{ 
-                            border: '1px solid', 
-                            borderColor: currentMode === "$" || currentMode === "FRAC" ? 'primary.main' : 'divider',
-                            bgcolor: currentMode === "$" || currentMode === "FRAC" ? 'primary.main' : 'transparent',
-                            color: currentMode === "$" || currentMode === "FRAC" ? '#fff' : 'text.secondary',
-                            borderRadius: '8px',
-                            px: 1,
-                            fontSize: '0.75rem', fontWeight: 600,
-                            '&:hover': { bgcolor: currentMode === "$" || currentMode === "FRAC" ? 'primary.dark' : 'action.hover' }
-                          }}
-                        >
-                          Venta por: {modeLabels[currentMode]}
-                        </IconButton>
-                      ) : (
-                        <Typography variant="caption" sx={{ fontWeight: 600 }}>
-                          Venta por: {unitLabels[item.product?.unit] || "Pieza"}
-                        </Typography>
-                      )}
-                    </Box>
-                  )}
-                  
-                  <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', mb: 1, flexWrap: 'wrap' }}>
-                    <Box sx={{ flex: 1, minWidth: 100 }}>
-                      <Typography variant="caption" sx={{ display: 'block', mb: 0.5, fontWeight: 600 }}>
-                        {currentMode === "$" ? 'Monto ($)' : currentMode === "FRAC" ? 'Fracción' : currentMode === "KG" ? 'Kilos' : 'Cantidad'}
-                      </Typography>
-                      <TextField
-                        size="small"
-                        type="number"
-                        value={item.quantity}
-                        onChange={(e) => {
-                          const val = e.target.value;
-                          // No permitir decimales en KG ni en PZ
-                          if ((currentMode === "KG" || currentMode === "PZ") && val.includes('.')) return;
-                          // Limitar decimales en FRAC a 3 dígitos
-                          if (currentMode === "FRAC" && val.includes('.') && val.split('.')[1]?.length > 3) return;
-                          handleQuantityChangeToCart(e, item);
-                        }}
-                        onKeyDown={(e) => {
-                          const step = currentMode === "FRAC" ? 0.1 : 1;
-                          const min = currentMode === "FRAC" ? 0.1 : currentMode === "$" ? 1 : 1;
-                          const availableStock = getAvailableStock(item.id, item.available_stock);
-                          
-                          if (e.key === "ArrowUp") {
-                            e.preventDefault();
-                            const newValue = Math.round((item.quantity + step) * 1000) / 1000;
-                            if (newValue <= availableStock) {
-                              handleQuantityChangeToCart({ target: { value: newValue } }, item);
-                            }
-                          } else if (e.key === "ArrowDown") {
-                            e.preventDefault();
-                            const newValue = Math.max(min, Math.round((item.quantity - step) * 1000) / 1000);
-                            handleQuantityChangeToCart({ target: { value: newValue } }, item);
-                          }
-                        }}
-                        inputProps={{ step: currentMode === "FRAC" ? 0.1 : 1, min: currentMode === "FRAC" ? 0.1 : 1 }}
-                        fullWidth
-                      />
-                    </Box>
-                    <Box sx={{ flex: 1, minWidth: 100 }}>
-                      <Typography variant="caption" sx={{ display: 'block', mb: 0.5, fontWeight: 600 }}>Precio unitario</Typography>
-                      <TextField
-                        size="small"
-                        type="number"
-                        value={item.unit_price || item.product.prices.unit_price}
-                        disabled
-                        inputProps={{ step: 0.01, min: 0 }}
-                        fullWidth
-                      />
-                    </Box>
-                  </Box>
-
-                  {/* Switch de mayoreo */}
-                  {item.product.prices.apply_wholesale && movementType === MOVEMENT_TYPES.SALE && currentMode === "KG" && (
-                    <Box sx={{ mb: 1 }}>
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            size="small"
-                            checked={item.product_price === item.product.prices.wholesale_price}
-                            onChange={() => handleChangePrice(item)}
-                            disabled={!item.product.prices.wholesale_price}
-                          />
-                        }
-                        label={`Mayoreo (${item.product.prices.min_wholesale_quantity}+) - ${formatCurrency(item.product.prices.wholesale_price)}`}
-                      />
-                    </Box>
-                  )}
-
-                  <Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
-                    <Box>
-                      <Typography variant="caption" sx={{ display: 'block', color: 'text.secondary', fontWeight: 600 }}>Stock</Typography>
-                      <Typography variant="body2">{item.available_stock}</Typography>
-                    </Box>
-                    <Box>
-                      <Typography variant="caption" sx={{ display: 'block', color: 'text.secondary', fontWeight: 600 }}>Total</Typography>
-                      <Typography variant="body2" sx={{ fontWeight: 700 }}>{formatCurrency(item.quantity * (item.unit_price || item.product.prices.unit_price))}</Typography>
-                    </Box>
-                  </Box>
-                </Grid>
-              );
-            })}
-          </Grid>
-        )}
-      </div>
+      {cart.length !== 0 && (
+        <CartToolbar
+          movementType={movementType}
+          isMobile={isMobile}
+          viewMode={cartViewMode}
+          onViewModeChange={setCartViewMode}
+          totalProducts={totalProducts}
+          total={total}
+          onCharge={() => paymentModal.open()}
+          destination={submit}
+          onSubmitTransfer={() => submit.submitTransfer(cart)}
+          onSubmitDistribution={() => submit.submitDistribution(cart)}
+          onSubmitAddToStock={() => submit.submitAddToStock(cart)}
+        />
+      )}
+      {!isMobile && cartViewMode === CART_VIEW.TABLE && (
+        <SimpleTable noDataComponent="Sin productos" data={cart} columns={columns} />
+      )}
+      {!isMobile && cartViewMode === CART_VIEW.CARDS && (
+        <Grid container spacing={2} sx={{ p: 2 }}>
+          {renderCards("card")}
+        </Grid>
+      )}
+      {isMobile && (
+        <Grid container spacing={1}>
+          {renderCards("mobile")}
+        </Grid>
+      )}
     </div>
   );
 };

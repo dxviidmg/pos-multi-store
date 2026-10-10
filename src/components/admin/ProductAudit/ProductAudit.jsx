@@ -3,7 +3,9 @@ import AuditCard from "../../ui/AuditCard/AuditCard";
 import CustomButton from "../../ui/Button/Button";
 import { getProductAudit, getProductAuditActivity } from "../../../api/audit";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
-import { Grid } from "@mui/material";
+import { Box, Grid } from "@mui/material";
+import PageHeader from "../../ui/PageHeader";
+import { showRequestError } from "../../../utils/alerts";
 import AssessmentIcon from "@mui/icons-material/Assessment";
 
 const ProductAudit = () => {
@@ -13,23 +15,33 @@ const ProductAudit = () => {
 
   const runCatalogAudit = async () => {
     setIsLoading(true);
-    const { data } = await getProductAudit();
-    setSyncData(data);
-    setIsLoading(false);
+    try {
+      const { data } = await getProductAudit();
+      setSyncData(data);
+    } catch (error) {
+      showRequestError("auditar el catálogo", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const runActivityAudit = async () => {
     setIsLoading(true);
-    const { data } = await getProductAuditActivity();
-    setActivityTaskId(data.task);
-    setIsLoading(false);
+    try {
+      const { data } = await getProductAuditActivity();
+      setActivityTaskId(data.task);
+    } catch (error) {
+      showRequestError("auditar la actividad", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <div>
       <CustomSpinner isLoading={isLoading} />
       <Grid className="card">
-        <h1>Auditoría de productos</h1>
+        <PageHeader title="Auditoría de productos" />
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <CustomButton fullWidth onClick={runCatalogAudit} startIcon={<AssessmentIcon />}>
@@ -53,9 +65,9 @@ const ProductAudit = () => {
             <CustomButton fullWidth onClick={runActivityAudit} startIcon={<AssessmentIcon />}>
               Auditar actividad
             </CustomButton>
-            <div style={{ marginTop: 16 }}>
+            <Box sx={{ mt: 2 }}>
               <AuditCard title="Productos sin movimiento" taskId={activityTaskId} />
-            </div>
+            </Box>
           </Grid>
         </Grid>
       </Grid>

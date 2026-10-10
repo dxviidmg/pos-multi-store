@@ -1,65 +1,26 @@
 /**
- * Get user data from localStorage (cached)
- * @returns {Object|null} User object with token and store_id
+ * Archivo de re-exportación para backward compatibility.
+ * Las implementaciones están en:
+ * - api-url.js — Builders de URLs (getApiUrl, getPrinterUrl, etc.)
+ * - api-user.js — Acceso a datos de usuario (getUserData)
+ * - api-serializers.js — Transformación de datos (toFormData, buildUrlWithParams)
  */
-let _userCache = null;
-let _userRaw = null;
 
-export const getUserData = () => {
-  const raw = localStorage.getItem("user");
-  if (raw !== _userRaw) {
-    _userRaw = raw;
-    _userCache = raw ? JSON.parse(raw) : null;
-  }
-  return _userCache;
-};
+// Re-exportar URL builders
+export {
+  getApiUrl,
+  getPrinterUrl,
+  getPrinterWsUrl,
+  getStaticUrl,
+  getApiWsUrl,
+  getSupportWhatsAppUrl,
+} from './api-url';
 
-/**
- * Build API URL for endpoint
- * @param {string} endpoint - API endpoint path
- * @param {boolean} end_slash - Whether to add trailing slash
- * @returns {string} Full API URL
- */
-export const getApiUrl = (endpoint, end_slash = true) =>
-  `${process.env.REACT_APP_API_URL}/api/${endpoint}${end_slash ? '/' : ''}`;
+// Re-exportar user data
+export { getUserData } from './api-user';
 
-/**
- * Build printer service URL
- * @param {string} endpoint - Printer endpoint path
- * @returns {string} Full printer URL
- */
-export const getPrinterUrl = (endpoint) => {
-  return `${process.env.REACT_APP_PRINTER_URL}/${endpoint}/`;
-};
-
-/**
- * Build printer service WebSocket URL.
- * Uses REACT_APP_PRINTER_WS_URL if defined; otherwise derives it from
- * REACT_APP_PRINTER_URL by swapping the http(s) scheme for ws(s).
- * @param {string} endpoint - Printer WS endpoint path (e.g. "printer-status")
- * @returns {string} Full printer WebSocket URL
- */
-export const getPrinterWsUrl = (endpoint) => {
-  const base =
-    process.env.REACT_APP_PRINTER_WS_URL ||
-    (process.env.REACT_APP_PRINTER_URL || "").replace(/^http/i, "ws");
-  return `${base}/${endpoint}/`;
-};
-
-/**
- * Build URL with query parameters
- * @param {string} baseUrl - Base URL
- * @param {Object} params - Query parameters object
- * @returns {URL} URL object with parameters
- */
-export const buildUrlWithParams = (baseUrl, params) => {
-  const url = new URL(baseUrl);
-  if (params) {
-    Object.entries(params).forEach(([key, value]) => {
-      if (value !== null && value !== undefined) {
-        url.searchParams.append(key, value);
-      }
-    });
-  }
-  return url;
-};
+// Re-exportar serializers
+export {
+  buildUrlWithParams,
+  toFormData,
+} from './api-serializers';

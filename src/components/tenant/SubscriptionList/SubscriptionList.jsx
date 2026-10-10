@@ -2,26 +2,15 @@ import React, { useEffect, useState } from "react";
 import DataTable from "../../ui/DataTable/DataTable";
 import { getSubscriptions } from "../../../api/subscriptions";
 import { Grid, Chip } from "@mui/material";
-import { logger } from "../../../utils/logger";
-import { formatCurrency } from "../../../utils/utils";
+import { showRequestError } from "../../../utils/alerts";
+import { formatCurrency, formatLongDate } from "../../../utils/utils";
+import PageHeader from "../../ui/PageHeader";
 
 const statusMap = {
   authorized: { label: "Autorizada", color: "success" },
   paused: { label: "Pausada", color: "warning" },
   cancelled: { label: "Cancelada", color: "error" },
   expired: { label: "Vencida", color: "warning" },
-};
-
-const formatDate = (dateStr) => {
-  if (!dateStr) return "—";
-  const date = new Date(dateStr);
-  return date.toLocaleDateString("es-MX", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
 };
 
 const formatCard = (row) => {
@@ -43,7 +32,7 @@ const SubscriptionList = () => {
         const response = await getSubscriptions();
         setSubscriptions(response.data);
       } catch (error) {
-        logger.error("Error al obtener suscripciones:", error);
+        showRequestError("cargar las suscripciones", error);
       } finally {
         setLoading(false);
       }
@@ -54,7 +43,7 @@ const SubscriptionList = () => {
   return (
     <Grid container>
       <Grid item xs={12} className="card">
-        <h1>Suscripciones</h1>
+        <PageHeader title="Suscripciones" />
         <DataTable
           progressPending={loading}
           noDataComponent="Sin suscripciones"
@@ -90,7 +79,7 @@ const SubscriptionList = () => {
             },
             {
               name: "Fecha de creación",
-              selector: (row) => formatDate(row.created_at),
+              selector: (row) => formatLongDate(row.created_at, { withTime: true }),
               minWidth: 220,
             },
           ]}

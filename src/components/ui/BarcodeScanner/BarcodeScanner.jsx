@@ -12,12 +12,19 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
+import { alpha } from "@mui/material/styles";
+import CustomTooltip from "../Tooltip";
 
 const BarcodeScanner = ({ open, onClose, onDetected }) => {
   const videoRef = useRef(null);
   const readerRef = useRef(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  // Callbacks más recientes sin reiniciar la cámara cuando cambian
+  const onCloseRef = useRef(onClose);
+  const onDetectedRef = useRef(onDetected);
+  onCloseRef.current = onClose;
+  onDetectedRef.current = onDetected;
 
   useEffect(() => {
     if (!open) return;
@@ -43,8 +50,8 @@ const BarcodeScanner = ({ open, onClose, onDetected }) => {
           (result, err) => {
             setLoading(false);
             if (result) {
-              onDetected(result.getText());
-              onClose();
+              onDetectedRef.current(result.getText());
+              onCloseRef.current();
             }
           }
         );
@@ -65,7 +72,9 @@ const BarcodeScanner = ({ open, onClose, onDetected }) => {
     return () => {
       try {
         readerRef.current?.reset();
-      } catch (_) {}
+      } catch {
+        // El lector ya estaba detenido
+      }
     };
   }, [open]);
 
@@ -82,9 +91,11 @@ const BarcodeScanner = ({ open, onClose, onDetected }) => {
           <QrCodeScannerIcon sx={{ color: "primary.main" }} />
           <Typography fontWeight={600}>Escanear código de barras</Typography>
         </Box>
-        <IconButton size="small" onClick={onClose}>
-          <CloseIcon />
-        </IconButton>
+        <CustomTooltip text="Cerrar" position="bottom">
+          <IconButton size="small" onClick={onClose} aria-label="Cerrar">
+            <CloseIcon />
+          </IconButton>
+        </CustomTooltip>
       </DialogTitle>
 
       <DialogContent sx={{ p: 0 }}>
@@ -93,7 +104,7 @@ const BarcodeScanner = ({ open, onClose, onDetected }) => {
             <Alert severity="error">{error}</Alert>
           </Box>
         ) : (
-          <Box sx={{ position: "relative", backgroundColor: "#000", minHeight: 300 }}>
+          <Box sx={{ position: "relative", bgcolor: "common.black", minHeight: 300 }}>
             {loading && (
               <Box sx={{
                 position: "absolute", inset: 0,
@@ -105,9 +116,10 @@ const BarcodeScanner = ({ open, onClose, onDetected }) => {
                 <Typography variant="body2">Iniciando cámara...</Typography>
               </Box>
             )}
-            <video
+            <Box
+              component="video"
               ref={videoRef}
-              style={{ width: "100%", display: "block", maxHeight: "60vh", objectFit: "cover" }}
+              sx={{ width: "100%", display: "block", maxHeight: "60vh", objectFit: "cover" }}
             />
             {/* Guía visual de encuadre */}
             {!loading && (
@@ -118,9 +130,9 @@ const BarcodeScanner = ({ open, onClose, onDetected }) => {
               }}>
                 <Box sx={{
                   width: "70%", height: 100,
-                  border: "2px solid rgba(255,255,255,0.8)",
+                  border: (theme) => `2px solid ${alpha(theme.palette.common.white, 0.8)}`,
                   borderRadius: 1,
-                  boxShadow: "0 0 0 9999px rgba(0,0,0,0.4)",
+                  boxShadow: (theme) => `0 0 0 9999px ${alpha(theme.palette.common.black, 0.4)}`,
                 }} />
               </Box>
             )}

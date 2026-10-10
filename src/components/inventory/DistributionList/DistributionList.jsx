@@ -5,6 +5,7 @@ import { getFormattedDateTime } from "../../../utils/utils";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { showSuccess, showRequestError } from "../../../utils/alerts";
 import { useUser } from "../../../context/UserContext";
+import { isOwner as isOwnerUser } from "../../../constants/routeAccess";
 import {
   confirmDistribution,
   deleteDistribution,
@@ -13,7 +14,7 @@ import {
   updateTransfer,
 } from "../../../api/transfers";
 import CustomTooltip from "../../ui/Tooltip";
-import { Grid, TextField} from "@mui/material";
+import { Grid, TextField } from "@mui/material";
 import ChecklistIcon from "@mui/icons-material/Checklist";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -23,34 +24,41 @@ import PageHeader from "../../ui/PageHeader";
 
 const DistributionList = () => {
   const { user } = useUser();
+  const isOwner = isOwnerUser(user);
   const [distributions, setDistributions] = useState([]);
   const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [editingRow, setEditingRow] = useState(null);
   const [editedQuantity, setEditedQuantity] = useState("");
 
   useEffect(() => {
     const fetchDistributions = async () => {
       setLoading(true);
-      const res = await getDistributions();
-      setDistributions(res.data);
-      setLoading(false);
+      try {
+        const res = await getDistributions();
+        setDistributions(res.data);
+      } catch (error) {
+        showRequestError("cargar las distribuciones", error);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchDistributions();
   }, []);
 
   const handleSubmit = async () => {
-    if (loading) return;
-    setLoading(true);
-    const response = await confirmDistribution({ id: selected.id });
-    setLoading(false);
-
-    if (response.status === 200) {
+    if (submitting) return;
+    setSubmitting(true);
+    try {
+      await confirmDistribution({ id: selected.id });
       setDistributions((prev) => prev.filter((d) => d.id !== selected.id));
       setSelected(null);
       showSuccess("Distribución realizada");
-    } else {
-      showRequestError("confirmar la distribución", response);
+    } catch (error) {
+      showRequestError("confirmar la distribución", error);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -60,8 +68,8 @@ const DistributionList = () => {
   };
 
   const handleSaveClick = async (row) => {
-    const response = await updateTransfer({ ...row, quantity: editedQuantity });
-    if (response.status === 200) {
+    try {
+      await updateTransfer({ ...row, quantity: editedQuantity });
       setSelected((prev) => ({
         ...prev,
         transfers: prev.transfers.map((t) =>
@@ -69,36 +77,36 @@ const DistributionList = () => {
         ),
       }));
       setEditingRow(null);
-    } else {
-      showRequestError("actualizar la cantidad", response);
+    } catch (error) {
+      showRequestError("actualizar la cantidad", error);
     }
   };
 
   const handleDeleteTransfer = async (row) => {
-    const response = await deleteTransfer(row);
-    if (response.status === 204) {
+    try {
+      await deleteTransfer(row);
       setSelected((prev) => ({
         ...prev,
         transfers: prev.transfers.filter((t) => t.id !== row.id),
       }));
-    } else {
-      showRequestError("eliminar el producto", response);
+    } catch (error) {
+      showRequestError("eliminar el producto", error);
     }
   };
 
   const handleDeleteDistribution = async (row) => {
-    const response = await deleteDistribution(row.id);
-    if (response.status === 204) {
+    try {
+      await deleteDistribution(row.id);
       setDistributions((prev) => prev.filter((d) => d.id !== row.id));
       showSuccess("Distribución eliminada");
-    } else {
-      showRequestError("eliminar la distribución", response);
+    } catch (error) {
+      showRequestError("eliminar la distribución", error);
     }
   };
 
   return (
     <>
-      <CustomSpinner isLoading={loading} />
+      <CustomSpinner isLoading={submitting} />
 
       <Grid item xs={12} className="card" sx={{ mb: '1.5rem' }}>
         <PageHeader title="Distribuciones" />
@@ -120,7 +128,7 @@ const DistributionList = () => {
                       <ChecklistIcon />
                     </CustomButton>
                   </CustomTooltip>
-                  {user.role === "owner" && (
+                  {isOwner && (
                     <CustomTooltip text="Eliminar distribución">
                       <CustomButton onClick={() => handleDeleteDistribution(row)}>
                         <DeleteIcon />
@@ -136,9 +144,9 @@ const DistributionList = () => {
 
       {selected && (
         <Grid item xs={12} className="card">
-          <h1>Distribución #{selected.id}</h1>
+          <PageHeader title={`Distribución #${selected.id}`} plain />
 
-          <CustomButton fullWidth onClick={handleSubmit} startIcon={<SendIcon />} sx={{ mb: 2 }}>
+          <CustomButton fullWidth onClick={handleSubmit} disabled={submitting} startIcon={<SendIcon />} sx={{ mb: 2 }}>
             Confirmar distribución
           </CustomButton>
 
@@ -167,7 +175,7 @@ const DistributionList = () => {
               {
                 name: "Acciones",
                 cell: (row) =>
-                  user.role === "owner" ? (
+                  isOwner ? (
                     editingRow === row.product_code ? (
                       <CustomButton onClick={() => handleSaveClick(row)} startIcon={<SaveIcon />}>
                         Guardar

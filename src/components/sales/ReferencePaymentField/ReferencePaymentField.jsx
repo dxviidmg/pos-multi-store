@@ -1,6 +1,15 @@
 import React, { memo } from "react";
 import { TextField } from "@mui/material";
 
+// Vacío: etiqueta en rojo pero borde neutro, como un campo sin foco
+const EMPTY_SX = {
+  '& .MuiOutlinedInput-root': {
+    '& fieldset': { borderColor: 'action.disabled' },
+    '&:hover fieldset': { borderColor: 'text.primary' },
+    '&.Mui-focused fieldset': { borderColor: 'action.disabled' },
+  },
+};
+
 /**
  * Campo de referencia para pagos que no son en efectivo. Se resalta mientras está vacío.
  */
@@ -18,13 +27,7 @@ const ReferencePaymentField = ({ value, onChange }) => {
       value={value}
       onChange={(e) => onChange(e.target.value)}
       InputLabelProps={{ shrink: true }}
-      sx={isEmpty ? {
-        '& .MuiOutlinedInput-root': {
-          '& fieldset': { borderColor: 'rgba(0,0,0,0.23)' },
-          '&:hover fieldset': { borderColor: 'rgba(0,0,0,0.87)' },
-          '&.Mui-focused fieldset': { borderColor: 'rgba(0,0,0,0.23)' },
-        },
-      } : undefined}
+      sx={isEmpty ? EMPTY_SX : undefined}
     />
   );
 };

@@ -11,6 +11,8 @@ import {
 import { getTaskResult } from "../../../api/products";
 import CustomButton from "../Button/Button";
 import { exportToExcel } from "../../../utils/utils";
+import { logger } from "../../../utils/logger";
+import { showError, showRequestError, SUPPORT_HINT } from "../../../utils/alerts";
 import DownloadIcon from "@mui/icons-material/Download";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ErrorIcon from "@mui/icons-material/Error";
@@ -37,36 +39,51 @@ const AuditCard = ({ title, taskId, syncResult, pollInterval = 7500 }) => {
   useEffect(() => {
     if (!taskId) return;
 
+    let cancelled = false;
+    let intervalId;
+    setData([]);
+
+    // Devuelve true cuando ya no hay que seguir consultando.
     const fetchTask = async () => {
       try {
-        setData([]);
         const { data: taskData } = await getTaskResult(taskId);
+        if (cancelled) return true;
         const { result, info: taskInfo, status } = taskData;
 
         if (status === "SUCCESS") {
           setData(result || []);
-          setInfo((prev) => ({ ...prev, total: prev.total, progress: 100 }));
+          setInfo((prev) => ({ ...prev, progress: 100 }));
           clearInterval(intervalId);
           return true;
-        } else {
-          setInfo({ total: taskInfo.total, progress: taskInfo.percent });
-          return false;
         }
+        if (status === "FAILURE") {
+          logger.error(`La tarea "${title}" falló:`, taskData);
+          showError("Error al procesar la tarea", taskData.error?.message || SUPPORT_HINT);
+          clearInterval(intervalId);
+          return true;
+        }
+        setInfo((prev) => ({ total: taskInfo?.total ?? prev.total, progress: taskInfo?.percent ?? prev.progress }));
+        return false;
       } catch (error) {
         clearInterval(intervalId);
+        if (cancelled) return true;
+        logger.error(`Error al consultar la tarea "${title}":`, error);
+        showRequestError("consultar la tarea", error);
         return true;
       }
     };
 
-    let intervalId;
     fetchTask().then((finished) => {
-      if (!finished) {
+      if (!finished && !cancelled) {
         intervalId = setInterval(fetchTask, pollInterval);
       }
     });
 
-    return () => clearInterval(intervalId);
-  }, [taskId, pollInterval]);
+    return () => {
+      cancelled = true;
+      clearInterval(intervalId);
+    };
+  }, [taskId, pollInterval, title]);
 
   const isComplete = info.progress === 100;
   const hasSource = isSync ? syncResult !== undefined && syncResult !== null : !!taskId;

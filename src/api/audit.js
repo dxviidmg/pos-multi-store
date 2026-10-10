@@ -6,7 +6,7 @@ export const getAudit = async (params) => {
   return httpClient.get(url);
 };
 
-export const getAudit2 = async (params) => {
+export const getStockAudit = async (params) => {
   const url = buildUrlWithParams(getApiUrl("stock-audit"), params);
   return httpClient.get(url);
 };

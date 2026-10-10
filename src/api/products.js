@@ -1,266 +1,43 @@
-import { logger } from "../utils/logger";
-import httpClient from "./httpClient";
-import { getApiUrl, buildUrlWithParams } from "./utils";
-
-const timedRequest = async (axiosCall, meta = {}) => {
-  const start = performance.now();
-  try {
-    const response = await axiosCall();
-    return response;
-  } catch (error) {
-    const end = performance.now();
-    const duration = Math.round((end - start) / 1000);
-    logger.warn(`[FAIL] ${meta.name || "request"}: ${duration} s`);
-    throw error;
-  }
-};
-
 /**
- * Construye un FormData para crear/actualizar producto cuando incluye imagen (File).
- * Omite valores nulos/indefinidos y serializa booleanos como "true"/"false".
- * @param {Object} data - Datos del producto (con image: File)
- * @returns {FormData}
+ * Archivo de re-exportación para backward compatibility.
+ * Las implementaciones están en:
+ * - store-products.js — Funciones de punto de venta
+ * - catalog-products.js — Funciones de catálogo/admin
+ * - products-common.js — Funciones compartidas
+ * 
+ * Importado desde: components, hooks
  */
-const buildProductFormData = (data) => {
-  const formData = new FormData();
-  Object.entries(data).forEach(([key, value]) => {
-    if (value === null || value === undefined || value === "") return;
-    if (value instanceof File) {
-      formData.append(key, value);
-    } else if (typeof value === "boolean") {
-      formData.append(key, value ? "true" : "false");
-    } else {
-      formData.append(key, value);
-    }
-  });
-  return formData;
-};
 
-/**
- * Get store products with optional filters
- * @param {Object} params - Query parameters
- * @param {Object} config - Axios config options
- * @returns {Promise<Object>} Store products response
- */
-export const getStoreProducts = async (params, config = {}) => {
-  const url = buildUrlWithParams(getApiUrl("store-product"), params);
-  return timedRequest(
-    () => httpClient.get(url, config),
-    { name: "getStoreProducts" }
-  );
-};
+// Store products
+export {
+  getStoreProducts,
+  getStoreProductSuggestions,
+  updateStoreProduct,
+  getStoreProductLogs,
+  getStoreProductLogsChoices,
+  importStoreProductsValidation,
+  importStoreProducts,
+  getImportCanIncludeQuantity,
+} from './store-products';
 
-/**
- * Get product suggestions for autocomplete (name/brand search).
- * Reutiliza el endpoint store-product con limit=5 para el desplegable de sugerencias.
- * @param {string} q - Texto de búsqueda (nombre o marca)
- * @param {Object} config - Axios config (ej. { signal } para cancelación)
- * @returns {Promise<Object>} Store products response (máx 5)
- */
-export const getStoreProductSuggestions = async (q, config = {}) => {
-  return getStoreProducts({ q, limit: 5 }, config);
-};
+// Catalog products
+export {
+  getProducts,
+  createProduct,
+  updateProduct,
+  addProducts,
+  importProductsValidation,
+  importProducts,
+  deleteProducts,
+  updatePricesProducts,
+  upperCodeProducts,
+  reassignProducts,
+} from './catalog-products';
 
-/**
- * Get products with optional filters
- * @param {Object} params - Query parameters
- * @returns {Promise<Object>} Products list response
- */
-export const getProducts = async (params) => {
-  const url = buildUrlWithParams(getApiUrl("product"), params);
-  return httpClient.get(url);
-};
-
-/**
- * Create new product
- * @param {Object} data - Product data
- * @returns {Promise<Object>} Created product response
- */
-export const createProduct = async (data) => {
-  if (data.min_wholesale_quantity === "") data.min_wholesale_quantity = null;
-  if (data.wholesale_price === "") data.wholesale_price = null;
-  if (data.image instanceof File) {
-    return httpClient.post(getApiUrl("product"), buildProductFormData(data));
-  }
-  return httpClient.post(getApiUrl("product"), data);
-};
-
-/**
- * Update product
- * @param {Object} data - Product data with ID
- * @returns {Promise<Object>} Updated product response
- */
-export const updateProduct = async (data) => {
-  if (typeof data.image === "string") {
-    delete data.image;
-  }
-  if (data.min_wholesale_quantity === "") data.min_wholesale_quantity = null;
-  if (data.wholesale_price === "") data.wholesale_price = null;
-  if (data.image instanceof File) {
-    return httpClient.patch(getApiUrl(`product/${data.id}`), buildProductFormData(data));
-  }
-  return httpClient.patch(getApiUrl(`product/${data.id}`), data);
-};
-
-/**
- * Add products to store inventory
- * @param {Object} data - Products data
- * @returns {Promise<Object>} Add products response
- */
-export const addProducts = async (data) => {
-  return httpClient.post(getApiUrl("products/add"), data);
-};
-
-/**
- * Get store product logs
- * @param {Object} params - Query parameters
- * @returns {Promise<Object>} Product logs response
- */
-export const getStoreProductLogs = async (params) => {
-  const url = buildUrlWithParams(getApiUrl("store-product-logs"), params);
-  return httpClient.get(url);
-};
-
-/**
- * Get store product log choices
- * @returns {Promise<Object>} Log choices response
- */
-export const getStoreProductLogsChoices = async () => {
-  return httpClient.get(getApiUrl("store-product-logs/choices"));
-};
-
-/**
- * Update store product
- * @param {Object} data - Store product data with ID
- * @returns {Promise<Object>} Updated store product response
- */
-export const updateStoreProduct = async (data) => {
-  return httpClient.patch(getApiUrl(`store-product/${data.id}`), data);
-};
-
-/**
- * Validate products import file
- * @param {Object} data - Object with file and config options
- * @returns {Promise<Object>} Validation results
- */
-export const importProductsValidation = async (data) => {
-  const formData = new FormData();
-  Object.entries(data).forEach(([key, value]) => {
-    if (value !== "" && value !== null && value !== undefined) {
-      formData.append(key, value);
-    }
-  });
-  return httpClient.post(getApiUrl("products/import-validation"), formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
-};
-
-/**
- * Import products from file
- * @param {Object} data - Object with file and config options
- * @returns {Promise<Object>} Import results
- */
-export const importProducts = async (data) => {
-  const formData = new FormData();
-  Object.entries(data).forEach(([key, value]) => {
-    if (value !== "" && value !== null && value !== undefined) {
-      formData.append(key, value);
-    }
-  });
-  return httpClient.post(getApiUrl("products/import"), formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
-};
-
-/**
- * Delete multiple products
- * @param {Object} data - Object with product IDs to delete
- * @returns {Promise<Object>} Deletion response
- */
-export const deleteProducts = async (data) => {
-  return httpClient.post(getApiUrl("products/delete"), data);
-};
-
-/**
- * Update prices for multiple products
- * @param {Array} data - Array of product IDs to update prices
- * @returns {Promise<Object>} Update prices response
- */
-export const updatePricesProducts = async (data) => {
-  return httpClient.post(getApiUrl("products/update-prices"), data);
-};
-
-/**
- * Convert product codes to uppercase
- * @param {Object} data - Product data
- * @returns {Promise<Object>} Update response
- */
-export const upperCodeProducts = async (data) => {
-  return httpClient.post(getApiUrl("products/upper-code"), data);
-};
-
-/**
- * Validate store products import file
- * @param {FormData} data - Form data with file
- * @returns {Promise<Object>} Validation results
- */
-export const importStoreProductsValidation = async (data) => {
-  return httpClient.post(getApiUrl("store-products/import-validation"), data);
-};
-
-/**
- * Import store products from file
- * @param {FormData} data - Form data with validated file
- * @returns {Promise<Object>} Import results
- */
-export const importStoreProducts = async (data) => {
-  return httpClient.post(getApiUrl("store-products/import"), data);
-};
-
-/**
- * Check if import can include quantity
- * @returns {Promise<Object>} Configuration response
- */
-export const getImportCanIncludeQuantity = async () => {
-  return httpClient.get(getApiUrl("store-products/import/can-include-quantity"));
-};
-
-/**
- * Reassign products to different department/category
- * @param {Object} data - Reassignment data
- * @returns {Promise<Object>} Reassignment response
- */
-export const reassignProducts = async (data) => {
-  return httpClient.post(getApiUrl("products/reassign"), data);
-};
-
-/**
- * Get async task result
- * @param {string} id - Task ID
- * @returns {Promise<Object>} Task result response
- */
-export const getTaskResult = async (id) => {
-  return httpClient.get(getApiUrl(`task-result/${id}`));
-};
-
-/**
- * Get stock in other stores for a product
- * @param {string} code - Product code
- * @returns {Promise<Object>} Stock information response
- */
-export const getStockOtherStores = async (storeProductId) => {
-  return httpClient.get(getApiUrl(`products/stock-other-stores/?store-product=${storeProductId}`, false));
-};
-
-export const getProductPriceLogs = async (productId) => {
-  const url = buildUrlWithParams(getApiUrl("product-price-logs"), { product_id: productId });
-  return httpClient.get(url);
-};
-
-/**
- * Check if products can be created on sale
- * @returns {Promise<Object>} Configuration response with create_products_on_sale flag
- */
-export const getCreateProductsOnSale = async () => {
-  return httpClient.get(getApiUrl("create-products-on-sale"));
-};
+// Common products
+export {
+  getTaskResult,
+  getStockOtherStores,
+  getProductPriceLogs,
+  getCreateProductsOnSale,
+} from './products-common';

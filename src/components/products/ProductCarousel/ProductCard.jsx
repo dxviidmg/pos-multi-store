@@ -1,7 +1,9 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
 import noPhoto from "../../../assets/images/noPhoto.webp";
-import { formatCurrency } from "../../../utils/utils";
+import { alpha } from "@mui/material/styles";
+import { formatCurrency } from "../../../utils/currency";
+import { colors } from "../../../theme/colors";
 
 /**
  * Tarjeta visual de producto para el carrusel de búsqueda visual.
@@ -38,7 +40,7 @@ const ProductCard = ({ storeProduct, disabled = false, onClick }) => {
         scrollSnapAlign: "start",
         bgcolor: "background.paper",
         borderRadius: "16px",
-        boxShadow: "0 4px 20px rgba(0,0,0,0.12)",
+        boxShadow: 5,
         overflow: "hidden",
         cursor: disabled ? "not-allowed" : "pointer",
         opacity: disabled ? 0.55 : 1,
@@ -48,7 +50,7 @@ const ProductCard = ({ storeProduct, disabled = false, onClick }) => {
           ? {}
           : {
               transform: "translateY(-4px)",
-              boxShadow: "0 8px 30px rgba(4,53,107,0.22)",
+              boxShadow: colors.shadow.brandHover,
               "& .pc-image": { transform: "scale(1.06)" },
             },
         "&:focus-visible": {
@@ -95,7 +97,7 @@ const ProductCard = ({ storeProduct, disabled = false, onClick }) => {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              bgcolor: "rgba(0,0,0,0.35)",
+              bgcolor: (theme) => alpha(theme.palette.common.black, 0.35),
             }}
           >
             <Box
@@ -104,7 +106,7 @@ const ProductCard = ({ storeProduct, disabled = false, onClick }) => {
                 py: 0.4,
                 borderRadius: "8px",
                 bgcolor: "error.main",
-                color: "#fff",
+                color: "common.white",
                 fontSize: "0.7rem",
                 fontWeight: 700,
                 textTransform: "uppercase",

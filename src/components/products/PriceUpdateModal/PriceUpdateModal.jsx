@@ -8,14 +8,30 @@ import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { updatePricesProducts } from "../../../api/products";
 import { showSuccess, showRequestError } from "../../../utils/alerts";
 import { formatCurrency } from "../../../utils/utils";
+import { getPriceErrors } from "../ProductModal/productValidation";
+
+const EMPTY_PRICES = { cost: "", unit_price: "", wholesale_price: "", min_wholesale_quantity: "" };
+
+const pricesOf = (product) => ({
+  cost: product.cost || "",
+  unit_price: product.unit_price || "",
+  wholesale_price: product.wholesale_price || "",
+  min_wholesale_quantity: product.min_wholesale_quantity || "",
+});
+
+const formatOptionalCurrency = (value) => (value ? formatCurrency(value) : "");
+
+const COMPARISON_COLUMNS = [
+  { name: "Código", selector: (row) => row.code || "" },
+  { name: "Producto", selector: (row) => row.name },
+  { name: "Costo", selector: (row) => formatOptionalCurrency(row.cost) },
+  { name: "Unitario", selector: (row) => formatOptionalCurrency(row.unit_price) },
+  { name: "Mayoreo", selector: (row) => formatOptionalCurrency(row.wholesale_price) },
+  { name: "Cant. mín.", selector: (row) => row.min_wholesale_quantity || "" },
+];
 
 const PriceUpdateModal = ({ isOpen, onClose, selectedProducts, onSuccess }) => {
-  const [formData, setFormData] = useState({
-    cost: "",
-    unit_price: "",
-    wholesale_price: "",
-    min_wholesale_quantity: "",
-  });
+  const [formData, setFormData] = useState(EMPTY_PRICES);
   const [isLoading, setIsLoading] = useState(false);
   const [confirmedDifferentPrices, setConfirmedDifferentPrices] = useState(false);
 
@@ -34,17 +50,7 @@ const PriceUpdateModal = ({ isOpen, onClose, selectedProducts, onSuccess }) => {
   const showForm = hasSamePrices || confirmedDifferentPrices;
 
   useEffect(() => {
-    if (hasSamePrices && selectedProducts.length > 0) {
-      const first = selectedProducts[0];
-      setFormData({
-        cost: first.cost || "",
-        unit_price: first.unit_price || "",
-        wholesale_price: first.wholesale_price || "",
-        min_wholesale_quantity: first.min_wholesale_quantity || "",
-      });
-    } else {
-      setFormData({ cost: "", unit_price: "", wholesale_price: "", min_wholesale_quantity: "" });
-    }
+    setFormData(hasSamePrices && selectedProducts.length > 0 ? pricesOf(selectedProducts[0]) : EMPTY_PRICES);
   }, [selectedProducts, hasSamePrices]);
 
   useEffect(() => {
@@ -61,33 +67,25 @@ const PriceUpdateModal = ({ isOpen, onClose, selectedProducts, onSuccess }) => {
   const handleSubmit = async () => {
     setIsLoading(true);
     const selectedIds = selectedProducts.map((p) => p.id);
-    const prices = {};
-    if (formData.cost !== "") prices.cost = formData.cost;
-    if (formData.unit_price !== "") prices.unit_price = formData.unit_price;
-    if (formData.wholesale_price !== "") prices.wholesale_price = formData.wholesale_price;
-    if (formData.min_wholesale_quantity !== "") prices.min_wholesale_quantity = formData.min_wholesale_quantity;
+    // Solo se envían los valores llenados
+    const prices = Object.fromEntries(Object.entries(formData).filter(([, value]) => value !== ""));
 
-    const response = await updatePricesProducts({ product_ids: selectedIds, ...prices });
-
-    if (response.status === 200) {
+    try {
+      await updatePricesProducts({ product_ids: selectedIds, ...prices });
       showSuccess("Precios actualizados");
-      setFormData({ cost: "", unit_price: "", wholesale_price: "", min_wholesale_quantity: "" });
+      setFormData(EMPTY_PRICES);
       setConfirmedDifferentPrices(false);
       onClose();
       onSuccess();
-    } else {
-      showRequestError("actualizar los precios", response);
+    } catch (error) {
+      showRequestError("actualizar los precios", error);
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
-  const isFormEmpty = !formData.cost && !formData.unit_price && !formData.wholesale_price && !formData.min_wholesale_quantity;
-
-  const isWholesaleInconsistent = (formData.wholesale_price !== "") !== (formData.min_wholesale_quantity !== "");
-
-  const isWholesaleHigher = formData.wholesale_price !== "" && formData.unit_price !== "" && Number(formData.wholesale_price) >= Number(formData.unit_price);
-
-  const isCostHigher = formData.cost !== "" && formData.unit_price !== "" && Number(formData.cost) >= Number(formData.unit_price);
+  const isFormEmpty = Object.values(formData).every((value) => !value);
+  const priceErrors = getPriceErrors(formData, { partial: true });
 
   return (
     <CustomModal showOut={isOpen} onClose={onClose} title={`Actualización masiva de costos y precios (${selectedProducts.length} productos)`}>
@@ -102,14 +100,7 @@ const PriceUpdateModal = ({ isOpen, onClose, selectedProducts, onSuccess }) => {
             <Grid item xs={12}>
               <SimpleTable
                 data={selectedProducts}
-                columns={[
-                  { name: "Código", selector: (row) => row.code || "" },
-                  { name: "Producto", selector: (row) => row.name },
-                  { name: "Costo", selector: (row) => row.cost ? formatCurrency(row.cost) : "" },
-                  { name: "Unitario", selector: (row) => row.unit_price ? formatCurrency(row.unit_price) : "" },
-                  { name: "Mayoreo", selector: (row) => row.wholesale_price ? formatCurrency(row.wholesale_price) : "" },
-                  { name: "Cant. mín.", selector: (row) => row.min_wholesale_quantity || "" },
-                ]}
+                columns={COMPARISON_COLUMNS}
               />
             </Grid>
             <Grid item xs={12}>
@@ -129,36 +120,36 @@ const PriceUpdateModal = ({ isOpen, onClose, selectedProducts, onSuccess }) => {
               <TextField size="small" fullWidth label="Costo" type="number"
                 value={formData.cost} name="cost" onChange={handleDataChange}
                 inputProps={{ min: 0 }}
-                error={isCostHigher}
-                helperText={isCostHigher ? "El costo debe ser menor al precio unitario" : ""}
+                error={!!priceErrors.cost}
+                helperText={priceErrors.cost}
               />
             </Grid>
             <Grid item xs={12} md={6}>
               <TextField size="small" fullWidth label="Precio unitario" type="number"
                 value={formData.unit_price} name="unit_price" onChange={handleDataChange}
                 inputProps={{ min: 0 }}
-                error={isCostHigher}
-                helperText={isCostHigher ? "Debe ser mayor al costo" : ""}
+                error={!!priceErrors.unitPrice}
+                helperText={priceErrors.unitPrice}
               />
             </Grid>
             <Grid item xs={12} md={6}>
               <TextField size="small" fullWidth label="Precio mayoreo" type="number"
                 value={formData.wholesale_price} name="wholesale_price" onChange={handleDataChange}
                 inputProps={{ min: 0, max: formData.unit_price || undefined }}
-                error={isWholesaleHigher || (formData.wholesale_price !== "" && formData.min_wholesale_quantity === "")}
-                helperText={isWholesaleHigher ? "Debe ser menor al precio unitario" : (formData.wholesale_price !== "" && formData.min_wholesale_quantity === "") ? "Requiere cantidad mínima mayoreo" : ""}
+                error={!!priceErrors.wholesale}
+                helperText={priceErrors.wholesale}
               />
             </Grid>
             <Grid item xs={12} md={6}>
               <TextField size="small" fullWidth label="Cantidad mínima de mayoreo" type="number"
                 value={formData.min_wholesale_quantity} name="min_wholesale_quantity" onChange={handleDataChange}
                 inputProps={{ min: 0 }}
-                error={formData.min_wholesale_quantity !== "" && formData.wholesale_price === ""}
-                helperText={(formData.min_wholesale_quantity !== "" && formData.wholesale_price === "") ? "Requiere precio mayoreo" : ""}
+                error={!!priceErrors.minQty}
+                helperText={priceErrors.minQty}
               />
             </Grid>
             <Grid item xs={12}>
-              <CustomButton fullWidth onClick={handleSubmit} disabled={isFormEmpty || isWholesaleInconsistent || isWholesaleHigher || isCostHigher || isLoading} startIcon={<SaveIcon />}>
+              <CustomButton fullWidth onClick={handleSubmit} disabled={isFormEmpty || priceErrors.hasAnyError || isLoading} startIcon={<SaveIcon />}>
                 {isLoading ? "Actualizando..." : "Actualizar precios"}
               </CustomButton>
             </Grid>

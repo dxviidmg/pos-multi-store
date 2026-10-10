@@ -1,56 +1,59 @@
-import { useEffect, useCallback } from "react";
+import { useEffect, useRef } from "react";
 import { updateMovementType } from "../redux/cart/cartActions";
 import { MOVEMENT_TYPES, QUERY_TYPES } from "../constants";
 
+// Ctrl+<tecla> → acción. `enabledBy` es la opción que habilita el atajo (si aplica).
+const SHORTCUTS = {
+  q: { run: ({ onQueryTypeChange }) => onQueryTypeChange?.(QUERY_TYPES.CODE) },
+  l: { run: ({ onQueryTypeChange }) => onQueryTypeChange?.(QUERY_TYPES.NAME) },
+  e: { enabledBy: "allowSale", movementType: MOVEMENT_TYPES.SALE },
+  r: { enabledBy: "allowTransfer", movementType: MOVEMENT_TYPES.TRANSFER },
+  d: { enabledBy: "allowDistribution", movementType: MOVEMENT_TYPES.DISTRIBUTION },
+  y: { movementType: MOVEMENT_TYPES.ADD_STOCK },
+  u: { movementType: MOVEMENT_TYPES.CHECK_STOCK },
+  i: { enabledBy: "allowReservation", movementType: MOVEMENT_TYPES.RESERVATION },
+  b: { run: ({ inputRef }) => inputRef?.current?.focus() },
+  k: { run: ({ onVisualSearch }) => onVisualSearch?.() },
+};
+
 export const useKeyboardShortcuts = (inputRef, dispatch, options = {}) => {
-  const { onVisualSearch, allowTransfer = true } = options;
-  const handleShortcut = useCallback((event) => {
-    if (event.ctrlKey && (event.key === "q" || event.key === "Q")) {
-      event.preventDefault();
-      dispatch(updateMovementType(QUERY_TYPES.CODE));
-    }
-    if (event.ctrlKey && (event.key === "w" || event.key === "W")) {
-      event.preventDefault();
-      dispatch(updateMovementType(QUERY_TYPES.NAME));
-    }
-    if (event.ctrlKey && (event.key === "e" || event.key === "E")) {
-      event.preventDefault();
-      dispatch(updateMovementType(MOVEMENT_TYPES.SALE));
-    }
-    if (allowTransfer && event.ctrlKey && (event.key === "r" || event.key === "R")) {
-      event.preventDefault();
-      dispatch(updateMovementType(MOVEMENT_TYPES.TRANSFER));
-    }
-    if (event.ctrlKey && (event.key === "t" || event.key === "T")) {
-      event.preventDefault();
-      dispatch(updateMovementType(MOVEMENT_TYPES.DISTRIBUTION));
-    }
-    if (event.ctrlKey && (event.key === "y" || event.key === "Y")) {
-      event.preventDefault();
-      dispatch(updateMovementType(MOVEMENT_TYPES.ADD_STOCK));
-    }
-    if (event.ctrlKey && (event.key === "u" || event.key === "U")) {
-      event.preventDefault();
-      dispatch(updateMovementType(MOVEMENT_TYPES.CHECK_STOCK));
-    }
-    if (event.ctrlKey && (event.key === "i" || event.key === "I")) {
-      event.preventDefault();
-      dispatch(updateMovementType(MOVEMENT_TYPES.RESERVATION));
-    }
-    if (event.ctrlKey && (event.key === "b" || event.key === "B")) {
-      event.preventDefault();
-      inputRef?.current?.focus();
-    }
-    if (event.ctrlKey && (event.key === "k" || event.key === "K")) {
-      event.preventDefault();
-      onVisualSearch?.();
-    }
-  }, [dispatch, inputRef, onVisualSearch, allowTransfer]);
+  const {
+    onVisualSearch,
+    onQueryTypeChange,
+    allowTransfer = true,
+    allowSale = true,
+    allowReservation = true,
+    allowDistribution = true,
+  } = options;
+
+  // Los callbacks y opciones viven en un ref para registrar el listener una sola vez
+  const contextRef = useRef();
+  contextRef.current = {
+    inputRef,
+    dispatch,
+    onVisualSearch,
+    onQueryTypeChange,
+    allowTransfer,
+    allowSale,
+    allowReservation,
+    allowDistribution,
+  };
 
   useEffect(() => {
-    window.addEventListener("keydown", handleShortcut);
-    return () => {
-      window.removeEventListener("keydown", handleShortcut);
+    const handleShortcut = (event) => {
+      if (!event.ctrlKey || typeof event.key !== "string") return;
+      const shortcut = SHORTCUTS[event.key.toLowerCase()];
+      const context = contextRef.current;
+      if (!shortcut || (shortcut.enabledBy && !context[shortcut.enabledBy])) return;
+      event.preventDefault();
+      if (shortcut.movementType) {
+        context.dispatch(updateMovementType(shortcut.movementType));
+      } else {
+        shortcut.run(context);
+      }
     };
-  }, [handleShortcut]);
+
+    window.addEventListener("keydown", handleShortcut);
+    return () => window.removeEventListener("keydown", handleShortcut);
+  }, []);
 };

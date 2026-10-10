@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from "react";
-import CustomModal from "../../ui/Modal/Modal";
+import CustomModal, { ModalBody } from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
 import SimpleTable from "../../ui/SimpleTable/SimpleTable";
 import { useCancelSale } from "../../../hooks/useSaleMutations";
-import { Grid, TextField, Checkbox, FormControlLabel, Typography } from "@mui/material";
+import { Box, Grid, TextField, Checkbox, FormControlLabel, Typography } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import { formatCurrency } from "../../../utils/utils";
+import { formatCurrency } from "../../../utils/currency";
+import { SALE_TYPES } from "../../../constants";
 
 const INITIAL_FORM_DATA = {
   products_sale: [],
 };
+
+const toQuantity = (value) => Number(value) || 0;
 
 const SaleModal = ({ isOpen, sale, onClose, onUpdate }) => {
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
@@ -18,7 +21,7 @@ const SaleModal = ({ isOpen, sale, onClose, onUpdate }) => {
   const [reason, setReason] = useState("");
   const cancelMutation = useCancelSale();
 
-  const isReservation = formData.sale_type === "A";
+  const isReservation = formData.sale_type === SALE_TYPES.RESERVATION;
 
   useEffect(() => {
     setFormData(sale?.id ? sale : INITIAL_FORM_DATA);
@@ -26,7 +29,7 @@ const SaleModal = ({ isOpen, sale, onClose, onUpdate }) => {
     setReason("");
 
     // Si es apartado, siempre es cancelación total
-    if (sale?.sale_type === "A") {
+    if (sale?.sale_type === SALE_TYPES.RESERVATION) {
       setTotalCancel(true);
       const all = {};
       sale.products_sale?.forEach((p) => { all[p.id] = p.quantity; });
@@ -36,14 +39,18 @@ const SaleModal = ({ isOpen, sale, onClose, onUpdate }) => {
     }
   }, [sale]);
 
-  const handleQuantityChange = (rowId, max, value) => {
-    const quantity = Math.min(parseInt(value) || 0, max);
-    const updated = { ...quantitiesToCancel, [rowId]: quantity };
+  // Productos por kg/lt aceptan hasta 3 decimales; por pieza solo enteros
+  const handleQuantityChange = (row, value) => {
+    const pattern = row.sells_by_fraction ? /^\d*\.?\d{0,3}$/ : /^\d*$/;
+    if (!pattern.test(value)) return;
+    const max = Number(row.quantity);
+    const quantity = Number(value) > max ? String(max) : value;
+    const updated = { ...quantitiesToCancel, [row.id]: quantity };
     setQuantitiesToCancel(updated);
 
     // Auto-marcar cancelación total si se devuelve todo
     const allReturned = formData.products_sale.every(
-      (p) => (updated[p.id] || 0) >= p.quantity
+      (p) => toQuantity(updated[p.id]) >= Number(p.quantity)
     );
     setTotalCancel(allReturned);
   };
@@ -51,7 +58,7 @@ const SaleModal = ({ isOpen, sale, onClose, onUpdate }) => {
   const disabledButton = () => {
     if (reason.trim() === "") return true;
     if (totalCancel) return false;
-    const total = Object.values(quantitiesToCancel).reduce((sum, qty) => sum + qty, 0);
+    const total = Object.values(quantitiesToCancel).reduce((sum, qty) => sum + toQuantity(qty), 0);
     return total === 0;
   };
 
@@ -70,7 +77,13 @@ const SaleModal = ({ isOpen, sale, onClose, onUpdate }) => {
   const handleSaveClient = async () => {
     const payload = totalCancel
       ? { id: sale.id, is_canceled: true, reason_cancel: reason }
-      : { id: sale.id, products_to_return: quantitiesToCancel, reason_return: reason };
+      : {
+          id: sale.id,
+          products_to_return: Object.fromEntries(
+            Object.entries(quantitiesToCancel).map(([id, qty]) => [id, toQuantity(qty)])
+          ),
+          reason_return: reason,
+        };
 
     cancelMutation.mutate(payload, {
       onSuccess: () => {
@@ -95,96 +108,98 @@ const SaleModal = ({ isOpen, sale, onClose, onUpdate }) => {
       onClose={onClose}
       title={getTitle()}
     >
-      <Grid container sx={{ padding: '1rem', backgroundColor: 'modalBody.main' }}>
-        <Grid item xs={12} className="card">
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={2}>
-            <TextField size="small" fullWidth label="Folio" type="text" value={formData.id} disabled />
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <TextField size="small" fullWidth label="Cliente" type="text"
-              value={formData.client?.full_name}
-              disabled
-            />
-          </Grid>
-          <Grid item xs={12} md={2}>
-            <TextField size="small" fullWidth label="Total" type="text" value={formatCurrency(formData.total)} disabled />
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <TextField size="small" fullWidth label="Creación" type="text" value={formData.created_at} disabled />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField size="small" fullWidth label="Vendedor" type="text"
-              value={formData.seller_username}
-              disabled
-            />
-          </Grid>
+      <ModalBody>
+        <Grid container>
+          <Grid item xs={12} className="card">
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={2}>
+                <TextField size="small" fullWidth label="Folio" type="text" value={formData.id} disabled />
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <TextField size="small" fullWidth label="Cliente" type="text"
+                  value={formData.client?.full_name}
+                  disabled
+                />
+              </Grid>
+              <Grid item xs={12} md={2}>
+                <TextField size="small" fullWidth label="Total" type="text" value={formatCurrency(formData.total)} disabled />
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <TextField size="small" fullWidth label="Creación" type="text" value={formData.created_at} disabled />
+              </Grid>
+              <Grid item xs={12} md={3}>
+                <TextField size="small" fullWidth label="Vendedor" type="text"
+                  value={formData.seller_username}
+                  disabled
+                />
+              </Grid>
 
-          {isReservation ? (
-            <Grid item xs={12} md={4}>
-              <Typography variant="body2" sx={{ fontWeight: 600, mt: 1 }}>
-                Devolver al cliente: <span style={{ color: "var(--color-primary)", fontSize: "1.1rem" }}>{formatCurrency(cashBack)}</span>
-              </Typography>
-            </Grid>
-          ) : (
-            <Grid item xs={12} md={4}>
-              <FormControlLabel
-                control={
-                  <Checkbox size="small"
-                    checked={totalCancel}
-                    onChange={handleCheck}
+              {isReservation ? (
+                <Grid item xs={12} md={4}>
+                  <Typography variant="body2" sx={{ fontWeight: 600, mt: 1 }}>
+                    Devolver al cliente: <Box component="span" sx={{ color: "primary.main", fontSize: "1.1rem" }}>{formatCurrency(cashBack)}</Box>
+                  </Typography>
+                </Grid>
+              ) : (
+                <Grid item xs={12} md={4}>
+                  <FormControlLabel
+                    control={
+                      <Checkbox size="small"
+                        checked={totalCancel}
+                        onChange={handleCheck}
+                      />
+                    }
+                    label="Cancelar venta completa"
                   />
-                }
-                label="Cancelar venta completa"
-              />
+                </Grid>
+              )}
+
+              <Grid item xs={12} md={5}>
+                <TextField size="small" fullWidth label={isReservation ? "Motivo de cancelación" : totalCancel ? "Motivo de cancelación" : "Motivo de devolución"} type="text"
+                  value={reason}
+                  onChange={(e) => setReason(e.target.value)}
+                />
+              </Grid>
+              <Grid item xs={12} md={12}>
+                <h5>{isReservation ? "Productos del apartado" : totalCancel ? "Todos los productos serán devueltos" : "Selecciona los productos a devolver"}</h5>
+                <SimpleTable
+                  noDataComponent="Sin productos"
+                  data={formData.products_sale}
+                  columns={[
+                    { name: "Descripción", selector: (row) => row.name },
+                    { name: "Cantidad", selector: (row) => row.quantity },
+                    ...(!isReservation ? [{
+                      name: "Devolver",
+                      width: 100,
+                      cell: (row) => (
+                        <TextField size="small" type="text"
+                          inputProps={{ inputMode: row.sells_by_fraction ? "decimal" : "numeric" }}
+                          value={quantitiesToCancel[row.id] ?? 0}
+                          disabled={totalCancel}
+                          onChange={(e) => handleQuantityChange(row, e.target.value)}
+                        />
+                      ),
+                    }] : []),
+                    { name: "Precio unitario", selector: (row) => formatCurrency(row.price) },
+                    { name: "Importe", selector: (row) => formatCurrency(row.price * row.quantity) },
+                  ]}
+                />
+              </Grid>
+
+              <Grid item xs={12} md={12}>
+                <CustomButton
+                  fullWidth
+                  onClick={handleSaveClient}
+                  disabled={disabledButton()}
+                  startIcon={<ShoppingCartIcon />}
+                >
+                  {isReservation ? "Cancelar apartado" : totalCancel ? "Cancelar venta" : "Devolver productos"}
+                </CustomButton>
+              </Grid>
             </Grid>
-          )}
-
-          <Grid item xs={12} md={5}>
-            <TextField size="small" fullWidth label={isReservation ? "Motivo de cancelación" : totalCancel ? "Motivo de cancelación" : "Motivo de devolución"} type="text"
-              value={reason}
-              onChange={(e) => setReason(e.target.value)}
-            />
-          </Grid>
-          <Grid item xs={12} md={12}>
-            <h5>{isReservation ? "Productos del apartado" : totalCancel ? "Todos los productos serán devueltos" : "Selecciona los productos a devolver"}</h5>
-            <SimpleTable
-              noDataComponent="Sin productos"
-              data={formData.products_sale}
-              columns={[
-                { name: "Descripción", selector: (row) => row.name },
-                { name: "Cantidad", selector: (row) => row.quantity },
-                ...(!isReservation ? [{
-                  name: "Devolver",
-                  width: 100,
-                  cell: (row) => (
-                    <TextField size="small" type="number"
-                      inputProps={{ min: 0, max: row.quantity }}
-                      value={quantitiesToCancel[row.id] || 0}
-                      disabled={totalCancel}
-                      onChange={(e) => handleQuantityChange(row.id, row.quantity, e.target.value)}
-                    />
-                  ),
-                }] : []),
-                { name: "Precio unitario", selector: (row) => formatCurrency(row.price) },
-                { name: "Importe", selector: (row) => formatCurrency(row.price * row.quantity) },
-              ]}
-            />
-          </Grid>
-
-          <Grid item xs={12} md={12}>
-            <CustomButton
-              fullWidth
-              onClick={handleSaveClient}
-              disabled={disabledButton()}
-              startIcon={<ShoppingCartIcon />}
-            >
-              {isReservation ? "Cancelar apartado" : totalCancel ? "Cancelar venta" : "Devolver productos"}
-            </CustomButton>
           </Grid>
         </Grid>
-        </Grid>
-      </Grid>
+      </ModalBody>
     </CustomModal>
   );
 };

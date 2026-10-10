@@ -1,21 +1,25 @@
 import React, { useEffect, useCallback, useMemo } from "react";
 import useTaskPolling from "../../../hooks/useTaskPolling";
-import CountdownTimer from "../../ui/CountdownTimer";
 import DataTable from "../../ui/DataTable/DataTable";
 import CustomButton from "../../ui/Button/Button";
+import EmptyState from "../../ui/EmptyState/EmptyState";
 import DoughnutChart from "./DoughnutChart";
+import DashboardLoading from "./DashboardLoading";
+import StatCard from "./StatCard";
 import { BarChart } from "@mui/x-charts/BarChart";
-import {
-  Grid, Box, Typography,
-  LinearProgress, Skeleton,
-} from "@mui/material";
-import { exportToExcel } from "../../../utils/utils";
-import httpClient from "../../../api/httpClient";
-import { getApiUrl } from "../../../api/utils";
+import { Grid, Box, Typography, useTheme } from "@mui/material";
+import { exportToExcel } from "../../../utils/excel";
+import { getPendingTransfersDashboard } from "../../../api/dashboards";
+import { CHART_LEGEND_TOP, CHART_TICK_STYLE } from "./chartStyles";
 import WarningIcon from "@mui/icons-material/Warning";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import DownloadIcon from "@mui/icons-material/Download";
-import InboxIcon from "@mui/icons-material/Inbox";
+
+const TITLE = "Traspasos pendientes";
+
+const STAT_ITEM_PROPS = { xs: 12, sm: 6, md: 6 };
+
+const BAR_MARGIN = { top: 50, bottom: 40, left: 70, right: 10 };
 
 const DESCRIPTION = "En SmartVenta sabemos que la precisión en tu operación diaria marca la diferencia. Aunque las inconsistencias o duplicidades en los traspasos no son frecuentes, cuando llegan a presentarse estamos atentos para detectarlas y ayudarte a resolverlas de forma rápida y confiable. Porque para nosotros, cuidar tus datos no es solo una función del sistema, es un compromiso con tu tranquilidad y la continuidad de tu negocio.";
 
@@ -29,9 +33,10 @@ const COLUMNS = [
 ];
 
 const PendingTransfersDashboard = () => {
+  const theme = useTheme();
+
   const startTask = useCallback(async () => {
-    const url = getApiUrl("pending-transfers-dashboard");
-    const response = await httpClient.get(url);
+    const response = await getPendingTransfersDashboard();
     return response.data.task;
   }, []);
 
@@ -77,10 +82,10 @@ const PendingTransfersDashboard = () => {
     });
     const storeNames = data.stores.map(s => s.name);
     return [
-      { data: storeNames.map(s => byStore[s]?.hoy || 0), label: "Hoy", color: "#4caf50" },
-      { data: storeNames.map(s => byStore[s]?.anteriores || 0), label: "Anteriores", color: "#f44336" },
+      { data: storeNames.map(s => byStore[s]?.hoy || 0), label: "Hoy", color: theme.palette.success.main },
+      { data: storeNames.map(s => byStore[s]?.anteriores || 0), label: "Anteriores", color: theme.palette.error.main },
     ];
-  }, [data]);
+  }, [data, theme]);
 
   const storeNames = useMemo(() => data?.stores?.map(s => s.name) || [], [data]);
 
@@ -89,36 +94,17 @@ const PendingTransfersDashboard = () => {
   }, [transfers]);
 
   if (loading) {
-    return (
-      <Box>
-        <Box className="card" sx={{ mb: 3 }}>
-          <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>Traspasos pendientes</Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>Procesando datos...</Typography>
-          <LinearProgress variant={progress > 0 ? "determinate" : "indeterminate"} value={progress} sx={{ height: 6, borderRadius: 3, mb: 1 }} />
-          <CountdownTimer seconds={countdown} />
-        </Box>
-        <Grid container spacing={2}>
-          {[0,1,2,3].map(i => (
-            <Grid item xs={12} sm={6} md={3} key={i}>
-              <Skeleton variant="rounded" height={120} sx={{ borderRadius: "14px" }} />
-            </Grid>
-          ))}
-        </Grid>
-      </Box>
-    );
+    return <DashboardLoading title={TITLE} progress={progress} countdown={countdown} />;
   }
 
   if (!kpis) {
     return (
       <Box>
         <Box className="card" sx={{ mb: 3 }}>
-          <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>Traspasos pendientes</Typography>
+          <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>{TITLE}</Typography>
           <Typography variant="body2" color="text.secondary">{DESCRIPTION}</Typography>
         </Box>
-        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: 350, gap: 2, opacity: 0.7 }}>
-          <InboxIcon sx={{ fontSize: 64, color: "text.secondary" }} />
-          <Typography variant="h6" color="text.secondary">No hay traspasos pendientes</Typography>
-        </Box>
+        <EmptyState message="No hay traspasos pendientes" />
       </Box>
     );
   }
@@ -126,29 +112,13 @@ const PendingTransfersDashboard = () => {
   return (
     <Box>
       <Box className="card" sx={{ mb: 3 }}>
-        <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>Traspasos pendientes</Typography>
+        <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>{TITLE}</Typography>
         <Typography variant="body2" color="text.secondary">{DESCRIPTION}</Typography>
       </Box>
 
       <Grid container spacing={3} sx={{ mb: 3 }}>
-        <Grid item xs={12} sm={6} md={6}>
-          <Box className="card" sx={{ height: "100%", mb: 0, display: "flex", alignItems: "center", gap: 2 }}>
-            <WarningIcon sx={{ fontSize: 32, color: "warning.main" }} />
-            <Box>
-              <Typography variant="body2" color="text.secondary">Traspasos pendientes</Typography>
-              <Typography variant="h5" sx={{ fontWeight: 700 }}>{kpis.total}</Typography>
-            </Box>
-          </Box>
-        </Grid>
-        <Grid item xs={12} sm={6} md={6}>
-          <Box className="card" sx={{ height: "100%", mb: 0, display: "flex", alignItems: "center", gap: 2 }}>
-            <InventoryIcon sx={{ fontSize: 32, color: "primary.main" }} />
-            <Box>
-              <Typography variant="body2" color="text.secondary">Promedio por tienda</Typography>
-              <Typography variant="h5" sx={{ fontWeight: 700 }}>{kpis.avgPerStore}</Typography>
-            </Box>
-          </Box>
-        </Grid>
+        <StatCard icon={WarningIcon} iconColor="warning.main" label="Traspasos pendientes" value={kpis.total} itemProps={STAT_ITEM_PROPS} />
+        <StatCard icon={InventoryIcon} iconColor="primary.main" label="Promedio por tienda" value={kpis.avgPerStore} itemProps={STAT_ITEM_PROPS} />
       </Grid>
 
       <Grid container spacing={3} sx={{ mb: 1 }}>
@@ -158,13 +128,13 @@ const PendingTransfersDashboard = () => {
               Traspasos por tienda (Hoy vs Anteriores)
             </Typography>
             <BarChart
-              xAxis={[{ data: storeNames, scaleType: "band", tickLabelStyle: { fontSize: 11, fill: "#64748b" } }]}
-              yAxis={[{ tickLabelStyle: { fontSize: 11, fill: "#64748b" } }]}
+              xAxis={[{ data: storeNames, scaleType: "band", tickLabelStyle: CHART_TICK_STYLE }]}
+              yAxis={[{ tickLabelStyle: CHART_TICK_STYLE }]}
               series={barChartSeries}
               height={300}
-              margin={{ top: 50, bottom: 40, left: 70, right: 10 }}
+              margin={BAR_MARGIN}
               borderRadius={4}
-              slotProps={{ legend: { direction: "row", position: { vertical: "top", horizontal: "middle" }, padding: 0 } }}
+              slotProps={{ legend: CHART_LEGEND_TOP }}
               grid={{ horizontal: true }}
             />
           </Box>

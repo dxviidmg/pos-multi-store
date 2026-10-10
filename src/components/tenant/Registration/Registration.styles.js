@@ -1,15 +1,58 @@
+import { alpha } from "@mui/material/styles";
+import { colors } from "../../../theme/colors";
+
+const FOCUS_RING = (color) => `0 0 0 3px ${alpha(color, 0.15)}`;
+
 export const inputSx = {
   "& .MuiOutlinedInput-root": {
     borderRadius: "10px",
     fontSize: "0.9rem",
-    backgroundColor: "background.paper",
+    backgroundColor: colors.white,
+    // Input text always dark in auth pages (light mode only)
+    "& input": {
+      color: (theme) => theme.palette.text.primary,
+    },
     "&.Mui-focused fieldset": {
-      borderColor: "#065a9e",
+      borderColor: colors.primaryLight,
       borderWidth: "1px",
-      boxShadow: "0 0 0 3px rgba(6,90,158,0.15)",
+      boxShadow: FOCUS_RING(colors.primaryLight),
     },
   },
-  "& label.Mui-focused": { color: "#065a9e" },
+  "& label.Mui-focused": { color: colors.primaryLight },
+};
+
+// Paleta del tema según la disponibilidad de la clave del negocio
+const SHORT_NAME_PALETTE = { available: "success", taken: "error" };
+
+/** Borde, foco y etiqueta del campo "Clave de tu negocio" según su disponibilidad. */
+export const getShortNameInputSx = (status) => (theme) => {
+  const paletteKey = SHORT_NAME_PALETTE[status];
+  const main = paletteKey ? theme.palette[paletteKey].main : null;
+  const focusColor = main || theme.palette.primary.light;
+  return {
+    "& .MuiOutlinedInput-root": {
+      borderRadius: "10px",
+      fontSize: "0.9rem",
+      backgroundColor: colors.white,
+      transition: "all 0.2s ease",
+      // Input text always dark in auth pages (light mode only)
+      "& input": {
+        color: (theme) => theme.palette.text.primary,
+      },
+      "& fieldset": {
+        borderColor: main ? alpha(main, 0.6) : undefined,
+        transition: "border-color 0.2s ease",
+      },
+      "&:hover fieldset": {
+        borderColor: main ? alpha(main, 0.8) : undefined,
+      },
+      "&.Mui-focused fieldset": {
+        borderColor: focusColor,
+        boxShadow: FOCUS_RING(focusColor),
+      },
+    },
+    "& label.Mui-focused": { color: focusColor },
+  };
 };
 
 export const pageContainerSx = {
@@ -40,7 +83,7 @@ export const formPaperSx = {
   bgcolor: "background.paper",
   border: "1px solid",
   borderColor: "divider",
-  boxShadow: "0 24px 80px rgba(0,0,0,0.2)",
+  boxShadow: colors.shadow.dialog,
   // Ocultar la barra de scroll (el contenido sigue siendo desplazable)
   scrollbarWidth: "none",        // Firefox
   msOverflowStyle: "none",       // IE / Edge legacy
@@ -49,14 +92,14 @@ export const formPaperSx = {
 
 // Header superior de la card con azul fuerte
 export const headerBannerSx = {
-  background: "linear-gradient(135deg, #04346b 0%, #065a9e 100%)",
+  background: colors.gradient.brand,
   px: 4, pt: 3.5, pb: 3,
   textAlign: "center",
 };
 
 export const successIconSx = {
   width: 48, height: 48, borderRadius: "50%",
-  background: "rgba(17, 153, 142, 0.12)",
+  bgcolor: (theme) => alpha(theme.palette.success.main, 0.12),
   display: "flex", alignItems: "center", justifyContent: "center",
   mx: "auto", mb: 2,
 };
@@ -75,29 +118,29 @@ export const stepCountSx = {
 export const progressBarSx = {
   height: 4,
   borderRadius: 2,
-  backgroundColor: "rgba(4,53,107,0.1)",
+  backgroundColor: alpha(colors.primary, 0.1),
   "& .MuiLinearProgress-bar": {
     borderRadius: 2,
-    background: "linear-gradient(90deg, #04346b 0%, #065a9e 100%)",
+    background: `linear-gradient(90deg, ${colors.primary} 0%, ${colors.primaryLight} 100%)`,
   },
 };
 
-// Botón primario con el gradiente azul de marca
+// Botón de acción principal en ámbar, igual que en la landing
 export const primaryButtonSx = {
   py: 1.3,
   borderRadius: "10px",
   fontSize: "0.9rem",
   fontWeight: 700,
-  background: "linear-gradient(135deg, #04346b 0%, #065a9e 100%)",
-  color: "#fff",
-  boxShadow: "0 4px 20px rgba(4,53,107,0.25)",
+  background: colors.accent,
+  color: colors.onAccent,
+  boxShadow: colors.shadow.brand,
   "&:hover": {
-    background: "linear-gradient(135deg, #022347 0%, #04346b 100%)",
-    boxShadow: "0 8px 30px rgba(4,53,107,0.35)",
+    background: colors.accentDark,
+    boxShadow: colors.shadow.brandHover,
   },
   "&.Mui-disabled": {
-    background: "rgba(4,53,107,0.12)",
-    color: "rgba(4,53,107,0.35)",
+    background: alpha(colors.primary, 0.12),
+    color: alpha(colors.primary, 0.35),
     boxShadow: "none",
   },
 };
@@ -114,3 +157,22 @@ export const secondaryButtonSx = {
   borderColor: "divider",
   "&:hover": { bgcolor: "action.selected" },
 };
+
+export const headerTitleSx = { fontWeight: 700, color: colors.white, mb: 0.5 };
+
+export const headerSubtitleSx = { fontSize: "0.85rem", color: alpha(colors.white, 0.75) };
+
+/** Tarjeta de plan; resaltada cuando está seleccionada. */
+export const getPlanCardSx = (selected) => ({
+  cursor: "pointer",
+  borderRadius: "12px",
+  bgcolor: selected ? alpha(colors.primary, 0.06) : "background.paper",
+  border: "2px solid",
+  borderColor: selected ? "primary.light" : "divider",
+  boxShadow: selected ? FOCUS_RING(colors.primaryLight) : "none",
+  transition: "all 0.2s ease",
+  "&:hover": {
+    borderColor: "primary.main",
+    bgcolor: alpha(colors.primary, 0.04),
+  },
+});

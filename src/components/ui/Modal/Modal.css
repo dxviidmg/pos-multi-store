@@ -1,4 +1,5 @@
+/* Encabezado de modal: neutro, con el título alineado a la izquierda (convención SaaS). */
 .modal__header {
-    background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 60%, var(--color-primary-light) 100%);
-    color: var(--color-white);
+    background: var(--color-paper);
+    color: var(--color-text);
 }

@@ -1,67 +1,70 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useDispatch } from "react-redux";
+import { TextField, Box } from "@mui/material";
 import SimpleTable from "../../ui/SimpleTable/SimpleTable";
 import { getClients } from "../../../api/clients";
-import { useDispatch } from "react-redux";
 import { addClientToCart } from "../../../redux/cart/cartActions";
 import { showWarning } from "../../../utils/alerts";
-import { TextField, Box } from "@mui/material";
+import { logger } from "../../../utils/logger";
+import { useCtrlShortcut } from "../../../hooks/useCtrlShortcut";
+
+const MAX_RESULTS = 5;
+// Ctrl+J enfoca la búsqueda; Ctrl+1…5 elige el cliente de esa posición
+const POSITION_KEYS = ["1", "2", "3", "4", "5"];
+
+const columns = [
+  { name: "Nombre", selector: (row) => row.full_name },
+  { name: "Teléfono", selector: (row) => row.phone_number },
+  { name: "Descuento", selector: (row) => row.discount_percentage + "%" },
+];
 
 const SearchClient = () => {
   const [query, setQuery] = useState("");
   const [clients, setClients] = useState([]);
   const dispatch = useDispatch();
-
-  const inputRefClient = useRef(null); // Crear una referencia para el input
+  const inputRef = useRef(null);
 
   useEffect(() => {
+    if (!query) {
+      setClients([]);
+      return undefined;
+    }
+    let active = true;
     const fetchData = async () => {
-      if (query) {
-        const response = await getClients({q: query});
-        setClients(response.data.slice(0, 5));
-      } else {
-        setClients([]);
+      try {
+        const response = await getClients({ q: query });
+        if (active) setClients(response.data.slice(0, MAX_RESULTS));
+      } catch (error) {
+        logger.error("Error searching clients:", error);
       }
     };
-
     fetchData();
+    return () => {
+      active = false;
+    };
   }, [query]);
 
   const handleSelectClient = (client) => {
     dispatch(addClientToCart(client));
-
     setQuery("");
   };
 
-  const handleShortcut = (event) => {
-    if (event.ctrlKey && (event.key === "j" || event.key === "J")) {
-      event.preventDefault();
-      inputRefClient.current?.focus();
+  useCtrlShortcut(["j", ...POSITION_KEYS], (_event, key) => {
+    if (key === "j") {
+      inputRef.current?.focus();
+      return;
     }
-    if (event.ctrlKey && ["1", "2", "3", "4", "5"].includes(event.key)) {
-      event.preventDefault();
-      const client = clients[parseInt(event.key) - 1];
-
-      if (client) {
-        handleSelectClient(client);
-      } else {
-        showWarning("No se pudo seleccionar el cliente", `No hay un cliente en la posición ${event.key}.`);
-      }
+    const client = clients[Number(key) - 1];
+    if (client) {
+      handleSelectClient(client);
+    } else {
+      showWarning("No se pudo seleccionar el cliente", `No hay un cliente en la posición ${key}.`);
     }
-  };
-
-  useEffect(() => {
-    // Añadir el listener al montar el componente
-    window.addEventListener("keydown", handleShortcut);
-
-    // Limpiar el listener al desmontar el componente
-    return () => {
-      window.removeEventListener("keydown", handleShortcut);
-    };
-  }, [clients]);
+  });
 
   return (
-    <Box sx={{ position: 'relative' }}>
-      <TextField size="small" fullWidth ref={inputRefClient}
+    <Box sx={{ position: "relative" }}>
+      <TextField size="small" fullWidth inputRef={inputRef}
         type="text"
         label="Buscar cliente"
         value={query}
@@ -71,25 +74,12 @@ const SearchClient = () => {
         className="fade-in-left"
       />
       {query && (
-        <Box sx={{ position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 10, mt: 0.5 }}>
+        <Box sx={{ position: "absolute", top: "100%", left: 0, right: 0, zIndex: 10, mt: 0.5 }}>
           <SimpleTable
             noDataComponent="Sin clientes"
             data={clients}
             onRowClicked={handleSelectClient}
-            columns={[
-              {
-                name: "Nombre",
-                selector: (row) => row.full_name,
-              },
-              {
-                name: "Teléfono",
-                selector: (row) => row.phone_number,
-              },
-              {
-                name: "Descuento",
-                selector: (row) => row.discount_percentage + "%",
-              },
-            ]}
+            columns={columns}
           />
         </Box>
       )}

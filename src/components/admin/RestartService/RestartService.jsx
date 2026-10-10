@@ -2,12 +2,13 @@ import React, { useCallback, useEffect, useState } from "react";
 import CustomButton from "../../ui/Button/Button";
 import { getRedeployRender } from "../../../api/restart";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
-import { formatTimeFromDate } from "../../../utils/utils";
+import { formatTimeFromDate } from "../../../utils/date";
+import { STORAGE_KEYS } from "../../../constants/storageKeys";
+import { readString, removeKey, writeString } from "../../../utils/storage";
 import { Grid, Typography, Alert, Box, Divider } from "@mui/material";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import SyncIcon from "@mui/icons-material/Sync";
 
-const DEPLOY_KEY = "deploy_finish_at";
 const DEPLOY_MINUTES = 3;
 
 function RestartService() {
@@ -22,13 +23,13 @@ function RestartService() {
     if (delay <= 0) return;
     const timeout = setTimeout(() => {
       setFinishAt(null);
-      localStorage.removeItem(DEPLOY_KEY);
+      removeKey(STORAGE_KEYS.DEPLOY_FINISH_AT);
     }, delay);
     return () => clearTimeout(timeout);
   }, []);
 
   useEffect(() => {
-    const stored = localStorage.getItem(DEPLOY_KEY);
+    const stored = readString(STORAGE_KEYS.DEPLOY_FINISH_AT);
     if (stored && new Date(stored).getTime() > Date.now()) {
       setFinishAt(stored);
       return scheduleEnable(stored);
@@ -39,19 +40,16 @@ function RestartService() {
     setIsLoading(true);
     setError(null);
     try {
-      const { status, data, response } = await getRedeployRender();
-      if (status === 200) {
-        const finish = new Date(data.deploy.createdAt);
-        finish.setMinutes(finish.getMinutes() + DEPLOY_MINUTES);
-        const finishIso = finish.toISOString();
-        localStorage.setItem(DEPLOY_KEY, finishIso);
-        setFinishAt(finishIso);
-        scheduleEnable(finishIso);
-      } else {
-        setError(response?.data?.error || "Error al sincronizar");
-      }
-    } catch {
-      setError("Error de conexión");
+      const { data } = await getRedeployRender();
+      const finish = new Date(data.deploy.createdAt);
+      finish.setMinutes(finish.getMinutes() + DEPLOY_MINUTES);
+      const finishIso = finish.toISOString();
+      writeString(STORAGE_KEYS.DEPLOY_FINISH_AT, finishIso);
+      setFinishAt(finishIso);
+      scheduleEnable(finishIso);
+    } catch (err) {
+      // Con respuesta del servidor se muestra su motivo; sin respuesta, es un problema de conexión
+      setError(err.response ? err.response.data?.error || "Error al sincronizar" : "Error de conexión");
     } finally {
       setIsLoading(false);
     }

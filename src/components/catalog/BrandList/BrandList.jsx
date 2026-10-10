@@ -2,7 +2,7 @@ import React from "react";
 import CatalogList from "../CatalogList/CatalogList";
 import { deleteBrands } from "../../../api/brands";
 import { useBrands } from "../../../hooks/useBrands";
-import { useCreateBrand, useUpdateBrand } from "../../../hooks/useBrandMutations";
+import { useCreateBrand, useUpdateBrand } from "../../../hooks/useCatalogMutations";
 
 const LABELS = {
   title: "Marcas",
@@ -20,6 +20,7 @@ const LABELS = {
 const BrandList = () => (
   <CatalogList
     useData={useBrands}
+    queryKey="brands"
     deleteFn={deleteBrands}
     useCreate={useCreateBrand}
     useUpdate={useUpdateBrand}
