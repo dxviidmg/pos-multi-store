@@ -14,6 +14,12 @@ import {
   CLOSE_CART,
 } from "./cartActions";
 import { MOVEMENT_TYPES } from "../../constants";
+import {
+  aClientIsSelected,
+  calculateProductPrice,
+  changeProductPrice,
+  updateCartWithPrice,
+} from "./priceCalculators";
 
 const createEmptyCart = (id) => ({
   id,
@@ -29,35 +35,10 @@ const initialState = {
   nextId: 2
 };
 
-const aClientIsSelected = (client) => Object.keys(client).length > 0;
-
-const calculateProductPrice = (quantity, prices, clientSelected) => {
-  if (!prices.wholesale_price_on_client_discount && clientSelected) {
-    return prices.unit_price;
-  }
-  if (prices.min_wholesale_quantity && quantity >= prices.min_wholesale_quantity) {
-    return prices.wholesale_price;
-  }
-  return prices.unit_price;
-};
-
-const changeProductPrice = (product_price, prices) => {
-  if (product_price === prices.wholesale_price) {
-    return prices.unit_price;
-  }
-  return prices.wholesale_price;
-};
-
-const updateCartWithPrice = (cart, clientSelected) => {
-  return cart.map((item) => ({
-    ...item,
-    product_price: calculateProductPrice(item.quantity, item.product.prices, clientSelected)
-  }));
-};
-
 /**
  * Cantidad de un producto ya agregada en los carritos (excepto `excludeCartId`).
  * La usan el reducer y useAvailableStock.
+ * Exportado para uso en hooks (ej: useAvailableStock).
  */
 export const getReservedStock = (carts, productId, excludeCartId = null) => {
   return carts.reduce((total, cart) => {
