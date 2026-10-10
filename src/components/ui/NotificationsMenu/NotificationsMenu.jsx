@@ -9,7 +9,6 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import InboxIcon from "@mui/icons-material/Inbox";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../../context/UserContext";
-import { getNotifications } from "../../../api/notifications";
 import { getApiWsUrl } from "../../../api/utils";
 import { canAccessRoute } from "../../../constants/routeAccess";
 import { showWarning } from "../../../utils/alerts";
@@ -37,7 +36,6 @@ const EVENT_CONFIG = {
 const MULTISTORE_EVENTS = ["transfer_created", "transfer_confirmed", "distribution_created", "distribution_confirmed"];
 
 const MAX_RECONNECT_ATTEMPTS = 5;
-const POLLING_INTERVAL_MS = 60000;
 
 // Mismo formato para mensajes del WebSocket y del respaldo HTTP.
 const buildNotification = (msg) => {
@@ -76,34 +74,6 @@ const NotificationsMenu = memo(() => {
     let ws = null;
     let attempts = 0;
     let reconnectTimer = null;
-    let pollingTimer = null;
-
-    const stopPolling = () => {
-      clearInterval(pollingTimer);
-      pollingTimer = null;
-    };
-
-    const poll = async () => {
-      try {
-        const { data } = await getNotifications();
-        const items = Array.isArray(data) ? data : data?.results || [];
-        if (disposed) return;
-        addNotifications(items.map((msg) => ({
-          ...msg,
-          id: msg.id ? `api-${msg.id}` : `api-${msg.event}-${msg.created_at}-${msg.message}`,
-        })));
-      } catch (error) {
-        if (disposed) return;
-        logger.error("Error al obtener notificaciones:", error);
-        if (error.response?.status === 404) stopPolling();
-      }
-    };
-
-    const startPolling = () => {
-      if (pollingTimer) return;
-      poll();
-      pollingTimer = setInterval(poll, POLLING_INTERVAL_MS);
-    };
 
     const connect = () => {
       let url = `${WS_URL}?token=${token}`;
@@ -113,7 +83,6 @@ const NotificationsMenu = memo(() => {
 
       ws.onopen = () => {
         attempts = 0;
-        stopPolling();
       };
 
       ws.onmessage = (event) => {
@@ -133,8 +102,6 @@ const NotificationsMenu = memo(() => {
           const delay = Math.min(1000 * 2 ** attempts, 30000);
           attempts += 1;
           reconnectTimer = setTimeout(connect, delay);
-        } else {
-          startPolling();
         }
       };
     };
@@ -144,7 +111,6 @@ const NotificationsMenu = memo(() => {
     return () => {
       disposed = true;
       clearTimeout(reconnectTimer);
-      stopPolling();
       if (ws) {
         ws.onclose = null;
         ws.close();

@@ -8,11 +8,3 @@ export const getPendingMovements = async () => {
 export const getDuplicateSales = async () => {
   return httpClient.get(getApiUrl("duplicate-sales"));
 };
-
-/**
- * Notificaciones recientes (respaldo cuando el WebSocket no logra conectarse).
- * Mismo formato que los mensajes del WebSocket: { event, message, store_id, store_name }.
- */
-export const getNotifications = async () => {
-  return httpClient.get(getApiUrl("audit/notifications"));
-};
