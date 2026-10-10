@@ -11,14 +11,16 @@ import { formatCurrency } from "../../../utils/utils";
 import { colors } from "../../../theme/colors";
 import CustomButton from "../../ui/Button/Button";
 
+const LANDING_URL = "https://smartventapos.vercel.app/";
+
 const SERVICES = [
   {
     icon: <StorefrontIcon />,
-    title: "Tienda / Almacén",
+    title: "Añadir tienda o almacén",
     price: null,
     tag: "Consultar precios",
     notes: "Agrega una nueva tienda o almacén a tu cuenta.",
-    action: "pricing",
+    action: "store-update",
   },
   {
     icon: <PrintIcon />,
@@ -45,14 +47,26 @@ const SERVICES = [
 ];
 
 const ServiceList = () => {
-  const [consultDialog, setConsultDialog] = useState({ open: false, service: null, storeNames: "" });
+  const [consultDialog, setConsultDialog] = useState({ open: false, service: null, storeNames: "", action: null });
 
   const handleOpenConsult = (service) => {
-    setConsultDialog({ open: true, service, storeNames: "" });
+    setConsultDialog({ open: true, service, storeNames: "", action: service.action });
   };
 
   const handleCloseConsult = () => {
-    setConsultDialog({ open: false, service: null, storeNames: "" });
+    setConsultDialog({ open: false, service: null, storeNames: "", action: null });
+  };
+
+  const handleSendStoreUpdate = () => {
+    if (!consultDialog.storeNames.trim()) {
+      return;
+    }
+
+    const whatsappNumber = process.env.REACT_APP_WHATSAPP_NUMBER || "+34";
+    const message = `Hola, necesito ${consultDialog.storeNames} nueva(s) sucursal(es).`;
+    const url = `https://wa.me/${whatsappNumber.replace(/\D/g, "")}?text=${encodeURIComponent(message)}`;
+    window.open(url, "_blank");
+    handleCloseConsult();
   };
 
   const handleSendConsult = () => {
@@ -68,7 +82,7 @@ const ServiceList = () => {
   };
 
   const handlePricingClick = () => {
-    window.location.href = "https://smartventapos.vercel.app/";
+    window.location.href = LANDING_URL;
   };
 
   return (
@@ -115,7 +129,12 @@ const ServiceList = () => {
                       {`${formatCurrency(service.price)}/mes`}
                     </Typography>
                   ) : service.tag ? (
-                    <Chip label={service.tag} size="small" />
+                    <Chip
+                      label={service.tag}
+                      size="small"
+                      onClick={() => service.action === "store-update" && handlePricingClick()}
+                      sx={{ cursor: service.action === "store-update" ? "pointer" : "default" }}
+                    />
                   ) : null}
                 </Box>
 
@@ -123,23 +142,7 @@ const ServiceList = () => {
                   {service.notes}
                 </Typography>
 
-                {service.action === "pricing" && (
-                  <CustomButton
-                    fullWidth
-                    onClick={handlePricingClick}
-                    size="small"
-                    sx={{
-                      mt: "auto",
-                      bgcolor: colors.whatsapp,
-                      color: "white",
-                      "&:hover": { bgcolor: "#075E54" },
-                    }}
-                  >
-                    Ver precios
-                  </CustomButton>
-                )}
-
-                {service.action === "consultar" && (
+                {service.action === "store-update" && (
                   <CustomButton
                     fullWidth
                     onClick={() => handleOpenConsult(service)}
@@ -152,7 +155,7 @@ const ServiceList = () => {
                       "&:hover": { bgcolor: "#075E54" },
                     }}
                   >
-                    Solicitar cambio
+                    Actualizar
                   </CustomButton>
                 )}
               </CardContent>
@@ -164,26 +167,39 @@ const ServiceList = () => {
       {/* Diálogo de consulta */}
       <Dialog open={consultDialog.open} onClose={handleCloseConsult} maxWidth="sm" fullWidth>
         <DialogTitle>
-          {consultDialog.service?.title}
+          {consultDialog.action === "store-update" ? "Añadir sucursales" : consultDialog.service?.title}
         </DialogTitle>
         <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2, pt: 2 }}>
-          <TextField
-            fullWidth
-            label="Descripción de cambios"
-            placeholder="Describe qué cambios necesitas..."
-            value={consultDialog.storeNames}
-            onChange={(e) => setConsultDialog({ ...consultDialog, storeNames: e.target.value })}
-            multiline
-            rows={3}
-            size="small"
-          />
+          {consultDialog.action === "store-update" ? (
+            <TextField
+              fullWidth
+              label="Cantidad de nuevas sucursales"
+              placeholder="Ej: 2"
+              type="number"
+              inputProps={{ min: 1 }}
+              value={consultDialog.storeNames}
+              onChange={(e) => setConsultDialog({ ...consultDialog, storeNames: e.target.value })}
+              size="small"
+            />
+          ) : (
+            <TextField
+              fullWidth
+              label="Descripción de cambios"
+              placeholder="Describe qué cambios necesitas..."
+              value={consultDialog.storeNames}
+              onChange={(e) => setConsultDialog({ ...consultDialog, storeNames: e.target.value })}
+              multiline
+              rows={3}
+              size="small"
+            />
+          )}
         </DialogContent>
         <DialogActions>
           <CustomButton variant="outlined" onClick={handleCloseConsult}>
             Cancelar
           </CustomButton>
           <CustomButton
-            onClick={handleSendConsult}
+            onClick={consultDialog.action === "store-update" ? handleSendStoreUpdate : handleSendConsult}
             disabled={!consultDialog.storeNames.trim()}
             startIcon={<WhatsAppIcon />}
             sx={{
