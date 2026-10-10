@@ -287,12 +287,13 @@ Revisa esta lista antes de crear un componente. Si un patrón se repite en dos a
 
 | Componente | Uso |
 |---|---|
-| `CustomModal` (`Modal/`) | Todos los modales. Props: `showOut`, `onClose`, `title`, `maxWidth` (800). Fondo desenfocado, header con cierre, animación `modal-enter`. **`ModalBody`** (export nombrado) es el cuerpo con padding y fondo `modalBody.main`; no repitas ese `sx`. |
-| `CustomButton` (`Button/`) | Botón MUI con `variant="contained"`, `size="small"`, `minWidth: 0`; respeta el `sx` recibido. |
+| `CustomModal` (`Modal/`) | Todos los modales. Props: `showOut`, `onClose`, `title`, `maxWidth` (800). Fondo desenfocado, header con degradado del sidebar, título centrado y botón de cierre a la derecha, animación `modal-enter`. **`ModalBody`** (export nombrado) es el cuerpo con padding y fondo `modalBody.main`; no repitas ese `sx`. |
+| `CustomButton` (`Button/`) | Botón MUI con `variant="contained"`, `size="small"`, `minWidth: 0`, alto fijo (40 px `small`, 44 px el resto); respeta el `sx` recibido. |
 | `CustomTooltip` (`Tooltip/`) | Props `text`, `position`, `fullWidth`. **Obligatorio en botones de solo ícono.** |
 | `CustomSpinner` (`Spinner/`) | Requiere `isLoading`. |
-| `DataTable` | DataGrid con búsqueda, orden, paginación, selección y carga. Columnas con `selector` (valor) o `cell` (render); soporta `conditionalRowStyles=[{ when, style }]`. No soporta `omit` ni `style` por columna. |
+| `DataTable` | DataGrid con búsqueda, orden, paginación, selección y carga. Columnas con `selector` (valor) o `cell` (render); soporta `conditionalRowStyles=[{ when, style }]`. No soporta `omit` ni `style` por columna. Encabezado azul marino con texto blanco (`App.css`). |
 | `SimpleTable` | Tabla HTML de solo lectura (modales, importaciones). |
+| `tableButtonSx` | `sx` para botones dentro de tablas: 28 px, esquinas casi rectas, íconos de 1rem. |
 | `PageHeader` | Título + acciones de página. No armes `Stack` + `<h1>` a mano. |
 | `PageHelp` | Botón de ayuda que lee `helpTexts.js` según la ruta. |
 | `CardGallery` | Cuadrícula de tarjetas con skeleton, vacío y entrada escalonada (`items`, `loading`, `emptyText`, `renderItem`). |
