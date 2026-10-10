@@ -122,7 +122,7 @@ export const activeSx = {
 };
 
 export const itemButtonSx = (expanded, active = false) => ({
-  borderRadius: "10px", py: 1,
+  borderRadius: "10px", py: 0.75,
   justifyContent: expanded ? "initial" : "center",
   ...(active ? activeSx : {}),
   "&:hover": { backgroundColor: whiteAlpha(0.08) },
@@ -133,7 +133,7 @@ export const itemIconSx = (expanded, active = false) => ({
   minWidth: expanded ? 38 : 0, justifyContent: "center",
 });
 
-export const subItemSx = { pl: 6.5, py: 0.6, borderRadius: "8px", my: 0.2, mx: 0.5 };
+export const subItemSx = { pl: 6.5, py: 0.5, borderRadius: "8px", my: 0.1, mx: 0.5 };
 
 export const subItemTextColor = whiteAlpha(0.75);
 
