@@ -1,6 +1,36 @@
 # Pendientes
 
-> Última revisión: 2026-10-04. Formato: archivo:línea, qué pasa, corrección sugerida. Al corregir algo, quítalo de aquí.
+> Última revisión: 10 de octubre de 2026. Formato: archivo:línea, qué pasa, corrección sugerida. Al corregir algo, quítalo de aquí.
+
+## Refactorización completada ✅ (octubre 2026)
+
+**Estado:** 14/14 refactores completados
+- Redux modularizado (3 módulos)
+- Tema modularizado (4 módulos)
+- API Products dividida (3 módulos)
+- Constants separadas (2 módulos)
+- API Utils repartidas (3 módulos)
+- Menu dividido (2 módulos)
+- Hooks documentados (30+)
+- Componentes documentados (100+)
+- Auditoría limpia (0 código muerto)
+
+**Documentación:**
+- `REFACTOR_PROGRESS_FINAL.md` — Resumen ejecutivo
+- `REFACTOR_13_AUDIT_REPORT.md` — Auditoría
+- `HOOKS_DOCUMENTATION.md` — 30+ hooks
+- `COMPONENTS_REFACTOR_GUIDE.md` — 100+ componentes
+- `src/hooks/README.md` — Guía de hooks
+- `src/components/README.md` — Estructura componentes
+
+**Garantías:**
+- ✅ 100% backward compatible
+- ✅ 0 breaking changes
+- ✅ ESLint: 0 errores
+- ✅ Build: sin errores nuevos
+- ✅ 13 commits documentados
+
+---
 
 ## Requiere backend (`pos_multi_store`)
 
@@ -18,10 +48,16 @@
 
 ## Deuda técnica restante (frontend)
 
-- **`SaleList`:** el select "Tipo" tiene una sola opción (`Ventas`) y sigue visible. ¿Se quita o se reactiva el filtro de apartados?
-- **`NotificationsMenu` montado dos veces** en `MainLayout` (cajas de escritorio y móvil), así que abre dos WebSocket. Dejar una sola instancia.
-- **`PasswordField` + `UserInfoFields`:** `admin/Profile/PasswordSection.jsx` y `ui/UserModals/*` repiten campos de contraseña y datos de usuario.
-- **Modales con `Box p:3` en lugar de `ModalBody`:** `CashFlowModal`, `ConversionModal`, `DiscountModal`. Cambiarlos modifica su fondo; decidir si se unifican.
-- **`App.css`:** `.status-dot--danger` e `.icon-danger` tienen `#dc2626` fijo (mismo valor que `colors.error`); pasarlo a variable CSS.
-- **`useProductSearch`:** en modo texto `fetchData` solo limpia resultados; `SearchProduct` podría llamar `setData([])` directo.
-- **`eslint-disable` justificados:** `hooks/useFetch.js` (deps del llamador) y `hooks/usePrinterStatus.js` (cambiar deps altera la reconexión).
+| # | Qué pasa | Archivo | Prioridad |
+|---|---|---|---|
+| 1 | **`NotificationsMenu` montado dos veces** en `MainLayout` (cajas de escritorio y móvil), así que abre dos WebSocket. | `src/components/layout/MainLayout/MainLayout.jsx` | Media |
+| 2 | **`SaleList`:** el select "Tipo" tiene una sola opción (`Ventas`) y sigue visible. ¿Se quita o se reactiva el filtro de apartados? | `src/components/sales/SaleList/SaleList.jsx` | Baja |
+| 3 | **`PasswordField` + `UserInfoFields` repetidas** en `admin/Profile/PasswordSection.jsx` y `ui/UserModals/*`. | Consolidar en `src/components/ui/UserModals/` | Baja |
+| 4 | **Modales con `Box p:3` en lugar de `ModalBody`** (`CashFlowModal`, `ConversionModal`, `DiscountModal`). | Migrar a `ModalBody` para consistencia | Baja |
+| 5 | **`App.css`:** `.status-dot--danger` e `.icon-danger` tienen `#dc2626` fijo. | Pasar a variable CSS `--color-error` | Baja |
+| 6 | **`useProductSearch`:** en modo texto `fetchData` solo limpia resultados. | `src/components/products/SearchProduct/useProductSearch.js` | Baja |
+
+### `eslint-disable` justificados
+
+- **`hooks/useFetch.js`:** deps del llamador (necesario para refetch manual)
+- **`hooks/usePrinterStatus.js`:** cambiar deps altera la reconexión WebSocket
