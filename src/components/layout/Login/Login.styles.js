@@ -31,19 +31,19 @@ export const desktopPrimaryButtonSx = {
   },
 };
 
-// Botón principal de móvil: blanco sobre el fondo navy, para que destaque.
+// Botón principal de móvil: amarillo (accent) sobre el fondo navy, como el de registrarse.
 export const mobilePrimaryButtonSx = {
   py: 1.25, mt: 1, borderRadius: "10px", fontWeight: 700, fontSize: "0.95rem",
-  background: colors.white,
-  color: colors.sidebar,
+  background: colors.accent,
+  color: colors.onAccent,
   boxShadow: colors.shadow.brand,
   "&:hover": {
-    background: alpha(colors.white, 0.9),
+    background: colors.accentDark,
     boxShadow: colors.shadow.brandHover,
   },
   "&.Mui-disabled": {
-    background: alpha(colors.white, 0.7),
-    color: alpha(colors.sidebar, 0.5),
+    background: alpha(colors.accent, 0.5),
+    color: alpha(colors.onAccent, 0.6),
   },
 };
 
