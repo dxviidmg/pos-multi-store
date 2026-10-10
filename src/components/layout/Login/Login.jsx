@@ -10,40 +10,64 @@ import { isOwner } from "../../../constants/routeAccess";
 import { alpha } from "@mui/material/styles";
 import {
   TextField, Box, Alert, Paper, Stack, Typography,
-  IconButton, InputAdornment, Button,
+  IconButton, InputAdornment, Button, CircularProgress,
 } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import LoginIcon from "@mui/icons-material/Login";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+import {
+  desktopLabelSx, mobileInputSx,
+  desktopPrimaryButtonSx, mobilePrimaryButtonSx,
+  desktopSecondaryButtonSx, mobileSecondaryButtonSx,
+} from "./Login.styles";
+
+/** Traduce un error de login a un mensaje en español según status y code del backend. */
+const mapLoginError = (error) => {
+  const status = error.response?.status;
+  const code = error.response?.data?.code;
+  if (status === 403 && code === "tenant_inactive") {
+    // Negocio cancelado: nadie entra, ni el dueño. La reactivación es por soporte.
+    return "Este negocio está inactivo. Contacta a soporte.";
+  }
+  if (status === 403 && code === "subscription_expired") {
+    return "La suscripción del negocio venció. Contacta al propietario para reactivarla.";
+  }
+  if (status === 400) {
+    return "Usuario o contraseña incorrectos.";
+  }
+  return "No se pudo iniciar sesión. Intenta de nuevo.";
+};
 
 function Login() {
   const navigate = useNavigate();
   const { login } = useUser();
-  const [state, setState] = useState({
-    formData: { username: "", password: "" },
-    alertData: { shown: false, message: "" },
-    showPassword: false,
-  });
+  const [formData, setFormData] = useState({ username: "", password: "" });
+  const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    document.body.style.overflow = 'hidden';
-    return () => { document.body.style.overflow = 'unset'; };
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = "unset"; };
   }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setState((prev) => ({ ...prev, formData: { ...prev.formData, [name]: value } }));
-  };
-
-  const showAlert = (message) => {
-    setState((prev) => ({ ...prev, alertData: { shown: true, message } }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isLoading) return; // evita dobles envíos
+    if (!formData.username.trim() || !formData.password.trim()) {
+      setError("Usuario y contraseña son obligatorios.");
+      return;
+    }
+    setIsLoading(true);
     try {
-      const { data } = await loginUser(state.formData);
+      const { data } = await loginUser(formData);
       login(data);
       if (data.access_blocked) {
         // Negocio vencido: el dueño entra solo para renovar/pagar
@@ -53,23 +77,27 @@ function Login() {
       } else {
         navigate("/vender/");
       }
-    } catch (error) {
-      const status = error.response?.status;
-      const code = error.response?.data?.code;
-      if (status === 403 && code === "tenant_inactive") {
-        // Negocio cancelado: nadie entra, ni el dueño. La reactivación es por soporte.
-        showAlert("Este negocio está inactivo. Contacta a soporte.");
-      } else if (status === 403 && code === "subscription_expired") {
-        showAlert("La suscripción del negocio venció. Contacta al propietario para reactivarla.");
-      } else if (status === 400) {
-        showAlert("Usuario o contraseña incorrectos.");
-      } else {
-        showAlert("No se pudo iniciar sesión. Intenta de nuevo.");
-      }
+    } catch (err) {
+      setError(mapLoginError(err));
+      setIsLoading(false);
     }
   };
 
-  const { formData, alertData, showPassword } = state;
+  const toggleShowPassword = () => setShowPassword((prev) => !prev);
+
+  const isFormEmpty = !formData.username.trim() || !formData.password.trim();
+
+  const passwordAdornment = (
+    <InputAdornment position="end">
+      <CustomTooltip text={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"} position="top">
+        <IconButton size="small" onClick={toggleShowPassword} edge="end"
+          aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+        >
+          {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
+        </IconButton>
+      </CustomTooltip>
+    </InputAdornment>
+  );
 
   return (
     <Box sx={{
@@ -77,6 +105,15 @@ function Login() {
       position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
       bgcolor: { xs: colors.sidebar, md: 'background.paper' },
       flexDirection: { xs: 'column', md: 'row' },
+      // Textura de marca (brillo + trama) solo en móvil, igual que el panel de marca de escritorio
+      backgroundImage: {
+        xs: [
+          `radial-gradient(520px circle at 85% 8%, ${alpha(colors.secondary, 0.22)}, transparent 60%)`,
+          `radial-gradient(${alpha(colors.white, 0.07)} 1px, transparent 1px)`,
+        ].join(','),
+        md: 'none',
+      },
+      backgroundSize: { xs: 'auto, 22px 22px', md: 'auto' },
     }}>
       {/* Panel izquierdo — marca (oculto en móvil) */}
       <Box sx={{
@@ -110,7 +147,7 @@ function Login() {
         flex: { xs: 1, md: 0.9 },
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         px: { xs: 3, sm: 6 }, py: { xs: 4, md: 4 },
-        bgcolor: { xs: colors.sidebar, md: 'background.default' },
+        bgcolor: { xs: 'transparent', md: 'background.default' },
       }}>
         {/* Tarjeta solo en desktop */}
         <Paper elevation={0} sx={{
@@ -130,9 +167,9 @@ function Login() {
             Ingresa tus credenciales para continuar
           </Typography>
 
-          {alertData.shown && (
-            <Alert severity="error" sx={{ mb: 3, borderRadius: '10px' }}>
-              {alertData.message}
+          {error && (
+            <Alert severity="error" icon={<ErrorOutlineIcon fontSize="small" />} sx={{ mb: 3, borderRadius: '10px' }}>
+              {error}
             </Alert>
           )}
 
@@ -140,55 +177,28 @@ function Login() {
             <TextField fullWidth name="username" label="Usuario" placeholder="Ingresa tu usuario"
               value={formData.username} onChange={handleChange}
               required autoFocus autoComplete="username" size="small"
+              sx={desktopLabelSx}
             />
 
             <TextField fullWidth name="password" label="Contraseña" placeholder="Ingresa tu contraseña"
               type={showPassword ? "text" : "password"}
               value={formData.password} onChange={handleChange}
               required autoComplete="current-password" size="small"
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <CustomTooltip text={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"} position="top">
-                      <IconButton size="small"
-                        onClick={() => setState(prev => ({ ...prev, showPassword: !prev.showPassword }))}
-                        edge="end"
-                        aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
-                      >
-                        {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
-                      </IconButton>
-                    </CustomTooltip>
-                  </InputAdornment>
-                ),
-              }}
+              sx={desktopLabelSx}
+              InputProps={{ endAdornment: passwordAdornment }}
             />
 
             <CustomButton type="submit" fullWidth
-              startIcon={<LoginIcon />}
-              sx={{
-                py: 1.25, mt: 1, borderRadius: '10px', fontWeight: 700, fontSize: '0.95rem',
-                background: colors.accent,
-                color: colors.onAccent,
-                boxShadow: colors.shadow.brand,
-                '&:hover': {
-                  background: colors.accentDark,
-                  boxShadow: colors.shadow.brandHover,
-                },
-              }}
+              disabled={isLoading || isFormEmpty}
+              startIcon={isLoading ? <CircularProgress size={18} sx={{ color: colors.white }} /> : <LoginIcon />}
+              sx={desktopPrimaryButtonSx}
             >
-              Iniciar sesión
+              {isLoading ? "Iniciando sesión…" : "Iniciar sesión"}
             </CustomButton>
 
             <Button onClick={() => navigate("/registrarme")} fullWidth
               variant="outlined" startIcon={<PersonAddIcon />}
-              sx={{
-                py: 1, borderRadius: '10px', fontWeight: 600, fontSize: '0.85rem',
-                borderColor: 'divider', color: 'text.secondary',
-                '&:hover': {
-                  borderColor: 'primary.main', color: 'primary.main',
-                  bgcolor: 'action.hover',
-                },
-              }}
+              sx={desktopSecondaryButtonSx}
             >
               Crear mi negocio
             </Button>
@@ -212,9 +222,9 @@ function Login() {
             Ingresa tus credenciales para continuar
           </Typography>
 
-          {alertData.shown && (
-            <Alert severity="error" sx={{ mb: 3, borderRadius: '10px' }}>
-              {alertData.message}
+          {error && (
+            <Alert severity="error" icon={<ErrorOutlineIcon fontSize="small" />} sx={{ mb: 3, borderRadius: '10px' }}>
+              {error}
             </Alert>
           )}
 
@@ -222,67 +232,28 @@ function Login() {
             <TextField fullWidth name="username" label="Usuario" placeholder="Ingresa tu usuario"
               value={formData.username} onChange={handleChange}
               required autoFocus autoComplete="username" size="small"
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  backgroundColor: colors.white,
-                  "& input": { color: (theme) => theme.palette.text.primary },
-                },
-              }}
+              sx={mobileInputSx}
             />
 
             <TextField fullWidth name="password" label="Contraseña" placeholder="Ingresa tu contraseña"
               type={showPassword ? "text" : "password"}
               value={formData.password} onChange={handleChange}
               required autoComplete="current-password" size="small"
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  backgroundColor: colors.white,
-                  "& input": { color: (theme) => theme.palette.text.primary },
-                },
-              }}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <CustomTooltip text={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"} position="top">
-                      <IconButton size="small"
-                        onClick={() => setState(prev => ({ ...prev, showPassword: !prev.showPassword }))}
-                        edge="end"
-                        aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
-                      >
-                        {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
-                      </IconButton>
-                    </CustomTooltip>
-                  </InputAdornment>
-                ),
-              }}
+              sx={mobileInputSx}
+              InputProps={{ endAdornment: passwordAdornment }}
             />
 
             <CustomButton type="submit" fullWidth
-              startIcon={<LoginIcon />}
-              sx={{
-                py: 1.25, mt: 1, borderRadius: '10px', fontWeight: 700, fontSize: '0.95rem',
-                background: colors.accent,
-                color: colors.onAccent,
-                boxShadow: colors.shadow.brand,
-                '&:hover': {
-                  background: colors.accentDark,
-                  boxShadow: colors.shadow.brandHover,
-                },
-              }}
+              disabled={isLoading || isFormEmpty}
+              startIcon={isLoading ? <CircularProgress size={18} sx={{ color: colors.sidebar }} /> : <LoginIcon />}
+              sx={mobilePrimaryButtonSx}
             >
-              Iniciar sesión
+              {isLoading ? "Iniciando sesión…" : "Iniciar sesión"}
             </CustomButton>
 
             <Button onClick={() => navigate("/registrarme")} fullWidth
               variant="outlined" startIcon={<PersonAddIcon />}
-              sx={{
-                py: 1, borderRadius: '10px', fontWeight: 600, fontSize: '0.85rem',
-                borderColor: alpha(colors.white, 0.3), color: alpha(colors.white, 0.9),
-                '&:hover': {
-                  borderColor: colors.accent, color: colors.accent,
-                  bgcolor: alpha(colors.accent, 0.1),
-                },
-              }}
+              sx={mobileSecondaryButtonSx}
             >
               Crear mi negocio
             </Button>
