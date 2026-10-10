@@ -52,15 +52,13 @@ export const SALE_TYPES = {
   RESERVATION: 'A', // Apartado
 };
 
-// Unidades de medida de productos
+// Unidades de medida de productos (debe coincidir con backend: Unit model)
 export const UNIT_LABELS = {
   PZ: 'Pieza',
-  CO: 'Costal',
-  BO: 'Bote',
-  KG: 'Kilo',
+  KG: 'Kilogramo',
   LT: 'Litro',
-  MT: 'Metro',
-  RO: 'Rollo',
+  BO: 'Bote',
+  CO: 'Costal',
 };
 
 // Motivos de cancelación de suscripción (debe coincidir con backend)
