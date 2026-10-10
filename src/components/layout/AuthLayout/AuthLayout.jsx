@@ -69,30 +69,54 @@ const Stepper = ({ activeStep, stepLabels }) => (
   </Box>
 );
 
+/** Pasos horizontales (registro móvil): completado, actual y pendiente. */
+const HorizontalStepper = ({ activeStep, stepLabels }) => (
+  <Box component="ol" aria-label="Progreso del registro"
+    sx={{ listStyle: "none", m: 0, p: 0, display: "flex", alignItems: "flex-start", justifyContent: "center" }}>
+    {stepLabels.map((label, i) => {
+      const done = i < activeStep;
+      const current = i === activeStep;
+      return (
+        <React.Fragment key={label}>
+          <Box component="li" aria-current={current ? "step" : undefined}
+            sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 0.75, flexShrink: 0 }}>
+            <Box sx={{
+              width: 32, height: 32, borderRadius: "50%",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: "0.85rem", fontWeight: 700,
+              bgcolor: current ? colors.accent : done ? alpha(colors.white, 0.9) : "transparent",
+              color: current || done ? colors.onAccent : alpha(colors.white, 0.8),
+              border: "2px solid",
+              borderColor: current ? colors.accent : done ? alpha(colors.white, 0.9) : alpha(colors.white, 0.35),
+            }}>
+              {done ? <CheckIcon sx={{ fontSize: 18 }} /> : i + 1}
+            </Box>
+            <Typography sx={{
+              fontSize: "0.8rem", fontWeight: current ? 700 : 500, whiteSpace: "nowrap",
+              color: current ? colors.white : alpha(colors.white, 0.78),
+            }}>
+              {label}
+            </Typography>
+          </Box>
+          {i < stepLabels.length - 1 && (
+            <Box aria-hidden sx={{
+              flex: 1, maxWidth: 48, height: 2, mt: "15px", mx: 1,
+              bgcolor: alpha(colors.white, done ? 0.6 : 0.18),
+            }} />
+          )}
+        </React.Fragment>
+      );
+    })}
+  </Box>
+);
+
 /**
  * Estructura común de login y registro: panel de marca (#0B1B4D) + panel de formulario.
  * Con `stepLabels` el panel de marca muestra el progreso en lugar de los beneficios.
- * En xs (móvil): header azul arriba + formulario abajo (app-style).
+ * En xs (móvil): logo + pasos horizontales arriba + formulario abajo (app-style).
  */
 const AuthLayout = ({ children, headline, subtitle, activeStep, stepLabels }) => (
   <Box sx={{ minHeight: "100dvh", display: "flex", flexDirection: { xs: "column", md: "row" }, bgcolor: { xs: colors.sidebar, md: "background.default" } }}>
-    {/* Header móvil con logo y fondo navy */}
-    <Box sx={{
-      display: { xs: "flex", md: "none" },
-      flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "center",
-      bgcolor: colors.sidebar,
-      py: 5, px: 3,
-      minHeight: 160,
-      width: "100%",
-    }}>
-      <Box component="img" src={LogoWhite} alt="SmartVenta" sx={{ height: 50, width: "auto", mb: 2 }} />
-      <Typography sx={{ color: colors.white, fontSize: "1.1rem", fontWeight: 700, textAlign: "center" }}>
-        SmartVenta
-      </Typography>
-    </Box>
-
     <Box component="aside" sx={brandPanelSx}>
       <Box component="img" src={LogoWhite} alt="SmartVenta" sx={{ width: 168, height: "auto" }} />
 
@@ -137,7 +161,7 @@ const AuthLayout = ({ children, headline, subtitle, activeStep, stepLabels }) =>
     </Box>
 
     <Box component="main" sx={{
-      flex: 1, display: "flex", alignItems: { xs: "center", md: "center" }, justifyContent: "center",
+      flex: 1, display: "flex", alignItems: "center", justifyContent: "center",
       px: { xs: 2, sm: 6 }, py: { xs: 4, md: 6 },
       bgcolor: { xs: colors.sidebar, md: "background.default" },
     }}>
@@ -150,12 +174,28 @@ const AuthLayout = ({ children, headline, subtitle, activeStep, stepLabels }) =>
         {children}
       </Box>
 
-      {/* Móvil: contenido directo sin tarjeta */}
+      {/* Móvil: logo + título + pasos + formulario, centrado vertical */}
       <Box sx={{ 
         display: { xs: "block", md: "none" },
         width: "100%", 
         maxWidth: 360,
+        mx: "auto",
       }}>
+        {stepLabels && (
+          <>
+            <Box sx={{ display: "flex", justifyContent: "center", mb: 2.5 }}>
+              <Box component="img" src={LogoWhite} alt="SmartVenta"
+                width={120} height="auto" sx={{ maxWidth: 120, height: "auto" }} />
+            </Box>
+            <Typography variant="h5" sx={{ fontWeight: 700, color: colors.white, mb: 0.5, textAlign: "center" }}>
+              {headline}
+            </Typography>
+            <Typography variant="body2" sx={{ color: alpha(colors.white, 0.8), mb: 3, textAlign: "center" }}>
+              {subtitle}
+            </Typography>
+            <HorizontalStepper activeStep={activeStep} stepLabels={stepLabels} />
+          </>
+        )}
         {children}
       </Box>
     </Box>
