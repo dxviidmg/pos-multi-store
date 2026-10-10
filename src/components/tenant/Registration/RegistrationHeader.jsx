@@ -14,7 +14,7 @@ const RegistrationHeader = ({ activeStep, stepLabels }) => (
         component="img"
         src={Logo}
         alt="SmartVenta"
-        sx={{ maxWidth: "180px", height: "auto", display: "block", mx: "auto", mb: 2 }}
+        sx={{ width: "100%", height: "auto", display: "block", mx: "auto", mb: 2 }}
       />
       <Typography variant="h5" sx={headerTitleSx}>
         Crea tu cuenta
