@@ -141,13 +141,20 @@ const AuthLayout = ({ children, headline, subtitle, activeStep, stepLabels }) =>
       px: { xs: 2, sm: 6 }, py: { xs: 4, md: 6 },
       bgcolor: { xs: colors.sidebar, md: "background.default" },
     }}>
+      {/* Desktop: tarjeta blanca con estilos */}
       <Box sx={{ 
+        display: { xs: "none", md: "block" },
         width: "100%", 
-        maxWidth: { xs: 380, sm: 440, md: 440 },
-        borderRadius: { xs: "24px", md: 0 },
-        overflow: "hidden",
-        boxShadow: { xs: "0 8px 32px rgba(0,0,0,0.3)", md: "none" },
-        bgcolor: { xs: "background.paper", md: "transparent" },
+        maxWidth: 440,
+      }}>
+        {children}
+      </Box>
+
+      {/* Móvil: contenido directo sin tarjeta */}
+      <Box sx={{ 
+        display: { xs: "block", md: "none" },
+        width: "100%", 
+        maxWidth: 360,
       }}>
         {children}
       </Box>
