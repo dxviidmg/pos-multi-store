@@ -1,12 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import {
-  Grid, Card, CardContent, Typography, Chip, Box, Divider,
+  Grid, Card, CardContent, Typography, Chip, Box, Divider, TextField, Dialog, DialogTitle, DialogContent, DialogActions,
 } from "@mui/material";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import PrintIcon from "@mui/icons-material/Print";
 import WifiIcon from "@mui/icons-material/Wifi";
 import IntegrationInstructionsIcon from "@mui/icons-material/IntegrationInstructions";
-import EmailIcon from "@mui/icons-material/Email";
+import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import { formatCurrency } from "../../../utils/utils";
 import CustomButton from "../../ui/Button/Button";
 
@@ -46,11 +46,26 @@ const SERVICES = [
 ];
 
 const ServiceList = () => {
-  const handleConsult = () => {
-    const whatsappNumber = process.env.REACT_APP_WHATSAPP_NUMBER || "+34"; // Fallback
-    const message = "Hola, me gustaría consultar sobre los servicios adicionales de SmartVenta.";
+  const [consultDialog, setConsultDialog] = useState({ open: false, service: null, storeNames: "" });
+
+  const handleOpenConsult = (service) => {
+    setConsultDialog({ open: true, service, storeNames: "" });
+  };
+
+  const handleCloseConsult = () => {
+    setConsultDialog({ open: false, service: null, storeNames: "" });
+  };
+
+  const handleSendConsult = () => {
+    if (!consultDialog.storeNames.trim()) {
+      return;
+    }
+
+    const whatsappNumber = process.env.REACT_APP_WHATSAPP_NUMBER || "+34";
+    const message = `Hola, me gustaría consultar sobre ${consultDialog.service.title}. Nuevas sucursales: ${consultDialog.storeNames}`;
     const url = `https://wa.me/${whatsappNumber.replace(/\D/g, "")}?text=${encodeURIComponent(message)}`;
     window.open(url, "_blank");
+    handleCloseConsult();
   };
 
   return (
@@ -64,9 +79,9 @@ const ServiceList = () => {
 
       <Divider sx={{ mb: 3 }} />
 
-      <Grid container spacing={3}>
+      <Grid container spacing={2}>
         {SERVICES.map((service, i) => (
-          <Grid item xs={12} sm={6} md={6} lg={4} key={i}>
+          <Grid item xs={12} sm={6} md={3} key={i}>
             <Card
               variant="outlined"
               sx={{
@@ -82,36 +97,37 @@ const ServiceList = () => {
                 },
               }}
             >
-              <CardContent sx={{ textAlign: "center", display: "flex", flexDirection: "column", gap: 2 }}>
+              <CardContent sx={{ textAlign: "center", display: "flex", flexDirection: "column", gap: 2, height: "100%" }}>
                 <Box sx={{ color: "primary.main", fontSize: 40 }}>{service.icon}</Box>
 
-                <Typography variant="subtitle1" fontWeight={600} sx={{ minHeight: 48 }}>
+                <Typography variant="subtitle2" fontWeight={600} sx={{ minHeight: 40 }}>
                   {service.title}
                 </Typography>
 
-                <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 1, minHeight: 50 }}>
+                <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 1, minHeight: 45 }}>
                   {service.price === 0 ? (
-                    <Chip label="Gratis" color="success" size="medium" />
+                    <Chip label="Gratis" color="success" size="small" />
                   ) : service.price ? (
-                    <Typography variant="h6" fontWeight={700} color="primary.main">
+                    <Typography variant="body2" fontWeight={700} color="primary.main">
                       {`${formatCurrency(service.price)}/mes`}
                     </Typography>
                   ) : service.tag ? (
-                    <Chip label={service.tag} color={service.tagColor} size="medium" />
+                    <Chip label={service.tag} color={service.tagColor} size="small" />
                   ) : null}
                 </Box>
 
-                <Typography variant="body2" color="text.secondary" sx={{ flexGrow: 1 }}>
+                <Typography variant="caption" color="text.secondary" sx={{ flexGrow: 1, fontSize: 0.75 }}>
                   {service.notes}
                 </Typography>
 
                 {service.action === "consultar" && (
                   <CustomButton
                     fullWidth
-                    variant="outlined"
-                    onClick={handleConsult}
-                    startIcon={<EmailIcon />}
+                    variant="contained"
+                    onClick={() => handleOpenConsult(service)}
+                    startIcon={<WhatsAppIcon />}
                     size="small"
+                    sx={{ mt: "auto" }}
                   >
                     Consultar
                   </CustomButton>
@@ -121,6 +137,38 @@ const ServiceList = () => {
           </Grid>
         ))}
       </Grid>
+
+      {/* Diálogo de consulta */}
+      <Dialog open={consultDialog.open} onClose={handleCloseConsult} maxWidth="sm" fullWidth>
+        <DialogTitle>
+          {consultDialog.service?.title}
+        </DialogTitle>
+        <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2, pt: 2 }}>
+          <TextField
+            fullWidth
+            label="Nombres de las nuevas sucursales"
+            placeholder="Ej: Tienda Centro, Tienda Norte"
+            value={consultDialog.storeNames}
+            onChange={(e) => setConsultDialog({ ...consultDialog, storeNames: e.target.value })}
+            multiline
+            rows={3}
+            size="small"
+          />
+        </DialogContent>
+        <DialogActions>
+          <CustomButton variant="outlined" onClick={handleCloseConsult}>
+            Cancelar
+          </CustomButton>
+          <CustomButton
+            variant="contained"
+            onClick={handleSendConsult}
+            disabled={!consultDialog.storeNames.trim()}
+            startIcon={<WhatsAppIcon />}
+          >
+            Enviar
+          </CustomButton>
+        </DialogActions>
+      </Dialog>
     </Grid>
   );
 };
