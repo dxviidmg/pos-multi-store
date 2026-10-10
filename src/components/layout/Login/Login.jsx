@@ -5,7 +5,6 @@ import { useUser } from "../../../context/UserContext";
 import CustomButton from "../../ui/Button/Button";
 import CustomTooltip from "../../ui/Tooltip";
 import LogoWhite from "../../../assets/images/logo-white.svg";
-import LogoBlue from "../../../assets/images/logo-blue.svg";
 import { colors } from "../../../theme/colors";
 import { isOwner } from "../../../constants/routeAccess";
 import { alpha } from "@mui/material/styles";
@@ -76,7 +75,8 @@ function Login() {
     <Box sx={{
       minHeight: '100vh', height: '100vh', display: 'flex',
       position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-      bgcolor: 'background.paper',
+      bgcolor: { xs: colors.sidebar, md: 'background.paper' },
+      flexDirection: { xs: 'column', md: 'row' },
     }}>
       {/* Panel izquierdo — marca (oculto en móvil) */}
       <Box sx={{
@@ -109,10 +109,12 @@ function Login() {
       <Box sx={{
         flex: { xs: 1, md: 0.9 },
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        px: { xs: 3, sm: 6 }, py: 4,
-        bgcolor: 'background.default',
+        px: { xs: 3, sm: 6 }, py: { xs: 4, md: 4 },
+        bgcolor: { xs: colors.sidebar, md: 'background.default' },
       }}>
+        {/* Tarjeta solo en desktop */}
         <Paper elevation={0} sx={{
+          display: { xs: 'none', md: 'block' },
           width: '100%', maxWidth: 420,
           borderRadius: '16px',
           bgcolor: 'background.paper',
@@ -121,11 +123,6 @@ function Login() {
           boxShadow: colors.shadow.card,
           p: { xs: 3, sm: 4 },
         }}>
-          {/* Logo visible solo en móvil */}
-          <Box sx={{ display: { xs: 'flex', md: 'none' }, justifyContent: 'center', mb: 3 }}>
-            <Box component="img" src={LogoBlue} alt="SmartVenta" width={180} height="auto" sx={{ maxWidth: 180, height: 'auto' }} />
-          </Box>
-
           <Typography variant="h4" sx={{ fontWeight: 700, color: 'text.primary', mb: 0.5 }}>
             Bienvenido
           </Typography>
@@ -197,6 +194,100 @@ function Login() {
             </Button>
           </Stack>
         </Paper>
+
+        {/* Formulario solo en móvil — sin tarjeta */}
+        <Box sx={{
+          display: { xs: 'block', md: 'none' },
+          width: '100%',
+          maxWidth: 360,
+        }}>
+          <Box sx={{ display: 'flex', justifyContent: 'center', mb: 4 }}>
+            <Box component="img" src={LogoWhite} alt="SmartVenta" width={120} height="auto" sx={{ maxWidth: 120, height: 'auto' }} />
+          </Box>
+
+          <Typography variant="h5" sx={{ fontWeight: 700, color: 'common.white', mb: 0.5, textAlign: 'center' }}>
+            Bienvenido
+          </Typography>
+          <Typography variant="body2" sx={{ color: alpha(colors.white, 0.8), mb: 3, textAlign: 'center' }}>
+            Ingresa tus credenciales para continuar
+          </Typography>
+
+          {alertData.shown && (
+            <Alert severity="error" sx={{ mb: 3, borderRadius: '10px' }}>
+              {alertData.message}
+            </Alert>
+          )}
+
+          <Stack component="form" onSubmit={handleSubmit} spacing={2.5}>
+            <TextField fullWidth name="username" label="Usuario" placeholder="Ingresa tu usuario"
+              value={formData.username} onChange={handleChange}
+              required autoFocus autoComplete="username" size="small"
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  backgroundColor: colors.white,
+                  "& input": { color: (theme) => theme.palette.text.primary },
+                },
+              }}
+            />
+
+            <TextField fullWidth name="password" label="Contraseña" placeholder="Ingresa tu contraseña"
+              type={showPassword ? "text" : "password"}
+              value={formData.password} onChange={handleChange}
+              required autoComplete="current-password" size="small"
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  backgroundColor: colors.white,
+                  "& input": { color: (theme) => theme.palette.text.primary },
+                },
+              }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <CustomTooltip text={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"} position="top">
+                      <IconButton size="small"
+                        onClick={() => setState(prev => ({ ...prev, showPassword: !prev.showPassword }))}
+                        edge="end"
+                        aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                      >
+                        {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
+                      </IconButton>
+                    </CustomTooltip>
+                  </InputAdornment>
+                ),
+              }}
+            />
+
+            <CustomButton type="submit" fullWidth
+              startIcon={<LoginIcon />}
+              sx={{
+                py: 1.25, mt: 1, borderRadius: '10px', fontWeight: 700, fontSize: '0.95rem',
+                background: colors.accent,
+                color: colors.onAccent,
+                boxShadow: colors.shadow.brand,
+                '&:hover': {
+                  background: colors.accentDark,
+                  boxShadow: colors.shadow.brandHover,
+                },
+              }}
+            >
+              Iniciar sesión
+            </CustomButton>
+
+            <Button onClick={() => navigate("/registrarme")} fullWidth
+              variant="outlined" startIcon={<PersonAddIcon />}
+              sx={{
+                py: 1, borderRadius: '10px', fontWeight: 600, fontSize: '0.85rem',
+                borderColor: alpha(colors.white, 0.3), color: alpha(colors.white, 0.9),
+                '&:hover': {
+                  borderColor: colors.accent, color: colors.accent,
+                  bgcolor: alpha(colors.accent, 0.1),
+                },
+              }}
+            >
+              Crear mi negocio
+            </Button>
+          </Stack>
+        </Box>
       </Box>
     </Box>
   );

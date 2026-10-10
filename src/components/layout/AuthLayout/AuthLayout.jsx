@@ -31,12 +31,6 @@ const brandPanelSx = {
   backgroundSize: "auto, 22px 22px",
 };
 
-const mobileBarSx = {
-  display: { xs: "flex", md: "none" },
-  alignItems: "center", justifyContent: "center",
-  py: 2, bgcolor: colors.sidebar,
-};
-
 /** Lista vertical de pasos (registro): completado, actual y pendiente. */
 const Stepper = ({ activeStep, stepLabels }) => (
   <Box component="ol" aria-label="Progreso del registro" sx={{ listStyle: "none", m: 0, p: 0 }}>
@@ -78,11 +72,25 @@ const Stepper = ({ activeStep, stepLabels }) => (
 /**
  * Estructura común de login y registro: panel de marca (#0B1B4D) + panel de formulario.
  * Con `stepLabels` el panel de marca muestra el progreso en lugar de los beneficios.
+ * En xs (móvil): header azul arriba + formulario abajo (app-style).
  */
 const AuthLayout = ({ children, headline, subtitle, activeStep, stepLabels }) => (
-  <Box sx={{ minHeight: "100dvh", display: "flex", flexDirection: { xs: "column", md: "row" }, bgcolor: "background.default" }}>
-    <Box sx={mobileBarSx}>
-      <Box component="img" src={LogoWhite} alt="SmartVenta" sx={{ height: 34, width: "auto" }} />
+  <Box sx={{ minHeight: "100dvh", display: "flex", flexDirection: { xs: "column", md: "row" }, bgcolor: { xs: colors.sidebar, md: "background.default" } }}>
+    {/* Header móvil con logo y fondo navy */}
+    <Box sx={{
+      display: { xs: "flex", md: "none" },
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      bgcolor: colors.sidebar,
+      py: 5, px: 3,
+      minHeight: 160,
+      width: "100%",
+    }}>
+      <Box component="img" src={LogoWhite} alt="SmartVenta" sx={{ height: 50, width: "auto", mb: 2 }} />
+      <Typography sx={{ color: colors.white, fontSize: "1.1rem", fontWeight: 700, textAlign: "center" }}>
+        SmartVenta
+      </Typography>
     </Box>
 
     <Box component="aside" sx={brandPanelSx}>
@@ -129,10 +137,20 @@ const AuthLayout = ({ children, headline, subtitle, activeStep, stepLabels }) =>
     </Box>
 
     <Box component="main" sx={{
-      flex: 1, display: "flex", alignItems: "center", justifyContent: "center",
-      px: { xs: 2.5, sm: 6 }, py: { xs: 4, md: 6 },
+      flex: 1, display: "flex", alignItems: { xs: "center", md: "center" }, justifyContent: "center",
+      px: { xs: 2, sm: 6 }, py: { xs: 4, md: 6 },
+      bgcolor: { xs: colors.sidebar, md: "background.default" },
     }}>
-      <Box sx={{ width: "100%", maxWidth: 440 }}>{children}</Box>
+      <Box sx={{ 
+        width: "100%", 
+        maxWidth: { xs: 380, sm: 440, md: 440 },
+        borderRadius: { xs: "24px", md: 0 },
+        overflow: "hidden",
+        boxShadow: { xs: "0 8px 32px rgba(0,0,0,0.3)", md: "none" },
+        bgcolor: { xs: "background.paper", md: "transparent" },
+      }}>
+        {children}
+      </Box>
     </Box>
   </Box>
 );
