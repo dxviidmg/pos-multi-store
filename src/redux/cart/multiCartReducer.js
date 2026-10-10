@@ -20,6 +20,10 @@ import {
   changeProductPrice,
   updateCartWithPrice,
 } from "./priceCalculators";
+import {
+  getReservedStock,
+  getAvailableStockForActiveCart,
+} from "./stockCalculators";
 
 const createEmptyCart = (id) => ({
   id,
@@ -36,26 +40,10 @@ const initialState = {
 };
 
 /**
- * Cantidad de un producto ya agregada en los carritos (excepto `excludeCartId`).
- * La usan el reducer y useAvailableStock.
- * Exportado para uso en hooks (ej: useAvailableStock).
+ * Exportamos getReservedStock para que hooks como useAvailableStock lo reutilicen.
+ * La implementación está en stockCalculators.js
  */
-export const getReservedStock = (carts, productId, excludeCartId = null) => {
-  return carts.reduce((total, cart) => {
-    if (cart.id === excludeCartId) return total;
-    const item = cart.cart.find(item => item.id === productId);
-    return total + (item ? item.quantity : 0);
-  }, 0);
-};
-
-// Stock disponible para el carrito activo: traspasos usan el stock reservado,
-// el resto el disponible; se descuenta lo que ya está en otros carritos.
-const getAvailableStockForActiveCart = (state, activeCart, product) => {
-  const productStock = activeCart.movementType === MOVEMENT_TYPES.TRANSFER
-    ? (product.reserved_stock || 0)
-    : (product.available_stock || 0);
-  return productStock - getReservedStock(state.carts, product.id, state.activeCartId);
-};
+export { getReservedStock };
 
 // Agrega un producto nuevo al carrito con el precio que le corresponde
 const appendNewItem = (activeCart, payload) => {
