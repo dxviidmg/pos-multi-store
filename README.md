@@ -365,11 +365,10 @@ Cada rol solo ve y abre las pantallas que le corresponden. Además:
 - **Mi plan.** Plan, precio, sucursales, tarjeta, fechas del negocio y de la suscripción.
   - Avisa cuando la tarjeta está por vencer (2 meses antes) o si falló un cobro.
 - **Cambiar tarjeta** sin cargo en ese momento.
-- **Domiciliación con ahorro.** Opción de cobro automático a un precio menor, cuando tu plan la ofrece.
 - **Reactivación.** Si la suscripción vence, el dueño entra directo a su plan para reactivarla. Mientras tanto, el resto del sistema queda en pausa.
 - **Cancelación cuando quieras** desde Mi plan, con motivo. Cierra la sesión de todos los usuarios del negocio.
 - **Historial de pagos y de suscripciones.**
-- **Servicios adicionales** (catálogo dentro del sistema): sucursales extra, impresora USB, impresora WiFi, módulo de vendedores ilimitados e integraciones con terceros.
+- **Servicios adicionales** (catálogo dentro del sistema): sucursales extra, impresora USB, impresora WiFi e integraciones con terceros.
 
 ---
 
