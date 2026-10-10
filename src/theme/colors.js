@@ -78,6 +78,10 @@ export const colors = {
       rowDivider: '#e8ecf2',
       tableHead: '#f1f4f9',
       tableHeadText: '#475569',
+      modalHeader: '#e4eaf2',
+      modalBody: '#d8e0eb',
+      modalField: '#f3f6fa',
+      modalBorder: '#aab6c8',
       shadowSm: `0 1px 2px rgba(${SHADOW_TINT},0.08)`,
       shadowMd: `0 8px 24px rgba(${SHADOW_TINT},0.12)`,
       shadows: [
@@ -104,6 +108,10 @@ export const colors = {
       rowDivider: '#1f2738',
       tableHead: '#1b2232',
       tableHeadText: '#a3adc2',
+      modalHeader: '#161c2a',
+      modalBody: '#0f1420',
+      modalField: '#1b2232',
+      modalBorder: '#3a4660',
       shadowSm: '0 1px 2px rgba(0,0,0,0.3)',
       shadowMd: '0 8px 24px rgba(0,0,0,0.4)',
       shadows: [
