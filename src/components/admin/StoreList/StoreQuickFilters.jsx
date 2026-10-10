@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { Box, ButtonBase } from "@mui/material";
+import { Box, ButtonBase, useMediaQuery, useTheme } from "@mui/material";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import { STORE_TYPES } from "../../../constants";
 import { colors } from "../../../theme/colors";
@@ -35,6 +35,9 @@ const WAREHOUSE_FILTERS = [
 const StoreQuickFilters = ({ storeType, stores, value, onChange }) => {
   const isStore = storeType === STORE_TYPES.STORE;
   const filters = isStore ? STORE_FILTERS : WAREHOUSE_FILTERS;
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  
   const counts = {
     storeCount: stores.length,
     printerCount: stores.filter((s) => s.printer).length,
@@ -49,6 +52,7 @@ const StoreQuickFilters = ({ storeType, stores, value, onChange }) => {
         display: "flex", gap: 0.5, p: 0.5, mb: 2,
         bgcolor: "tableHead.main", border: "1px solid", borderColor: "divider", borderRadius: 1.5,
         overflowX: "auto", scrollbarWidth: "none", "&::-webkit-scrollbar": { display: "none" },
+        flexWrap: isMobile ? "wrap" : "nowrap",
       }}
     >
       {filters
@@ -62,7 +66,8 @@ const StoreQuickFilters = ({ storeType, stores, value, onChange }) => {
               aria-selected={selected}
               onClick={() => onChange(filter)}
               sx={{
-                flex: { xs: "0 0 auto", md: "1 1 0" }, gap: 0.75, px: 1.75, py: 0.9,
+                flex: isMobile ? "1 1 calc(33.333% - 4px)" : { xs: "0 0 auto", md: "1 1 0" },
+                gap: 0.75, px: 1.75, py: 0.9,
                 borderRadius: 1.25, whiteSpace: "nowrap",
                 fontSize: "0.8125rem", fontWeight: 600,
                 color: selected ? "common.white" : "text.secondary",

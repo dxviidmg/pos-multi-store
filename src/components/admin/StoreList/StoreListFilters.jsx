@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { Box, Checkbox, FormControl, FormControlLabel, Grid, InputLabel, MenuItem, Select } from "@mui/material";
+import { Box, Checkbox, FormControl, FormControlLabel, Grid, InputLabel, MenuItem, Select, useMediaQuery, useTheme } from "@mui/material";
 import DateRangeFilter from "../../ui/DateRangeFilter/DateRangeFilter";
 import { STORE_TYPES, UI_TEXT } from "../../../constants";
 
@@ -8,34 +8,52 @@ const DATE_ITEM_PROPS = { xs: 12, sm: 6, md: 3 };
 /** Tipo de sucursal, leyenda de promedio, fechas y departamento. */
 const StoreListFilters = ({ params, departments, onChange, onStoreTypeChange }) => {
   const isWarehouse = params.store_type === STORE_TYPES.WAREHOUSE;
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   return (
     <>
       <Box sx={{ mb: 1 }}>
         <Grid container spacing={2} alignItems="center">
           <Grid item xs={12} md={4}>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  size="small"
+            {isMobile ? (
+              <FormControl fullWidth size="small">
+                <InputLabel>Tipo de sucursal</InputLabel>
+                <Select
+                  value={params.store_type}
                   onChange={onStoreTypeChange}
-                  value={STORE_TYPES.STORE}
-                  checked={params.store_type === STORE_TYPES.STORE}
+                  label="Tipo de sucursal"
+                >
+                  <MenuItem value={STORE_TYPES.STORE}>Tiendas</MenuItem>
+                  <MenuItem value={STORE_TYPES.WAREHOUSE}>Almacenes</MenuItem>
+                </Select>
+              </FormControl>
+            ) : (
+              <>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      size="small"
+                      onChange={onStoreTypeChange}
+                      value={STORE_TYPES.STORE}
+                      checked={params.store_type === STORE_TYPES.STORE}
+                    />
+                  }
+                  label="Tiendas"
                 />
-              }
-              label="Tiendas"
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  size="small"
-                  onChange={onStoreTypeChange}
-                  value={STORE_TYPES.WAREHOUSE}
-                  checked={isWarehouse}
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      size="small"
+                      onChange={onStoreTypeChange}
+                      value={STORE_TYPES.WAREHOUSE}
+                      checked={isWarehouse}
+                    />
+                  }
+                  label="Almacenes"
                 />
-              }
-              label="Almacenes"
-            />
+              </>
+            )}
           </Grid>
           <Grid item xs={12} md={8} sx={{ textAlign: "center" }}>
             {params.store_type === STORE_TYPES.STORE && (
