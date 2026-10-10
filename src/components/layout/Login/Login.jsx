@@ -125,8 +125,8 @@ function Login() {
         background: colors.gradient.sidebar,
       }}>
         <Box sx={{ position: 'relative', zIndex: 1, textAlign: 'center', px: 6 }}>
-          <Box component="img" src={LogoWhite} alt="SmartVenta" width={260} height="auto" sx={{
-            maxWidth: 260, width: '100%', height: 'auto', mb: 4,
+          <Box component="img" src={LogoWhite} alt="SmartVenta" width={312} height="auto" sx={{
+            maxWidth: 312, width: '100%', height: 'auto', mb: 4,
             filter: colors.shadow.logo,
           }} />
           <Typography variant="h4" sx={{
@@ -212,7 +212,7 @@ function Login() {
           maxWidth: 360,
         }}>
           <Box sx={{ display: 'flex', justifyContent: 'center', mb: 4 }}>
-            <Box component="img" src={LogoWhite} alt="SmartVenta" width={120} height="auto" sx={{ maxWidth: 120, height: 'auto' }} />
+            <Box component="img" src={LogoWhite} alt="SmartVenta" width={144} height="auto" sx={{ maxWidth: 144, height: 'auto' }} />
           </Box>
 
           <Typography variant="h5" sx={{ fontWeight: 700, color: 'common.white', mb: 0.5, textAlign: 'center' }}>

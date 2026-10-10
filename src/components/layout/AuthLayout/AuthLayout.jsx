@@ -118,7 +118,7 @@ const HorizontalStepper = ({ activeStep, stepLabels }) => (
 const AuthLayout = ({ children, headline, subtitle, activeStep, stepLabels }) => (
   <Box sx={{ minHeight: "100dvh", display: "flex", flexDirection: { xs: "column", md: "row" }, bgcolor: { xs: colors.sidebar, md: "background.default" } }}>
     <Box component="aside" sx={brandPanelSx}>
-      <Box component="img" src={LogoWhite} alt="SmartVenta" sx={{ width: 168, height: "auto" }} />
+      <Box component="img" src={LogoWhite} alt="SmartVenta" sx={{ width: 202, height: "auto" }} />
 
       <Box>
         <Typography component="p" sx={{
