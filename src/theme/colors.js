@@ -24,6 +24,7 @@ export const colors = {
   error: STATUS_ERROR,
   onAccent: '#0b1b4d',
   sidebar: SIDEBAR,
+  sidebarDark: SIDEBAR_DARK,
   sidebarActive: '#00e0d8',
   whatsapp: '#25D366',
   googleBlue: '#4285F4',
