@@ -9,7 +9,7 @@ import {
   sidebarDividerSx,
 } from "./MainLayout.styles";
 
-const LANDING_URL = "https://smartventa-pos.vercel.app/";
+const LANDING_URL = "https://smartventapos.vercel.app/";
 
 const Logo = () => (
   <a href={LANDING_URL} target="_blank" rel="noopener noreferrer">
