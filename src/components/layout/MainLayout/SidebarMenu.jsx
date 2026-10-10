@@ -60,7 +60,7 @@ const SidebarMenu = ({
 
   if (item.action === MENU_ACTIONS.GO_BACK) {
     return (
-      <ListItem key={idx} disablePadding sx={{ mb: 0.3 }}>
+      <ListItem key={idx} disablePadding sx={{ mb: 0.15 }}>
         <ListItemButton onClick={onBack} sx={itemButtonSx(expanded)}>
           <ListItemIcon sx={itemIconSx(expanded)}>{getMenuIcon(item.label)}</ListItemIcon>
           <ListItemText primary={item.label}
@@ -76,7 +76,7 @@ const SidebarMenu = ({
     const isStoreSelector = item.action === MENU_ACTIONS.STORE_SELECTOR;
     return (
       <Fragment key={idx}>
-        <ListItem disablePadding sx={{ mb: 0.3 }}>
+        <ListItem disablePadding sx={{ mb: 0.15 }}>
           <ListItemButton onClick={() => onToggleMenu(item, !expanded)} sx={itemButtonSx(expanded)}>
             <ListItemIcon sx={itemIconSx(expanded)}>{getMenuIcon(item.label)}</ListItemIcon>
             <ListItemText
@@ -106,7 +106,7 @@ const SidebarMenu = ({
 
   const active = isActive(item.href);
   return (
-    <ListItem key={idx} disablePadding sx={{ mb: 0.3 }}>
+    <ListItem key={idx} disablePadding sx={{ mb: 0.15 }}>
       <ListItemButton onClick={() => onNavigate(item.href)} sx={itemButtonSx(expanded, active)}>
         <ListItemIcon sx={itemIconSx(expanded, active)}>{getMenuIcon(item.label)}</ListItemIcon>
         <ListItemText primary={item.label}

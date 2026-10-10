@@ -5,6 +5,7 @@ import { alpha } from "@mui/material/styles";
 import InboxOutlinedIcon from "@mui/icons-material/InboxOutlined";
 import { TableSkeleton } from "../Skeleton/Skeleton";
 import { colors } from "../../../theme/colors";
+import { tableButtonSx } from "../tableButtonSx";
 
 const searchInObject = (obj, search) => {
   if (typeof obj === "string") return obj.toLowerCase().includes(search.toLowerCase());
@@ -179,7 +180,7 @@ const DataTable = ({
               color: 'text.primary',
               borderBottom: '1px solid',
               borderColor: 'divider',
-              '& .MuiButtonBase-root': { transform: 'scale(0.85)', minWidth: 0, px: 0.5 },
+              ...tableButtonSx,
             },
             "& .MuiDataGrid-row": {
               minHeight: '34px !important',

@@ -189,7 +189,7 @@ Cuando abres tu segunda sucursal, las funciones de varias sucursales se activan 
 - **Mayoreo manual.** Aplica el precio de mayoreo a un producto del carrito con una casilla.
 - **Protección contra cobros dobles.** Evita registrar dos veces la misma venta.
 - **Aviso de verificación.** Al agregar un producto marcado para conteo físico, el administrador o el dueño ven un aviso.
-- **Fijar resultados.** Mantén la búsqueda abierta para agregar varios productos seguidos.
+- **Fijar resultados.** Mantén la búsqueda abierta para agregar varios productos seguidos, incluso después de agregar stock desde la ventana de stock en otras tiendas.
 - **Vista en tabla o tarjetas** del carrito en computadora.
 - **Impresión de tickets** en impresoras térmicas (recomendada Epson TM-88V). También reimprime desde ventas y apartados.
 - **Estado de la impresora a la vista.** Indicador de conectada o desconectada que se reconecta solo.

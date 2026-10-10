@@ -54,7 +54,7 @@ const SearchProduct = ({ searchInputRef }) => {
 
   const closeStockModal = () => {
     stockModal.close();
-    search.clearSearch();
+    if (!search.keepListOpen) search.clearSearch();
   };
 
   const closeProductModal = () => {
