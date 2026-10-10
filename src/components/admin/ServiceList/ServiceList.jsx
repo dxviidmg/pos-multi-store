@@ -16,10 +16,9 @@ const SERVICES = [
     icon: <StorefrontIcon />,
     title: "Tienda / Almacén",
     price: null,
-    tag: "Consultar precios en",
-    tagColor: "info",
+    tag: "Consultar precios",
     notes: "Agrega una nueva tienda o almacén a tu cuenta.",
-    action: "consultar-pricing",
+    action: "pricing",
   },
   {
     icon: <PrintIcon />,
@@ -40,7 +39,6 @@ const SERVICES = [
     title: "Integración con terceros",
     price: null,
     tag: "Consultar",
-    tagColor: "info",
     notes: "El precio puede variar según los requerimientos.",
     action: "consultar",
   },
@@ -63,14 +61,14 @@ const ServiceList = () => {
     }
 
     const whatsappNumber = process.env.REACT_APP_WHATSAPP_NUMBER || "+34";
-    const message = `Hola, me gustaría consultar sobre ${consultDialog.service.title}. Nuevas sucursales: ${consultDialog.storeNames}`;
+    const message = `Hola, me gustaría solicitar cambios en ${consultDialog.service.title}: ${consultDialog.storeNames}`;
     const url = `https://wa.me/${whatsappNumber.replace(/\D/g, "")}?text=${encodeURIComponent(message)}`;
     window.open(url, "_blank");
     handleCloseConsult();
   };
 
   const handlePricingClick = () => {
-    window.location.href = "/#pricing";
+    window.location.href = "https://smartventapos.vercel.app/";
   };
 
   return (
@@ -125,11 +123,10 @@ const ServiceList = () => {
                   {service.notes}
                 </Typography>
 
-                {service.action === "consultar-pricing" && (
+                {service.action === "pricing" && (
                   <CustomButton
                     fullWidth
                     onClick={handlePricingClick}
-                    startIcon={<WhatsAppIcon />}
                     size="small"
                     sx={{
                       mt: "auto",
@@ -155,7 +152,7 @@ const ServiceList = () => {
                       "&:hover": { bgcolor: "#075E54" },
                     }}
                   >
-                    Actualizar
+                    Solicitar cambio
                   </CustomButton>
                 )}
               </CardContent>
@@ -173,7 +170,7 @@ const ServiceList = () => {
           <TextField
             fullWidth
             label="Descripción de cambios"
-            placeholder="Describe qué necesitas actualizar..."
+            placeholder="Describe qué cambios necesitas..."
             value={consultDialog.storeNames}
             onChange={(e) => setConsultDialog({ ...consultDialog, storeNames: e.target.value })}
             multiline
