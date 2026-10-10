@@ -1,8 +1,9 @@
 import { useEffect, useCallback, useMemo, useState } from "react";
 import DataTable from "../../ui/DataTable/DataTable";
-import { Chip, Box } from "@mui/material";
+import { Chip, Box, useMediaQuery, useTheme } from "@mui/material";
 import CustomButton from "../../ui/Button/Button";
 import PageHeader from "../../ui/PageHeader";
+import CardGallery from "../../ui/CardGallery/CardGallery";
 import { colors } from "../../../theme/colors";
 import { getFormattedDate } from "../../../utils/date";
 import AddBusinessIcon from "@mui/icons-material/AddBusiness";
@@ -19,6 +20,7 @@ import UserManagementModals from "../../ui/UserModals/UserManagementModals";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { getStoreColumns, getStorageColumns, getTotalColumns } from "./StoreList.columns";
 import CreateStoreModal from "./CreateStoreModal";
+import StoreCard from "./StoreCard";
 import StoreKpiTiles from "./StoreKpiTiles";
 import StoreListFilters from "./StoreListFilters";
 import StoreQuickFilters from "./StoreQuickFilters";
@@ -50,6 +52,8 @@ const StoreList = () => {
   const { user } = useUser();
   const isOwner = isOwnerUser(user);
   const { switchStore } = useSwitchStore();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   const [storeInvestments, setStoreInvestments] = useState({});
   const [quickFilter, setQuickFilter] = useState("all");
@@ -114,32 +118,30 @@ const StoreList = () => {
     [stores, quickFilter]
   );
 
-  const columns = useMemo(() => {
-    const props = {
-      user,
-      quickFilter,
-      storeInvestments,
-      handleSelectStore: switchStore,
-      handleOpenEditUser,
-      handleOpenChangePassword,
-      handleShowInvestmentForStore,
-      handleResetStore: resetStoreWithConfirm,
-    };
-    return isStoreType
-      ? getStoreColumns({ ...props, averageSales, hasDepartment })
-      : getStorageColumns(props);
-  }, [
-    isStoreType,
+  const sharedProps = useMemo(() => ({
     user,
     quickFilter,
-    averageSales,
-    hasDepartment,
+    storeInvestments,
+    handleSelectStore: switchStore,
+    handleOpenEditUser,
+    handleOpenChangePassword,
+    handleShowInvestmentForStore,
+    handleResetStore: resetStoreWithConfirm,
+  }), [
+    user,
+    quickFilter,
     storeInvestments,
     switchStore,
     handleOpenEditUser,
     handleOpenChangePassword,
     handleShowInvestmentForStore,
   ]);
+
+  const columns = useMemo(() => (
+    isStoreType
+      ? getStoreColumns({ ...sharedProps, averageSales, hasDepartment })
+      : getStorageColumns(sharedProps)
+  ), [isStoreType, sharedProps, averageSales, hasDepartment]);
 
   const totalColumns = useMemo(
     () => getTotalColumns({ quickFilter, hasDepartment }),
@@ -163,9 +165,12 @@ const StoreList = () => {
       <CustomSpinner isLoading={loading} />
       <Box className="card">
         <PageHeader title={isStoreType ? "Tiendas" : "Almacenes"} childrenMd={6}>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1, flexWrap: "nowrap", justifyContent: "flex-end" }}>
+          <Box sx={{
+            display: "flex", alignItems: "center", gap: 1,
+            flexWrap: "wrap", justifyContent: { xs: "flex-start", md: "flex-end" },
+          }}>
             {tenantInfo.notices?.length > 0 && (
-              <Box sx={{ display: "flex", gap: 0.5, flexWrap: "nowrap" }}>
+              <Box sx={{ display: "flex", gap: 0.5, flexWrap: "wrap" }}>
                 {tenantInfo.notices.map((notice, index) => (
                   <Chip
                     key={index}
@@ -182,6 +187,7 @@ const StoreList = () => {
                 startIcon={<AddBusinessIcon />}
                 disabled={createStoreBlocked}
                 title={createStoreBlocked ? "Has alcanzado el límite de tiendas de tu plan" : ""}
+                fullWidth={isMobile}
               >
                 Crear tienda
               </CustomButton>
@@ -206,27 +212,46 @@ const StoreList = () => {
         />
 
         <Box sx={{ mb: 2 }}>
-          <DataTable
-            progressPending={loading}
-            noDataComponent={isOwner ? (
-              <Box sx={{ py: 6, textAlign: "center" }}>
-                <CustomButton
-                  onClick={() => createStoreModal.open()}
-                  disabled={createStoreBlocked}
-                  startIcon={<AddBusinessIcon />}
-                  sx={firstStoreButtonSx}
-                >
-                  Crear mi primera tienda
-                </CustomButton>
-              </Box>
-            ) : "No hay sucursales registradas"}
-            data={filteredStores}
-            columns={columns}
-            conditionalRowStyles={currentStoreRowStyles}
-          />
+          {isMobile ? (
+            <CardGallery
+              items={filteredStores}
+              loading={loading}
+              gridItem={{ xs: 12, sm: 6 }}
+              emptyText={isOwner ? "Crea tu primera tienda para empezar" : "No hay sucursales registradas"}
+              renderItem={(store) => (
+                <StoreCard
+                  store={store}
+                  quickFilter={quickFilter}
+                  isStoreType={isStoreType}
+                  averageSales={averageSales}
+                  enterTooltip={isStoreType ? "Entrar a la tienda" : "Entrar al almacén"}
+                  {...sharedProps}
+                />
+              )}
+            />
+          ) : (
+            <DataTable
+              progressPending={loading}
+              noDataComponent={isOwner ? (
+                <Box sx={{ py: 6, textAlign: "center" }}>
+                  <CustomButton
+                    onClick={() => createStoreModal.open()}
+                    disabled={createStoreBlocked}
+                    startIcon={<AddBusinessIcon />}
+                    sx={firstStoreButtonSx}
+                  >
+                    Crear mi primera tienda
+                  </CustomButton>
+                </Box>
+              ) : "No hay sucursales registradas"}
+              data={filteredStores}
+              columns={columns}
+              conditionalRowStyles={currentStoreRowStyles}
+            />
+          )}
         </Box>
 
-        {isStoreType && stores.length > 1 && !FILTERS_WITHOUT_TOTALS.includes(quickFilter) && (
+        {!isMobile && isStoreType && stores.length > 1 && !FILTERS_WITHOUT_TOTALS.includes(quickFilter) && (
           <Box sx={{ mt: 4 }}>
             <Box sx={{ mb: 2 }}>
               <h2>Totales</h2>

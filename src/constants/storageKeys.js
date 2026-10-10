@@ -7,5 +7,6 @@ export const STORAGE_KEYS = {
   VIEW_MODE: {
     PRODUCT_LIST: "productList.viewMode",
     STORE_PRODUCT_LIST: "storeProductList.viewMode",
+    STORE_LIST: "storeList.viewMode",
   },
 };
