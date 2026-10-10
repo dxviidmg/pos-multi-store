@@ -8,6 +8,7 @@ import WifiIcon from "@mui/icons-material/Wifi";
 import IntegrationInstructionsIcon from "@mui/icons-material/IntegrationInstructions";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import { formatCurrency } from "../../../utils/utils";
+import { colors } from "../../../theme/colors";
 import CustomButton from "../../ui/Button/Button";
 
 const SERVICES = [
@@ -15,10 +16,10 @@ const SERVICES = [
     icon: <StorefrontIcon />,
     title: "Tienda / Almacén",
     price: null,
-    tag: "Consultar",
+    tag: "Consultar precios en",
     tagColor: "info",
     notes: "Agrega una nueva tienda o almacén a tu cuenta.",
-    action: "consultar",
+    action: "consultar-pricing",
   },
   {
     icon: <PrintIcon />,
@@ -68,6 +69,10 @@ const ServiceList = () => {
     handleCloseConsult();
   };
 
+  const handlePricingClick = () => {
+    window.location.href = "/#pricing";
+  };
+
   return (
     <Grid className="card">
       <Typography variant="h5" fontWeight={700} gutterBottom>
@@ -112,7 +117,7 @@ const ServiceList = () => {
                       {`${formatCurrency(service.price)}/mes`}
                     </Typography>
                   ) : service.tag ? (
-                    <Chip label={service.tag} color={service.tagColor} size="small" />
+                    <Chip label={service.tag} size="small" />
                   ) : null}
                 </Box>
 
@@ -120,16 +125,37 @@ const ServiceList = () => {
                   {service.notes}
                 </Typography>
 
+                {service.action === "consultar-pricing" && (
+                  <CustomButton
+                    fullWidth
+                    onClick={handlePricingClick}
+                    startIcon={<WhatsAppIcon />}
+                    size="small"
+                    sx={{
+                      mt: "auto",
+                      bgcolor: colors.whatsapp,
+                      color: "white",
+                      "&:hover": { bgcolor: "#075E54" },
+                    }}
+                  >
+                    Ver precios
+                  </CustomButton>
+                )}
+
                 {service.action === "consultar" && (
                   <CustomButton
                     fullWidth
-                    variant="contained"
                     onClick={() => handleOpenConsult(service)}
                     startIcon={<WhatsAppIcon />}
                     size="small"
-                    sx={{ mt: "auto" }}
+                    sx={{
+                      mt: "auto",
+                      bgcolor: colors.whatsapp,
+                      color: "white",
+                      "&:hover": { bgcolor: "#075E54" },
+                    }}
                   >
-                    Consultar
+                    Actualizar
                   </CustomButton>
                 )}
               </CardContent>
@@ -146,8 +172,8 @@ const ServiceList = () => {
         <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2, pt: 2 }}>
           <TextField
             fullWidth
-            label="Nombres de las nuevas sucursales"
-            placeholder="Ej: Tienda Centro, Tienda Norte"
+            label="Descripción de cambios"
+            placeholder="Describe qué necesitas actualizar..."
             value={consultDialog.storeNames}
             onChange={(e) => setConsultDialog({ ...consultDialog, storeNames: e.target.value })}
             multiline
@@ -160,10 +186,15 @@ const ServiceList = () => {
             Cancelar
           </CustomButton>
           <CustomButton
-            variant="contained"
             onClick={handleSendConsult}
             disabled={!consultDialog.storeNames.trim()}
             startIcon={<WhatsAppIcon />}
+            sx={{
+              bgcolor: colors.whatsapp,
+              color: "white",
+              "&:hover": { bgcolor: "#075E54" },
+              "&:disabled": { bgcolor: "#ccc" },
+            }}
           >
             Enviar
           </CustomButton>
