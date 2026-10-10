@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
-import CustomModal from "../../ui/Modal/Modal";
+import CustomModal, { ModalBody } from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
 import { showSuccess, showRequestError } from "../../../utils/alerts";
 import { createCashFlow, updateCashFlow, getCashFlowChoices } from "../../../api/cashflow";
 import {
-  Box,
   Grid,
   TextField,
   Select,
@@ -83,7 +82,7 @@ const CashFlowModal = ({ isOpen, cashFlow, onClose, onUpdate }) => {
       onClose={onClose}
       title={formData.id ? "Editar movimiento" : "Crear movimiento"}
     >
-      <Box sx={{ p: 3 }}>
+      <ModalBody>
         <Typography
           variant="body2"
           sx={{ mb: 2.5, color: "text.secondary" }}
@@ -173,7 +172,7 @@ const CashFlowModal = ({ isOpen, cashFlow, onClose, onUpdate }) => {
             </CustomButton>
           </Grid>
         </Grid>
-      </Box>
+      </ModalBody>
     </CustomModal>
   );
 };

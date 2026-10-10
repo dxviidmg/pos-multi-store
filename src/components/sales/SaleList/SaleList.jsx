@@ -96,7 +96,9 @@ const SaleList = () => {
         <PageHeader title="Ventas" />
 
         <Grid container spacing={2} sx={{ mb: 2 }}>
-          <Grid item xs={12} md={3}>
+          {/* Select "Tipo" oculto — solo tiene 1 opción (Ventas).
+              Descomentar si se reactiva el filtro de apartados. */}
+          {/* <Grid item xs={12} md={3}>
             <FormControl fullWidth size="small">
               <InputLabel>Tipo</InputLabel>
               <Select value={params.reservation_in_progress} onChange={handleDataChange} name="reservation_in_progress" label="Tipo">
@@ -105,7 +107,7 @@ const SaleList = () => {
                 ))}
               </Select>
             </FormControl>
-          </Grid>
+          </Grid> */}
 
           <SaleSearchFields params={params} onChange={handleDataChange} maxDate={today} />
 

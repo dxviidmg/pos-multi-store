@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import CustomModal from "../../ui/Modal/Modal";
+import CustomModal, { ModalBody } from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
 import { createDiscount } from "../../../api/discounts";
 import { useCrudMutation } from "../../../hooks/useCrudMutation";
-import { TextField, Box } from "@mui/material";
+import { TextField } from "@mui/material";
 import DiscountIcon from "@mui/icons-material/Discount";
 
 const DUPLICATE_DISCOUNT_ERROR = "discount with this discount percentage already exists.";
@@ -37,7 +37,7 @@ const DiscountModal = ({ isOpen, onClose }) => {
 
   return (
     <CustomModal showOut={isOpen} onClose={onClose} title="Crear descuento">
-      <Box sx={{ p: 3, display: "flex", flexDirection: "column", gap: 2 }}>
+      <ModalBody sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
         <TextField
           size="small"
           fullWidth
@@ -53,7 +53,7 @@ const DiscountModal = ({ isOpen, onClose }) => {
         >
           Crear descuento
         </CustomButton>
-      </Box>
+      </ModalBody>
     </CustomModal>
   );
 };

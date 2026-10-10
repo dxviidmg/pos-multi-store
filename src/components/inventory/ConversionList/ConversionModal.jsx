@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import CustomModal from "../../ui/Modal/Modal";
+import CustomModal, { ModalBody } from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
 import {
   Box,
@@ -88,7 +88,7 @@ const ConversionModal = ({ isOpen, onClose, conversion }) => {
       onClose={onClose}
       title={isEditing ? "Editar conversión" : "Nueva conversión"}
     >
-      <Box sx={{ p: 3, maxWidth: 500, mx: "auto" }}>
+      <ModalBody sx={{ maxWidth: 500, mx: "auto" }}>
         <Typography variant="body2" sx={{ mb: 2.5, color: "text.secondary" }}>
           Define la equivalencia entre dos productos. Ejemplo: 1 Costal = 10 Kilogramos.
         </Typography>
@@ -200,7 +200,7 @@ const ConversionModal = ({ isOpen, onClose, conversion }) => {
             </CustomButton>
           </Grid>
         </Grid>
-      </Box>
+      </ModalBody>
     </CustomModal>
   );
 };

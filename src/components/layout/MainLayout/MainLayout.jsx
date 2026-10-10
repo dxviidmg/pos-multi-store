@@ -197,21 +197,19 @@ export default function MainLayout({ toggleTheme, themeMode }) {
             </Box>
           )}
 
-          {/* Desktop: todos los menus */}
-          <Box sx={{ display: { xs: "none", lg: "flex" }, alignItems: "center", gap: 0.5 }}>
+          {/* Desktop + Mobile: menú de notificaciones unificado */}
+          <Box sx={{ display: { xs: open ? "none" : "flex", lg: "flex" }, alignItems: "center", gap: { xs: 0, lg: 0.5 } }}>
             <PendingMenu />
             {!seller && (
               <>
-                <DuplicateSalesMenu />
-                <StockRequestMenu />
+                {/* Estos solo se muestran en desktop */}
+                <Box sx={{ display: { xs: "none", lg: "flex" }, gap: 0.5 }}>
+                  <DuplicateSalesMenu />
+                  <StockRequestMenu />
+                </Box>
                 <NotificationsMenu />
               </>
             )}
-          </Box>
-
-          {/* Mobile: solo NotificationsMenu - ocultar cuando drawer abierto */}
-          <Box sx={{ display: { xs: open ? "none" : "flex", lg: "none" }, alignItems: "center" }}>
-            {!seller && <NotificationsMenu />}
           </Box>
 
           {/* Ayuda - ocultar cuando drawer abierto en mobile */}
