@@ -45,7 +45,7 @@ const helpTexts = {
   },
   "/importar-productos/": {
     title: "Importar productos",
-    text: "Carga productos desde un archivo Excel. Ideal para dar de alta tu catálogo inicial o agregar muchos productos nuevos de una vez.",
+    text: "Carga productos desde un archivo Excel. Con el modo Tradicional usas la plantilla; con el modo Especial subes el reporte de inventario de otro sistema. Ideal para dar de alta tu catálogo inicial o agregar muchos productos nuevos de una vez.",
   },
   "/importar-inventario/": {
     title: "Importar inventario",

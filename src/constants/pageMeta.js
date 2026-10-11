@@ -66,7 +66,7 @@ const pageMeta = {
   "/tablero-traspasos-pendientes/": { icon: PendingActionsOutlinedIcon, description: "Traspasos que todavía no se reciben." },
   "/tablero-productos/": { icon: LeaderboardOutlinedIcon, description: "Desempeño de tus productos." },
   "/reasignacion/": { icon: DriveFileMoveOutlinedIcon, description: "Cambia marca o departamento de varios productos a la vez." },
-  "/importar-productos/": { icon: UploadFileOutlinedIcon, description: "Da de alta tu catálogo desde un archivo de Excel." },
+  "/importar-productos/": { icon: UploadFileOutlinedIcon, description: "Da de alta tu catálogo desde la plantilla o desde el reporte de otro sistema." },
   "/importar-inventario/": { icon: UploadFileOutlinedIcon, description: "Carga existencias de una tienda desde Excel." },
   "/auditoria-transacciones/": { icon: ManageSearchOutlinedIcon, description: "Revisión de transacciones registradas." },
   "/auditoria-productos/": { icon: ManageSearchOutlinedIcon, description: "Revisión de cambios en productos." },
