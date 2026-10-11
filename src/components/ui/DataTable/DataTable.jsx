@@ -20,6 +20,7 @@ const DataTable = ({
   noDataComponent = "Sin datos que mostrar",
   searcher = false,
   setSelectedRows,
+  selectedIds,
   conditionalRowStyles,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -141,6 +142,7 @@ const DataTable = ({
           onPaginationModelChange={setPaginationModel}
           pageSizeOptions={[10, 25, 50, 100]}
           checkboxSelection={!!setSelectedRows}
+          {...(selectedIds && { rowSelectionModel: selectedIds })}
           onRowSelectionModelChange={(ids) => {
             if (setSelectedRows) {
               const selected = rowsWithIds.filter((row) => ids.includes(row._id));
