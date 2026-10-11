@@ -82,6 +82,24 @@ export const importProducts = async (data) => {
 };
 
 /**
+ * Validate products import file from another system's inventory report (modo especial).
+ * @param {Object} data - Object with file, brand and import_stock
+ * @returns {Promise<Object>} Validation results
+ */
+export const importEleventaValidation = async (data) => {
+  return httpClient.post(getApiUrl("products/eleventa/import-validation"), toFormData(data));
+};
+
+/**
+ * Import products from another system's inventory report (modo especial).
+ * @param {Object} data - Object with file, brand, import_stock and excluded_codes (JSON array of codes to skip)
+ * @returns {Promise<Object>} Import results
+ */
+export const importEleventa = async (data) => {
+  return httpClient.post(getApiUrl("products/eleventa/import"), toFormData(data));
+};
+
+/**
  * Delete multiple products del catálogo.
  * @param {Object} data - Object with product IDs to delete
  * @returns {Promise<Object>} Deletion response
