@@ -3,9 +3,10 @@ import { useQuery } from "@tanstack/react-query";
 import { useInvalidateCatalogOptions } from "../shared/useCatalogOptions";
 import { getImportCanIncludeQuantity, importEleventa, importEleventaValidation } from "../../../api/products";
 import { useImportFlow } from "../../../hooks/useImportFlow";
-import { showRequestError } from "../../../utils/alerts";
+import { showRequestError, showWarning } from "../../../utils/alerts";
 
 const DEFAULT_BRAND = "Sin marca";
+const SUCCESS_STATUS = "Exitoso";
 export const MIN_WHOLESALE_QUANTITY = 2;
 
 export const isMinQuantityValid = (value) => Number.isInteger(Number(value)) && Number(value) >= MIN_WHOLESALE_QUANTITY;
@@ -14,6 +15,7 @@ const isWholesaleConfigured = ({ wholesale_mode: mode, min_wholesale_quantity: q
   mode === "ignore" || (mode === "quantity" && isMinQuantityValid(quantity));
 
 const hasNoStock = (row) => !row.quantity;
+const isValidRow = (row) => row.status === SUCCESS_STATUS;
 
 /**
  * Importación de un reporte de inventario de otro sistema: validación y alta en el backend;
@@ -23,6 +25,7 @@ export const useEleventaImport = () => {
   const invalidateCatalogOptions = useInvalidateCatalogOptions();
   const [validatedRows, setValidatedRows] = useState([]);
   const [selectedIds, setSelectedIds] = useState([]);
+  const [removedCount, setRemovedCount] = useState(0);
 
   const { data: canIncludeQuantity = false, error: configError } = useQuery({
     queryKey: ["import-can-include-quantity"],
@@ -42,17 +45,31 @@ export const useEleventaImport = () => {
     [canIncludeQuantity]
   );
 
+  // Correcciones del usuario sobre el archivo (se reenvían con cada validación e importación)
+  const editsRef = useRef({});
+  const removedRowsRef = useRef([]);
+  const latestRowsRef = useRef([]);
+  const getCorrections = useCallback(() => ({
+    edits: Object.keys(editsRef.current).length ? JSON.stringify(editsRef.current) : "",
+    removed_rows: removedRowsRef.current.length ? JSON.stringify(removedRowsRef.current) : "",
+  }), []);
+
   const validate = useCallback(async (form) => {
-    const response = await importEleventaValidation(form);
+    const response = await importEleventaValidation({ ...form, ...getCorrections() });
+    latestRowsRef.current = response.data;
     setValidatedRows(response.data);
     setSelectedIds(form.import_stock === "Y" ? response.data.filter(hasNoStock).map((row) => row.code) : []);
     return response;
-  }, []);
+  }, [getCorrections]);
 
   const excludedRef = useRef([]);
   const importFile = useCallback(
-    (form) => importEleventa({ ...form, excluded_codes: excludedRef.current.length ? JSON.stringify(excludedRef.current) : "" }),
-    []
+    (form) => importEleventa({
+      ...form,
+      ...getCorrections(),
+      excluded_codes: excludedRef.current.length ? JSON.stringify(excludedRef.current) : "",
+    }),
+    [getCorrections]
   );
 
   const flow = useImportFlow({
@@ -61,9 +78,30 @@ export const useEleventaImport = () => {
     importFile,
     importErrorAction: "importar los productos",
     importSuccessMessage: "Productos importados",
+    errorsHint: "Corrígelos en la tabla o quita esos productos.",
     onImported: invalidateCatalogOptions,
   });
   const { formData, setFormData } = flow;
+
+  useEffect(() => {
+    editsRef.current = {};
+    removedRowsRef.current = [];
+    setRemovedCount(0);
+  }, [formData.file]);
+
+  const saveRowEdit = async (excelRow, changes) => {
+    editsRef.current = { ...editsRef.current, [excelRow]: { ...editsRef.current[excelRow], ...changes } };
+    const validated = await flow.handleValidation({ silent: true });
+    const row = validated && latestRowsRef.current.find((item) => item.excel_row === excelRow);
+    if (row && !isValidRow(row)) showWarning(`No se pudo corregir la fila ${excelRow}`, row.status);
+    return validated;
+  };
+
+  const removeRows = (excelRows) => {
+    removedRowsRef.current = [...new Set([...removedRowsRef.current, ...excelRows])];
+    setRemovedCount(removedRowsRef.current.length);
+    return flow.handleValidation({ silent: true });
+  };
 
   useEffect(() => {
     if (configError) showRequestError("cargar la configuración de importación", configError);
@@ -90,13 +128,16 @@ export const useEleventaImport = () => {
 
   return {
     ...flow,
+    saveRowEdit,
+    removeRows,
     canIncludeQuantity,
     isFormIncomplete: formData.brand.trim() === "" || formData.import_stock === "" || !isWholesaleConfigured(formData),
     zeroStockRows,
     selectedIds,
     setSelectedIds,
     excludedCount: excluded.length,
-    totalCount: validatedRows.length,
+    removedCount,
+    originalCount: validatedRows.length + removedCount,
     importCount,
     canImport: flow.canImport && importCount > 0,
   };

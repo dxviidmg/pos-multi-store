@@ -4,11 +4,10 @@ import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import PageHeader from "../../ui/PageHeader";
 import ImportStepper from "../../ui/Import/ImportStepper";
 import ImportFileDrop from "../../ui/Import/ImportFileDrop";
-import ImportErrorRows from "../../ui/Import/ImportErrorRows";
 import { ImportValidateButton, ImportSubmitButton } from "../../ui/Import/ImportActions";
 import YesNoSelect from "./YesNoSelect";
+import EleventaErrorRows from "./EleventaErrorRows";
 import ZeroStockSelector from "./ZeroStockSelector";
-import { ERROR_COLUMNS } from "./eleventaImport.columns";
 import { isMinQuantityValid, MIN_WHOLESALE_QUANTITY, useEleventaImport } from "./useEleventaImport";
 
 const WHOLESALE_OPTIONS = [
@@ -19,9 +18,9 @@ const WHOLESALE_OPTIONS = [
 const EleventaImport = ({ tabs }) => {
   const {
     formData, handleDataChange, fileInputRef, fileTableRef, dropZoneProps,
-    loading, errorRows, validationResult, canImport, handleValidation, handleImport,
+    loading, errorRows, validationResult, canImport, handleValidation, handleImport, saveRowEdit, removeRows,
     canIncludeQuantity, isFormIncomplete, zeroStockRows, selectedIds, setSelectedIds,
-    excludedCount, totalCount, importCount,
+    excludedCount, removedCount, originalCount, importCount,
   } = useEleventaImport();
 
   return (
@@ -53,7 +52,7 @@ const EleventaImport = ({ tabs }) => {
               error={formData.brand.trim() === ""}
               helperText="Tu reporte no incluye marca; se usará esta para todos."
             />
-            <Alert severity="info">
+            <Alert severity="info" variant="filled">
               El reporte no incluye la cantidad mínima de mayoreo. Elige si usas una cantidad por defecto
               en los productos con precio mayoreo o si solo se toma el precio de menudeo.
             </Alert>
@@ -82,12 +81,12 @@ const EleventaImport = ({ tabs }) => {
             {canIncludeQuantity ? (
               <>
                 <YesNoSelect name="import_stock" label="¿Agregar inventario?" value={formData.import_stock} onChange={handleDataChange} />
-                <Alert severity="info">
+                <Alert severity="info" variant="filled">
                   Primera vez aquí con una sola tienda: puedes agregar el inventario del reporte.
                 </Alert>
               </>
             ) : (
-              <Alert severity="info">
+              <Alert severity="info" variant="filled">
                 Tu negocio tiene varias sucursales o ya tiene inventario: el inventario del reporte se ignora.
               </Alert>
             )}
@@ -103,14 +102,15 @@ const EleventaImport = ({ tabs }) => {
         </Grid>
       </Grid>
 
-      <ImportErrorRows rows={errorRows} columns={ERROR_COLUMNS} tableRef={fileTableRef} paginated />
+      <EleventaErrorRows rows={errorRows} tableRef={fileTableRef} showWholesale={formData.wholesale_mode === "quantity"} disabled={loading} onSave={saveRowEdit} onRemove={removeRows} />
 
       <ZeroStockSelector
         rows={zeroStockRows}
         selectedIds={selectedIds}
         onChange={setSelectedIds}
         importCount={importCount}
-        totalCount={totalCount}
+        originalCount={originalCount}
+        removedCount={removedCount}
         excludedCount={excludedCount}
         canImport={canImport}
         onImport={handleImport}
