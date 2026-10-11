@@ -291,7 +291,7 @@ Revisa esta lista antes de crear un componente. Si un patrón se repite en dos a
 | `CustomButton` (`Button/`) | Botón MUI con `variant="contained"`, `size="small"`, `minWidth: 0`, alto fijo (40 px `small`, 44 px el resto); respeta el `sx` recibido. |
 | `CustomTooltip` (`Tooltip/`) | Props `text`, `position`, `fullWidth`. **Obligatorio en botones de solo ícono.** |
 | `CustomSpinner` (`Spinner/`) | Requiere `isLoading`. |
-| `DataTable` | DataGrid con búsqueda, orden, paginación, selección y carga. Columnas con `selector` (valor) o `cell` (render); soporta `conditionalRowStyles=[{ when, style }]`. No soporta `omit` ni `style` por columna. Encabezado azul marino con texto blanco (`App.css`). |
+| `DataTable` | DataGrid con búsqueda, orden, paginación, selección y carga. Columnas con `selector` (valor) o `cell` (render); soporta `conditionalRowStyles=[{ when, style }]`. Con `setSelectedRows` muestra casillas; `selectedIds` (arreglo de `id`) controla la selección. No soporta `omit` ni `style` por columna. Encabezado azul marino con texto blanco (`App.css`). |
 | `SimpleTable` | Tabla HTML de solo lectura (modales, importaciones). |
 | `tableButtonSx` | `sx` para botones dentro de tablas: 28 px, esquinas casi rectas, íconos de 1rem. |
 | `PageHeader` | Título + acciones de página. No armes `Stack` + `<h1>` a mano. |
@@ -533,6 +533,7 @@ Antes de escribir algo nuevo, copia el ejemplo correspondiente.
 | Columnas en archivo aparte | `admin/StoreList/StoreList.columns.jsx` | Fábricas `getXColumns({ … })`, helpers `cashCol`/`countCol`, `FILTER_COLUMNS` |
 | Tablero con tarea Celery | `admin/Dashboard/ProductsDashboard.jsx` + `api/dashboards.js` | `startTask` memoizado → `useTaskPolling`, `Filters`, `DashboardLoading`, `EmptyState`, `chartStyles` |
 | Importación Excel | `sales/SaleImport/SaleImport.jsx` | `useImportFlow` + `ui/Import/*` + `getStaticUrl` para la plantilla |
+| Importación con dos modos y selección de filas | `products/ProductImport/ProductImport.jsx` + `useEleventaImport.js` + `ZeroStockSelector.jsx` | Pestañas de modo con `key` que remonta; `useImportFlow` envuelto; `DataTable` con `selectedIds`; el backend valida e importa, el frontend manda `excluded_codes` |
 | Exportación Excel | `products/ProductList` (`handleDownload`) | Filas con encabezados en español → `exportToExcel(data, "Nombre")` |
 | Atajo de teclado en modal | `sales/PaymentEditModal/PaymentEditModal.jsx` | `useCtrlShortcut` con la misma regla de deshabilitado que el botón |
 | Botón de cobro con impresora | `sales/shared/PaymentSubmitPanel.jsx` | Estado de impresora + texto con/sin ticket |

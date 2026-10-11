@@ -1,6 +1,6 @@
 # SmartVenta — Punto de venta en la nube para negocios con una o muchas sucursales
 
-> Última actualización: 10 de octubre de 2026
+> Última actualización: 11 de octubre de 2026
 
 **SmartVenta** es un punto de venta (POS) en la nube para negocios con una o varias tiendas y almacenes. Desde el navegador vendes, cobras, apartas, surtes, mueves mercancía entre sucursales y controlas precios e inventario, en computadora, tableta o celular, sin instalar nada. Cada pieza queda registrada: sabes quién la movió, cuándo y a dónde fue.
 
@@ -153,6 +153,7 @@ Cuando abres tu segunda sucursal, las funciones de varias sucursales se activan 
 - **Historial de precios.** Cada cambio con valor anterior, valor nuevo, fecha y quién lo hizo, por producto o general. Filtra hasta 12 meses atrás y descárgalo a Excel.
 - **Precios bajo control.** Solo el dueño edita precios de productos existentes.
 - **Importación masiva desde Excel.** Carga tu catálogo con precios desde una plantilla.
+- **Importación desde otro sistema.** Si vienes de Eleventa, sube su reporte de inventario tal como lo exporta, sin acomodarlo a mano. Elige la marca para todos los productos, decide si usas una cantidad mínima de mayoreo o solo el precio de menudeo, revisa los errores fila por fila y decide qué productos con inventario en 0 se importan y cuáles no.
 
 **Resultado:** ajustas cientos de precios en minutos, sin errores y con registro de cada cambio.
 
