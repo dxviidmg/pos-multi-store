@@ -51,7 +51,7 @@ Como usuario quiero elegir entre "Tradicional" (plantilla) y "Especial" (reporte
 - R3.2 **Departamento:** se usa el de Eleventa y se crean los que no existan. Si el departamento dice textualmente `- Sin Departamento -` (tras quitar espacios) o viene vacío, el producto se importa con departamento `null`; ese texto nunca se crea como departamento.
 - R3.3 **Unidad:** `PZ` para todos (Eleventa no la trae).
 - R3.4 **Mayoreo con descuento de cliente:** No.
-- R3.6 **Mayoreo:** antes de validar, un aviso explica que el reporte no incluye la cantidad mínima de mayoreo y se debe elegir (obligatorio): "Usar una cantidad mínima" (campo entero ≥ 2, por defecto 2, que se aplica a todos los productos con precio mayoreo mayor a 0) o "Solo precio de menudeo" (se ignora el precio mayoreo). La tabla de errores muestra "Cantidad mínima mayoreo" con ese valor.
+- R3.6 **Mayoreo:** antes de validar, un aviso explica que el reporte no incluye la cantidad mínima de mayoreo y se debe elegir (obligatorio): "Usar una cantidad mínima" (campo entero ≥ 2, por defecto 2, que se aplica a todos los productos con precio mayoreo mayor a 0) o "Solo precio de menudeo" (se ignora el precio mayoreo).
 - R3.5 No se muestran las preguntas "¿Crear marcas?", "¿Crear departamentos?" ni "¿Deptos obligatorios?"; en este modo son fijas (sí, sí, no).
 
 ### R4. Validaciones por fila (modo Eleventa)
@@ -80,7 +80,7 @@ Después de validar sin errores, si el inventario se importa y hay productos con
 - R6.3 Por defecto todos quedan **seleccionados** (se importan). El usuario desmarca los que no quiere. Hay acciones "Seleccionar todos" y "Quitar todos".
 - R6.4 Los productos con inventario 0 que se desmarcan **no se importan**; el resto sí.
 - R6.5 Solo aplica cuando el inventario se importa (R5.1). Si el inventario se ignora (R5.2, varias tiendas), no se muestra la sección y se importan todos los productos.
-- R6.6 Antes de importar se ve el resumen: "Se importarán X de Y productos (Z con inventario 0 omitidos)".
+- R6.6 Antes de importar se ve el resumen: renglones originales del archivo, cuántos se quitaron por errores (filas quitadas en la tabla de errores) y cuántos por inventario 0 (desmarcados), y cuántos se importarán con su porcentaje del total original (por ejemplo "Se importarán 4,171 (78%)").
 - R6.7 Sin productos en 0, no aparece la sección.
 
 ### R7. Importar
