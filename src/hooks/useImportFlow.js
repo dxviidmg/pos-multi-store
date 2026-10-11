@@ -1,8 +1,7 @@
 import { useCallback, useMemo, useRef, useState } from "react";
-import { showSuccess, showWarning, showRequestError } from "../utils/alerts";
+import { showSuccess, showWarning, showRequestError, waitForAlertClose } from "../utils/alerts";
 
 const SUCCESS_STATUS = "Exitoso";
-const SCROLL_DELAY = 300;
 
 const isErrorRow = (row) => row.status !== SUCCESS_STATUS;
 
@@ -81,7 +80,7 @@ export const useImportFlow = ({ initialForm, validate, importFile, importErrorAc
       const errorCount = response.data.filter(isErrorRow).length;
       if (errorCount > 0) {
         showWarning("Archivo cargado con errores", `${errorCount} filas tienen errores. Corrige los errores y vuelve a subir el archivo.`);
-        setTimeout(() => fileTableRef.current?.scrollIntoView({ behavior: "smooth" }), SCROLL_DELAY);
+        waitForAlertClose().then(() => fileTableRef.current?.scrollIntoView({ behavior: "smooth" }));
       } else {
         showSuccess("Archivo cargado", "Todas las filas están bien");
       }
