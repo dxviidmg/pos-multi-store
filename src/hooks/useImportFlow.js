@@ -3,6 +3,8 @@ import { showSuccess, showWarning, showRequestError, waitForAlertClose } from ".
 
 const SUCCESS_STATUS = "Exitoso";
 
+const DEFAULT_ERRORS_HINT = "Corrige los errores y vuelve a subir el archivo.";
+
 const isErrorRow = (row) => row.status !== SUCCESS_STATUS;
 
 /**
@@ -16,6 +18,9 @@ const isErrorRow = (row) => row.status !== SUCCESS_STATUS;
  * @param {string} config.importErrorAction - Acción para `showRequestError` (p. ej. "importar los productos")
  * @param {string} config.importSuccessMessage - Título de `showSuccess` al importar (p. ej. "Productos importados")
  * @param {Function} [config.onImported] - Se llama después de importar
+ * @param {string} [config.errorsHint] - Qué hacer con las filas con error (por defecto, corregir y volver a subir el archivo)
+ * `handleValidation({ silent: true })` revalida sin la advertencia de errores ni el scroll (correcciones en la tabla).
+ * `handleValidation` devuelve `true` si la validación terminó bien.
  * @returns {{
  *   formData: Object, setFormData: Function, handleDataChange: Function,
  *   fileInputRef: Object, fileTableRef: Object, dropZoneProps: Object,
@@ -23,7 +28,7 @@ const isErrorRow = (row) => row.status !== SUCCESS_STATUS;
  *   canImport: boolean, handleValidation: Function, handleImport: Function,
  * }}
  */
-export const useImportFlow = ({ initialForm, validate, importFile, importErrorAction, importSuccessMessage, onImported }) => {
+export const useImportFlow = ({ initialForm, validate, importFile, importErrorAction, importSuccessMessage, onImported, errorsHint = DEFAULT_ERRORS_HINT }) => {
   const fileInputRef = useRef(null);
   const fileTableRef = useRef(null);
   const requestRef = useRef(0);
@@ -70,24 +75,26 @@ export const useImportFlow = ({ initialForm, validate, importFile, importErrorAc
     },
   };
 
-  const handleValidation = async () => {
+  const handleValidation = async ({ silent = false } = {}) => {
     const requestId = ++requestRef.current;
     setLoading(true);
     try {
       const response = await validate(formData);
-      if (requestId !== requestRef.current) return;
+      if (requestId !== requestRef.current) return false;
       setRows(response.data);
       const errorCount = response.data.filter(isErrorRow).length;
-      if (errorCount > 0) {
-        showWarning("Archivo cargado con errores", `${errorCount} filas tienen errores. Corrige los errores y vuelve a subir el archivo.`);
-        waitForAlertClose().then(() => fileTableRef.current?.scrollIntoView({ behavior: "smooth" }));
-      } else {
+      if (errorCount === 0) {
         showSuccess("Archivo cargado", "Todas las filas están bien");
+      } else if (!silent) {
+        showWarning("Archivo cargado con errores", `${errorCount} filas tienen errores. ${errorsHint}`);
+        waitForAlertClose().then(() => fileTableRef.current?.scrollIntoView({ behavior: "smooth" }));
       }
+      return true;
     } catch (error) {
-      if (requestId !== requestRef.current) return;
+      if (requestId !== requestRef.current) return false;
       clearFileInput();
       showRequestError("validar el archivo", error);
+      return false;
     } finally {
       setLoading(false);
     }

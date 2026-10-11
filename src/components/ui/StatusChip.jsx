@@ -5,7 +5,6 @@ const StatusChip = ({ status }) => (
     size="small"
     label={status}
     color={status === "Exitoso" ? "success" : "error"}
-    variant="outlined"
   />
 );
 
