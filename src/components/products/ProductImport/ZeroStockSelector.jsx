@@ -10,7 +10,7 @@ import DataTable from "../../ui/DataTable/DataTable";
 import { ImportSubmitButton } from "../../ui/Import/ImportActions";
 import { waitForAlertClose } from "../../../utils/alerts";
 import { formatNumber } from "../../../utils/currency";
-import { ZERO_STOCK_COLUMNS } from "./eleventaImport.columns";
+import { ZERO_STOCK_COLUMNS } from "./editableColumns";
 
 const Stat = ({ label, value, highlight = false }) => (
   <Grid item xs={6} md={3}>

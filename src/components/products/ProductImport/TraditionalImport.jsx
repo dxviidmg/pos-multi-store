@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { Alert, Grid, LinearProgress } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
 import CustomButton from "../../ui/Button/Button";
@@ -6,14 +6,14 @@ import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import PageHeader from "../../ui/PageHeader";
 import ImportStepper from "../../ui/Import/ImportStepper";
 import ImportFileDrop from "../../ui/Import/ImportFileDrop";
-import ImportErrorRows from "../../ui/Import/ImportErrorRows";
 import { ImportValidateButton, ImportSubmitButton } from "../../ui/Import/ImportActions";
+import EditableErrorRows from "./EditableErrorRows";
 import YesNoSelect from "./YesNoSelect";
-import { useInvalidateCatalogOptions } from "../shared/useCatalogOptions";
-import { getImportCanIncludeQuantity, importProducts, importProductsValidation } from "../../../api/products";
+import ZeroStockSelector from "./ZeroStockSelector";
+import { getTemplateFields } from "./importFields";
+import { useEditableImport } from "./useEditableImport";
+import { importProducts, importProductsValidation } from "../../../api/products";
 import { getStaticUrl } from "../../../api/utils";
-import { useImportFlow } from "../../../hooks/useImportFlow";
-import { showRequestError } from "../../../utils/alerts";
 
 const URL_TEMPLATE = getStaticUrl("templates/SmartVenta_plantilla_importacion_productos.xlsx");
 
@@ -23,64 +23,18 @@ const CONFIG_FIELDS = [
   { name: "departments_mandatory", label: "¿Deptos obligatorios?" },
 ];
 
-const PRODUCT_COLUMNS = [
-  { name: "Número de fila", selector: (row) => row.excel_row },
-  { name: "Código", selector: (row) => row.code },
-  { name: "Marca", selector: (row) => row.brand },
-  { name: "Departamento", selector: (row) => row.departament },
-  { name: "Nombre", selector: (row) => row.name },
-  { name: "Costo", selector: (row) => row.cost },
-  { name: "Precio unitario", selector: (row) => row.unit_price },
-  { name: "Precio mayoreo", selector: (row) => row.wholesale_price },
-  { name: "Cantidad mínima mayoreo", selector: (row) => row.min_wholesale_quantity },
-  { name: "Permitir mayoreo con descuento de cliente", selector: (row) => row.wholesale_price_on_client_discount },
-];
-
-const QUANTITY_COLUMN = { name: "Cantidad", selector: (row) => row.quantity };
-
-/** Sin la opción de inventario, `import_stock` va fijo en "N"; con ella el usuario debe elegir. */
-const getInitialForm = (canIncludeQuantity) => ({
-  file: "",
-  create_brands: "",
-  create_departments: "",
-  departments_mandatory: "",
-  import_stock: canIncludeQuantity ? "" : "N",
-});
+const BASE_FORM = { file: "", create_brands: "", create_departments: "", departments_mandatory: "" };
 
 const TraditionalImport = ({ tabs }) => {
-  // El backend permite agregar stock junto con los productos (primera importación con una sola tienda)
-  const [canIncludeQuantity, setCanIncludeQuantity] = useState(false);
-  const initialForm = useMemo(() => getInitialForm(canIncludeQuantity), [canIncludeQuantity]);
-  const invalidateCatalogOptions = useInvalidateCatalogOptions();
-
   const {
-    formData, setFormData, handleDataChange, fileInputRef, fileTableRef, dropZoneProps,
-    loading, errorRows, validationResult, canImport, handleValidation, handleImport,
-  } = useImportFlow({
-    initialForm,
-    validate: importProductsValidation,
-    importFile: importProducts,
-    importErrorAction: "importar los productos",
-    importSuccessMessage: "Productos importados",
-    onImported: invalidateCatalogOptions,
-  });
-
-  useEffect(() => {
-    const fetchCanIncludeQuantity = async () => {
-      try {
-        const response = await getImportCanIncludeQuantity();
-        setCanIncludeQuantity(response.data);
-        if (response.data) {
-          setFormData((prev) => ({ ...prev, import_stock: "" }));
-        }
-      } catch (error) {
-        showRequestError("cargar la configuración de importación", error);
-      }
-    };
-    fetchCanIncludeQuantity();
-  }, [setFormData]);
+    formData, handleDataChange, fileInputRef, fileTableRef, dropZoneProps,
+    loading, errorRows, validationResult, canImport, handleValidation, handleImport, saveRowEdit, removeRows,
+    canIncludeQuantity, zeroStockRows, selectedIds, setSelectedIds,
+    excludedCount, removedCount, originalCount, importCount,
+  } = useEditableImport({ baseForm: BASE_FORM, validateApi: importProductsValidation, importApi: importProducts });
 
   const isFormIncomplete = Object.values(formData).some((value) => value === "");
+  const fields = useMemo(() => getTemplateFields({ showStock: formData.import_stock === "Y" }), [formData.import_stock]);
 
   return (
     <>
@@ -109,7 +63,7 @@ const TraditionalImport = ({ tabs }) => {
             {canIncludeQuantity && (
               <>
                 <YesNoSelect name="import_stock" label="¿Agregar inventario?" value={formData.import_stock} onChange={handleDataChange} />
-                <Alert severity="info">
+                <Alert severity="info" variant="filled">
                   Primera vez aquí con una sola tienda: puedes agregar stock junto con los productos.
                 </Alert>
               </>
@@ -126,11 +80,18 @@ const TraditionalImport = ({ tabs }) => {
         </Grid>
       </Grid>
 
-      <ImportErrorRows
-        rows={errorRows}
-        columns={formData.import_stock === "Y" ? [...PRODUCT_COLUMNS, QUANTITY_COLUMN] : PRODUCT_COLUMNS}
-        tableRef={fileTableRef}
-        paginated
+      <EditableErrorRows rows={errorRows} tableRef={fileTableRef} fields={fields} disabled={loading} onSave={saveRowEdit} onRemove={removeRows} />
+
+      <ZeroStockSelector
+        rows={zeroStockRows}
+        selectedIds={selectedIds}
+        onChange={setSelectedIds}
+        importCount={importCount}
+        originalCount={originalCount}
+        removedCount={removedCount}
+        excludedCount={excludedCount}
+        canImport={canImport}
+        onImport={handleImport}
       />
     </>
   );

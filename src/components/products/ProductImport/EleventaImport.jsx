@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Alert, FormControl, Grid, InputLabel, LinearProgress, MenuItem, Select, TextField } from "@mui/material";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import PageHeader from "../../ui/PageHeader";
@@ -6,7 +6,8 @@ import ImportStepper from "../../ui/Import/ImportStepper";
 import ImportFileDrop from "../../ui/Import/ImportFileDrop";
 import { ImportValidateButton, ImportSubmitButton } from "../../ui/Import/ImportActions";
 import YesNoSelect from "./YesNoSelect";
-import EleventaErrorRows from "./EleventaErrorRows";
+import EditableErrorRows from "./EditableErrorRows";
+import { getEleventaFields } from "./importFields";
 import ZeroStockSelector from "./ZeroStockSelector";
 import { isMinQuantityValid, MIN_WHOLESALE_QUANTITY, useEleventaImport } from "./useEleventaImport";
 
@@ -22,6 +23,11 @@ const EleventaImport = ({ tabs }) => {
     canIncludeQuantity, isFormIncomplete, zeroStockRows, selectedIds, setSelectedIds,
     excludedCount, removedCount, originalCount, importCount,
   } = useEleventaImport();
+
+  const fields = useMemo(
+    () => getEleventaFields({ showWholesale: formData.wholesale_mode === "quantity" }),
+    [formData.wholesale_mode]
+  );
 
   return (
     <>
@@ -102,7 +108,7 @@ const EleventaImport = ({ tabs }) => {
         </Grid>
       </Grid>
 
-      <EleventaErrorRows rows={errorRows} tableRef={fileTableRef} showWholesale={formData.wholesale_mode === "quantity"} disabled={loading} onSave={saveRowEdit} onRemove={removeRows} />
+      <EditableErrorRows rows={errorRows} tableRef={fileTableRef} fields={fields} disabled={loading} onSave={saveRowEdit} onRemove={removeRows} />
 
       <ZeroStockSelector
         rows={zeroStockRows}

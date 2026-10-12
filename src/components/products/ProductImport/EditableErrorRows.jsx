@@ -4,7 +4,7 @@ import CustomButton from "../../ui/Button/Button";
 import ImportErrorRows from "../../ui/Import/ImportErrorRows";
 import { showConfirm } from "../../../utils/alerts";
 import { formatNumber } from "../../../utils/currency";
-import { getEditableErrorColumns, getRowActionsColumn } from "./eleventaImport.columns";
+import { getEditableColumns, getRowActionsColumn } from "./editableColumns";
 
 const DESCRIPTION =
   "Tu archivo tiene errores, pero puedes corregirlos desde aquí: el sistema te indica el error de cada fila en la columna Estado.";
@@ -12,9 +12,10 @@ const DESCRIPTION =
 /**
  * Tabla de errores con campos editables: guardar valida de nuevo y la fila sale si ya no tiene error;
  * quitar descarta el producto. Los valores en edición se conservan al paginar.
+ * `fields` define las columnas (ver `importFields.js`).
  * `onSave(excelRow, changes)` y `onRemove(excelRows)` devuelven si la revalidación terminó bien.
  */
-const EleventaErrorRows = ({ rows, tableRef, showWholesale, disabled, onSave, onRemove }) => {
+const EditableErrorRows = ({ rows, tableRef, fields, disabled, onSave, onRemove }) => {
   const [drafts, setDrafts] = useState({});
 
   const clearDrafts = (excelRows) =>
@@ -34,10 +35,10 @@ const EleventaErrorRows = ({ rows, tableRef, showWholesale, disabled, onSave, on
       if (await onRemove([row.excel_row])) clearDrafts([row.excel_row]);
     };
     return {
-      fields: getEditableErrorColumns({ drafts, onChange: handleChange, showWholesale, disabled }),
+      fields: getEditableColumns({ fields, drafts, onChange: handleChange, disabled }),
       actions: getRowActionsColumn({ drafts, onSave: handleSave, onRemove: handleRemove, disabled }),
     };
-  }, [drafts, showWholesale, disabled, onSave, onRemove]);
+  }, [fields, drafts, disabled, onSave, onRemove]);
 
   const handleRemoveAll = async () => {
     const confirmed = await showConfirm(
@@ -64,4 +65,4 @@ const EleventaErrorRows = ({ rows, tableRef, showWholesale, disabled, onSave, on
   );
 };
 
-export default EleventaErrorRows;
+export default EditableErrorRows;
