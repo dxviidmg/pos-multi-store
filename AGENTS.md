@@ -533,7 +533,7 @@ Antes de escribir algo nuevo, copia el ejemplo correspondiente.
 | Columnas en archivo aparte | `admin/StoreList/StoreList.columns.jsx` | Fábricas `getXColumns({ … })`, helpers `cashCol`/`countCol`, `FILTER_COLUMNS` |
 | Tablero con tarea Celery | `admin/Dashboard/ProductsDashboard.jsx` + `api/dashboards.js` | `startTask` memoizado → `useTaskPolling`, `Filters`, `DashboardLoading`, `EmptyState`, `chartStyles` |
 | Importación Excel | `sales/SaleImport/SaleImport.jsx` | `useImportFlow` + `ui/Import/*` + `getStaticUrl` para la plantilla |
-| Importación con dos modos y selección de filas | `products/ProductImport/ProductImport.jsx` + `useEleventaImport.js` + `ZeroStockSelector.jsx` | Pestañas de modo con `key` que remonta; `useImportFlow` envuelto; `DataTable` con `selectedIds`; el backend valida e importa, el frontend manda `excluded_codes` |
+| Importación con dos modos y selección de filas | `products/ProductImport/ProductImport.jsx` + `useEditableImport.js` + `EditableErrorRows.jsx` + `ZeroStockSelector.jsx` | Pestañas de modo con `key` que remonta; `useImportFlow` envuelto (`useEditableImport` guarda `edits`/`removed_rows`); campos por modo en `importFields.js`; `DataTable` con `selectedIds`; el backend valida e importa, el frontend manda `excluded_codes` |
 | Exportación Excel | `products/ProductList` (`handleDownload`) | Filas con encabezados en español → `exportToExcel(data, "Nombre")` |
 | Atajo de teclado en modal | `sales/PaymentEditModal/PaymentEditModal.jsx` | `useCtrlShortcut` con la misma regla de deshabilitado que el botón |
 | Botón de cobro con impresora | `sales/shared/PaymentSubmitPanel.jsx` | Estado de impresora + texto con/sin ticket |

@@ -304,7 +304,8 @@ Al confirmar un traspaso o una distribución eliges el destino dos veces, para n
 - **Stock inicial al crear** (una sucursal). Dentro de tu tienda, el producto se crea con su existencia en un solo paso.
 - **Importación desde Excel en 4 pasos:** subir, configurar, validar e importar.
   - Puede crear las marcas y departamentos que falten.
-  - Muestra los errores por página.
+  - Muestra los errores por página y los corriges ahí mismo: edita el dato y guarda, o quita el producto, sin volver a cargar el archivo.
+  - Si agregas inventario, te deja elegir cuáles productos con inventario en 0 se importan y cuáles no, con el resumen de cuántos se importarán.
 - **Marcas y departamentos** con su número de productos. No se borran mientras tengan productos, y solo el dueño los elimina.
 - **Reasignación masiva.** Pasa todos los productos de una marca o departamento a otro y, si quieres, elimina el de origen.
 - **Formatear códigos** (dueño). Unifica todos los códigos en mayúsculas.
