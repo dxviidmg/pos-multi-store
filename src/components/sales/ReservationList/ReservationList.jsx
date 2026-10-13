@@ -39,18 +39,20 @@ const ReservationList = () => {
   const paymentEditModal = useModal();
 
   useEffect(() => {
+    let ignore = false;
     const fetchSalesData = async () => {
       setLoading(true);
       try {
         const salesResponse = await getSales(params);
-        setSales(salesResponse.data);
+        if (!ignore) setSales(salesResponse.data);
       } catch (error) {
-        showRequestError("cargar los apartados", error);
+        if (!ignore) showRequestError("cargar los apartados", error);
       } finally {
-        setLoading(false);
+        if (!ignore) setLoading(false);
       }
     };
     fetchSalesData();
+    return () => { ignore = true; };
   }, [params]);
 
   const handleDataChange = (e) => {

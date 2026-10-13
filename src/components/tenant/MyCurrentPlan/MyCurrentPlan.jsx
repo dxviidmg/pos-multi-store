@@ -80,34 +80,39 @@ const MyCurrentPlan = () => {
   const isActive = plan?.subscription_status === "active";
 
   useEffect(() => {
+    let ignore = false;
     const fetchData = async () => {
       try {
         const res = await getCurrentPlan();
+        if (ignore) return;
         setPlan(res.data);
         if (res.data?.plan?.stores) {
           const eqRes = await getPlanEquivalent().catch(() => null);
-          if (eqRes) setEquivalent(eqRes.data);
+          if (eqRes && !ignore) setEquivalent(eqRes.data);
         }
       } catch (error) {
-        showRequestError("cargar tu plan", error);
+        if (!ignore) showRequestError("cargar tu plan", error);
       } finally {
-        setPlanLoading(false);
+        if (!ignore) setPlanLoading(false);
       }
     };
     fetchData();
+    return () => { ignore = true; };
   }, []);
 
   useEffect(() => {
+    let ignore = false;
     const fetchDates = async () => {
       try {
         const res = await getTenantDates();
-        setTenantDates(res.data);
+        if (!ignore) setTenantDates(res.data);
       } catch (err) {
         logger.error("Error fetching tenant dates:", err);
-        setTenantDates({});
+        if (!ignore) setTenantDates({});
       }
     };
     fetchDates();
+    return () => { ignore = true; };
   }, []);
 
   return (

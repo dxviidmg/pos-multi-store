@@ -34,18 +34,20 @@ const DistributionList = () => {
   const [editedQuantity, setEditedQuantity] = useState("");
 
   useEffect(() => {
+    let ignore = false;
     const fetchDistributions = async () => {
       setLoading(true);
       try {
         const res = await getDistributions();
-        setDistributions(res.data);
+        if (!ignore) setDistributions(res.data);
       } catch (error) {
-        showRequestError("cargar las distribuciones", error);
+        if (!ignore) showRequestError("cargar las distribuciones", error);
       } finally {
-        setLoading(false);
+        if (!ignore) setLoading(false);
       }
     };
     fetchDistributions();
+    return () => { ignore = true; };
   }, []);
 
   const handleSubmit = async () => {

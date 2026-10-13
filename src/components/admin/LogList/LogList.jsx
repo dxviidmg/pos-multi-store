@@ -39,24 +39,28 @@ const LogList = () => {
   const { data: brands = [], isLoading: loadingBrands, isFetched: brandsLoaded } = useBrands();
 
   useEffect(() => {
+    let ignore = false;
     getStoreProductLogsChoices()
-      .then((res) => setActions(res.data))
+      .then((res) => { if (!ignore) setActions(res.data); })
       .catch((error) => logger.error("Error al cargar los tipos de movimiento:", error));
+    return () => { ignore = true; };
   }, []);
 
   useEffect(() => {
+    let ignore = false;
     const fetchLogs = async () => {
       setLoading(true);
       try {
         const res = await getStoreProductLogs(params);
-        setLogs(res.data);
+        if (!ignore) setLogs(res.data);
       } catch (error) {
-        showRequestError("cargar el historial de stock", error);
+        if (!ignore) showRequestError("cargar el historial de stock", error);
       } finally {
-        setLoading(false);
+        if (!ignore) setLoading(false);
       }
     };
     fetchLogs();
+    return () => { ignore = true; };
   }, [params]);
 
   const handleDataChange = (e) => {

@@ -18,15 +18,17 @@ const CashFlowModal = ({ isOpen, cashFlow, onClose, onUpdate }) => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    let ignore = false;
     const fetchChoices = async () => {
       try {
         const res = await getCashFlowChoices();
-        setOptions(res.data);
+        if (!ignore) setOptions(res.data);
       } catch (error) {
-        showRequestError("cargar los tipos de movimiento", error);
+        if (!ignore) showRequestError("cargar los tipos de movimiento", error);
       }
     };
     fetchChoices();
+    return () => { ignore = true; };
   }, []);
 
   useEffect(() => {

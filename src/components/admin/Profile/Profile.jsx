@@ -18,19 +18,22 @@ const Profile = () => {
   const [loadFailed, setLoadFailed] = useState(false);
 
   useEffect(() => {
+    let ignore = false;
     const fetchData = async () => {
       try {
         const [tenantResponse, userResponse] = await Promise.all([getTenant(user.tenant_id), getUser(user.user_id)]);
+        if (ignore) return;
         setTenant(tenantResponse.data);
         setUserInfo(userResponse.data);
       } catch (error) {
         logger.error("Profile fetch error:", error);
-        setLoadFailed(true);
+        if (!ignore) setLoadFailed(true);
       } finally {
-        setLoading(false);
+        if (!ignore) setLoading(false);
       }
     };
     fetchData();
+    return () => { ignore = true; };
   }, [user.tenant_id, user.user_id]);
 
   if (loading) return <PageSkeleton />;

@@ -24,17 +24,19 @@ const StockUpdateRequestList = () => {
   const allStores = user.store_id === null;
 
   useEffect(() => {
+    let ignore = false;
     const fetchData = async () => {
       try {
         const response = await getStockUpdateRequests();
-        setRequests(response.data);
+        if (!ignore) setRequests(response.data);
       } catch (error) {
-        showRequestError("cargar las solicitudes", error);
+        if (!ignore) showRequestError("cargar las solicitudes", error);
       } finally {
-        setLoading(false);
+        if (!ignore) setLoading(false);
       }
     };
     fetchData();
+    return () => { ignore = true; };
   }, []);
 
   const handleApply = async (row) => {

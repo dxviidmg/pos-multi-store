@@ -34,29 +34,33 @@ const CashSummary = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    let ignore = false;
     const fetchData = async () => {
       setLoading(true);
       try {
         const { data } = await getCashSummary(date);
+        if (ignore) return;
         setPaymentMethodsSummary(data.filter((c) => c.payment_method_data));
         setSalesSummary(data.filter((c) => c.sales_data));
         setCashFlowSummary(data.filter((c) => c.cashflow_data));
         setTotalSummary(data.filter((c) => c.total_data));
         setCashSummary(data);
       } catch (error) {
-        showRequestError("cargar el corte de caja", error);
+        if (!ignore) showRequestError("cargar el corte de caja", error);
       } finally {
-        setLoading(false);
+        if (!ignore) setLoading(false);
       }
     };
     fetchData();
+    return () => { ignore = true; };
   }, [date]);
 
   useEffect(() => {
+    let ignore = false;
     const fetchDuplicates = async () => {
       try {
         const { data } = await getDuplicateSales();
-        if (data && data.length > 0 && data[0].messages && data[0].messages.length > 0) {
+        if (!ignore && data && data.length > 0 && data[0].messages && data[0].messages.length > 0) {
           const message = `${data[0].messages.join(", ")}\n\nPosiblemente no cuadren las cuentas por esas ventas duplicadas.`;
           showWarning("Posibles ventas duplicadas", message);
         }
@@ -65,6 +69,7 @@ const CashSummary = () => {
       }
     };
     fetchDuplicates();
+    return () => { ignore = true; };
   }, []);
 
   const handleExport = () => {

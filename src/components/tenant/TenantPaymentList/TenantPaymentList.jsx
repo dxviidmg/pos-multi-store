@@ -11,17 +11,19 @@ const TenantPaymentList = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let ignore = false;
     const fetchPayments = async () => {
       try {
         const response = await getPayments();
-        setPayments(response.data);
+        if (!ignore) setPayments(response.data);
       } catch (error) {
-        showRequestError("cargar los pagos", error);
+        if (!ignore) showRequestError("cargar los pagos", error);
       } finally {
-        setLoading(false);
+        if (!ignore) setLoading(false);
       }
     };
     fetchPayments();
+    return () => { ignore = true; };
   }, []);
 
   return (

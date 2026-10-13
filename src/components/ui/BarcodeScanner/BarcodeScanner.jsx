@@ -29,6 +29,7 @@ const BarcodeScanner = ({ open, onClose, onDetected }) => {
   useEffect(() => {
     if (!open) return;
 
+    let ignore = false;
     setError("");
     setLoading(true);
 
@@ -47,7 +48,8 @@ const BarcodeScanner = ({ open, onClose, onDetected }) => {
         await reader.decodeFromVideoDevice(
           deviceId,
           videoRef.current,
-          (result, err) => {
+          (result) => {
+            if (ignore) return;
             setLoading(false);
             if (result) {
               onDetectedRef.current(result.getText());
@@ -56,6 +58,7 @@ const BarcodeScanner = ({ open, onClose, onDetected }) => {
           }
         );
       } catch (e) {
+        if (ignore) return;
         setLoading(false);
         if (e.name === "NotAllowedError") {
           setError("Permiso de cámara denegado. Habilítalo en la configuración del navegador.");
@@ -70,6 +73,7 @@ const BarcodeScanner = ({ open, onClose, onDetected }) => {
     startScanner();
 
     return () => {
+      ignore = true;
       try {
         readerRef.current?.reset();
       } catch {

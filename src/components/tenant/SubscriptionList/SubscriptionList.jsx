@@ -27,17 +27,19 @@ const SubscriptionList = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let ignore = false;
     const fetchSubscriptions = async () => {
       try {
         const response = await getSubscriptions();
-        setSubscriptions(response.data);
+        if (!ignore) setSubscriptions(response.data);
       } catch (error) {
-        showRequestError("cargar las suscripciones", error);
+        if (!ignore) showRequestError("cargar las suscripciones", error);
       } finally {
-        setLoading(false);
+        if (!ignore) setLoading(false);
       }
     };
     fetchSubscriptions();
+    return () => { ignore = true; };
   }, []);
 
   return (
