@@ -11,18 +11,18 @@ Como usuario quiero un menú lateral corto, con las pantallas relacionadas agrup
    - **Movimientos**: Distribuciones · Traspasos
    - **Inventario**: Inventario · Conversiones · Reasignación · Por verificar
    - **Marcas y departamentos**: Marcas · Departamentos
-   - **Importaciones**: Productos · Inventario · Ventas
+   - **Importar**: Productos · Inventario
    - **Historial**: Stock · Precios
    - **Facturación**: Mi plan · Pagos · Suscripciones
    - **Auditoría** (vista general): Productos · Transacciones
-3. Siguen como entradas sueltas: Ajustes de inventario (en todas las vistas, justo después de Inventario o Productos), Vender, Distribuir, Clientes, Productos, Tiendas, Vendedores, Servicios y Sincronizar. Los **Tableros** siguen como submenú: cada uno lanza una tarea pesada y no deben montarse juntos.
+3. Siguen como entradas sueltas: Vender, Distribuir, Clientes, Tiendas, Vendedores, Servicios y Sincronizar. Los **Tableros** siguen como submenú: cada uno lanza una tarea pesada y no deben montarse juntos.
 4. Las pestañas se filtran con `canAccessRoute`, igual que el menú. Una pestaña que el usuario no puede abrir no aparece. Si queda una sola, no se muestra la barra y la entrada del menú es un enlace directo con el nombre completo de esa pantalla (por ejemplo "Movimientos en caja" para el vendedor).
 5. El enlace de la entrada abre la primera pestaña accesible. La entrada del menú aparece activa en cualquier ruta de su sección.
-6. **Productos** es un submenú con: Productos, Importar productos, Ajustes de inventario y Marcas y departamentos (en la vista general, Productos conserva sus pestañas y no hay entrada "Importaciones", que solo tendría Productos). Menú resultante:
-   - **Tienda (administrador)**: Vender · Ventas · Caja · Clientes · Productos · Inventario · Movimientos · Marcas y departamentos · Importaciones · Historial
-   - **Almacén**: Distribuir · Movimientos · Productos · Inventario · Marcas y departamentos · Importaciones · Historial
-   - **Vista general**: Tableros · Tiendas · Clientes · Vendedores · Productos (Productos · Conversiones · Reasignación · Historial de precios) · Ajustes de inventario · Marcas y departamentos · Importaciones · Auditoría · Facturación · Servicios · Sincronizar. No tiene Inventario ni Historial como entradas.
-   - **Vendedor**: lo que sus permisos abran (Vender, Ventas, Caja con solo Movimientos, Movimientos con solo Traspasos).
+6. Submenús: **Ventas** (Ventas con sus pestañas · Importar ventas) y **Productos** (Productos · Importar · Ajustes de inventario · Marcas y departamentos). "Importar" es la sección Importar (Productos · Inventario). Un submenú que queda con un solo ítem es un enlace directo. En la vista general, Productos conserva sus pestañas (Productos · Conversiones · Reasignación · Historial de precios) e Importar se llama "Importar productos" (única pestaña). Menú resultante:
+   - **Tienda (administrador)**: Vender · Ventas ▾ · Caja · Clientes · Movimientos · Productos ▾ · Inventario · Historial
+   - **Almacén**: Distribuir · Movimientos · Productos ▾ · Inventario · Historial
+   - **Vista general**: Tableros ▾ · Tiendas · Vendedores · Clientes · Productos ▾ · Auditoría · Facturación · Servicios · Sincronizar
+   - **Vendedor**: lo que sus permisos abran (Vender, Ventas, Movimientos en caja, Traspasos).
 7. "Auditoría" de tienda y almacén desaparece como entrada: su única pantalla pasa a ser la pestaña "Por verificar" de Inventario.
 8. La importación de productos reemplaza sus pestañas Tradicional/Especial por un control de modo (botones segmentados a todo el ancho) dentro de la página, para no tener dos barras de pestañas.
 9. Cambiar de pestaña remonta la página: se pierden filtros y búsqueda de la pestaña anterior. Es aceptable.
