@@ -67,7 +67,7 @@ export const ICONS = {
   Regresar: ArrowBackIcon,
   Inventario: Inventory2Icon,
   "Marcas y departamentos": CategoryIcon,
-  Importaciones: UploadFileIcon,
+  Importar: UploadFileIcon,
   "Ajustes de inventario": TuneIcon,
   Historial: HistoryIcon,
 };
@@ -95,7 +95,13 @@ export const buildLinksByType = (user, storeSwitcher) => ({
   [STORE_TYPES.STORE]: [
     ...storeSwitcher,
     { label: "Vender", href: "/vender/" },
-    { section: "sales" },
+    {
+      label: "Ventas",
+      dropdown: [
+        { section: "sales" },
+        { label: "Importar ventas", href: "/importar-ventas/" },
+      ],
+    },
     { section: "cash" },
     { label: "Clientes", href: "/clientes/" },
     { section: "transfers" },
@@ -103,13 +109,12 @@ export const buildLinksByType = (user, storeSwitcher) => ({
       label: "Productos",
       dropdown: [
         { label: "Productos", href: "/productos/" },
-        { label: "Importar productos", href: "/importar-productos/" },
+        { section: "imports" },
         { label: "Ajustes de inventario", href: "/solicitudes-ajustes-stock/" },
         { section: "catalog" },
       ],
     },
     { section: "inventory" },
-    { section: "imports" },
     { section: "history" },
   ],
   [STORE_TYPES.WAREHOUSE]: [
@@ -120,13 +125,12 @@ export const buildLinksByType = (user, storeSwitcher) => ({
       label: "Productos",
       dropdown: [
         { label: "Productos", href: "/productos/" },
-        { label: "Importar productos", href: "/importar-productos/" },
+        { section: "imports" },
         { label: "Ajustes de inventario", href: "/solicitudes-ajustes-stock/" },
         { section: "catalog" },
       ],
     },
     { section: "inventory" },
-    { section: "imports" },
     { section: "history" },
   ],
   [STORE_TYPES.GENERAL]: [
@@ -148,7 +152,7 @@ export const buildLinksByType = (user, storeSwitcher) => ({
       label: "Productos",
       dropdown: [
         { section: "products" },
-        { label: "Importar productos", href: "/importar-productos/" },
+        { section: "imports" },
         { label: "Ajustes de inventario", href: "/solicitudes-ajustes-stock/" },
         { section: "catalog" },
       ],

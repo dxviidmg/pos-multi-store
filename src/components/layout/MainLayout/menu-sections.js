@@ -59,11 +59,10 @@ export const SECTIONS = {
     ],
   },
   imports: {
-    label: "Importaciones",
+    label: "Importar",
     tabs: [
       { label: "Productos", fullLabel: "Importar productos", href: "/importar-productos/" },
       { label: "Inventario", fullLabel: "Importar inventario", href: "/importar-inventario/" },
-      { label: "Ventas", fullLabel: "Importar ventas", href: "/importar-ventas/" },
     ],
   },
   history: {
