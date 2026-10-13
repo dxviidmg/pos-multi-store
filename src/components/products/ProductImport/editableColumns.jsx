@@ -18,7 +18,7 @@ const INPUT_PATTERNS = {
 const INPUT_MODES = { money: "decimal", decimal: "decimal", integer: "numeric" };
 
 /** Valor de una celda editable como texto de campo (vacío si no hay valor; los booleanos, "true"/"false"). */
-export const toFieldValue = (value) => (value == null ? "" : String(value));
+const toFieldValue = (value) => (value == null ? "" : String(value));
 
 const ROW_COLUMN = { name: "Número de fila", selector: (row) => row.excel_row };
 

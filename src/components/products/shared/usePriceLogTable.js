@@ -4,7 +4,7 @@ import { getProductPriceLogs } from "../../../api/products";
 import { getFormattedDateTime } from "../../../utils/utils";
 import { showRequestError } from "../../../utils/alerts";
 
-export const PRICE_LOGS_KEY = "product-price-logs";
+const PRICE_LOGS_KEY = "product-price-logs";
 
 /** Agrupa los cambios de un mismo producto en el mismo minuto en una fila (un campo por columna). */
 const groupPriceLogs = (logs) => {

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Grid, MenuItem, FormControl, InputLabel } from "@mui/material";
-import { Select } from "../../ui/Field/Field";
+import { Grid } from "@mui/material";
 import BlockIcon from "@mui/icons-material/Block";
 import UndoIcon from "@mui/icons-material/Undo";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
@@ -23,11 +22,6 @@ import SaleModal from "../SaleModal/SaleModal";
 import ProductsPopperButton from "../ProductsPopperButton/ProductsPopperButton";
 import SaleSearchFields from "../shared/SaleSearchFields";
 import PrintTicketButton from "../shared/PrintTicketButton";
-
-// Los apartados en curso viven en ReservationList; aquí solo se listan ventas
-const TYPE_OPTIONS = [
-  { value: false, label: "Ventas" },
-];
 
 const QUICK_FILTERS = {
   all: () => true,
@@ -99,19 +93,6 @@ const SaleList = () => {
         <PageHeader title="Ventas" />
 
         <Grid container className="fill-row" spacing={2} sx={{ mb: 2 }}>
-          {/* Select "Tipo" oculto — solo tiene 1 opción (Ventas).
-              Descomentar si se reactiva el filtro de apartados. */}
-          {/* <Grid item xs={12} md={3}>
-            <FormControl fullWidth size="small">
-              <InputLabel>Tipo</InputLabel>
-              <Select value={params.reservation_in_progress} onChange={handleDataChange} name="reservation_in_progress" label="Tipo">
-                {TYPE_OPTIONS.map((opt) => (
-                  <MenuItem key={String(opt.value)} value={opt.value}>{opt.label}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid> */}
-
           <SaleSearchFields params={params} onChange={handleDataChange} maxDate={today} />
 
           <Grid item xs={12} md={3}>

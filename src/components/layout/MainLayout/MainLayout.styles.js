@@ -4,7 +4,7 @@ import MuiDrawer from "@mui/material/Drawer";
 import MuiAppBar from "@mui/material/AppBar";
 import { colors } from "../../../theme/colors";
 
-export const DRAWER_WIDTH = 256;
+const DRAWER_WIDTH = 256;
 
 /** Blanco con opacidad, para texto y fondos sobre el sidebar marino. */
 export const whiteAlpha = (opacity) => alpha(colors.white, opacity);
