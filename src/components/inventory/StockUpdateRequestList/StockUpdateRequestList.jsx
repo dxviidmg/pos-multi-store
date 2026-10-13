@@ -70,7 +70,7 @@ const StockUpdateRequestList = () => {
 
   return (
     <Grid item xs={12} className="card">
-      <PageHeader title={`Solicitudes de ajustes de stock${allStores ? " (todas las tiendas)" : " (Solo esta tienda)"}`} />
+      <PageHeader title={`Ajustes de inventario${allStores ? "" : " en esta tienda"}`} />
       <DataTable
         progressPending={loading}
         noDataComponent="Sin solicitudes pendientes"
