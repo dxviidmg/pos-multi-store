@@ -44,7 +44,7 @@ npm run build          # build de producción en /build
 npx eslint <archivos>  # lint (config react-app en package.json)
 ```
 
-Todos los scripts usan `react-app-rewired` (`config-overrides.js` solo pone `resolve.fullySpecified = false`). Las pruebas viven junto al archivo que prueban (`*.test.js` / `*.test.jsx`) y se corren con `CI=true npm test -- --watchAll=false`; `src/setupTests.js` carga `jest-dom`. Cobertura actual: lógica pura (carrito de Redux, permisos y menú, utilidades de moneda, mensajes de servicios, periodos de Tiendas), `useFetch`, `ui/Field`, `ConsultDialog` y `StoreList`. En las pantallas se mockean los hooks de datos y `DataTable` (el DataGrid no pinta filas en jsdom).
+Todos los scripts usan `react-app-rewired` (`config-overrides.js` pone `resolve.fullySpecified = false` y silencia los avisos de source maps de `@zxing/browser`). Las pruebas viven junto al archivo que prueban (`*.test.js` / `*.test.jsx`) y se corren con `CI=true npm test -- --watchAll=false`; `src/setupTests.js` carga `jest-dom`. Cobertura actual: lógica pura (carrito de Redux, permisos y menú, utilidades de moneda, mensajes de servicios, periodos de Tiendas), `useFetch`, `ui/Field`, `ConsultDialog` y `StoreList`. En las pantallas se mockean los hooks de datos y `DataTable` (el DataGrid no pinta filas en jsdom).
 
 **Antes de dar un cambio por terminado:** `npx eslint` sobre los archivos tocados sin errores nuevos, y `npm run build` si tocaste rutas, imports compartidos o dependencias.
 
@@ -242,6 +242,7 @@ Usa siempre los helpers de `src/constants/routeAccess.js`: `isOwner(user)`, `isS
 | `useUserManagement` | Editar usuario / cambiar contraseña (con `UserManagementModals`) |
 | `useCartActions`, `useAvailableStock` | Agregar al carrito respetando stock reservado entre carritos |
 | `useViewModePreference(key)` | Preferencia tabla/galería persistida |
+| `useStoreScopedList(fetchFn, errorMessage)` | Lista que depende de la sucursal: carga al montar y con `store-changed` (menús del header) |
 | `useFetch`, `useFetchWithRetry` | Lecturas con timeout y reintento (búsqueda por código) |
 | `useMercadoPago`, `usePrinterStatus`, `useOnlineStatus`, `useThemeMode`, `useCanCreateStore`, `useTransfers`, `useRegistration` | Integraciones y estado puntual |
 
@@ -306,7 +307,7 @@ Revisa esta lista antes de crear un componente. Si un patrón se repite en dos a
 | `ConnectionStatusBanner` | Aviso de conexión perdida/restaurada (eventos del navegador). |
 | `CountdownTimer`, `ErrorBoundary`, `LoadingFallback`, `Icons` | Utilitarios. |
 | `UserModals` | `EditUserModal`, `ChangePasswordModal` y `UserManagementModals` (ambos conectados a `useUserManagement()` vía prop `management`). |
-| `NotificationsMenu`, `PendingMenu`, `DuplicateSalesMenu`, `StockRequestMenu` | Menús del header construidos sobre `HeaderPopoverMenu`; se recargan con `store-changed`. |
+| `NotificationsMenu`, `PendingMenu`, `DuplicateSalesMenu`, `StockRequestMenu` | Menús del header construidos sobre `HeaderPopoverMenu` (`PendingMenu` y `DuplicateSalesMenu` son `MessageGroupsMenu` con su API; todos cargan con `useStoreScopedList`); se recargan con `store-changed`. |
 | `HeaderPopoverMenu` | Base de los menús del header: botón con badge + `CustomTooltip`, Popover con título, lista con scroll y estado vacío. `autoHideBadge={false}` si el badge lo controla el padre. |
 | `DateRangeFilter` | "Fecha de inicio" / "Fecha de fin" (+ "Rango" con `showRange`) como `Grid item`s; `onChange` recibe el evento con `name` `start_date`/`end_date`. |
 | `Field/` (`TextField`, `Select`) | Campos con un ícono Outlined al inicio según su etiqueta (`fieldIcons.js`; un `startAdornment` propio tiene prioridad; sin etiqueta no lleva ícono). **Importa `TextField` y `Select` de aquí, no de `@mui/material`.** Para un ícono nuevo, agrega su regla a `FIELD_ICONS`. |
@@ -322,8 +323,8 @@ Componentes compartidos dentro de un dominio:
 | Carpeta | Contenido |
 |---|---|
 | `products/shared/` | `CodeNameSearchBar`, `ProductFilterFields`, `CatalogAutocomplete`, `GridCardBase`, `storeProductColumns`, `StoreProductModals`, `useStoreProductActions`, `useStoreProductList`, `useFilteredList`, `useCatalogOptions` (+ `useInvalidateCatalogOptions` tras cambiar productos), `usePriceLogTable` |
-| `sales/shared/` | `PaymentSubmitPanel` (botón de cobro + estado de impresora), `PrintTicketButton`, `SaleSearchFields` |
-| `admin/Dashboard/` | `Filters`, `MainBarChart`, `KPICard`, `StatCard`, `InsightCard`, `DashboardLoading`, `TodayReferenceLine`, `StoreComparisonTable`, `chartStyles.js`, `chartData.js` |
+| `sales/shared/` | `PaymentSubmitPanel` (botón de cobro + estado de impresora), `PrintTicketButton`, `SaleSearchFields`, `useSalesList` (ventas o apartados por filtros, con guard de respuesta vieja) |
+| `admin/Dashboard/` | `DashboardHeader` (tarjeta de título, periodo y filtros), `ChartTypeSelect`, `Filters`, `MainBarChart`, `KPICard`, `StatCard`, `InsightCard`, `DashboardLoading`, `TodayReferenceLine`, `StoreComparisonTable`, `chartStyles.js`, `chartData.js` |
 | `inventory/Cart/` | `quantityRules.js` + `QuantityInput` (reglas de cantidad por modo de venta), `CartItemCard`, `CartToolbar`, `useCartSubmit` |
 
 ### Tablas
@@ -533,11 +534,11 @@ Antes de escribir algo nuevo, copia el ejemplo correspondiente.
 | Columnas en archivo aparte | `admin/StoreList/StoreList.columns.jsx` | Fábricas `getXColumns({ … })`, helpers `cashCol`/`countCol`, `FILTER_COLUMNS` |
 | Tablero con tarea Celery | `admin/Dashboard/ProductsDashboard.jsx` + `api/dashboards.js` | `startTask` memoizado → `useTaskPolling`, `Filters`, `DashboardLoading`, `EmptyState`, `chartStyles` |
 | Importación Excel | `sales/SaleImport/SaleImport.jsx` | `useImportFlow` + `ui/Import/*` + `getStaticUrl` para la plantilla |
-| Importación con dos modos y selección de filas | `products/ProductImport/ProductImport.jsx` + `useEditableImport.js` + `EditableErrorRows.jsx` + `ZeroStockSelector.jsx` | Pestañas de modo con `key` que remonta; `useImportFlow` envuelto (`useEditableImport` guarda `edits`/`removed_rows`); campos por modo en `importFields.js`; `DataTable` con `selectedIds`; el backend valida e importa, el frontend manda `excluded_codes` |
+| Importación con dos modos y selección de filas | `products/ProductImport/ProductImport.jsx` + `useEditableImport.js` + `ImportResults.jsx` (`EditableErrorRows` + `ZeroStockSelector`) | Selector de modo (botones segmentados) con `key` que remonta; `useImportFlow` envuelto (`useEditableImport` guarda `edits`/`removed_rows`); campos por modo en `importFields.js`; `DataTable` con `selectedIds`; el backend valida e importa, el frontend manda `excluded_codes` |
 | Exportación Excel | `products/ProductList` (`handleDownload`) | Filas con encabezados en español → `exportToExcel(data, "Nombre")` |
 | Atajo de teclado en modal | `sales/PaymentEditModal/PaymentEditModal.jsx` | `useCtrlShortcut` con la misma regla de deshabilitado que el botón |
 | Botón de cobro con impresora | `sales/shared/PaymentSubmitPanel.jsx` | Estado de impresora + texto con/sin ticket |
-| Menú del header | `ui/PendingMenu/PendingMenu.jsx` | `HeaderPopoverMenu` + fetch con `logger.error` + escucha `store-changed` |
+| Menú del header | `ui/PendingMenu/PendingMenu.jsx` + `hooks/useStoreScopedList.js` | `HeaderPopoverMenu` + lista que recarga con `store-changed` y registra el error con `logger.error` |
 | WebSocket con reconexión | `hooks/usePrinterStatus.js` | Backoff, heartbeat, guard `activeRef`, `closeSocket()` anula handlers antes de cerrar, respaldo HTTP |
 | Autocompletar | `hooks/useDebouncedSearch.js` (uso: `inventory/ConversionModal`) | Espera, `AbortController`, `minChars` |
 | Formulario de tarjeta Mercado Pago | `hooks/useCardFormModal.js` (uso: `tenant/MyCurrentPlan`) | Monta el Brick al abrir, desmonta al cerrar o desmontar |

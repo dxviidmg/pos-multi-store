@@ -9,9 +9,10 @@
 
 Auditoría del 13 de octubre de 2026 contra las reglas de `AGENTS.md` §12. Lo que quedó resuelto se quitó de aquí; lo siguiente se dejó a propósito o queda por vigilar.
 
-- **Componentes cerca del límite de ~300 líneas:** `ProductModal` (284), `MainLayout` (282), `Login` (265), `Registration` (264) y `StockModal` (262). Vigilarlos si crecen.
+- **Componentes cerca del límite de ~300 líneas:** `ProductModal` (284), `Registration` (264) y `StockModal` (262). Vigilarlos si crecen.
 - **Exports de permisos sin uso, conservados a propósito:** `isStoreView` e `isAdmin` (y `ROLES`/`getRole`, que solo se usan dentro del archivo) forman la API de permisos que documenta `AGENTS.md` §6.
 - **Peticiones en `useEffect` convertibles a `useQuery`:** las listas simples (`SubscriptionList`, `TenantPaymentList`, `Profile`, `StockUpdateRequestList`, `DistributionList`) ya tienen guard de respuesta vieja, pero siguen cargando con `useEffect`; migrarlas a `createQueryHook` quitaría su estado de carga manual (regla 3).
+- **Duplicación menor que se dejó:** la fila de filtros con `DateRangeFilter` de `SellerList` y `ClientList`, las barras de herramientas de `ProductListToolbar` y `StoreProductList`, y fragmentos pequeños de formulario en `ConversionModal`, `CreateStoreModal` y `Registration`.
 - **Sin pruebas:** el guard de respuesta vieja en cada lista, `usePrinterStatus` y `BarcodeScanner` (dependen de WebSocket y cámara) y la mayoría de las pantallas.
 - `admin/StoreList/StoreList.jsx` conserva el alto del contenido al cambiar de pestaña (`lockedHeight`) para que no salte el scroll; si se rediseña la carga de esa vista, valorar si sigue haciendo falta.
 - `ui/Field/fieldIcons.js` elige el ícono por el texto de la etiqueta; si se renombran etiquetas, revisar sus reglas (hay pruebas en `fieldIcons.test.js`).
