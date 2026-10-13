@@ -1,9 +1,8 @@
-import { useEffect, useCallback, useMemo, useState } from "react";
+import { useEffect, useCallback, useMemo, useRef, useState } from "react";
 import { Button, Box, useMediaQuery, useTheme } from "@mui/material";
 import StorefrontOutlinedIcon from "@mui/icons-material/StorefrontOutlined";
 import CardGallery from "../../ui/CardGallery/CardGallery";
 import DataTable from "../../ui/DataTable/DataTable";
-import { WarmTheme } from "../../../theme";
 import { useUser } from "../../../context/UserContext";
 import { isOwner as isOwnerUser } from "../../../constants/routeAccess";
 import { STORE_TYPES } from "../../../constants";
@@ -30,6 +29,14 @@ import { useModal } from "../../../hooks/useModal";
 import { useCanCreateStore } from "../../../hooks/useCanCreateStore";
 import { showRequestError } from "../../../utils/alerts";
 
+// La tabla y sus pastillas de vista comparten una misma tarjeta con borde
+const TABLE_CARD_SX = {
+  border: "1px solid", borderColor: "divider", borderRadius: "14px", overflow: "hidden", bgcolor: "background.paper",
+  "& > div:last-of-type": { mt: 0 },
+  "& .MuiDataGrid-root": { border: 0, borderRadius: 0 },
+  "& .MuiDataGrid-cell": { borderColor: "rowDivider.main", fontVariantNumeric: "tabular-nums" },
+};
+
 const StoreList = () => {
   const { user } = useUser();
   const isOwner = isOwnerUser(user);
@@ -40,6 +47,9 @@ const StoreList = () => {
   const [storeInvestments, setStoreInvestments] = useState({});
   const [quickFilter, setQuickFilter] = useState("all");
   const [period, setPeriod] = useState("today");
+  // Al cambiar de pestaña se conserva el alto del contenido mientras carga, para que el scroll no salte
+  const contentRef = useRef(null);
+  const [lockedHeight, setLockedHeight] = useState(0);
   const [params, setParams] = useState(() => ({ ...getPeriodRange("today"), store_type: STORE_TYPES.STORE }));
   const hasDepartment = Boolean(params.department_id);
   const isStoreType = params.store_type === STORE_TYPES.STORE;
@@ -62,6 +72,11 @@ const StoreList = () => {
     if (tenantInfo.show_mp_modal) openMpModal();
   }, [tenantInfo.show_mp_modal, openMpModal]);
 
+  const { store_type: storeType } = params;
+  useEffect(() => {
+    if (!loadingStores) setLockedHeight(0);
+  }, [loadingStores, storeType]);
+
   const stores = useMemo(() => storesData?.stores || [], [storesData]);
   const totals = useMemo(() => storesData?.totals || {}, [storesData]);
   const loading = loadingStores || loadingTenant;
@@ -77,6 +92,7 @@ const StoreList = () => {
   }, []);
 
   const handleStoreType = useCallback((storeType) => {
+    setLockedHeight(contentRef.current?.offsetHeight || 0);
     setQuickFilter("all");
     setParams((prev) => ({ ...prev, store_type: storeType }));
   }, []);
@@ -144,68 +160,72 @@ const StoreList = () => {
     <StoreEmptyNotice icon={StorefrontOutlinedIcon} title="Todavía no tienes almacenes" />
   );
 
+  const quickFilters = (
+    <StoreQuickFilters
+      storeType={params.store_type}
+      stores={stores}
+      value={quickFilter}
+      onChange={setQuickFilter}
+    />
+  );
+
   return (
     <>
-      <WarmTheme>
-        <Box className="card">
-          <StoreHeader
-            title={isStoreType ? "Tiendas" : "Almacenes"}
-            greeting={getGreeting(user)}
-            notices={tenantInfo.notices}
-            canCreate={isOwner}
-            createBlocked={createStoreBlocked}
-            onCreate={() => openCreateStore()}
-          />
+      <Box className="card">
+        <StoreHeader
+          title={isStoreType ? "Tiendas" : "Almacenes"}
+          greeting={getGreeting(user)}
+          notices={tenantInfo.notices}
+          isOwner={isOwner}
+          createBlocked={createStoreBlocked}
+          onCreate={() => openCreateStore()}
+        />
 
-          {isStoreType && (
-            <StorePeriodFilters
-              period={period}
-              onPeriodChange={handlePeriod}
-              params={params}
-              departments={departments}
-              onChange={handleParams}
-            />
-          )}
+        <StorePeriodFilters
+          period={period}
+          onPeriodChange={handlePeriod}
+          params={params}
+          departments={departments}
+          onChange={handleParams}
+          showFilters={isStoreType}
+        />
 
-          <StoreKpiTiles tenantInfo={tenantInfo} totals={totals} loading={loading} />
+        <StoreKpiTiles tenantInfo={tenantInfo} totals={totals} period={period} loading={loading} />
 
-          <StoreTypeTabs value={params.store_type} onChange={handleStoreType} />
+        <StoreTypeTabs value={params.store_type} onChange={handleStoreType} />
 
+        <Box ref={contentRef} sx={{ minHeight: lockedHeight || undefined }}>
           <Box key={params.store_type} className="fade-in-up">
-            <StoreQuickFilters
-              storeType={params.store_type}
-              stores={stores}
-              value={quickFilter}
-              onChange={setQuickFilter}
-            />
-
             {isMobile ? (
-              <CardGallery
-                items={filteredStores}
-                loading={loading}
-                gridItem={{ xs: 12, sm: 6 }}
-                emptyText={isOwner ? "Crea tu primera tienda para empezar" : "No hay sucursales registradas"}
-                renderItem={(store) => (
-                  <StoreCard
-                    store={store}
-                    quickFilter={quickFilter}
-                    {...sharedProps}
+              <>
+                {quickFilters}
+                <Box sx={{ mt: 2 }}>
+                  <CardGallery
+                    items={filteredStores}
+                    loading={loading}
+                    gridItem={{ xs: 12, sm: 6 }}
+                    emptyText={isOwner ? "Crea tu primera tienda para empezar" : "No hay sucursales registradas"}
+                    renderItem={(store) => (
+                      <StoreCard store={store} quickFilter={quickFilter} {...sharedProps} />
+                    )}
                   />
-                )}
-              />
+                </Box>
+              </>
             ) : (
-              <DataTable
-                progressPending={loading}
-                noDataComponent={emptyList}
-                data={filteredStores}
-                columns={columns}
-                conditionalRowStyles={currentStoreRowStyles}
-              />
+              <Box sx={TABLE_CARD_SX}>
+                {quickFilters}
+                <DataTable
+                  progressPending={loading}
+                  noDataComponent={emptyList}
+                  data={filteredStores}
+                  columns={columns}
+                  conditionalRowStyles={currentStoreRowStyles}
+                />
+              </Box>
             )}
-
           </Box>
         </Box>
-      </WarmTheme>
+      </Box>
 
       <UserManagementModals management={userManagement} />
 

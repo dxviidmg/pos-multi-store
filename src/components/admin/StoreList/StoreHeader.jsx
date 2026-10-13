@@ -1,42 +1,51 @@
 import React, { memo } from "react";
-import { Box, Chip, Link as MuiLink, Typography } from "@mui/material";
+import { Box, Button, Chip, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 import AddBusinessOutlinedIcon from "@mui/icons-material/AddBusinessOutlined";
+import AutoAwesomeOutlinedIcon from "@mui/icons-material/AutoAwesomeOutlined";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import CustomButton from "../../ui/Button/Button";
+import CustomTooltip from "../../ui/Tooltip";
 
 const NOTICE_COLORS = { error: "error", warning: "warning" };
 
-/** Título y saludo a la izquierda; avisos y acción principal a la derecha. */
-const StoreHeader = ({ title, greeting, notices = [], canCreate, createBlocked, onCreate }) => (
-  <Box sx={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start", justifyContent: "space-between", gap: 2, mb: 3 }}>
+/** Saludo y título a la izquierda; ampliar plan y crear tienda a la derecha. */
+const StoreHeader = ({ title, greeting, notices = [], isOwner, createBlocked, onCreate }) => (
+  <Box sx={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 2, mb: 3 }}>
     <Box>
-      <Typography variant="h2" component="h2">{title}</Typography>
-      <Typography variant="body1" color="text.secondary" sx={{ mt: 0.5 }}>{greeting}</Typography>
+      <Typography variant="body1" color="text.secondary">{greeting}</Typography>
+      <Typography variant="h1" component="h2" sx={{ mt: 0.25, fontWeight: 600, color: "text.primary" }}>{title}</Typography>
     </Box>
 
-    <Box sx={{ display: "flex", flexDirection: "column", alignItems: { xs: "flex-start", md: "flex-end" }, gap: 1 }}>
-      <Box sx={{ display: "flex", alignItems: "center", gap: 1, flexWrap: "wrap" }}>
-        {notices.map((notice) => (
-          <Chip
-            key={notice.notice}
-            label={notice.notice}
-            color={NOTICE_COLORS[notice.variant] || "success"}
-            variant="outlined"
-            size="small"
-          />
-        ))}
-        {canCreate && (
-          <CustomButton onClick={onCreate} startIcon={<AddBusinessOutlinedIcon />} disabled={createBlocked}>
-            Crear tienda
-          </CustomButton>
-        )}
-      </Box>
-      {canCreate && createBlocked && (
-        <Typography variant="caption" sx={{ maxWidth: 320, textAlign: { md: "right" } }}>
-          Ya tienes todas las tiendas que incluye tu plan. Si necesitas otra, puedes ampliarlo en{" "}
-          <MuiLink component={Link} to="/mi-plan-actual/">Mi plan</MuiLink>.
-        </Typography>
+    <Box sx={{ display: "flex", alignItems: "center", gap: 1, flexWrap: "wrap" }}>
+      {notices.map((notice) => (
+        <Chip
+          key={notice.notice}
+          label={notice.notice}
+          color={NOTICE_COLORS[notice.variant] || "success"}
+          variant="outlined"
+          size="small"
+        />
+      ))}
+      {isOwner && (
+        <Button
+          variant="outlined"
+          size="small"
+          component={Link}
+          to="/mi-plan-actual/"
+          startIcon={<AutoAwesomeOutlinedIcon />}
+          sx={{ height: 40, bgcolor: "background.paper", color: "text.primary", borderColor: "divider" }}
+        >
+          Ampliar plan
+        </Button>
       )}
+      {isOwner && (createBlocked ? (
+        <CustomTooltip text="Ya usas todas las tiendas de tu plan" position="bottom">
+          <CustomButton disabled startIcon={<LockOutlinedIcon />}>Crear tienda</CustomButton>
+        </CustomTooltip>
+      ) : (
+        <CustomButton onClick={onCreate} startIcon={<AddBusinessOutlinedIcon />}>Crear tienda</CustomButton>
+      ))}
     </Box>
   </Box>
 );

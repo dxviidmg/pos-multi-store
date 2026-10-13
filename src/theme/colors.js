@@ -1,17 +1,14 @@
-// Paleta del POS, alineada con smartventa-landing pero en clave SaaS:
-// superficies neutras y descansadas, y el azul de marca solo en acciones y estados activos.
-const PRIMARY = '#1d4ed8';
-const PRIMARY_LIGHT = '#3b82f6';
-const PRIMARY_DARK = '#1e40af';
+// Paleta del POS: navy de marca (topbar, sidebar, botones, encabezados de tabla y pestaña activa)
+// sobre neutros fríos y descansados. Es la única fuente de color: theme y cssVariables solo la leen.
+const SIDEBAR = '#121a45';
+const SIDEBAR_DARK = '#121a45';
+const PRIMARY = SIDEBAR;
+const PRIMARY_LIGHT = '#2b3578';
+const PRIMARY_DARK = '#0b1233';
 const ACCENT = '#ffb020';
 const ACCENT_DARK = '#f59e0b';
 
-// Navy del landing (footer y textos) para el sidebar
-const SIDEBAR = '#0b1b4d';
-const SIDEBAR_DARK = '#08143a';
-
-const PRIMARY_RGB = '29,78,216';
-const SHADOW_TINT = '15,23,42';
+const PRIMARY_RGB = '18,26,69';
 const STATUS_ERROR = '#dc2626';
 const SECONDARY = '#00a4db';
 
@@ -26,7 +23,8 @@ export const colors = {
   onAccent: '#0b1b4d',
   sidebar: SIDEBAR,
   sidebarDark: SIDEBAR_DARK,
-  sidebarActive: '#00e0d8',
+  sidebarActive: '#ffffff',
+  sidebarIcon: '#8e95be',
   whatsapp: '#25D366',
   googleBlue: '#4285F4',
   white: '#fff',
@@ -50,9 +48,6 @@ export const colors = {
     brandHover: `linear-gradient(135deg, ${PRIMARY_DARK} 0%, ${PRIMARY} 100%)`,
   },
 
-  // Tono de cada indicador (ícono sobre un fondo del mismo color al 12%)
-  kpiTones: ['#1d4ed8', '#059669', '#0284c7', '#b45309', '#0f766e'],
-
   status: {
     success: { main: '#16a34a', light: '#dcfce7', dark: '#15803d' },
     warning: { main: '#d97706', light: '#fef3c7', dark: '#b45309' },
@@ -61,60 +56,87 @@ export const colors = {
   },
 
   // Tokens semánticos por modo: los consumen theme.js y cssVariables.js
+  // (más los de la tarjeta destacada y las pastillas, que lee `useThemeTokens`).
   modes: {
     light: {
-      primary: PRIMARY,
+      primary: SIDEBAR,
       primaryHover: PRIMARY_DARK,
+      primaryLight: PRIMARY_LIGHT,
+      primaryDark: PRIMARY_DARK,
+      secondary: '#5b6280',
       buttonBg: SIDEBAR,
-      buttonHover: SIDEBAR_DARK,
-      background: '#E8EEF6',
-      paper: '#fbfcfe',
-      text: '#0f172a',
-      textSecondary: '#475569',
-      caption: '#64748b',
-      border: '#dde3ec',
-      borderStrong: '#cfd6e2',
-      borderHover: '#94a3b8',
-      rowHover: '#f1f4f9',
-      rowDivider: '#e8ecf2',
-      tableHead: '#f1f4f9',
-      tableHeadText: '#475569',
-      modalHeader: '#e4eaf2',
-      modalBody: '#d8e0eb',
-      modalField: '#f3f6fa',
-      modalBorder: '#aab6c8',
-      focusRing: SECONDARY,
-      shadowSm: `0 1px 2px rgba(${SHADOW_TINT},0.08)`,
-      shadowMd: `0 8px 24px rgba(${SHADOW_TINT},0.12)`,
+      buttonHover: '#1c2760',
+      buttonDisabledBg: '#e7e9f0',
+      buttonDisabledText: '#9ea3b8',
+      focusRing: SIDEBAR,
+      tabSelectedColor: '#141a33',
+      skeletonBase: '#5b6280',
+      background: '#f3f4f8',
+      paper: '#ffffff',
+      text: '#141a33',
+      textSecondary: '#5b6280',
+      caption: '#8c92ab',
+      border: '#e3e6ee',
+      borderStrong: '#d3d7e3',
+      borderHover: '#a9aec4',
+      rowHover: '#f6f7fb',
+      rowDivider: '#eef0f5',
+      tableHead: SIDEBAR,
+      tableHeadText: '#ffffff',
+      modalHeader: '#eceef5',
+      modalBody: '#e6e9f2',
+      modalField: '#f6f7fb',
+      modalBorder: '#b9bfd4',
+      heroBg: SIDEBAR,
+      heroLabel: '#aeb5da',
+      heroDivider: 'rgba(255,255,255,0.12)',
+      heroGlow: 'rgba(255,255,255,0.14)',
+      pillBg: '#e9ebf2',
+      pillActiveBg: 'rgba(255,255,255,0.2)',
+      shadowSm: '0 1px 2px rgba(18,26,69,0.04)',
+      shadowMd: '0 8px 24px rgba(18,26,69,0.08)',
       shadows: [
-        `0 1px 3px rgba(${SHADOW_TINT},0.09)`,
-        `0 2px 6px rgba(${SHADOW_TINT},0.10)`,
-        `0 4px 12px rgba(${SHADOW_TINT},0.11)`,
-        `0 12px 32px rgba(${SHADOW_TINT},0.16)`,
+        '0 1px 3px rgba(18,26,69,0.05)',
+        '0 2px 6px rgba(18,26,69,0.06)',
+        '0 4px 12px rgba(18,26,69,0.07)',
+        '0 12px 32px rgba(18,26,69,0.10)',
       ],
     },
     dark: {
-      primary: '#5b8cff',
-      primaryHover: '#7aa2ff',
-      buttonBg: '#5b8cff',
-      buttonHover: '#7aa2ff',
-      background: '#0f1420',
-      paper: '#161c2a',
-      text: '#e6eaf2',
-      textSecondary: '#a3adc2',
-      caption: '#7f8aa3',
-      border: '#262f42',
-      borderStrong: '#2f3a50',
-      borderHover: '#4a5670',
-      rowHover: 'rgba(255,255,255,0.03)',
-      rowDivider: '#1f2738',
-      tableHead: '#1b2232',
-      tableHeadText: '#a3adc2',
-      modalHeader: '#161c2a',
-      modalBody: '#0f1420',
-      modalField: '#1b2232',
-      modalBorder: '#3a4660',
-      focusRing: SECONDARY,
+      primary: '#aab3e6',
+      primaryHover: '#c3caf0',
+      primaryLight: '#c3caf0',
+      primaryDark: SIDEBAR,
+      secondary: '#a4abc9',
+      buttonBg: '#2b3a8f',
+      buttonHover: '#3647a8',
+      buttonDisabledBg: '#262c48',
+      buttonDisabledText: '#6b7294',
+      focusRing: '#aab3e6',
+      tabSelectedColor: '#e8eaf4',
+      skeletonBase: '#aeb5da',
+      background: '#0f1220',
+      paper: '#171b2e',
+      text: '#e8eaf4',
+      textSecondary: '#a4abc9',
+      caption: '#7f86a8',
+      border: '#2a3050',
+      borderStrong: '#363d63',
+      borderHover: '#5a6390',
+      rowHover: 'rgba(255,255,255,0.04)',
+      rowDivider: '#232944',
+      tableHead: '#1b2766',
+      tableHeadText: '#ffffff',
+      modalHeader: '#171b2e',
+      modalBody: '#0f1220',
+      modalField: '#1e2338',
+      modalBorder: '#3a4266',
+      heroBg: '#1b2766',
+      heroLabel: '#aeb5da',
+      heroDivider: 'rgba(255,255,255,0.12)',
+      heroGlow: 'rgba(255,255,255,0.1)',
+      pillBg: '#262c48',
+      pillActiveBg: 'rgba(255,255,255,0.2)',
       shadowSm: '0 1px 2px rgba(0,0,0,0.3)',
       shadowMd: '0 8px 24px rgba(0,0,0,0.4)',
       shadows: [
@@ -123,100 +145,6 @@ export const colors = {
         '0 4px 12px rgba(0,0,0,0.4)',
         '0 12px 32px rgba(0,0,0,0.5)',
       ],
-    },
-  },
-
-  // Paleta cálida (neutros arena + verde profundo). Mismas llaves que `modes`;
-  // la usa `WarmTheme` en las pantallas que ya migraron al nuevo estilo.
-  warm: {
-    modes: {
-      light: {
-        primary: PRIMARY,
-        primaryHover: PRIMARY_DARK,
-        primaryLight: PRIMARY_LIGHT,
-        primaryDark: PRIMARY_DARK,
-        secondary: '#6b6256',
-        buttonBg: PRIMARY,
-        buttonHover: PRIMARY_DARK,
-        focusRing: PRIMARY,
-        primarySoft: `rgba(${PRIMARY_RGB},0.1)`,
-        skeletonBase: '#78716c',
-        background: '#e8eef6',
-        paper: '#fffefb',
-        text: '#292524',
-        textSecondary: '#57534e',
-        caption: '#78716c',
-        border: '#e7e2d8',
-        borderStrong: '#d6d0c3',
-        borderHover: '#a8a094',
-        rowHover: '#f8f4ea',
-        rowDivider: '#efebe1',
-        tableHead: '#fbf9f4',
-        tableHeadText: '#78716c',
-        modalHeader: '#f1ede3',
-        modalBody: '#efeadf',
-        modalField: '#faf7f0',
-        modalBorder: '#c9c1b1',
-        shadowSm: '0 1px 2px rgba(41,37,36,0.05)',
-        shadowMd: '0 8px 24px rgba(41,37,36,0.08)',
-        shadows: [
-          '0 1px 3px rgba(41,37,36,0.06)',
-          '0 2px 6px rgba(41,37,36,0.07)',
-          '0 4px 12px rgba(41,37,36,0.08)',
-          '0 12px 32px rgba(41,37,36,0.12)',
-        ],
-      },
-      dark: {
-        primary: '#5b8cff',
-        primaryHover: '#7aa2ff',
-        primaryLight: '#7aa2ff',
-        primaryDark: PRIMARY_DARK,
-        secondary: '#b5ada1',
-        buttonBg: '#5b8cff',
-        buttonHover: '#7aa2ff',
-        focusRing: '#5b8cff',
-        primarySoft: 'rgba(91,140,255,0.16)',
-        skeletonBase: '#d6cfc4',
-        background: '#1c1917',
-        paper: '#26211e',
-        text: '#f2ede4',
-        textSecondary: '#b5ada1',
-        caption: '#968e82',
-        border: '#38322d',
-        borderStrong: '#443d37',
-        borderHover: '#6b6258',
-        rowHover: 'rgba(255,244,224,0.04)',
-        rowDivider: '#2e2824',
-        tableHead: '#2b2623',
-        tableHeadText: '#b5ada1',
-        modalHeader: '#26211e',
-        modalBody: '#1c1917',
-        modalField: '#2b2623',
-        modalBorder: '#4a423b',
-        shadowSm: '0 1px 2px rgba(0,0,0,0.3)',
-        shadowMd: '0 8px 24px rgba(0,0,0,0.4)',
-        shadows: [
-          '0 1px 3px rgba(0,0,0,0.35)',
-          '0 2px 6px rgba(0,0,0,0.4)',
-          '0 4px 12px rgba(0,0,0,0.4)',
-          '0 12px 32px rgba(0,0,0,0.5)',
-        ],
-      },
-    },
-    // Verde, ámbar y rojo solo para estados (más / igual / menos que el promedio)
-    status: {
-      light: {
-        success: { main: '#2f7d4f', light: '#e4f1e8', dark: '#255f3d' },
-        warning: { main: '#b7791f', light: '#f8edd3', dark: '#8a5a12' },
-        error: { main: '#b8432f', light: '#f8e3de', dark: '#8f3224' },
-        info: { main: '#3b6e8f', light: '#e3eef4', dark: '#2c5570' },
-      },
-      dark: {
-        success: { main: '#6cc48c', light: '#1f3a2a', dark: '#4ea36e' },
-        warning: { main: '#e0a84b', light: '#3d3220', dark: '#c48f33' },
-        error: { main: '#e5806d', light: '#432722', dark: '#c9604d' },
-        info: { main: '#7fb0cf', light: '#223442', dark: '#5f95b6' },
-      },
     },
   },
 };

@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, ButtonBase } from "@mui/material";
 import CustomButton from "../../ui/Button/Button";
 import CustomTooltip from "../../ui/Tooltip";
 import { formatCurrency } from "../../../utils/currency";
@@ -33,6 +33,23 @@ const cashCol = (name, key) => ({
   name,
   selector: (row) => formatCurrency(row.cash_summary?.[key]),
 });
+
+const EnterButton = ({ tooltip, onClick }) => (
+  <CustomTooltip text={tooltip}>
+    <ButtonBase
+      onClick={onClick}
+      aria-label={tooltip}
+      sx={{
+        "&&&": { width: 30, height: 30, minWidth: 30, padding: 0, borderRadius: "8px", "& .MuiSvgIcon-root": { fontSize: 18 } },
+        bgcolor: "tableHead.main", color: "common.white", transition: "background-color 0.15s ease",
+        "&:hover": { bgcolor: "primary.dark" },
+        "&.Mui-focusVisible": { outline: "2px solid", outlineColor: "primary.main", outlineOffset: 2 },
+      }}
+    >
+      <HomeOutlinedIcon />
+    </ButtonBase>
+  </CustomTooltip>
+);
 
 const catalogCol = {
   name: "Catálogo",
@@ -122,11 +139,7 @@ const getActionColumns = ({ user, handleSelectStore, handleResetStore, enterTool
     : []),
   {
     name: "Entrar",
-    cell: (row) => (
-      <CustomTooltip text={enterTooltip}>
-        <CustomButton onClick={() => handleSelectStore(row)}><HomeOutlinedIcon /></CustomButton>
-      </CustomTooltip>
-    ),
+    cell: (row) => <EnterButton tooltip={enterTooltip} onClick={() => handleSelectStore(row)} />,
   },
 ];
 

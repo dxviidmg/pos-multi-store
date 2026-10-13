@@ -13,27 +13,25 @@ import { buildComponentsConfig } from './components';
  * Construye y retorna el tema MUI completo según el modo (light/dark).
  * 
  * @param {string} mode - 'light' o 'dark'
- * @param {string} [variant] - 'default' o 'warm' (paleta cálida, ver `WarmTheme`)
  * @returns {Object} Tema MUI (resultado de createTheme())
  * 
  * Paleta:
- * - Primary: azul (#0030cc)
- * - Secondary: cian (#00a4db)
+ * - Primary: navy de marca (#121a45)
+ * - Secondary: gris azulado
  * - Accent: ámbar (#ffb020)
  * - Success/Warning/Error/Info: del objeto status
  * 
  * Tipografía:
- * - Títulos: Plus Jakarta Sans (800, 700)
+ * - Títulos: Inter (800, 700)
  * - Cuerpo: Inter (400)
  * - Botones: 600, sin mayúsculas forzadas
  * 
  * Componentes:
  * - Customizados: Button, TextField, Dialog, Table, etc.
  */
-export const getTheme = (mode, variant = 'default') => {
-  const warm = variant === 'warm';
-  const t = (warm ? colors.warm.modes : colors.modes)[mode];
-  const status = warm ? colors.warm.status[mode] : colors.status;
+export const getTheme = (mode) => {
+  const t = colors.modes[mode];
+  const { status } = colors;
 
   return createTheme({
     palette: {
@@ -57,6 +55,7 @@ export const getTheme = (mode, variant = 'default') => {
       warning: status.warning,
       error: status.error,
       info: status.info,
+      rowDivider: { main: t.rowDivider },
       modalBody: { main: t.modalBody },
       modalHeader: { main: t.modalHeader },
       modalField: { main: t.modalField },

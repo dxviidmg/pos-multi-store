@@ -111,7 +111,7 @@ const HorizontalStepper = ({ activeStep, stepLabels }) => (
 );
 
 /**
- * Estructura común de login y registro: panel de marca (#0B1B4D) + panel de formulario.
+ * Estructura común de login y registro: panel de marca (navy) + panel de formulario.
  * Con `stepLabels` el panel de marca muestra el progreso en lugar de los beneficios.
  * En xs (móvil): logo + pasos horizontales arriba + formulario abajo (app-style).
  */

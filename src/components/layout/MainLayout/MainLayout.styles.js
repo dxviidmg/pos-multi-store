@@ -110,7 +110,7 @@ export const menuListSx = (scrollbarWidth) => ({
 
 export const activeSx = {
   position: "relative",
-  background: whiteAlpha(0.09),
+  background: whiteAlpha(0.1),
   "&:hover": { background: whiteAlpha(0.12) },
   "&::before": {
     content: '""',
@@ -129,7 +129,7 @@ export const itemButtonSx = (expanded, active = false) => ({
 });
 
 export const itemIconSx = (expanded, active = false) => ({
-  color: active ? colors.sidebarActive : whiteAlpha(0.7),
+  color: active ? colors.sidebarActive : colors.sidebarIcon,
   minWidth: expanded ? 38 : 0, justifyContent: "center",
 });
 

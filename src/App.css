@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 @import './theme/variables.css';
 
 /* Base resets */
@@ -28,9 +28,13 @@ h1, h2, h3 {
   transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
+@media (max-width: 600px) {
+  .card { padding: 1rem; }
+}
+
 .card-interactive:hover {
   box-shadow: var(--shadow-md);
-  border-color: rgba(6, 90, 158, 0.35);
+  border-color: var(--color-border-hover);
 }
 
 /* Entrance animation; stagger with animation-delay */
@@ -101,8 +105,7 @@ h1, h2, h3 {
   margin: 0 0 0.25rem 0;
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--color-primary, #0030cc);
-  text-align: center;
+  color: var(--color-text);
 }
 
 /* Card titles (Typography variant h5/subtitle2) */
@@ -111,8 +114,7 @@ h1, h2, h3 {
 .card h4,
 .card h5,
 .card h6 {
-  color: var(--color-primary, #0030cc);
-  text-align: center;
+  color: var(--color-text);
 }
 
 /* Modal titles centered */
@@ -123,12 +125,12 @@ h1, h2, h3 {
 
 /* DataGrid header cells */
 .MuiDataGrid-columnHeaderTitle {
-  color: white !important;
+  color: var(--color-table-head-text) !important;
   font-weight: 600 !important;
 }
 
 .MuiDataGrid-columnHeader {
-  background-color: #0B1B4D !important;
+  background-color: var(--color-table-head) !important;
 }
 
 /* Utility classes */
@@ -175,3 +177,9 @@ input:focus, select:focus, textarea:focus {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(100,116,139,0.35); border-radius: 999px; border: 2px solid transparent; background-clip: padding-box; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(100,116,139,0.55); border: 2px solid transparent; background-clip: padding-box; }
+
+/* Filas de filtros: los campos de cada fila se reparten todo el ancho disponible */
+.fill-row > .MuiGrid-item {
+  flex-grow: 1;
+  max-width: none;
+}

@@ -143,7 +143,7 @@ const StoreCard = ({ store, quickFilter, ...props }) => {
         p: 2, height: "100%", cursor: "pointer",
         display: "flex", flexDirection: "column", gap: 1.25,
         bgcolor: isCurrent ? (theme) => alpha(theme.palette.primary.main, 0.05) : "background.paper",
-        boxShadow: isCurrent ? (theme) => `inset 3px 0 0 ${theme.palette.accent.main}` : "none",
+        boxShadow: isCurrent ? (theme) => `inset 3px 0 0 ${theme.palette.primary.main}` : "none",
         transition: "background-color 0.15s ease",
         "&:hover": { bgcolor: "action.hover" },
         "&:focus-visible": { outline: "2px solid", outlineColor: "primary.main", outlineOffset: 2 },

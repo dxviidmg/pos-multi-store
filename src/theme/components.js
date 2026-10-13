@@ -34,7 +34,7 @@ export const buildComponentsConfig = (modeColors, mode) => ({
     defaultProps: { disableElevation: true },
     styleOverrides: {
       root: {
-        borderRadius: 8,
+        borderRadius: 10,
         padding: '6px 16px',
         fontWeight: 600,
         fontSize: '0.8125rem',
@@ -51,6 +51,9 @@ export const buildComponentsConfig = (modeColors, mode) => ({
           boxShadow: colors.shadow.brand,
           transform: 'translateY(-1px)',
         },
+        ...(modeColors.buttonDisabledBg && {
+          '&.Mui-disabled': { background: modeColors.buttonDisabledBg, color: modeColors.buttonDisabledText },
+        }),
       },
       outlined: {
         borderColor: modeColors.borderStrong,
@@ -86,7 +89,7 @@ export const buildComponentsConfig = (modeColors, mode) => ({
     defaultProps: { elevation: 0 },
     styleOverrides: {
       root: {
-        borderRadius: 12,
+        borderRadius: 14,
         border: `1px solid ${modeColors.border}`,
         backgroundImage: 'none',
       },
@@ -97,7 +100,7 @@ export const buildComponentsConfig = (modeColors, mode) => ({
     defaultProps: { elevation: 0 },
     styleOverrides: {
       root: {
-        borderRadius: 12,
+        borderRadius: 14,
         border: `1px solid ${modeColors.border}`,
         transition: 'box-shadow 0.2s ease',
         '&:hover': {
@@ -123,7 +126,7 @@ export const buildComponentsConfig = (modeColors, mode) => ({
     styleOverrides: {
       root: {
         '& .MuiOutlinedInput-root': {
-          borderRadius: 8,
+          borderRadius: 10,
           fontSize: '0.875rem',
           transition: 'border-color 0.15s ease, box-shadow 0.15s ease',
           '&:hover fieldset': {
@@ -142,7 +145,7 @@ export const buildComponentsConfig = (modeColors, mode) => ({
   MuiSelect: {
     styleOverrides: {
       root: {
-        borderRadius: 8,
+        borderRadius: 10,
         fontSize: '0.875rem',
       },
     },
@@ -210,11 +213,7 @@ export const buildComponentsConfig = (modeColors, mode) => ({
         fontSize: '0.8125rem',
         textTransform: 'none',
         minHeight: 40,
-        ...(modeColors.primarySoft && {
-          borderRadius: '8px 8px 0 0',
-          transition: 'background-color 0.15s ease, color 0.15s ease',
-          '&.Mui-selected': { backgroundColor: modeColors.primarySoft },
-        }),
+        ...(modeColors.tabSelectedColor && { '&.Mui-selected': { color: modeColors.tabSelectedColor } }),
       },
     },
   },
