@@ -309,6 +309,7 @@ Revisa esta lista antes de crear un componente. Si un patrón se repite en dos a
 | `NotificationsMenu`, `PendingMenu`, `DuplicateSalesMenu`, `StockRequestMenu` | Menús del header construidos sobre `HeaderPopoverMenu`; se recargan con `store-changed`. |
 | `HeaderPopoverMenu` | Base de los menús del header: botón con badge + `CustomTooltip`, Popover con título, lista con scroll y estado vacío. `autoHideBadge={false}` si el badge lo controla el padre. |
 | `DateRangeFilter` | "Fecha de inicio" / "Fecha de fin" (+ "Rango" con `showRange`) como `Grid item`s; `onChange` recibe el evento con `name` `start_date`/`end_date`. |
+| `Field/` (`TextField`, `Select`) | Campos con un ícono Outlined al inicio según su etiqueta (`fieldIcons.js`; un `startAdornment` propio tiene prioridad; sin etiqueta no lleva ícono). **Importa `TextField` y `Select` de aquí, no de `@mui/material`.** Para un ícono nuevo, agrega su regla a `FIELD_ICONS`. |
 | `StoreSelect` | Select de sucursales con `useStoreOptions` (`params`, `allLabel`, `placeholder`, `getOptionLabel`). |
 | `ViewModeToggle` | Selector de vista: `variant="select"` (opciones `PRODUCT_VIEW_OPTIONS`) o `"buttons"` (íconos). |
 | `EmptyState` | Ícono + mensaje centrado (tableros); `compact` para menús. |
@@ -403,7 +404,7 @@ En el cobro: Ctrl+G confirma y Ctrl+O quita el cliente (solo con el cobro abiert
 
 Fuente única de colores y sombras: `src/theme/colors.js` (primitivas, `status` y `modes.light/dark`). `theme.js` y `cssVariables.js` solo los leen: `theme.js` arma el tema MUI y `cssVariables.js` publica las variables CSS (`--color-*`, `--shadow-*`) al cambiar de modo desde `useThemeMode`. `variables.css` solo guarda radio, espaciado, fuente y easing. **No repitas un valor de color en estos archivos**: agrégalo a `colors.js`.
 
-- **Estilo cálido (migración gradual).** `colors.warm` (neutros arena, azul de la app y ámbar `#FFB020` solo de detalle: marca de la sucursal actual) y `getTheme(mode, "warm")` arman un tema anidado. `WarmTheme` (`src/theme/WarmTheme.jsx`) lo aplica a una pantalla completa y publica sus variables CSS solo ahí; modales y portales van fuera del bloque. Hoy solo `/tiendas/` lo usa (ejemplo: `admin/StoreList/`). Para migrar otra pantalla basta envolverla en `<WarmTheme>` y quitar sus colores propios. Íconos: MUI Outlined/Rounded, en tono neutro, sin cajas de color.
+- **Estilo de marca.** Navy `#121A45` (`colors.sidebar`) en topbar, sidebar, botones, encabezado de tabla y pestaña activa; neutros fríos para fondo, superficies y bordes; Inter en todo; íconos MUI Outlined de 18 px, monocromos. Las pantallas lo heredan del tema global: no lleva envoltorio ni tema propio. `useThemeTokens()` da los tokens extra de la tarjeta destacada y las pastillas (ejemplo: `admin/StoreList/`). `PageHeader` pone el título a la izquierda sin ícono; el contenedor principal de cada página es `.card` (radio 16 px, padding 28 px).
 - **Nunca hardcodear hex ni rgba** en componentes. Usa tokens del tema (`primary`, `secondary`, `accent`, `success`, `error`, `text.*`, `divider`, `common.white`…), `alpha(theme.palette.x.main, o)` para transparencias, o `colors` de `src/theme/colors.js`.
 - `colors.js` tiene las primitivas que no son tokens de MUI:
   - `error` (= `error.main`), `whatsapp`, `backdrop`, `appbar`.
@@ -417,7 +418,7 @@ Fuente única de colores y sombras: `src/theme/colors.js` (primitivas, `status` 
 
 ### Tipografía
 
-Texto `Inter`; títulos h1–h4 `Plus Jakarta Sans` (700–800); números `tabular-nums`.
+Texto e títulos `Inter` (títulos h1–h4 con peso 700–800; los encabezados de página usan 600); números `tabular-nums`.
 
 | Nivel | Tamaño | Peso |
 |---|---|---|
@@ -435,28 +436,25 @@ Texto `Inter`; títulos h1–h4 `Plus Jakarta Sans` (700–800); números `tabul
 
 | Token | Claro | Oscuro |
 |---|---|---|
-| primary | `#0030cc` (light `#0079be`, dark `#00269e`) | igual |
-| secondary | `#00a4db` | igual |
-| accent | `#ffb020` (ámbar, solo botón principal del registro y detalles; dark `#f59e0b`; texto sobre ámbar `onAccent` `#0b1b4d`; el sidebar activo usa `sidebarActive` `#00e0d8`) | igual |
-| background.default | `#f5f9ff` | `#0d1117` |
-| background.paper | `#ffffff` | `#161b22` |
-| divider | `#e2e8f0` | `#30363d` |
-| text.primary | `#0f172a` | `#e6edf3` |
-| text.secondary | `#475569` | `#8b949e` |
+| primary / sidebar / botones | `#121a45` | primary `#aab3e6`, botón `#2b3a8f` |
+| accent | `#ffb020` (ámbar, solo botón principal del registro y detalles; dark `#f59e0b`; texto sobre ámbar `onAccent` `#0b1b4d`) | igual |
+| background.default | `#f3f4f8` | `#0f1220` |
+| background.paper | `#ffffff` | `#171b2e` |
+| divider | `#e3e6ee` | `#2a3050` |
+| text.primary | `#141a33` | `#e8eaf4` |
+| text.secondary | `#5b6280` | `#a4abc9` |
+| text terciario (`caption`) | `#8c92ab` | `#7f86a8` |
+| sidebar activo / íconos inactivos | `#ffffff` con barra de 3px / `#8e95be` | igual |
 
-`colors.js` define las primitivas que consume `theme.js` (no repitas hex en el tema). Degradados en `colors.gradient`:
-- Sidebar y login: `180deg #0079be → #00269e`.
-- Botón de login: `135deg #0030cc → #0079be`.
-- Íconos de KPI: azul, verde, verde azulado, ámbar y cian.
+`colors.js` define las primitivas que consume `theme.js` (no repitas hex en el tema). El sidebar, el login y los modales usan el navy plano (`colors.gradient.sidebar` es el mismo tono). Sin azul rey ni fondos pastel de color en tarjetas o íconos.
 
 ### Formas, sombras y movimiento
 
-- **Radios:** Paper/Card/.card 12px · Button/TextField/Select/Alert 8px · Dialog 16px · Chip 999px · Tooltip 6px.
-- **Sombras teñidas de azul en modo claro** (negras en oscuro):
-  - Ligera: `0 1px 2px rgba(0,38,158,.06)`
-  - Media: `0 8px 24px rgba(0,38,158,.10)`
-  - Amplia: `0 24px 60px rgba(0,38,158,.18)`
-  - Marca: `0 4px 14px rgba(0,48,204,.25)`
+- **Radios:** `.card` 16px · Paper/Card y tarjetas 14px · Button/TextField/Select 10px · Alert 8px · Dialog 16px · Chip 999px · Tooltip 6px.
+- **Sombras teñidas de navy en modo claro** (negras en oscuro), casi imperceptibles:
+  - Ligera: `0 1px 2px rgba(18,26,69,.04)`
+  - Media: `0 8px 24px rgba(18,26,69,.08)`
+  - Marca: `0 4px 14px rgba(18,26,69,.22)`
 - **Animaciones en `App.css`:**
   - `fade-in-up`: tarjetas y paneles; escalonar con `animationDelay`, 60 ms.
   - `fade-in-left`: campos condicionales.

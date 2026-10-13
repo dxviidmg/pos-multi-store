@@ -228,7 +228,7 @@ Al confirmar un traspaso o una distribución eliges el destino dos veces, para n
 
 ### 🏪 Control de sucursales (dueño)
 
-- **Vista general de tiendas y almacenes.** Te saluda según la hora y resume en una línea cómo va cada tienda frente al promedio. Indicadores de productos, ventas, monto y ganancia del periodo (hoy, ayer, últimos 7 días, este mes o un rango propio), con totales y filtro por departamento. Cada tienda trae una etiqueta que dice con palabras cómo va ("Buen día", "Normal", "Más lento de lo usual") y toda la fila abre la tienda. Si todavía no hay ventas, te lo dice y te sugiere ver otro periodo.
+- **Vista general de tiendas y almacenes.** Te saluda según la hora y muestra, con el periodo que elijas (hoy, ayer, últimos 7 días, este mes o un rango propio), el monto vendido con su desglose por forma de pago, las ventas, la ganancia y los productos, con filtro por departamento y la hora de la última actualización. La tabla de cada sucursal cambia de vista (pagos, ventas, administradores, inversión, impresoras, acciones) y desde ahí entras a la tienda. Si todavía no hay ventas, lo dice con claridad.
 - **Semáforo de desempeño.** Cada sucursal se marca por encima, en o por debajo del promedio.
 - **Catálogo incompleto.** Filtro para ver qué sucursales no tienen todos los productos.
 - **Filtros rápidos por sucursal:** pagos, ventas, administradores, inversión, impresoras y acciones.
