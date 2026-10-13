@@ -26,6 +26,7 @@ export const colors = {
   sidebarActive: '#ffffff',
   sidebarIcon: '#8e95be',
   whatsapp: '#25D366',
+  whatsappDark: '#075e54',
   googleBlue: '#4285F4',
   white: '#fff',
 
