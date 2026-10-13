@@ -1,29 +1,13 @@
-import React, { memo, useState, useEffect, useCallback, useMemo } from "react";
+import React, { memo, useMemo } from "react";
 import { ListItem, ListItemText } from "@mui/material";
 import TuneIcon from "@mui/icons-material/Tune";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import { getStockUpdateRequests } from "../../../api/stockRequests";
-import { logger } from "../../../utils/logger";
+import { useStoreScopedList } from "../../../hooks/useStoreScopedList";
 import HeaderPopoverMenu from "../HeaderPopoverMenu/HeaderPopoverMenu";
 
-const StockRequestMenu = memo(() => {
-  const [items, setItems] = useState([]);
-
-  const fetchPending = useCallback(async () => {
-    try {
-      const { data } = await getStockUpdateRequests();
-      setItems(data);
-    } catch (error) {
-      logger.error("Error al obtener solicitudes de ajuste:", error);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchPending();
-    const onStoreChange = () => fetchPending();
-    window.addEventListener("store-changed", onStoreChange);
-    return () => window.removeEventListener("store-changed", onStoreChange);
-  }, [fetchPending]);
+const StockRequestMenu = () => {
+  const { items, refresh } = useStoreScopedList(getStockUpdateRequests, "Error al obtener solicitudes de ajuste:");
 
   const grouped = useMemo(() => {
     const map = {};
@@ -39,7 +23,7 @@ const StockRequestMenu = memo(() => {
       tooltip="Solicitudes de ajuste"
       title="Solicitudes de ajuste"
       badgeCount={items.length}
-      onOpen={fetchPending}
+      onOpen={refresh}
       isEmpty={items.length === 0}
       emptyIcon={CheckCircleOutlineIcon}
       emptyText="Sin solicitudes pendientes"
@@ -56,8 +40,6 @@ const StockRequestMenu = memo(() => {
       ))}
     </HeaderPopoverMenu>
   );
-});
+};
 
-StockRequestMenu.displayName = "StockRequestMenu";
-
-export default StockRequestMenu;
+export default memo(StockRequestMenu);
