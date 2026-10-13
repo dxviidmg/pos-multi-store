@@ -1,6 +1,6 @@
 # SmartVenta — Punto de venta en la nube para negocios con una o muchas sucursales
 
-> Última actualización: 11 de octubre de 2026
+> Última actualización: 12 de octubre de 2026
 
 **SmartVenta** es un punto de venta (POS) en la nube para negocios con una o varias tiendas y almacenes. Desde el navegador vendes, cobras, apartas, surtes, mueves mercancía entre sucursales y controlas precios e inventario, en computadora, tableta o celular, sin instalar nada. Cada pieza queda registrada: sabes quién la movió, cuándo y a dónde fue.
 
@@ -321,6 +321,7 @@ Al confirmar un traspaso o una distribución eliges el destino dos veces, para n
 - **Mapa de calor.** Días y horas de mayor venta por tienda.
 - **Cancelaciones.** Monto y porcentaje cancelado o devuelto, separado por tipo, cuándo y dónde ocurre más, y sus motivos.
 - **Marcas y productos.** Marcas más vendidas y productos más y menos vendidos, por tienda y periodo.
+- **Por departamento.** Elige un departamento, un año y un mes: una gráfica por tienda con lo que vendió, lo que tienes invertido en inventario y el total de ambos.
 - **Verificación de stock.** Productos por verificar, cobertura y promedio por tienda.
 - **Traspasos pendientes** (varias sucursales). Por tienda, hoy contra días anteriores.
 - **Cálculo en segundo plano.** Los tableros pesados muestran una barra de progreso mientras se calculan.
