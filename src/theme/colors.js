@@ -13,12 +13,13 @@ const SIDEBAR_DARK = '#08143a';
 const PRIMARY_RGB = '29,78,216';
 const SHADOW_TINT = '15,23,42';
 const STATUS_ERROR = '#dc2626';
+const SECONDARY = '#00a4db';
 
 export const colors = {
   primary: PRIMARY,
   primaryLight: PRIMARY_LIGHT,
   primaryDark: PRIMARY_DARK,
-  secondary: '#00a4db',
+  secondary: SECONDARY,
   accent: ACCENT,
   accentDark: ACCENT_DARK,
   error: STATUS_ERROR,
@@ -82,6 +83,7 @@ export const colors = {
       modalBody: '#d8e0eb',
       modalField: '#f3f6fa',
       modalBorder: '#aab6c8',
+      focusRing: SECONDARY,
       shadowSm: `0 1px 2px rgba(${SHADOW_TINT},0.08)`,
       shadowMd: `0 8px 24px rgba(${SHADOW_TINT},0.12)`,
       shadows: [
@@ -112,6 +114,7 @@ export const colors = {
       modalBody: '#0f1420',
       modalField: '#1b2232',
       modalBorder: '#3a4660',
+      focusRing: SECONDARY,
       shadowSm: '0 1px 2px rgba(0,0,0,0.3)',
       shadowMd: '0 8px 24px rgba(0,0,0,0.4)',
       shadows: [
@@ -120,6 +123,100 @@ export const colors = {
         '0 4px 12px rgba(0,0,0,0.4)',
         '0 12px 32px rgba(0,0,0,0.5)',
       ],
+    },
+  },
+
+  // Paleta cálida (neutros arena + verde profundo). Mismas llaves que `modes`;
+  // la usa `WarmTheme` en las pantallas que ya migraron al nuevo estilo.
+  warm: {
+    modes: {
+      light: {
+        primary: PRIMARY,
+        primaryHover: PRIMARY_DARK,
+        primaryLight: PRIMARY_LIGHT,
+        primaryDark: PRIMARY_DARK,
+        secondary: '#6b6256',
+        buttonBg: PRIMARY,
+        buttonHover: PRIMARY_DARK,
+        focusRing: PRIMARY,
+        primarySoft: `rgba(${PRIMARY_RGB},0.1)`,
+        skeletonBase: '#78716c',
+        background: '#e8eef6',
+        paper: '#fffefb',
+        text: '#292524',
+        textSecondary: '#57534e',
+        caption: '#78716c',
+        border: '#e7e2d8',
+        borderStrong: '#d6d0c3',
+        borderHover: '#a8a094',
+        rowHover: '#f8f4ea',
+        rowDivider: '#efebe1',
+        tableHead: '#fbf9f4',
+        tableHeadText: '#78716c',
+        modalHeader: '#f1ede3',
+        modalBody: '#efeadf',
+        modalField: '#faf7f0',
+        modalBorder: '#c9c1b1',
+        shadowSm: '0 1px 2px rgba(41,37,36,0.05)',
+        shadowMd: '0 8px 24px rgba(41,37,36,0.08)',
+        shadows: [
+          '0 1px 3px rgba(41,37,36,0.06)',
+          '0 2px 6px rgba(41,37,36,0.07)',
+          '0 4px 12px rgba(41,37,36,0.08)',
+          '0 12px 32px rgba(41,37,36,0.12)',
+        ],
+      },
+      dark: {
+        primary: '#5b8cff',
+        primaryHover: '#7aa2ff',
+        primaryLight: '#7aa2ff',
+        primaryDark: PRIMARY_DARK,
+        secondary: '#b5ada1',
+        buttonBg: '#5b8cff',
+        buttonHover: '#7aa2ff',
+        focusRing: '#5b8cff',
+        primarySoft: 'rgba(91,140,255,0.16)',
+        skeletonBase: '#d6cfc4',
+        background: '#1c1917',
+        paper: '#26211e',
+        text: '#f2ede4',
+        textSecondary: '#b5ada1',
+        caption: '#968e82',
+        border: '#38322d',
+        borderStrong: '#443d37',
+        borderHover: '#6b6258',
+        rowHover: 'rgba(255,244,224,0.04)',
+        rowDivider: '#2e2824',
+        tableHead: '#2b2623',
+        tableHeadText: '#b5ada1',
+        modalHeader: '#26211e',
+        modalBody: '#1c1917',
+        modalField: '#2b2623',
+        modalBorder: '#4a423b',
+        shadowSm: '0 1px 2px rgba(0,0,0,0.3)',
+        shadowMd: '0 8px 24px rgba(0,0,0,0.4)',
+        shadows: [
+          '0 1px 3px rgba(0,0,0,0.35)',
+          '0 2px 6px rgba(0,0,0,0.4)',
+          '0 4px 12px rgba(0,0,0,0.4)',
+          '0 12px 32px rgba(0,0,0,0.5)',
+        ],
+      },
+    },
+    // Verde, ámbar y rojo solo para estados (más / igual / menos que el promedio)
+    status: {
+      light: {
+        success: { main: '#2f7d4f', light: '#e4f1e8', dark: '#255f3d' },
+        warning: { main: '#b7791f', light: '#f8edd3', dark: '#8a5a12' },
+        error: { main: '#b8432f', light: '#f8e3de', dark: '#8f3224' },
+        info: { main: '#3b6e8f', light: '#e3eef4', dark: '#2c5570' },
+      },
+      dark: {
+        success: { main: '#6cc48c', light: '#1f3a2a', dark: '#4ea36e' },
+        warning: { main: '#e0a84b', light: '#3d3220', dark: '#c48f33' },
+        error: { main: '#e5806d', light: '#432722', dark: '#c9604d' },
+        info: { main: '#7fb0cf', light: '#223442', dark: '#5f95b6' },
+      },
     },
   },
 };

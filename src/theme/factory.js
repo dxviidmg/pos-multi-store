@@ -13,6 +13,7 @@ import { buildComponentsConfig } from './components';
  * Construye y retorna el tema MUI completo según el modo (light/dark).
  * 
  * @param {string} mode - 'light' o 'dark'
+ * @param {string} [variant] - 'default' o 'warm' (paleta cálida, ver `WarmTheme`)
  * @returns {Object} Tema MUI (resultado de createTheme())
  * 
  * Paleta:
@@ -29,21 +30,22 @@ import { buildComponentsConfig } from './components';
  * Componentes:
  * - Customizados: Button, TextField, Dialog, Table, etc.
  */
-export const getTheme = (mode) => {
-  const t = colors.modes[mode];
-  const { status } = colors;
+export const getTheme = (mode, variant = 'default') => {
+  const warm = variant === 'warm';
+  const t = (warm ? colors.warm.modes : colors.modes)[mode];
+  const status = warm ? colors.warm.status[mode] : colors.status;
 
   return createTheme({
     palette: {
       mode,
       primary: {
         main: t.primary,
-        light: paletteBase.primaryLight,
-        dark: paletteBase.primaryDark,
+        light: t.primaryLight ?? paletteBase.primaryLight,
+        dark: t.primaryDark ?? paletteBase.primaryDark,
         contrastText: paletteBase.white,
       },
       secondary: {
-        main: paletteBase.secondary,
+        main: t.secondary ?? paletteBase.secondary,
         contrastText: paletteBase.onAccent,
       },
       accent: {

@@ -41,7 +41,7 @@ export const buildComponentsConfig = (modeColors, mode) => ({
         lineHeight: 1.4,
         transition: 'background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.2s ease, transform 0.2s ease',
         '&:active': { transform: 'translateY(0) scale(0.98)' },
-        '&.Mui-focusVisible': { boxShadow: `0 0 0 3px ${alpha(colors.secondary, 0.6)}` },
+        '&.Mui-focusVisible': { boxShadow: `0 0 0 3px ${alpha(modeColors.focusRing, 0.6)}` },
       },
       contained: {
         background: modeColors.buttonBg,
@@ -210,6 +210,11 @@ export const buildComponentsConfig = (modeColors, mode) => ({
         fontSize: '0.8125rem',
         textTransform: 'none',
         minHeight: 40,
+        ...(modeColors.primarySoft && {
+          borderRadius: '8px 8px 0 0',
+          transition: 'background-color 0.15s ease, color 0.15s ease',
+          '&.Mui-selected': { backgroundColor: modeColors.primarySoft },
+        }),
       },
     },
   },
@@ -250,7 +255,7 @@ export const buildComponentsConfig = (modeColors, mode) => ({
     defaultProps: { animation: 'wave' },
     styleOverrides: {
       root: {
-        backgroundColor: mode === 'light' ? alpha(colors.primary, 0.07) : alpha(colors.white, 0.06),
+        backgroundColor: alpha(modeColors.skeletonBase ?? (mode === 'light' ? colors.primary : colors.white), mode === 'light' ? 0.07 : 0.06),
       },
       rounded: { borderRadius: 8 },
     },
