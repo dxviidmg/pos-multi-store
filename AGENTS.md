@@ -403,6 +403,7 @@ En el cobro: Ctrl+G confirma y Ctrl+O quita el cliente (solo con el cobro abiert
 
 Fuente única de colores y sombras: `src/theme/colors.js` (primitivas, `status` y `modes.light/dark`). `theme.js` y `cssVariables.js` solo los leen: `theme.js` arma el tema MUI y `cssVariables.js` publica las variables CSS (`--color-*`, `--shadow-*`) al cambiar de modo desde `useThemeMode`. `variables.css` solo guarda radio, espaciado, fuente y easing. **No repitas un valor de color en estos archivos**: agrégalo a `colors.js`.
 
+- **Estilo cálido (migración gradual).** `colors.warm` (neutros arena, azul de la app y ámbar `#FFB020` solo de detalle: marca de la sucursal actual) y `getTheme(mode, "warm")` arman un tema anidado. `WarmTheme` (`src/theme/WarmTheme.jsx`) lo aplica a una pantalla completa y publica sus variables CSS solo ahí; modales y portales van fuera del bloque. Hoy solo `/tiendas/` lo usa (ejemplo: `admin/StoreList/`). Para migrar otra pantalla basta envolverla en `<WarmTheme>` y quitar sus colores propios. Íconos: MUI Outlined/Rounded, en tono neutro, sin cajas de color.
 - **Nunca hardcodear hex ni rgba** en componentes. Usa tokens del tema (`primary`, `secondary`, `accent`, `success`, `error`, `text.*`, `divider`, `common.white`…), `alpha(theme.palette.x.main, o)` para transparencias, o `colors` de `src/theme/colors.js`.
 - `colors.js` tiene las primitivas que no son tokens de MUI:
   - `error` (= `error.main`), `whatsapp`, `backdrop`, `appbar`.
