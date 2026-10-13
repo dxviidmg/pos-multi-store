@@ -5,7 +5,6 @@ import DataTable from "../../ui/DataTable/DataTable";
 import CustomButton from "../../ui/Button/Button";
 import CardGallery from "../../ui/CardGallery/CardGallery";
 import ViewModeToggle from "../../ui/ViewModeToggle/ViewModeToggle";
-import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import PageHeader from "../../ui/PageHeader";
 import StoreProductGridCard from "./StoreProductGridCard";
 import StockRequestAlert from "../StockRequestAlert/StockRequestAlert";
@@ -50,7 +49,6 @@ const StoreProductList = () => {
 
   return (
     <>
-      <CustomSpinner isLoading={loading} />
       <StoreProductModals logsModal={logsModal} requestModal={requestModal} onUpdate={handleUpdateStoreProductList} />
 
       <Grid container>

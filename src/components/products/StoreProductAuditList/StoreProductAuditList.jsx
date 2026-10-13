@@ -5,7 +5,6 @@ import SearchIcon from "@mui/icons-material/Search";
 import DownloadIcon from "@mui/icons-material/Download";
 import DataTable from "../../ui/DataTable/DataTable";
 import CustomButton from "../../ui/Button/Button";
-import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import PageHeader from "../../ui/PageHeader";
 import StockRequestAlert from "../StockRequestAlert/StockRequestAlert";
 import ProductFilterFields from "../shared/ProductFilterFields";
@@ -45,7 +44,6 @@ const StoreProductAuditList = () => {
 
   return (
     <>
-      <CustomSpinner isLoading={loading} />
       <StoreProductModals logsModal={logsModal} requestModal={requestModal} onUpdate={handleUpdateStoreProductList} />
 
       <Grid container>

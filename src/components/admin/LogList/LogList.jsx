@@ -6,7 +6,6 @@ import { logger } from "../../../utils/logger";
 import { showRequestError } from "../../../utils/alerts";
 import { getStoreProductLogs, getStoreProductLogsChoices } from "../../../api/products";
 import { useBrands } from "../../../hooks/useBrands";
-import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import CustomButton from "../../ui/Button/Button";
 import StoreSelect from "../../ui/StoreSelect/StoreSelect";
 import { chooseIcon } from "../../ui/Icons/Icons";
@@ -78,8 +77,6 @@ const LogList = () => {
 
   return (
     <>
-      <CustomSpinner isLoading={loading || loadingBrands} />
-
       <Grid container>
         <Grid item xs={12} className="card">
           <PageHeader title="Historial de stock" />
@@ -135,7 +132,7 @@ const LogList = () => {
           </Grid>
 
           <DataTable
-            progressPending={loading}
+            progressPending={loading || loadingBrands}
             noDataComponent="Sin movimientos"
             data={logs}
             columns={COLUMNS}
