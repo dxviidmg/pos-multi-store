@@ -7,8 +7,7 @@ import KPICard from "./KPICard";
 import Filters from "./Filters";
 import DashboardLoading from "./DashboardLoading";
 import EmptyState from "../../ui/EmptyState/EmptyState";
-import { Grid, FormControl, MenuItem, Box, Typography } from "@mui/material";
-import { Select } from "../../ui/Field/Field";
+import { Grid, Box, Typography } from "@mui/material";
 import { MONTH_NAMES, MONTH_NAMES_SHORT, DAY_NAMES } from "../../../utils/date";
 import { getTied } from "../../../utils/chart";
 import { getCancellationsDashboard } from "../../../api/dashboards";
@@ -17,6 +16,8 @@ import UndoIcon from "@mui/icons-material/Undo";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import ChartTypeSelect from "./ChartTypeSelect";
+import DashboardHeader from "./DashboardHeader";
 
 const TITLE = "Ventas canceladas";
 
@@ -110,10 +111,7 @@ const CancellationsDashboard = () => {
   if (!kpis) {
     return (
       <Box>
-        <Box className="card">
-          <Typography variant="h4" sx={{ fontWeight: 700, mb: 2 }}>{TITLE}</Typography>
-          {filters}
-        </Box>
+        <DashboardHeader title={TITLE} filters={filters} />
         <EmptyState message="No hay cancelaciones ni devoluciones en este periodo" />
       </Box>
     );
@@ -128,15 +126,7 @@ const CancellationsDashboard = () => {
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-      <Box className="card" sx={{ mb: 0 }}>
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 1, mb: 2 }}>
-          <Box>
-            <Typography variant="h4" sx={{ fontWeight: 700 }}>{TITLE}</Typography>
-            <Typography variant="body2" color="text.secondary">{periodLabel}</Typography>
-          </Box>
-        </Box>
-        {filters}
-      </Box>
+      <DashboardHeader title={TITLE} subtitle={periodLabel} filters={filters} sx={{ mb: 0 }} />
 
       <Grid container spacing={2}>
         <KPICard title="Canceladas/Devueltas" value={kpis.total} subtitle={`${kpis.percentage}% de ${kpis.totalValidSales + kpis.total} ventas`} icon={BlockIcon} index={0} itemProps={KPI_ITEM_PROPS} />
@@ -152,12 +142,7 @@ const CancellationsDashboard = () => {
           <Typography variant="h6" sx={{ fontWeight: 500 }}>
             {isYear ? "Cancelaciones/devoluciones por mes" : "Cancelaciones/devoluciones por día"}
           </Typography>
-          <FormControl size="small" sx={{ minWidth: 120 }}>
-            <Select value={chartType} onChange={(e) => setChartType(e.target.value)}>
-              <MenuItem value="line">Líneas</MenuItem>
-              <MenuItem value="bar">Barras</MenuItem>
-            </Select>
-          </FormControl>
+          <ChartTypeSelect value={chartType} onChange={setChartType} />
         </Box>
         {chartType === "line" ? (
           <LineChart

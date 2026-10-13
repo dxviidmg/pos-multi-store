@@ -14,6 +14,7 @@ import WarningIcon from "@mui/icons-material/Warning";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import DownloadIcon from "@mui/icons-material/Download";
+import DashboardHeader from "./DashboardHeader";
 
 const TITLE = "Verificación de stock";
 
@@ -74,10 +75,7 @@ const StockVerificationDashboard = () => {
   if (!kpis) {
     return (
       <Box>
-        <Box className="card" sx={{ mb: 3 }}>
-          <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>{TITLE}</Typography>
-          <Typography variant="body2" color="text.secondary">{DESCRIPTION}</Typography>
-        </Box>
+        <DashboardHeader title={TITLE} subtitle={DESCRIPTION} sx={{ mb: 3 }} />
         <EmptyState message="Todo el stock está correcto" />
       </Box>
     );
@@ -85,10 +83,7 @@ const StockVerificationDashboard = () => {
 
   return (
     <Box>
-      <Box className="card" sx={{ mb: 3 }}>
-        <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>{TITLE}</Typography>
-        <Typography variant="body2" color="text.secondary">{DESCRIPTION}</Typography>
-      </Box>
+      <DashboardHeader title={TITLE} subtitle={DESCRIPTION} sx={{ mb: 3 }} />
 
       <Grid container spacing={3} sx={{ mb: 3 }}>
         <StatCard icon={WarningIcon} iconColor="warning.main" label="Productos a verificar" value={kpis.total} />

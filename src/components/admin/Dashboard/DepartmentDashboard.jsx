@@ -16,6 +16,7 @@ import { MONTH_NAMES } from "../../../utils/date";
 import { CHART_COLORS } from "../../../utils/chart";
 import { formatCurrency, formatNumber } from "../../../utils/currency";
 import { getDepartmentDashboard } from "../../../api/dashboards";
+import DashboardHeader from "./DashboardHeader";
 
 // Las unidades pueden ser fraccionarias (venta por peso)
 const UNITS_FORMAT = { maximumFractionDigits: 3 };
@@ -148,13 +149,7 @@ const DepartmentDashboard = () => {
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-      <Box className="card" sx={{ mb: 0 }}>
-        <Box sx={{ mb: 2 }}>
-          <Typography variant="h4" sx={{ fontWeight: 700 }}>{TITLE}</Typography>
-          <Typography variant="body2" color="text.secondary">{periodLabel}</Typography>
-        </Box>
-        {filters}
-      </Box>
+      <DashboardHeader title={TITLE} subtitle={periodLabel} filters={filters} sx={{ mb: 0 }} />
 
       {!stores ? (
         <EmptyState message="Selecciona un departamento" />
