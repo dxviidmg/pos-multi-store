@@ -40,6 +40,7 @@ import { AppBar, DrawerHeader, userMenuPaperSx } from "./MainLayout.styles";
 import SidebarDrawer from "./SidebarDrawer";
 import SidebarMenu from "./SidebarMenu";
 import SidebarFooter from "./SidebarFooter";
+import { getSectionByPath } from "./menu-sections";
 
 export default function MainLayout({ toggleTheme, themeMode }) {
   const navigate = useNavigate();
@@ -138,7 +139,8 @@ export default function MainLayout({ toggleTheme, themeMode }) {
     await switchStore(selectedStore, { withOverlay: true });
   };
 
-  const isActive = (href) => location.pathname === href;
+  const isActive = (href, sectionId) =>
+    location.pathname === href || (!!sectionId && getSectionByPath(user, location.pathname)?.id === sectionId);
 
   const closeUserMenu = () => setAnchorEl(null);
 
