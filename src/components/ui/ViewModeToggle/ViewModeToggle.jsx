@@ -1,5 +1,6 @@
 import React, { memo } from "react";
-import { IconButton, MenuItem, Select } from "@mui/material";
+import { IconButton, MenuItem } from "@mui/material";
+import { Select } from "../Field/Field";
 import CustomTooltip from "../Tooltip";
 
 /**

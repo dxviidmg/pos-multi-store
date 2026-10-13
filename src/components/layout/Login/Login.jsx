@@ -8,10 +8,8 @@ import LogoWhite from "../../../assets/images/logo-white.svg";
 import { colors } from "../../../theme/colors";
 import { isOwner } from "../../../constants/routeAccess";
 import { alpha } from "@mui/material/styles";
-import {
-  TextField, Box, Alert, Paper, Stack, Typography,
-  IconButton, InputAdornment, Button, CircularProgress,
-} from "@mui/material";
+import { Box, Alert, Paper, Stack, Typography, IconButton, InputAdornment, Button, CircularProgress } from "@mui/material";
+import { TextField } from "../../ui/Field/Field";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";

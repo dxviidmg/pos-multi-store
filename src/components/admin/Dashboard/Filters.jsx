@@ -1,5 +1,6 @@
 import React, { memo } from "react";
-import { FormControl, Grid, InputLabel, MenuItem, Select } from "@mui/material";
+import { FormControl, Grid, InputLabel, MenuItem } from "@mui/material";
+import { Select } from "../../ui/Field/Field";
 import { MONTH_NAMES, getYearOptions } from "../../../utils/date";
 
 const LabeledSelect = ({ label, value, onChange, children }) => (

@@ -38,7 +38,7 @@ const ProductListToolbar = ({
   const { searchField, handleSearchFieldChange, handleSearchChange } = useCodeNameSearch(setParams);
 
   return (
-    <Grid container spacing={2} sx={{ mb: 3 }}>
+    <Grid container className="fill-row" spacing={2} sx={{ mb: 3 }}>
       <CodeNameSearchBar
         searchField={searchField}
         onSearchFieldChange={handleSearchFieldChange}

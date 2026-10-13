@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { TextField } from "@mui/material";
+import { TextField } from "../../ui/Field/Field";
 
 // Vacío: etiqueta en rojo pero borde neutro, como un campo sin foco
 const EMPTY_SX = {

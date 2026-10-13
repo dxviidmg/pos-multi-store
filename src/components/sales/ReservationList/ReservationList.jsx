@@ -79,7 +79,7 @@ const ReservationList = () => {
       <Grid className="card">
         <PageHeader title="Apartados" />
 
-        <Grid container spacing={2} sx={{ mb: 2 }}>
+        <Grid container className="fill-row" spacing={2} sx={{ mb: 2 }}>
           <SaleSearchFields params={params} onChange={handleDataChange} maxDate={today} />
 
           <Grid item xs={12} md={3}>

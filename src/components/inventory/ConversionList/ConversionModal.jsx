@@ -1,14 +1,8 @@
 import React, { useState, useEffect } from "react";
 import CustomModal, { ModalBody } from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
-import {
-  Box,
-  Grid,
-  TextField,
-  Typography,
-  Autocomplete,
-  CircularProgress,
-} from "@mui/material";
+import { Box, Grid, Typography, Autocomplete, CircularProgress } from "@mui/material";
+import { TextField } from "../../ui/Field/Field";
 import SaveIcon from "@mui/icons-material/Save";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import { useCreateConversion, useUpdateConversion } from "../../../hooks/useConversions";

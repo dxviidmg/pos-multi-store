@@ -1,5 +1,6 @@
 import React from "react";
-import { FormControlLabel, FormLabel, Grid, MenuItem, Radio, RadioGroup, Select } from "@mui/material";
+import { FormControlLabel, FormLabel, Grid, MenuItem, Radio, RadioGroup } from "@mui/material";
+import { Select } from "../../ui/Field/Field";
 import { MOVEMENT_TYPES, QUERY_TYPES } from "../../../constants";
 
 const QUERY_OPTIONS = [

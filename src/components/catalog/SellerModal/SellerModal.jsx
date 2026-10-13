@@ -7,7 +7,8 @@ import { useUser } from "../../../context/UserContext";
 import { useStoreOptions } from "../../../hooks/useStores";
 import { createSeller } from "../../../api/sellers";
 import { STORE_TYPES } from "../../../constants";
-import { Grid, TextField, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
+import { Grid, MenuItem, FormControl, InputLabel } from "@mui/material";
+import { TextField, Select } from "../../ui/Field/Field";
 import SaveIcon from "@mui/icons-material/Save";
 
 const STORE_PARAMS = { store_type: STORE_TYPES.STORE };
@@ -109,7 +110,7 @@ const SellerModal = ({ isOpen, onClose, onUpdate }) => {
     <CustomModal showOut={isOpen} onClose={onClose} title="Crear vendedor">
       <ModalBody>
         <Grid item xs={12} className="card">
-          <Grid container spacing={2}>
+          <Grid container className="fill-row" spacing={2}>
             <Grid item xs={12} md={6}>
               <StoreSelect
                 value={formData.store_id ?? ""}

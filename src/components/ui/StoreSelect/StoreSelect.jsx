@@ -1,5 +1,6 @@
 import React, { memo } from "react";
-import { FormControl, InputLabel, Select, MenuItem, Box } from "@mui/material";
+import { FormControl, InputLabel, MenuItem, Box } from "@mui/material";
+import { Select } from "../Field/Field";
 import { useStoreOptions } from "../../../hooks/useStores";
 
 const defaultOptionLabel = (store) => store.full_name;

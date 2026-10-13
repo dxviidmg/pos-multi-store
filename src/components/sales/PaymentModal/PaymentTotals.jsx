@@ -1,5 +1,6 @@
 import React from "react";
-import { Grid, TextField } from "@mui/material";
+import { Grid } from "@mui/material";
+import { TextField } from "../../ui/Field/Field";
 import { alpha } from "@mui/material/styles";
 import ReferencePaymentField from "../ReferencePaymentField/ReferencePaymentField";
 import { formatCurrency } from "../../../utils/currency";

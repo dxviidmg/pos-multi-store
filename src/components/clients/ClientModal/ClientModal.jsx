@@ -4,7 +4,8 @@ import CustomModal, { ModalBody } from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
 import { useDiscounts } from "../../../hooks/useDiscounts";
 import { useCreateClient, useUpdateClient } from "../../../hooks/useClientMutations";
-import { Grid, TextField, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import { Grid, FormControl, InputLabel, MenuItem } from "@mui/material";
+import { TextField, Select } from "../../ui/Field/Field";
 import SaveIcon from "@mui/icons-material/Save";
 
 const INITIAL_FORM_DATA = {
@@ -58,8 +59,8 @@ const ClientModal = ({ isOpen, client, onClose, onUpdate }) => {
     >
       <ModalBody>
         <Grid item xs={12} className="card">
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
+          <Grid container className="fill-row" spacing={2}>
+            <Grid item xs={12} md={6}>
               <TextField size="small" fullWidth label="Nombre" type="text"
                 value={values.first_name}
                 placeholder="Nombre"
@@ -67,7 +68,7 @@ const ClientModal = ({ isOpen, client, onClose, onUpdate }) => {
                 onChange={handleChange}
               />
             </Grid>
-            <Grid item xs={12} md={3}>
+            <Grid item xs={12} md={6}>
               <TextField size="small" fullWidth label="Apellidos" type="text"
                 value={values.last_name}
                 placeholder="Apellidos"
@@ -75,7 +76,7 @@ const ClientModal = ({ isOpen, client, onClose, onUpdate }) => {
                 onChange={handleChange}
               />
             </Grid>
-            <Grid item xs={12} md={3}>
+            <Grid item xs={12} md={6}>
               <TextField size="small" fullWidth label="Teléfono" type="text"
                 value={values.phone_number}
                 placeholder="Teléfono"
@@ -83,7 +84,7 @@ const ClientModal = ({ isOpen, client, onClose, onUpdate }) => {
                 onChange={handleChange}
               />
             </Grid>
-            <Grid item xs={12} md={3}>
+            <Grid item xs={12} md={6}>
               <FormControl fullWidth size="small">
                 <InputLabel>Descuento</InputLabel>
                 <Select fullWidth size="small" aria-label="Select discount"
@@ -100,7 +101,7 @@ const ClientModal = ({ isOpen, client, onClose, onUpdate }) => {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12} md={3}>
+            <Grid item xs={12}>
               <CustomButton
                 fullWidth
                 onClick={handleSaveClient}

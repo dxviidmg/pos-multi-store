@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Box, Button, Grid, IconButton, InputAdornment, TextField } from "@mui/material";
+import { Box, Button, Grid, IconButton, InputAdornment } from "@mui/material";
+import { TextField } from "../../ui/Field/Field";
 import { Lock, Visibility, VisibilityOff } from "@mui/icons-material";
 import ProfileSectionTitle from "./ProfileSectionTitle";
 import { changePassword } from "../../../api/users";

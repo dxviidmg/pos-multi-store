@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
-import { Box, FormControl, Grid, InputLabel, MenuItem, Select, Typography } from "@mui/material";
+import { Box, FormControl, Grid, InputLabel, MenuItem, Typography } from "@mui/material";
+import { Select } from "../../ui/Field/Field";
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
 import LayersOutlinedIcon from "@mui/icons-material/LayersOutlined";

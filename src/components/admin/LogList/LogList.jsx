@@ -10,7 +10,8 @@ import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import CustomButton from "../../ui/Button/Button";
 import StoreSelect from "../../ui/StoreSelect/StoreSelect";
 import { chooseIcon } from "../../ui/Icons/Icons";
-import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, Autocomplete } from "@mui/material";
+import { Grid, MenuItem, FormControl, InputLabel, Autocomplete } from "@mui/material";
+import { TextField, Select } from "../../ui/Field/Field";
 import DownloadIcon from "@mui/icons-material/Download";
 import PageHeader from "../../ui/PageHeader";
 
@@ -79,7 +80,7 @@ const LogList = () => {
         <Grid item xs={12} className="card">
           <PageHeader title="Historial de stock" />
 
-          <Grid container spacing={2} sx={{ mb: 2 }}>
+          <Grid container className="fill-row" spacing={2} sx={{ mb: 2 }}>
             <Grid item xs={12} md={3}>
               <TextField size="small" fullWidth label="Fecha" type="date"
                 value={params.date} onChange={handleDataChange} name="date"

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
-import { TextField, Box } from "@mui/material";
+import { Box } from "@mui/material";
+import { TextField } from "../../ui/Field/Field";
 import SimpleTable from "../../ui/SimpleTable/SimpleTable";
 import { getClients } from "../../../api/clients";
 import { addClientToCart } from "../../../redux/cart/cartActions";

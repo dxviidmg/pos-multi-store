@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Grid, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
+import { Grid, MenuItem, FormControl, InputLabel } from "@mui/material";
+import { Select } from "../../ui/Field/Field";
 import BlockIcon from "@mui/icons-material/Block";
 import UndoIcon from "@mui/icons-material/Undo";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
@@ -95,7 +96,7 @@ const SaleList = () => {
       <Grid className="card">
         <PageHeader title="Ventas" />
 
-        <Grid container spacing={2} sx={{ mb: 2 }}>
+        <Grid container className="fill-row" spacing={2} sx={{ mb: 2 }}>
           {/* Select "Tipo" oculto — solo tiene 1 opción (Ventas).
               Descomentar si se reactiva el filtro de apartados. */}
           {/* <Grid item xs={12} md={3}>

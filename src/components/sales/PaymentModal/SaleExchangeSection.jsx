@@ -1,5 +1,6 @@
 import React from "react";
-import { Grid, TextField } from "@mui/material";
+import { Grid } from "@mui/material";
+import { TextField } from "../../ui/Field/Field";
 import SearchIcon from "@mui/icons-material/Search";
 import CustomButton from "../../ui/Button/Button";
 import { formatCurrency } from "../../../utils/currency";
@@ -10,7 +11,7 @@ import PaymentCard from "./PaymentCard";
  */
 const SaleExchangeSection = ({ hidden, saleExchange, onSaleIdChange, onSearch }) => (
   <PaymentCard hidden={hidden} title="Cambio de mercancia">
-    <Grid container spacing={2}>
+    <Grid container className="fill-row" spacing={2}>
       <Grid item xs={12} md={3}>
         <TextField
           fullWidth

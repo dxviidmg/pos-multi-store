@@ -14,7 +14,8 @@ import {
   updateTransfer,
 } from "../../../api/transfers";
 import CustomTooltip from "../../ui/Tooltip";
-import { Grid, TextField } from "@mui/material";
+import { Grid } from "@mui/material";
+import { TextField } from "../../ui/Field/Field";
 import ChecklistIcon from "@mui/icons-material/Checklist";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";

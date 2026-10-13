@@ -9,7 +9,8 @@ import { createTransfer } from "../../../api/transfers";
 import { addProducts, getStockOtherStores } from "../../../api/products";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { addToCart, updateMovementType, updateQuantityInCart } from "../../../redux/cart/cartActions";
-import { Grid, TextField, Box, Alert, Chip, Tabs, Tab } from "@mui/material";
+import { Grid, Box, Alert, Chip, Tabs, Tab } from "@mui/material";
+import { TextField } from "../../ui/Field/Field";
 import { MOVEMENT_TYPES } from "../../../constants";
 import { useUser } from "../../../context/UserContext";
 

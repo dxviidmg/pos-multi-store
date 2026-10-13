@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
-import { Alert, FormControl, Grid, InputLabel, LinearProgress, MenuItem, Select, TextField } from "@mui/material";
+import { Alert, FormControl, Grid, InputLabel, LinearProgress, MenuItem } from "@mui/material";
+import { TextField, Select } from "../../ui/Field/Field";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import PageHeader from "../../ui/PageHeader";
 import ImportStepper from "../../ui/Import/ImportStepper";
@@ -42,7 +43,7 @@ const EleventaImport = ({ tabs }) => {
 
         {loading && <LinearProgress sx={{ mb: 2, borderRadius: 1 }} />}
 
-        <Grid container spacing={2}>
+        <Grid container className="fill-row" spacing={2}>
           <Grid item xs={12} md={3}>
             <ImportFileDrop dropZoneProps={dropZoneProps} file={formData.file} fileInputRef={fileInputRef} onChange={handleDataChange} />
           </Grid>

@@ -1,5 +1,6 @@
 import React from "react";
-import { Select, MenuItem, FormControl, InputLabel } from "@mui/material";
+import { MenuItem, FormControl, InputLabel } from "@mui/material";
+import { Select } from "../../ui/Field/Field";
 
 const YES_NO_OPTIONS = [
   { value: "Y", label: "Si" },

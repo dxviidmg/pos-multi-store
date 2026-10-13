@@ -1,5 +1,5 @@
 import React from "react";
-import { TextField } from "@mui/material";
+import { TextField } from "../../ui/Field/Field";
 import { QUANTITY_MODES, QUANTITY_RULES, getInputValue, getSteppedValue, isValidQuantityText } from "./quantityRules";
 
 /**

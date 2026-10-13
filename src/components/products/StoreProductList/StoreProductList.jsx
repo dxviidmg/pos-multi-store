@@ -59,7 +59,7 @@ const StoreProductList = () => {
             {showAlert && <StockRequestAlert onClose={() => setShowAlert(false)} />}
           </PageHeader>
 
-          <Grid container spacing={2} sx={{ mb: 3 }}>
+          <Grid container className="fill-row" spacing={2} sx={{ mb: 3 }}>
             <CodeNameSearchBar
               searchField={searchField}
               onSearchFieldChange={handleSearchFieldChange}

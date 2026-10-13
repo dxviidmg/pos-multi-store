@@ -1,5 +1,6 @@
 import React from "react";
-import { Grid, TextField } from "@mui/material";
+import { Grid } from "@mui/material";
+import { TextField } from "../../ui/Field/Field";
 import CatalogAutocomplete from "./CatalogAutocomplete";
 
 const NO_DEPARTMENT_OPTION = { id: "0", name: "Sin departamento", product_count: 0 };

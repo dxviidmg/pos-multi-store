@@ -3,7 +3,8 @@ import CustomModal, { ModalBody } from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
 import { createDiscount } from "../../../api/discounts";
 import { useCrudMutation } from "../../../hooks/useCrudMutation";
-import { TextField } from "@mui/material";
+import { Box } from "@mui/material";
+import { TextField } from "../../ui/Field/Field";
 import DiscountIcon from "@mui/icons-material/Discount";
 
 const DUPLICATE_DISCOUNT_ERROR = "discount with this discount percentage already exists.";
@@ -37,22 +38,24 @@ const DiscountModal = ({ isOpen, onClose }) => {
 
   return (
     <CustomModal showOut={isOpen} onClose={onClose} title="Crear descuento">
-      <ModalBody sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-        <TextField
-          size="small"
-          fullWidth
-          label="Porcentaje de descuento"
-          type="number"
-          value={discountPercentage}
-          onChange={(e) => setDiscountPercentage(e.target.value)}
-        />
-        <CustomButton
-          onClick={handleSave}
-          disabled={!discountPercentage || createMutation.isPending}
-          startIcon={<DiscountIcon />}
-        >
-          Crear descuento
-        </CustomButton>
+      <ModalBody>
+        <Box className="card" sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <TextField
+            size="small"
+            fullWidth
+            label="Porcentaje de descuento"
+            type="number"
+            value={discountPercentage}
+            onChange={(e) => setDiscountPercentage(e.target.value)}
+          />
+          <CustomButton
+            onClick={handleSave}
+            disabled={!discountPercentage || createMutation.isPending}
+            startIcon={<DiscountIcon />}
+          >
+            Crear descuento
+          </CustomButton>
+        </Box>
       </ModalBody>
     </CustomModal>
   );

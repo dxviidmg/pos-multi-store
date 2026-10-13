@@ -1,5 +1,6 @@
 import React, { memo } from "react";
-import { Autocomplete, TextField } from "@mui/material";
+import { Autocomplete } from "@mui/material";
+import { TextField } from "../../ui/Field/Field";
 
 /**
  * Autocomplete de marca o departamento con el conteo de productos en cada opción.

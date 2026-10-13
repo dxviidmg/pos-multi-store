@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import {
-  Grid, Card, CardContent, Typography, Chip, Box, Divider, TextField, Dialog, DialogTitle, DialogContent, DialogActions,
-} from "@mui/material";
+import { Grid, Card, CardContent, Typography, Chip, Box, Divider, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
+import { TextField } from "../../ui/Field/Field";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import PrintIcon from "@mui/icons-material/Print";
 import WifiIcon from "@mui/icons-material/Wifi";

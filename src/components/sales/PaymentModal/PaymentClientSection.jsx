@@ -1,6 +1,7 @@
 import React from "react";
 import { useDispatch } from "react-redux";
-import { Box, Grid, TextField } from "@mui/material";
+import { Box, Grid } from "@mui/material";
+import { TextField } from "../../ui/Field/Field";
 import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
 import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
 import CustomButton from "../../ui/Button/Button";
@@ -44,7 +45,7 @@ const PaymentClientSection = ({ hidden, client }) => {
       )}
 
       {hasClient && (
-        <Grid container spacing={2} sx={{ alignItems: "center" }}>
+        <Grid container className="fill-row" spacing={2} sx={{ alignItems: "center" }}>
           <Grid item xs={12} md={3}>
             <TextField size="small" fullWidth label="Nombre" value={client.full_name || ""} disabled />
           </Grid>

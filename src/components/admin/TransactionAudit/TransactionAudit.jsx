@@ -42,7 +42,7 @@ const TransactionAudit = () => {
       <CustomSpinner isLoading={isLoading} />
       <Grid className="card">
         <PageHeader title="Auditoría de transacciones" />
-        <Grid container spacing={2}>
+        <Grid container className="fill-row" spacing={2}>
           <Grid item xs={12} md={6} lg={4}>
             <StoreSelect
               value={params.store_id || ""}
