@@ -109,6 +109,7 @@ src/
 │   ├── layout/         # Login, MainLayout (sidebar, header, drawer móvil)
 │   │   └── MainLayout/
 │   │       ├── menu-config.js     # Configuración pura del menú (ICONS, rutas)
+│   │       ├── menu-sections.js   # Secciones con pestañas (SECTIONS, getSectionByPath, getAccessibleTabs)
 │   │       ├── menu-builders.js   # Lógica de construcción (buildMenu, filterMenu)
 │   │       └── menuConfig.js      # Re-exportación backward compatible
 │   ├── products/       # Catálogo, inventario por tienda, búsqueda, importaciones, precios
@@ -196,7 +197,7 @@ Usa siempre los helpers de `src/constants/routeAccess.js`: `isOwner(user)`, `isS
 - `useUser()` / `updateUser()` (`src/context/UserContext.js`) es la fuente del usuario y la sucursal activa. Se refleja en `localStorage.user`.
 - **Cambiar de sucursal solo con `useSwitchStore()`** (`switchStore(store, { withOverlay })`, `backToGeneral()`). El hook actualiza `store_id`, `store_name`, `store_type` y `store_printer`, limpia la caché de React Query y el carrito, emite `store-changed` y navega a `/vender/` o `/distribuir/` si cambia el tipo. No repitas esa secuencia a mano. Las páginas se remontan con `key={pathname-store_id}`.
 - Al volver a la vista general: `store_id = null` (nunca `""`) y `store_printer = null`.
-- El menú lateral se arma en `layout/MainLayout/menuConfig.js` (`buildMenu(user, { stores })`), filtrado con `canAccessRoute`.
+- El menú lateral se arma en `layout/MainLayout/menuConfig.js` (`buildMenu(user, { stores })`), filtrado con `canAccessRoute`. Las pantallas relacionadas son **secciones** (`menu-sections.js`): una entrada del menú y una barra de pestañas (`SectionTabs`) que dibuja `PageHeader` al inicio de la card. Cada pestaña es una ruta; con una sola accesible, la entrada es un enlace directo con su `fullLabel`. **Al agregar una ruta a una sección:** `App.js`, `ROUTE_ACCESS` y `SECTIONS`.
 - El selector de sucursal es solo para el dueño con varias sucursales; el dueño con una sola sucursal ve "Regresar".
 
 ### HTTP (`src/api/httpClient.js`)
@@ -294,7 +295,7 @@ Revisa esta lista antes de crear un componente. Si un patrón se repite en dos a
 | `DataTable` | DataGrid con búsqueda, orden, paginación, selección y carga. Columnas con `selector` (valor) o `cell` (render); soporta `conditionalRowStyles=[{ when, style }]`. Con `setSelectedRows` muestra casillas; `selectedIds` (arreglo de `id`) controla la selección. No soporta `omit` ni `style` por columna. Encabezado azul marino con texto blanco (`App.css`). |
 | `SimpleTable` | Tabla HTML de solo lectura (modales, importaciones). |
 | `tableButtonSx` | `sx` para botones dentro de tablas: 28 px, esquinas casi rectas, íconos de 1rem. |
-| `PageHeader` | Título + acciones de página. No armes `Stack` + `<h1>` a mano. |
+| `PageHeader` | Título + acciones de página; dibuja las pestañas de su sección (`SectionTabs`) salvo con `plain`. No armes `Stack` + `<h1>` a mano. |
 | `PageHelp` | Botón de ayuda que lee `helpTexts.js` según la ruta. |
 | `CardGallery` | Cuadrícula de tarjetas con skeleton, vacío y entrada escalonada (`items`, `loading`, `emptyText`, `renderItem`). |
 | `Skeleton` | `PageSkeleton`, `TableSkeleton`. |
