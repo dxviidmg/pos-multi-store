@@ -2,7 +2,7 @@
 
 Instrucciones para cualquier agente de código (Claude Code, Kiro, Codex, Cursor, etc.) y para personas que trabajen en este repositorio. **Este archivo es la única fuente de reglas técnicas.** `CLAUDE.md` y `.kiro/steering/project.md` solo lo importan; no dupliques reglas en ellos.
 
-> Última revisión: 10 de octubre de 2026
+> Última revisión: 13 de octubre de 2026
 
 ---
 
@@ -44,7 +44,7 @@ npm run build          # build de producción en /build
 npx eslint <archivos>  # lint (config react-app en package.json)
 ```
 
-Todos los scripts usan `react-app-rewired` (`config-overrides.js` solo pone `resolve.fullySpecified = false`). No hay tests automatizados todavía; `npm test` existe pero no hay archivos `*.test.*`.
+Todos los scripts usan `react-app-rewired` (`config-overrides.js` solo pone `resolve.fullySpecified = false`). Las pruebas viven junto al archivo que prueban (`*.test.js` / `*.test.jsx`) y se corren con `CI=true npm test -- --watchAll=false`; `src/setupTests.js` carga `jest-dom`. Cobertura actual: lógica pura (carrito de Redux, permisos y menú, utilidades de moneda, mensajes de servicios, periodos de Tiendas), `useFetch`, `ui/Field`, `ConsultDialog` y `StoreList`. En las pantallas se mockean los hooks de datos y `DataTable` (el DataGrid no pinta filas en jsdom).
 
 **Antes de dar un cambio por terminado:** `npx eslint` sobre los archivos tocados sin errores nuevos, y `npm run build` si tocaste rutas, imports compartidos o dependencias.
 
@@ -512,7 +512,7 @@ Reglas derivadas de la auditoría del 2026-10-04. Revísalas antes de terminar u
 - No pases props que ya son el default del componente receptor.
 - Comentarios solo donde aportan; escribe como el código que lo rodea.
 
-**Verificación**: `npx eslint --ext .js,.jsx src` sin errores ni warnings (sin `--ext` no revisa nada) y `npm run build`.
+**Verificación**: `npx eslint --ext .js,.jsx src` sin errores ni warnings (sin `--ext` no revisa nada), `CI=true npm test -- --watchAll=false` en verde y `npm run build`.
 
 ---
 
