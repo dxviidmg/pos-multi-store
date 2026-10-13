@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Tab, Tabs } from "@mui/material";
+import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import TraditionalImport from "./TraditionalImport";
 import EleventaImport from "./EleventaImport";
 
@@ -23,13 +23,20 @@ const ProductImport = () => {
   const [value, setValue] = useState(0);
 
   const tabs = (
-    <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 2 }}>
-      <Tabs value={value} onChange={(event, newValue) => setValue(newValue)} aria-label="Modo de importación" variant="fullWidth">
-        {MODES.map(({ label }, index) => (
-          <Tab key={label} label={label} {...a11yProps(index)} />
-        ))}
-      </Tabs>
-    </Box>
+    <ToggleButtonGroup
+      value={value}
+      exclusive
+      fullWidth
+      size="small"
+      color="primary"
+      onChange={(event, newValue) => newValue !== null && setValue(newValue)}
+      aria-label="Modo de importación"
+      sx={{ mb: 2 }}
+    >
+      {MODES.map(({ label }, index) => (
+        <ToggleButton key={label} value={index} {...a11yProps(index)}>{label}</ToggleButton>
+      ))}
+    </ToggleButtonGroup>
   );
 
   return MODES.map(({ label, Component }, index) => (
