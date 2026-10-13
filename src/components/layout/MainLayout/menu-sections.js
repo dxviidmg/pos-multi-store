@@ -48,7 +48,7 @@ export const SECTIONS = {
       { label: "Inventario", fullLabel: "Inventario", href: "/inventario/" },
       { label: "Conversiones", fullLabel: "Conversiones", href: "/conversiones/" },
       { label: "Reasignación", fullLabel: "Reasignación", href: "/reasignacion/" },
-      { label: "Por verificar", fullLabel: "Inventario a verificar", href: "/auditoria-inventario/" },
+      { label: "Por verificar", fullLabel: "Inventario a verificar", href: "/inventario-a-verificar/" },
     ],
   },
   catalog: {

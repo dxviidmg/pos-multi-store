@@ -5,7 +5,7 @@ import { useUser } from "./context/UserContext";
 import LoadingFallback from "./components/ui/LoadingFallback";
 import ErrorBoundary from "./components/ui/ErrorBoundary";
 import RequireAccess from "./components/ui/RequireAccess";
-import { getHomeRoute } from "./constants/routeAccess";
+import { getHomeRoute, LEGACY_ROUTES } from "./constants/routeAccess";
 
 // Componentes críticos (carga inmediata)
 import Login from "./components/layout/Login/Login";
@@ -100,6 +100,9 @@ function App({ toggleTheme, themeMode }) {
           ) : (
           <Route element={<MainLayout toggleTheme={toggleTheme} themeMode={themeMode} />}>
             {/* Permisos por rol, tipo de sucursal y plan: constants/routeAccess.js */}
+            {Object.entries(LEGACY_ROUTES).map(([from, to]) => (
+              <Route key={from} path={from} element={<Navigate to={to} replace />} />
+            ))}
             <Route element={<RequireAccess />}>
               <Route path="/tiendas/" element={<Lazy><StoreList /></Lazy>} />
               <Route path="/ventas/" element={<Lazy><SaleList /></Lazy>} />
@@ -112,12 +115,12 @@ function App({ toggleTheme, themeMode }) {
               <Route path="/distribuciones/" element={<Lazy><DistributionList /></Lazy>} />
               <Route path="/conversiones/" element={<Lazy><ConversionList /></Lazy>} />
               <Route path="/traspasos/" element={<Lazy><TransferList /></Lazy>} />
-              <Route path="/solicitudes-ajustes-stock/" element={<Lazy><StockUpdateRequestList /></Lazy>} />
+              <Route path="/ajustes-inventario/" element={<Lazy><StockUpdateRequestList /></Lazy>} />
               <Route path="/historial-precios/" element={<Lazy><PriceLogsList /></Lazy>} />
               <Route path="/clientes/" element={<Lazy><ClientList /></Lazy>} />
               <Route path="/productos/" element={<Lazy><ProductList /></Lazy>} />
               <Route path="/inventario/" element={<Lazy><StoreProductList /></Lazy>} />
-              <Route path="/auditoria-inventario/" element={<Lazy><ProductAuditList /></Lazy>} />
+              <Route path="/inventario-a-verificar/" element={<Lazy><ProductAuditList /></Lazy>} />
               <Route path="/marcas/" element={<Lazy><BrandList /></Lazy>} />
               <Route path="/departamentos/" element={<Lazy><DepartmentList /></Lazy>} />
               <Route path="/historial-stock/" element={<Lazy><LogList /></Lazy>} />
@@ -126,12 +129,12 @@ function App({ toggleTheme, themeMode }) {
               <Route path="/mi-plan-actual/" element={<Lazy><MyCurrentPlan /></Lazy>} />
               <Route path="/vendedores/" element={<Lazy><SellerList /></Lazy>} />
               <Route path="/servicios/" element={<Lazy><ServiceList /></Lazy>} />
-              <Route path="/tablero-ventas/" element={<Lazy><Dashboard /></Lazy>} />
-              <Route path="/tablero-ventas-ajustadas-cancelaciones/" element={<Lazy><CancellationsDashboard /></Lazy>} />
+              <Route path="/tablero-ventas-exitosas/" element={<Lazy><Dashboard /></Lazy>} />
+              <Route path="/tablero-ventas-canceladas/" element={<Lazy><CancellationsDashboard /></Lazy>} />
               <Route path="/tablero-verificacion-stock/" element={<Lazy><StockVerificationDashboard /></Lazy>} />
               <Route path="/tablero-traspasos-pendientes/" element={<Lazy><PendingTransfersDashboard /></Lazy>} />
-              <Route path="/tablero-productos/" element={<Lazy><ProductsDashboard /></Lazy>} />
-              <Route path="/tablero-departamentos/" element={<Lazy><DepartmentDashboard /></Lazy>} />
+              <Route path="/tablero-marcas-productos/" element={<Lazy><ProductsDashboard /></Lazy>} />
+              <Route path="/tablero-por-departamento/" element={<Lazy><DepartmentDashboard /></Lazy>} />
               <Route path="/reasignacion/" element={<Lazy><ProductReassign /></Lazy>} />
               <Route path="/importar-productos/" element={<Lazy><ProductImport /></Lazy>} />
               <Route path="/importar-inventario/" element={<Lazy><StoreProductImport /></Lazy>} />

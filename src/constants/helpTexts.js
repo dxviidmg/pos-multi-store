@@ -71,11 +71,11 @@ const helpTexts = {
     title: "Tiendas y almacenes",
     text: "Panel central de tu negocio. Desde aquí ves el resumen de todas tus tiendas y almacenes, y puedes entrar a administrar cada una.",
   },
-  "/tablero-ventas/": {
+  "/tablero-ventas-exitosas/": {
     title: "Tablero de ventas exitosas",
     text: "Métricas generales de tu negocio: ventas totales, productos más vendidos, rendimiento por tienda. Visión global para tomar decisiones.",
   },
-  "/tablero-departamentos/": {
+  "/tablero-por-departamento/": {
     title: "Tablero por departamento",
     text: "Elige un departamento, un año y un mes. Verás, por cada tienda, cuánto vendió, cuánto tienes invertido en inventario y el total de ambos.",
   },

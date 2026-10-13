@@ -110,7 +110,7 @@ export const buildLinksByType = (user, storeSwitcher) => ({
       dropdown: [
         { label: "Productos", href: "/productos/" },
         { section: "imports" },
-        { label: "Ajustes de inventario", href: "/solicitudes-ajustes-stock/" },
+        { label: "Ajustes de inventario", href: "/ajustes-inventario/" },
         { section: "catalog" },
       ],
     },
@@ -126,7 +126,7 @@ export const buildLinksByType = (user, storeSwitcher) => ({
       dropdown: [
         { label: "Productos", href: "/productos/" },
         { section: "imports" },
-        { label: "Ajustes de inventario", href: "/solicitudes-ajustes-stock/" },
+        { label: "Ajustes de inventario", href: "/ajustes-inventario/" },
         { section: "catalog" },
       ],
     },
@@ -138,10 +138,10 @@ export const buildLinksByType = (user, storeSwitcher) => ({
       label: "Tableros",
       dropdown: [
         { label: "Ventas exitosas", href: SALES_DASHBOARD_PATH, disabled: isSalesDashboardRestricted(user), disabledMessage: SALES_DASHBOARD_RESTRICTION_MESSAGE },
-        { label: "Ventas canceladas", href: "/tablero-ventas-ajustadas-cancelaciones/" },
+        { label: "Ventas canceladas", href: "/tablero-ventas-canceladas/" },
         { label: "Verificación de stock", href: "/tablero-verificacion-stock/" },
-        { label: "Marcas y productos", href: "/tablero-productos/" },
-        { label: "Por departamento", href: "/tablero-departamentos/" },
+        { label: "Marcas y productos", href: "/tablero-marcas-productos/" },
+        { label: "Por departamento", href: "/tablero-por-departamento/" },
         { label: "Traspasos pendientes", href: "/tablero-traspasos-pendientes/" },
       ],
     },
@@ -153,7 +153,7 @@ export const buildLinksByType = (user, storeSwitcher) => ({
       dropdown: [
         { section: "products" },
         { section: "imports" },
-        { label: "Ajustes de inventario", href: "/solicitudes-ajustes-stock/" },
+        { label: "Ajustes de inventario", href: "/ajustes-inventario/" },
         { section: "catalog" },
       ],
     },

@@ -28,8 +28,8 @@ const EVENT_CONFIG = {
   transfer_confirmed: { icon: <CheckCircleIcon fontSize="small" color="success" />, href: "/traspasos/" },
   distribution_created: { icon: <LocalShippingIcon fontSize="small" />, href: "/distribuciones/" },
   distribution_confirmed: { icon: <CheckCircleIcon fontSize="small" color="success" />, href: "/distribuciones/" },
-  stock_request_created: { icon: <SendIcon fontSize="small" />, href: "/solicitudes-ajustes-stock/" },
-  stock_request_approved: { icon: <CheckCircleIcon fontSize="small" color="success" />, href: "/solicitudes-ajustes-stock/" },
+  stock_request_created: { icon: <SendIcon fontSize="small" />, href: "/ajustes-inventario/" },
+  stock_request_approved: { icon: <CheckCircleIcon fontSize="small" color="success" />, href: "/ajustes-inventario/" },
   reservation_created: { icon: <ShoppingCartIcon fontSize="small" />, href: "/ventas/" },
 };
 
