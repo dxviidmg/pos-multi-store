@@ -24,7 +24,7 @@ const ProductImport = () => {
 
   const tabs = (
     <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 2 }}>
-      <Tabs value={value} onChange={(event, newValue) => setValue(newValue)} aria-label="Modo de importación">
+      <Tabs value={value} onChange={(event, newValue) => setValue(newValue)} aria-label="Modo de importación" variant="fullWidth">
         {MODES.map(({ label }, index) => (
           <Tab key={label} label={label} {...a11yProps(index)} />
         ))}
