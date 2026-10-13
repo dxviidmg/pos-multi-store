@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Grid } from "@mui/material";
 import BlockIcon from "@mui/icons-material/Block";
 import UndoIcon from "@mui/icons-material/Undo";
@@ -10,17 +10,15 @@ import DataTable from "../../ui/DataTable/DataTable";
 import CustomButton from "../../ui/Button/Button";
 import CustomTooltip from "../../ui/Tooltip";
 import PageHeader from "../../ui/PageHeader";
-import { CustomSpinner } from "../../ui/Spinner/Spinner";
-import { getSales } from "../../../api/sales";
 import { getFormattedDate, getFormattedDateTime } from "../../../utils/date";
 import { formatCurrency } from "../../../utils/currency";
-import { showRequestError } from "../../../utils/alerts";
 import { useModal } from "../../../hooks/useModal";
 import { useUser } from "../../../context/UserContext";
 import { isSeller } from "../../../constants/routeAccess";
 import SaleModal from "../SaleModal/SaleModal";
 import ProductsPopperButton from "../ProductsPopperButton/ProductsPopperButton";
 import SaleSearchFields from "../shared/SaleSearchFields";
+import { useSalesList } from "../shared/useSalesList";
 import PrintTicketButton from "../shared/PrintTicketButton";
 
 const QUICK_FILTERS = {
@@ -30,36 +28,20 @@ const QUICK_FILTERS = {
   returned: (sale) => sale.has_return,
 };
 
+const SALES_ERROR = "cargar las ventas";
+
 const SaleList = () => {
   const { user } = useUser();
   const printer = user.store_printer;
-  const [sales, setSales] = useState([]);
   const today = getFormattedDate();
   const [params, setParams] = useState({
     date: today,
     reservation_in_progress: false,
   });
-  const [loading, setLoading] = useState(false);
+  const { sales, loading } = useSalesList(params, SALES_ERROR);
   const [showAllFields, setShowAllFields] = useState(false);
   const [quickFilter, setQuickFilter] = useState("all");
   const saleModal = useModal();
-
-  useEffect(() => {
-    let ignore = false;
-    const fetchSalesData = async () => {
-      setLoading(true);
-      try {
-        const salesResponse = await getSales(params);
-        if (!ignore) setSales(salesResponse.data);
-      } catch (error) {
-        if (!ignore) showRequestError("cargar las ventas", error);
-      } finally {
-        if (!ignore) setLoading(false);
-      }
-    };
-    fetchSalesData();
-    return () => { ignore = true; };
-  }, [params]);
 
   const handleDataChange = (e) => {
     const { name, value } = e.target;
@@ -86,7 +68,6 @@ const SaleList = () => {
 
   return (
     <>
-      <CustomSpinner isLoading={loading} />
       <SaleModal isOpen={saleModal.isOpen} sale={saleModal.data} onClose={saleModal.close} onUpdate={refreshSales} />
 
       <Grid className="card">

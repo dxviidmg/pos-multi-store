@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Grid } from "@mui/material";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import BlockIcon from "@mui/icons-material/Block";
@@ -9,51 +9,33 @@ import DataTable from "../../ui/DataTable/DataTable";
 import CustomButton from "../../ui/Button/Button";
 import CustomTooltip from "../../ui/Tooltip";
 import PageHeader from "../../ui/PageHeader";
-import { CustomSpinner } from "../../ui/Spinner/Spinner";
-import { getSales } from "../../../api/sales";
 import { getFormattedDate, getFormattedDateTime } from "../../../utils/date";
 import { formatCurrency } from "../../../utils/currency";
 import { upsertById } from "../../../utils/array";
-import { showRequestError } from "../../../utils/alerts";
 import { useModal } from "../../../hooks/useModal";
 import { useUser } from "../../../context/UserContext";
 import SaleModal from "../SaleModal/SaleModal";
 import PaymentEditModal from "../PaymentEditModal/PaymentEditModal";
 import ProductsPopperButton from "../ProductsPopperButton/ProductsPopperButton";
 import SaleSearchFields from "../shared/SaleSearchFields";
+import { useSalesList } from "../shared/useSalesList";
 import PrintTicketButton from "../shared/PrintTicketButton";
+
+const SALES_ERROR = "cargar los apartados";
 
 const ReservationList = () => {
   const { user } = useUser();
   const printer = user.store_printer;
-  const [sales, setSales] = useState([]);
   const today = getFormattedDate();
   const [params, setParams] = useState({
     date: today,
     reservation_in_progress: "true",
   });
-  const [loading, setLoading] = useState(false);
+  const { sales, setSales, loading } = useSalesList(params, SALES_ERROR);
   const [showAllFields, setShowAllFields] = useState(false);
   const [quickFilter, setQuickFilter] = useState("all");
   const saleModal = useModal();
   const paymentEditModal = useModal();
-
-  useEffect(() => {
-    let ignore = false;
-    const fetchSalesData = async () => {
-      setLoading(true);
-      try {
-        const salesResponse = await getSales(params);
-        if (!ignore) setSales(salesResponse.data);
-      } catch (error) {
-        if (!ignore) showRequestError("cargar los apartados", error);
-      } finally {
-        if (!ignore) setLoading(false);
-      }
-    };
-    fetchSalesData();
-    return () => { ignore = true; };
-  }, [params]);
 
   const handleDataChange = (e) => {
     const { name, value } = e.target;
@@ -74,7 +56,6 @@ const ReservationList = () => {
 
   return (
     <>
-      <CustomSpinner isLoading={loading} />
       <PaymentEditModal isOpen={paymentEditModal.isOpen} sale={paymentEditModal.data} onClose={paymentEditModal.close} onUpdate={handleUpdateSaleList} />
       <SaleModal isOpen={saleModal.isOpen} sale={saleModal.data} onClose={saleModal.close} onUpdate={handleUpdateSaleList} />
 
