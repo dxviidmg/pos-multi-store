@@ -7,9 +7,8 @@ import ImportStepper from "../../ui/Import/ImportStepper";
 import ImportFileDrop from "../../ui/Import/ImportFileDrop";
 import { ImportValidateButton, ImportSubmitButton } from "../../ui/Import/ImportActions";
 import YesNoSelect from "./YesNoSelect";
-import EditableErrorRows from "./EditableErrorRows";
 import { getEleventaFields } from "./importFields";
-import ZeroStockSelector from "./ZeroStockSelector";
+import ImportResults from "./ImportResults";
 import { isMinQuantityValid, MIN_WHOLESALE_QUANTITY, useEleventaImport } from "./useEleventaImport";
 
 const WHOLESALE_OPTIONS = [
@@ -109,17 +108,21 @@ const EleventaImport = ({ tabs }) => {
         </Grid>
       </Grid>
 
-      <EditableErrorRows rows={errorRows} tableRef={fileTableRef} fields={fields} disabled={loading} onSave={saveRowEdit} onRemove={removeRows} />
-
-      <ZeroStockSelector
-        rows={zeroStockRows}
+      <ImportResults
+        fields={fields}
+        loading={loading}
+        tableRef={fileTableRef}
+        errorRows={errorRows}
+        zeroStockRows={zeroStockRows}
         selectedIds={selectedIds}
-        onChange={setSelectedIds}
+        setSelectedIds={setSelectedIds}
         importCount={importCount}
         originalCount={originalCount}
         removedCount={removedCount}
         excludedCount={excludedCount}
         canImport={canImport}
+        onSave={saveRowEdit}
+        onRemove={removeRows}
         onImport={handleImport}
       />
     </>

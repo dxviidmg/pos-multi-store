@@ -7,9 +7,8 @@ import PageHeader from "../../ui/PageHeader";
 import ImportStepper from "../../ui/Import/ImportStepper";
 import ImportFileDrop from "../../ui/Import/ImportFileDrop";
 import { ImportValidateButton, ImportSubmitButton } from "../../ui/Import/ImportActions";
-import EditableErrorRows from "./EditableErrorRows";
 import YesNoSelect from "./YesNoSelect";
-import ZeroStockSelector from "./ZeroStockSelector";
+import ImportResults from "./ImportResults";
 import { getTemplateFields } from "./importFields";
 import { useEditableImport } from "./useEditableImport";
 import { importProducts, importProductsValidation } from "../../../api/products";
@@ -80,17 +79,21 @@ const TraditionalImport = ({ tabs }) => {
         </Grid>
       </Grid>
 
-      <EditableErrorRows rows={errorRows} tableRef={fileTableRef} fields={fields} disabled={loading} onSave={saveRowEdit} onRemove={removeRows} />
-
-      <ZeroStockSelector
-        rows={zeroStockRows}
+      <ImportResults
+        fields={fields}
+        loading={loading}
+        tableRef={fileTableRef}
+        errorRows={errorRows}
+        zeroStockRows={zeroStockRows}
         selectedIds={selectedIds}
-        onChange={setSelectedIds}
+        setSelectedIds={setSelectedIds}
         importCount={importCount}
         originalCount={originalCount}
         removedCount={removedCount}
         excludedCount={excludedCount}
         canImport={canImport}
+        onSave={saveRowEdit}
+        onRemove={removeRows}
         onImport={handleImport}
       />
     </>
