@@ -9,6 +9,7 @@ import StatCard from "./StatCard";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { Grid, Box, Typography, useTheme } from "@mui/material";
 import { exportToExcel } from "../../../utils/excel";
+import { formatLongDate } from "../../../utils/date";
 import { getPendingTransfersDashboard } from "../../../api/dashboards";
 import { CHART_LEGEND_TOP, CHART_TICK_STYLE } from "./chartStyles";
 import WarningIcon from "@mui/icons-material/Warning";
@@ -50,7 +51,7 @@ const PendingTransfersDashboard = () => {
     Cantidad: t.quantity,
     Producto: t.product,
     Marca: t.brand,
-    Fecha: new Date(t.created_at).toLocaleDateString(),
+    Fecha: formatLongDate(t.created_at),
   })), [data]);
 
   const kpis = useMemo(() => {

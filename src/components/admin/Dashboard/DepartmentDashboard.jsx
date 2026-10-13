@@ -14,8 +14,11 @@ import KPICard from "./KPICard";
 import DashboardLoading from "./DashboardLoading";
 import { MONTH_NAMES } from "../../../utils/date";
 import { CHART_COLORS } from "../../../utils/chart";
-import { formatCurrency } from "../../../utils/currency";
+import { formatCurrency, formatNumber } from "../../../utils/currency";
 import { getDepartmentDashboard } from "../../../api/dashboards";
+
+// Las unidades pueden ser fraccionarias (venta por peso)
+const UNITS_FORMAT = { maximumFractionDigits: 3 };
 
 const TITLE = "Por departamento";
 const NO_DEPARTMENT = "0";
@@ -32,7 +35,7 @@ const TOP_PRODUCTS_COLUMNS = [
   { name: "#", selector: (row) => row.rank, width: "60px" },
   { name: "Código", selector: (row) => row.code },
   { name: "Producto", selector: (row) => row.name },
-  { name: "Unidades vendidas", selector: (row) => row.quantity.toLocaleString("es-MX") },
+  { name: "Unidades vendidas", selector: (row) => formatNumber(row.quantity, UNITS_FORMAT) },
   { name: "Ventas", selector: (row) => formatCurrency(row.sales) },
 ];
 
@@ -162,7 +165,7 @@ const DepartmentDashboard = () => {
               <KPICard
                 key={key}
                 title={title}
-                value={key === "units" ? totals.units.toLocaleString("es-MX") : formatCurrency(totals[key])}
+                value={key === "units" ? formatNumber(totals.units, UNITS_FORMAT) : formatCurrency(totals[key])}
                 icon={icon}
                 index={i}
                 itemProps={KPI_ITEM_PROPS}

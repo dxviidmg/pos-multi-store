@@ -1,7 +1,6 @@
 import { useCallback, useRef } from 'react';
+import { getMercadoPagoPublicKey } from "../api/mercadopago";
 import { logger } from "../utils/logger";
-
-const MERCADO_PAGO_PUBLIC_KEY = process.env.REACT_APP_MERCADO_PAGO_PUBLIC_KEY
 
 export const useMercadoPago = () => {
   const bricksControllerRef = useRef(null);
@@ -20,7 +19,7 @@ export const useMercadoPago = () => {
 
   const createCardForm = useCallback(async ({ amount, containerId = 'mp-bricks-container', onSubmit, onError }) => {
     await loadSDK();
-    const mp = new window.MercadoPago(MERCADO_PAGO_PUBLIC_KEY, { locale: 'es-MX' });
+    const mp = new window.MercadoPago(getMercadoPagoPublicKey(), { locale: 'es-MX' });
     const bricksBuilder = mp.bricks();
 
     bricksControllerRef.current = await bricksBuilder.create('cardPayment', containerId, {
