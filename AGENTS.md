@@ -186,7 +186,7 @@ Usa siempre los helpers de `src/constants/routeAccess.js`: `isOwner(user)`, `isS
 - `ROUTE_ACCESS` define, por ruta y por vista (`T`, `A`, `G`), qué roles pueden entrar y si requiere `multistore`.
 - `RequireAccess` (`src/components/ui/RequireAccess.jsx`) envuelve las rutas en `App.js`. Si no hay acceso, redirige a `getHomeRoute(user)`: almacén → `/distribuir/`, tienda → `/vender/`, dueño en vista general → `/tiendas/`, otros → `/perfil/`.
 - El menú de `MainLayout` filtra sus enlaces con `canAccessRoute`, así que **menú y rutas no pueden desincronizarse**.
-- `isSalesDashboardRestricted(user)`: con varias sucursales (excepto el tenant `demo`), `/tablero-ventas/` solo abre antes de las 10:00 y desde las 21:00 (reloj local).
+- `isSalesDashboardRestricted(user)`: con varias sucursales (excepto el tenant `demo`), `/tablero-ventas-exitosas/` solo abre antes de las 10:00 y desde las 21:00 (reloj local).
 
 **Al agregar una ruta:** agrégala en `App.js` **y** en `ROUTE_ACCESS`; una ruta que no está en el mapa no abre para nadie. Las acciones dentro de una página (botones, columnas) se ocultan por rol con spread condicional: `...(isOwner(user) ? [{...}] : [])`. `DataTable` ya no soporta `omit`.
 
@@ -197,7 +197,7 @@ Usa siempre los helpers de `src/constants/routeAccess.js`: `isOwner(user)`, `isS
 - `useUser()` / `updateUser()` (`src/context/UserContext.js`) es la fuente del usuario y la sucursal activa. Se refleja en `localStorage.user`.
 - **Cambiar de sucursal solo con `useSwitchStore()`** (`switchStore(store, { withOverlay })`, `backToGeneral()`). El hook actualiza `store_id`, `store_name`, `store_type` y `store_printer`, limpia la caché de React Query y el carrito, emite `store-changed` y navega a `/vender/` o `/distribuir/` si cambia el tipo. No repitas esa secuencia a mano. Las páginas se remontan con `key={pathname-store_id}`.
 - Al volver a la vista general: `store_id = null` (nunca `""`) y `store_printer = null`.
-- El menú lateral se arma en `layout/MainLayout/menuConfig.js` (`buildMenu(user, { stores })`), filtrado con `canAccessRoute`. Las pantallas relacionadas son **secciones** (`menu-sections.js`): una entrada del menú y una barra de pestañas (`SectionTabs`) que dibuja `PageHeader` al inicio de la card. Cada pestaña es una ruta; con una sola accesible, la entrada es un enlace directo con su `fullLabel`. **Al agregar una ruta a una sección:** `App.js`, `ROUTE_ACCESS` y `SECTIONS`.
+- El menú lateral se arma en `layout/MainLayout/menuConfig.js` (`buildMenu(user, { stores })`), filtrado con `canAccessRoute`. Las pantallas relacionadas son **secciones** (`menu-sections.js`): una entrada del menú y una barra de pestañas (`SectionTabs`) que dibuja `PageHeader` al inicio de la card. Cada pestaña es una ruta; con una sola accesible, la entrada es un enlace directo con su `fullLabel`. **Al agregar una ruta a una sección:** `App.js`, `ROUTE_ACCESS` y `SECTIONS`. La URL de cada pantalla debe coincidir con su nombre en el menú. Si renombras una ruta, deja la anterior en `LEGACY_ROUTES` (`routeAccess.js`), que redirige a la nueva.
 - El selector de sucursal es solo para el dueño con varias sucursales; el dueño con una sola sucursal ve "Regresar".
 
 ### HTTP (`src/api/httpClient.js`)
