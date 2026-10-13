@@ -182,6 +182,7 @@ export const buildLinksByType = (user, storeSwitcher) => {
           { label: "Ventas canceladas", href: "/tablero-ventas-ajustadas-cancelaciones/" },
           { label: "Verificación de stock", href: "/tablero-verificacion-stock/" },
           { label: "Marcas y productos", href: "/tablero-productos/" },
+          { label: "Por departamento", href: "/tablero-departamentos/" },
           { label: "Traspasos pendientes", href: "/tablero-traspasos-pendientes/" },
         ],
       },

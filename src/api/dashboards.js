@@ -36,3 +36,13 @@ export const getCancellationsDashboard = async (params) => {
   const url = buildUrlWithParams(getApiUrl("sales-dashboard-cancellations"), params);
   return httpClient.get(url);
 };
+
+/**
+ * Start department dashboard task
+ * @param {Object} params - { department_id ("0" = sin departamento), year, month }
+ * @returns {Promise<Object>} Response with data.task (task id)
+ */
+export const getDepartmentDashboard = async (params) => {
+  const url = buildUrlWithParams(getApiUrl("department-dashboard"), params);
+  return httpClient.get(url);
+};

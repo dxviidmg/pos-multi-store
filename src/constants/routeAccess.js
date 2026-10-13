@@ -63,6 +63,7 @@ const ROUTE_ACCESS = {
   "/tablero-ventas-ajustadas-cancelaciones/": { G: OWNER },
   "/tablero-verificacion-stock/": { G: OWNER },
   "/tablero-productos/": { G: OWNER },
+  "/tablero-departamentos/": { G: OWNER },
   "/tablero-traspasos-pendientes/": { G: multistore(OWNER) },
   "/tiendas/": { G: OWNER },
   "/vendedores/": { G: OWNER },

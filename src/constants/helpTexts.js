@@ -75,6 +75,10 @@ const helpTexts = {
     title: "Tablero de ventas exitosas",
     text: "Métricas generales de tu negocio: ventas totales, productos más vendidos, rendimiento por tienda. Visión global para tomar decisiones.",
   },
+  "/tablero-departamentos/": {
+    title: "Tablero por departamento",
+    text: "Elige un departamento, un año y un mes. Verás, por cada tienda, cuánto vendió, cuánto tienes invertido en inventario y el total de ambos.",
+  },
   "/auditoria-transacciones/": {
     title: "Auditoría de transacciones",
     text: "Herramientas para detectar inconsistencias: ventas duplicadas, registros repetidos y discrepancias de stock. Ejecuta análisis por rango de fechas.",

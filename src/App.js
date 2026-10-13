@@ -71,6 +71,7 @@ const CancellationsDashboard = lazyRetry(() => import("./components/admin/Dashbo
 const StockVerificationDashboard = lazyRetry(() => import("./components/admin/Dashboard/StockVerificationDashboard"));
 const PendingTransfersDashboard = lazyRetry(() => import("./components/admin/Dashboard/PendingTransfersDashboard"));
 const ProductsDashboard = lazyRetry(() => import("./components/admin/Dashboard/ProductsDashboard"));
+const DepartmentDashboard = lazyRetry(() => import("./components/admin/Dashboard/DepartmentDashboard"));
 const PriceLogsList = lazyRetry(() => import("./components/products/PriceLogsList/PriceLogsList"));
 const DistributionList = lazyRetry(() => import("./components/inventory/DistributionList/DistributionList"));
 const ConversionList = lazyRetry(() => import("./components/inventory/ConversionList/ConversionList"));
@@ -130,6 +131,7 @@ function App({ toggleTheme, themeMode }) {
               <Route path="/tablero-verificacion-stock/" element={<Lazy><StockVerificationDashboard /></Lazy>} />
               <Route path="/tablero-traspasos-pendientes/" element={<Lazy><PendingTransfersDashboard /></Lazy>} />
               <Route path="/tablero-productos/" element={<Lazy><ProductsDashboard /></Lazy>} />
+              <Route path="/tablero-departamentos/" element={<Lazy><DepartmentDashboard /></Lazy>} />
               <Route path="/reasignacion/" element={<Lazy><ProductReassign /></Lazy>} />
               <Route path="/importar-productos/" element={<Lazy><ProductImport /></Lazy>} />
               <Route path="/importar-inventario/" element={<Lazy><StoreProductImport /></Lazy>} />
