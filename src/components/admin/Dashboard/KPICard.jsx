@@ -1,9 +1,5 @@
 import React from "react";
 import { Box, Grid, Typography } from "@mui/material";
-import { alpha } from "@mui/material/styles";
-import { colors } from "../../../theme";
-
-const tones = colors.kpiTones;
 
 const KPI_ITEM_PROPS = { xs: 6, md: 3 };
 
@@ -17,22 +13,14 @@ const KPICard = ({ title, value, subtitle, icon: Icon, index = 0, itemProps = KP
             <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5, fontWeight: 500 }}>
               {title}
             </Typography>
-            <Typography variant="h4" sx={{ fontWeight: 800, mb: 0.5, fontVariantNumeric: "tabular-nums" }}>
+            <Typography variant="h4" sx={{ fontWeight: 600, mb: 0.5, fontVariantNumeric: "tabular-nums" }}>
               {value}
             </Typography>
             {subtitle && (
               <Typography variant="body2" color="text.secondary">{subtitle}</Typography>
             )}
           </Box>
-          {Icon && (
-            <Box sx={{
-              bgcolor: alpha(tones[index % tones.length], 0.12),
-              color: tones[index % tones.length], p: 1.25, borderRadius: 1.5,
-              display: "flex", alignItems: "center", justifyContent: "center",
-            }}>
-              <Icon sx={{ fontSize: 26 }} />
-            </Box>
-          )}
+          {Icon && <Icon sx={{ fontSize: 22, color: "text.secondary" }} />}
         </Box>
       </Box>
     </Box>

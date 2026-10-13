@@ -1,6 +1,7 @@
 import React, { memo, useState, useMemo } from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import { Box, TextField, Typography, Paper, LinearProgress } from "@mui/material";
+import { Box, Typography, Paper, LinearProgress } from "@mui/material";
+import { TextField } from "../Field/Field";
 import { alpha } from "@mui/material/styles";
 import InboxOutlinedIcon from "@mui/icons-material/InboxOutlined";
 import { TableSkeleton } from "../Skeleton/Skeleton";
@@ -159,11 +160,11 @@ const DataTable = ({
           sx={{
             border: '1px solid',
             borderColor: 'divider',
-            borderRadius: 1.5,
+            borderRadius: '14px',
             overflow: 'hidden',
             "& .MuiDataGrid-columnHeaders": {
-              backgroundColor: colors.sidebar,
-              color: 'common.white',
+              backgroundColor: 'tableHead.main',
+              color: 'tableHead.contrastText',
               borderBottom: '1px solid',
               borderColor: alpha(colors.white, 0.12),
               minHeight: '36px !important',
@@ -176,12 +177,12 @@ const DataTable = ({
             "& .MuiDataGrid-columnHeader": { justifyContent: 'center' },
             "& .MuiDataGrid-columnHeaderTitleContainer": { justifyContent: 'center' },
             "& .MuiDataGrid-cell": {
-              py: 0.5, px: 1, fontSize: '0.8125rem',
+              py: 1, px: 1, fontSize: '0.8125rem', fontVariantNumeric: 'tabular-nums',
               whiteSpace: 'normal !important', lineHeight: '1.4 !important',
               justifyContent: 'center', textAlign: 'center',
               color: 'text.primary',
               borderBottom: '1px solid',
-              borderColor: 'divider',
+              borderColor: 'rowDivider.main',
               ...tableButtonSx,
             },
             "& .MuiDataGrid-row": {
