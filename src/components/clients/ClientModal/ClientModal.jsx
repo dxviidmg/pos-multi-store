@@ -87,7 +87,7 @@ const ClientModal = ({ isOpen, client, onClose, onUpdate }) => {
             <Grid item xs={12} md={6}>
               <FormControl fullWidth size="small">
                 <InputLabel>Descuento</InputLabel>
-                <Select fullWidth size="small" aria-label="Select discount"
+                <Select fullWidth size="small" aria-label="Seleccionar descuento"
                   value={values.discount}
                   onChange={handleChange}
                   name="discount"

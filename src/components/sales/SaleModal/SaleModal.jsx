@@ -162,7 +162,9 @@ const SaleModal = ({ isOpen, sale, onClose, onUpdate }) => {
                 />
               </Grid>
               <Grid item xs={12} md={12}>
-                <h5>{isReservation ? "Productos del apartado" : totalCancel ? "Todos los productos serán devueltos" : "Selecciona los productos a devolver"}</h5>
+                <Typography variant="h5" component="h3" sx={{ mb: 1 }}>
+                  {isReservation ? "Productos del apartado" : totalCancel ? "Todos los productos serán devueltos" : "Selecciona los productos a devolver"}
+                </Typography>
                 <SimpleTable
                   noDataComponent="Sin productos"
                   data={formData.products_sale}
