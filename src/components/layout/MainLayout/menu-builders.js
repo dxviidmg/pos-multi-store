@@ -45,7 +45,7 @@ const resolveLink = (user, item) => {
 
 /**
  * Filtra el menú según los permisos del usuario.
- * Quita items sin acceso y submenús vacíos. Una sección es una sola entrada que abre
+ * Quita items sin acceso y submenús vacíos; un submenú con un solo ítem pasa a ser ese enlace directo. Una sección es una sola entrada que abre
  * su primera pestaña accesible; con una sola pestaña, toma el nombre completo de esa pantalla.
  * 
  * @param {Object} user - Usuario
@@ -57,6 +57,7 @@ export const filterMenu = (user, items) => items.flatMap((item) => {
   if (item.action) return [item];
   if (item.dropdown) {
     const dropdown = item.dropdown.flatMap((sub) => resolveLink(user, sub));
+    if (dropdown.length === 1 && !item.action) return [{ iconKey: item.label, ...dropdown[0] }];
     return dropdown.length ? [{ ...item, dropdown }] : [];
   }
   return resolveLink(user, item);
