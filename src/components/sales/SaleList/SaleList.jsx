@@ -20,6 +20,8 @@ import SaleModal from "../SaleModal/SaleModal";
 import ProductsPopperButton from "../ProductsPopperButton/ProductsPopperButton";
 import SaleSearchFields from "../shared/SaleSearchFields";
 import { useSalesList } from "../shared/useSalesList";
+import PaymentsCell from "./PaymentsCell";
+import PaymentsModal from "./PaymentsModal";
 import PrintTicketButton from "../shared/PrintTicketButton";
 
 const QUICK_FILTERS = {
@@ -27,9 +29,9 @@ const QUICK_FILTERS = {
   duplicated: (sale) => sale.is_repeated,
   canceled: (sale) => sale.is_canceled,
   returned: (sale) => sale.has_return,
+  mixed: (sale) => sale.payments_methods.length > 1,
 };
 
-  mixed: (sale) => sale.payments_methods.length > 1,
 const CASH_LABEL = PAYMENT_METHOD_OPTIONS.find(({ value }) => value === PAYMENT_METHODS.CASH).label;
 
 // Con is_cancelable, el dueño cancela cualquier venta; los demás roles solo las pagadas únicamente en efectivo.
@@ -50,6 +52,7 @@ const SaleList = () => {
   const [showAllFields, setShowAllFields] = useState(false);
   const [quickFilter, setQuickFilter] = useState("all");
   const saleModal = useModal();
+  const paymentsModal = useModal();
 
   const handleDataChange = (e) => {
     const { name, value } = e.target;
@@ -77,6 +80,7 @@ const SaleList = () => {
   return (
     <>
       <SaleModal isOpen={saleModal.isOpen} sale={saleModal.data} onClose={saleModal.close} onUpdate={refreshSales} />
+      <PaymentsModal isOpen={paymentsModal.isOpen} sale={paymentsModal.data} onClose={paymentsModal.close} />
 
       <Grid className="card">
         <PageHeader title="Ventas" />
@@ -102,11 +106,11 @@ const SaleList = () => {
           })}
           {renderQuickFilter("canceled", "Canceladas")}
           {renderQuickFilter("returned", "Con devolución")}
+          {renderQuickFilter("mixed", "Pagos mixtos")}
         </Grid>
 
         <DataTable
           progressPending={loading}
-          {renderQuickFilter("mixed", "Pagos mixtos")}
           noDataComponent="Sin ventas"
           searcher
           data={sales.filter(QUICK_FILTERS[quickFilter])}
@@ -134,7 +138,7 @@ const SaleList = () => {
             },
             { name: "Número de productos", selector: (row) => row.products_sale?.reduce((sum, p) => sum + (p.sells_by_fraction ? 1 : p.quantity), 0) || 0, width: 80 },
             ...(isSeller(user) ? [] : [{ name: "Total", selector: (row) => formatCurrency(row.total), width: 100 }]),
-            { name: "Métodos de pago", selector: (row) => row.payments_methods.join(", ") },
+            { name: "Métodos de pago", selector: (row) => <PaymentsCell sale={row} onOpen={paymentsModal.open} /> },
             ...(showAllFields
               ? [
                   { name: "Referencia", selector: (row) => row.reference },
