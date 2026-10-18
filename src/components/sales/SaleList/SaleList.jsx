@@ -14,7 +14,8 @@ import { getFormattedDate, getFormattedDateTime } from "../../../utils/date";
 import { formatCurrency } from "../../../utils/currency";
 import { useModal } from "../../../hooks/useModal";
 import { useUser } from "../../../context/UserContext";
-import { isSeller } from "../../../constants/routeAccess";
+import { PAYMENT_METHODS, PAYMENT_METHOD_OPTIONS } from "../../../constants";
+import { isOwner, isSeller } from "../../../constants/routeAccess";
 import SaleModal from "../SaleModal/SaleModal";
 import ProductsPopperButton from "../ProductsPopperButton/ProductsPopperButton";
 import SaleSearchFields from "../shared/SaleSearchFields";
@@ -27,6 +28,12 @@ const QUICK_FILTERS = {
   canceled: (sale) => sale.is_canceled,
   returned: (sale) => sale.has_return,
 };
+
+const CASH_LABEL = PAYMENT_METHOD_OPTIONS.find(({ value }) => value === PAYMENT_METHODS.CASH).label;
+
+// Con is_cancelable, el dueño cancela cualquier venta; los demás roles solo las pagadas únicamente en efectivo.
+const canCancel = (sale, user) => sale.is_cancelable
+  && (isOwner(user) || (sale.payments_methods.length === 1 && sale.payments_methods[0] === CASH_LABEL));
 
 const SALES_ERROR = "cargar las ventas";
 
@@ -147,7 +154,7 @@ const SaleList = () => {
                         <CustomTooltip text={row.reason_return || "Sin motivo"}>
                           <CustomButton disabled><UndoIcon color="info" /></CustomButton>
                         </CustomTooltip>
-                      ) : row.is_cancelable && (
+                      ) : canCancel(row, user) && (
                         <CustomTooltip text="Devolución">
                           <CustomButton onClick={() => saleModal.open(row)}>
                             <UndoIcon />
