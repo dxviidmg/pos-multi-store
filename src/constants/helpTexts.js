@@ -27,6 +27,10 @@ const helpTexts = {
     title: "Catálogo de productos",
     text: "Aquí gestionas todos los productos de tu negocio: nombre, código, marca, departamento, precios de menudeo y mayoreo. Los productos son compartidos entre todas tus tiendas.",
   },
+  "/catalogo/": {
+    title: "Catálogo para clientes",
+    text: "Elige una marca o un departamento y descarga un PDF con sus productos y precios para compartirlo con tus clientes. Puedes incluir las imágenes de los productos o dejarlas fuera.",
+  },
   "/inventario/": {
     title: "Inventario de tienda",
     text: "Consulta el stock disponible en esta tienda específica. Puedes ajustar cantidades manualmente y ver el historial de movimientos de cada producto.",

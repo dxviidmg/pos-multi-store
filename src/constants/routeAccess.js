@@ -48,6 +48,7 @@ const ROUTE_ACCESS = {
   "/marcas/": { T: STAFF, A: ALL, G: OWNER },
   "/departamentos/": { T: STAFF, A: ALL, G: OWNER },
   "/reasignacion/": { T: STAFF, G: OWNER },
+  "/catalogo/": { G: OWNER },
   "/importar-productos/": { T: STAFF, A: ALL, G: OWNER },
   "/importar-inventario/": { T: STAFF, A: ALL },
   "/ajustes-inventario/": { T: STAFF, A: ALL, G: OWNER },

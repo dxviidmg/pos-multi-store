@@ -36,6 +36,7 @@ export const SECTIONS = {
     views: [STORE_TYPES.GENERAL],
     tabs: [
       { label: "Productos", fullLabel: "Productos", href: "/productos/" },
+      { label: "Catálogo", fullLabel: "Catálogo", href: "/catalogo/" },
       { label: "Conversiones", fullLabel: "Conversiones", href: "/conversiones/" },
       { label: "Reasignación", fullLabel: "Reasignación", href: "/reasignacion/" },
       { label: "Historial de precios", fullLabel: "Historial de cambio de precios", href: "/historial-precios/" },

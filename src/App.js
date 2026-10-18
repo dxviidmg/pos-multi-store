@@ -51,6 +51,7 @@ const SaleImport = lazyRetry(() => import("./components/sales/SaleImport/SaleImp
 const StoreProductList = lazyRetry(() => import("./components/products/StoreProductList/StoreProductList"));
 const ProductAuditList = lazyRetry(() => import("./components/products/StoreProductAuditList/StoreProductAuditList"));
 const StoreList = lazyRetry(() => import("./components/admin/StoreList/StoreList"));
+const ProductCatalog = lazyRetry(() => import("./components/products/ProductCatalog/ProductCatalog"));
 const ProductImport = lazyRetry(() => import("./components/products/ProductImport/ProductImport"));
 const ReservationList = lazyRetry(() => import("./components/sales/ReservationList/ReservationList"));
 const CashSummary = lazyRetry(() => import("./components/sales/CashSummary/CashSummary"));
@@ -136,6 +137,7 @@ function App({ toggleTheme, themeMode }) {
               <Route path="/tablero-marcas-productos/" element={<Lazy><ProductsDashboard /></Lazy>} />
               <Route path="/tablero-por-departamento/" element={<Lazy><DepartmentDashboard /></Lazy>} />
               <Route path="/reasignacion/" element={<Lazy><ProductReassign /></Lazy>} />
+              <Route path="/catalogo/" element={<Lazy><ProductCatalog /></Lazy>} />
               <Route path="/importar-productos/" element={<Lazy><ProductImport /></Lazy>} />
               <Route path="/importar-inventario/" element={<Lazy><StoreProductImport /></Lazy>} />
               <Route path="/auditoria-transacciones/" element={<Lazy><TransactionAudit /></Lazy>} />

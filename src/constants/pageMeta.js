@@ -15,6 +15,7 @@ const pageMeta = {
   "/ajustes-inventario/": "Ajustes de inventario pendientes de revisar.",
   "/historial-precios/": "Cambios de precio registrados por producto.",
   "/clientes/": "Tu cartera de clientes, sus datos y descuentos.",
+  "/catalogo/": "Descarga en PDF la lista de productos y precios de una marca o departamento.",
   "/productos/": "Catálogo compartido entre todas tus tiendas.",
   "/inventario/": "Existencias disponibles en esta sucursal.",
   "/inventario-a-verificar/": "Productos pendientes de verificar en el conteo.",
