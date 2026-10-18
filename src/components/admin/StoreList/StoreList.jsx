@@ -178,6 +178,7 @@ const StoreList = () => {
           notices={tenantInfo.notices}
           isOwner={isOwner}
           createBlocked={createStoreBlocked}
+          createLabel={isStoreType ? "Crear tienda" : "Crear almacén"}
           onCreate={() => openCreateStore()}
         />
 
@@ -187,7 +188,7 @@ const StoreList = () => {
           params={params}
           departments={departments}
           onChange={handleParams}
-          showFilters={isStoreType}
+          disabled={!isStoreType}
         />
 
         <StoreKpiTiles tenantInfo={tenantInfo} totals={totals} period={period} loading={loading} />

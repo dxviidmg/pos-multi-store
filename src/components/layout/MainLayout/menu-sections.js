@@ -11,7 +11,7 @@ import { canAccessRoute, getViewType, normalizePath } from "../../../constants/r
 
 export const SECTIONS = {
   sales: {
-    label: "Ventas",
+    label: "Ventas y apartados",
     tabs: [
       { label: "Ventas", fullLabel: "Ventas", href: "/ventas/" },
       { label: "Apartados", fullLabel: "Apartados", href: "/apartados/" },

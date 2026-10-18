@@ -14,11 +14,14 @@ import { getFormattedDate, getFormattedDateTime } from "../../../utils/date";
 import { formatCurrency } from "../../../utils/currency";
 import { useModal } from "../../../hooks/useModal";
 import { useUser } from "../../../context/UserContext";
-import { isSeller } from "../../../constants/routeAccess";
+import { PAYMENT_METHODS, PAYMENT_METHOD_OPTIONS } from "../../../constants";
+import { isOwner, isSeller } from "../../../constants/routeAccess";
 import SaleModal from "../SaleModal/SaleModal";
 import ProductsPopperButton from "../ProductsPopperButton/ProductsPopperButton";
 import SaleSearchFields from "../shared/SaleSearchFields";
 import { useSalesList } from "../shared/useSalesList";
+import PaymentsCell from "./PaymentsCell";
+import PaymentsModal from "./PaymentsModal";
 import PrintTicketButton from "../shared/PrintTicketButton";
 
 const QUICK_FILTERS = {
@@ -26,7 +29,14 @@ const QUICK_FILTERS = {
   duplicated: (sale) => sale.is_repeated,
   canceled: (sale) => sale.is_canceled,
   returned: (sale) => sale.has_return,
+  mixed: (sale) => sale.payments_methods.length > 1,
 };
+
+const CASH_LABEL = PAYMENT_METHOD_OPTIONS.find(({ value }) => value === PAYMENT_METHODS.CASH).label;
+
+// Con is_cancelable, el dueño cancela cualquier venta; los demás roles solo las pagadas únicamente en efectivo.
+const canCancel = (sale, user) => sale.is_cancelable
+  && (isOwner(user) || (sale.payments_methods.length === 1 && sale.payments_methods[0] === CASH_LABEL));
 
 const SALES_ERROR = "cargar las ventas";
 
@@ -42,6 +52,7 @@ const SaleList = () => {
   const [showAllFields, setShowAllFields] = useState(false);
   const [quickFilter, setQuickFilter] = useState("all");
   const saleModal = useModal();
+  const paymentsModal = useModal();
 
   const handleDataChange = (e) => {
     const { name, value } = e.target;
@@ -54,7 +65,7 @@ const SaleList = () => {
   const duplicatedCount = sales.filter(QUICK_FILTERS.duplicated).length;
 
   const renderQuickFilter = (value, label, extraProps) => (
-    <Grid item xs={6} md={3}>
+    <Grid item xs={6} md>
       <CustomButton
         fullWidth
         variant={quickFilter === value ? "contained" : "outlined"}
@@ -69,6 +80,7 @@ const SaleList = () => {
   return (
     <>
       <SaleModal isOpen={saleModal.isOpen} sale={saleModal.data} onClose={saleModal.close} onUpdate={refreshSales} />
+      <PaymentsModal isOpen={paymentsModal.isOpen} sale={paymentsModal.data} onClose={paymentsModal.close} />
 
       <Grid className="card">
         <PageHeader title="Ventas" />
@@ -94,6 +106,7 @@ const SaleList = () => {
           })}
           {renderQuickFilter("canceled", "Canceladas")}
           {renderQuickFilter("returned", "Con devolución")}
+          {renderQuickFilter("mixed", "Pagos mixtos")}
         </Grid>
 
         <DataTable
@@ -125,7 +138,7 @@ const SaleList = () => {
             },
             { name: "Número de productos", selector: (row) => row.products_sale?.reduce((sum, p) => sum + (p.sells_by_fraction ? 1 : p.quantity), 0) || 0, width: 80 },
             ...(isSeller(user) ? [] : [{ name: "Total", selector: (row) => formatCurrency(row.total), width: 100 }]),
-            { name: "Métodos de pago", selector: (row) => row.payments_methods.join(", ") },
+            { name: "Métodos de pago", selector: (row) => <PaymentsCell sale={row} onOpen={paymentsModal.open} /> },
             ...(showAllFields
               ? [
                   { name: "Referencia", selector: (row) => row.reference },
@@ -147,7 +160,7 @@ const SaleList = () => {
                         <CustomTooltip text={row.reason_return || "Sin motivo"}>
                           <CustomButton disabled><UndoIcon color="info" /></CustomButton>
                         </CustomTooltip>
-                      ) : row.is_cancelable && (
+                      ) : canCancel(row, user) && (
                         <CustomTooltip text="Devolución">
                           <CustomButton onClick={() => saleModal.open(row)}>
                             <UndoIcon />

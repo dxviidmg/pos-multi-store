@@ -10,8 +10,8 @@ import CustomTooltip from "../../ui/Tooltip";
 const NOTICE_COLORS = { error: "error", warning: "warning" };
 
 /** Saludo y título a la izquierda; ampliar plan y crear tienda a la derecha. */
-const StoreHeader = ({ title, greeting, notices = [], isOwner, createBlocked, onCreate }) => (
-  <Box sx={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 2, mb: 3 }}>
+const StoreHeader = ({ title, greeting, notices = [], isOwner, createBlocked, createLabel, onCreate }) => (
+  <Box sx={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 2, mb: 2 }}>
     <Box>
       <Typography variant="body1" color="text.secondary">{greeting}</Typography>
       <Typography variant="h1" component="h2" sx={{ mt: 0.25, fontWeight: 600, color: "text.primary" }}>{title}</Typography>
@@ -41,10 +41,10 @@ const StoreHeader = ({ title, greeting, notices = [], isOwner, createBlocked, on
       )}
       {isOwner && (createBlocked ? (
         <CustomTooltip text="Ya usas todas las tiendas de tu plan" position="bottom">
-          <CustomButton disabled startIcon={<LockOutlinedIcon />}>Crear tienda</CustomButton>
+          <CustomButton disabled startIcon={<LockOutlinedIcon />}>{createLabel}</CustomButton>
         </CustomTooltip>
       ) : (
-        <CustomButton onClick={onCreate} startIcon={<AddBusinessOutlinedIcon />}>Crear tienda</CustomButton>
+        <CustomButton onClick={onCreate} startIcon={<AddBusinessOutlinedIcon />}>{createLabel}</CustomButton>
       ))}
     </Box>
   </Box>

@@ -48,7 +48,7 @@ export const STORE_SELECTOR_LABEL = "Tienda";
  */
 export const ICONS = {
   Vender: ShoppingCartIcon,
-  Ventas: ReceiptIcon,
+  "Ventas y apartados": ReceiptIcon,
   Clientes: PersonSearchIcon,
   Tableros: BarChartIcon,
   [STORE_SELECTOR_LABEL]: LocalShippingIcon,
@@ -96,7 +96,7 @@ export const buildLinksByType = (user, storeSwitcher) => ({
     ...storeSwitcher,
     { label: "Vender", href: "/vender/" },
     {
-      label: "Ventas",
+      label: "Ventas y apartados",
       dropdown: [
         { section: "sales" },
         { label: "Importar ventas", href: "/importar-ventas/" },
