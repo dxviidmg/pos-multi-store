@@ -29,6 +29,7 @@ const QUICK_FILTERS = {
   returned: (sale) => sale.has_return,
 };
 
+  mixed: (sale) => sale.payments_methods.length > 1,
 const CASH_LABEL = PAYMENT_METHOD_OPTIONS.find(({ value }) => value === PAYMENT_METHODS.CASH).label;
 
 // Con is_cancelable, el dueño cancela cualquier venta; los demás roles solo las pagadas únicamente en efectivo.
@@ -61,7 +62,7 @@ const SaleList = () => {
   const duplicatedCount = sales.filter(QUICK_FILTERS.duplicated).length;
 
   const renderQuickFilter = (value, label, extraProps) => (
-    <Grid item xs={6} md={3}>
+    <Grid item xs={6} md>
       <CustomButton
         fullWidth
         variant={quickFilter === value ? "contained" : "outlined"}
@@ -105,6 +106,7 @@ const SaleList = () => {
 
         <DataTable
           progressPending={loading}
+          {renderQuickFilter("mixed", "Pagos mixtos")}
           noDataComponent="Sin ventas"
           searcher
           data={sales.filter(QUICK_FILTERS[quickFilter])}
