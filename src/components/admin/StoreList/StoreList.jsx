@@ -178,6 +178,7 @@ const StoreList = () => {
           notices={tenantInfo.notices}
           isOwner={isOwner}
           createBlocked={createStoreBlocked}
+          createLabel={isStoreType ? "Crear tienda" : "Crear almacén"}
           onCreate={() => openCreateStore()}
         />
 
