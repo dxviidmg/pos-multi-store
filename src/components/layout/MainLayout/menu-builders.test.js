@@ -8,24 +8,24 @@ const find = (items, label) => items.find((item) => item.label === label);
 describe("buildMenu", () => {
   it("vendedor con una sola sucursal ve solo lo que puede abrir, sin submenús de un ítem", () => {
     const menu = buildMenu(user({ role: "seller", multistore: false }));
-    expect(labels(menu)).toEqual(["Vender", "Ventas", "Movimientos en caja"]);
+    expect(labels(menu)).toEqual(["Vender", "Ventas y apartados", "Movimientos en caja"]);
     expect(menu.every((item) => !item.dropdown)).toBe(true);
   });
 
   it("vendedor con varias sucursales también ve traspasos", () => {
-    expect(labels(buildMenu(user({ role: "seller" })))).toEqual(["Vender", "Ventas", "Movimientos en caja", "Traspasos"]);
+    expect(labels(buildMenu(user({ role: "seller" })))).toEqual(["Vender", "Ventas y apartados", "Movimientos en caja", "Traspasos"]);
   });
 
   it("administrador de tienda ve el menú completo en su orden", () => {
     expect(labels(buildMenu(user({})))).toEqual([
-      "Vender", "Ventas", "Caja", "Clientes", "Movimientos", "Productos",
+      "Vender", "Ventas y apartados", "Caja", "Clientes", "Movimientos", "Productos",
       "Inventario", "Historial",
     ]);
   });
 
   it("Ventas y Productos son submenús con sus pantallas", () => {
     const menu = buildMenu(user({}));
-    expect(labels(find(menu, "Ventas").dropdown)).toEqual(["Ventas", "Importar ventas"]);
+    expect(labels(find(menu, "Ventas y apartados").dropdown)).toEqual(["Ventas y apartados", "Importar ventas"]);
     expect(labels(find(menu, "Productos").dropdown)).toEqual([
       "Productos", "Importar", "Ajustes de inventario", "Marcas y departamentos",
     ]);
