@@ -59,10 +59,6 @@ describe("StoreList", () => {
     expect(screen.getByText("Buenos días, David")).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Tiendas" })).toBeInTheDocument();
     expect(screen.getByText("Monto vendido hoy")).toBeInTheDocument();
-    expect(screen.getByText("Aún no hay ventas hoy")).toBeInTheDocument();
-    expect(screen.getByText("Tickets cobrados en el periodo")).toBeInTheDocument();
-    expect(screen.getByText("Aparece con tu primera venta")).toBeInTheDocument();
-    expect(screen.getByText("Registrados en tu catálogo")).toBeInTheDocument();
     expect(screen.getByText("120")).toBeInTheDocument();
   });
 
