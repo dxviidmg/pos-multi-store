@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Box, IconButton, Typography } from "@mui/material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import CustomTooltip from "../../ui/Tooltip";
 import ProductCard from "./ProductCard";
 import { MOVEMENT_TYPES } from "../../../constants";
 
@@ -66,15 +67,17 @@ const ProductCarousel = ({ products = [], onSelect, movementType }) => {
 
   return (
     <Box sx={{ position: "relative", width: "100%" }}>
-      <IconButton
-        onClick={() => scrollByAmount(-1)}
-        disabled={!canScrollLeft}
-        size="small"
-        aria-label="Anterior"
-        sx={{ ...ARROW_SX, left: -6 }}
-      >
-        <ChevronLeftIcon />
-      </IconButton>
+      <CustomTooltip text="Anterior" position="top">
+        <IconButton
+          onClick={() => scrollByAmount(-1)}
+          disabled={!canScrollLeft}
+          size="small"
+          aria-label="Anterior"
+          sx={{ ...ARROW_SX, left: -6 }}
+        >
+          <ChevronLeftIcon />
+        </IconButton>
+      </CustomTooltip>
 
       <Box
         ref={scrollRef}
@@ -103,15 +106,17 @@ const ProductCarousel = ({ products = [], onSelect, movementType }) => {
         })}
       </Box>
 
-      <IconButton
-        onClick={() => scrollByAmount(1)}
-        disabled={!canScrollRight}
-        size="small"
-        aria-label="Siguiente"
-        sx={{ ...ARROW_SX, right: -6 }}
-      >
-        <ChevronRightIcon />
-      </IconButton>
+      <CustomTooltip text="Siguiente" position="top">
+        <IconButton
+          onClick={() => scrollByAmount(1)}
+          disabled={!canScrollRight}
+          size="small"
+          aria-label="Siguiente"
+          sx={{ ...ARROW_SX, right: -6 }}
+        >
+          <ChevronRightIcon />
+        </IconButton>
+      </CustomTooltip>
     </Box>
   );
 };

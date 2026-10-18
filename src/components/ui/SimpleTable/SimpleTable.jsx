@@ -30,8 +30,8 @@ const SimpleTable = ({ data, columns, noDataComponent, onRowClicked }) => {
                 key={idx}
                 sx={{ 
                   textAlign: "center", 
-                  color: "white !important", 
-                  backgroundColor: "#0B1B4D !important",
+                  color: "tableHead.contrastText !important",
+                  backgroundColor: "tableHead.main !important",
                   fontWeight: 600
                 }}
               >

@@ -1,5 +1,6 @@
 import React from "react";
-import { Grid, TextField, Box } from "@mui/material";
+import { Grid, Box } from "@mui/material";
+import { TextField } from "../../ui/Field/Field";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CustomButton from "../../ui/Button/Button";

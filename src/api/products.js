@@ -28,6 +28,8 @@ export {
   addProducts,
   importProductsValidation,
   importProducts,
+  importEleventaValidation,
+  importEleventa,
   deleteProducts,
   updatePricesProducts,
   upperCodeProducts,

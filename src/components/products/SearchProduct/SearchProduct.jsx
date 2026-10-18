@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
-import { Chip, Grid, TextField, InputAdornment, IconButton, CircularProgress, LinearProgress, useMediaQuery, useTheme } from "@mui/material";
+import { Chip, Grid, InputAdornment, IconButton, CircularProgress, LinearProgress, useMediaQuery, useTheme } from "@mui/material";
+import { TextField } from "../../ui/Field/Field";
 import SearchIcon from "@mui/icons-material/Search";
 import PushPinIcon from "@mui/icons-material/PushPin";
 import PushPinOutlinedIcon from "@mui/icons-material/PushPinOutlined";
@@ -9,6 +10,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
 import CustomButton from "../../ui/Button/Button";
+import CustomTooltip from "../../ui/Tooltip";
 import PageHeader from "../../ui/PageHeader";
 import BarcodeScanner from "../../ui/BarcodeScanner/BarcodeScanner";
 import StockModal from "../../inventory/StockModal/StockModal";
@@ -63,9 +65,17 @@ const SearchProduct = ({ searchInputRef }) => {
   };
 
   const searchButton = (
-    <IconButton size="small" onClick={isCodeMode ? search.runBarcodeSearch : search.handleSearchProduct} disabled={searching} sx={SEARCH_BUTTON_SX}>
-      {searching ? <CircularProgress size={18} color="inherit" /> : <SearchIcon fontSize="small" />}
-    </IconButton>
+    <CustomTooltip text="Buscar" position="bottom">
+      <IconButton
+        size="small"
+        aria-label="Buscar"
+        onClick={isCodeMode ? search.runBarcodeSearch : search.handleSearchProduct}
+        disabled={searching}
+        sx={SEARCH_BUTTON_SX}
+      >
+        {searching ? <CircularProgress size={18} color="inherit" /> : <SearchIcon fontSize="small" />}
+      </IconButton>
+    </CustomTooltip>
   );
 
   return (
@@ -127,7 +137,7 @@ const SearchProduct = ({ searchInputRef }) => {
             InputProps={{
               startAdornment: isTextMode && !isMobile ? (
                 <InputAdornment position="start">
-                  <IconButton size="small" onClick={search.handleSearchProduct} disabled={searching} sx={{ p: 0.5 }}>
+                  <IconButton size="small" aria-label="Buscar" onClick={search.handleSearchProduct} disabled={searching} sx={{ p: 0.5 }}>
                     {searching ? <CircularProgress size={18} /> : <SearchIcon fontSize="small" />}
                   </IconButton>
                 </InputAdornment>
@@ -136,33 +146,46 @@ const SearchProduct = ({ searchInputRef }) => {
           />
           {searchButton}
           {isCodeMode && isMobile && (
-            <IconButton size="small" onClick={() => setScannerOpen(true)} sx={{ ...SQUARE_BUTTON_SX, bgcolor: "success.main" }}>
-              <QrCodeScannerIcon fontSize="small" />
-            </IconButton>
+            <CustomTooltip text="Escanear con la cámara" position="bottom">
+              <IconButton
+                size="small"
+                aria-label="Escanear con la cámara"
+                onClick={() => setScannerOpen(true)}
+                sx={{ ...SQUARE_BUTTON_SX, bgcolor: "success.main" }}
+              >
+                <QrCodeScannerIcon fontSize="small" />
+              </IconButton>
+            </CustomTooltip>
           )}
-          <IconButton
-            size="small"
-            sx={{
-              ...SQUARE_BUTTON_SX,
-              bgcolor: isInputFocused ? "primary.main" : "warning.main",
-              "&:hover": { bgcolor: isInputFocused ? "primary.dark" : "warning.dark" },
-            }}
-          >
-            {isInputFocused ? <EditIcon fontSize="small" /> : <EditOffIcon fontSize="small" />}
-          </IconButton>
-          {isTextMode && (
+          <CustomTooltip text={isInputFocused ? "Campo activo: puedes escribir o escanear" : "Haz clic en el campo para escribir o escanear"} position="bottom">
             <IconButton
               size="small"
-              onClick={search.toggleKeepListOpen}
+              aria-label={isInputFocused ? "Campo activo" : "Campo inactivo"}
               sx={{
                 ...SQUARE_BUTTON_SX,
-                bgcolor: search.keepListOpen ? "primary.main" : "transparent",
-                color: search.keepListOpen ? "common.white" : "text.secondary",
-                "&:hover": { bgcolor: search.keepListOpen ? "primary.dark" : "action.hover" },
+                bgcolor: isInputFocused ? "primary.main" : "warning.main",
+                "&:hover": { bgcolor: isInputFocused ? "primary.dark" : "warning.dark" },
               }}
             >
-              {search.keepListOpen ? <PushPinIcon fontSize="small" /> : <PushPinOutlinedIcon fontSize="small" />}
+              {isInputFocused ? <EditIcon fontSize="small" /> : <EditOffIcon fontSize="small" />}
             </IconButton>
+          </CustomTooltip>
+          {isTextMode && (
+            <CustomTooltip text={search.keepListOpen ? "La lista seguirá abierta" : "Mantener la lista abierta"} position="bottom">
+              <IconButton
+                size="small"
+                aria-label="Mantener la lista abierta"
+                onClick={search.toggleKeepListOpen}
+                sx={{
+                  ...SQUARE_BUTTON_SX,
+                  bgcolor: search.keepListOpen ? "primary.main" : "transparent",
+                  color: search.keepListOpen ? "common.white" : "text.secondary",
+                  "&:hover": { bgcolor: search.keepListOpen ? "primary.dark" : "action.hover" },
+                }}
+              >
+                {search.keepListOpen ? <PushPinIcon fontSize="small" /> : <PushPinOutlinedIcon fontSize="small" />}
+              </IconButton>
+            </CustomTooltip>
           )}
           {isTextMode && data.length > 0 && (
             <Chip label={`${data.length} resultados`} color="primary" size="small" sx={{ height: 36 }} />

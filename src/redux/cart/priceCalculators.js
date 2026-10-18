@@ -8,7 +8,7 @@
  * @param {Object} client - Objeto cliente
  * @returns {boolean}
  */
-export const aClientIsSelected = (client) => Object.keys(client).length > 0;
+export const aClientIsSelected = (client) => Boolean(client) && Object.keys(client).length > 0;
 
 /**
  * Calcula el precio que debe aplicarse a un producto en el carrito.

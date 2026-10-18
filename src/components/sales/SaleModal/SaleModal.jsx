@@ -3,7 +3,8 @@ import CustomModal, { ModalBody } from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
 import SimpleTable from "../../ui/SimpleTable/SimpleTable";
 import { useCancelSale } from "../../../hooks/useSaleMutations";
-import { Box, Grid, TextField, Checkbox, FormControlLabel, Typography } from "@mui/material";
+import { Box, Grid, Checkbox, FormControlLabel, Typography } from "@mui/material";
+import { TextField } from "../../ui/Field/Field";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { formatCurrency } from "../../../utils/currency";
 import { SALE_TYPES } from "../../../constants";
@@ -111,7 +112,7 @@ const SaleModal = ({ isOpen, sale, onClose, onUpdate }) => {
       <ModalBody>
         <Grid container>
           <Grid item xs={12} className="card">
-            <Grid container spacing={2}>
+            <Grid container className="fill-row" spacing={2}>
               <Grid item xs={12} md={2}>
                 <TextField size="small" fullWidth label="Folio" type="text" value={formData.id} disabled />
               </Grid>
@@ -161,7 +162,9 @@ const SaleModal = ({ isOpen, sale, onClose, onUpdate }) => {
                 />
               </Grid>
               <Grid item xs={12} md={12}>
-                <h5>{isReservation ? "Productos del apartado" : totalCancel ? "Todos los productos serán devueltos" : "Selecciona los productos a devolver"}</h5>
+                <Typography variant="h5" component="h3" sx={{ mb: 1 }}>
+                  {isReservation ? "Productos del apartado" : totalCancel ? "Todos los productos serán devueltos" : "Selecciona los productos a devolver"}
+                </Typography>
                 <SimpleTable
                   noDataComponent="Sin productos"
                   data={formData.products_sale}

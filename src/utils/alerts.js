@@ -17,6 +17,15 @@ export const showWarning = (title, text = "") => {
   showAlert("warning", title, text);
 };
 
+const ALERT_POLL_DELAY = 100;
+
+/** Se resuelve cuando ya no hay una alerta abierta (SweetAlert restaura el scroll al cerrar). */
+export const waitForAlertClose = () =>
+  new Promise((resolve) => {
+    const check = () => (Swal.isVisible() ? setTimeout(check, ALERT_POLL_DELAY) : setTimeout(resolve, ALERT_POLL_DELAY));
+    check();
+  });
+
 export const SUPPORT_HINT = "Intenta de nuevo. Si continúa, contacta a soporte.";
 
 const getErrorDetail = (source) => {

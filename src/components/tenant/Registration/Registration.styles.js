@@ -55,41 +55,6 @@ export const getShortNameInputSx = (status) => (theme) => {
   };
 };
 
-export const pageContainerSx = {
-  minHeight: "100vh",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  backgroundSize: "cover",
-  backgroundPosition: "center",
-  backgroundAttachment: "fixed",
-  position: "relative",
-  overflowY: "auto",
-  py: 4,
-};
-
-export const overlayGradientSx = {
-  position: "fixed", inset: 0,
-  bgcolor: "background.default",
-  zIndex: 0,
-};
-
-export const formPaperSx = {
-  position: "relative", zIndex: 1,
-  width: "100%", maxWidth: 600, mx: 2,
-  maxHeight: "90vh",
-  overflowY: "auto",
-  borderRadius: "16px", overflow: "hidden auto",
-  bgcolor: "background.paper",
-  border: "1px solid",
-  borderColor: "divider",
-  boxShadow: colors.shadow.dialog,
-  // Ocultar la barra de scroll (el contenido sigue siendo desplazable)
-  scrollbarWidth: "none",        // Firefox
-  msOverflowStyle: "none",       // IE / Edge legacy
-  "&::-webkit-scrollbar": { display: "none" }, // Chrome, Safari, Edge
-};
-
 // Header superior de la card con azul fuerte
 export const headerBannerSx = {
   background: colors.gradient.brand,

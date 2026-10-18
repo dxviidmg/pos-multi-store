@@ -23,7 +23,7 @@ const OWNER = [ROLES.OWNER];
 
 const multistore = (roles) => ({ roles, multistore: true });
 
-export const SALES_DASHBOARD_PATH = "/tablero-ventas/";
+export const SALES_DASHBOARD_PATH = "/tablero-ventas-exitosas/";
 
 const ROUTE_ACCESS = {
   // Tienda
@@ -48,11 +48,12 @@ const ROUTE_ACCESS = {
   "/marcas/": { T: STAFF, A: ALL, G: OWNER },
   "/departamentos/": { T: STAFF, A: ALL, G: OWNER },
   "/reasignacion/": { T: STAFF, G: OWNER },
+  "/catalogo/": { G: OWNER },
   "/importar-productos/": { T: STAFF, A: ALL, G: OWNER },
   "/importar-inventario/": { T: STAFF, A: ALL },
-  "/solicitudes-ajustes-stock/": { T: STAFF, A: ALL, G: OWNER },
+  "/ajustes-inventario/": { T: STAFF, A: ALL, G: OWNER },
   "/historial-precios/": { T: STAFF, A: ALL, G: OWNER },
-  "/auditoria-inventario/": { T: STAFF, A: STAFF },
+  "/inventario-a-verificar/": { T: STAFF, A: STAFF },
   "/historial-stock/": { T: STAFF, A: STAFF },
 
   // Clientes
@@ -60,9 +61,10 @@ const ROUTE_ACCESS = {
 
   // Vista general (solo owner)
   [SALES_DASHBOARD_PATH]: { G: OWNER },
-  "/tablero-ventas-ajustadas-cancelaciones/": { G: OWNER },
+  "/tablero-ventas-canceladas/": { G: OWNER },
   "/tablero-verificacion-stock/": { G: OWNER },
-  "/tablero-productos/": { G: OWNER },
+  "/tablero-marcas-productos/": { G: OWNER },
+  "/tablero-por-departamento/": { G: OWNER },
   "/tablero-traspasos-pendientes/": { G: multistore(OWNER) },
   "/tiendas/": { G: OWNER },
   "/vendedores/": { G: OWNER },
@@ -76,6 +78,16 @@ const ROUTE_ACCESS = {
 
   // Todos
   "/perfil/": { T: ALL, A: ALL, G: ALL },
+};
+
+/** Rutas con nombre anterior → ruta actual (enlaces guardados y notificaciones viejas). */
+export const LEGACY_ROUTES = {
+  "/solicitudes-ajustes-stock/": "/ajustes-inventario/",
+  "/auditoria-inventario/": "/inventario-a-verificar/",
+  "/tablero-ventas/": "/tablero-ventas-exitosas/",
+  "/tablero-ventas-ajustadas-cancelaciones/": "/tablero-ventas-canceladas/",
+  "/tablero-productos/": "/tablero-marcas-productos/",
+  "/tablero-departamentos/": "/tablero-por-departamento/",
 };
 
 export const getViewType = (user) =>

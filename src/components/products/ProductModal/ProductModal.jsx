@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Grid, TextField, FormControl, InputLabel, Select, MenuItem, Alert } from "@mui/material";
+import { Grid, FormControl, InputLabel, MenuItem, Alert } from "@mui/material";
+import { TextField, Select } from "../../ui/Field/Field";
 import SaveIcon from "@mui/icons-material/Save";
 import CustomModal, { ModalBody } from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
@@ -185,13 +186,13 @@ const ProductModal = ({ isOpen, product, onClose, onUpdate }) => {
           {showStoreProducts ? (
             <ProductStockByStore code={productData.code} />
           ) : (
-            <Grid container spacing={2}>
+            <Grid container className="fill-row" spacing={2}>
               <Grid item xs={12} md={4}>
                 <ProductImageField src={previewImage} onChange={handleImageChange} />
               </Grid>
 
               <Grid item xs={12} md={8}>
-                <Grid container spacing={2}>
+                <Grid container className="fill-row" spacing={2}>
                   <Grid item xs={12} md={6}>
                     <TextField size="small" fullWidth label="Código" type="text"
                       value={formData.code}

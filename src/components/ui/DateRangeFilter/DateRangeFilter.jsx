@@ -1,5 +1,6 @@
 import React, { memo } from "react";
-import { Grid, TextField } from "@mui/material";
+import { Grid } from "@mui/material";
+import { TextField } from "../Field/Field";
 import { getDateDifference, getFormattedDate } from "../../../utils/date";
 
 const DEFAULT_ITEM_PROPS = { xs: 12, md: 4 };

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Box, Button, FormControlLabel, Grid, Switch, TextField } from "@mui/material";
+import { Box, Button, FormControlLabel, Grid, Switch } from "@mui/material";
+import { TextField } from "../../ui/Field/Field";
 import { Business, Save, Settings } from "@mui/icons-material";
 import ProfileSectionTitle from "./ProfileSectionTitle";
 import { updateTenant } from "../../../api/tenants";

@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import { Box, Button, Grid, IconButton, InputAdornment, TextField } from "@mui/material";
+import { Box, Button, Grid, IconButton, InputAdornment } from "@mui/material";
+import { TextField } from "../../ui/Field/Field";
 import { Lock, Visibility, VisibilityOff } from "@mui/icons-material";
+import CustomTooltip from "../../ui/Tooltip";
 import ProfileSectionTitle from "./ProfileSectionTitle";
 import { changePassword } from "../../../api/users";
 import { showRequestError, showSuccess, showWarning } from "../../../utils/alerts";
@@ -76,9 +78,16 @@ const PasswordSection = ({ userId }) => {
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
-                      <IconButton onClick={() => toggleVisibility(name)} edge="end" size="small">
-                        {visible[name] ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
+                      <CustomTooltip text={visible[name] ? "Ocultar contraseña" : "Mostrar contraseña"} position="top">
+                        <IconButton
+                          onClick={() => toggleVisibility(name)}
+                          edge="end"
+                          size="small"
+                          aria-label={visible[name] ? "Ocultar contraseña" : "Mostrar contraseña"}
+                        >
+                          {visible[name] ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </CustomTooltip>
                     </InputAdornment>
                   ),
                 }}

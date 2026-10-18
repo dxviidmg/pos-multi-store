@@ -5,6 +5,7 @@
 
 import { isOwner, canAccessRoute, getViewType } from "../../../constants/routeAccess";
 import { MENU_ACTIONS, STORE_SELECTOR_LABEL, buildLinksByType } from "./menu-config";
+import { SECTIONS, getAccessibleTabs } from "./menu-sections";
 
 /**
  * Construye el selector de sucursal (dueño con multi-store o botón "Regresar").
@@ -26,9 +27,26 @@ export const buildStoreSwitcher = (user, stores) => {
   return [{ label: "Regresar", action: MENU_ACTIONS.GO_BACK }];
 };
 
+const resolveLink = (user, item) => {
+  if (item.section) {
+    const section = SECTIONS[item.section];
+    const tabs = getAccessibleTabs(user, section);
+    if (!tabs.length) return [];
+    const [first] = tabs;
+    return [{
+      label: tabs.length === 1 ? first.fullLabel : section.label,
+      iconKey: section.label,
+      href: first.href,
+      sectionId: item.section,
+    }];
+  }
+  return canAccessRoute(user, item.href) ? [item] : [];
+};
+
 /**
  * Filtra el menú según los permisos del usuario.
- * Quita items ocultos (`hidden`), items sin acceso, y submenús vacíos.
+ * Quita items sin acceso y submenús vacíos; un submenú con un solo ítem pasa a ser ese enlace directo. Una sección es una sola entrada que abre
+ * su primera pestaña accesible; con una sola pestaña, toma el nombre completo de esa pantalla.
  * 
  * @param {Object} user - Usuario
  * @param {Array} items - Items del menú sin filtrar
@@ -36,13 +54,13 @@ export const buildStoreSwitcher = (user, stores) => {
  * @private
  */
 export const filterMenu = (user, items) => items.flatMap((item) => {
-  if (item.hidden) return [];
   if (item.action) return [item];
   if (item.dropdown) {
-    const dropdown = item.dropdown.filter((sub) => canAccessRoute(user, sub.href));
+    const dropdown = item.dropdown.flatMap((sub) => resolveLink(user, sub));
+    if (dropdown.length === 1 && !item.action) return [{ iconKey: item.label, ...dropdown[0] }];
     return dropdown.length ? [{ ...item, dropdown }] : [];
   }
-  return canAccessRoute(user, item.href) ? [item] : [];
+  return resolveLink(user, item);
 });
 
 /**

@@ -8,6 +8,7 @@ import DashboardLoading from "./DashboardLoading";
 import { Grid, Box, Typography } from "@mui/material";
 import { MONTH_NAMES } from "../../../utils/date";
 import { getProductsDashboard } from "../../../api/dashboards";
+import DashboardHeader from "./DashboardHeader";
 
 const TITLE = "Marcas y productos";
 
@@ -74,10 +75,7 @@ const ProductsDashboard = () => {
   if (!data) {
     return (
       <Box>
-        <Box className="card">
-          <Typography variant="h4" sx={{ fontWeight: 700, mb: 2 }}>{TITLE}</Typography>
-          {filters}
-        </Box>
+        <DashboardHeader title={TITLE} filters={filters} />
         <EmptyState message="No hay datos en este periodo" />
       </Box>
     );
@@ -87,15 +85,7 @@ const ProductsDashboard = () => {
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-      <Box className="card" sx={{ mb: 0 }}>
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 1, mb: 2 }}>
-          <Box>
-            <Typography variant="h4" sx={{ fontWeight: 700 }}>{TITLE}</Typography>
-            <Typography variant="body2" color="text.secondary">{periodLabel}</Typography>
-          </Box>
-        </Box>
-        {filters}
-      </Box>
+      <DashboardHeader title={TITLE} subtitle={periodLabel} filters={filters} sx={{ mb: 0 }} />
 
       <Grid container spacing={3}>
         <Grid item xs={12} md={6}>

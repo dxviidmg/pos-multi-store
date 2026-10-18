@@ -1,5 +1,6 @@
 import React from "react";
-import { Checkbox, FormControlLabel, Grid, TextField } from "@mui/material";
+import { Checkbox, FormControlLabel, Grid } from "@mui/material";
+import { TextField } from "../../ui/Field/Field";
 
 /**
  * Costo, precios, mayoreo y "mayoreo con descuento de cliente" (como `Grid item`s).

@@ -1,6 +1,6 @@
 # SmartVenta — Punto de venta en la nube para negocios con una o muchas sucursales
 
-> Última actualización: 10 de octubre de 2026
+> Última actualización: 18 de octubre de 2026
 
 **SmartVenta** es un punto de venta (POS) en la nube para negocios con una o varias tiendas y almacenes. Desde el navegador vendes, cobras, apartas, surtes, mueves mercancía entre sucursales y controlas precios e inventario, en computadora, tableta o celular, sin instalar nada. Cada pieza queda registrada: sabes quién la movió, cuándo y a dónde fue.
 
@@ -153,6 +153,7 @@ Cuando abres tu segunda sucursal, las funciones de varias sucursales se activan 
 - **Historial de precios.** Cada cambio con valor anterior, valor nuevo, fecha y quién lo hizo, por producto o general. Filtra hasta 12 meses atrás y descárgalo a Excel.
 - **Precios bajo control.** Solo el dueño edita precios de productos existentes.
 - **Importación masiva desde Excel.** Carga tu catálogo con precios desde una plantilla.
+- **Importación desde otro sistema.** Si vienes de Eleventa, sube su reporte de inventario tal como lo exporta, sin acomodarlo a mano. Elige la marca para todos los productos, decide si usas una cantidad mínima de mayoreo o solo el precio de menudeo, corrige los errores directamente en la tabla (edita el dato y guarda, o quita el producto) sin volver a cargar el archivo, y decide qué productos con inventario en 0 se importan y cuáles no.
 
 **Resultado:** ajustas cientos de precios en minutos, sin errores y con registro de cada cambio.
 
@@ -227,7 +228,7 @@ Al confirmar un traspaso o una distribución eliges el destino dos veces, para n
 
 ### 🏪 Control de sucursales (dueño)
 
-- **Vista general de tiendas y almacenes.** Indicadores de productos, ventas, monto y ganancia del periodo, con totales y filtro por departamento.
+- **Vista general de tiendas y almacenes.** Te saluda según la hora y muestra, con el periodo que elijas (hoy, ayer, últimos 7 días, este mes o un rango propio), el monto vendido con su desglose por forma de pago, las ventas, la ganancia y los productos, con filtro por departamento y la hora de la última actualización. La tabla de cada sucursal cambia de vista (pagos, ventas, administradores, inversión, impresoras, acciones) y desde ahí entras a la tienda. Si todavía no hay ventas, lo dice con claridad.
 - **Semáforo de desempeño.** Cada sucursal se marca por encima, en o por debajo del promedio.
 - **Catálogo incompleto.** Filtro para ver qué sucursales no tienen todos los productos.
 - **Filtros rápidos por sucursal:** pagos, ventas, administradores, inversión, impresoras y acciones.
@@ -235,6 +236,7 @@ Al confirmar un traspaso o una distribución eliges el destino dos veces, para n
 - **Administradores por sucursal.** Edita sus datos y cambia su contraseña desde la lista.
 - **Entrar a una sucursal** con un clic; la sucursal actual se resalta.
 - **Cambiar de sucursal desde el menú,** en computadora y celular.
+- **Menú corto con pestañas.** Las pantallas relacionadas comparten una sola entrada del menú y se alternan con pestañas: Ventas y Apartados, Corte y Movimientos de caja, Distribuciones y Traspasos, Marcas y Departamentos, las importaciones, el historial de stock y de precios, y la facturación. Cada usuario ve solo las pestañas que su rol permite.
 - **Crear tienda o almacén** con nombre, dirección y teléfono, respetando el límite de tu plan.
 - **Vaciar stock con doble confirmación:** hay que escribir el nombre de la sucursal.
 - **Avisos del negocio** visibles en la lista de sucursales.
@@ -303,13 +305,15 @@ Al confirmar un traspaso o una distribución eliges el destino dos veces, para n
 - **Stock inicial al crear** (una sucursal). Dentro de tu tienda, el producto se crea con su existencia en un solo paso.
 - **Importación desde Excel en 4 pasos:** subir, configurar, validar e importar.
   - Puede crear las marcas y departamentos que falten.
-  - Muestra los errores por página.
+  - Muestra los errores por página y los corriges ahí mismo: edita el dato y guarda, o quita el producto, sin volver a cargar el archivo.
+  - Si agregas inventario, te deja elegir cuáles productos con inventario en 0 se importan y cuáles no, con el resumen de cuántos se importarán.
 - **Marcas y departamentos** con su número de productos. No se borran mientras tengan productos, y solo el dueño los elimina.
 - **Reasignación masiva.** Pasa todos los productos de una marca o departamento a otro y, si quieres, elimina el de origen.
 - **Formatear códigos** (dueño). Unifica todos los códigos en mayúsculas.
 - **Borrado seguro.** Solo se borran productos sin existencia.
 - **Historial de precios** por producto y general.
 - **Exportar catálogo a Excel** con precios y enlace de imagen.
+- **Catálogo en PDF para tus clientes** (dueño). Elige una marca o un departamento, ponle nombre al catálogo, indica hasta cuándo es válido y descarga un PDF con sus productos y precios (con precio de mayoreo y a partir de cuántas piezas, si quieres) para enviarlo a tus clientes; el sistema te dice cuántos productos tienen imagen: con muy pocas el PDF sale sin ellas, con casi todas las lleva, y en el punto medio tú decides. También eliges si incluir productos sin stock y puedes desmarcar los productos que no quieras que salgan.
 
 ### 📈 Tableros (dueño)
 
@@ -319,6 +323,7 @@ Al confirmar un traspaso o una distribución eliges el destino dos veces, para n
 - **Mapa de calor.** Días y horas de mayor venta por tienda.
 - **Cancelaciones.** Monto y porcentaje cancelado o devuelto, separado por tipo, cuándo y dónde ocurre más, y sus motivos.
 - **Marcas y productos.** Marcas más vendidas y productos más y menos vendidos, por tienda y periodo.
+- **Por departamento.** Elige un departamento, un año y un mes: una gráfica por tienda con lo que vendió, lo que tienes invertido en inventario y el total de ambos.
 - **Verificación de stock.** Productos por verificar, cobertura y promedio por tienda.
 - **Traspasos pendientes** (varias sucursales). Por tienda, hoy contra días anteriores.
 - **Cálculo en segundo plano.** Los tableros pesados muestran una barra de progreso mientras se calculan.
@@ -365,11 +370,10 @@ Cada rol solo ve y abre las pantallas que le corresponden. Además:
 - **Mi plan.** Plan, precio, sucursales, tarjeta, fechas del negocio y de la suscripción.
   - Avisa cuando la tarjeta está por vencer (2 meses antes) o si falló un cobro.
 - **Cambiar tarjeta** sin cargo en ese momento.
-- **Domiciliación con ahorro.** Opción de cobro automático a un precio menor, cuando tu plan la ofrece.
 - **Reactivación.** Si la suscripción vence, el dueño entra directo a su plan para reactivarla. Mientras tanto, el resto del sistema queda en pausa.
 - **Cancelación cuando quieras** desde Mi plan, con motivo. Cierra la sesión de todos los usuarios del negocio.
 - **Historial de pagos y de suscripciones.**
-- **Servicios adicionales** (catálogo dentro del sistema): sucursales extra, impresora USB, impresora WiFi, módulo de vendedores ilimitados e integraciones con terceros.
+- **Servicios adicionales** (catálogo dentro del sistema): sucursales extra, impresora USB, impresora WiFi e integraciones con terceros.
 
 ---
 

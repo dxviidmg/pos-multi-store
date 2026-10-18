@@ -3,7 +3,8 @@ import DataTable from "../../ui/DataTable/DataTable";
 import { calculateTimeAgo, formatTimeFromDate } from "../../../utils/utils";
 import CustomButton from "../../ui/Button/Button";
 import { useTransfers, useDeleteTransfer } from "../../../hooks/useTransfers";
-import { Grid, MenuItem, FormControl, InputLabel, Select, TextField } from "@mui/material";
+import { Grid, MenuItem, FormControl, InputLabel } from "@mui/material";
+import { TextField, Select } from "../../ui/Field/Field";
 import DeleteIcon from "@mui/icons-material/Delete";
 import PageHeader from "../../ui/PageHeader";
 import CustomTooltip from "../../ui/Tooltip";
@@ -34,7 +35,7 @@ const TransferList = () => {
   return (
     <Grid item xs={12} className="card">
       <PageHeader title="Traspasos" />
-      <Grid container spacing={2} sx={{ mb: 2 }}>
+      <Grid container className="fill-row" spacing={2} sx={{ mb: 2 }}>
         <Grid item xs={12} md={3}>
           <FormControl fullWidth size="small">
             <InputLabel>Estado</InputLabel>

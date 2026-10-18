@@ -22,7 +22,7 @@ const StockRequestAlert = ({ onClose }) => {
     >
       {isOwner(user) ? (
         <strong>Revisa y aprueba las solicitudes de stock en{" "}
-          <Box component={Link} to="/solicitudes-ajustes-stock/" sx={{ color: "primary.main", fontWeight: 600 }}>
+          <Box component={Link} to="/ajustes-inventario/" sx={{ color: "primary.main", fontWeight: 600 }}>
             Solicitudes de ajuste
           </Box>.</strong>
       ) : (

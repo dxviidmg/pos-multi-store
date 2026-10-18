@@ -23,8 +23,9 @@ describe("priceCalculators", () => {
       expect(aClientIsSelected({})).toBe(false);
     });
 
-    it("retorna false si el cliente es undefined", () => {
-      expect(aClientIsSelected(undefined || {})).toBe(true); // undefined || {} → {}
+    it("retorna false si el cliente es undefined o null", () => {
+      expect(aClientIsSelected(undefined)).toBe(false);
+      expect(aClientIsSelected(null)).toBe(false);
     });
   });
 

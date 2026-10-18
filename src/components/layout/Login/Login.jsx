@@ -2,43 +2,16 @@ import React, { useState, useEffect } from "react";
 import { loginUser } from "../../../api/login";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../../context/UserContext";
-import CustomButton from "../../ui/Button/Button";
 import CustomTooltip from "../../ui/Tooltip";
 import LogoWhite from "../../../assets/images/logo-white.svg";
 import { colors } from "../../../theme/colors";
 import { isOwner } from "../../../constants/routeAccess";
 import { alpha } from "@mui/material/styles";
-import {
-  TextField, Box, Alert, Paper, Stack, Typography,
-  IconButton, InputAdornment, Button, CircularProgress,
-} from "@mui/material";
+import { Box, Paper, Typography, IconButton, InputAdornment } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import LoginIcon from "@mui/icons-material/Login";
-import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
-import {
-  desktopLabelSx, mobileInputSx,
-  desktopPrimaryButtonSx, mobilePrimaryButtonSx,
-  desktopSecondaryButtonSx, mobileSecondaryButtonSx,
-} from "./Login.styles";
-
-/** Traduce un error de login a un mensaje en español según status y code del backend. */
-const mapLoginError = (error) => {
-  const status = error.response?.status;
-  const code = error.response?.data?.code;
-  if (status === 403 && code === "tenant_inactive") {
-    // Negocio cancelado: nadie entra, ni el dueño. La reactivación es por soporte.
-    return "Este negocio está inactivo. Contacta a soporte.";
-  }
-  if (status === 403 && code === "subscription_expired") {
-    return "La suscripción del negocio venció. Contacta al propietario para reactivarla.";
-  }
-  if (status === 400) {
-    return "Usuario o contraseña incorrectos.";
-  }
-  return "No se pudo iniciar sesión. Intenta de nuevo.";
-};
+import LoginForm from "./LoginForm";
+import { mapLoginError } from "./loginErrors";
 
 function Login() {
   const navigate = useNavigate();
@@ -167,42 +140,18 @@ function Login() {
             Ingresa tus credenciales para continuar
           </Typography>
 
-          {error && (
-            <Alert severity="error" icon={<ErrorOutlineIcon fontSize="small" />} sx={{ mb: 3, borderRadius: '10px' }}>
-              {error}
-            </Alert>
-          )}
-
-          <Stack component="form" onSubmit={handleSubmit} spacing={2.5}>
-            <TextField fullWidth name="username" label="Usuario" placeholder="Ingresa tu usuario"
-              value={formData.username} onChange={handleChange}
-              required autoFocus autoComplete="username" size="small"
-              sx={desktopLabelSx}
-            />
-
-            <TextField fullWidth name="password" label="Contraseña" placeholder="Ingresa tu contraseña"
-              type={showPassword ? "text" : "password"}
-              value={formData.password} onChange={handleChange}
-              required autoComplete="current-password" size="small"
-              sx={desktopLabelSx}
-              InputProps={{ endAdornment: passwordAdornment }}
-            />
-
-            <CustomButton type="submit" fullWidth
-              disabled={isLoading || isFormEmpty}
-              startIcon={isLoading ? <CircularProgress size={18} sx={{ color: colors.white }} /> : <LoginIcon />}
-              sx={desktopPrimaryButtonSx}
-            >
-              {isLoading ? "Iniciando sesión…" : "Iniciar sesión"}
-            </CustomButton>
-
-            <Button onClick={() => navigate("/registrarme")} fullWidth
-              variant="outlined" startIcon={<PersonAddIcon />}
-              sx={desktopSecondaryButtonSx}
-            >
-              Crear mi negocio
-            </Button>
-          </Stack>
+          <LoginForm
+            variant="desktop"
+            formData={formData}
+            error={error}
+            showPassword={showPassword}
+            passwordAdornment={passwordAdornment}
+            isLoading={isLoading}
+            isFormEmpty={isFormEmpty}
+            onChange={handleChange}
+            onSubmit={handleSubmit}
+            onRegister={() => navigate("/registrarme")}
+          />
         </Paper>
 
         {/* Formulario solo en móvil — sin tarjeta */}
@@ -222,42 +171,18 @@ function Login() {
             Ingresa tus credenciales para continuar
           </Typography>
 
-          {error && (
-            <Alert severity="error" icon={<ErrorOutlineIcon fontSize="small" />} sx={{ mb: 3, borderRadius: '10px' }}>
-              {error}
-            </Alert>
-          )}
-
-          <Stack component="form" onSubmit={handleSubmit} spacing={2.5}>
-            <TextField fullWidth name="username" label="Usuario" placeholder="Ingresa tu usuario"
-              value={formData.username} onChange={handleChange}
-              required autoFocus autoComplete="username" size="small"
-              sx={mobileInputSx}
-            />
-
-            <TextField fullWidth name="password" label="Contraseña" placeholder="Ingresa tu contraseña"
-              type={showPassword ? "text" : "password"}
-              value={formData.password} onChange={handleChange}
-              required autoComplete="current-password" size="small"
-              sx={mobileInputSx}
-              InputProps={{ endAdornment: passwordAdornment }}
-            />
-
-            <CustomButton type="submit" fullWidth
-              disabled={isLoading || isFormEmpty}
-              startIcon={isLoading ? <CircularProgress size={18} sx={{ color: colors.sidebar }} /> : <LoginIcon />}
-              sx={mobilePrimaryButtonSx}
-            >
-              {isLoading ? "Iniciando sesión…" : "Iniciar sesión"}
-            </CustomButton>
-
-            <Button onClick={() => navigate("/registrarme")} fullWidth
-              variant="outlined" startIcon={<PersonAddIcon />}
-              sx={mobileSecondaryButtonSx}
-            >
-              Crear mi negocio
-            </Button>
-          </Stack>
+          <LoginForm
+            variant="mobile"
+            formData={formData}
+            error={error}
+            showPassword={showPassword}
+            passwordAdornment={passwordAdornment}
+            isLoading={isLoading}
+            isFormEmpty={isFormEmpty}
+            onChange={handleChange}
+            onSubmit={handleSubmit}
+            onRegister={() => navigate("/registrarme")}
+          />
         </Box>
       </Box>
     </Box>

@@ -14,7 +14,8 @@ import {
   updateTransfer,
 } from "../../../api/transfers";
 import CustomTooltip from "../../ui/Tooltip";
-import { Grid, TextField } from "@mui/material";
+import { Grid } from "@mui/material";
+import { TextField } from "../../ui/Field/Field";
 import ChecklistIcon from "@mui/icons-material/Checklist";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -33,18 +34,20 @@ const DistributionList = () => {
   const [editedQuantity, setEditedQuantity] = useState("");
 
   useEffect(() => {
+    let ignore = false;
     const fetchDistributions = async () => {
       setLoading(true);
       try {
         const res = await getDistributions();
-        setDistributions(res.data);
+        if (!ignore) setDistributions(res.data);
       } catch (error) {
-        showRequestError("cargar las distribuciones", error);
+        if (!ignore) showRequestError("cargar las distribuciones", error);
       } finally {
-        setLoading(false);
+        if (!ignore) setLoading(false);
       }
     };
     fetchDistributions();
+    return () => { ignore = true; };
   }, []);
 
   const handleSubmit = async () => {

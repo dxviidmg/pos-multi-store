@@ -1,5 +1,6 @@
 import React from "react";
-import { TextField, Box, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
+import { TextField } from "../../ui/Field/Field";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import CustomButton from "../../ui/Button/Button";
 import ShortNameStatusAdornment from "./ShortNameStatusAdornment";

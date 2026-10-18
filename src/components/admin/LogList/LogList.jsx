@@ -6,11 +6,11 @@ import { logger } from "../../../utils/logger";
 import { showRequestError } from "../../../utils/alerts";
 import { getStoreProductLogs, getStoreProductLogsChoices } from "../../../api/products";
 import { useBrands } from "../../../hooks/useBrands";
-import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import CustomButton from "../../ui/Button/Button";
 import StoreSelect from "../../ui/StoreSelect/StoreSelect";
 import { chooseIcon } from "../../ui/Icons/Icons";
-import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, Autocomplete } from "@mui/material";
+import { Grid, MenuItem, FormControl, InputLabel, Autocomplete } from "@mui/material";
+import { TextField, Select } from "../../ui/Field/Field";
 import DownloadIcon from "@mui/icons-material/Download";
 import PageHeader from "../../ui/PageHeader";
 
@@ -38,24 +38,28 @@ const LogList = () => {
   const { data: brands = [], isLoading: loadingBrands, isFetched: brandsLoaded } = useBrands();
 
   useEffect(() => {
+    let ignore = false;
     getStoreProductLogsChoices()
-      .then((res) => setActions(res.data))
+      .then((res) => { if (!ignore) setActions(res.data); })
       .catch((error) => logger.error("Error al cargar los tipos de movimiento:", error));
+    return () => { ignore = true; };
   }, []);
 
   useEffect(() => {
+    let ignore = false;
     const fetchLogs = async () => {
       setLoading(true);
       try {
         const res = await getStoreProductLogs(params);
-        setLogs(res.data);
+        if (!ignore) setLogs(res.data);
       } catch (error) {
-        showRequestError("cargar el historial de stock", error);
+        if (!ignore) showRequestError("cargar el historial de stock", error);
       } finally {
-        setLoading(false);
+        if (!ignore) setLoading(false);
       }
     };
     fetchLogs();
+    return () => { ignore = true; };
   }, [params]);
 
   const handleDataChange = (e) => {
@@ -73,13 +77,11 @@ const LogList = () => {
 
   return (
     <>
-      <CustomSpinner isLoading={loading || loadingBrands} />
-
       <Grid container>
         <Grid item xs={12} className="card">
           <PageHeader title="Historial de stock" />
 
-          <Grid container spacing={2} sx={{ mb: 2 }}>
+          <Grid container className="fill-row" spacing={2} sx={{ mb: 2 }}>
             <Grid item xs={12} md={3}>
               <TextField size="small" fullWidth label="Fecha" type="date"
                 value={params.date} onChange={handleDataChange} name="date"
@@ -130,7 +132,7 @@ const LogList = () => {
           </Grid>
 
           <DataTable
-            progressPending={loading}
+            progressPending={loading || loadingBrands}
             noDataComponent="Sin movimientos"
             data={logs}
             columns={COLUMNS}

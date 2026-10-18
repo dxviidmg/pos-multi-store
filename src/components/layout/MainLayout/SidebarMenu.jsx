@@ -19,7 +19,7 @@ const expandIconSx = { fontSize: 18 };
 
 const SubItems = ({ items, expanded, isActive, onNavigate }) =>
   items.map((sub) => {
-    const active = isActive(sub.href);
+    const active = isActive(sub.href, sub.sectionId);
     return (
       <ListItemButton key={sub.href} onClick={() => !sub.disabled && onNavigate(sub.href)} disabled={sub.disabled}
         sx={{
@@ -104,11 +104,11 @@ const SidebarMenu = ({
     );
   }
 
-  const active = isActive(item.href);
+  const active = isActive(item.href, item.sectionId);
   return (
     <ListItem key={idx} disablePadding sx={{ mb: 0.15 }}>
       <ListItemButton onClick={() => onNavigate(item.href)} sx={itemButtonSx(expanded, active)}>
-        <ListItemIcon sx={itemIconSx(expanded, active)}>{getMenuIcon(item.label)}</ListItemIcon>
+        <ListItemIcon sx={itemIconSx(expanded, active)}>{getMenuIcon(item.iconKey || item.label)}</ListItemIcon>
         <ListItemText primary={item.label}
           primaryTypographyProps={{
             fontWeight: 600, fontSize: "0.8rem",

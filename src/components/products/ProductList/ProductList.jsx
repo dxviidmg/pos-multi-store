@@ -3,7 +3,6 @@ import { Box, Grid, useMediaQuery, useTheme } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DataTable from "../../ui/DataTable/DataTable";
 import CustomButton from "../../ui/Button/Button";
-import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import PageHeader from "../../ui/PageHeader";
 import CardGallery from "../../ui/CardGallery/CardGallery";
 import ProductModal from "../ProductModal/ProductModal";
@@ -117,7 +116,6 @@ const ProductList = () => {
   return (
     <>
       <Box component="input" {...cameraInputProps} sx={{ display: "none" }} />
-      <CustomSpinner isLoading={loading} />
       <ProductModal isOpen={productModal.isOpen} product={productModal.data} onClose={productModal.close} onUpdate={handleProductSaved} />
       <PriceLogsModal isOpen={priceLogsModal.isOpen} product={priceLogsModal.data} onClose={priceLogsModal.close} />
       <PriceUpdateModal isOpen={priceUpdateModal.isOpen} onClose={priceUpdateModal.close} selectedProducts={selectedRows} onSuccess={fetchProducts} />

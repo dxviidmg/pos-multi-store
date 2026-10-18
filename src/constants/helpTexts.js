@@ -27,6 +27,10 @@ const helpTexts = {
     title: "Catálogo de productos",
     text: "Aquí gestionas todos los productos de tu negocio: nombre, código, marca, departamento, precios de menudeo y mayoreo. Los productos son compartidos entre todas tus tiendas.",
   },
+  "/catalogo/": {
+    title: "Catálogo para clientes",
+    text: "Elige una marca o un departamento y descarga un PDF con sus productos y precios para compartirlo con tus clientes. Puedes incluir las imágenes de los productos o dejarlas fuera.",
+  },
   "/inventario/": {
     title: "Inventario de tienda",
     text: "Consulta el stock disponible en esta tienda específica. Puedes ajustar cantidades manualmente y ver el historial de movimientos de cada producto.",
@@ -45,7 +49,7 @@ const helpTexts = {
   },
   "/importar-productos/": {
     title: "Importar productos",
-    text: "Carga productos desde un archivo Excel. Ideal para dar de alta tu catálogo inicial o agregar muchos productos nuevos de una vez.",
+    text: "Carga productos desde un archivo Excel. Con el modo Tradicional usas la plantilla; con el modo Especial subes el reporte de inventario de otro sistema. Ideal para dar de alta tu catálogo inicial o agregar muchos productos nuevos de una vez.",
   },
   "/importar-inventario/": {
     title: "Importar inventario",
@@ -71,9 +75,13 @@ const helpTexts = {
     title: "Tiendas y almacenes",
     text: "Panel central de tu negocio. Desde aquí ves el resumen de todas tus tiendas y almacenes, y puedes entrar a administrar cada una.",
   },
-  "/tablero-ventas/": {
+  "/tablero-ventas-exitosas/": {
     title: "Tablero de ventas exitosas",
     text: "Métricas generales de tu negocio: ventas totales, productos más vendidos, rendimiento por tienda. Visión global para tomar decisiones.",
+  },
+  "/tablero-por-departamento/": {
+    title: "Tablero por departamento",
+    text: "Elige un departamento, un año y un mes. Verás, por cada tienda, cuánto vendió, cuánto tienes invertido en inventario y el total de ambos.",
   },
   "/auditoria-transacciones/": {
     title: "Auditoría de transacciones",

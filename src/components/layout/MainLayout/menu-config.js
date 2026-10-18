@@ -19,9 +19,12 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import PolicyIcon from "@mui/icons-material/Policy";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import HistoryIcon from "@mui/icons-material/History";
+import Inventory2Icon from "@mui/icons-material/Inventory2";
+import CategoryIcon from "@mui/icons-material/Category";
+import UploadFileIcon from "@mui/icons-material/UploadFile";
+import TuneIcon from "@mui/icons-material/Tune";
 import { STORE_TYPES } from "../../../constants";
 import {
-  isSeller,
   SALES_DASHBOARD_PATH,
   SALES_DASHBOARD_RESTRICTION_MESSAGE,
   isSalesDashboardRestricted,
@@ -62,7 +65,11 @@ export const ICONS = {
   "Auditoría": PolicyIcon,
   Facturación: ReceiptIcon,
   Regresar: ArrowBackIcon,
-  "Historial de stock": HistoryIcon,
+  Inventario: Inventory2Icon,
+  "Marcas y departamentos": CategoryIcon,
+  Importar: UploadFileIcon,
+  "Ajustes de inventario": TuneIcon,
+  Historial: HistoryIcon,
 };
 
 /**
@@ -84,140 +91,75 @@ export const getMenuIcon = (label) => {
  * @returns {Object} Menú por tipo de vista
  * @private
  */
-export const buildLinksByType = (user, storeSwitcher) => {
-  const seller = isSeller(user);
-  return {
-    [STORE_TYPES.STORE]: [
-      ...storeSwitcher,
-      { label: "Vender", href: "/vender/" },
-      {
-        label: "Ventas",
-        dropdown: [
-          { label: "Ventas", href: "/ventas/" },
-          { label: "Apartados", href: "/apartados/" },
-          { label: "Importar ventas", href: "/importar-ventas/" },
-        ],
-        hidden: seller,
-      },
-      {
-        label: "Caja",
-        dropdown: [
-          { label: "Corte de caja", href: "/corte-caja/" },
-          { label: "Movimientos en caja", href: "/movimientos-caja/" },
-        ],
-        hidden: seller,
-      },
-      { label: "Clientes", href: "/clientes/" },
-      {
-        label: "Productos",
-        dropdown: [
-          { label: "Productos", href: "/productos/" },
-          { label: "Inventario", href: "/inventario/" },
-          { label: "Conversiones", href: "/conversiones/" },
-          { label: "Marcas", href: "/marcas/" },
-          { label: "Departamentos", href: "/departamentos/" },
-          { label: "Reasignación", href: "/reasignacion/" },
-          { label: "Importar productos", href: "/importar-productos/" },
-          { label: "Importar inventario", href: "/importar-inventario/" },
-          { label: "Solicitudes de ajustes de stock", href: "/solicitudes-ajustes-stock/" },
-          { label: "Historial de cambio de precios", href: "/historial-precios/" },
-        ],
-      },
-      {
-        label: "Auditoría",
-        dropdown: [
-          { label: "Inventario a verificar", href: "/auditoria-inventario/" },
-        ],
-      },
-      {
-        label: "Movimientos",
-        dropdown: [
-          { label: "Distribuciones", href: "/distribuciones/" },
-          { label: "Traspasos", href: "/traspasos/" },
-        ],
-        hidden: seller,
-      },
-      { label: "Ventas", href: "/ventas/", hidden: !seller },
-      { label: "Apartados", href: "/apartados/", hidden: !seller },
-      { label: "Movimientos en caja", href: "/movimientos-caja/", hidden: !seller },
-      { label: "Traspasos", href: "/traspasos/", hidden: !seller },
-      { label: "Historial de stock", href: "/historial-stock/" },
-    ],
-    [STORE_TYPES.WAREHOUSE]: [
-      ...storeSwitcher,
-      { label: "Distribuir", href: "/distribuir/" },
-      {
-        label: "Movimientos",
-        dropdown: [
-          { label: "Distribuciones", href: "/distribuciones/" },
-          { label: "Traspasos", href: "/traspasos/" },
-        ],
-      },
-      {
-        label: "Productos",
-        dropdown: [
-          { label: "Productos", href: "/productos/" },
-          { label: "Inventario", href: "/inventario/" },
-          { label: "Marcas", href: "/marcas/" },
-          { label: "Departamentos", href: "/departamentos/" },
-          { label: "Importar productos", href: "/importar-productos/" },
-          { label: "Importar inventario", href: "/importar-inventario/" },
-          { label: "Solicitudes de ajustes de stock", href: "/solicitudes-ajustes-stock/" },
-          { label: "Historial de cambio de precios", href: "/historial-precios/" },
-        ],
-      },
-      {
-        label: "Auditoría",
-        dropdown: [
-          { label: "Inventario a verificar", href: "/auditoria-inventario/" },
-        ],
-      },
-      { label: "Historial de stock", href: "/historial-stock/" },
-    ],
-    [STORE_TYPES.GENERAL]: [
-      {
-        label: "Tableros",
-        dropdown: [
-          { label: "Ventas exitosas", href: SALES_DASHBOARD_PATH, disabled: isSalesDashboardRestricted(user), disabledMessage: SALES_DASHBOARD_RESTRICTION_MESSAGE },
-          { label: "Ventas canceladas", href: "/tablero-ventas-ajustadas-cancelaciones/" },
-          { label: "Verificación de stock", href: "/tablero-verificacion-stock/" },
-          { label: "Marcas y productos", href: "/tablero-productos/" },
-          { label: "Traspasos pendientes", href: "/tablero-traspasos-pendientes/" },
-        ],
-      },
-      { label: "Tiendas", href: "/tiendas/" },
-      { label: "Clientes", href: "/clientes/" },
-      { label: "Vendedores", href: "/vendedores/" },
-      {
-        label: "Productos",
-        dropdown: [
-          { label: "Productos", href: "/productos/" },
-          { label: "Conversiones", href: "/conversiones/" },
-          { label: "Marcas", href: "/marcas/" },
-          { label: "Departamentos", href: "/departamentos/" },
-          { label: "Reasignación", href: "/reasignacion/" },
-          { label: "Importar productos", href: "/importar-productos/" },
-          { label: "Solicitudes de ajustes de stock", href: "/solicitudes-ajustes-stock/" },
-          { label: "Historial de cambio de precios", href: "/historial-precios/" },
-        ],
-      },
-      {
-        label: "Auditoría",
-        dropdown: [
-          { label: "Productos", href: "/auditoria-productos/" },
-          { label: "Transacciones", href: "/auditoria-transacciones/" },
-        ],
-      },
-      {
-        label: "Facturación",
-        dropdown: [
-          { label: "Mi plan actual", href: "/mi-plan-actual/" },
-          { label: "Historial de pagos", href: "/pagos/" },
-          { label: "Suscripciones", href: "/suscripciones/" },
-        ],
-      },
-      { label: "Servicios", href: "/servicios/" },
-      { label: "Sincronizar", href: "/sincronizar/" },
-    ],
-  };
-};
+export const buildLinksByType = (user, storeSwitcher) => ({
+  [STORE_TYPES.STORE]: [
+    ...storeSwitcher,
+    { label: "Vender", href: "/vender/" },
+    {
+      label: "Ventas",
+      dropdown: [
+        { section: "sales" },
+        { label: "Importar ventas", href: "/importar-ventas/" },
+      ],
+    },
+    { section: "cash" },
+    { label: "Clientes", href: "/clientes/" },
+    { section: "transfers" },
+    {
+      label: "Productos",
+      dropdown: [
+        { label: "Productos", href: "/productos/" },
+        { section: "imports" },
+        { label: "Ajustes de inventario", href: "/ajustes-inventario/" },
+        { section: "catalog" },
+      ],
+    },
+    { section: "inventory" },
+    { section: "history" },
+  ],
+  [STORE_TYPES.WAREHOUSE]: [
+    ...storeSwitcher,
+    { label: "Distribuir", href: "/distribuir/" },
+    { section: "transfers" },
+    {
+      label: "Productos",
+      dropdown: [
+        { label: "Productos", href: "/productos/" },
+        { section: "imports" },
+        { label: "Ajustes de inventario", href: "/ajustes-inventario/" },
+        { section: "catalog" },
+      ],
+    },
+    { section: "inventory" },
+    { section: "history" },
+  ],
+  [STORE_TYPES.GENERAL]: [
+    {
+      label: "Tableros",
+      dropdown: [
+        { label: "Ventas exitosas", href: SALES_DASHBOARD_PATH, disabled: isSalesDashboardRestricted(user), disabledMessage: SALES_DASHBOARD_RESTRICTION_MESSAGE },
+        { label: "Ventas canceladas", href: "/tablero-ventas-canceladas/" },
+        { label: "Verificación de stock", href: "/tablero-verificacion-stock/" },
+        { label: "Marcas y productos", href: "/tablero-marcas-productos/" },
+        { label: "Por departamento", href: "/tablero-por-departamento/" },
+        { label: "Traspasos pendientes", href: "/tablero-traspasos-pendientes/" },
+      ],
+    },
+    { label: "Tiendas", href: "/tiendas/" },
+    { label: "Vendedores", href: "/vendedores/" },
+    { label: "Clientes", href: "/clientes/" },
+    {
+      label: "Productos",
+      dropdown: [
+        { section: "products" },
+        { section: "imports" },
+        { label: "Ajustes de inventario", href: "/ajustes-inventario/" },
+        { section: "catalog" },
+      ],
+    },
+    { section: "audit" },
+    { section: "billing" },
+    { label: "Servicios", href: "/servicios/" },
+    { label: "Sincronizar", href: "/sincronizar/" },
+  ],
+});

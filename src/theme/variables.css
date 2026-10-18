@@ -1,7 +1,7 @@
 :root {
-  --radius-lg: 12px;
-  --spacing-md: 1.25rem;
+  --radius-lg: 16px;
+  --spacing-md: 1.75rem;
 
-  --font-display: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  --font-display: 'Inter', sans-serif;
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 }

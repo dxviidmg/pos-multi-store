@@ -1,5 +1,6 @@
 import React, { memo } from "react";
-import { Box, Checkbox, FormControlLabel, Grid, IconButton, TextField, Typography } from "@mui/material";
+import { Box, Checkbox, FormControlLabel, Grid, IconButton, Typography } from "@mui/material";
+import { TextField } from "../../ui/Field/Field";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CustomTooltip from "../../ui/Tooltip";
 import LabelValue from "../../ui/LabelValue/LabelValue";

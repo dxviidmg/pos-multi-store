@@ -4,22 +4,13 @@ import CustomButton from "../../ui/Button/Button";
 import { showSuccess, showRequestError } from "../../../utils/alerts";
 import { createStore } from "../../../api/stores";
 import { STORE_TYPES } from "../../../constants";
-import {
-  Box,
-  Grid,
-  TextField,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  InputAdornment,
-  Typography,
-} from "@mui/material";
+import { Box, Grid, MenuItem, FormControl, InputLabel, InputAdornment, Typography } from "@mui/material";
+import { TextField, Select } from "../../ui/Field/Field";
 import SaveIcon from "@mui/icons-material/Save";
-import StoreIcon from "@mui/icons-material/Store";
-import WarehouseIcon from "@mui/icons-material/Warehouse";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
-import PhoneIcon from "@mui/icons-material/Phone";
+import StoreIcon from "@mui/icons-material/StoreOutlined";
+import WarehouseIcon from "@mui/icons-material/WarehouseOutlined";
+import LocationOnIcon from "@mui/icons-material/LocationOnOutlined";
+import PhoneIcon from "@mui/icons-material/PhoneOutlined";
 
 const INITIAL_FORM = { name: "", store_type: STORE_TYPES.STORE, address: "", phone_number: "" };
 

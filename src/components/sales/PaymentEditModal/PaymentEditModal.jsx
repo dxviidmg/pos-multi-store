@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Grid, TextField, Radio, RadioGroup, FormControlLabel, FormLabel, Typography } from "@mui/material";
+import { Grid, Radio, RadioGroup, FormControlLabel, FormLabel, Typography } from "@mui/material";
+import { TextField } from "../../ui/Field/Field";
 import CustomModal, { ModalBody } from "../../ui/Modal/Modal";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { updateSale } from "../../../api/sales";
@@ -122,7 +123,7 @@ const PaymentEditModal = ({ isOpen, sale, onClose, onUpdate }) => {
           <Grid container>
             <Grid item xs={12} className="card" sx={{ marginBottom: "1rem" }}>
               <Typography variant="h2" sx={SECTION_TITLE_SX}>Información</Typography>
-              <Grid container spacing={2}>
+              <Grid container className="fill-row" spacing={2}>
                 <Grid item xs={12} md={3}>
                   <TextField size="small" fullWidth label="Folio" type="number" value={reservation.id || ""} disabled InputProps={{ startAdornment: "#" }} />
                 </Grid>
@@ -140,7 +141,7 @@ const PaymentEditModal = ({ isOpen, sale, onClose, onUpdate }) => {
 
             <Grid item xs={12} className="card" sx={{ marginBottom: "1rem" }}>
               <Typography variant="h2" sx={SECTION_TITLE_SX}>Totales</Typography>
-              <Grid container spacing={2}>
+              <Grid container className="fill-row" spacing={2}>
                 <Grid item xs={12} md={3}>
                   <TextField
                     fullWidth

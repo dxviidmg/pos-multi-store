@@ -2,7 +2,8 @@ import React, { useEffect } from "react";
 import CustomModal, { ModalBody } from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
 import { useForm } from "../../../hooks/useForm";
-import { Grid, TextField } from "@mui/material";
+import { Grid } from "@mui/material";
+import { TextField } from "../../ui/Field/Field";
 import SaveIcon from "@mui/icons-material/Save";
 
 const INITIAL_VALUES = { name: "" };
@@ -38,7 +39,7 @@ const CatalogModal = ({ isOpen, item, onClose, useCreate, useUpdate, entityLabel
     >
       <ModalBody>
         <Grid item xs={12} className="card">
-          <Grid container spacing={2}>
+          <Grid container className="fill-row" spacing={2}>
             <Grid item xs={12} md={6}>
               <TextField
                 size="small"

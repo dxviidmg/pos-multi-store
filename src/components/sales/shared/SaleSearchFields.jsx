@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { FormControl, Grid, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import { FormControl, Grid, InputLabel, MenuItem } from "@mui/material";
+import { TextField, Select } from "../../ui/Field/Field";
 
 const SEARCH_BY_OPTIONS = [
   { value: "date", label: "Fecha" },

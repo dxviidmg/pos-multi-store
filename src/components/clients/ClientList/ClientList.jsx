@@ -64,7 +64,7 @@ const ClientList = () => {
           </Grid>
         </PageHeader>
 
-        <Grid container spacing={2} sx={{ mb: 2 }}>
+        <Grid container className="fill-row" spacing={2} sx={{ mb: 2 }}>
           <DateRangeFilter
             startDate={params.start_date}
             endDate={params.end_date}

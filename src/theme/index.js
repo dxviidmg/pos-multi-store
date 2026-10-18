@@ -4,3 +4,4 @@
 
 export { colors } from './colors';
 export { getTheme } from './theme';
+export { useThemeTokens } from './useThemeTokens';

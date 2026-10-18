@@ -1,5 +1,6 @@
 import React from "react";
-import { Checkbox, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, TextField } from "@mui/material";
+import { Checkbox, FormControlLabel, FormLabel, Grid, Radio, RadioGroup } from "@mui/material";
+import { TextField } from "../../ui/Field/Field";
 import { PAYMENT_METHODS, PAYMENT_METHOD_OPTIONS } from "../../../constants";
 import { PAYMENT_TYPES } from "./usePaymentMethods";
 import PaymentCard from "./PaymentCard";

@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Grid, TextField, LinearProgress } from "@mui/material";
+import { Grid, LinearProgress } from "@mui/material";
+import { TextField } from "../../ui/Field/Field";
 import SaveIcon from "@mui/icons-material/Save";
 import CustomModal, { ModalBody } from "../../ui/Modal/Modal";
 import DataTable from "../../ui/DataTable/DataTable";
@@ -106,7 +107,7 @@ const StoreProductLogsModal = ({ isOpen, logs: logsData, onClose, onUpdate }) =>
       <ModalBody>
         <Grid item xs={12} className="card">
           {adjustStock ? (
-            <Grid container spacing={2}>
+            <Grid container className="fill-row" spacing={2}>
               <Grid item xs={12} md={6}>
                 <TextField size="small" fullWidth label="Cantidad" type="text"
                   value={formData.stock}

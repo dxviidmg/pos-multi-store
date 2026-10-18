@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Grid, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
+import React, { useState } from "react";
+import { Grid } from "@mui/material";
 import BlockIcon from "@mui/icons-material/Block";
 import UndoIcon from "@mui/icons-material/Undo";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
@@ -10,23 +10,16 @@ import DataTable from "../../ui/DataTable/DataTable";
 import CustomButton from "../../ui/Button/Button";
 import CustomTooltip from "../../ui/Tooltip";
 import PageHeader from "../../ui/PageHeader";
-import { CustomSpinner } from "../../ui/Spinner/Spinner";
-import { getSales } from "../../../api/sales";
 import { getFormattedDate, getFormattedDateTime } from "../../../utils/date";
 import { formatCurrency } from "../../../utils/currency";
-import { showRequestError } from "../../../utils/alerts";
 import { useModal } from "../../../hooks/useModal";
 import { useUser } from "../../../context/UserContext";
 import { isSeller } from "../../../constants/routeAccess";
 import SaleModal from "../SaleModal/SaleModal";
 import ProductsPopperButton from "../ProductsPopperButton/ProductsPopperButton";
 import SaleSearchFields from "../shared/SaleSearchFields";
+import { useSalesList } from "../shared/useSalesList";
 import PrintTicketButton from "../shared/PrintTicketButton";
-
-// Los apartados en curso viven en ReservationList; aquí solo se listan ventas
-const TYPE_OPTIONS = [
-  { value: false, label: "Ventas" },
-];
 
 const QUICK_FILTERS = {
   all: () => true,
@@ -35,34 +28,20 @@ const QUICK_FILTERS = {
   returned: (sale) => sale.has_return,
 };
 
+const SALES_ERROR = "cargar las ventas";
+
 const SaleList = () => {
   const { user } = useUser();
   const printer = user.store_printer;
-  const [sales, setSales] = useState([]);
   const today = getFormattedDate();
   const [params, setParams] = useState({
     date: today,
     reservation_in_progress: false,
   });
-  const [loading, setLoading] = useState(false);
+  const { sales, loading } = useSalesList(params, SALES_ERROR);
   const [showAllFields, setShowAllFields] = useState(false);
   const [quickFilter, setQuickFilter] = useState("all");
   const saleModal = useModal();
-
-  useEffect(() => {
-    const fetchSalesData = async () => {
-      setLoading(true);
-      try {
-        const salesResponse = await getSales(params);
-        setSales(salesResponse.data);
-      } catch (error) {
-        showRequestError("cargar las ventas", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchSalesData();
-  }, [params]);
 
   const handleDataChange = (e) => {
     const { name, value } = e.target;
@@ -89,26 +68,12 @@ const SaleList = () => {
 
   return (
     <>
-      <CustomSpinner isLoading={loading} />
       <SaleModal isOpen={saleModal.isOpen} sale={saleModal.data} onClose={saleModal.close} onUpdate={refreshSales} />
 
       <Grid className="card">
         <PageHeader title="Ventas" />
 
-        <Grid container spacing={2} sx={{ mb: 2 }}>
-          {/* Select "Tipo" oculto — solo tiene 1 opción (Ventas).
-              Descomentar si se reactiva el filtro de apartados. */}
-          {/* <Grid item xs={12} md={3}>
-            <FormControl fullWidth size="small">
-              <InputLabel>Tipo</InputLabel>
-              <Select value={params.reservation_in_progress} onChange={handleDataChange} name="reservation_in_progress" label="Tipo">
-                {TYPE_OPTIONS.map((opt) => (
-                  <MenuItem key={String(opt.value)} value={opt.value}>{opt.label}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid> */}
-
+        <Grid container className="fill-row" spacing={2} sx={{ mb: 2 }}>
           <SaleSearchFields params={params} onChange={handleDataChange} maxDate={today} />
 
           <Grid item xs={12} md={3}>

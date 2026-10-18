@@ -34,14 +34,14 @@ export const buildComponentsConfig = (modeColors, mode) => ({
     defaultProps: { disableElevation: true },
     styleOverrides: {
       root: {
-        borderRadius: 8,
+        borderRadius: 10,
         padding: '6px 16px',
         fontWeight: 600,
         fontSize: '0.8125rem',
         lineHeight: 1.4,
         transition: 'background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.2s ease, transform 0.2s ease',
         '&:active': { transform: 'translateY(0) scale(0.98)' },
-        '&.Mui-focusVisible': { boxShadow: `0 0 0 3px ${alpha(colors.secondary, 0.6)}` },
+        '&.Mui-focusVisible': { boxShadow: `0 0 0 3px ${alpha(modeColors.focusRing, 0.6)}` },
       },
       contained: {
         background: modeColors.buttonBg,
@@ -51,6 +51,9 @@ export const buildComponentsConfig = (modeColors, mode) => ({
           boxShadow: colors.shadow.brand,
           transform: 'translateY(-1px)',
         },
+        ...(modeColors.buttonDisabledBg && {
+          '&.Mui-disabled': { background: modeColors.buttonDisabledBg, color: modeColors.buttonDisabledText },
+        }),
       },
       outlined: {
         borderColor: modeColors.borderStrong,
@@ -86,7 +89,7 @@ export const buildComponentsConfig = (modeColors, mode) => ({
     defaultProps: { elevation: 0 },
     styleOverrides: {
       root: {
-        borderRadius: 12,
+        borderRadius: 14,
         border: `1px solid ${modeColors.border}`,
         backgroundImage: 'none',
       },
@@ -97,7 +100,7 @@ export const buildComponentsConfig = (modeColors, mode) => ({
     defaultProps: { elevation: 0 },
     styleOverrides: {
       root: {
-        borderRadius: 12,
+        borderRadius: 14,
         border: `1px solid ${modeColors.border}`,
         transition: 'box-shadow 0.2s ease',
         '&:hover': {
@@ -123,7 +126,7 @@ export const buildComponentsConfig = (modeColors, mode) => ({
     styleOverrides: {
       root: {
         '& .MuiOutlinedInput-root': {
-          borderRadius: 8,
+          borderRadius: 10,
           fontSize: '0.875rem',
           transition: 'border-color 0.15s ease, box-shadow 0.15s ease',
           '&:hover fieldset': {
@@ -142,7 +145,7 @@ export const buildComponentsConfig = (modeColors, mode) => ({
   MuiSelect: {
     styleOverrides: {
       root: {
-        borderRadius: 8,
+        borderRadius: 10,
         fontSize: '0.875rem',
       },
     },
@@ -210,6 +213,7 @@ export const buildComponentsConfig = (modeColors, mode) => ({
         fontSize: '0.8125rem',
         textTransform: 'none',
         minHeight: 40,
+        ...(modeColors.tabSelectedColor && { '&.Mui-selected': { color: modeColors.tabSelectedColor } }),
       },
     },
   },
@@ -250,7 +254,7 @@ export const buildComponentsConfig = (modeColors, mode) => ({
     defaultProps: { animation: 'wave' },
     styleOverrides: {
       root: {
-        backgroundColor: mode === 'light' ? alpha(colors.primary, 0.07) : alpha(colors.white, 0.06),
+        backgroundColor: alpha(modeColors.skeletonBase ?? (mode === 'light' ? colors.primary : colors.white), mode === 'light' ? 0.07 : 0.06),
       },
       rounded: { borderRadius: 8 },
     },

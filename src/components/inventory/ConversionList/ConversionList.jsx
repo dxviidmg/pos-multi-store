@@ -115,6 +115,7 @@ const ConversionList = () => {
         <PageHeader title="Conversiones de producto">
           {isOwner && (
             <CustomButton
+              fullWidth
               onClick={() => modal.open()}
               startIcon={<AddIcon />}
             >

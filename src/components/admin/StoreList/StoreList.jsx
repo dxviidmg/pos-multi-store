@@ -1,12 +1,8 @@
-import { useEffect, useCallback, useMemo, useState } from "react";
-import DataTable from "../../ui/DataTable/DataTable";
-import { Chip, Box, useMediaQuery, useTheme } from "@mui/material";
-import CustomButton from "../../ui/Button/Button";
-import PageHeader from "../../ui/PageHeader";
+import { useEffect, useCallback, useMemo, useRef, useState } from "react";
+import { Button, Box, useMediaQuery, useTheme } from "@mui/material";
+import StorefrontOutlinedIcon from "@mui/icons-material/StorefrontOutlined";
 import CardGallery from "../../ui/CardGallery/CardGallery";
-import { colors } from "../../../theme/colors";
-import { getFormattedDate } from "../../../utils/date";
-import AddBusinessIcon from "@mui/icons-material/AddBusiness";
+import DataTable from "../../ui/DataTable/DataTable";
 import { useUser } from "../../../context/UserContext";
 import { isOwner as isOwnerUser } from "../../../constants/routeAccess";
 import { STORE_TYPES } from "../../../constants";
@@ -17,35 +13,28 @@ import { useSwitchStore } from "../../../hooks/useSwitchStore";
 import { getInvestment } from "../../../api/stores";
 import { useUserManagement } from "../../../hooks/useUserManagement";
 import UserManagementModals from "../../ui/UserModals/UserManagementModals";
-import { CustomSpinner } from "../../ui/Spinner/Spinner";
-import { getStoreColumns, getStorageColumns, getTotalColumns } from "./StoreList.columns";
+import { getStoreColumns, getStorageColumns } from "./StoreList.columns";
 import CreateStoreModal from "./CreateStoreModal";
 import StoreCard from "./StoreCard";
+import StoreEmptyNotice from "./StoreEmptyNotice";
+import StoreHeader from "./StoreHeader";
 import StoreKpiTiles from "./StoreKpiTiles";
-import StoreListFilters from "./StoreListFilters";
+import StorePeriodFilters from "./StorePeriodFilters";
 import StoreQuickFilters from "./StoreQuickFilters";
+import StoreTypeTabs from "./StoreTypeTabs";
 import StorePaymentModal from "./StorePaymentModal";
+import { getGreeting, getPeriodRange } from "./storeInsights";
 import { resetStoreWithConfirm } from "./resetStoreDialog";
 import { useModal } from "../../../hooks/useModal";
 import { useCanCreateStore } from "../../../hooks/useCanCreateStore";
 import { showRequestError } from "../../../utils/alerts";
 
-const NOTICE_COLORS = { error: "error", warning: "warning" };
-
-// Con estos filtros la fila de totales no aporta información
-const FILTERS_WITHOUT_TOTALS = ["managers", "printer", "actions"];
-
-const firstStoreButtonSx = {
-  px: 4,
-  py: 1.2,
-  fontSize: "1rem",
-  bgcolor: colors.sidebar,
-  boxShadow: colors.shadow.brand,
-  "&:hover": {
-    boxShadow: colors.shadow.brandHover,
-    transform: "translateY(-1px)",
-  },
-  transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
+// La tabla y sus pastillas de vista comparten una misma tarjeta con borde
+const TABLE_CARD_SX = {
+  border: "1px solid", borderColor: "divider", borderRadius: "14px", overflow: "hidden", bgcolor: "background.paper",
+  "& > div:last-of-type": { mt: 0 },
+  "& .MuiDataGrid-root": { border: 0, borderRadius: 0 },
+  "& .MuiDataGrid-cell": { borderColor: "rowDivider.main", fontVariantNumeric: "tabular-nums" },
 };
 
 const StoreList = () => {
@@ -57,10 +46,11 @@ const StoreList = () => {
 
   const [storeInvestments, setStoreInvestments] = useState({});
   const [quickFilter, setQuickFilter] = useState("all");
-  const [params, setParams] = useState(() => {
-    const today = getFormattedDate();
-    return { end_date: today, start_date: today, store_type: STORE_TYPES.STORE };
-  });
+  const [period, setPeriod] = useState("today");
+  // Al cambiar de pestaña se conserva el alto del contenido mientras carga, para que el scroll no salte
+  const contentRef = useRef(null);
+  const [lockedHeight, setLockedHeight] = useState(0);
+  const [params, setParams] = useState(() => ({ ...getPeriodRange("today"), store_type: STORE_TYPES.STORE }));
   const hasDepartment = Boolean(params.department_id);
   const isStoreType = params.store_type === STORE_TYPES.STORE;
 
@@ -73,13 +63,19 @@ const StoreList = () => {
 
   const mpModal = useModal();
   const createStoreModal = useModal();
+  const { open: openCreateStore } = createStoreModal;
   const { data: canCreateData, refetch: refetchCanCreate } = useCanCreateStore();
-  const createStoreBlocked = canCreateData && !canCreateData.can_create;
+  const createStoreBlocked = Boolean(canCreateData && !canCreateData.can_create);
 
   const { open: openMpModal } = mpModal;
   useEffect(() => {
     if (tenantInfo.show_mp_modal) openMpModal();
   }, [tenantInfo.show_mp_modal, openMpModal]);
+
+  const { store_type: storeType } = params;
+  useEffect(() => {
+    if (!loadingStores) setLockedHeight(0);
+  }, [loadingStores, storeType]);
 
   const stores = useMemo(() => storesData?.stores || [], [storesData]);
   const totals = useMemo(() => storesData?.totals || {}, [storesData]);
@@ -90,9 +86,15 @@ const StoreList = () => {
     setParams((prev) => ({ ...prev, [name]: value }));
   }, []);
 
-  const handleStoreType = useCallback((e) => {
+  const handlePeriod = useCallback((key) => {
+    setPeriod(key);
+    if (key !== "custom") setParams((prev) => ({ ...prev, ...getPeriodRange(key) }));
+  }, []);
+
+  const handleStoreType = useCallback((storeType) => {
+    setLockedHeight(contentRef.current?.offsetHeight || 0);
     setQuickFilter("all");
-    setParams((prev) => ({ ...prev, store_type: e.target.value }));
+    setParams((prev) => ({ ...prev, store_type: storeType }));
   }, []);
 
   const handleShowInvestmentForStore = useCallback(async (storeId) => {
@@ -106,21 +108,14 @@ const StoreList = () => {
     }
   }, [storeInvestments]);
 
-  // Promedio de ventas para el indicador de color junto al nombre
-  const averageSales = useMemo(() => {
-    if (stores.length === 0) return 0;
-    const totalSales = stores.reduce((sum, store) => sum + (store.cash_summary?.total_day || 0), 0);
-    return totalSales / stores.length;
-  }, [stores]);
-
   const filteredStores = useMemo(
     () => (quickFilter === "synced" ? stores.filter((store) => !store.has_all_products) : stores),
     [stores, quickFilter]
   );
 
+
   const sharedProps = useMemo(() => ({
     user,
-    quickFilter,
     storeInvestments,
     handleSelectStore: switchStore,
     handleOpenEditUser,
@@ -129,7 +124,6 @@ const StoreList = () => {
     handleResetStore: resetStoreWithConfirm,
   }), [
     user,
-    quickFilter,
     storeInvestments,
     switchStore,
     handleOpenEditUser,
@@ -139,16 +133,9 @@ const StoreList = () => {
 
   const columns = useMemo(() => (
     isStoreType
-      ? getStoreColumns({ ...sharedProps, averageSales, hasDepartment })
-      : getStorageColumns(sharedProps)
-  ), [isStoreType, sharedProps, averageSales, hasDepartment]);
-
-  const totalColumns = useMemo(
-    () => getTotalColumns({ quickFilter, hasDepartment }),
-    [quickFilter, hasDepartment]
-  );
-
-  const totalRows = useMemo(() => [totals], [totals]);
+      ? getStoreColumns({ ...sharedProps, quickFilter, hasDepartment })
+      : getStorageColumns({ ...sharedProps, quickFilter })
+  ), [isStoreType, sharedProps, quickFilter, hasDepartment]);
 
   const currentStoreRowStyles = useMemo(() => [
     {
@@ -160,109 +147,84 @@ const StoreList = () => {
     },
   ], [user?.store_id]);
 
+  const emptyList = isStoreType ? (
+    <StoreEmptyNotice
+      icon={StorefrontOutlinedIcon}
+      title={isOwner ? "Aún no tienes tiendas" : "No hay tiendas registradas"}
+      description={isOwner ? "Crea la primera para empezar a vender." : undefined}
+      action={isOwner && (
+        <Button variant="contained" onClick={() => openCreateStore()} disabled={createStoreBlocked}>Crear mi primera tienda</Button>
+      )}
+    />
+  ) : (
+    <StoreEmptyNotice icon={StorefrontOutlinedIcon} title="Todavía no tienes almacenes" />
+  );
+
+  const quickFilters = (
+    <StoreQuickFilters
+      storeType={params.store_type}
+      stores={stores}
+      value={quickFilter}
+      onChange={setQuickFilter}
+    />
+  );
+
   return (
     <>
-      <CustomSpinner isLoading={loading} />
       <Box className="card">
-        <PageHeader title={isStoreType ? "Tiendas" : "Almacenes"} childrenMd={6}>
-          <Box sx={{
-            display: "flex", alignItems: "center", gap: 1,
-            flexWrap: "wrap", justifyContent: { xs: "flex-start", md: "flex-end" },
-          }}>
-            {tenantInfo.notices?.length > 0 && (
-              <Box sx={{ display: "flex", gap: 0.5, flexWrap: "wrap" }}>
-                {tenantInfo.notices.map((notice, index) => (
-                  <Chip
-                    key={index}
-                    label={notice.notice}
-                    color={NOTICE_COLORS[notice.variant] || "success"}
-                    size="small"
-                  />
-                ))}
-              </Box>
-            )}
-            {isOwner && (
-              <CustomButton
-                onClick={() => createStoreModal.open()}
-                startIcon={<AddBusinessIcon />}
-                disabled={createStoreBlocked}
-                title={createStoreBlocked ? "Has alcanzado el límite de tiendas de tu plan" : ""}
-                fullWidth={isMobile}
-              >
-                Crear tienda
-              </CustomButton>
-            )}
-          </Box>
-        </PageHeader>
+        <StoreHeader
+          title={isStoreType ? "Tiendas" : "Almacenes"}
+          greeting={getGreeting(user)}
+          notices={tenantInfo.notices}
+          isOwner={isOwner}
+          createBlocked={createStoreBlocked}
+          onCreate={() => openCreateStore()}
+        />
 
-        <StoreKpiTiles tenantInfo={tenantInfo} totals={totals} />
-
-        <StoreListFilters
+        <StorePeriodFilters
+          period={period}
+          onPeriodChange={handlePeriod}
           params={params}
           departments={departments}
           onChange={handleParams}
-          onStoreTypeChange={handleStoreType}
+          showFilters={isStoreType}
         />
 
-        <StoreQuickFilters
-          storeType={params.store_type}
-          stores={stores}
-          value={quickFilter}
-          onChange={setQuickFilter}
-        />
+        <StoreKpiTiles tenantInfo={tenantInfo} totals={totals} period={period} loading={loading} />
 
-        <Box sx={{ mb: 2 }}>
-          {isMobile ? (
-            <CardGallery
-              items={filteredStores}
-              loading={loading}
-              gridItem={{ xs: 12, sm: 6 }}
-              emptyText={isOwner ? "Crea tu primera tienda para empezar" : "No hay sucursales registradas"}
-              renderItem={(store) => (
-                <StoreCard
-                  store={store}
-                  quickFilter={quickFilter}
-                  isStoreType={isStoreType}
-                  averageSales={averageSales}
-                  enterTooltip={isStoreType ? "Entrar a la tienda" : "Entrar al almacén"}
-                  {...sharedProps}
-                />
-              )}
-            />
-          ) : (
-            <DataTable
-              progressPending={loading}
-              noDataComponent={isOwner ? (
-                <Box sx={{ py: 6, textAlign: "center" }}>
-                  <CustomButton
-                    onClick={() => createStoreModal.open()}
-                    disabled={createStoreBlocked}
-                    startIcon={<AddBusinessIcon />}
-                    sx={firstStoreButtonSx}
-                  >
-                    Crear mi primera tienda
-                  </CustomButton>
+        <StoreTypeTabs value={params.store_type} onChange={handleStoreType} />
+
+        <Box ref={contentRef} sx={{ minHeight: lockedHeight || undefined }}>
+          <Box key={params.store_type} className="fade-in-up">
+            {isMobile ? (
+              <>
+                {quickFilters}
+                <Box sx={{ mt: 2 }}>
+                  <CardGallery
+                    items={filteredStores}
+                    loading={loading}
+                    gridItem={{ xs: 12, sm: 6 }}
+                    emptyText={isOwner ? "Crea tu primera tienda para empezar" : "No hay sucursales registradas"}
+                    renderItem={(store) => (
+                      <StoreCard store={store} quickFilter={quickFilter} {...sharedProps} />
+                    )}
+                  />
                 </Box>
-              ) : "No hay sucursales registradas"}
-              data={filteredStores}
-              columns={columns}
-              conditionalRowStyles={currentStoreRowStyles}
-            />
-          )}
-        </Box>
-
-        {!isMobile && isStoreType && stores.length > 1 && !FILTERS_WITHOUT_TOTALS.includes(quickFilter) && (
-          <Box sx={{ mt: 4 }}>
-            <Box sx={{ mb: 2 }}>
-              <h2>Totales</h2>
-            </Box>
-            <DataTable
-              progressPending={loading}
-              data={totalRows}
-              columns={totalColumns}
-            />
+              </>
+            ) : (
+              <Box sx={TABLE_CARD_SX}>
+                {quickFilters}
+                <DataTable
+                  progressPending={loading}
+                  noDataComponent={emptyList}
+                  data={filteredStores}
+                  columns={columns}
+                  conditionalRowStyles={currentStoreRowStyles}
+                />
+              </Box>
+            )}
           </Box>
-        )}
+        </Box>
       </Box>
 
       <UserManagementModals management={userManagement} />

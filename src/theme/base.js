@@ -42,5 +42,5 @@ export const paletteBase = {
  * Configuración de forma (border radius)
  */
 export const shapeConfig = {
-  borderRadius: 8,
+  borderRadius: 10,
 };

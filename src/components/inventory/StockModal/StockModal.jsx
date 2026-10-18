@@ -9,7 +9,8 @@ import { createTransfer } from "../../../api/transfers";
 import { addProducts, getStockOtherStores } from "../../../api/products";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { addToCart, updateMovementType, updateQuantityInCart } from "../../../redux/cart/cartActions";
-import { Grid, TextField, Box, Alert, Chip, Tabs, Tab } from "@mui/material";
+import { Grid, Box, Alert, Chip, Tabs, Tab } from "@mui/material";
+import { TextField } from "../../ui/Field/Field";
 import { MOVEMENT_TYPES } from "../../../constants";
 import { useUser } from "../../../context/UserContext";
 
@@ -49,21 +50,23 @@ const StockModal = ({ isOpen, product, onClose }) => {
   const storeProductId = storeProduct.id;
   const productCode = storeProduct.product?.code;
   useEffect(() => {
+    let ignore = false;
     const fetchData = async () => {
       setIsLoading(true);
       try {
         const response = await getStockOtherStores(storeProductId);
-        setStockOtherStores(response.data);
+        if (!ignore) setStockOtherStores(response.data);
       } catch (error) {
-        showRequestError("consultar el stock en otras tiendas", error);
+        if (!ignore) showRequestError("consultar el stock en otras tiendas", error);
       } finally {
-        setIsLoading(false);
+        if (!ignore) setIsLoading(false);
       }
     };
 
     if (canRequestFromOtherStores && isOpen && productCode) {
       fetchData();
     }
+    return () => { ignore = true; };
   }, [canRequestFromOtherStores, isOpen, storeProductId, productCode]);
 
   const handleQuantityChange = (rowId, max, value) => {

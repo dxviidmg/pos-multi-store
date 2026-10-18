@@ -9,11 +9,13 @@ import StatCard from "./StatCard";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { Grid, Box, Typography, useTheme } from "@mui/material";
 import { exportToExcel } from "../../../utils/excel";
+import { formatLongDate } from "../../../utils/date";
 import { getPendingTransfersDashboard } from "../../../api/dashboards";
 import { CHART_LEGEND_TOP, CHART_TICK_STYLE } from "./chartStyles";
 import WarningIcon from "@mui/icons-material/Warning";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import DownloadIcon from "@mui/icons-material/Download";
+import DashboardHeader from "./DashboardHeader";
 
 const TITLE = "Traspasos pendientes";
 
@@ -50,7 +52,7 @@ const PendingTransfersDashboard = () => {
     Cantidad: t.quantity,
     Producto: t.product,
     Marca: t.brand,
-    Fecha: new Date(t.created_at).toLocaleDateString(),
+    Fecha: formatLongDate(t.created_at),
   })), [data]);
 
   const kpis = useMemo(() => {
@@ -100,10 +102,7 @@ const PendingTransfersDashboard = () => {
   if (!kpis) {
     return (
       <Box>
-        <Box className="card" sx={{ mb: 3 }}>
-          <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>{TITLE}</Typography>
-          <Typography variant="body2" color="text.secondary">{DESCRIPTION}</Typography>
-        </Box>
+        <DashboardHeader title={TITLE} subtitle={DESCRIPTION} sx={{ mb: 3 }} />
         <EmptyState message="No hay traspasos pendientes" />
       </Box>
     );
@@ -111,10 +110,7 @@ const PendingTransfersDashboard = () => {
 
   return (
     <Box>
-      <Box className="card" sx={{ mb: 3 }}>
-        <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>{TITLE}</Typography>
-        <Typography variant="body2" color="text.secondary">{DESCRIPTION}</Typography>
-      </Box>
+      <DashboardHeader title={TITLE} subtitle={DESCRIPTION} sx={{ mb: 3 }} />
 
       <Grid container spacing={3} sx={{ mb: 3 }}>
         <StatCard icon={WarningIcon} iconColor="warning.main" label="Traspasos pendientes" value={kpis.total} itemProps={STAT_ITEM_PROPS} />

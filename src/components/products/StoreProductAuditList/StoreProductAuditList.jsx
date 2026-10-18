@@ -1,10 +1,10 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { Grid, TextField } from "@mui/material";
+import { Grid } from "@mui/material";
+import { TextField } from "../../ui/Field/Field";
 import SearchIcon from "@mui/icons-material/Search";
 import DownloadIcon from "@mui/icons-material/Download";
 import DataTable from "../../ui/DataTable/DataTable";
 import CustomButton from "../../ui/Button/Button";
-import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import PageHeader from "../../ui/PageHeader";
 import StockRequestAlert from "../StockRequestAlert/StockRequestAlert";
 import ProductFilterFields from "../shared/ProductFilterFields";
@@ -44,7 +44,6 @@ const StoreProductAuditList = () => {
 
   return (
     <>
-      <CustomSpinner isLoading={loading} />
       <StoreProductModals logsModal={logsModal} requestModal={requestModal} onUpdate={handleUpdateStoreProductList} />
 
       <Grid container>
@@ -53,7 +52,7 @@ const StoreProductAuditList = () => {
             {showAlert && <StockRequestAlert onClose={() => setShowAlert(false)} />}
           </PageHeader>
 
-          <Grid container spacing={2} sx={{ mb: 2 }}>
+          <Grid container className="fill-row" spacing={2} sx={{ mb: 2 }}>
             <Grid item xs={12} md={3}>
               <TextField size="small" fullWidth label="Código" type="text"
                 value={params.code || ""} onChange={handleDataChange} name="code"

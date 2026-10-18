@@ -2,7 +2,7 @@
 
 Instrucciones para cualquier agente de código (Claude Code, Kiro, Codex, Cursor, etc.) y para personas que trabajen en este repositorio. **Este archivo es la única fuente de reglas técnicas.** `CLAUDE.md` y `.kiro/steering/project.md` solo lo importan; no dupliques reglas en ellos.
 
-> Última revisión: 10 de octubre de 2026
+> Última revisión: 13 de octubre de 2026
 
 ---
 
@@ -44,7 +44,7 @@ npm run build          # build de producción en /build
 npx eslint <archivos>  # lint (config react-app en package.json)
 ```
 
-Todos los scripts usan `react-app-rewired` (`config-overrides.js` solo pone `resolve.fullySpecified = false`). No hay tests automatizados todavía; `npm test` existe pero no hay archivos `*.test.*`.
+Todos los scripts usan `react-app-rewired` (`config-overrides.js` pone `resolve.fullySpecified = false` y silencia los avisos de source maps de `@zxing/browser`). Las pruebas viven junto al archivo que prueban (`*.test.js` / `*.test.jsx`) y se corren con `CI=true npm test -- --watchAll=false`; `src/setupTests.js` carga `jest-dom`. Cobertura actual: lógica pura (carrito de Redux, permisos y menú, utilidades de moneda, mensajes de servicios, periodos de Tiendas), `useFetch`, `ui/Field`, `ConsultDialog` y `StoreList`. En las pantallas se mockean los hooks de datos y `DataTable` (el DataGrid no pinta filas en jsdom).
 
 **Antes de dar un cambio por terminado:** `npx eslint` sobre los archivos tocados sin errores nuevos, y `npm run build` si tocaste rutas, imports compartidos o dependencias.
 
@@ -77,6 +77,7 @@ Nunca commitear `.env` con valores reales; mantener `.env.template` al día.
 | HTTP | Axios centralizado en `src/api/httpClient.js` |
 | Códigos de barras | `@zxing/browser` |
 | Excel | `xlsx` |
+| PDF | `jspdf` + `jspdf-autotable` (solo `ProductCatalog`, carga bajo demanda) |
 | Alertas | SweetAlert2, solo a través de `src/utils/alerts.js` |
 | Pagos | `@mercadopago/sdk-js` (Card Payment Brick, locale es-MX) |
 
@@ -109,6 +110,7 @@ src/
 │   ├── layout/         # Login, MainLayout (sidebar, header, drawer móvil)
 │   │   └── MainLayout/
 │   │       ├── menu-config.js     # Configuración pura del menú (ICONS, rutas)
+│   │       ├── menu-sections.js   # Secciones con pestañas (SECTIONS, getSectionByPath, getAccessibleTabs)
 │   │       ├── menu-builders.js   # Lógica de construcción (buildMenu, filterMenu)
 │   │       └── menuConfig.js      # Re-exportación backward compatible
 │   ├── products/       # Catálogo, inventario por tienda, búsqueda, importaciones, precios
@@ -185,7 +187,7 @@ Usa siempre los helpers de `src/constants/routeAccess.js`: `isOwner(user)`, `isS
 - `ROUTE_ACCESS` define, por ruta y por vista (`T`, `A`, `G`), qué roles pueden entrar y si requiere `multistore`.
 - `RequireAccess` (`src/components/ui/RequireAccess.jsx`) envuelve las rutas en `App.js`. Si no hay acceso, redirige a `getHomeRoute(user)`: almacén → `/distribuir/`, tienda → `/vender/`, dueño en vista general → `/tiendas/`, otros → `/perfil/`.
 - El menú de `MainLayout` filtra sus enlaces con `canAccessRoute`, así que **menú y rutas no pueden desincronizarse**.
-- `isSalesDashboardRestricted(user)`: con varias sucursales (excepto el tenant `demo`), `/tablero-ventas/` solo abre antes de las 10:00 y desde las 21:00 (reloj local).
+- `isSalesDashboardRestricted(user)`: con varias sucursales (excepto el tenant `demo`), `/tablero-ventas-exitosas/` solo abre antes de las 10:00 y desde las 21:00 (reloj local).
 
 **Al agregar una ruta:** agrégala en `App.js` **y** en `ROUTE_ACCESS`; una ruta que no está en el mapa no abre para nadie. Las acciones dentro de una página (botones, columnas) se ocultan por rol con spread condicional: `...(isOwner(user) ? [{...}] : [])`. `DataTable` ya no soporta `omit`.
 
@@ -196,7 +198,7 @@ Usa siempre los helpers de `src/constants/routeAccess.js`: `isOwner(user)`, `isS
 - `useUser()` / `updateUser()` (`src/context/UserContext.js`) es la fuente del usuario y la sucursal activa. Se refleja en `localStorage.user`.
 - **Cambiar de sucursal solo con `useSwitchStore()`** (`switchStore(store, { withOverlay })`, `backToGeneral()`). El hook actualiza `store_id`, `store_name`, `store_type` y `store_printer`, limpia la caché de React Query y el carrito, emite `store-changed` y navega a `/vender/` o `/distribuir/` si cambia el tipo. No repitas esa secuencia a mano. Las páginas se remontan con `key={pathname-store_id}`.
 - Al volver a la vista general: `store_id = null` (nunca `""`) y `store_printer = null`.
-- El menú lateral se arma en `layout/MainLayout/menuConfig.js` (`buildMenu(user, { stores })`), filtrado con `canAccessRoute`.
+- El menú lateral se arma en `layout/MainLayout/menuConfig.js` (`buildMenu(user, { stores })`), filtrado con `canAccessRoute`. Las pantallas relacionadas son **secciones** (`menu-sections.js`): una entrada del menú y una barra de pestañas (`SectionTabs`) que dibuja `PageHeader` al inicio de la card. Cada pestaña es una ruta; con una sola accesible, la entrada es un enlace directo con su `fullLabel`. **Al agregar una ruta a una sección:** `App.js`, `ROUTE_ACCESS` y `SECTIONS`. La URL de cada pantalla debe coincidir con su nombre en el menú. Si renombras una ruta, deja la anterior en `LEGACY_ROUTES` (`routeAccess.js`), que redirige a la nueva.
 - El selector de sucursal es solo para el dueño con varias sucursales; el dueño con una sola sucursal ve "Regresar".
 
 ### HTTP (`src/api/httpClient.js`)
@@ -241,6 +243,7 @@ Usa siempre los helpers de `src/constants/routeAccess.js`: `isOwner(user)`, `isS
 | `useUserManagement` | Editar usuario / cambiar contraseña (con `UserManagementModals`) |
 | `useCartActions`, `useAvailableStock` | Agregar al carrito respetando stock reservado entre carritos |
 | `useViewModePreference(key)` | Preferencia tabla/galería persistida |
+| `useStoreScopedList(fetchFn, errorMessage)` | Lista que depende de la sucursal: carga al montar y con `store-changed` (menús del header) |
 | `useFetch`, `useFetchWithRetry` | Lecturas con timeout y reintento (búsqueda por código) |
 | `useMercadoPago`, `usePrinterStatus`, `useOnlineStatus`, `useThemeMode`, `useCanCreateStore`, `useTransfers`, `useRegistration` | Integraciones y estado puntual |
 
@@ -291,10 +294,10 @@ Revisa esta lista antes de crear un componente. Si un patrón se repite en dos a
 | `CustomButton` (`Button/`) | Botón MUI con `variant="contained"`, `size="small"`, `minWidth: 0`, alto fijo (40 px `small`, 44 px el resto); respeta el `sx` recibido. |
 | `CustomTooltip` (`Tooltip/`) | Props `text`, `position`, `fullWidth`. **Obligatorio en botones de solo ícono.** |
 | `CustomSpinner` (`Spinner/`) | Requiere `isLoading`. |
-| `DataTable` | DataGrid con búsqueda, orden, paginación, selección y carga. Columnas con `selector` (valor) o `cell` (render); soporta `conditionalRowStyles=[{ when, style }]`. No soporta `omit` ni `style` por columna. Encabezado azul marino con texto blanco (`App.css`). |
+| `DataTable` | DataGrid con búsqueda, orden, paginación, selección y carga. Columnas con `selector` (valor) o `cell` (render); soporta `conditionalRowStyles=[{ when, style }]`. Con `setSelectedRows` muestra casillas; `selectedIds` (arreglo de `id`) controla la selección. No soporta `omit` ni `style` por columna. Encabezado azul marino con texto blanco (`App.css`). |
 | `SimpleTable` | Tabla HTML de solo lectura (modales, importaciones). |
 | `tableButtonSx` | `sx` para botones dentro de tablas: 28 px, esquinas casi rectas, íconos de 1rem. |
-| `PageHeader` | Título + acciones de página. No armes `Stack` + `<h1>` a mano. |
+| `PageHeader` | Título + acciones de página; dibuja las pestañas de su sección (`SectionTabs`) salvo con `plain`. No armes `Stack` + `<h1>` a mano. |
 | `PageHelp` | Botón de ayuda que lee `helpTexts.js` según la ruta. |
 | `CardGallery` | Cuadrícula de tarjetas con skeleton, vacío y entrada escalonada (`items`, `loading`, `emptyText`, `renderItem`). |
 | `Skeleton` | `PageSkeleton`, `TableSkeleton`. |
@@ -305,9 +308,10 @@ Revisa esta lista antes de crear un componente. Si un patrón se repite en dos a
 | `ConnectionStatusBanner` | Aviso de conexión perdida/restaurada (eventos del navegador). |
 | `CountdownTimer`, `ErrorBoundary`, `LoadingFallback`, `Icons` | Utilitarios. |
 | `UserModals` | `EditUserModal`, `ChangePasswordModal` y `UserManagementModals` (ambos conectados a `useUserManagement()` vía prop `management`). |
-| `NotificationsMenu`, `PendingMenu`, `DuplicateSalesMenu`, `StockRequestMenu` | Menús del header construidos sobre `HeaderPopoverMenu`; se recargan con `store-changed`. |
+| `NotificationsMenu`, `PendingMenu`, `DuplicateSalesMenu`, `StockRequestMenu` | Menús del header construidos sobre `HeaderPopoverMenu` (`PendingMenu` y `DuplicateSalesMenu` son `MessageGroupsMenu` con su API; todos cargan con `useStoreScopedList`); se recargan con `store-changed`. |
 | `HeaderPopoverMenu` | Base de los menús del header: botón con badge + `CustomTooltip`, Popover con título, lista con scroll y estado vacío. `autoHideBadge={false}` si el badge lo controla el padre. |
 | `DateRangeFilter` | "Fecha de inicio" / "Fecha de fin" (+ "Rango" con `showRange`) como `Grid item`s; `onChange` recibe el evento con `name` `start_date`/`end_date`. |
+| `Field/` (`TextField`, `Select`) | Campos con un ícono Outlined al inicio según su etiqueta (`fieldIcons.js`; un `startAdornment` propio tiene prioridad; sin etiqueta no lleva ícono). **Importa `TextField` y `Select` de aquí, no de `@mui/material`.** Para un ícono nuevo, agrega su regla a `FIELD_ICONS`. |
 | `StoreSelect` | Select de sucursales con `useStoreOptions` (`params`, `allLabel`, `placeholder`, `getOptionLabel`). |
 | `ViewModeToggle` | Selector de vista: `variant="select"` (opciones `PRODUCT_VIEW_OPTIONS`) o `"buttons"` (íconos). |
 | `EmptyState` | Ícono + mensaje centrado (tableros); `compact` para menús. |
@@ -320,8 +324,8 @@ Componentes compartidos dentro de un dominio:
 | Carpeta | Contenido |
 |---|---|
 | `products/shared/` | `CodeNameSearchBar`, `ProductFilterFields`, `CatalogAutocomplete`, `GridCardBase`, `storeProductColumns`, `StoreProductModals`, `useStoreProductActions`, `useStoreProductList`, `useFilteredList`, `useCatalogOptions` (+ `useInvalidateCatalogOptions` tras cambiar productos), `usePriceLogTable` |
-| `sales/shared/` | `PaymentSubmitPanel` (botón de cobro + estado de impresora), `PrintTicketButton`, `SaleSearchFields` |
-| `admin/Dashboard/` | `Filters`, `MainBarChart`, `KPICard`, `StatCard`, `InsightCard`, `DashboardLoading`, `TodayReferenceLine`, `StoreComparisonTable`, `chartStyles.js`, `chartData.js` |
+| `sales/shared/` | `PaymentSubmitPanel` (botón de cobro + estado de impresora), `PrintTicketButton`, `SaleSearchFields`, `useSalesList` (ventas o apartados por filtros, con guard de respuesta vieja) |
+| `admin/Dashboard/` | `DashboardHeader` (tarjeta de título, periodo y filtros), `ChartTypeSelect`, `Filters`, `MainBarChart`, `KPICard`, `StatCard`, `InsightCard`, `DashboardLoading`, `TodayReferenceLine`, `StoreComparisonTable`, `chartStyles.js`, `chartData.js` |
 | `inventory/Cart/` | `quantityRules.js` + `QuantityInput` (reglas de cantidad por modo de venta), `CartItemCard`, `CartToolbar`, `useCartSubmit` |
 
 ### Tablas
@@ -402,6 +406,7 @@ En el cobro: Ctrl+G confirma y Ctrl+O quita el cliente (solo con el cobro abiert
 
 Fuente única de colores y sombras: `src/theme/colors.js` (primitivas, `status` y `modes.light/dark`). `theme.js` y `cssVariables.js` solo los leen: `theme.js` arma el tema MUI y `cssVariables.js` publica las variables CSS (`--color-*`, `--shadow-*`) al cambiar de modo desde `useThemeMode`. `variables.css` solo guarda radio, espaciado, fuente y easing. **No repitas un valor de color en estos archivos**: agrégalo a `colors.js`.
 
+- **Estilo de marca.** Navy `#121A45` (`colors.sidebar`) en topbar, sidebar, botones, encabezado de tabla y pestaña activa; neutros fríos para fondo, superficies y bordes; Inter en todo; íconos MUI Outlined de 18 px, monocromos. Las pantallas lo heredan del tema global: no lleva envoltorio ni tema propio. `useThemeTokens()` da los tokens extra de la tarjeta destacada y las pastillas (ejemplo: `admin/StoreList/`). `PageHeader` pone el título a la izquierda sin ícono; el contenedor principal de cada página es `.card` (radio 16 px, padding 28 px).
 - **Nunca hardcodear hex ni rgba** en componentes. Usa tokens del tema (`primary`, `secondary`, `accent`, `success`, `error`, `text.*`, `divider`, `common.white`…), `alpha(theme.palette.x.main, o)` para transparencias, o `colors` de `src/theme/colors.js`.
 - `colors.js` tiene las primitivas que no son tokens de MUI:
   - `error` (= `error.main`), `whatsapp`, `backdrop`, `appbar`.
@@ -415,7 +420,7 @@ Fuente única de colores y sombras: `src/theme/colors.js` (primitivas, `status` 
 
 ### Tipografía
 
-Texto `Inter`; títulos h1–h4 `Plus Jakarta Sans` (700–800); números `tabular-nums`.
+Texto e títulos `Inter` (títulos h1–h4 con peso 700–800; los encabezados de página usan 600); números `tabular-nums`.
 
 | Nivel | Tamaño | Peso |
 |---|---|---|
@@ -433,28 +438,25 @@ Texto `Inter`; títulos h1–h4 `Plus Jakarta Sans` (700–800); números `tabul
 
 | Token | Claro | Oscuro |
 |---|---|---|
-| primary | `#0030cc` (light `#0079be`, dark `#00269e`) | igual |
-| secondary | `#00a4db` | igual |
-| accent | `#ffb020` (ámbar, solo botón principal del registro y detalles; dark `#f59e0b`; texto sobre ámbar `onAccent` `#0b1b4d`; el sidebar activo usa `sidebarActive` `#00e0d8`) | igual |
-| background.default | `#f5f9ff` | `#0d1117` |
-| background.paper | `#ffffff` | `#161b22` |
-| divider | `#e2e8f0` | `#30363d` |
-| text.primary | `#0f172a` | `#e6edf3` |
-| text.secondary | `#475569` | `#8b949e` |
+| primary / sidebar / botones | `#121a45` | primary `#aab3e6`, botón `#2b3a8f` |
+| accent | `#ffb020` (ámbar, solo botón principal del registro y detalles; dark `#f59e0b`; texto sobre ámbar `onAccent` `#0b1b4d`) | igual |
+| background.default | `#f3f4f8` | `#0f1220` |
+| background.paper | `#ffffff` | `#171b2e` |
+| divider | `#e3e6ee` | `#2a3050` |
+| text.primary | `#141a33` | `#e8eaf4` |
+| text.secondary | `#5b6280` | `#a4abc9` |
+| text terciario (`caption`) | `#8c92ab` | `#7f86a8` |
+| sidebar activo / íconos inactivos | `#ffffff` con barra de 3px / `#8e95be` | igual |
 
-`colors.js` define las primitivas que consume `theme.js` (no repitas hex en el tema). Degradados en `colors.gradient`:
-- Sidebar y login: `180deg #0079be → #00269e`.
-- Botón de login: `135deg #0030cc → #0079be`.
-- Íconos de KPI: azul, verde, verde azulado, ámbar y cian.
+`colors.js` define las primitivas que consume `theme.js` (no repitas hex en el tema). El sidebar, el login y los modales usan el navy plano (`colors.gradient.sidebar` es el mismo tono). Sin azul rey ni fondos pastel de color en tarjetas o íconos.
 
 ### Formas, sombras y movimiento
 
-- **Radios:** Paper/Card/.card 12px · Button/TextField/Select/Alert 8px · Dialog 16px · Chip 999px · Tooltip 6px.
-- **Sombras teñidas de azul en modo claro** (negras en oscuro):
-  - Ligera: `0 1px 2px rgba(0,38,158,.06)`
-  - Media: `0 8px 24px rgba(0,38,158,.10)`
-  - Amplia: `0 24px 60px rgba(0,38,158,.18)`
-  - Marca: `0 4px 14px rgba(0,48,204,.25)`
+- **Radios:** `.card` 16px · Paper/Card y tarjetas 14px · Button/TextField/Select 10px · Alert 8px · Dialog 16px · Chip 999px · Tooltip 6px.
+- **Sombras teñidas de navy en modo claro** (negras en oscuro), casi imperceptibles:
+  - Ligera: `0 1px 2px rgba(18,26,69,.04)`
+  - Media: `0 8px 24px rgba(18,26,69,.08)`
+  - Marca: `0 4px 14px rgba(18,26,69,.22)`
 - **Animaciones en `App.css`:**
   - `fade-in-up`: tarjetas y paneles; escalonar con `animationDelay`, 60 ms.
   - `fade-in-left`: campos condicionales.
@@ -512,7 +514,7 @@ Reglas derivadas de la auditoría del 2026-10-04. Revísalas antes de terminar u
 - No pases props que ya son el default del componente receptor.
 - Comentarios solo donde aportan; escribe como el código que lo rodea.
 
-**Verificación**: `npx eslint --ext .js,.jsx src` sin errores ni warnings (sin `--ext` no revisa nada) y `npm run build`.
+**Verificación**: `npx eslint --ext .js,.jsx src` sin errores ni warnings (sin `--ext` no revisa nada), `CI=true npm test -- --watchAll=false` en verde y `npm run build`.
 
 ---
 
@@ -533,10 +535,12 @@ Antes de escribir algo nuevo, copia el ejemplo correspondiente.
 | Columnas en archivo aparte | `admin/StoreList/StoreList.columns.jsx` | Fábricas `getXColumns({ … })`, helpers `cashCol`/`countCol`, `FILTER_COLUMNS` |
 | Tablero con tarea Celery | `admin/Dashboard/ProductsDashboard.jsx` + `api/dashboards.js` | `startTask` memoizado → `useTaskPolling`, `Filters`, `DashboardLoading`, `EmptyState`, `chartStyles` |
 | Importación Excel | `sales/SaleImport/SaleImport.jsx` | `useImportFlow` + `ui/Import/*` + `getStaticUrl` para la plantilla |
+| Importación con dos modos y selección de filas | `products/ProductImport/ProductImport.jsx` + `useEditableImport.js` + `ImportResults.jsx` (`EditableErrorRows` + `ZeroStockSelector`) | Selector de modo (botones segmentados) con `key` que remonta; `useImportFlow` envuelto (`useEditableImport` guarda `edits`/`removed_rows`); campos por modo en `importFields.js`; `DataTable` con `selectedIds`; el backend valida e importa, el frontend manda `excluded_codes` |
+| Exportación PDF | `products/ProductCatalog/` | `catalogData.js` (reglas puras) + `catalogPdf.js` (jsPDF) cargado con `import()` desde `useCatalogPdf`; imágenes que no se pueden leer salen vacías y se avisan |
 | Exportación Excel | `products/ProductList` (`handleDownload`) | Filas con encabezados en español → `exportToExcel(data, "Nombre")` |
 | Atajo de teclado en modal | `sales/PaymentEditModal/PaymentEditModal.jsx` | `useCtrlShortcut` con la misma regla de deshabilitado que el botón |
 | Botón de cobro con impresora | `sales/shared/PaymentSubmitPanel.jsx` | Estado de impresora + texto con/sin ticket |
-| Menú del header | `ui/PendingMenu/PendingMenu.jsx` | `HeaderPopoverMenu` + fetch con `logger.error` + escucha `store-changed` |
+| Menú del header | `ui/PendingMenu/PendingMenu.jsx` + `hooks/useStoreScopedList.js` | `HeaderPopoverMenu` + lista que recarga con `store-changed` y registra el error con `logger.error` |
 | WebSocket con reconexión | `hooks/usePrinterStatus.js` | Backoff, heartbeat, guard `activeRef`, `closeSocket()` anula handlers antes de cerrar, respaldo HTTP |
 | Autocompletar | `hooks/useDebouncedSearch.js` (uso: `inventory/ConversionModal`) | Espera, `AbortController`, `minChars` |
 | Formulario de tarjeta Mercado Pago | `hooks/useCardFormModal.js` (uso: `tenant/MyCurrentPlan`) | Monta el Brick al abrir, desmonta al cerrar o desmontar |

@@ -16,13 +16,13 @@ import { buildComponentsConfig } from './components';
  * @returns {Object} Tema MUI (resultado de createTheme())
  * 
  * Paleta:
- * - Primary: azul (#0030cc)
- * - Secondary: cian (#00a4db)
+ * - Primary: navy de marca (#121a45)
+ * - Secondary: gris azulado
  * - Accent: ámbar (#ffb020)
  * - Success/Warning/Error/Info: del objeto status
  * 
  * Tipografía:
- * - Títulos: Plus Jakarta Sans (800, 700)
+ * - Títulos: Inter (800, 700)
  * - Cuerpo: Inter (400)
  * - Botones: 600, sin mayúsculas forzadas
  * 
@@ -38,12 +38,12 @@ export const getTheme = (mode) => {
       mode,
       primary: {
         main: t.primary,
-        light: paletteBase.primaryLight,
-        dark: paletteBase.primaryDark,
+        light: t.primaryLight ?? paletteBase.primaryLight,
+        dark: t.primaryDark ?? paletteBase.primaryDark,
         contrastText: paletteBase.white,
       },
       secondary: {
-        main: paletteBase.secondary,
+        main: t.secondary ?? paletteBase.secondary,
         contrastText: paletteBase.onAccent,
       },
       accent: {
@@ -55,6 +55,7 @@ export const getTheme = (mode) => {
       warning: status.warning,
       error: status.error,
       info: status.info,
+      rowDivider: { main: t.rowDivider },
       modalBody: { main: t.modalBody },
       modalHeader: { main: t.modalHeader },
       modalField: { main: t.modalField },

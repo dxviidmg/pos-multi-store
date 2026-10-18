@@ -5,6 +5,7 @@ import { Tabs, Tab, IconButton, Box } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { MOVEMENT_TYPES } from "../../../constants";
 import CloseIcon from "@mui/icons-material/Close";
+import CustomTooltip from "../../ui/Tooltip";
 import Cart from "./Cart";
 import { createNewCart, switchCart, closeCart } from "../../../redux/cart/cartActions";
 
@@ -59,13 +60,16 @@ const MultiCart = ({ searchInputRef, cartViewMode, setCartViewMode }) => {
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 {getCartLabel(cart)}
                 {carts.length > 1 && (
-                  <IconButton
-                    size="small"
-                    onClick={(e) => handleCloseCart(cart.id, e)}
-                    sx={{ ml: 0.5, p: 0.5 }}
-                  >
-                    <CloseIcon fontSize="small" />
-                  </IconButton>
+                  <CustomTooltip text="Cerrar carrito" position="top">
+                    <IconButton
+                      size="small"
+                      aria-label="Cerrar carrito"
+                      onClick={(e) => handleCloseCart(cart.id, e)}
+                      sx={{ ml: 0.5, p: 0.5 }}
+                    >
+                      <CloseIcon fontSize="small" />
+                    </IconButton>
+                  </CustomTooltip>
                 )}
               </Box>
             }

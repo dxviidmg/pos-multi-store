@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import CustomModal, { ModalBody } from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
-import { Grid, TextField } from "@mui/material";
+import { Grid } from "@mui/material";
+import { TextField } from "../../ui/Field/Field";
 import SendIcon from "@mui/icons-material/Send";
 import { showSuccess, showRequestError } from "../../../utils/alerts";
 import { createStockUpdateRequest } from "../../../api/stockRequests";
@@ -45,7 +46,7 @@ const StockUpdateRequestModal = ({ isOpen, storeProduct, onClose }) => {
     <CustomModal showOut={isOpen} onClose={onClose} title="Solicitar ajuste de stock">
       <ModalBody>
         <Grid item xs={12} className="card">
-          <Grid container spacing={2}>
+          <Grid container className="fill-row" spacing={2}>
             <Grid item xs={12} md={6}>
               <TextField size="small" fullWidth label="Código" value={storeProduct?.product?.code || ""} disabled />
             </Grid>

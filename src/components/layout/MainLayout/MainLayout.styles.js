@@ -4,7 +4,7 @@ import MuiDrawer from "@mui/material/Drawer";
 import MuiAppBar from "@mui/material/AppBar";
 import { colors } from "../../../theme/colors";
 
-export const DRAWER_WIDTH = 256;
+const DRAWER_WIDTH = 256;
 
 /** Blanco con opacidad, para texto y fondos sobre el sidebar marino. */
 export const whiteAlpha = (opacity) => alpha(colors.white, opacity);
@@ -110,7 +110,7 @@ export const menuListSx = (scrollbarWidth) => ({
 
 export const activeSx = {
   position: "relative",
-  background: whiteAlpha(0.09),
+  background: whiteAlpha(0.1),
   "&:hover": { background: whiteAlpha(0.12) },
   "&::before": {
     content: '""',
@@ -129,7 +129,7 @@ export const itemButtonSx = (expanded, active = false) => ({
 });
 
 export const itemIconSx = (expanded, active = false) => ({
-  color: active ? colors.sidebarActive : whiteAlpha(0.7),
+  color: active ? colors.sidebarActive : colors.sidebarIcon,
   minWidth: expanded ? 38 : 0, justifyContent: "center",
 });
 

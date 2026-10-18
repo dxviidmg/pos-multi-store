@@ -13,7 +13,7 @@ import DashboardLoading from "./DashboardLoading";
 import StoreComparisonTable from "./StoreComparisonTable";
 import { getSalesInsights, getSalesKpis, getStoreComparison } from "./salesDashboardMetrics";
 import EmptyState from "../../ui/EmptyState/EmptyState";
-import { Grid, FormControl, Select, MenuItem, Box, Typography } from "@mui/material";
+import { Grid, Box, Typography } from "@mui/material";
 import { MONTH_NAMES, MONTH_NAMES_SHORT } from "../../../utils/date";
 import { formatCurrency, formatNumber } from "../../../utils/currency";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
@@ -23,6 +23,8 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import PercentIcon from "@mui/icons-material/Percent";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import ChartTypeSelect from "./ChartTypeSelect";
+import DashboardHeader from "./DashboardHeader";
 
 const TITLE = "Tablero de ventas";
 
@@ -82,10 +84,7 @@ const Dashboard = () => {
   if (!kpis) {
     return (
       <Box>
-        <Box className="card">
-          <Typography variant="h4" sx={{ fontWeight: 700, mb: 2 }}>{TITLE}</Typography>
-          {filters}
-        </Box>
+        <DashboardHeader title={TITLE} filters={filters} />
         <EmptyState
           message="No hay ventas registradas en este periodo"
           description="Selecciona otro mes o año para ver datos"
@@ -107,15 +106,7 @@ const Dashboard = () => {
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-      <Box className="card" sx={{ mb: 0 }}>
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 1, mb: 2 }}>
-          <Box>
-            <Typography variant="h4" sx={{ fontWeight: 700 }}>{TITLE}</Typography>
-            <Typography variant="body2" color="text.secondary">{periodLabel}</Typography>
-          </Box>
-        </Box>
-        {filters}
-      </Box>
+      <DashboardHeader title={TITLE} subtitle={periodLabel} filters={filters} sx={{ mb: 0 }} />
 
       {metricType === "total" && (
         <Grid container spacing={2}>
@@ -196,12 +187,7 @@ const Dashboard = () => {
           <Typography variant="h6" sx={{ fontWeight: 500, color: "text.primary" }}>
             {isYear ? "Ventas por mes" : "Ventas por día del mes"}
           </Typography>
-          <FormControl size="small" sx={{ minWidth: 120 }}>
-            <Select value={mainChartType} onChange={(e) => setMainChartType(e.target.value)}>
-              <MenuItem value="line">Líneas</MenuItem>
-              <MenuItem value="bar">Barras</MenuItem>
-            </Select>
-          </FormControl>
+          <ChartTypeSelect value={mainChartType} onChange={setMainChartType} />
         </Box>
         {mainChartType === "line" ? (
           <LineChart

@@ -7,7 +7,8 @@ import { reassignProducts } from "../../../api/products";
 import { showSuccess, showRequestError } from "../../../utils/alerts";
 import { useForm } from "../../../hooks/useForm";
 import CustomButton from "../../ui/Button/Button";
-import { Grid, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
+import { Grid, MenuItem, FormControl, InputLabel } from "@mui/material";
+import { Select } from "../../ui/Field/Field";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import PageHeader from "../../ui/PageHeader";
 
@@ -57,7 +58,7 @@ const ProductReassign = () => {
         <CustomSpinner isLoading={loading} />
         <PageHeader title="Reasignación de productos" />
 
-        <Grid container spacing={2}>
+        <Grid container className="fill-row" spacing={2}>
           <Grid item xs={12} md={3}>
             <FormControl fullWidth size="small">
               <InputLabel>Tipo de reasignación</InputLabel>
