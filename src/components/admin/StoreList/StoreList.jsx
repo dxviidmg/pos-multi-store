@@ -188,7 +188,7 @@ const StoreList = () => {
           params={params}
           departments={departments}
           onChange={handleParams}
-          showFilters={isStoreType}
+          disabled={!isStoreType}
         />
 
         <StoreKpiTiles tenantInfo={tenantInfo} totals={totals} period={period} loading={loading} />
