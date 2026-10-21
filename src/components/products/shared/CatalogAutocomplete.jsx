@@ -14,6 +14,8 @@ const CatalogAutocomplete = ({ label, options, value, onChange, loaded, leadingO
   return (
     <Autocomplete
       size="small"
+      blurOnSelect="touch"
+      slotProps={{ popper: { modifiers: [{ name: "flip", enabled: false }] } }}
       options={allOptions}
       getOptionLabel={(option) =>
         option.id === leadingOption?.id ? option.name : `${option.name} (${option.product_count})`
