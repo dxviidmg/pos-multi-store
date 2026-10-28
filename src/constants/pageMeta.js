@@ -17,6 +17,7 @@ const pageMeta = {
   "/clientes/": "Tu cartera de clientes, sus datos y descuentos.",
   "/catalogo/": "Descarga en PDF la lista de productos y precios de una marca o departamento.",
   "/productos/": "Catálogo compartido entre todas tus tiendas.",
+  "/productos/nuevo/": "Da de alta un producto en el catálogo.",
   "/inventario/": "Existencias disponibles en esta sucursal.",
   "/inventario-a-verificar/": "Productos pendientes de verificar en el conteo.",
   "/marcas/": "Marcas para organizar y buscar tus productos.",
