@@ -9,6 +9,19 @@ import CustomTooltip from "../../ui/Tooltip";
 import Cart from "./Cart";
 import { createNewCart, switchCart, closeCart } from "../../../redux/cart/cartActions";
 
+// Pestañas como chips (sin línea inferior ni indicador); la activa va rellena
+const CHIP_TABS_SX = {
+  mb: 1.5,
+  minHeight: 36,
+  "& .MuiTabs-indicator": { display: "none" },
+  "& .MuiTabs-flexContainer": { gap: 1 },
+  "& .MuiTab-root": {
+    minHeight: 36, minWidth: 0, px: 1.5, py: 0.5, borderRadius: 1, border: "1px solid", borderColor: "divider", fontSize: "0.8125rem",
+  },
+  "& .MuiTab-root.Mui-selected": { bgcolor: "primary.main", borderColor: "primary.main", color: "common.white" },
+  "& .MuiTab-root.Mui-disabled": { opacity: 0.5 },
+};
+
 const MultiCart = ({ searchInputRef, cartViewMode, setCartViewMode }) => {
   const dispatch = useDispatch();
   const carts = useSelector(selectCarts);
@@ -50,7 +63,7 @@ const MultiCart = ({ searchInputRef, cartViewMode, setCartViewMode }) => {
         onChange={handleTabChange}
         variant="scrollable"
         scrollButtons="auto"
-        sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}
+        sx={CHIP_TABS_SX}
       >
         {carts.map((cart) => (
           <Tab
@@ -65,7 +78,7 @@ const MultiCart = ({ searchInputRef, cartViewMode, setCartViewMode }) => {
                       size="small"
                       aria-label="Cerrar carrito"
                       onClick={(e) => handleCloseCart(cart.id, e)}
-                      sx={{ ml: 0.5, p: 0.5 }}
+                      sx={{ ml: 0.5, p: 0.5, color: "inherit" }}
                     >
                       <CloseIcon fontSize="small" />
                     </IconButton>
@@ -78,8 +91,7 @@ const MultiCart = ({ searchInputRef, cartViewMode, setCartViewMode }) => {
         <Tab
           value="add"
           icon={<AddIcon />}
-          sx={{ minWidth: 50 }}
-          disabled={movementType !== MOVEMENT_TYPES.SALE}
+                    disabled={movementType !== MOVEMENT_TYPES.SALE}
         />
       </Tabs>
       

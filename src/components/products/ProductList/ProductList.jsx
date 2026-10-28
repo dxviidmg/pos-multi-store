@@ -12,6 +12,7 @@ import ProductGridCard from "./ProductGridCard";
 import ProductListToolbar from "./ProductListToolbar";
 import { getProductColumns } from "./ProductList.columns";
 import { useProductImageCapture } from "./useProductImageCapture";
+import { useProductFormEntry } from "../shared/useProductFormEntry";
 import { useFilteredList } from "../shared/useFilteredList";
 import { useInvalidateCatalogOptions } from "../shared/useCatalogOptions";
 import { deleteProducts, getProducts, upperCodeProducts } from "../../../api/products";
@@ -95,6 +96,7 @@ const ProductList = () => {
   };
 
   const { open: openProductModal } = productModal;
+  const openProductCreate = useProductFormEntry(productModal, "/productos/");
   const { open: openPriceLogs } = priceLogsModal;
   const handleEditProduct = useCallback((product) => openProductModal({ product, showStoreProducts: false }), [openProductModal]);
   const handleStoreStock = useCallback((product) => openProductModal({ product, showStoreProducts: true }), [openProductModal]);
@@ -123,7 +125,7 @@ const ProductList = () => {
       <Grid container>
         <Grid item xs={12} className="card">
           <PageHeader title="Productos">
-            <CustomButton fullWidth onClick={() => openProductModal({ product: null, showStoreProducts: false })} startIcon={<AddIcon />}>
+            <CustomButton fullWidth onClick={() => openProductCreate({ product: null, showStoreProducts: false })} startIcon={<AddIcon />}>
               Nuevo producto
             </CustomButton>
           </PageHeader>

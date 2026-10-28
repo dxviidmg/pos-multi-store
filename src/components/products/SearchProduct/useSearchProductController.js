@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { selectMovementType } from "../../../redux/cart/selectors";
 import { updateMovementType } from "../../../redux/cart/cartActions";
@@ -11,6 +12,7 @@ import { useProductSearch } from "../../../hooks/useProductSearch";
 import { useProductSuggestions } from "../../../hooks/useProductSuggestions";
 import { useCartActions } from "../../../hooks/useCartActions";
 import { useAvailableStock } from "../../../hooks/useAvailableStock";
+import { useProductFormEntry } from "../shared/useProductFormEntry";
 import { useUser } from "../../../context/UserContext";
 import { MOVEMENT_TYPES, QUERY_TYPES, STORE_TYPES } from "../../../constants";
 
@@ -24,6 +26,9 @@ export const useSearchProductController = (inputRef) => {
   const dispatch = useDispatch();
   const stockModal = useModal();
   const productModal = useModal();
+  const openProductCreate = useProductFormEntry(productModal, "/vender/");
+  const navigate = useNavigate();
+  const location = useLocation();
   const { getAvailableStock } = useAvailableStock();
   const movementType = useSelector(selectMovementType);
 
@@ -111,7 +116,7 @@ export const useSearchProductController = (inputRef) => {
 
   // La búsqueda usa siempre los handlers del último render; solo se dispara al cambiar el texto o el modo
   const runSearchRef = useRef(null);
-  runSearchRef.current = () => fetchData(handleSingleProductFetch, createProductsOnSale, productModal);
+  runSearchRef.current = () => fetchData(handleSingleProductFetch, createProductsOnSale, { open: openProductCreate });
 
   useEffect(() => {
     if (queryType === QUERY_TYPES.CODE && query) {
@@ -222,6 +227,16 @@ export const useSearchProductController = (inputRef) => {
       showRequestError("agregar el producto al carrito", error);
     }
   };
+
+  // Al volver de la página de alta (celular) el producto creado se agrega al carrito
+  const createdProduct = location.state?.createdProduct;
+  const createdHandlerRef = useRef(null);
+  createdHandlerRef.current = handleProductCreated;
+  useEffect(() => {
+    if (!createdProduct) return;
+    navigate(location.pathname, { replace: true, state: null });
+    createdHandlerRef.current(createdProduct);
+  }, [createdProduct, navigate, location.pathname]);
 
   return {
     user,

@@ -11,6 +11,8 @@ import { formatCurrency } from "../../../utils/currency";
 import { CART_VIEW_OPTIONS } from "./cartViewModes";
 
 const VALUE_SX = { fontWeight: 700, color: "primary.main" };
+const LARGE_VALUE_SX = { ...VALUE_SX, fontSize: "1.75rem", lineHeight: 1.1 };
+const MOBILE_CHARGE_SX = { height: 48, fontSize: "1rem" };
 
 const destinationLabel = (store) => <b>{store.name} ({store.store_type_display})</b>;
 const confirmationLabel = (store) => `${store.name} (${store.store_type_display})`;
@@ -22,8 +24,8 @@ const ViewToggle = ({ value, onChange }) => (
 );
 
 // `key` cambia con el valor para repetir la animación value-pop
-const AnimatedValue = ({ value }) => (
-  <Typography key={value} variant="h4" className="value-pop" sx={VALUE_SX}>{value}</Typography>
+const AnimatedValue = ({ value, large = false }) => (
+  <Typography key={value} variant="h4" className="value-pop" sx={large ? LARGE_VALUE_SX : VALUE_SX}>{value}</Typography>
 );
 
 const ProductsCount = ({ totalProducts, showToggle, viewMode, onViewModeChange }) => (
@@ -60,18 +62,18 @@ const CartToolbar = ({
     <Grid container spacing={1} sx={{ mb: 1, alignItems: "center" }}>
       {(movementType === MOVEMENT_TYPES.SALE || movementType === MOVEMENT_TYPES.RESERVATION) && (
         <>
-          <Grid item xs={6} md={3}>
+          <Grid item xs={5} md={3}>
             <ProductsCount {...countProps} />
           </Grid>
-          <Grid item xs={6} md={5}>
-            <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+          <Grid item xs={7} md={5}>
+            <Box sx={isMobile ? { display: "flex", flexDirection: "column", alignItems: "flex-end" } : { display: "flex", gap: 1, alignItems: "center" }}>
               <Typography variant="body2" color="text.secondary">Total:</Typography>
-              <AnimatedValue value={formatCurrency(total)} />
+              <AnimatedValue value={formatCurrency(total)} large={isMobile} />
             </Box>
           </Grid>
           <Grid item xs={12} md={4}>
-            <CustomButton fullWidth onClick={onCharge} startIcon={<PaymentIcon />} sx={{ py: 1.2, fontSize: "0.875rem" }}>
-              Cobrar (Ctrl+P)
+            <CustomButton fullWidth onClick={onCharge} startIcon={<PaymentIcon />} sx={isMobile ? MOBILE_CHARGE_SX : { py: 1.2, fontSize: "0.875rem" }}>
+              Ir a cobrar (Ctrl+P)
             </CustomButton>
           </Grid>
         </>

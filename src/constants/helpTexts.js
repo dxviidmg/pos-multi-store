@@ -23,6 +23,10 @@ const helpTexts = {
     title: "Clientes",
     text: "Administra tu base de clientes. Registra datos de contacto, consulta historial de compras y asigna clientes a ventas para llevar un control personalizado.",
   },
+  "/productos/nuevo/": {
+    title: "Nuevo producto",
+    text: "Captura el código, nombre, marca, departamento y precios del producto. Si tu negocio tiene una sola sucursal, también puedes darle su stock inicial. Al guardar regresas a la pantalla donde estabas.",
+  },
   "/productos/": {
     title: "Catálogo de productos",
     text: "Aquí gestionas todos los productos de tu negocio: nombre, código, marca, departamento, precios de menudeo y mayoreo. Los productos son compartidos entre todas tus tiendas.",

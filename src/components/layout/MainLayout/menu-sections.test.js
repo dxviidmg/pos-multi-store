@@ -20,7 +20,7 @@ describe("getSectionByPath", () => {
   });
 
   it("una misma ruta pertenece a otra sección según la vista", () => {
-    expect(getSectionByPath(ADMIN_STORE, "/conversiones/").id).toBe("inventory");
+    expect(getSectionByPath(ADMIN_STORE, "/conversiones/")).toBeNull();
     expect(getSectionByPath(OWNER_GENERAL, "/conversiones/").id).toBe("products");
     expect(getSectionByPath(ADMIN_STORE, "/historial-precios/").id).toBe("history");
     expect(getSectionByPath(OWNER_GENERAL, "/historial-precios/").id).toBe("products");
@@ -44,9 +44,9 @@ describe("getAccessibleTabs", () => {
     expect(getAccessibleTabs(ADMIN_STORE, SECTIONS.transfers)).toHaveLength(2);
   });
 
-  it("en almacén no incluye conversiones ni reasignación", () => {
+  it("en almacén incluye inventario, ajustes y por verificar", () => {
     const labels = getAccessibleTabs(ADMIN_WAREHOUSE, SECTIONS.inventory).map((tab) => tab.label);
-    expect(labels).toEqual(["Inventario", "Por verificar"]);
+    expect(labels).toEqual(["Inventario", "Ajustes", "Por verificar"]);
   });
 
   it("cada ruta pertenece a una sola sección por vista", () => {

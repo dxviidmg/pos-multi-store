@@ -43,6 +43,7 @@ const ROUTE_ACCESS = {
 
   // Productos e inventario
   "/productos/": { T: STAFF, A: ALL, G: OWNER },
+  "/productos/nuevo/": { T: ALL, A: ALL, G: OWNER },
   "/inventario/": { T: STAFF, A: ALL },
   "/conversiones/": { T: STAFF, G: OWNER },
   "/marcas/": { T: STAFF, A: ALL, G: OWNER },

@@ -165,7 +165,7 @@ export default function MainLayout({ toggleTheme, themeMode }) {
       {/* Drawer permanente para desktop */}
       {renderSidebar(false)}
 
-      <Box component="main" sx={{ flexGrow: 1, p: { xs: 1.5, sm: 2, md: 3 }, minWidth: 0, overflowY: "auto", position: "relative" }}>
+      <Box component="main" className="app-main" sx={{ flexGrow: 1, p: { xs: 1.5, sm: 2, md: 3 }, minWidth: 0, overflowY: "auto", position: "relative", bgcolor: { xs: "background.paper", sm: "transparent" } }}>
         <DrawerHeader />
         <Box key={`${location.pathname}-${user.store_id}`} className="page-enter">
           <Outlet />

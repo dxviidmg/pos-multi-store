@@ -19,17 +19,17 @@ const MOVEMENT_OPTIONS = [
   { value: MOVEMENT_TYPES.RESERVATION, label: "Apartado", shortcut: "Ctrl+I", allowedBy: "allowSale" },
 ];
 
-const MOBILE_LABEL_SX = { fontWeight: 600, fontSize: "0.875rem", display: "block", mb: 0.5 };
+const MOBILE_LABEL_SX = { fontWeight: 600, fontSize: "0.75rem", color: "text.secondary", display: "block", mb: 0.5 };
 const DESKTOP_LABEL_SX = { fontWeight: 600, fontSize: "0.875rem" };
 const DESKTOP_ROW_SX = { display: "flex", alignItems: "center", flexWrap: "wrap", gap: 1 };
 const OPTION_SX = { mr: 4 };
 const RADIO = <Radio size="small" sx={{ py: 0.5 }} />;
 
-/** Select en móvil; radios en fila con su atajo en escritorio. */
+/** Select en móvil (dos por fila); radios en fila con su atajo en escritorio. */
 const SelectorRow = ({ title, value, onChange, options, isMobile }) => {
   if (isMobile) {
     return (
-      <Grid item xs={12}>
+      <Grid item xs={6}>
         <FormLabel sx={MOBILE_LABEL_SX}>{title}</FormLabel>
         <Select size="small" value={value} onChange={onChange} fullWidth>
           {options.map((option) => (

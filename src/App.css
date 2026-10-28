@@ -32,6 +32,17 @@ h1, h2, h3 {
   .card { padding: 1rem; }
 }
 
+/* En celular la card principal de cada página se funde con el fondo blanco de la pantalla */
+@media (max-width: 600px) {
+  .app-main .card:not(.card .card) {
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    margin-bottom: 0;
+    padding: 0;
+  }
+}
+
 .card-interactive:hover {
   box-shadow: var(--shadow-md);
   border-color: var(--color-border-hover);
@@ -182,4 +193,15 @@ input:focus, select:focus, textarea:focus {
 .fill-row > .MuiGrid-item {
   flex-grow: 1;
   max-width: none;
+}
+
+/* Celular: entradas más cortas y respuesta visible al tocar (se apagan con prefers-reduced-motion) */
+@media (max-width: 899px) {
+  .fade-in-up { animation-duration: 0.2s; }
+  .page-enter { animation-duration: 0.2s; }
+}
+
+@media (pointer: coarse) {
+  .MuiButtonBase-root { transition: transform 0.15s ease, background-color 0.15s ease; }
+  .MuiButtonBase-root:active:not(.Mui-disabled) { transform: scale(0.97); }
 }

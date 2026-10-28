@@ -20,6 +20,7 @@ export const colors = {
   accent: ACCENT,
   accentDark: ACCENT_DARK,
   error: STATUS_ERROR,
+  confirm: '#14A34A',
   onAccent: '#0b1b4d',
   sidebar: SIDEBAR,
   sidebarDark: SIDEBAR_DARK,

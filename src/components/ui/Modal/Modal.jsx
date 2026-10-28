@@ -3,7 +3,6 @@ import Modal from '@mui/material/Modal';
 import { Box, IconButton, Typography } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import { colors } from '../../../theme/colors';
-import CustomTooltip from '../Tooltip';
 import CloseIcon from '@mui/icons-material/Close';
 
 const style = {
@@ -26,6 +25,9 @@ const modalFieldSx = {
   '& .MuiOutlinedInput-notchedOutline': { borderColor: 'modalBorder.main' },
 };
 
+// Evita que la X le quite el foco al campo activo: en móvil el teclado se cierra, la pantalla se mueve y el clic se pierde
+const keepInputFocus = (e) => e.preventDefault();
+
 function CustomModal({ showOut, onClose, title, children, maxWidth = 800 }) {
   return (
     <Modal
@@ -38,11 +40,9 @@ function CustomModal({ showOut, onClose, title, children, maxWidth = 800 }) {
           <Typography variant="h6" sx={{ px: 5, textAlign: 'center', fontSize: '1.0625rem', fontWeight: 700, color: 'inherit' }}>
             {title}
           </Typography>
-          <CustomTooltip text="Cerrar" position="bottom">
-            <IconButton onClick={onClose} size="small" aria-label="Cerrar" sx={{ position: 'absolute', top: '50%', transform: 'translateY(-50%)', right: { xs: 8, sm: 16 }, color: alpha(colors.white, 0.8), '&:hover': { bgcolor: alpha(colors.white, 0.12), color: colors.white } }}>
-              <CloseIcon />
-            </IconButton>
-          </CustomTooltip>
+          <IconButton onClick={onClose} onMouseDown={keepInputFocus} size="small" aria-label="Cerrar" sx={{ position: 'absolute', top: '50%', transform: 'translateY(-50%)', right: { xs: 8, sm: 16 }, color: alpha(colors.white, 0.8), '&:hover': { bgcolor: alpha(colors.white, 0.12), color: colors.white } }}>
+            <CloseIcon />
+          </IconButton>
         </Box>
         <Box>
           {children}

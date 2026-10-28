@@ -48,6 +48,7 @@ const ClientList = lazyRetry(() => import("./components/clients/ClientList/Clien
 const ProductList = lazyRetry(() => import("./components/products/ProductList/ProductList"));
 const BrandList = lazyRetry(() => import("./components/catalog/BrandList/BrandList"));
 const SaleImport = lazyRetry(() => import("./components/sales/SaleImport/SaleImport"));
+const ProductCreate = lazyRetry(() => import("./components/products/ProductCreate/ProductCreate"));
 const StoreProductList = lazyRetry(() => import("./components/products/StoreProductList/StoreProductList"));
 const ProductAuditList = lazyRetry(() => import("./components/products/StoreProductAuditList/StoreProductAuditList"));
 const StoreList = lazyRetry(() => import("./components/admin/StoreList/StoreList"));
@@ -120,6 +121,7 @@ function App({ toggleTheme, themeMode }) {
               <Route path="/historial-precios/" element={<Lazy><PriceLogsList /></Lazy>} />
               <Route path="/clientes/" element={<Lazy><ClientList /></Lazy>} />
               <Route path="/productos/" element={<Lazy><ProductList /></Lazy>} />
+              <Route path="/productos/nuevo/" element={<Lazy><ProductCreate /></Lazy>} />
               <Route path="/inventario/" element={<Lazy><StoreProductList /></Lazy>} />
               <Route path="/inventario-a-verificar/" element={<Lazy><ProductAuditList /></Lazy>} />
               <Route path="/marcas/" element={<Lazy><BrandList /></Lazy>} />
