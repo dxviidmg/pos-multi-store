@@ -32,6 +32,17 @@ h1, h2, h3 {
   .card { padding: 1rem; }
 }
 
+/* En celular la card principal de cada página se funde con el fondo blanco de la pantalla */
+@media (max-width: 600px) {
+  .app-main .card:not(.card .card) {
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    margin-bottom: 0;
+    padding: 0;
+  }
+}
+
 .card-interactive:hover {
   box-shadow: var(--shadow-md);
   border-color: var(--color-border-hover);
