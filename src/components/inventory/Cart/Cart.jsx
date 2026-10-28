@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Grid, useMediaQuery, useTheme } from "@mui/material";
+import { Box, Grid, useMediaQuery, useTheme } from "@mui/material";
 import { selectCart, selectCarts, selectMovementType } from "../../../redux/cart/selectors";
 import { removeFromCart, updateMovementType, updateQuantityInCart, changePrice } from "../../../redux/cart/cartActions";
 import SimpleTable from "../../ui/SimpleTable/SimpleTable";
@@ -143,25 +143,27 @@ const Cart = ({ searchInputRef, cartViewMode = CART_VIEW.TABLE, setCartViewMode 
       />
     ));
 
+  const toolbar = cart.length !== 0 && (
+    <CartToolbar
+      movementType={movementType}
+      isMobile={isMobile}
+      viewMode={cartViewMode}
+      onViewModeChange={setCartViewMode}
+      totalProducts={totalProducts}
+      total={total}
+      onCharge={() => paymentModal.open()}
+      destination={submit}
+      onSubmitTransfer={() => submit.submitTransfer(cart)}
+      onSubmitDistribution={() => submit.submitDistribution(cart)}
+      onSubmitAddToStock={() => submit.submitAddToStock(cart)}
+    />
+  );
+
   return (
     <div>
       <CustomSpinner isLoading={submit.loading} />
+      {!isMobile && toolbar}
       <StockModal isOpen={stockModal.isOpen} product={stockModal.data} onClose={stockModal.close} />
-      {cart.length !== 0 && (
-        <CartToolbar
-          movementType={movementType}
-          isMobile={isMobile}
-          viewMode={cartViewMode}
-          onViewModeChange={setCartViewMode}
-          totalProducts={totalProducts}
-          total={total}
-          onCharge={() => paymentModal.open()}
-          destination={submit}
-          onSubmitTransfer={() => submit.submitTransfer(cart)}
-          onSubmitDistribution={() => submit.submitDistribution(cart)}
-          onSubmitAddToStock={() => submit.submitAddToStock(cart)}
-        />
-      )}
       {!isMobile && cartViewMode === CART_VIEW.TABLE && (
         <SimpleTable noDataComponent="Sin productos" data={cart} columns={columns} />
       )}
@@ -171,9 +173,12 @@ const Cart = ({ searchInputRef, cartViewMode = CART_VIEW.TABLE, setCartViewMode 
         </Grid>
       )}
       {isMobile && (
-        <Grid container spacing={1}>
-          {renderCards("mobile")}
-        </Grid>
+        <>
+          <Grid container spacing={1}>
+            {renderCards("mobile")}
+          </Grid>
+          {toolbar && <Box sx={{ mt: 1.5 }}>{toolbar}</Box>}
+        </>
       )}
       <PaymentModal isOpen={paymentModal.isOpen} onClose={handleClosePayment} />
     </div>
