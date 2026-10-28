@@ -161,6 +161,18 @@ const PaymentModal = ({ isOpen, onClose }) => {
 
   const title = isReservation ? "Registrar apartado" : "Finalizar venta";
 
+  // En móvil no se imprime ticket
+  const submitPanel = (
+    <PaymentSubmitPanel
+      printer={printer}
+      compact={isMobile}
+      disabled={isSubmitDisabled}
+      onSubmit={() => handleCreateSale(!isMobile && !!printer)}
+    >
+      {isReservation ? "Apartar" : "Cobrar"}<br />(Ctrl + G)
+    </PaymentSubmitPanel>
+  );
+
   const content = (
     <Grid container>
       {isReservation && (
@@ -229,15 +241,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
         onPaymentsChange={handleChangePayments}
         onAmountChange={handlePaymentValueChange}
       >
-        {/* En móvil no se imprime ticket */}
-        <PaymentSubmitPanel
-          printer={printer}
-          compact={isMobile}
-          disabled={isSubmitDisabled}
-          onSubmit={() => handleCreateSale(!isMobile && !!printer)}
-        >
-          {isReservation ? "Apartar" : "Cobrar"}<br />(Ctrl + G)
-        </PaymentSubmitPanel>
+        {!isMobile && submitPanel}
       </PaymentMethodsSection>
     </Grid>
   );
@@ -248,17 +252,20 @@ const PaymentModal = ({ isOpen, onClose }) => {
       <>
         <CustomSpinner isLoading={isLoading} />
         {isOpen && (
-          <Box ref={inlineRef} sx={INLINE_SX}>
-            <Box sx={INLINE_HEADER_SX}>
-              <Typography variant="h6" sx={{ fontWeight: 700 }}>{title}</Typography>
-              <CustomTooltip text="Cerrar" position="left">
-                <IconButton onClick={onClose} size="small" aria-label="Cerrar">
-                  <CloseIcon />
-                </IconButton>
-              </CustomTooltip>
+          <>
+            <Box ref={inlineRef} sx={INLINE_SX}>
+              <Box sx={INLINE_HEADER_SX}>
+                <Typography variant="h6" sx={{ fontWeight: 700 }}>{title}</Typography>
+                <CustomTooltip text="Cerrar" position="left">
+                  <IconButton onClick={onClose} size="small" aria-label="Cerrar">
+                    <CloseIcon />
+                  </IconButton>
+                </CustomTooltip>
+              </Box>
+              {content}
             </Box>
-            {content}
-          </Box>
+            <Box sx={{ mt: 1.5 }}>{submitPanel}</Box>
+          </>
         )}
       </>
     );

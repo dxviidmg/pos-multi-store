@@ -90,9 +90,11 @@ const PaymentMethodsSection = ({
           </Grid>
         )}
 
-        <Grid item xs={isMobile ? 12 : columnWidth}>
-          {children}
-        </Grid>
+        {children && (
+          <Grid item xs={isMobile ? 12 : columnWidth}>
+            {children}
+          </Grid>
+        )}
       </Grid>
     </PaymentCard>
   );
