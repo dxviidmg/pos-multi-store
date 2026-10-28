@@ -56,7 +56,11 @@ const SearchProduct = ({ searchInputRef }) => {
 
   const closeStockModal = () => {
     stockModal.close();
-    if (!search.keepListOpen) search.clearSearch();
+    if (!search.keepListOpen) {
+      search.clearSearch();
+    } else if (queryType === QUERY_TYPES.NAME && data.length === 0 && suggestions.suggestions.length > 0) {
+      suggestions.setOpen(true);
+    }
   };
 
   const closeProductModal = () => {
