@@ -146,7 +146,6 @@ const Cart = ({ searchInputRef, cartViewMode = CART_VIEW.TABLE, setCartViewMode 
   return (
     <div>
       <CustomSpinner isLoading={submit.loading} />
-      <PaymentModal isOpen={paymentModal.isOpen} onClose={handleClosePayment} />
       <StockModal isOpen={stockModal.isOpen} product={stockModal.data} onClose={stockModal.close} />
       {cart.length !== 0 && (
         <CartToolbar
@@ -176,6 +175,7 @@ const Cart = ({ searchInputRef, cartViewMode = CART_VIEW.TABLE, setCartViewMode 
           {renderCards("mobile")}
         </Grid>
       )}
+      <PaymentModal isOpen={paymentModal.isOpen} onClose={handleClosePayment} />
     </div>
   );
 };

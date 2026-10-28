@@ -1,12 +1,14 @@
 import React, { useMemo, useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Grid, Alert, useMediaQuery, useTheme } from "@mui/material";
+import { Box, Grid, Alert, IconButton, Typography, useMediaQuery, useTheme } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import { selectCart, selectMovementType, selectClient } from "../../../redux/cart/selectors";
 import { cleanCart, removeClientFromCart } from "../../../redux/cart/cartActions";
 import CustomModal, { ModalBody } from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
+import CustomTooltip from "../../ui/Tooltip";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { createSale, getSale } from "../../../api/sales";
 import { showSuccess, showRequestError } from "../../../utils/alerts";
@@ -24,6 +26,9 @@ import PaymentTotals from "./PaymentTotals";
 import PaymentMethodsSection from "./PaymentMethodsSection";
 
 const INITIAL_SALE_EXCHANGE_STATE = { refunded: 0, payment: 0 };
+
+const INLINE_SX = { mt: 3, p: 1.5, bgcolor: "background.paper", borderRadius: 2, border: "1px solid", borderColor: "divider", scrollMarginTop: 8 };
+const INLINE_HEADER_SX = { display: "flex", alignItems: "center", justifyContent: "space-between", gap: 1, mb: 1.5 };
 
 const PaymentModal = ({ isOpen, onClose }) => {
   const dispatch = useDispatch();
@@ -44,6 +49,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const isSubmittingRef = useRef(false);
+  const inlineRef = useRef(null);
 
   const { total, totalDiscount } = useMemo(() => {
     const total = roundUpCustom(cart.reduce((acc, item) => acc + item.product_price * item.quantity, 0));
@@ -72,8 +78,9 @@ const PaymentModal = ({ isOpen, onClose }) => {
     if (!isOpen) return undefined;
     const timer = setTimeout(() => inputPaymentRef.current?.focus(), 100);
     if (isReservation) setHideClient(false);
+    if (isMobile) inlineRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     return () => clearTimeout(timer);
-  }, [isOpen, movementType, isReservation]);
+  }, [isOpen, movementType, isReservation, isMobile]);
 
   const handleCreateSale = async (printTicket = false) => {
     if (isSubmittingRef.current) return;
@@ -152,90 +159,116 @@ const PaymentModal = ({ isOpen, onClose }) => {
     if (isOpen) dispatch(removeClientFromCart());
   });
 
+  const title = isReservation ? "Registrar apartado" : "Finalizar venta";
+
+  const content = (
+    <Grid container>
+      {isReservation && (
+        <Grid item xs={12} sx={{ marginBottom: "1rem" }}>
+          <Alert severity="info" variant="filled">
+            El cliente deja un abono. El resto se liquida después.
+          </Alert>
+        </Grid>
+      )}
+      {errorMessage && (
+        <Grid item xs={12} sx={{ marginBottom: "1rem" }}>
+          <Alert severity="error" variant="filled" onClose={() => setErrorMessage("")}>
+            {errorMessage}
+          </Alert>
+        </Grid>
+      )}
+      {!isReservation && (
+        <PaymentCard>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={6}>
+              <CustomButton
+                fullWidth
+                onClick={handleToggleClient}
+                startIcon={<PersonAddIcon />}
+                color={!hideClient ? "error" : "primary"}
+              >
+                {!hideClient ? "Quitar cliente" : "Agregar cliente"}
+              </CustomButton>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <CustomButton fullWidth onClick={() => setHideExchange((prev) => !prev)} startIcon={<SwapHorizIcon />}>
+                Intercambio de mercancia
+              </CustomButton>
+            </Grid>
+          </Grid>
+        </PaymentCard>
+      )}
+
+      <PaymentClientSection hidden={isReservation ? false : hideClient} client={client} />
+
+      <SaleExchangeSection
+        hidden={hideExchange}
+        saleExchange={saleExchange}
+        onSaleIdChange={(id) => setSaleExchange((prev) => ({ ...prev, id }))}
+        onSearch={handleSearchSaleForChange}
+      />
+
+      <PaymentTotals
+        total={total}
+        totalDiscount={totalDiscount}
+        hasClient={Boolean(client?.id)}
+        payment={payment}
+        onPaidWithChange={handlePaidWithChange}
+        paidWithRef={inputPaymentRef}
+        needsReference={needsReference}
+        referencePayment={referencePayment}
+        onReferenceChange={setReferencePayment}
+        isMobile={isMobile}
+      />
+
+      <PaymentMethodsSection
+        paymentMethods={paymentMethods}
+        selectedMethod={selectedMethod}
+        isReservation={isReservation}
+        isMobile={isMobile}
+        onPaymentsChange={handleChangePayments}
+        onAmountChange={handlePaymentValueChange}
+      >
+        {/* En móvil no se imprime ticket */}
+        <PaymentSubmitPanel
+          printer={printer}
+          compact={isMobile}
+          disabled={isSubmitDisabled}
+          onSubmit={() => handleCreateSale(!isMobile && !!printer)}
+        >
+          {isReservation ? "Apartar" : "Cobrar"}<br />(Ctrl + G)
+        </PaymentSubmitPanel>
+      </PaymentMethodsSection>
+    </Grid>
+  );
+
+  // En móvil el cobro se muestra debajo del carrito en vez de en un modal
+  if (isMobile) {
+    return (
+      <>
+        <CustomSpinner isLoading={isLoading} />
+        {isOpen && (
+          <Box ref={inlineRef} sx={INLINE_SX}>
+            <Box sx={INLINE_HEADER_SX}>
+              <Typography variant="h6" sx={{ fontWeight: 700 }}>{title}</Typography>
+              <CustomTooltip text="Cerrar" position="left">
+                <IconButton onClick={onClose} size="small" aria-label="Cerrar">
+                  <CloseIcon />
+                </IconButton>
+              </CustomTooltip>
+            </Box>
+            {content}
+          </Box>
+        )}
+      </>
+    );
+  }
+
   return (
     <>
       <CustomSpinner isLoading={isLoading} />
-      <CustomModal showOut={isOpen} onClose={onClose} title={isReservation ? "Registrar apartado" : "Finalizar venta"}>
-        <ModalBody>
-          <Grid container>
-            {isReservation && (
-              <Grid item xs={12} sx={{ marginBottom: "1rem" }}>
-                <Alert severity="info" variant="filled">
-                  El cliente deja un abono. El resto se liquida después.
-                </Alert>
-              </Grid>
-            )}
-            {errorMessage && (
-              <Grid item xs={12} sx={{ marginBottom: "1rem" }}>
-                <Alert severity="error" variant="filled" onClose={() => setErrorMessage("")}>
-                  {errorMessage}
-                </Alert>
-              </Grid>
-            )}
-            {!isReservation && (
-              <PaymentCard>
-                <Grid container spacing={2}>
-                  <Grid item xs={12} md={6}>
-                    <CustomButton
-                      fullWidth
-                      onClick={handleToggleClient}
-                      startIcon={<PersonAddIcon />}
-                      color={!hideClient ? "error" : "primary"}
-                    >
-                      {!hideClient ? "Quitar cliente" : "Agregar cliente"}
-                    </CustomButton>
-                  </Grid>
-                  <Grid item xs={12} md={6}>
-                    <CustomButton fullWidth onClick={() => setHideExchange((prev) => !prev)} startIcon={<SwapHorizIcon />}>
-                      Intercambio de mercancia
-                    </CustomButton>
-                  </Grid>
-                </Grid>
-              </PaymentCard>
-            )}
-
-            <PaymentClientSection hidden={isReservation ? false : hideClient} client={client} />
-
-            <SaleExchangeSection
-              hidden={hideExchange}
-              saleExchange={saleExchange}
-              onSaleIdChange={(id) => setSaleExchange((prev) => ({ ...prev, id }))}
-              onSearch={handleSearchSaleForChange}
-            />
-
-            <PaymentTotals
-              total={total}
-              totalDiscount={totalDiscount}
-              hasClient={Boolean(client?.id)}
-              payment={payment}
-              onPaidWithChange={handlePaidWithChange}
-              paidWithRef={inputPaymentRef}
-              needsReference={needsReference}
-              referencePayment={referencePayment}
-              onReferenceChange={setReferencePayment}
-              isMobile={isMobile}
-            />
-
-            <PaymentMethodsSection
-              paymentMethods={paymentMethods}
-              selectedMethod={selectedMethod}
-              isReservation={isReservation}
-              isMobile={isMobile}
-              onPaymentsChange={handleChangePayments}
-              onAmountChange={handlePaymentValueChange}
-            >
-              {/* En móvil no se imprime ticket */}
-              <PaymentSubmitPanel
-                printer={printer}
-                compact={isMobile}
-                disabled={isSubmitDisabled}
-                onSubmit={() => handleCreateSale(!isMobile && !!printer)}
-              >
-                {isReservation ? "Apartar" : "Cobrar"}<br />(Ctrl + G)
-              </PaymentSubmitPanel>
-            </PaymentMethodsSection>
-          </Grid>
-        </ModalBody>
+      <CustomModal showOut={isOpen} onClose={onClose} title={title}>
+        <ModalBody>{content}</ModalBody>
       </CustomModal>
     </>
   );
