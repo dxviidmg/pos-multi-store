@@ -44,9 +44,9 @@ describe("getAccessibleTabs", () => {
     expect(getAccessibleTabs(ADMIN_STORE, SECTIONS.transfers)).toHaveLength(2);
   });
 
-  it("en almacén no incluye conversiones ni reasignación", () => {
+  it("en almacén incluye inventario, ajustes y por verificar", () => {
     const labels = getAccessibleTabs(ADMIN_WAREHOUSE, SECTIONS.inventory).map((tab) => tab.label);
-    expect(labels).toEqual(["Inventario", "Por verificar"]);
+    expect(labels).toEqual(["Inventario", "Ajustes", "Por verificar"]);
   });
 
   it("cada ruta pertenece a una sola sección por vista", () => {

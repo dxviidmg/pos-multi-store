@@ -27,7 +27,7 @@ describe("buildMenu", () => {
     const menu = buildMenu(user({}));
     expect(labels(find(menu, "Ventas y apartados").dropdown)).toEqual(["Ventas y apartados", "Importar ventas"]);
     expect(labels(find(menu, "Productos").dropdown)).toEqual([
-      "Productos", "Importar", "Ajustes de inventario", "Marcas y departamentos",
+      "Productos", "Importar", "Marcas y departamentos",
     ]);
   });
 

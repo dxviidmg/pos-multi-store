@@ -110,7 +110,6 @@ export const buildLinksByType = (user, storeSwitcher) => ({
       dropdown: [
         { label: "Productos", href: "/productos/" },
         { section: "imports" },
-        { label: "Ajustes de inventario", href: "/ajustes-inventario/" },
         { section: "catalog" },
       ],
     },
@@ -126,7 +125,6 @@ export const buildLinksByType = (user, storeSwitcher) => ({
       dropdown: [
         { label: "Productos", href: "/productos/" },
         { section: "imports" },
-        { label: "Ajustes de inventario", href: "/ajustes-inventario/" },
         { section: "catalog" },
       ],
     },

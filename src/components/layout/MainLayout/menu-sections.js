@@ -47,6 +47,7 @@ export const SECTIONS = {
     views: [STORE_TYPES.STORE, STORE_TYPES.WAREHOUSE],
     tabs: [
       { label: "Inventario", fullLabel: "Inventario", href: "/inventario/" },
+      { label: "Ajustes", fullLabel: "Ajustes de inventario", href: "/ajustes-inventario/" },
       { label: "Por verificar", fullLabel: "Inventario a verificar", href: "/inventario-a-verificar/" },
     ],
   },
