@@ -31,11 +31,12 @@ const MOBILE_LABEL_SX = { display: "block", mb: 0.5, fontWeight: 600 };
 const CARD_INPUT_SX = { "& input": { fontSize: "0.75rem", py: 0.4, textAlign: "center" } };
 const CARD_WHOLESALE_SX = { fontSize: "0.65rem", m: 0, "& .MuiTypography-root": { fontSize: "0.65rem" } };
 const MOBILE_REMOVE_SX = { width: 32, height: 32, flexShrink: 0, borderRadius: 1, bgcolor: "primary.main", color: "common.white", "&:hover": { bgcolor: "primary.dark" } };
+const MOBILE_ROW_ITEM_SX = { py: 1.5, borderBottom: "1px solid", borderColor: "divider" };
 const MOBILE_NAME_SX = {
-  fontWeight: 600, lineHeight: 1.3, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical",
+  fontSize: "0.9375rem", fontWeight: 600, lineHeight: 1.3, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical",
 };
 const MOBILE_ROW_SX = { display: "grid", gridTemplateColumns: "minmax(96px, 1.2fr) 1fr 1fr", gap: 1.5, alignItems: "start", mt: 1.25 };
-const MOBILE_VALUE_SX = { display: "flex", alignItems: "center", minHeight: 40, fontWeight: 600 };
+const MOBILE_VALUE_SX = { display: "flex", alignItems: "center", minHeight: 40, fontSize: "1rem", fontWeight: 600 };
 const MOBILE_FOOTER_SX = { display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 1, mt: 1, pt: 0.5, borderTop: "1px solid", borderColor: "divider" };
 
 /**
@@ -203,7 +204,7 @@ const CartItemCard = ({
   const hasFooter = saleModes || showWholesale;
 
   return (
-    <Grid item xs={12} className="fade-in-up" sx={{ bgcolor: "background.paper", borderRadius: 2, border: "1px solid", borderColor: "divider", p: 1.5 }}>
+    <Grid item xs={12} className="fade-in-up" sx={MOBILE_ROW_ITEM_SX}>
       <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1 }}>
         <Box sx={{ flex: 1, minWidth: 0 }}>
           <Typography variant="subtitle2" sx={MOBILE_NAME_SX}>
@@ -227,7 +228,7 @@ const CartItemCard = ({
         </Box>
         <Box sx={{ textAlign: "right" }}>
           <Typography variant="caption" sx={MOBILE_LABEL_SX}>Total</Typography>
-          <Typography variant="subtitle1" sx={{ ...MOBILE_VALUE_SX, justifyContent: "flex-end", fontWeight: 700 }}>{subtotal}</Typography>
+          <Typography variant="subtitle1" sx={{ ...MOBILE_VALUE_SX, justifyContent: "flex-end", fontSize: "1.125rem", fontWeight: 700 }}>{subtotal}</Typography>
         </Box>
       </Box>
 

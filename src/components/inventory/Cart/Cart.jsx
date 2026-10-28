@@ -5,6 +5,8 @@ import { selectCart, selectCarts, selectMovementType } from "../../../redux/cart
 import { removeFromCart, updateMovementType, updateQuantityInCart, changePrice } from "../../../redux/cart/cartActions";
 import SimpleTable from "../../ui/SimpleTable/SimpleTable";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
+import EmptyState from "../../ui/EmptyState/EmptyState";
+import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import PaymentModal from "../../sales/PaymentModal/PaymentModal";
 import StockModal from "../StockModal/StockModal";
 import { showWarning } from "../../../utils/alerts";
@@ -172,9 +174,12 @@ const Cart = ({ searchInputRef, cartViewMode = CART_VIEW.TABLE, setCartViewMode 
           {renderCards("card")}
         </Grid>
       )}
+      {isMobile && cart.length === 0 && movementType !== MOVEMENT_TYPES.CHECK_STOCK && (
+        <EmptyState icon={ShoppingCartOutlinedIcon} message="El carrito está vacío" description="Busca o escanea un producto para agregarlo." />
+      )}
       {isMobile && (
         <>
-          <Grid container spacing={1}>
+          <Grid container>
             {renderCards("mobile")}
           </Grid>
           {toolbar && <Box sx={{ mt: 1.5 }}>{toolbar}</Box>}
