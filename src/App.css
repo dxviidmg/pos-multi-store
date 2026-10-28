@@ -194,3 +194,14 @@ input:focus, select:focus, textarea:focus {
   flex-grow: 1;
   max-width: none;
 }
+
+/* Celular: entradas más cortas y respuesta visible al tocar (se apagan con prefers-reduced-motion) */
+@media (max-width: 899px) {
+  .fade-in-up { animation-duration: 0.2s; }
+  .page-enter { animation-duration: 0.2s; }
+}
+
+@media (pointer: coarse) {
+  .MuiButtonBase-root { transition: transform 0.15s ease, background-color 0.15s ease; }
+  .MuiButtonBase-root:active:not(.Mui-disabled) { transform: scale(0.97); }
+}
