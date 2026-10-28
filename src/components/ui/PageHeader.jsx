@@ -8,9 +8,10 @@ import SectionTabs from "./SectionTabs";
  * La descripción sale de constants/pageMeta.js según la URL; `description` la reemplaza
  * y `plain` muestra solo el título (para modales y vistas de detalle).
  * Si la ruta pertenece a una sección del menú, dibuja sus pestañas arriba (salvo con `plain`).
+ * `dense` reduce el título y el espacio inferior (pantallas donde el contenido va justo debajo).
  * `childrenMd` (1-12 o "auto") es el ancho de las acciones en escritorio; en celular ocupan todo el ancho.
  */
-const PageHeader = ({ title, description, children, childrenMd = 3, plain = false }) => {
+const PageHeader = ({ title, description, children, childrenMd = 3, plain = false, dense = false }) => {
   const { pathname } = useLocation();
   const subtitle = plain ? null : description ?? pageMeta[pathname];
   const actionsWidth = childrenMd === "auto" ? "auto" : `${(Number(childrenMd) / 12) * 100}%`;
@@ -21,11 +22,11 @@ const PageHeader = ({ title, description, children, childrenMd = 3, plain = fals
       <Box
         sx={{
           display: "flex", flexWrap: "wrap", alignItems: "center",
-          gap: { xs: 1.5, md: 2 }, mb: { xs: 2, md: 3 },
+          gap: { xs: 1.5, md: 2 }, mt: { xs: 2, sm: 0 }, mb: dense ? { xs: 0.5, md: 3 } : { xs: 1.5, md: 3 },
         }}
       >
         <Box sx={{ flex: "1 1 260px", minWidth: 0 }}>
-          <Typography variant="h1" component="h2" sx={{ fontSize: { xs: "1.375rem", sm: "1.75rem" }, fontWeight: 600, color: "text.primary", textAlign: "left" }}>
+          <Typography variant="h1" component="h2" sx={{ fontSize: { xs: dense ? "1.5rem" : "1.625rem", sm: "1.75rem" }, fontWeight: { xs: 700, sm: 600 }, color: "text.primary", textAlign: "left" }}>
             {title}
           </Typography>
           {subtitle && (

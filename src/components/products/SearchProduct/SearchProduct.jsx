@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { Chip, Grid, InputAdornment, IconButton, CircularProgress, LinearProgress, useMediaQuery, useTheme } from "@mui/material";
+import { Box, Chip, Grid, InputAdornment, IconButton, CircularProgress, LinearProgress, useMediaQuery, useTheme } from "@mui/material";
 import { TextField } from "../../ui/Field/Field";
 import SearchIcon from "@mui/icons-material/Search";
 import PushPinIcon from "@mui/icons-material/PushPin";
@@ -27,8 +27,10 @@ import SearchResultsTable from "./SearchResultsTable";
 import StockVerificationSnackbar from "./StockVerificationSnackbar";
 import { useSearchProductController } from "./useSearchProductController";
 
-const SQUARE_BUTTON_SX = { width: 36, height: 36, color: "common.white", borderRadius: 1 };
-const SEARCH_BUTTON_SX = { ...SQUARE_BUTTON_SX, bgcolor: "primary.main" };
+
+// En móvil el campo ocupa la mitad (como un select de arriba) y los botones la otra mitad
+const SEARCH_FIELD_MOBILE_SX = { flex: "0 0 calc(50% - 6px)", minWidth: 0 };
+const BUTTONS_MOBILE_SX = { flex: 1, minWidth: 0, display: "flex", gap: 0.5, "& > span": { flex: 1, minWidth: 0 } };
 
 const SearchProduct = ({ searchInputRef }) => {
   const localRef = useRef(null);
@@ -42,6 +44,9 @@ const SearchProduct = ({ searchInputRef }) => {
   const search = useSearchProductController(inputRef);
   const { user, queryType, isTextMode, searching, data, stockModal, productModal, suggestions } = search;
   const isCodeMode = queryType === QUERY_TYPES.CODE;
+  // En móvil los botones miden lo mismo que el campo y los selects (40 px)
+  const buttonSize = isMobile ? 40 : 36;
+  const squareButtonSx = { width: isMobile ? "100%" : buttonSize, height: buttonSize, color: "common.white", borderRadius: isMobile ? "10px" : 1 };
 
   const storePrinter = user?.store_printer;
   const { connected: printerConnected } = usePrinterStatus(storePrinter);
@@ -75,7 +80,7 @@ const SearchProduct = ({ searchInputRef }) => {
         aria-label="Buscar"
         onClick={isCodeMode ? search.runBarcodeSearch : search.handleSearchProduct}
         disabled={searching}
-        sx={SEARCH_BUTTON_SX}
+        sx={{ ...squareButtonSx, bgcolor: "primary.main" }}
       >
         {searching ? <CircularProgress size={18} color="inherit" /> : <SearchIcon fontSize="small" />}
       </IconButton>
@@ -98,7 +103,7 @@ const SearchProduct = ({ searchInputRef }) => {
         onClose={search.closeStockVerification}
       />
 
-      <PageHeader title="Vender">
+      <PageHeader title="Vender" dense={isMobile}>
         {!isMobile && (
           <CustomButton
             fullWidth
@@ -123,10 +128,10 @@ const SearchProduct = ({ searchInputRef }) => {
       />
 
       <Grid container spacing={1} sx={{ mb: 0.5 }}>
-        <Grid item xs={12} sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+        <Grid item xs={12} ref={setAnchorEl} sx={{ display: "flex", gap: isMobile ? 1.5 : 1, alignItems: "center" }}>
           <TextField size="small" fullWidth
+            sx={isMobile ? SEARCH_FIELD_MOBILE_SX : undefined}
             inputRef={inputRef}
-            ref={setAnchorEl}
             type="text"
             value={isCodeMode ? search.barcode : search.query}
             placeholder={isCodeMode ? "Buscar producto por código (Ctrl+B)" : "Buscar producto por nombre (Ctrl+B)"}
@@ -148,53 +153,61 @@ const SearchProduct = ({ searchInputRef }) => {
               ) : null,
             }}
           />
-          {searchButton}
-          {isCodeMode && isMobile && (
-            <CustomTooltip text="Escanear con la cámara" position="bottom">
+          <Box sx={isMobile ? BUTTONS_MOBILE_SX : { display: "contents" }}>
+            {searchButton}
+            {isCodeMode && isMobile && (
+              <CustomTooltip text="Escanear con la cámara" position="bottom">
+                <IconButton
+                  size="small"
+                  aria-label="Escanear con la cámara"
+                  onClick={() => setScannerOpen(true)}
+                  sx={{ ...squareButtonSx, bgcolor: "success.main" }}
+                >
+                  <QrCodeScannerIcon fontSize="small" />
+                </IconButton>
+              </CustomTooltip>
+            )}
+            <CustomTooltip text={isInputFocused ? "Campo activo: puedes escribir o escanear" : "Haz clic en el campo para escribir o escanear"} position="bottom">
               <IconButton
                 size="small"
-                aria-label="Escanear con la cámara"
-                onClick={() => setScannerOpen(true)}
-                sx={{ ...SQUARE_BUTTON_SX, bgcolor: "success.main" }}
-              >
-                <QrCodeScannerIcon fontSize="small" />
-              </IconButton>
-            </CustomTooltip>
-          )}
-          <CustomTooltip text={isInputFocused ? "Campo activo: puedes escribir o escanear" : "Haz clic en el campo para escribir o escanear"} position="bottom">
-            <IconButton
-              size="small"
-              aria-label={isInputFocused ? "Campo activo" : "Campo inactivo"}
-              sx={{
-                ...SQUARE_BUTTON_SX,
-                bgcolor: isInputFocused ? "primary.main" : "warning.main",
-                "&:hover": { bgcolor: isInputFocused ? "primary.dark" : "warning.dark" },
-              }}
-            >
-              {isInputFocused ? <EditIcon fontSize="small" /> : <EditOffIcon fontSize="small" />}
-            </IconButton>
-          </CustomTooltip>
-          {isTextMode && (
-            <CustomTooltip text={search.keepListOpen ? "La lista seguirá abierta" : "Mantener la lista abierta"} position="bottom">
-              <IconButton
-                size="small"
-                aria-label="Mantener la lista abierta"
-                onClick={search.toggleKeepListOpen}
+                aria-label={isInputFocused ? "Campo activo" : "Campo inactivo"}
                 sx={{
-                  ...SQUARE_BUTTON_SX,
-                  bgcolor: search.keepListOpen ? "primary.main" : "transparent",
-                  color: search.keepListOpen ? "common.white" : "text.secondary",
-                  "&:hover": { bgcolor: search.keepListOpen ? "primary.dark" : "action.hover" },
+                  ...squareButtonSx,
+                  bgcolor: isInputFocused ? "primary.main" : "warning.main",
+                  "&:hover": { bgcolor: isInputFocused ? "primary.dark" : "warning.dark" },
                 }}
               >
-                {search.keepListOpen ? <PushPinIcon fontSize="small" /> : <PushPinOutlinedIcon fontSize="small" />}
+                {isInputFocused ? <EditIcon fontSize="small" /> : <EditOffIcon fontSize="small" />}
               </IconButton>
             </CustomTooltip>
-          )}
-          {isTextMode && data.length > 0 && (
-            <Chip label={`${data.length} resultados`} color="primary" size="small" sx={{ height: 36 }} />
+            {isTextMode && (
+              <CustomTooltip text={search.keepListOpen ? "La lista seguirá abierta" : "Mantener la lista abierta"} position="bottom">
+                <IconButton
+                  size="small"
+                  aria-label="Mantener la lista abierta"
+                  onClick={search.toggleKeepListOpen}
+                  sx={{
+                    ...squareButtonSx,
+                    bgcolor: search.keepListOpen ? "primary.main" : "transparent",
+                    color: search.keepListOpen ? "common.white" : "text.secondary",
+                    "&:hover": { bgcolor: search.keepListOpen ? "primary.dark" : "action.hover" },
+                  }}
+                >
+                  {search.keepListOpen ? <PushPinIcon fontSize="small" /> : <PushPinOutlinedIcon fontSize="small" />}
+                </IconButton>
+              </CustomTooltip>
+            )}
+          </Box>
+          {isTextMode && !isMobile && data.length > 0 && (
+            <Chip label={`${data.length} resultados`} color="primary" size="small" sx={{ height: buttonSize }} />
           )}
         </Grid>
+
+        {isTextMode && isMobile && data.length > 0 && (
+          <Grid item xs={12}>
+            <Chip label={`${data.length} resultados`} color="primary" size="small" />
+          </Grid>
+        )}
 
         {queryType === QUERY_TYPES.NAME && (
           <SearchSuggestions
@@ -229,6 +242,7 @@ const SearchProduct = ({ searchInputRef }) => {
         {data.length > 0 && queryType !== QUERY_TYPES.VISUAL && (
           <Grid item xs={12}>
             <SearchResultsTable
+              isMobile={isMobile}
               data={data}
               movementType={search.movementType}
               allowTransfer={search.allowTransfer}
