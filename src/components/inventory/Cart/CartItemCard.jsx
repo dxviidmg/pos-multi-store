@@ -10,7 +10,7 @@ import QuantityInput from "./QuantityInput";
 import SaleModeButton from "./SaleModeButton";
 import { QUANTITY_MODES, allowsSaleModes, getUnitLabel, isWeightedItem } from "./quantityRules";
 
-const { PIECE, KG, FRACTION, AMOUNT, STOCK } = QUANTITY_MODES;
+const { KG, FRACTION, AMOUNT, STOCK } = QUANTITY_MODES;
 
 const isLiter = (item) => item.product?.unit === "LT";
 
@@ -30,7 +30,13 @@ const CARD_LABEL_SX = { display: "block", mb: 0.5, fontWeight: 600, fontSize: "0
 const MOBILE_LABEL_SX = { display: "block", mb: 0.5, fontWeight: 600 };
 const CARD_INPUT_SX = { "& input": { fontSize: "0.75rem", py: 0.4, textAlign: "center" } };
 const CARD_WHOLESALE_SX = { fontSize: "0.65rem", m: 0, "& .MuiTypography-root": { fontSize: "0.65rem" } };
-const STAT_LABEL_SX = { display: "block", color: "text.secondary", fontWeight: 600 };
+const MOBILE_REMOVE_SX = { width: 32, height: 32, flexShrink: 0, borderRadius: 1, bgcolor: "primary.main", color: "common.white", "&:hover": { bgcolor: "primary.dark" } };
+const MOBILE_NAME_SX = {
+  fontWeight: 600, lineHeight: 1.3, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical",
+};
+const MOBILE_ROW_SX = { display: "grid", gridTemplateColumns: "minmax(96px, 1.2fr) 1fr 1fr", gap: 1.5, alignItems: "start", mt: 1.25 };
+const MOBILE_VALUE_SX = { display: "flex", alignItems: "center", minHeight: 40, fontWeight: 600 };
+const MOBILE_FOOTER_SX = { display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 1, mt: 1, pt: 0.5, borderTop: "1px solid", borderColor: "divider" };
 
 /**
  * Producto del carrito como tarjeta: `variant="card"` (cuadrícula de escritorio) o `"mobile"` (lista en móvil).
@@ -52,7 +58,7 @@ const CartItemCard = ({
   const weighted = isWeightedItem(item);
   const { prices } = item.product;
   const subtotal = formatCurrency(item.quantity * item.product_price);
-  const showWholesale = prices.apply_wholesale && saleModes && (mode === PIECE || mode === KG);
+  const showWholesale = saleModes && !!prices.wholesale_price;
 
   const removeButton = (
     <CustomTooltip text="Quitar" position="top">
@@ -60,7 +66,7 @@ const CartItemCard = ({
         size="small"
         onClick={() => onRemove(item)}
         aria-label="Quitar"
-        sx={isCard ? { color: "error.main", flexShrink: 0, width: 32, height: 32 } : { color: "error.main" }}
+        sx={isCard ? { color: "error.main", flexShrink: 0, width: 32, height: 32 } : MOBILE_REMOVE_SX}
       >
         <DeleteIcon {...(isCard ? { sx: { fontSize: "1rem" } } : { fontSize: "small" })} />
       </IconButton>
@@ -101,18 +107,17 @@ const CartItemCard = ({
   );
 
   const wholesaleField = showWholesale && (
-    <Box sx={isCard ? undefined : { mb: 1 }}>
+    <Box>
       <FormControlLabel
         control={
           <Checkbox
             size="small"
             checked={item.product_price === prices.wholesale_price}
             onChange={() => onChangePrice(item)}
-            disabled={!prices.wholesale_price}
           />
         }
         label={
-          isCard
+          isCard || !prices.apply_wholesale
             ? `Mayoreo ${formatCurrency(prices.wholesale_price)}`
             : `Mayoreo (${prices.min_wholesale_quantity}+) - ${formatCurrency(prices.wholesale_price)}`
         }
@@ -195,52 +200,47 @@ const CartItemCard = ({
     );
   }
 
+  const hasFooter = saleModes || showWholesale;
+
   return (
     <Grid item xs={12} className="fade-in-up" sx={{ bgcolor: "background.paper", borderRadius: 2, border: "1px solid", borderColor: "divider", p: 1.5 }}>
-      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "start", mb: 1 }}>
-        <Box sx={{ flex: 1 }}>
-          <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 0.5 }}>
+      <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1 }}>
+        <Box sx={{ flex: 1, minWidth: 0 }}>
+          <Typography variant="subtitle2" sx={MOBILE_NAME_SX}>
             {item.product.name}
           </Typography>
-          <Typography variant="caption" display="block" sx={{ color: "text.secondary", mb: 0.3 }}>
-            Código: {item.product.code}
-          </Typography>
           <Typography variant="caption" display="block" sx={{ color: "text.secondary" }}>
-            Marca: {item.product.brand_name}
+            {item.product.code} · {item.product.brand_name} · Stock {item.available_stock}
           </Typography>
         </Box>
         {removeButton}
       </Box>
 
-      {saleModes && (
-        <Box sx={{ mb: 1 }}>
-          {weighted ? (
+      <Box sx={MOBILE_ROW_SX}>
+        <Box>
+          <Typography variant="caption" sx={MOBILE_LABEL_SX}>{getQuantityLabel(item, mode, variant)}</Typography>
+          <QuantityInput item={item} mode={mode} onChange={onQuantityChange} maxQuantity={maxQuantity} fullWidth />
+        </Box>
+        <Box>
+          <Typography variant="caption" sx={MOBILE_LABEL_SX}>Precio</Typography>
+          <Typography variant="body2" sx={MOBILE_VALUE_SX}>{formatCurrency(item.product_price)}</Typography>
+        </Box>
+        <Box sx={{ textAlign: "right" }}>
+          <Typography variant="caption" sx={MOBILE_LABEL_SX}>Total</Typography>
+          <Typography variant="subtitle1" sx={{ ...MOBILE_VALUE_SX, justifyContent: "flex-end", fontWeight: 700 }}>{subtotal}</Typography>
+        </Box>
+      </Box>
+
+      {hasFooter && (
+        <Box sx={MOBILE_FOOTER_SX}>
+          {saleModes && (weighted ? (
             <SaleModeButton item={item} mode={mode} onToggle={onToggleSaleMode} variant="mobile" />
           ) : (
-            <Typography variant="caption" sx={{ fontWeight: 600 }}>
-              Venta por: {getUnitLabel(item)}
-            </Typography>
-          )}
+            <Typography variant="caption" sx={{ fontWeight: 600 }}>Venta por: {getUnitLabel(item)}</Typography>
+          ))}
+          {wholesaleField}
         </Box>
       )}
-
-      <Box sx={{ display: "flex", gap: 1, alignItems: "center", mb: 1, flexWrap: "wrap" }}>
-        <Box sx={{ flex: 1, minWidth: 100 }}>{quantityField}</Box>
-        <Box sx={{ flex: 1, minWidth: 100 }}>{priceField}</Box>
-      </Box>
-
-      {wholesaleField}
-
-      <Box sx={{ display: "flex", gap: 2, mt: 1 }}>
-        <Box>
-          <Typography variant="caption" sx={STAT_LABEL_SX}>Stock</Typography>
-          <Typography variant="body2">{item.available_stock}</Typography>
-        </Box>
-        <Box>
-          <Typography variant="caption" sx={STAT_LABEL_SX}>Total</Typography>
-          <Typography variant="body2" sx={{ fontWeight: 700 }}>{subtotal}</Typography>
-        </Box>
-      </Box>
     </Grid>
   );
 };
