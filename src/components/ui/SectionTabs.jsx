@@ -4,6 +4,9 @@ import { useUser } from "../../context/UserContext";
 import { normalizePath } from "../../constants/routeAccess";
 import { getAccessibleTabs, getSectionByPath } from "../layout/MainLayout/menu-sections";
 
+// En celular ocupan todo el ancho con el texto centrado; si no caben, se desplazan
+const TABS_SX = { "& .MuiTabs-flexContainer": { minWidth: "100%", width: "max-content" }, "& .MuiTab-root": { flex: "1 0 auto" } };
+
 /**
  * Barra de pestañas de la sección a la que pertenece la ruta actual. Cada
  * pestaña es una ruta; con menos de dos accesibles no se muestra. La dibuja
@@ -24,6 +27,7 @@ const SectionTabs = () => {
         value={normalizePath(pathname)}
         variant={compact ? "scrollable" : "fullWidth"}
         allowScrollButtonsMobile
+        sx={compact ? TABS_SX : undefined}
         aria-label={section.label}
       >
         {tabs.map(({ label, href }) => (
