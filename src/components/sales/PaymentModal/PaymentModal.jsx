@@ -11,8 +11,8 @@ import CustomButton from "../../ui/Button/Button";
 import CustomTooltip from "../../ui/Tooltip";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { createSale, getSale } from "../../../api/sales";
-import { showSuccess, showRequestError } from "../../../utils/alerts";
-import { handlePrintTicket } from "../../../utils/print";
+import { showAlert, showRequestError } from "../../../utils/alerts";
+import { PRINT_STATUS, getPrintStatusText, printTicketQuietly } from "../../../utils/print";
 import { roundUpCustom } from "../../../utils/currency";
 import { useUser } from "../../../context/UserContext";
 import { useCtrlShortcut } from "../../../hooks/useCtrlShortcut";
@@ -25,10 +25,28 @@ import SaleExchangeSection from "./SaleExchangeSection";
 import PaymentTotals from "./PaymentTotals";
 import PaymentMethodsSection from "./PaymentMethodsSection";
 
+const SALE_ALERT_MS = 2000;
+const SALE_ALERT_ERROR_MS = 5000;
+
 const INITIAL_SALE_EXCHANGE_STATE = { refunded: 0, payment: 0 };
 
-const INLINE_SX = { mt: 3, p: 1.5, bgcolor: "background.paper", borderRadius: 2, border: "1px solid", borderColor: "divider", scrollMarginTop: 8 };
-const INLINE_HEADER_SX = { display: "flex", alignItems: "center", justifyContent: "space-between", gap: 1, mb: 1.5 };
+// Las secciones del cobro van planas, separadas por una línea, dentro del cuadro
+const INLINE_SECTION_SX = {
+  border: 0,
+  borderRadius: 0,
+  boxShadow: "none",
+  bgcolor: "transparent",
+  padding: "12px 0 !important",
+  marginBottom: "0 !important",
+  borderBottom: "1px solid",
+  borderColor: "divider",
+};
+const INLINE_SX = {
+  mt: 3, p: 1.5, bgcolor: "background.paper", borderRadius: 2, border: "1px solid", borderColor: "divider", scrollMarginTop: 8,
+  "& .card": INLINE_SECTION_SX,
+  "& .card:last-child": { borderBottom: 0, paddingBottom: "0 !important" },
+};
+const INLINE_HEADER_SX = { display: "flex", alignItems: "center", justifyContent: "space-between", gap: 1, minHeight: 40, mt: 1, mb: 1 };
 
 const PaymentModal = ({ isOpen, onClose }) => {
   const dispatch = useDispatch();
@@ -111,9 +129,9 @@ const PaymentModal = ({ isOpen, onClose }) => {
 
       const response = await createSale(data);
 
-      if (printer && printTicket) {
-        handlePrintTicket("ticket", { ...data, id: response.data.id, payment });
-      }
+      const printRequest = printer && printTicket
+        ? printTicketQuietly("ticket", { ...data, id: response.data.id, payment })
+        : null;
 
       dispatch(removeClientFromCart());
       dispatch(cleanCart());
@@ -122,7 +140,15 @@ const PaymentModal = ({ isOpen, onClose }) => {
       setHideClient(true);
       setSaleExchange(INITIAL_SALE_EXCHANGE_STATE);
 
-      showSuccess(`${isReservation ? "Apartado registrado" : "Venta exitosa"}. Folio ${response.data.id}`);
+      // Un solo aviso: venta registrada con el estado de la impresión
+      const printStatus = printRequest ? await printRequest : null;
+      const failedPrint = printStatus === PRINT_STATUS.ERROR;
+      showAlert(
+        failedPrint ? "warning" : "success",
+        `${isReservation ? "Apartado registrado" : "Venta exitosa"}. Folio ${response.data.id}`,
+        getPrintStatusText(printStatus),
+        failedPrint ? SALE_ALERT_ERROR_MS : SALE_ALERT_MS,
+      );
     } catch (error) {
       showRequestError("finalizar la venta", error);
     } finally {
@@ -169,7 +195,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
       disabled={isSubmitDisabled}
       onSubmit={() => handleCreateSale(!isMobile && !!printer)}
     >
-      {isReservation ? "Apartar" : "Cobrar"}<br />(Ctrl + G)
+      {isReservation ? "Apartar" : "Cobrar"}<br />(Ctrl+G)
     </PaymentSubmitPanel>
   );
 
@@ -202,11 +228,13 @@ const PaymentModal = ({ isOpen, onClose }) => {
                 {!hideClient ? "Quitar cliente" : "Agregar cliente"}
               </CustomButton>
             </Grid>
-            <Grid item xs={12} md={6}>
-              <CustomButton fullWidth onClick={() => setHideExchange((prev) => !prev)} startIcon={<SwapHorizIcon />}>
-                Intercambio de mercancia
-              </CustomButton>
-            </Grid>
+            {!isMobile && (
+              <Grid item xs={12} md={6}>
+                <CustomButton fullWidth onClick={() => setHideExchange((prev) => !prev)} startIcon={<SwapHorizIcon />}>
+                  Intercambio de mercancia
+                </CustomButton>
+              </Grid>
+            )}
           </Grid>
         </PaymentCard>
       )}
@@ -255,7 +283,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
           <>
             <Box ref={inlineRef} sx={INLINE_SX}>
               <Box sx={INLINE_HEADER_SX}>
-                <Typography variant="h6" sx={{ fontWeight: 700 }}>{title}</Typography>
+                <Typography variant="h5" sx={{ fontSize: "1.375rem", fontWeight: 700 }}>{title}</Typography>
                 <CustomTooltip text="Cerrar" position="left">
                   <IconButton onClick={onClose} size="small" aria-label="Cerrar">
                     <CloseIcon />
@@ -264,7 +292,7 @@ const PaymentModal = ({ isOpen, onClose }) => {
               </Box>
               {content}
             </Box>
-            <Box sx={{ mt: 1.5 }}>{submitPanel}</Box>
+            <Box sx={{ mt: 1.5, mb: 3 }}>{submitPanel}</Box>
           </>
         )}
       </>
