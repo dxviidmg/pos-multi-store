@@ -12,6 +12,7 @@ import { useCtrlShortcut } from "../../../hooks/useCtrlShortcut";
 import { PAYMENT_METHODS, PAYMENT_METHOD_OPTIONS } from "../../../constants";
 import ReferencePaymentField from "../ReferencePaymentField/ReferencePaymentField";
 import PaymentSubmitPanel from "../shared/PaymentSubmitPanel";
+import { CHANGE_SX, TOTAL_SX } from "../shared/paymentFieldSx";
 
 const INITIAL_PAYMENT_STATE = { paidWith: 0, change: 0 };
 const ACTIONS = { SETTLE: "Liquidar", PARTIAL: "Abonar" };
@@ -156,7 +157,7 @@ const PaymentEditModal = ({ isOpen, sale, onClose, onUpdate }) => {
                 </Grid>
                 <Grid item xs={12} md={3}>
                   {isCash ? (
-                    <TextField fullWidth size="small" label="Cambio" value={formatCurrency(payment.change)} disabled />
+                    <TextField fullWidth size="small" label="Cambio" value={formatCurrency(payment.change)} disabled sx={payment.change > 0 ? CHANGE_SX : TOTAL_SX} />
                   ) : (
                     <ReferencePaymentField value={referencePayment} onChange={setReferencePayment} />
                   )}
@@ -186,7 +187,7 @@ const PaymentEditModal = ({ isOpen, sale, onClose, onUpdate }) => {
 
                 <Grid item xs={12} md={4}>
                   <PaymentSubmitPanel printer={printer} disabled={isSubmitDisabled} onSubmit={() => handleCreatePayment(!!printer)}>
-                    Cobrar (Ctrl + G)
+                    Cobrar (Ctrl+G)
                   </PaymentSubmitPanel>
                 </Grid>
               </Grid>
