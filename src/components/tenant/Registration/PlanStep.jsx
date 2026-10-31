@@ -1,48 +1,50 @@
-import React from "react";
-import { Box, Typography, CircularProgress, Card, CardContent, Chip } from "@mui/material";
+import React, { useEffect, useMemo } from "react";
+import { Box, Typography, CircularProgress, Slider } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import StorefrontIcon from "@mui/icons-material/Storefront";
 import CustomButton from "../../ui/Button/Button";
 import { formatCurrency } from "../../../utils/utils";
-import { primaryButtonSx, secondaryButtonSx, getPlanCardSx } from "./Registration.styles";
+import { primaryButtonSx, secondaryButtonSx } from "./Registration.styles";
 
-const storesChipSx = {
-  fontSize: "0.72rem", height: 22,
-  bgcolor: "action.hover",
-  color: "text.secondary",
-  border: "1px solid",
-  borderColor: "divider",
-};
+const storesLabel = (stores) => `${stores} ${stores === 1 ? "tienda" : "tiendas"}`;
 
-const PlanOption = ({ plan, selected, onSelect }) => (
-  <Card onClick={() => onSelect(plan)} sx={getPlanCardSx(selected)}>
-    <CardContent sx={{ p: 2, "&:last-child": { pb: 2 } }}>
-      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <Box>
-          <Typography sx={{ fontSize: "0.95rem", fontWeight: 700, color: "text.primary" }}>
-            {plan.name}
-          </Typography>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 0.5 }}>
-            <Chip
-              icon={<StorefrontIcon sx={{ fontSize: "14px !important" }} />}
-              label={`${plan.stores} ${plan.stores === 1 ? "tienda" : "tiendas"}`}
-              size="small"
-              sx={storesChipSx}
-            />
-          </Box>
-        </Box>
-        <Box sx={{ textAlign: "right" }}>
-          <Typography sx={{ fontSize: "1.2rem", fontWeight: 700, color: "primary.main" }}>
-            {formatCurrency(plan.price)}
-          </Typography>
-          <Typography sx={{ fontSize: "0.7rem", color: "text.secondary" }}>
-            MXN/mes
-          </Typography>
-        </Box>
+const StoresPicker = ({ plans, selectedPlan, onSelect }) => {
+  const sorted = useMemo(() => [...plans].sort((a, b) => a.stores - b.stores), [plans]);
+  const index = sorted.findIndex((plan) => plan.id === selectedPlan?.id);
+
+  useEffect(() => {
+    if (!selectedPlan) onSelect(sorted[0]);
+  }, [selectedPlan, sorted, onSelect]);
+
+  return (
+  <Box>
+    <Typography sx={{ fontSize: "0.85rem", fontWeight: 600, color: "text.secondary", mb: 1 }}>
+      ¿Cuántas tiendas tienes?
+    </Typography>
+    <Box sx={{ px: 2 }}>
+      <Slider
+        value={Math.max(index, 0)}
+        min={0}
+        max={sorted.length - 1}
+        step={1}
+        marks={sorted.map((plan, i) => ({ value: i, label: plan.stores }))}
+        onChange={(_, value) => onSelect(sorted[value])}
+        sx={{ "& .MuiSlider-markLabel": { fontSize: "0.8rem", fontWeight: 600 } }}
+      />
+    </Box>
+    {selectedPlan && (
+      <Box sx={{ textAlign: "center", mt: 2, py: 2, borderRadius: "12px", bgcolor: "action.hover" }}>
+        <Typography sx={{ fontSize: "0.85rem", color: "text.secondary" }}>
+          Plan para {storesLabel(selectedPlan.stores)}
+        </Typography>
+        <Typography sx={{ fontSize: "1.8rem", fontWeight: 800, color: "primary.main" }}>
+          {formatCurrency(selectedPlan.price)}
+        </Typography>
+        <Typography sx={{ fontSize: "0.75rem", color: "text.secondary" }}>MXN/mes</Typography>
       </Box>
-    </CardContent>
-  </Card>
-);
+    )}
+  </Box>
+  );
+};
 
 /** Paso 3: elegir el plan y pasar al pago. */
 const PlanStep = ({ plans, plansLoading, selectedPlan, onSelectPlan, onBack, onSubmit, submitDisabled, isSubmitting }) => (
@@ -56,16 +58,7 @@ const PlanStep = ({ plans, plansLoading, selectedPlan, onSelectPlan, onBack, onS
         No hay planes disponibles en este momento.
       </Typography>
     ) : (
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
-        {plans.map((plan) => (
-          <PlanOption
-            key={plan.id}
-            plan={plan}
-            selected={selectedPlan?.id === plan.id}
-            onSelect={onSelectPlan}
-          />
-        ))}
-      </Box>
+      <StoresPicker plans={plans} selectedPlan={selectedPlan} onSelect={onSelectPlan} />
     )}
 
     <Box sx={{ display: "flex", gap: 1.5, mt: 2.5 }}>
