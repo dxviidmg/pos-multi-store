@@ -8,7 +8,8 @@
 Este documento acumula las auditorías de consistencia visual del frontend:
 
 1. [Auditoría de botones](#1-auditoría-de-botones--cerrada) — ✅ cerrada (3 nov 2026)
-2. [Auditoría de avisos (chips, alerts, cajas de aviso)](#2-auditoría-de-avisos--abierta) — 🔎 abierta
+2. [Auditoría de avisos (chips, alerts, cajas de aviso)](#2-auditoría-de-avisos--abierta) — ✅ cerrada (3 nov 2026)
+3. [Auditoría de tablas](#3-auditoría-de-tablas--cerrada) — ✅ cerrada (3 nov 2026)
 
 ---
 
@@ -106,3 +107,49 @@ Convención adoptada: **`variant="filled"` en todos los Alerts** y radio uniform
 
 - **Chips (`<Chip>`):** `ui/Import/ImportActions.jsx`, `products/SearchProduct/SearchProduct.jsx`, `sales/shared/PaymentSubmitPanel.jsx`, `ui/Import/ImportFileDrop.jsx`, `ui/AuditCard/AuditCard.jsx`, `ui/StatusChip.jsx`, `inventory/StockUpdateRequestList/StockUpdateRequestList.jsx`, `inventory/StockModal/StockModal.jsx`, `tenant/MyCurrentPlan/PlanCard.jsx`, `tenant/SubscriptionList/SubscriptionList.jsx`, `admin/ServiceList/ServiceCard.jsx`, `admin/StoreList/StoreHeader.jsx`, `admin/Profile/ProfileHero.jsx`.
 - **Alerts (`<Alert>`):** 22 archivos (tenant, products, inventory, sales, ui, admin, layout). Ver búsqueda `<Alert` en `src/components`.
+
+---
+
+# 3. Auditoría de tablas — CERRADA
+
+Objetivo: estandarizar las tablas. Estándar: `DataTable` (envuelve `@mui/x-data-grid`), `SimpleTable` para tablas de solo lectura, `tableButtonSx` para botones dentro de tablas.
+
+**Diagnóstico general: muy buen estado.** Las tablas están casi completamente estandarizadas:
+
+- **Nadie usa `DataGrid` crudo.** Los 25 usos (24 archivos) pasan por `DataTable`. `DataGrid` solo aparece dentro de `ui/DataTable/DataTable.jsx`.
+- **`noDataComponent` siempre presente y en español** en todos los `DataTable` y `SimpleTable`.
+- **`DataTable` ya encapsula** header navy, radio 14px, paginación, skeleton de carga y `tableButtonSx` (aplicado globalmente a los botones de celda). Esto evita la mayoría de inconsistencias en origen.
+
+Los hallazgos son menores.
+
+## 🟠 Media — Indicador de carga inconsistente en tablas de modal
+
+Algunos `DataTable` dentro de modales no usan `progressPending` y en su lugar ponen un indicador de carga aparte, lo que contradice la regla de `AGENTS.md` §8 ("un solo indicador de carga por vista: `progressPending` **o** `CustomSpinner`, no ambos") y rompe la consistencia con el resto (que sí usa `progressPending={loading}`).
+
+| Archivo:línea | Qué pasa | Sugerencia |
+|---|---|---|
+| `products/StoreProductLogsModal/StoreProductLogsModal.jsx:127,138` | `<LinearProgress>` manual arriba + `<DataTable>` sin `progressPending` | Pasar `progressPending={loading}` al `DataTable` y quitar el `LinearProgress` manual |
+| `products/PriceLogsModal/PriceLogsModal.jsx:23` | `<CustomSpinner isLoading={isLoading}>` + `<DataTable>` sin `progressPending` | Elegir uno: `progressPending={isLoading}` en el `DataTable` **o** mantener el spinner, no ambos |
+
+## 🟡 Baja — Columnas "Acciones" sin ancho fijo cuando tienen un solo botón
+
+Las columnas de acciones con 3+ botones fijan `width` (correcto, `AGENTS.md`), pero las de un solo botón a veces no lo fijan y quedan con `flex: 1`, estirándose más de lo necesario:
+
+- Con `width`: `ConversionList.jsx:93` (120), `SaleList`, `DistributionList`, etc.
+- Sin `width` (un botón, `flex: 1`): `clients/ClientList/ClientList.jsx:99`, `catalog/CatalogList/CatalogList.jsx:87`.
+
+No rompe nada, pero una columna de un solo ícono estirada se ve desbalanceada. Sugerencia: fijar un `width` pequeño (p. ej. 90) a las columnas de acción de un solo botón, o definir un ancho estándar de columna de acciones.
+
+## ✅ Lo que está bien
+
+- Arquitectura de tabla única (`DataTable` / `SimpleTable`), sin `DataGrid` suelto.
+- `noDataComponent` en español en el 100% de los casos.
+- `tableButtonSx` aplicado centralizadamente; los botones de celda son consistentes (30px, íconos 18px).
+- Header, radio, paginación y skeleton viven en `DataTable`, no en cada pantalla.
+
+## Recomendación de acción
+
+1. ~~**🟠 Unificar el indicador de carga** en `StoreProductLogsModal` y `PriceLogsModal`~~ ✅ **Hecho (3 nov 2026).** Ambos usan `progressPending={loading}` en el `DataTable`; se quitó el `LinearProgress` manual y el `CustomSpinner`.
+2. ~~**🟡 Definir un ancho estándar** para columnas "Acciones" de un solo botón~~ ✅ **Hecho (3 nov 2026).** `width: 90` en `ClientList` y `CatalogList`.
+
+**Auditoría de tablas cerrada:** sin puntos abiertos.
