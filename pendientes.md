@@ -2,6 +2,12 @@
 
 ## Backend
 
+### Stock inicial al crear producto debe ser atómico
+
+- **Dónde:** `POST /api/product` (`createProduct`, `src/api/catalog-products.js`), lo llama `useProductForm.js` al crear con una sola sucursal.
+- **Qué pasa:** el frontend enviaba el producto y luego buscaba su registro de sucursal y llamaba `products/add` para sumar el stock. A veces el registro aún no existía y el producto quedaba en stock 0.
+- **Corrección sugerida:** `createProduct` acepta `initial_stock` (entero > 0, opcional) y, en la misma transacción que crea el producto y su registro de sucursal, deja ese stock (con su movimiento en el historial). Si algo falla, no se crea nada. El frontend ya envía `initial_stock` y no hace llamadas extra; mientras el backend lo ignore, el producto se crea con stock 0 aunque el aviso diga "con stock de N".
+
 ### `change_password` exige `confirm_password`
 
 - **Dónde:** `accounts/views.py`, `UserViewSet.change_password` (`POST /api/user/change_password`).
