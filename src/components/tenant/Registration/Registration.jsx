@@ -209,7 +209,7 @@ const Registration = () => {
               {showPayment && (
                 <Box>
                   {paymentError && (
-                    <Alert severity="error" sx={{ mb: 2, borderRadius: "10px", fontSize: "0.85rem" }}>
+                    <Alert severity="error" variant="filled" sx={{ mb: 2, fontSize: "0.85rem" }}>
                       {paymentError}
                     </Alert>
                   )}

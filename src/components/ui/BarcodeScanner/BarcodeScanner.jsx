@@ -105,7 +105,7 @@ const BarcodeScanner = ({ open, onClose, onDetected }) => {
       <DialogContent sx={{ p: 0 }}>
         {error ? (
           <Box sx={{ p: 2 }}>
-            <Alert severity="error">{error}</Alert>
+            <Alert severity="error" variant="filled">{error}</Alert>
           </Box>
         ) : (
           <Box sx={{ position: "relative", bgcolor: "common.black", minHeight: 300 }}>

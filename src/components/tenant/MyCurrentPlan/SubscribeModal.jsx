@@ -10,7 +10,7 @@ const SubscribeModal = ({ cardForm, equivalent }) => (
   <CustomModal showOut={cardForm.isOpen} onClose={cardForm.close} title="Domiciliar pago recurrente">
     <Box sx={{ p: 3 }}>
       {cardForm.error && (
-        <Alert severity="error" sx={{ mb: 2 }}>
+        <Alert severity="error" variant="filled" sx={{ mb: 2 }}>
           {cardForm.error}
         </Alert>
       )}

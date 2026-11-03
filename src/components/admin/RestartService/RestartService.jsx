@@ -76,13 +76,13 @@ function RestartService() {
       </Box>
 
       {isDisabled && (
-        <Alert severity="warning" variant="outlined">
+        <Alert severity="warning" variant="filled">
           El servicio se está sincronizando. Disponible a las: <b>{formatTimeFromDate(finishAt)}</b>
         </Alert>
       )}
 
       {error && (
-        <Alert severity="error" variant="outlined" sx={{ mt: 2 }}>{error}</Alert>
+        <Alert severity="error" variant="filled" sx={{ mt: 2 }}>{error}</Alert>
       )}
     </Grid>
   );

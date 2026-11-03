@@ -122,7 +122,7 @@ const MyCurrentPlan = () => {
 
       {user?.access_blocked && (
         <Grid item xs={12} className="card">
-          <Alert severity="warning" sx={{ mb: 2 }}>
+          <Alert severity="warning" variant="filled" sx={{ mb: 2 }}>
             El acceso a tu negocio está suspendido porque tu suscripción venció
             {user?.access_until ? ` el ${formatLongDate(user.access_until)}` : ""}
             . Renueva tu plan para reactivar el acceso completo.

@@ -24,7 +24,7 @@ const RequireAccess = () => {
 
   if (normalizePath(pathname) === SALES_DASHBOARD_PATH && isSalesDashboardRestricted(user)) {
     return (
-      <Alert severity="warning" sx={{ borderRadius: 2 }}>
+      <Alert severity="warning" variant="filled">
         <AlertTitle>Tablero no disponible en este horario</AlertTitle>
         El tablero de ventas exitosas solo se puede consultar antes de las 10:00 a. m. y después de las 9:00 p. m.
       </Alert>

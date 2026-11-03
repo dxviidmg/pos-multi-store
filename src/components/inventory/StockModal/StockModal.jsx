@@ -215,7 +215,7 @@ const StockModal = ({ isOpen, product, onClose }) => {
                     {storesWithStock > 0 ? (
                       <SimpleTable noDataComponent="Sin acceso a otras tiendas" data={stockOtherStores} columns={stockColumns} />
                     ) : (
-                      <Alert severity="warning" sx={{ py: 2 }}>
+                      <Alert severity="warning" variant="filled" sx={{ py: 2 }}>
                         No hay stock disponible en ninguna otra tienda
                       </Alert>
                     )}

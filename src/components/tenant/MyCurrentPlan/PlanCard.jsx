@@ -99,6 +99,7 @@ const PlanCard = ({ plan, equivalent, planLoading, isOwner, hasAccess, onSubscri
             {isSubscription && isCardExpiringSoon(currentCard) && (
               <Alert
                 severity="warning"
+                variant="filled"
                 icon={<CreditCardIcon />}
                 sx={{ mt: 2, alignItems: "center" }}
                 action={
@@ -122,7 +123,7 @@ const PlanCard = ({ plan, equivalent, planLoading, isOwner, hasAccess, onSubscri
             )}
 
             {isSubscription && isCancelled && (
-              <Alert severity="info" sx={{ mt: 2 }}>
+              <Alert severity="info" variant="filled" sx={{ mt: 2 }}>
                 Tu suscripción está cancelada. Para reactivarla, contacta a soporte.
               </Alert>
             )}
@@ -130,6 +131,7 @@ const PlanCard = ({ plan, equivalent, planLoading, isOwner, hasAccess, onSubscri
             {isSubscription && expiredWithAccess && (
               <Alert
                 severity="warning"
+                variant="filled"
                 sx={{ mt: 2 }}
                 action={
                   isOwner && (
@@ -148,6 +150,7 @@ const PlanCard = ({ plan, equivalent, planLoading, isOwner, hasAccess, onSubscri
             {isSubscription && expiredWithoutAccess && (
               <Alert
                 severity="error"
+                variant="filled"
                 sx={{ mt: 2 }}
                 action={
                   isOwner && (

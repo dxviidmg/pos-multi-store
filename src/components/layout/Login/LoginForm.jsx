@@ -40,7 +40,7 @@ const LoginForm = ({
   return (
     <>
       {error && (
-        <Alert severity="error" icon={<ErrorOutlineIcon fontSize="small" />} sx={{ mb: 3, borderRadius: "10px" }}>
+        <Alert severity="error" variant="filled" icon={<ErrorOutlineIcon fontSize="small" />} sx={{ mb: 3 }}>
           {error}
         </Alert>
       )}

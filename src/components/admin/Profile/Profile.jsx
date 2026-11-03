@@ -42,7 +42,7 @@ const Profile = () => {
   return (
     <Box>
       {loadFailed && (
-        <Alert severity="error" sx={{ mb: 2 }}>
+        <Alert severity="error" variant="filled" sx={{ mb: 2 }}>
           Error al cargar los datos
         </Alert>
       )}

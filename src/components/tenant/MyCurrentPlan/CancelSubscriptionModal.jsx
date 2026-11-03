@@ -62,7 +62,7 @@ const CancelSubscriptionModal = ({ isOpen, onClose }) => {
       <CustomModal showOut={isOpen} onClose={handleClose} title="Cancelar suscripción">
         <Box sx={{ p: 3 }}>
           {error && (
-            <Alert severity="error" sx={{ mb: 2 }}>
+            <Alert severity="error" variant="filled" sx={{ mb: 2 }}>
               {error}
             </Alert>
           )}
