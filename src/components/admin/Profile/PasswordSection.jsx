@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { Box, Button, Grid, IconButton, InputAdornment } from "@mui/material";
+import { Button, Grid, IconButton, InputAdornment } from "@mui/material";
 import { TextField } from "../../ui/Field/Field";
-import { Lock, Visibility, VisibilityOff } from "@mui/icons-material";
+import { CheckCircle, Lock, Visibility, VisibilityOff } from "@mui/icons-material";
 import CustomTooltip from "../../ui/Tooltip";
-import ProfileSectionTitle from "./ProfileSectionTitle";
+import ProfileCard from "./ProfileCard";
+import { getConfirmFieldProps, getConfirmState } from "../../ui/UserModals/passwordConfirm";
 import { changePassword } from "../../../api/users";
 import { showRequestError, showSuccess, showWarning } from "../../../utils/alerts";
 
@@ -46,7 +47,7 @@ const PasswordSection = ({ userId }) => {
     setSaving(true);
     try {
       await changePassword(userId, {
-        current_password: passwordData.current_password,
+        old_password: passwordData.current_password,
         new_password: passwordData.new_password,
       });
       showSuccess("Contraseña actualizada");
@@ -58,54 +59,66 @@ const PasswordSection = ({ userId }) => {
     }
   };
 
+  const { new_password: newPassword, confirm_password: confirmPassword } = passwordData;
+  const confirmState = getConfirmState(newPassword, confirmPassword);
+
   const isIncomplete = PASSWORD_FIELDS.some(({ name }) => !passwordData[name]);
 
   return (
     <Grid item xs={12} md={6}>
-      <Box sx={{ mb: 3 }}>
-        <ProfileSectionTitle icon={Lock} title="Cambiar contraseña" />
-        <Grid container spacing={2}>
-          {PASSWORD_FIELDS.map(({ name, label }) => (
-            <Grid item xs={12} key={name}>
-              <TextField
-                fullWidth
-                label={label}
-                name={name}
-                value={passwordData[name]}
-                onChange={handleChange}
-                size="small"
-                type={visible[name] ? "text" : "password"}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <CustomTooltip text={visible[name] ? "Ocultar contraseña" : "Mostrar contraseña"} position="top">
-                        <IconButton
-                          onClick={() => toggleVisibility(name)}
-                          edge="end"
-                          size="small"
-                          aria-label={visible[name] ? "Ocultar contraseña" : "Mostrar contraseña"}
-                        >
-                          {visible[name] ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                      </CustomTooltip>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </Grid>
-          ))}
-        </Grid>
-      </Box>
-
-      <Button
-        fullWidth
-        variant="contained"
-        startIcon={<Lock />}
-        onClick={handleSave}
-        disabled={saving || isIncomplete}
+      <ProfileCard
+        icon={Lock}
+        title="Cambiar contraseña"
+        description="Mínimo 6 caracteres"
+        delay={120}
+        action={
+          <Button
+            variant="contained"
+            startIcon={<Lock />}
+            onClick={handleSave}
+            disabled={saving || isIncomplete || confirmState === "mismatch"}
+            sx={{ width: { xs: "100%", sm: "auto" } }}
+          >
+            Cambiar contraseña
+          </Button>
+        }
       >
-        Cambiar contraseña
-      </Button>
+        {PASSWORD_FIELDS.map(({ name, label }) => {
+          const isConfirm = name === "confirm_password";
+          return (
+          <TextField
+            key={name}
+            fullWidth
+            label={label}
+            name={name}
+            value={passwordData[name]}
+            onChange={handleChange}
+            size="small"
+            type={visible[name] ? "text" : "password"}
+            {...(isConfirm ? getConfirmFieldProps(confirmState) : {})}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  {isConfirm && confirmState === "match" && (
+                    <CheckCircle color="success" fontSize="small" aria-hidden="true" sx={{ mr: 0.5 }} />
+                  )}
+                  <CustomTooltip text={visible[name] ? "Ocultar contraseña" : "Mostrar contraseña"} position="top">
+                    <IconButton
+                      onClick={() => toggleVisibility(name)}
+                      edge="end"
+                      size="small"
+                      aria-label={visible[name] ? "Ocultar contraseña" : "Mostrar contraseña"}
+                    >
+                      {visible[name] ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </CustomTooltip>
+                </InputAdornment>
+              ),
+            }}
+          />
+          );
+        })}
+      </ProfileCard>
     </Grid>
   );
 };

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { Box, Button, Grid } from "@mui/material";
+import { Button, Grid } from "@mui/material";
 import { TextField } from "../../ui/Field/Field";
 import { Person, Save } from "@mui/icons-material";
-import ProfileSectionTitle from "./ProfileSectionTitle";
+import ProfileCard from "./ProfileCard";
 import { updateUser } from "../../../api/users";
 import { showRequestError, showSuccess } from "../../../utils/alerts";
 
@@ -41,31 +41,31 @@ const UserSection = ({ userId, initialUser }) => {
 
   return (
     <Grid item xs={12} md={6}>
-      <Box sx={{ mb: 3 }}>
-        <ProfileSectionTitle icon={Person} title="Información del usuario" />
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <TextField fullWidth label="Usuario" name="username" value={userData.username} size="small" disabled />
-          </Grid>
-          {EDITABLE_FIELDS.map(({ name, label, type }) => (
-            <Grid item xs={12} key={name}>
-              <TextField
-                fullWidth
-                label={label}
-                name={name}
-                value={userData[name]}
-                onChange={handleChange}
-                size="small"
-                type={type}
-              />
-            </Grid>
-          ))}
-        </Grid>
-      </Box>
-
-      <Button fullWidth variant="contained" startIcon={<Save />} onClick={handleSave} disabled={saving}>
-        Guardar datos del usuario
-      </Button>
+      <ProfileCard
+        icon={Person}
+        title="Información del usuario"
+        description="Tus datos de contacto"
+        delay={60}
+        action={
+          <Button variant="contained" startIcon={<Save />} onClick={handleSave} disabled={saving} sx={{ width: { xs: "100%", sm: "auto" } }}>
+            Guardar cambios
+          </Button>
+        }
+      >
+        <TextField fullWidth label="Usuario" name="username" value={userData.username} size="small" disabled />
+        {EDITABLE_FIELDS.map(({ name, label, type }) => (
+          <TextField
+            key={name}
+            fullWidth
+            label={label}
+            name={name}
+            value={userData[name]}
+            onChange={handleChange}
+            size="small"
+            type={type}
+          />
+        ))}
+      </ProfileCard>
     </Grid>
   );
 };

@@ -1,11 +1,14 @@
 import { Grid, IconButton, InputAdornment, Alert } from "@mui/material";
 import { TextField } from "../Field/Field";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { CheckCircle, Visibility, VisibilityOff } from "@mui/icons-material";
 import CustomModal from "../Modal/Modal";
 import CustomButton from "../Button/Button";
 import CustomTooltip from "../Tooltip";
+import { getConfirmFieldProps, getConfirmState } from "./passwordConfirm";
 
 const ChangePasswordModal = ({ open, onClose, passwordData, onChange, onSave, showPasswords, onToggleVisibility }) => {
+  const confirmState = getConfirmState(passwordData.new_password, passwordData.confirm_password);
+
   return (
     <CustomModal showOut={open} onClose={onClose} title="Cambiar contraseña">
       <Grid container sx={{ padding: '1rem', backgroundColor: 'modalBody.main' }}>
@@ -72,9 +75,13 @@ const ChangePasswordModal = ({ open, onClose, passwordData, onChange, onSave, sh
                 size="small"
                 autoComplete="new-password"
                 type={showPasswords.confirm ? "text" : "password"}
+                {...getConfirmFieldProps(confirmState)}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
+                      {confirmState === "match" && (
+                        <CheckCircle color="success" fontSize="small" aria-hidden="true" sx={{ mr: 0.5 }} />
+                      )}
                       <CustomTooltip text={showPasswords.confirm ? "Ocultar contraseña" : "Mostrar contraseña"} position="top">
                         <IconButton onClick={() => onToggleVisibility('confirm')} edge="end" size="small" aria-label={showPasswords.confirm ? "Ocultar contraseña" : "Mostrar contraseña"}>
                           {showPasswords.confirm ? <VisibilityOff /> : <Visibility />}
@@ -89,7 +96,7 @@ const ChangePasswordModal = ({ open, onClose, passwordData, onChange, onSave, sh
               <CustomButton 
                 onClick={onSave} 
                 fullWidth
-                disabled={!passwordData.old_password || !passwordData.new_password || !passwordData.confirm_password}
+                disabled={!passwordData.old_password || !passwordData.new_password || confirmState !== "match"}
               >
                 Cambiar contraseña
               </CustomButton>

@@ -1,15 +1,15 @@
 import React, { useState } from "react";
-import { Box, Button, FormControlLabel, Grid, Switch } from "@mui/material";
+import { Box, Button, Grid, Switch, Typography } from "@mui/material";
 import { TextField } from "../../ui/Field/Field";
 import { Business, Save, Settings } from "@mui/icons-material";
-import ProfileSectionTitle from "./ProfileSectionTitle";
+import ProfileCard from "./ProfileCard";
 import { updateTenant } from "../../../api/tenants";
 import { formatLongDate } from "../../../utils/date";
 import { showRequestError, showSuccess } from "../../../utils/alerts";
 
 const SETTINGS = [
-  { name: "displays_stock_in_storages", label: "Mostrar stock en almacenes" },
-  { name: "create_products_on_sale", label: "Permitir crear productos desde venta" },
+  { name: "displays_stock_in_storages", label: "Mostrar stock en almacenes", hint: "Las tiendas ven el stock disponible en los almacenes" },
+  { name: "create_products_on_sale", label: "Permitir crear productos desde venta", hint: "Agrega productos nuevos sin salir de la pantalla de venta" },
 ];
 
 /** Datos y configuraciones del negocio (solo dueño). */
@@ -50,60 +50,55 @@ const TenantSection = ({ tenantId, tenant }) => {
   return (
     <>
       <Grid item xs={12} md={6}>
-        <Box sx={{ mb: 3 }}>
-          <ProfileSectionTitle icon={Business} title="Información del negocio" />
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Nombre del negocio"
-                name="name"
-                value={tenantData.name}
-                onChange={handleTenantChange}
-                size="small"
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Nombre corto"
-                name="short_name"
-                value={tenantData.short_name}
-                size="small"
-                disabled
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Fecha de creación"
-                name="created_at"
-                value={tenantData.created_at ? formatLongDate(tenantData.created_at) : ""}
-                size="small"
-                disabled
-              />
-            </Grid>
-          </Grid>
-        </Box>
+        <ProfileCard icon={Business} title="Información del negocio" description="Datos generales de tu cuenta" delay={0}>
+          <TextField
+            fullWidth
+            label="Nombre del negocio"
+            name="name"
+            value={tenantData.name}
+            onChange={handleTenantChange}
+            size="small"
+          />
+          <TextField fullWidth label="Nombre corto" name="short_name" value={tenantData.short_name} size="small" disabled />
+          <TextField
+            fullWidth
+            label="Fecha de creación"
+            name="created_at"
+            value={tenantData.created_at ? formatLongDate(tenantData.created_at) : ""}
+            size="small"
+            disabled
+          />
+        </ProfileCard>
       </Grid>
 
       <Grid item xs={12} md={6}>
-        <Box sx={{ mb: 3 }}>
-          <ProfileSectionTitle icon={Settings} title="Configuraciones" />
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            {SETTINGS.map(({ name, label }) => (
-              <FormControlLabel
-                key={name}
-                control={<Switch name={name} checked={settings[name]} onChange={handleSettingChange} />}
-                label={label}
-              />
-            ))}
-          </Box>
-        </Box>
-
-        <Button fullWidth variant="contained" startIcon={<Save />} onClick={handleSave} disabled={saving}>
-          Guardar datos del negocio
-        </Button>
+        <ProfileCard
+          icon={Settings}
+          title="Configuraciones"
+          description="Cómo se comporta tu negocio"
+          delay={30}
+          action={
+            <Button variant="contained" startIcon={<Save />} onClick={handleSave} disabled={saving} sx={{ width: { xs: "100%", sm: "auto" } }}>
+              Guardar datos del negocio
+            </Button>
+          }
+        >
+          {SETTINGS.map(({ name, label, hint }) => (
+            <Box
+              key={name}
+              sx={{
+                display: "flex", alignItems: "center", justifyContent: "space-between", gap: 2,
+                p: 1.5, border: 1, borderColor: "divider", borderRadius: "10px",
+              }}
+            >
+              <Box sx={{ minWidth: 0 }}>
+                <Typography variant="body1" fontWeight={600} component="label" htmlFor={name}>{label}</Typography>
+                <Typography variant="body2" color="text.secondary">{hint}</Typography>
+              </Box>
+              <Switch id={name} name={name} checked={settings[name]} onChange={handleSettingChange} />
+            </Box>
+          ))}
+        </ProfileCard>
       </Grid>
     </>
   );

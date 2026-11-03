@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Alert, Grid } from "@mui/material";
+import { Alert, Box, Grid } from "@mui/material";
 import { useUser } from "../../../context/UserContext";
-import { isOwner } from "../../../constants/routeAccess";
+import { getRole, isOwner } from "../../../constants/routeAccess";
 import { getTenant } from "../../../api/tenants";
 import { getUser } from "../../../api/users";
 import { logger } from "../../../utils/logger";
 import { PageSkeleton } from "../../ui/Skeleton/Skeleton";
+import ProfileHero from "./ProfileHero";
 import TenantSection from "./TenantSection";
 import UserSection from "./UserSection";
 import PasswordSection from "./PasswordSection";
@@ -39,21 +40,21 @@ const Profile = () => {
   if (loading) return <PageSkeleton />;
 
   return (
-    <Grid container>
-      <Grid item xs={12} className="card">
-        {loadFailed && (
-          <Alert severity="error" sx={{ mb: 3 }}>
-            Error al cargar los datos
-          </Alert>
-        )}
+    <Box>
+      {loadFailed && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          Error al cargar los datos
+        </Alert>
+      )}
 
-        <Grid container spacing={3}>
-          {isOwner(user) && <TenantSection tenantId={user.tenant_id} tenant={tenant || {}} />}
-          <UserSection userId={user.user_id} initialUser={userInfo || {}} />
-          <PasswordSection userId={user.user_id} />
-        </Grid>
+      <ProfileHero userInfo={userInfo || {}} role={getRole(user)} tenant={tenant || {}} />
+
+      <Grid container spacing={2}>
+        {isOwner(user) && <TenantSection tenantId={user.tenant_id} tenant={tenant || {}} />}
+        <UserSection userId={user.user_id} initialUser={userInfo || {}} />
+        <PasswordSection userId={user.user_id} />
       </Grid>
-    </Grid>
+    </Box>
   );
 };
 
