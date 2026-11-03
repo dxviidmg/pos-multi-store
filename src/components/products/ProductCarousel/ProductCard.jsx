@@ -39,7 +39,7 @@ const ProductCard = ({ storeProduct, disabled = false, onClick }) => {
         width: 168,
         scrollSnapAlign: "start",
         bgcolor: "background.paper",
-        borderRadius: "16px",
+        borderRadius: "14px",
         boxShadow: 5,
         overflow: "hidden",
         cursor: disabled ? "not-allowed" : "pointer",

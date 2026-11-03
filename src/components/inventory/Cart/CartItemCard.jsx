@@ -134,7 +134,7 @@ const CartItemCard = ({
           sx={{
             width: "100%",
             bgcolor: "background.paper",
-            borderRadius: "12px",
+            borderRadius: "14px",
             border: "1px solid",
             borderColor: "divider",
             overflow: "hidden",
