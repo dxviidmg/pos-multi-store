@@ -12,6 +12,7 @@ Este documento acumula las auditorías de consistencia visual del frontend:
 3. [Auditoría de tablas](#3-auditoría-de-tablas--cerrada) — ✅ cerrada (3 nov 2026)
 4. [Auditoría de modales](#4-auditoría-de-modales--cerrada) — ✅ cerrada (3 nov 2026)
 5. [Auditoría de cards](#5-auditoría-de-cards--cerrada) — ✅ cerrada (3 nov 2026)
+6. [Auditoría de tipografía](#6-auditoría-de-tipografía--cerrada) — ✅ cerrada (3 nov 2026)
 
 ---
 
@@ -234,3 +235,34 @@ Convención adoptada (Opción A): **radio 14px** para las tarjetas de contenido 
 ## Nota
 
 Se optó por ajustar el valor del radio (no migrar los `Box` a `<Card>` de MUI) para mantener el cambio de bajo riesgo, sin tocar estructura, hover ni props.
+
+---
+
+# 6. Auditoría de tipografía — CERRADA
+
+Objetivo: usar los `variant` de `Typography` en vez de `fontSize`/`fontWeight` a mano. Escala del tema (`theme/typography.js`): h1 1.75/800, h2 1.5/700, h3 1.25/700, h4 1.125/700, h5 1/600, h6 0.875/600, body1 0.875/400, body2 0.8125/400, button 0.8125/600, caption 0.75.
+
+**Diagnóstico:** ~50 `<Typography>` definen tamaño/peso en `sx`. Hay dos grupos:
+
+1. **Coinciden exactamente con la escala** pero reinventan el tamaño a mano → deberían usar `variant`.
+2. **Tamaños fuera de escala** (`0.65`, `0.68`, `0.7`, `0.72`, `0.8`, `0.85`, `0.95`, `1.375`, `1.8rem`…) → densidad intencional en sidebar, carrito, menús y KPIs.
+
+Se adoptó la **Opción A (conservadora):** arreglar solo los casos del grupo 1 que coinciden exactamente en tamaño **y** peso **y** sin diferencia de color/lineHeight (cero cambio visual). El grupo 2 se deja como intencional.
+
+## 🟢 Resuelto (3 nov 2026)
+
+| Archivo | Antes | Ahora |
+|---|---|---|
+| `ui/EmptyState/EmptyState.jsx:42` | `variant="h6"` + `sx={{ fontSize:"1rem", fontWeight:600 }}` | `variant="h5"` (1rem/600 exacto) |
+| `tenant/Registration/RegistrationSuccess.jsx:21` | `sx={{ fontSize:"1.25rem", fontWeight:700, … }}` | `variant="h3"` + `sx={{ color, mb }}` (1.25rem/700 exacto) |
+
+## Casos revisados y descartados (no son cambio seguro)
+
+- `CountdownTimer:6` — `variant="body2"` forzado a `0.75rem`: sería `caption`, pero `caption` trae un color terciario distinto de `text.secondary`; cambiaría el color. Se deja.
+- `RegistrationSuccess:24` — `0.875rem` = body1 en tamaño, pero usa `lineHeight:1.6` (body1 es 1.5). No es exacto.
+- `PaymentModal:286`, `Modal.jsx:40` — `variant="h5"/"h6"` con override a `1.375rem`/`1.0625rem`: tamaños fuera de escala, intencionales para esos títulos.
+- Resto de `fontSize` sueltos: densidad intencional (sidebar `0.8rem`, carrito `0.65rem`, KPIs `1.5`/`1.375rem`, menús del header, íconos SVG, PDF, charts).
+
+## Nota
+
+La Opción A es deliberadamente acotada: solo 2 cambios realmente seguros (tamaño+peso+color+lineHeight idénticos a un `variant`). Normalizar los tamaños de densidad fuera de escala (Opción B) cambiaría la apariencia y no se hizo.
