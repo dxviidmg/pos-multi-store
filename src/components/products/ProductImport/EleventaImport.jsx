@@ -1,10 +1,11 @@
 import React, { useMemo } from "react";
-import { Alert, FormControl, Grid, InputLabel, LinearProgress, MenuItem } from "@mui/material";
+import { Alert, FormControl, Grid, InputLabel, MenuItem } from "@mui/material";
 import { TextField, Select } from "../../ui/Field/Field";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import PageHeader from "../../ui/PageHeader";
 import ImportStepper from "../../ui/Import/ImportStepper";
 import ImportFileDrop from "../../ui/Import/ImportFileDrop";
+import ImportProgress from "../../ui/Import/ImportProgress";
 import { ImportValidateButton, ImportSubmitButton } from "../../ui/Import/ImportActions";
 import YesNoSelect from "./YesNoSelect";
 import { getEleventaFields } from "./importFields";
@@ -40,7 +41,7 @@ const EleventaImport = ({ tabs }) => {
 
         <ImportStepper hasFile={!!formData.file} withConfig configured={!isFormIncomplete} validated={!!validationResult} />
 
-        {loading && <LinearProgress sx={{ mb: 2, borderRadius: 1 }} />}
+        <ImportProgress loading={loading} />
 
         <Grid container className="fill-row" spacing={2}>
           <Grid item xs={12} md={3}>

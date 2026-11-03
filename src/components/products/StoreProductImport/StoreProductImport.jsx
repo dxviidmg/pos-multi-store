@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid, MenuItem, FormControl, InputLabel, LinearProgress } from "@mui/material";
+import { Grid, MenuItem, FormControl, InputLabel } from "@mui/material";
 import { Select } from "../../ui/Field/Field";
 import DownloadIcon from "@mui/icons-material/Download";
 import CustomButton from "../../ui/Button/Button";
@@ -7,6 +7,7 @@ import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import PageHeader from "../../ui/PageHeader";
 import ImportStepper from "../../ui/Import/ImportStepper";
 import ImportFileDrop from "../../ui/Import/ImportFileDrop";
+import ImportProgress from "../../ui/Import/ImportProgress";
 import ImportErrorRows from "../../ui/Import/ImportErrorRows";
 import { ImportValidateButton, ImportSubmitButton } from "../../ui/Import/ImportActions";
 import { importStoreProducts, importStoreProductsValidation } from "../../../api/products";
@@ -53,7 +54,7 @@ const StoreProductImport = () => {
 
         <ImportStepper hasFile={!!formData.file} withConfig configured={!isFormIncomplete} validated={!!validationResult} />
 
-        {loading && <LinearProgress sx={{ mb: 2, borderRadius: 1 }} />}
+        <ImportProgress loading={loading} />
 
         <Grid container className="fill-row" spacing={2}>
           <Grid item xs={12} md={3}>
