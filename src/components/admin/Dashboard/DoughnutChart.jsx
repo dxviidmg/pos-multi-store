@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { PieChart } from "@mui/x-charts/PieChart";
 import { Box, Typography, useTheme } from "@mui/material";
-import { CHART_COLORS } from "../../../utils/chart";
+import { CHART_COLORS, CHART_FADED } from "../../../utils/chart";
 
 // Campo de agrupación y etiqueta cuando falta, por tipo de gráfica
 const GROUP_BY = {
@@ -62,7 +62,7 @@ const DoughnutChart = ({ title, data, dataType, metricType = "count" }) => {
             paddingAngle: 1,
             cornerRadius: 4,
             highlightScope: { faded: "global", highlighted: "item" },
-            faded: { innerRadius: 60, additionalRadius: -5, color: "gray" },
+            faded: { innerRadius: 60, additionalRadius: -5, color: CHART_FADED },
           },
         ]}
         height={300}

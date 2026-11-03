@@ -13,7 +13,7 @@ import Filters from "./Filters";
 import KPICard from "./KPICard";
 import DashboardLoading from "./DashboardLoading";
 import { MONTH_NAMES } from "../../../utils/date";
-import { CHART_COLORS } from "../../../utils/chart";
+import { CHART_COLORS, CHART_FADED } from "../../../utils/chart";
 import { formatCurrency, formatNumber } from "../../../utils/currency";
 import { getDepartmentDashboard } from "../../../api/dashboards";
 import DashboardHeader from "./DashboardHeader";
@@ -83,7 +83,7 @@ const StoreChart = ({ title, stores, field }) => {
             cornerRadius: 4,
             valueFormatter: ({ value }) => formatCurrency(value),
             highlightScope: { faded: "global", highlighted: "item" },
-            faded: { additionalRadius: -5, color: "gray" },
+            faded: { additionalRadius: -5, color: CHART_FADED },
           }]}
           height={300}
           margin={PIE_MARGIN}
