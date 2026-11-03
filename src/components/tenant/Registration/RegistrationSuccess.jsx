@@ -18,7 +18,7 @@ const RegistrationSuccess = ({ ownerUsername, onLogin, onRegisterAnother }) => (
     <Box sx={successIconSx}>
       <CheckCircleIcon sx={{ fontSize: 24, color: "success.main" }} />
     </Box>
-    <Typography sx={{ fontSize: "1.25rem", fontWeight: 700, color: "text.primary", mb: 0.5 }}>
+    <Typography variant="h3" sx={{ color: "text.primary", mb: 0.5 }}>
       ¡Listo!
     </Typography>
     <Typography sx={{ fontSize: "0.875rem", color: "text.secondary", mb: 1, lineHeight: 1.6 }}>

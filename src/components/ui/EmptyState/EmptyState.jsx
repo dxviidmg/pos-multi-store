@@ -39,7 +39,7 @@ const EmptyState = ({ icon: Icon = InboxOutlinedIcon, message, description, comp
       >
         <Icon sx={{ fontSize: 34 }} />
       </Box>
-      <Typography variant="h6" sx={{ fontSize: "1rem", fontWeight: 600 }}>{message}</Typography>
+      <Typography variant="h5">{message}</Typography>
       {description && (
         <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 380 }}>{description}</Typography>
       )}
