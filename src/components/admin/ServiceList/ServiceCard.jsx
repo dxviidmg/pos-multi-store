@@ -1,13 +1,14 @@
 import React from "react";
-import { Box, Card, CardContent, Chip, Typography } from "@mui/material";
+import { Box, Card, CardContent, Typography } from "@mui/material";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import CustomButton from "../../ui/Button/Button";
+import StatusChip from "../../ui/StatusChip";
 import { formatCurrency } from "../../../utils/utils";
 import { STORE_UPDATE } from "./services";
 import { whatsappButtonSx } from "./whatsappButtonSx";
 
 const PriceOrTag = ({ service, onPricing }) => {
-  if (service.price === 0) return <Chip label="Gratis" color="success" size="small" />;
+  if (service.price === 0) return <StatusChip label="Gratis" tone="success" />;
   if (service.price) {
     return (
       <Typography variant="body2" fontWeight={700} color="primary.main">

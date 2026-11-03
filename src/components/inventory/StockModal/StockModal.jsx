@@ -9,8 +9,9 @@ import { createTransfer } from "../../../api/transfers";
 import { addProducts, getStockOtherStores } from "../../../api/products";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { addToCart, updateMovementType, updateQuantityInCart } from "../../../redux/cart/cartActions";
-import { Grid, Box, Alert, Chip, Tabs, Tab } from "@mui/material";
+import { Grid, Box, Alert, Tabs, Tab } from "@mui/material";
 import { TextField } from "../../ui/Field/Field";
+import StatusChip from "../../ui/StatusChip";
 import { MOVEMENT_TYPES } from "../../../constants";
 import { useUser } from "../../../context/UserContext";
 
@@ -143,11 +144,9 @@ const StockModal = ({ isOpen, product, onClose }) => {
     {
       name: "Stock",
       selector: (row) => (
-        <Chip
+        <StatusChip
           label={row.available_stock}
-          color={row.available_stock > 0 ? "success" : "default"}
-          size="small"
-          variant="outlined"
+          tone={row.available_stock > 0 ? "success" : "default"}
         />
       ),
     },

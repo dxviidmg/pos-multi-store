@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react";
 import DataTable from "../../ui/DataTable/DataTable";
 import { getSubscriptions } from "../../../api/subscriptions";
-import { Grid, Chip } from "@mui/material";
+import { Grid } from "@mui/material";
 import { showRequestError } from "../../../utils/alerts";
 import { formatCurrency, formatLongDate } from "../../../utils/utils";
+import { STATUS_TONES } from "../../../constants";
 import PageHeader from "../../ui/PageHeader";
+import StatusChip from "../../ui/StatusChip";
 
 const statusMap = {
-  authorized: { label: "Autorizada", color: "success" },
-  paused: { label: "Pausada", color: "warning" },
-  cancelled: { label: "Cancelada", color: "error" },
-  expired: { label: "Vencida", color: "warning" },
+  authorized: { label: "Autorizada", tone: STATUS_TONES.SUCCESS },
+  paused: { label: "Pausada", tone: STATUS_TONES.WARNING },
+  cancelled: { label: "Cancelada", tone: STATUS_TONES.ERROR },
+  expired: { label: "Vencida", tone: STATUS_TONES.WARNING },
 };
 
 const formatCard = (row) => {
@@ -74,8 +76,8 @@ const SubscriptionList = () => {
             {
               name: "Estado",
               cell: (row) => {
-                const status = statusMap[row.status] || { label: row.status, color: "default" };
-                return <Chip size="small" label={status.label} color={status.color} variant="filled" />;
+                const status = statusMap[row.status] || { label: row.status, tone: STATUS_TONES.NEUTRAL };
+                return <StatusChip label={status.label} tone={status.tone} />;
               },
               width: 140,
             },

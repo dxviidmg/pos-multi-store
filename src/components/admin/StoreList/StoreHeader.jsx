@@ -1,13 +1,15 @@
 import React, { memo } from "react";
-import { Box, Chip, Grid, Typography } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 import AddBusinessOutlinedIcon from "@mui/icons-material/AddBusinessOutlined";
 import AutoAwesomeOutlinedIcon from "@mui/icons-material/AutoAwesomeOutlined";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import CustomButton from "../../ui/Button/Button";
 import CustomTooltip from "../../ui/Tooltip";
+import StatusChip from "../../ui/StatusChip";
+import { STATUS_TONES } from "../../../constants";
 
-const NOTICE_COLORS = { error: "error", warning: "warning" };
+const NOTICE_TONES = { error: STATUS_TONES.ERROR, warning: STATUS_TONES.WARNING };
 
 /** Saludo, título y avisos a la izquierda; ampliar plan y crear tienda ocupan 1/4 cada uno. */
 const StoreHeader = ({ title, greeting, notices = [], isOwner, createBlocked, createLabel, onCreate }) => (
@@ -18,12 +20,10 @@ const StoreHeader = ({ title, greeting, notices = [], isOwner, createBlocked, cr
       {notices.length > 0 && (
         <Box sx={{ display: "flex", alignItems: "center", gap: 1, flexWrap: "wrap", mt: 1 }}>
           {notices.map((notice) => (
-            <Chip
+            <StatusChip
               key={notice.notice}
               label={notice.notice}
-              color={NOTICE_COLORS[notice.variant] || "success"}
-              variant="outlined"
-              size="small"
+              tone={NOTICE_TONES[notice.variant] || STATUS_TONES.SUCCESS}
             />
           ))}
         </Box>

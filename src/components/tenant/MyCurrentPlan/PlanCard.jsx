@@ -1,10 +1,11 @@
 import React from "react";
-import { Grid, Typography, Box, Chip, Alert } from "@mui/material";
+import { Grid, Typography, Box, Alert } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
 import PageHeader from "../../ui/PageHeader";
 import CustomButton from "../../ui/Button/Button";
+import StatusChip from "../../ui/StatusChip";
 import { colors } from "../../../theme/colors";
 import { formatCurrency } from "../../../utils/utils";
 
@@ -48,7 +49,7 @@ const PlanCard = ({ plan, equivalent, planLoading, isOwner, hasAccess, onSubscri
     <Grid item xs={12} className="card">
       <PageHeader title="Mi plan actual" childrenMd="auto">
         {isSubscription ? (
-          <Chip icon={<CheckCircleIcon />} label="Domiciliación activada" color="success" variant="filled" />
+          <StatusChip icon={<CheckCircleIcon />} label="Domiciliación activada" tone="success" />
         ) : isOwner && equivalent ? (
           <CustomButton
             onClick={onSubscribe}
