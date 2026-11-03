@@ -1,13 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useCatalogOptions, useInvalidateCatalogOptions } from "../shared/useCatalogOptions";
 import { getPriceErrors, isProductFormIncomplete } from "./productValidation";
-import { createProduct, getStoreProducts, updateProduct, addProducts } from "../../../api/products";
+import { createProduct, getStoreProducts, updateProduct } from "../../../api/products";
 import { useUser } from "../../../context/UserContext";
 import { useForm } from "../../../hooks/useForm";
 import { useConversionUnits } from "../../../hooks/useConversions";
 import { isOwner } from "../../../constants/routeAccess";
 import { convertImageToWebp } from "../../../utils/image";
-import { showSuccess, showRequestError, showWarning } from "../../../utils/alerts";
+import { showSuccess, showRequestError } from "../../../utils/alerts";
 import noPhoto from "../../../assets/images/noPhoto.webp";
 
 const INITIAL_FORM_DATA = {
@@ -54,6 +54,7 @@ export const useProductForm = ({ productData, createFromSearch = false, onSaved 
   const [previewImage, setPreviewImage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [codeExists, setCodeExists] = useState(false);
+  const submittingRef = useRef(false);
 
   useEffect(() => {
     if (productData.id) {
@@ -113,41 +114,32 @@ export const useProductForm = ({ productData, createFromSearch = false, onSaved 
     readAsDataUrl(webpFile, setPreviewImage);
   };
 
-  const addInitialStock = async (createdProduct, quantity) => {
-    try {
-      const storeProducts = await getStoreProducts({ code: formData.code });
-      if (storeProducts.data.length > 0) {
-        await addProducts({ store_products: [{ id: storeProducts.data[0].id, quantity }] });
-        createdProduct.stock = (createdProduct.stock || 0) + quantity;
-      }
-    } catch {
-      showWarning("Producto creado sin stock inicial", "No se pudo agregar el stock. Ajústalo desde Inventario.");
-    }
-  };
-
   const submit = async () => {
+    if (submittingRef.current) return;
+    submittingRef.current = true;
     setIsLoading(true);
     const apiCall = formData.id ? updateProduct : createProduct;
 
-    // department "0" o vacío no se envía; initial_stock tampoco (se agrega aparte)
+    // department "0" o vacío no se envía; initial_stock solo se envía al crear con una sola sucursal
     const { initial_stock: initialStockValue, ...cleanFormData } = formData;
     if (cleanFormData.department === "0" || !cleanFormData.department) {
       delete cleanFormData.department;
     }
+    const initialStock = parseInt(initialStockValue);
+    const withInitialStock = !formData.id && isSingleStoreInside && initialStock > 0;
+    if (withInitialStock) cleanFormData.initial_stock = initialStock;
 
     try {
       const response = await apiCall(cleanFormData);
-      if (!formData.id && isSingleStoreInside && initialStockValue && parseInt(initialStockValue) > 0) {
-        await addInitialStock(response.data, parseInt(initialStockValue));
-      }
       onSaved(response.data);
       invalidateCatalogOptions();
       setFormData(INITIAL_FORM_DATA);
       setPreviewImage(null);
-      showSuccess(`Producto ${formData.id ? "actualizado" : "creado"}${isSingleStoreInside && initialStockValue ? ` con stock de ${initialStockValue}` : ""}`);
+      showSuccess(`Producto ${formData.id ? "actualizado" : "creado"}${withInitialStock ? ` con stock de ${initialStock}` : ""}`);
     } catch (error) {
       showRequestError(`${formData.id ? "actualizar" : "crear"} el producto`, error);
     } finally {
+      submittingRef.current = false;
       setIsLoading(false);
     }
   };
