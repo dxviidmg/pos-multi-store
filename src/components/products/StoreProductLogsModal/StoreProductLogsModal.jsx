@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Grid, LinearProgress } from "@mui/material";
+import { Grid } from "@mui/material";
 import { TextField } from "../../ui/Field/Field";
 import SaveIcon from "@mui/icons-material/Save";
 import CustomModal, { ModalBody } from "../../ui/Modal/Modal";
@@ -124,7 +124,6 @@ const StoreProductLogsModal = ({ isOpen, logs: logsData, onClose, onUpdate }) =>
             </Grid>
           ) : (
             <>
-              {loading && <LinearProgress sx={{ mb: 2, borderRadius: 1 }} />}
               <TextField
                 size="small"
                 label="Meses anteriores (iniciar desde cuántos meses atrás)"
@@ -135,7 +134,7 @@ const StoreProductLogsModal = ({ isOpen, logs: logsData, onClose, onUpdate }) =>
                 sx={{ width: "100%", mb: 2 }}
               />
               <PageHeader title="Últimos movimientos" plain />
-              <DataTable noDataComponent="Sin movimientos" data={logs} columns={COLUMNS} />
+              <DataTable progressPending={loading} noDataComponent="Sin movimientos" data={logs} columns={COLUMNS} />
             </>
           )}
         </Grid>
