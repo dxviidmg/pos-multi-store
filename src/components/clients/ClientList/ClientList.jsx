@@ -97,6 +97,7 @@ const ClientList = () => {
             },
             {
               name: "Acciones",
+              width: 90,
               cell: (row) => (
                 <CustomTooltip text="Editar cliente">
                   <CustomButton onClick={() => clientModal.open(row)}>

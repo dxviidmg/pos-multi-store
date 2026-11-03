@@ -85,6 +85,7 @@ const CatalogList = ({ useData, queryKey, deleteFn, useCreate, useUpdate, labels
             { name: "Número de productos", selector: (row) => row.product_count },
             {
               name: "Acciones",
+              width: 90,
               cell: (row) => (
                 <CustomTooltip text={`Editar ${labels.singular}`}>
                   <CustomButton onClick={() => modal.open(row)}>
