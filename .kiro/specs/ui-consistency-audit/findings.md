@@ -53,24 +53,41 @@ Los 5 botones primarios que usaban `<Button>` crudo de `@mui/material` se migrar
 
 ---
 
-## 🟠 Media prioridad — Inconsistencias de variante/color para la misma intención
+## ~~🟠 Media prioridad — Inconsistencias de variante/color para la misma intención~~ ✅ RESUELTO (3 nov 2026)
+
+**Decisión tomada:** se formalizó `variant` como prop de `CustomButton` (default `"contained"`, acepta `"outlined"` y `"text"`). Todos los botones de la app usan ahora `CustomButton`; `<Button>` crudo de `@mui/material` solo queda en `ui/Button/Button.jsx` (el propio componente) y en `ui/ErrorBoundary.jsx` (excepción intencional, ver 🟡).
+
+Botones migrados en este paso:
+
+| Archivo | Botón | variant |
+|---|---|---|
+| `admin/StoreList/StoreHeader.jsx` | "Ampliar plan" | `outlined` |
+| `layout/Login/LoginForm.jsx` | "Crear mi negocio" | `outlined` |
+| `tenant/MyCurrentPlan/MyCurrentPlan.jsx` | "Cancelar suscripción" | `text` + `color="error"` |
+| `tenant/MyCurrentPlan/PlanCard.jsx` | "Domiciliar" | `contained` + `color="success"` |
+| `tenant/MyCurrentPlan/PlanCard.jsx` | "Cambiar tarjeta" | `contained` (gradiente de marca) |
+| `tenant/MyCurrentPlan/PlanCard.jsx` | "Actualizar tarjeta", "Reactivar" | `text` + `color="inherit"` (dentro de `Alert`) |
+| `ui/NotificationsMenu/NotificationsMenu.jsx` | "Limpiar" | `text` |
+| `sales/SaleList/PaymentsCell.jsx` | enlace de métodos de pago | `text` + `height: "auto"` |
+
+### Detalle original (referencia)
 
 - **`admin/StoreList/StoreHeader.jsx:31`** — "Ampliar plan" es `<Button variant="outlined">` con `sx={{ height: 40, bgcolor: "background.paper", color: "text.primary", borderColor: "divider" }}`. Replica a mano lo que debería ser un `CustomButton` o un estilo tokenizado reutilizable; convive con `CustomButton` en el mismo componente. Botón secundario sin patrón compartido.
 - **`tenant/MyCurrentPlan/PlanCard.jsx:52,106,138,156`** — 4 botones crudos con colores/variantes dispares: uno `color="success"` con `sx={{ bgcolor: "success.main" }}`, otro con `background: colors.gradient.brand`, y dos `color="inherit"` dentro de `Alert`. Los botones dentro de `Alert` (acción de alerta) son un caso aceptable de MUI, pero los dos primeros (`:52` domiciliar, `:106` cambiar tarjeta) deberían unificarse: hoy "acción primaria" se ve verde en un lado y gradiente de marca en otro.
 - **`layout/Login/LoginForm.jsx:71`** — "Crear mi negocio" es `<Button variant="outlined">` mientras el botón primario de al lado sí es `CustomButton`. Botón secundario sin un patrón outlined compartido (mismo caso que `StoreHeader` y `CancelSubscriptionModal`).
 - **`tenant/MyCurrentPlan/MyCurrentPlan.jsx:182`** — "Cancelar suscripción" `<Button variant="text" color="error" size="small">`. Acción destructiva sin patrón consistente.
 
-**Patrón de fondo:** no existe una variante "secundaria/outlined" estandarizada. Cada pantalla inventa su botón secundario (`outlined` + `sx` ad-hoc). Hay al menos 4 implementaciones distintas del mismo concepto. Conviene decidir: o `CustomButton` acepta `variant="outlined"`, o se crea un `SecondaryButton`.
+**Patrón de fondo (resuelto):** ya no hay implementaciones ad-hoc del botón secundario. Se optó por formalizar `variant` en `CustomButton` (en vez de crear un `SecondaryButton`), manteniendo un solo componente.
 
 ---
 
 ## 🟡 Baja prioridad — Casos legítimos pero vale documentar/confirmar
 
-- **`admin/Dashboard/ChartTypeSelect.jsx:2`** — importa `Select` crudo de `@mui/material` en vez de `ui/Field/Field`. Puede ser intencional (select compacto de control de gráfica, no un campo de formulario), pero es la **única** excepción al estándar "Select viene de Field" y conviene confirmarla o anotarla.
-- **`sales/SaleList/PaymentsCell.jsx:11`** — `<Button>` crudo usado como enlace de texto subrayado dentro de una celda. Legítimo (no es un botón de acción), pero es un patrón "enlace" sin componente compartido; si se repite en otra celda, extraer un `LinkButton`.
-- **`ui/NotificationsMenu/NotificationsMenu.jsx:145`** — `<Button>` crudo ("limpiar"). Podría ser `CustomButton`.
-- **`ui/ErrorBoundary.jsx:23`** — `<Button>` crudo. Aceptable: no puede depender de componentes que quizá fallaron.
-- **`admin/Dashboard/TodayReferenceLine.jsx`** — 2 `style={{}}` inline. Es SVG de gráfica, donde `sx` no aplica. Legítimo.
+- **`admin/Dashboard/ChartTypeSelect.jsx:2`** — ⏳ **Pendiente de confirmar.** Importa `Select` crudo de `@mui/material` en vez de `ui/Field/Field`. Puede ser intencional (select compacto de control de gráfica, no un campo de formulario), pero es la **única** excepción al estándar "Select viene de Field".
+- **`sales/SaleList/PaymentsCell.jsx:11`** — ✅ **Resuelto.** Migrado a `CustomButton variant="text"` (enlace de texto en celda, con `height: "auto"` para no romper la fila de la tabla).
+- **`ui/NotificationsMenu/NotificationsMenu.jsx:145`** — ✅ **Resuelto.** "Limpiar" migrado a `CustomButton variant="text"`.
+- **`ui/ErrorBoundary.jsx:23`** — ✅ **Confirmado como excepción.** Se mantiene con `<Button>` crudo de MUI: es el fallback de errores y no debe depender de componentes de UI compartidos que pudieron ser la causa del fallo.
+- **`admin/Dashboard/TodayReferenceLine.jsx`** — ✅ **Confirmado legítimo.** 2 `style={{}}` inline en SVG de gráfica, donde `sx` no aplica.
 
 ---
 
@@ -87,5 +104,14 @@ Los 5 botones primarios que usaban `<Button>` crudo de `@mui/material` se migrar
 ## Recomendación de acción (en commits atómicos)
 
 1. ~~**Fix rápido y seguro (🔴):** migrar los 5 botones primarios a `CustomButton`.~~ ✅ **Hecho (3 nov 2026).**
-2. **Decisión de diseño (🟠):** definir la variante secundaria/outlined estándar y aplicarla a `StoreHeader`, `LoginForm`, `CancelSubscriptionModal`, `MyCurrentPlan`. Requiere elegir el patrón (¿`CustomButton variant="outlined"` o componente aparte?).
-3. **Confirmar excepciones (🟡):** `ChartTypeSelect`, `PaymentsCell`.
+2. ~~**Decisión de diseño (🟠):** definir la variante secundaria/outlined estándar.~~ ✅ **Hecho (3 nov 2026).** Se formalizó `variant` en `CustomButton` y se migraron todos los botones restantes.
+3. **Confirmar excepciones (🟡):** solo queda `ChartTypeSelect` por confirmar. `PaymentsCell` y `NotificationsMenu` ya se migraron; `ErrorBoundary` y `TodayReferenceLine` quedan como excepciones confirmadas.
+
+---
+
+## Ajustes de layout aplicados (3 nov 2026)
+
+Junto con la estandarización de botones se hicieron dos ajustes de presentación solicitados:
+
+- **`/perfil/`** — los tres botones de acción (`UserSection`, `TenantSection`, `PasswordSection`) ahora usan `fullWidth` (ancho completo en todas las resoluciones, no solo móvil).
+- **`/tiendas/` (`StoreHeader`)** — reestructurado a `Grid container`: título + saludo + chips de avisos en `xs=12 md=6`; "Ampliar plan" y "Crear tienda" en `xs=6 md=3` cada uno (1/4 del ancho en escritorio, mitad en móvil), ambos con `fullWidth`.
