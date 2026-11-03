@@ -10,6 +10,7 @@ Este documento acumula las auditorías de consistencia visual del frontend:
 1. [Auditoría de botones](#1-auditoría-de-botones--cerrada) — ✅ cerrada (3 nov 2026)
 2. [Auditoría de avisos (chips, alerts, cajas de aviso)](#2-auditoría-de-avisos--abierta) — ✅ cerrada (3 nov 2026)
 3. [Auditoría de tablas](#3-auditoría-de-tablas--cerrada) — ✅ cerrada (3 nov 2026)
+4. [Auditoría de modales](#4-auditoría-de-modales--cerrada) — ✅ cerrada (3 nov 2026)
 
 ---
 
@@ -153,3 +154,50 @@ No rompe nada, pero una columna de un solo ícono estirada se ve desbalanceada. 
 2. ~~**🟡 Definir un ancho estándar** para columnas "Acciones" de un solo botón~~ ✅ **Hecho (3 nov 2026).** `width: 90` en `ClientList` y `CatalogList`.
 
 **Auditoría de tablas cerrada:** sin puntos abiertos.
+
+---
+
+# 4. Auditoría de modales — CERRADA
+
+Objetivo: que todos los modales usen `CustomModal` + `ModalBody` y un `maxWidth` consistente. Estándar: `CustomModal` (props `showOut`, `onClose`, `title`, `maxWidth` numérico en px, default 800) y `ModalBody` (padding responsivo + fondo `modalBody.main` + `modalFieldSx` para los inputs).
+
+**Diagnóstico general: buen estado, con un hueco claro.** 23 modales usan `CustomModal`. Los `Dialog`/`Drawer`/`Popover` crudos son casos legítimos (ver excepciones). El hueco: **7 modales usan `CustomModal` pero arman el cuerpo a mano con `<Box sx={{ p: … }}>` en vez de `ModalBody`.**
+
+## 🟠 Media — Modales que no usan `ModalBody`
+
+Al no usar `ModalBody`, estos modales no aplican el fondo `modalBody.main` (se ven con el fondo del header), ni `modalFieldSx` (estilo de input de modal), y usan padding dispar (`p: 2` vs `p: 3`):
+
+| Archivo:línea | Cuerpo actual | Debería |
+|---|---|---|
+| `tenant/MyCurrentPlan/SubscribeModal.jsx:11` | `<Box sx={{ p: 3 }}>` | `ModalBody` |
+| `tenant/MyCurrentPlan/UpdateCardModal.jsx:16` | `<Box sx={{ p: 3 }}>` | `ModalBody` |
+| `tenant/MyCurrentPlan/CancelSubscriptionModal.jsx:63` | `<Box sx={{ p: 3 }}>` | `ModalBody` |
+| `admin/StoreList/StorePaymentModal.jsx:30` | `<Box sx={{ p: 3, textAlign: "center" }}>` | `ModalBody sx={{ textAlign: "center" }}` |
+| `admin/StoreList/CreateStoreModal.jsx:49` | `<Box sx={{ p: 3, maxWidth: 420, mx: "auto" }}>` | `ModalBody` (+ sx extra) |
+| `products/PriceUpdateModal/PriceUpdateModal.jsx:93` | `<Grid container sx={{ p: 2 }}>` | `ModalBody` envolviendo el `Grid` |
+| `inventory/StockModal/StockModal.jsx:188` | `<Box sx={{ p: 2, bgcolor: "background.paper" }}>` | `ModalBody` (quita el bgcolor manual) |
+
+Nota: los tres de `tenant` montan el Brick de Mercado Pago (`<div id=…>`); migrar a `ModalBody` solo cambia el wrapper, el contenedor del Brick se conserva.
+
+## 🟡 Baja — `maxWidth` no numérico en `StockModal`
+
+`inventory/StockModal/StockModal.jsx:185` pasa `maxWidth="sm"` a `CustomModal`, pero `CustomModal` espera un número en px (default 800) y lo aplica como `maxWidth` de CSS. El string `"sm"` no corresponde al contrato del componente. Sugerencia: usar un número (p. ej. `maxWidth={600}`).
+
+## ✅ Lo que está bien
+
+- 16 de 23 modales ya usan `CustomModal` + `ModalBody` correctamente.
+- El header navy, el botón de cierre, el desenfoque de fondo y la animación `modal-enter` viven en `CustomModal` (no se repiten por pantalla).
+
+## Excepciones confirmadas (no son `CustomModal` a propósito)
+
+- `ui/BarcodeScanner/BarcodeScanner.jsx` — `<Dialog>` del escáner con cámara (necesita comportamiento propio).
+- `admin/ServiceList/ConsultDialog.jsx` — `<Dialog>` con input/validador (AGENTS.md permite diálogos especiales fuera de `CustomModal`).
+- `ui/PageHelp/PageHelp.jsx`, `ui/HeaderPopoverMenu/HeaderPopoverMenu.jsx` — `<Popover>` (poppers, no modales).
+- `layout/MainLayout/SidebarDrawer.jsx` — `<Drawer>` (sidebar, no modal).
+
+## Recomendación de acción
+
+1. ~~**🟠 Migrar los 7 modales a `ModalBody`**~~ ✅ **Hecho (3 nov 2026).** `SubscribeModal`, `UpdateCardModal`, `CancelSubscriptionModal`, `StorePaymentModal`, `CreateStoreModal`, `PriceUpdateModal`, `StockModal` ahora usan `ModalBody`; el `sx` extra (textAlign, maxWidth interno) se movió al cuerpo.
+2. ~~**🟡 Corregir `maxWidth`** de `StockModal`~~ ✅ **Hecho (3 nov 2026).** `maxWidth="sm"` → `maxWidth={600}`.
+
+**Auditoría de modales cerrada:** sin puntos abiertos.
