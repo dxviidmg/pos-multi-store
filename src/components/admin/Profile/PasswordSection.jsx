@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button, Grid, IconButton, InputAdornment } from "@mui/material";
 import { TextField } from "../../ui/Field/Field";
-import { Lock, Visibility, VisibilityOff } from "@mui/icons-material";
+import { CheckCircle, Lock, Visibility, VisibilityOff } from "@mui/icons-material";
 import CustomTooltip from "../../ui/Tooltip";
 import ProfileCard from "./ProfileCard";
 import { changePassword } from "../../../api/users";
@@ -58,6 +58,9 @@ const PasswordSection = ({ userId }) => {
     }
   };
 
+  const { new_password: newPassword, confirm_password: confirmPassword } = passwordData;
+  const confirmState = !confirmPassword ? null : confirmPassword === newPassword ? "match" : "mismatch";
+
   const isIncomplete = PASSWORD_FIELDS.some(({ name }) => !passwordData[name]);
 
   return (
@@ -72,7 +75,7 @@ const PasswordSection = ({ userId }) => {
             variant="contained"
             startIcon={<Lock />}
             onClick={handleSave}
-            disabled={saving || isIncomplete}
+            disabled={saving || isIncomplete || confirmState === "mismatch"}
             sx={{ width: { xs: "100%", sm: "auto" } }}
           >
             Cambiar contraseña
@@ -80,6 +83,7 @@ const PasswordSection = ({ userId }) => {
         }
       >
         {PASSWORD_FIELDS.map(({ name, label }) => {
+          const isConfirm = name === "confirm_password";
           return (
           <TextField
             key={name}
@@ -90,9 +94,18 @@ const PasswordSection = ({ userId }) => {
             onChange={handleChange}
             size="small"
             type={visible[name] ? "text" : "password"}
+            error={isConfirm && confirmState === "mismatch"}
+            helperText={
+              isConfirm && confirmState === "mismatch" ? "Las contraseñas no coinciden"
+                : isConfirm && confirmState === "match" ? "Las contraseñas coinciden" : undefined
+            }
+            FormHelperTextProps={isConfirm && confirmState === "match" ? { sx: { color: "success.main" } } : undefined}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
+                  {isConfirm && confirmState === "match" && (
+                    <CheckCircle color="success" fontSize="small" aria-hidden="true" sx={{ mr: 0.5 }} />
+                  )}
                   <CustomTooltip text={visible[name] ? "Ocultar contraseña" : "Mostrar contraseña"} position="top">
                     <IconButton
                       onClick={() => toggleVisibility(name)}
