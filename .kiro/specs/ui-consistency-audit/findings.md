@@ -75,11 +75,18 @@ Los `<Chip>` de estado se migraron a `StatusChip` con `tone`/`label`. Convenció
 
 **No migrados (no son avisos de estado):** contadores de resultados (`SearchProduct`), nombre de archivo (`ImportFileDrop`), contadores de importación (`ImportActions`), chip de impresora con sx de punto (`PaymentSubmitPanel`), chip de `AuditCard` (recibe color por prop), rol (`ProfileHero`).
 
-## 🟡 Media-baja — `variant` de Alert sin criterio consistente — PENDIENTE
+## ~~🟡 Media-baja — `variant` de Alert sin criterio consistente~~ ✅ RESUELTO (3 nov 2026)
 
-> La parte de chips ya se resolvió (arriba). Queda la convención de **Alerts**.
+Convención adoptada: **`variant="filled"` en todos los Alerts** y radio uniforme (8px del tema, quitando los `borderRadius` locales de los alerts inline). Estandarización in situ (sin componente nuevo: MUI `Alert` + `severity` ya unifica color e ícono).
 
-- **Alerts:** mezcla de `variant="filled"` en muchos (`PaymentModal`, `ProductCatalog`, `EleventaImport`…) y sin variant en otros (modales de `tenant`, `RequireAccess`, `Profile`). El radio también varía: unos `borderRadius: 2`, otros `"10px"`, otros nada (heredan del tema).
+- **`variant="filled"` agregado** a los que no lo tenían: `PlanCard` (4), `StockModal` (sin stock), `BarcodeScanner`, `RestartService` (2, eran outlined), `ChangePasswordModal`, `RequireAccess`, `MyCurrentPlan`, `SubscribeModal`, `UpdateCardModal`, `CancelSubscriptionModal`, `Profile`, `Registration`, `LoginForm`.
+- **Radios locales quitados** (heredan 8px): `RequireAccess`, `Registration`, `LoginForm`, `StockRequestAlert`.
+- **Ya eran filled, sin cambios:** `PaymentModal`, `ProductCatalog`, `EleventaImport`, `TraditionalImport`, `StockModal` (otros 2), `PriceUpdateModal`, `ProductFormFields`.
+
+### Excepciones confirmadas
+
+- **Toasts flotantes** `products/SearchProduct/StockVerificationSnackbar.jsx` y `ui/ConnectionStatusBanner.jsx` conservan `borderRadius: "10px"`: son avisos flotantes con sombra, visualmente distintos de los alerts inline.
+- **`ui/AuditCard/AuditCard.jsx`** usa `<Card variant="outlined">` (no es un `Alert`), fuera de alcance.
 
 ## ✅ Lo que está bien
 
@@ -91,7 +98,9 @@ Los `<Chip>` de estado se migraron a `StatusChip` con `tone`/`label`. Convenció
 
 1. ~~**🔴 Rehacer `StatusChip`**~~ ✅ **Hecho (3 nov 2026).** Recibe `tone` + `label`, variante filled, con `STATUS_TONES`.
 2. ~~**🟠 Crear un mapa único de tono de estado**~~ ✅ **Hecho (3 nov 2026).** `STATUS_TONES` en `constants/enums.js`; `statusMap`/`NOTICE_TONES` lo consumen; chips migrados a `StatusChip`.
-3. **🟡 Definir la convención de Alerts** (filled + radio uniforme) y aplicarla. ⏳ **Pendiente.**
+3. ~~**🟡 Definir la convención de Alerts** (filled + radio uniforme) y aplicarla.~~ ✅ **Hecho (3 nov 2026).** `variant="filled"` en todos los alerts inline, radios locales quitados (heredan 8px), toasts flotantes como excepción.
+
+**Auditoría de avisos cerrada:** chips (`StatusChip` + `STATUS_TONES`) y alerts (filled + radio uniforme) estandarizados.
 
 ### Inventario de referencia
 
