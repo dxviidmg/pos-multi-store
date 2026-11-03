@@ -13,6 +13,7 @@ Este documento acumula las auditorías de consistencia visual del frontend:
 4. [Auditoría de modales](#4-auditoría-de-modales--cerrada) — ✅ cerrada (3 nov 2026)
 5. [Auditoría de cards](#5-auditoría-de-cards--cerrada) — ✅ cerrada (3 nov 2026)
 6. [Auditoría de tipografía](#6-auditoría-de-tipografía--cerrada) — ✅ cerrada (3 nov 2026)
+7. [Auditoría de espaciados / sx repetidos](#7-auditoría-de-espaciados--sx-repetidos--cerrada) — ✅ cerrada (3 nov 2026)
 
 ---
 
@@ -266,3 +267,43 @@ Se adoptó la **Opción A (conservadora):** arreglar solo los casos del grupo 1 
 ## Nota
 
 La Opción A es deliberadamente acotada: solo 2 cambios realmente seguros (tamaño+peso+color+lineHeight idénticos a un `variant`). Normalizar los tamaños de densidad fuera de escala (Opción B) cambiaría la apariencia y no se hizo.
+
+---
+
+# 7. Auditoría de espaciados / sx repetidos — CERRADA
+
+Objetivo: detectar `sx` duplicados que valgan como clase de `App.css` o componente compartido.
+
+**Diagnóstico: poco que estandarizar.** `App.css` ya tiene buenas utilidades (`.card`, `.card-interactive`, `.fill-row`, `.text-success/danger/warning`, `.status-dot`, animaciones). Los patrones `sx` tipo "flex centrado" o "space-between" están dispersos **pero con variaciones** (distinto `gap`, `flexWrap`, `flexDirection`); extraerlos a una clase única los volvería rígidos, así que **no se tocaron** (decisión deliberada).
+
+Se encontró **un** candidato de duplicación literal real y se corrigió.
+
+## 🟡 Resuelto — Barra de progreso de importación duplicada (3 nov 2026)
+
+`{loading && <LinearProgress sx={{ mb: 2, borderRadius: 1 }} />}` aparecía idéntica en 4 pantallas de importación. Se extrajo a `ui/Import/ImportProgress.jsx` (componente `<ImportProgress loading={…} />`), coherente con las demás piezas de `ui/Import/`.
+
+| Archivo | Antes | Ahora |
+|---|---|---|
+| `sales/SaleImport/SaleImport.jsx:50` | `{loading && <LinearProgress sx={…} />}` | `<ImportProgress loading={loading} />` |
+| `products/StoreProductImport/StoreProductImport.jsx:56` | idem | `<ImportProgress>` |
+| `products/ProductImport/TraditionalImport.jsx:51` | idem | `<ImportProgress>` |
+| `products/ProductImport/EleventaImport.jsx:43` | idem | `<ImportProgress>` |
+
+## ❌ No tocado (deliberado)
+
+- Patrones `flex center` / `space-between`: dispersos pero con variaciones; una clase única los volvería rígidos. Se dejan como `sx` inline.
+- No se encontraron otros `sx` duplicados literalmente que justifiquen una clase o componente.
+
+---
+
+## Estado global de la auditoría de consistencia visual
+
+Las 7 auditorías están cerradas:
+
+1. ✅ Botones — todos usan `CustomButton`
+2. ✅ Avisos — `StatusChip` + `STATUS_TONES`, Alerts filled
+3. ✅ Tablas — carga unificada, anchos de acción
+4. ✅ Modales — todos usan `ModalBody`
+5. ✅ Cards — radio 14px unificado
+6. ✅ Tipografía — variants de la escala (Opción A)
+7. ✅ Espaciados — `ImportProgress` compartido
