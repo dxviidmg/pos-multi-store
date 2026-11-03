@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { Button, Grid } from "@mui/material";
+import { Grid } from "@mui/material";
 import { TextField } from "../../ui/Field/Field";
+import CustomButton from "../../ui/Button/Button";
 import { Person, Save } from "@mui/icons-material";
 import ProfileCard from "./ProfileCard";
 import { updateUser } from "../../../api/users";
@@ -47,9 +48,9 @@ const UserSection = ({ userId, initialUser }) => {
         description="Tus datos de contacto"
         delay={60}
         action={
-          <Button variant="contained" startIcon={<Save />} onClick={handleSave} disabled={saving} sx={{ width: { xs: "100%", sm: "auto" } }}>
+          <CustomButton startIcon={<Save />} onClick={handleSave} disabled={saving} sx={{ width: { xs: "100%", sm: "auto" } }}>
             Guardar cambios
-          </Button>
+          </CustomButton>
         }
       >
         <TextField fullWidth label="Usuario" name="username" value={userData.username} size="small" disabled />

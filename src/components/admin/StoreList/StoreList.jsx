@@ -1,8 +1,9 @@
 import { useEffect, useCallback, useMemo, useRef, useState } from "react";
-import { Button, Box, useMediaQuery, useTheme } from "@mui/material";
+import { Box, useMediaQuery, useTheme } from "@mui/material";
 import StorefrontOutlinedIcon from "@mui/icons-material/StorefrontOutlined";
 import CardGallery from "../../ui/CardGallery/CardGallery";
 import DataTable from "../../ui/DataTable/DataTable";
+import CustomButton from "../../ui/Button/Button";
 import { useUser } from "../../../context/UserContext";
 import { isOwner as isOwnerUser } from "../../../constants/routeAccess";
 import { STORE_TYPES } from "../../../constants";
@@ -153,7 +154,7 @@ const StoreList = () => {
       title={isOwner ? "Aún no tienes tiendas" : "No hay tiendas registradas"}
       description={isOwner ? "Crea la primera para empezar a vender." : undefined}
       action={isOwner && (
-        <Button variant="contained" onClick={() => openCreateStore()} disabled={createStoreBlocked}>Crear mi primera tienda</Button>
+        <CustomButton onClick={() => openCreateStore()} disabled={createStoreBlocked}>Crear mi primera tienda</CustomButton>
       )}
     />
   ) : (

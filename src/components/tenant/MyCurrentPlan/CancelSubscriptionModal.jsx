@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Typography, Alert, Button, Stack, MenuItem } from "@mui/material";
+import { Box, Typography, Alert, Stack, MenuItem } from "@mui/material";
 import { TextField } from "../../ui/Field/Field";
 import CustomModal from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
@@ -95,14 +95,13 @@ const CancelSubscriptionModal = ({ isOpen, onClose }) => {
             <CustomButton onClick={handleClose} disabled={cancelling} variant="outlined">
               No, mantener
             </CustomButton>
-            <Button
+            <CustomButton
               onClick={handleCancelSubscription}
               disabled={!reason || cancelling}
-              variant="contained"
               color="error"
             >
               {cancelling ? "Cancelando..." : "Sí, cancelar"}
-            </Button>
+            </CustomButton>
           </Stack>
         </Box>
       </CustomModal>

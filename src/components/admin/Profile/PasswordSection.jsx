@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { Button, Grid, IconButton, InputAdornment } from "@mui/material";
+import { Grid, IconButton, InputAdornment } from "@mui/material";
 import { TextField } from "../../ui/Field/Field";
+import CustomButton from "../../ui/Button/Button";
 import { CheckCircle, Lock, Visibility, VisibilityOff } from "@mui/icons-material";
 import CustomTooltip from "../../ui/Tooltip";
 import ProfileCard from "./ProfileCard";
@@ -72,15 +73,14 @@ const PasswordSection = ({ userId }) => {
         description="Mínimo 6 caracteres"
         delay={120}
         action={
-          <Button
-            variant="contained"
+          <CustomButton
             startIcon={<Lock />}
             onClick={handleSave}
             disabled={saving || isIncomplete || confirmState === "mismatch"}
             sx={{ width: { xs: "100%", sm: "auto" } }}
           >
             Cambiar contraseña
-          </Button>
+          </CustomButton>
         }
       >
         {PASSWORD_FIELDS.map(({ name, label }) => {
