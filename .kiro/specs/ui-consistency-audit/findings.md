@@ -14,6 +14,7 @@ Este documento acumula las auditorías de consistencia visual del frontend:
 5. [Auditoría de cards](#5-auditoría-de-cards--cerrada) — ✅ cerrada (3 nov 2026)
 6. [Auditoría de tipografía](#6-auditoría-de-tipografía--cerrada) — ✅ cerrada (3 nov 2026)
 7. [Auditoría de espaciados / sx repetidos](#7-auditoría-de-espaciados--sx-repetidos--cerrada) — ✅ cerrada (3 nov 2026)
+8. [Auditoría de componentes reutilizables](#8-auditoría-de-componentes-reutilizables--abierta) — 🔓 abierta (3 nov 2026)
 
 ---
 
@@ -307,3 +308,37 @@ Las 7 auditorías están cerradas:
 5. ✅ Cards — radio 14px unificado
 6. ✅ Tipografía — variants de la escala (Opción A)
 7. ✅ Espaciados — `ImportProgress` compartido
+
+---
+
+# 8. Auditoría de componentes reutilizables — ABIERTA
+
+Objetivo: revisar `ui/` y `shared/`, quitar props que siempre son el mismo valor, fusionar lo fusionable y corregir inconsistencias CSS/MUI (tokens vs valores crudos).
+
+## 🔴 Resuelto — Colores hardcodeados → tokens (3 nov 2026)
+
+| Archivo | Antes | Ahora |
+|---|---|---|
+| `ui/Icons/Icons.jsx` | `chooseIcon`: `color:"green"` / `color:"red"` | `color:"success.main"` / `color:"error.main"` |
+| `admin/Dashboard/DoughnutChart.jsx:65` | `faded: { … color:"gray" }` | `color: CHART_FADED` |
+| `admin/Dashboard/DepartmentDashboard.jsx:86` | `faded: { … color:"gray" }` | `color: CHART_FADED` |
+
+Se agregó `CHART_FADED` (`#9ca3af`) a `utils/chart.js` como fuente única del gris de los segmentos atenuados de los PieChart.
+
+## 🟡 Resuelto — Radio inconsistente entre poppers del header (3 nov 2026)
+
+Los dos poppers tenían radios muy distintos. Unificados a `1.5` (12px):
+
+| Archivo | Antes | Ahora |
+|---|---|---|
+| `ui/HeaderPopoverMenu/HeaderPopoverMenu.jsx` | `borderRadius: 3` (24px) | `borderRadius: 1.5` (12px) |
+| `ui/PageHelp/PageHelp.jsx` | `borderRadius: 1.5` (12px) | (ya correcto, referencia) |
+
+## ⏳ Pendiente (para después, a petición del usuario)
+
+- **#3 `CustomTooltip` `position`** — default es `"right"` pero casi todos los usos pasan `"bottom"`. Candidato a cambiar el default a `"bottom"` y quitar la prop repetida. Falta contar usos antes de decidir.
+- **#5 Fila de menú del header** — `MessageGroupsMenu` y `StockRequestMenu` repiten el patrón `ListItem` con `borderBottom`/`primaryTypographyProps`. Posible extracción menor; riesgo/beneficio bajo.
+
+## ✅ Revisado y correcto (sin cambios)
+
+`CustomButton`, `StatusChip`, `ModalBody`, `Field`, `CardGallery`, `EmptyState`, `ViewModeToggle`, `DropZone`, `VisuallyHiddenInput`, `SimpleTable`, `HeaderPopoverMenu` (estructura). Los presets `PendingMenu`/`DuplicateSalesMenu` se dejan separados a propósito (más legibles que fusionados).
