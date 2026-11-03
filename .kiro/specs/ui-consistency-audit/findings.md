@@ -83,7 +83,7 @@ Botones migrados en este paso:
 
 ## 🟡 Baja prioridad — Casos legítimos pero vale documentar/confirmar
 
-- **`admin/Dashboard/ChartTypeSelect.jsx:2`** — ⏳ **Pendiente de confirmar.** Importa `Select` crudo de `@mui/material` en vez de `ui/Field/Field`. Puede ser intencional (select compacto de control de gráfica, no un campo de formulario), pero es la **única** excepción al estándar "Select viene de Field".
+- **`admin/Dashboard/ChartTypeSelect.jsx:2`** — ✅ **Confirmado como excepción.** Usa `Select` crudo de `@mui/material` a propósito: es un control de presentación de la gráfica (líneas/barras), no un campo de formulario, y sin `label` el wrapper `ui/Field/Field` no aportaría ícono ni estilo. Mismo criterio que `ViewModeToggle`. Documentado con un comentario en el archivo.
 - **`sales/SaleList/PaymentsCell.jsx:11`** — ✅ **Resuelto.** Migrado a `CustomButton variant="text"` (enlace de texto en celda, con `height: "auto"` para no romper la fila de la tabla).
 - **`ui/NotificationsMenu/NotificationsMenu.jsx:145`** — ✅ **Resuelto.** "Limpiar" migrado a `CustomButton variant="text"`.
 - **`ui/ErrorBoundary.jsx:23`** — ✅ **Confirmado como excepción.** Se mantiene con `<Button>` crudo de MUI: es el fallback de errores y no debe depender de componentes de UI compartidos que pudieron ser la causa del fallo.
@@ -105,7 +105,9 @@ Botones migrados en este paso:
 
 1. ~~**Fix rápido y seguro (🔴):** migrar los 5 botones primarios a `CustomButton`.~~ ✅ **Hecho (3 nov 2026).**
 2. ~~**Decisión de diseño (🟠):** definir la variante secundaria/outlined estándar.~~ ✅ **Hecho (3 nov 2026).** Se formalizó `variant` en `CustomButton` y se migraron todos los botones restantes.
-3. **Confirmar excepciones (🟡):** solo queda `ChartTypeSelect` por confirmar. `PaymentsCell` y `NotificationsMenu` ya se migraron; `ErrorBoundary` y `TodayReferenceLine` quedan como excepciones confirmadas.
+3. ~~**Confirmar excepciones (🟡):**~~ ✅ **Hecho (3 nov 2026).** `PaymentsCell` y `NotificationsMenu` migrados; `ChartTypeSelect`, `ErrorBoundary` y `TodayReferenceLine` confirmados como excepciones documentadas.
+
+**Auditoría cerrada:** todos los puntos (🔴/🟠/🟡) están resueltos o confirmados como excepción.
 
 ---
 
