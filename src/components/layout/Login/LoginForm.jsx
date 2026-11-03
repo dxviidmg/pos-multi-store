@@ -1,5 +1,5 @@
 import React from "react";
-import { Alert, Button, CircularProgress, Stack } from "@mui/material";
+import { Alert, CircularProgress, Stack } from "@mui/material";
 import { TextField } from "../../ui/Field/Field";
 import CustomButton from "../../ui/Button/Button";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
@@ -68,12 +68,12 @@ const LoginForm = ({
           {isLoading ? "Iniciando sesión…" : "Iniciar sesión"}
         </CustomButton>
 
-        <Button onClick={onRegister} fullWidth
+        <CustomButton onClick={onRegister} fullWidth
           variant="outlined" startIcon={<PersonAddIcon />}
           sx={styles.secondaryButton}
         >
           Crear mi negocio
-        </Button>
+        </CustomButton>
       </Stack>
     </>
   );

@@ -1,9 +1,10 @@
 import React from "react";
-import { Grid, Typography, Box, Chip, Button, Alert } from "@mui/material";
+import { Grid, Typography, Box, Chip, Alert } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
 import PageHeader from "../../ui/PageHeader";
+import CustomButton from "../../ui/Button/Button";
 import { colors } from "../../../theme/colors";
 import { formatCurrency } from "../../../utils/utils";
 
@@ -49,16 +50,14 @@ const PlanCard = ({ plan, equivalent, planLoading, isOwner, hasAccess, onSubscri
         {isSubscription ? (
           <Chip icon={<CheckCircleIcon />} label="Domiciliación activada" color="success" variant="filled" />
         ) : isOwner && equivalent ? (
-          <Button
+          <CustomButton
             onClick={onSubscribe}
             startIcon={<AddCircleIcon />}
-            variant="contained"
             color="success"
-            size="small"
             sx={{ bgcolor: "success.main", "&:hover": { bgcolor: "success.dark" } }}
           >
             Domiciliar (Ahorra {formatCurrency(plan.plan.price - equivalent.price)} MXN/mes)
-          </Button>
+          </CustomButton>
         ) : null}
       </PageHeader>
 
@@ -103,10 +102,8 @@ const PlanCard = ({ plan, equivalent, planLoading, isOwner, hasAccess, onSubscri
                 sx={{ mt: 2, alignItems: "center" }}
                 action={
                   isOwner && (
-                    <Button
+                    <CustomButton
                       onClick={onUpdateCard}
-                      variant="contained"
-                      size="small"
                       sx={{
                         whiteSpace: "nowrap",
                         background: colors.gradient.brand,
@@ -114,7 +111,7 @@ const PlanCard = ({ plan, equivalent, planLoading, isOwner, hasAccess, onSubscri
                       }}
                     >
                       Cambiar tarjeta
-                    </Button>
+                    </CustomButton>
                   )
                 }
               >
@@ -135,9 +132,9 @@ const PlanCard = ({ plan, equivalent, planLoading, isOwner, hasAccess, onSubscri
                 sx={{ mt: 2 }}
                 action={
                   isOwner && (
-                    <Button color="inherit" size="small" onClick={onUpdateCard}>
+                    <CustomButton color="inherit" variant="text" onClick={onUpdateCard}>
                       Actualizar tarjeta
-                    </Button>
+                    </CustomButton>
                   )
                 }
               >
@@ -153,9 +150,9 @@ const PlanCard = ({ plan, equivalent, planLoading, isOwner, hasAccess, onSubscri
                 sx={{ mt: 2 }}
                 action={
                   isOwner && (
-                    <Button color="inherit" size="small" onClick={onSubscribe}>
+                    <CustomButton color="inherit" variant="text" onClick={onSubscribe}>
                       Reactivar
-                    </Button>
+                    </CustomButton>
                   )
                 }
               >
