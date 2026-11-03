@@ -4,6 +4,7 @@ import { TextField } from "../../ui/Field/Field";
 import { CheckCircle, Lock, Visibility, VisibilityOff } from "@mui/icons-material";
 import CustomTooltip from "../../ui/Tooltip";
 import ProfileCard from "./ProfileCard";
+import { getConfirmFieldProps, getConfirmState } from "../../ui/UserModals/passwordConfirm";
 import { changePassword } from "../../../api/users";
 import { showRequestError, showSuccess, showWarning } from "../../../utils/alerts";
 
@@ -46,7 +47,7 @@ const PasswordSection = ({ userId }) => {
     setSaving(true);
     try {
       await changePassword(userId, {
-        current_password: passwordData.current_password,
+        old_password: passwordData.current_password,
         new_password: passwordData.new_password,
       });
       showSuccess("Contraseña actualizada");
@@ -59,7 +60,7 @@ const PasswordSection = ({ userId }) => {
   };
 
   const { new_password: newPassword, confirm_password: confirmPassword } = passwordData;
-  const confirmState = !confirmPassword ? null : confirmPassword === newPassword ? "match" : "mismatch";
+  const confirmState = getConfirmState(newPassword, confirmPassword);
 
   const isIncomplete = PASSWORD_FIELDS.some(({ name }) => !passwordData[name]);
 
@@ -94,12 +95,7 @@ const PasswordSection = ({ userId }) => {
             onChange={handleChange}
             size="small"
             type={visible[name] ? "text" : "password"}
-            error={isConfirm && confirmState === "mismatch"}
-            helperText={
-              isConfirm && confirmState === "mismatch" ? "Las contraseñas no coinciden"
-                : isConfirm && confirmState === "match" ? "Las contraseñas coinciden" : undefined
-            }
-            FormHelperTextProps={isConfirm && confirmState === "match" ? { sx: { color: "success.main" } } : undefined}
+            {...(isConfirm ? getConfirmFieldProps(confirmState) : {})}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">

@@ -66,7 +66,6 @@ export const useUserManagement = () => {
       await changePassword(changePasswordModal.userId, {
         old_password: passwordData.old_password,
         new_password: passwordData.new_password,
-        confirm_password: passwordData.confirm_password,
         user_id: changePasswordModal.userId
       });
       showSuccess('Guardado', 'Contraseña actualizada');
