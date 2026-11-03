@@ -11,6 +11,7 @@ Este documento acumula las auditorías de consistencia visual del frontend:
 2. [Auditoría de avisos (chips, alerts, cajas de aviso)](#2-auditoría-de-avisos--abierta) — ✅ cerrada (3 nov 2026)
 3. [Auditoría de tablas](#3-auditoría-de-tablas--cerrada) — ✅ cerrada (3 nov 2026)
 4. [Auditoría de modales](#4-auditoría-de-modales--cerrada) — ✅ cerrada (3 nov 2026)
+5. [Auditoría de cards](#5-auditoría-de-cards--cerrada) — ✅ cerrada (3 nov 2026)
 
 ---
 
@@ -201,3 +202,35 @@ Nota: los tres de `tenant` montan el Brick de Mercado Pago (`<div id=…>`); mig
 2. ~~**🟡 Corregir `maxWidth`** de `StockModal`~~ ✅ **Hecho (3 nov 2026).** `maxWidth="sm"` → `maxWidth={600}`.
 
 **Auditoría de modales cerrada:** sin puntos abiertos.
+
+---
+
+# 5. Auditoría de cards — CERRADA
+
+Objetivo: radio consistente en las tarjetas. Estándar del tema: `MuiCard`/`MuiPaper` = **14px** (automático), clase `.card` = 16px (`--radius-lg`), `MuiChip` = 999px.
+
+**Diagnóstico:** el tema ya estandariza bien las superficies MUI. El problema eran las **tarjetas de contenido construidas a mano con `Box` + borde + fondo paper**, cada una con un radio distinto (12/14/16) para el mismo concepto.
+
+## 🟠 Media — Tarjetas "a mano" con radios inconsistentes ✅ RESUELTO (3 nov 2026)
+
+Convención adoptada (Opción A): **radio 14px** para las tarjetas de contenido (coincide con `Card`/`Paper` del tema). Se unificó el valor sin cambiar la estructura.
+
+| Archivo | Antes | Ahora |
+|---|---|---|
+| `products/shared/GridCardBase.jsx:29` | `12px` | `14px` |
+| `inventory/Cart/CartItemCard.jsx:137` | `12px` | `14px` |
+| `products/ProductCarousel/ProductCard.jsx:42` | `16px` | `14px` |
+| `layout/Login/Login.jsx:129` | `16px` | `14px` |
+| `admin/StoreList/StoreList.jsx:35` | `14px` | (ya correcto, sin cambio) |
+
+## ✅ Legítimo (no es tarjeta de contenido, sin cambios)
+
+- Íconos en caja (`ProfileCard`, `AuthLayout`, `TenantSection`): `10px`.
+- Selects / pills (`StorePeriodFilters`, `StoreQuickFilters`): `10px`, controles.
+- Toasts (`ConnectionStatusBanner`, `StockVerificationSnackbar`): `10px`, excepción ya documentada (auditoría de avisos).
+- Bloques destacados internos con `action.hover` (`PlanStep`, `RegistrationSuccess`): `10px`/`12px`, no son tarjetas con fondo paper.
+- `DashboardLoading`, `DataTable`: `14px`, coinciden con el tema.
+
+## Nota
+
+Se optó por ajustar el valor del radio (no migrar los `Box` a `<Card>` de MUI) para mantener el cambio de bajo riesgo, sin tocar estructura, hover ni props.
