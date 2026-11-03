@@ -2,7 +2,7 @@ import { showSuccess, showRequestError } from "../../../utils/alerts";
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { selectCarts, selectActiveCartId } from "../../../redux/cart/selectors";
-import CustomModal from "../../ui/Modal/Modal";
+import CustomModal, { ModalBody } from "../../ui/Modal/Modal";
 import SimpleTable from "../../ui/SimpleTable/SimpleTable";
 import CustomButton from "../../ui/Button/Button";
 import { createTransfer } from "../../../api/transfers";
@@ -183,9 +183,9 @@ const StockModal = ({ isOpen, product, onClose }) => {
         showOut={isOpen}
         onClose={onClose}
         title={`${storeProduct.product?.code} - ${storeProduct.product?.brand_name} ${storeProduct.product?.name}`}
-        maxWidth="sm"
+        maxWidth={600}
       >
-        <Box sx={{ p: 2, bgcolor: "background.paper" }}>
+        <ModalBody>
           <Grid container>
             {!storeProduct.onlyRead && (
               <Box sx={{ mb: 0, width: "100%" }}>
@@ -254,7 +254,7 @@ const StockModal = ({ isOpen, product, onClose }) => {
               </Grid>
             )}
           </Grid>
-        </Box>
+        </ModalBody>
       </CustomModal>
     </>
   );

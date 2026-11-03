@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import CustomModal from "../../ui/Modal/Modal";
+import CustomModal, { ModalBody } from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
 import { showSuccess, showRequestError } from "../../../utils/alerts";
 import { createStore } from "../../../api/stores";
@@ -46,10 +46,11 @@ const CreateStoreModal = ({ isOpen, onClose, onCreated }) => {
       onClose={onClose}
       title="Crear tienda"
     >
-      <Box sx={{ p: 3, maxWidth: 420, mx: "auto" }}>
-        <Typography variant="body2" sx={{ mb: 2.5, color: "text.secondary" }}>
-          Agrega una nueva tienda o almacén a tu negocio.
-        </Typography>
+      <ModalBody>
+        <Box sx={{ maxWidth: 420, mx: "auto" }}>
+          <Typography variant="body2" sx={{ mb: 2.5, color: "text.secondary" }}>
+            Agrega una nueva tienda o almacén a tu negocio.
+          </Typography>
 
         <Grid container spacing={2}>
           <Grid item xs={12}>
@@ -141,7 +142,8 @@ const CreateStoreModal = ({ isOpen, onClose, onCreated }) => {
             </CustomButton>
           </Grid>
         </Grid>
-      </Box>
+        </Box>
+      </ModalBody>
     </CustomModal>
   );
 };

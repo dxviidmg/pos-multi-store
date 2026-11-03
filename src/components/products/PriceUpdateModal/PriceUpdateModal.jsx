@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
-import CustomModal from "../../ui/Modal/Modal";
+import CustomModal, { ModalBody } from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
 import SimpleTable from "../../ui/SimpleTable/SimpleTable";
 import { Grid, Alert } from "@mui/material";
@@ -90,8 +90,9 @@ const PriceUpdateModal = ({ isOpen, onClose, selectedProducts, onSuccess }) => {
 
   return (
     <CustomModal showOut={isOpen} onClose={onClose} title={`Actualización masiva de costos y precios (${selectedProducts.length} productos)`}>
-      <Grid container spacing={2} sx={{ p: 2 }}>
-        {!hasSamePrices && !confirmedDifferentPrices ? (
+      <ModalBody>
+        <Grid container spacing={2}>
+          {!hasSamePrices && !confirmedDifferentPrices ? (
           <>
             <Grid item xs={12}>
               <Alert severity="warning" variant="filled">
@@ -155,8 +156,9 @@ const PriceUpdateModal = ({ isOpen, onClose, selectedProducts, onSuccess }) => {
               </CustomButton>
             </Grid>
           </>
-        ) : null}
-      </Grid>
+          ) : null}
+        </Grid>
+      </ModalBody>
     </CustomModal>
   );
 };

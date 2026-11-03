@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Box, Typography, Alert, Stack, MenuItem } from "@mui/material";
+import { Typography, Alert, Stack, MenuItem } from "@mui/material";
 import { TextField } from "../../ui/Field/Field";
-import CustomModal from "../../ui/Modal/Modal";
+import CustomModal, { ModalBody } from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { cancelSubscription } from "../../../api/subscriptions";
@@ -60,7 +60,7 @@ const CancelSubscriptionModal = ({ isOpen, onClose }) => {
     <>
       <CustomSpinner isLoading={cancelling} />
       <CustomModal showOut={isOpen} onClose={handleClose} title="Cancelar suscripción">
-        <Box sx={{ p: 3 }}>
+        <ModalBody>
           {error && (
             <Alert severity="error" variant="filled" sx={{ mb: 2 }}>
               {error}
@@ -103,7 +103,7 @@ const CancelSubscriptionModal = ({ isOpen, onClose }) => {
               {cancelling ? "Cancelando..." : "Sí, cancelar"}
             </CustomButton>
           </Stack>
-        </Box>
+        </ModalBody>
       </CustomModal>
     </>
   );

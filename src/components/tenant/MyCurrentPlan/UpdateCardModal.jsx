@@ -1,6 +1,6 @@
 import React from "react";
-import { Box, Typography, Alert } from "@mui/material";
-import CustomModal from "../../ui/Modal/Modal";
+import { Typography, Alert } from "@mui/material";
+import CustomModal, { ModalBody } from "../../ui/Modal/Modal";
 
 export const UPDATE_CARD_CONTAINER_ID = "mp-bricks-container-update";
 
@@ -13,7 +13,7 @@ const UpdateCardModal = ({ cardForm }) => {
 
   return (
     <CustomModal showOut={cardForm.isOpen} onClose={handleClose} title="Actualizar tarjeta">
-      <Box sx={{ p: 3 }}>
+      <ModalBody>
         {cardForm.error && (
           <Alert severity="error" variant="filled" sx={{ mb: 2 }}>
             {cardForm.error}
@@ -24,7 +24,7 @@ const UpdateCardModal = ({ cardForm }) => {
           aplicarán en tu próximo pago recurrente.
         </Typography>
         <div id={UPDATE_CARD_CONTAINER_ID} />
-      </Box>
+      </ModalBody>
     </CustomModal>
   );
 };

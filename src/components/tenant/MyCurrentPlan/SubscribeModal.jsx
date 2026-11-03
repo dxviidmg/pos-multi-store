@@ -1,6 +1,6 @@
 import React from "react";
-import { Box, Typography, Alert } from "@mui/material";
-import CustomModal from "../../ui/Modal/Modal";
+import { Typography, Alert } from "@mui/material";
+import CustomModal, { ModalBody } from "../../ui/Modal/Modal";
 import { formatCurrency } from "../../../utils/utils";
 
 export const SUBSCRIBE_CONTAINER_ID = "mp-bricks-container";
@@ -8,7 +8,7 @@ export const SUBSCRIBE_CONTAINER_ID = "mp-bricks-container";
 /** Modal para domiciliar el pago; `cardForm` viene de `useCardFormModal`. */
 const SubscribeModal = ({ cardForm, equivalent }) => (
   <CustomModal showOut={cardForm.isOpen} onClose={cardForm.close} title="Domiciliar pago recurrente">
-    <Box sx={{ p: 3 }}>
+    <ModalBody>
       {cardForm.error && (
         <Alert severity="error" variant="filled" sx={{ mb: 2 }}>
           {cardForm.error}
@@ -20,7 +20,7 @@ const SubscribeModal = ({ cardForm, equivalent }) => (
         </Typography>
       )}
       <div id={SUBSCRIBE_CONTAINER_ID} />
-    </Box>
+    </ModalBody>
   </CustomModal>
 );
 
