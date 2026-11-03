@@ -79,7 +79,7 @@ const TenantSection = ({ tenantId, tenant }) => {
           description="Cómo se comporta tu negocio"
           delay={30}
           action={
-            <CustomButton startIcon={<Save />} onClick={handleSave} disabled={saving} sx={{ width: { xs: "100%", sm: "auto" } }}>
+            <CustomButton startIcon={<Save />} onClick={handleSave} disabled={saving} fullWidth>
               Guardar datos del negocio
             </CustomButton>
           }

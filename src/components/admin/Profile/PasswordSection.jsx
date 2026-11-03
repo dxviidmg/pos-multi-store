@@ -77,7 +77,7 @@ const PasswordSection = ({ userId }) => {
             startIcon={<Lock />}
             onClick={handleSave}
             disabled={saving || isIncomplete || confirmState === "mismatch"}
-            sx={{ width: { xs: "100%", sm: "auto" } }}
+            fullWidth
           >
             Cambiar contraseña
           </CustomButton>

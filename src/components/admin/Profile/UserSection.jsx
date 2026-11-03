@@ -48,7 +48,7 @@ const UserSection = ({ userId, initialUser }) => {
         description="Tus datos de contacto"
         delay={60}
         action={
-          <CustomButton startIcon={<Save />} onClick={handleSave} disabled={saving} sx={{ width: { xs: "100%", sm: "auto" } }}>
+          <CustomButton startIcon={<Save />} onClick={handleSave} disabled={saving} fullWidth>
             Guardar cambios
           </CustomButton>
         }
