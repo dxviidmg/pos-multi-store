@@ -411,7 +411,7 @@ Fuente única de colores y sombras: `src/theme/colors.js` (primitivas, `status` 
 - `colors.js` tiene las primitivas que no son tokens de MUI:
   - `error` (= `error.main`), `whatsapp`, `backdrop`, `appbar`.
   - `shadow.{light, medium, brand, brandHover, appbar, card, toast, dialog, logo}`.
-  - `gradient.{sidebar, brand, brandHover, kpi[]}`.
+  - `gradient.{brand, brandHover}`.
 - Si un valor se repite y no existe, agrégalo a `colors.js`; no lo dejes en el componente.
 - Gráficas (`@mui/x-charts`): el texto SVG no acepta rutas del tema como `'text.secondary'`. Usa los estilos de `admin/Dashboard/chartStyles.js`, que leen variables CSS (`var(--color-text-secondary)`) y siguen el modo oscuro. La paleta de series es `CHART_COLORS` (`utils/chart.js`).
 - Inputs: nunca fondo fijo (`#fff`); usa `background.paper`, o rompe el modo oscuro.
@@ -448,7 +448,7 @@ Texto e títulos `Inter` (títulos h1–h4 con peso 700–800; los encabezados d
 | text terciario (`caption`) | `#8c92ab` | `#7f86a8` |
 | sidebar activo / íconos inactivos | `#ffffff` con barra de 3px / `#8e95be` | igual |
 
-`colors.js` define las primitivas que consume `theme.js` (no repitas hex en el tema). El sidebar, el login y los modales usan el navy plano (`colors.gradient.sidebar` es el mismo tono). Sin azul rey ni fondos pastel de color en tarjetas o íconos.
+`colors.js` define las primitivas que consume `theme.js` (no repitas hex en el tema). El sidebar, el login y los modales usan el navy plano (`colors.sidebar`). Sin azul rey ni fondos pastel de color en tarjetas o íconos.
 
 ### Formas, sombras y movimiento
 
