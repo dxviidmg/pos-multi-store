@@ -8,7 +8,7 @@ const ProductImageField = ({ src, onChange }) => (
     component="label"
     sx={{ display: "block", cursor: "pointer", "&:hover": { opacity: 0.8 }, transition: "opacity 0.2s" }}
   >
-    <Box component="img" src={src} alt="Producto" sx={{ width: "100%", height: "auto", borderRadius: 2 }} />
+    <Box component="img" src={src} alt="Producto" sx={{ width: "100%", height: "auto", borderRadius: "10px" }} />
     <VisuallyHiddenInput type="file" accept="image/*" onChange={onChange} />
   </Box>
 );

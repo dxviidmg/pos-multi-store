@@ -88,7 +88,7 @@ const BarcodeScanner = ({ open, onClose, onDetected }) => {
       onClose={onClose}
       fullWidth
       maxWidth="sm"
-      PaperProps={{ sx: { borderRadius: 3, overflow: "hidden" } }}
+      PaperProps={{ sx: { borderRadius: "16px", overflow: "hidden" } }}
     >
       <DialogTitle sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", pb: 1 }}>
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
