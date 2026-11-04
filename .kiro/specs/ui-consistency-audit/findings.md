@@ -339,6 +339,12 @@ Los dos poppers tenían radios muy distintos. Unificados a `1.5` (12px):
 - **#3 `CustomTooltip` `position`** — ❌ **Descartado (4 nov 2026).** Se contaron los usos: 23 pasan `position` explícito (11 `"bottom"`, 9 `"top"`, 1 `"left"`, **0 `"right"`**) y ~140 no lo pasan, usando el default `"right"`. El default es, de lejos, el valor más usado (los tooltips de botones de acción en columnas de tabla); nadie escribe `position="right"` porque ya es el default. Cambiarlo obligaría a añadir `position="right"` en ~140 sitios. El componente queda como está.
 - **#5 Fila de menú del header** — ✅ **Resuelto (4 nov 2026).** Se extrajo `ui/HeaderPopoverMenu/HeaderMenuItem.jsx` (fila estándar: título en negrita + borde inferior, con `secondary` o `children`). `MessageGroupsMenu` y `StockRequestMenu` la usan; se eliminó el `ListItem` y los `typographyProps` duplicados en ambos. Test de `MessageGroupsMenu` en verde (3/3).
 
+## 🟡 Resuelto — B3: ícono decorativo de KPICard (4 nov 2026)
+
+`KPICard` mostraba un ícono gris (`text.secondary`) arriba a la derecha, sin color semántico ni información que el título no diera. Se quitó el ícono, la prop `icon` y se aplanó la estructura (ya sin el `Box` flex de dos columnas). Se limpiaron los `icon={…}` y los imports de íconos sin uso en `Dashboard` (4), `CancellationsDashboard` (`BlockIcon`/`UndoIcon`) y `DepartmentDashboard` (3, incl. la propiedad `icon` del array `KPIS`). `StatCard` e `InsightCard` NO se tocaron: ahí el ícono es funcional (color semántico, ancla el dato).
+
+**A2 (jerarquía de indicadores): NO aplicado.** Cambio estético subjetivo y de alto toque visual, no verificable sin navegador. Queda como pendiente consciente a decisión del usuario.
+
 ## 🟡 Resuelto — M3: animación de entrada anidada en KPICard (4 nov 2026)
 
 `KPICard` tenía un `Box` interno con `fade-in-up` + `animationDelay: index*60ms`, anidado dentro del `.card`. La página ya anima su entrada con `page-enter` (`MainLayout.jsx:170`, con `key` por ruta+tienda), así que la cascada por tarjeta era una segunda animación anidada. Se quitó el `Box` interno y la prop `index` (ya sin uso), y se limpiaron los `index={…}` en `Dashboard`, `CancellationsDashboard` y `DepartmentDashboard`.
