@@ -1,7 +1,8 @@
 import React, { memo } from "react";
-import { Typography, ListItem, ListItemText } from "@mui/material";
+import { Typography } from "@mui/material";
 import { useStoreScopedList } from "../../../hooks/useStoreScopedList";
 import HeaderPopoverMenu from "../HeaderPopoverMenu/HeaderPopoverMenu";
+import HeaderMenuItem from "../HeaderPopoverMenu/HeaderMenuItem";
 
 /**
  * Menú del header con grupos `{ title, messages[] }` que entrega el backend
@@ -23,17 +24,13 @@ const MessageGroupsMenu = ({ icon, title, fetchFn, errorMessage, emptyIcon, empt
       emptyText={emptyText}
     >
       {items.map((group, i) => (
-        <ListItem key={i} sx={{ flexDirection: "column", alignItems: "flex-start", py: 1, borderBottom: "1px solid", borderColor: "divider" }}>
-          <ListItemText
-            primary={group.title}
-            primaryTypographyProps={{ fontSize: "0.8rem", fontWeight: 700 }}
-          />
+        <HeaderMenuItem key={i} primary={group.title}>
           {(group.messages || []).map((msg, j) => (
             <Typography key={j} variant="body2" sx={{ fontSize: "0.75rem", color: "text.secondary", pl: 1 }}>
               • {msg}
             </Typography>
           ))}
-        </ListItem>
+        </HeaderMenuItem>
       ))}
     </HeaderPopoverMenu>
   );
