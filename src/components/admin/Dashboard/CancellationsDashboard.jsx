@@ -129,9 +129,9 @@ const CancellationsDashboard = () => {
       <DashboardHeader title={TITLE} subtitle={periodLabel} filters={filters} sx={{ mb: 0 }} />
 
       <Grid container spacing={2}>
-        <KPICard title="Canceladas/Devueltas" value={kpis.total} subtitle={`${kpis.percentage}% de ${kpis.totalValidSales + kpis.total} ventas`} icon={BlockIcon} index={0} itemProps={KPI_ITEM_PROPS} />
-        <KPICard title="Canceladas" value={kpis.totalCanceled} subtitle="Ventas canceladas" icon={BlockIcon} index={1} itemProps={KPI_ITEM_PROPS} />
-        <KPICard title="Devoluciones" value={kpis.totalReturned} subtitle="Ventas con devolución" icon={UndoIcon} index={2} itemProps={KPI_ITEM_PROPS} />
+        <KPICard title="Canceladas/Devueltas" value={kpis.total} subtitle={`${kpis.percentage}% de ${kpis.totalValidSales + kpis.total} ventas`} icon={BlockIcon} itemProps={KPI_ITEM_PROPS} />
+        <KPICard title="Canceladas" value={kpis.totalCanceled} subtitle="Ventas canceladas" icon={BlockIcon} itemProps={KPI_ITEM_PROPS} />
+        <KPICard title="Devoluciones" value={kpis.totalReturned} subtitle="Ventas con devolución" icon={UndoIcon} itemProps={KPI_ITEM_PROPS} />
         {hasMultipleStores && <HighlightCard icon={StorefrontIcon} title="Más cancelaciones" value={kpis.worstStore} />}
         <HighlightCard icon={CalendarMonthIcon} title="Día con más" value={kpis.worstWeekday} />
         <HighlightCard icon={AccessTimeIcon} title="Hora con más" value={kpis.worstHour} />

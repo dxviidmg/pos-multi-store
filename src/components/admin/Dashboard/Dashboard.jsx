@@ -115,28 +115,24 @@ const Dashboard = () => {
             value={formatCurrency(kpis.totalAmount)}
             subtitle={`${kpis.totalSales} transacciones`}
             icon={AttachMoneyIcon}
-            index={0}
           />
           <KPICard
             title="Ganancias"
             value={formatCurrency(kpis.totalProfit)}
             subtitle={periodLabel}
             icon={TrendingUpIcon}
-            index={1}
           />
           <KPICard
             title="Margen"
             value={`${kpis.marginPercentage}%`}
             subtitle={`De ${formatCurrency(kpis.totalAmount)}`}
             icon={PercentIcon}
-            index={2}
           />
           <KPICard
             title="Ticket promedio"
             value={formatCurrency(kpis.totalAmount / kpis.totalSales)}
             subtitle={`${kpis.totalSales} ventas`}
             icon={ShoppingCartIcon}
-            index={3}
           />
         </Grid>
       )}
@@ -148,14 +144,12 @@ const Dashboard = () => {
             value={formatNumber(kpis.totalSales)}
             subtitle={periodLabel}
             icon={ShoppingCartIcon}
-            index={0}
           />
           <KPICard
             title={isYear ? "Promedio por mes" : "Promedio por día"}
             value={(kpis.totalSales / (isYear ? 12 : kpis.daysInPeriod)).toFixed(0)}
             subtitle={isYear ? "12 meses" : `${kpis.daysInPeriod} días`}
             icon={StorefrontIcon}
-            index={1}
           />
         </Grid>
       )}

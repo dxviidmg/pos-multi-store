@@ -156,13 +156,12 @@ const DepartmentDashboard = () => {
       ) : (
         <>
           <Grid container spacing={2}>
-            {KPIS.map(({ key, title, icon }, i) => (
+            {KPIS.map(({ key, title, icon }) => (
               <KPICard
                 key={key}
                 title={title}
                 value={key === "units" ? formatNumber(totals.units, UNITS_FORMAT) : formatCurrency(totals[key])}
                 icon={icon}
-                index={i}
                 itemProps={KPI_ITEM_PROPS}
               />
             ))}
