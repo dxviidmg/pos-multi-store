@@ -339,6 +339,10 @@ Los dos poppers tenían radios muy distintos. Unificados a `1.5` (12px):
 - **#3 `CustomTooltip` `position`** — ❌ **Descartado (4 nov 2026).** Se contaron los usos: 23 pasan `position` explícito (11 `"bottom"`, 9 `"top"`, 1 `"left"`, **0 `"right"`**) y ~140 no lo pasan, usando el default `"right"`. El default es, de lejos, el valor más usado (los tooltips de botones de acción en columnas de tabla); nadie escribe `position="right"` porque ya es el default. Cambiarlo obligaría a añadir `position="right"` en ~140 sitios. El componente queda como está.
 - **#5 Fila de menú del header** — `MessageGroupsMenu` y `StockRequestMenu` repiten el patrón `ListItem` con `borderBottom`/`primaryTypographyProps`. Posible extracción menor; riesgo/beneficio bajo.
 
+## 🟡 Resuelto — M3: animación de entrada anidada en KPICard (4 nov 2026)
+
+`KPICard` tenía un `Box` interno con `fade-in-up` + `animationDelay: index*60ms`, anidado dentro del `.card`. La página ya anima su entrada con `page-enter` (`MainLayout.jsx:170`, con `key` por ruta+tienda), así que la cascada por tarjeta era una segunda animación anidada. Se quitó el `Box` interno y la prop `index` (ya sin uso), y se limpiaron los `index={…}` en `Dashboard`, `CancellationsDashboard` y `DepartmentDashboard`.
+
 ## ✅ Revisado y correcto (sin cambios)
 
 `CustomButton`, `StatusChip`, `ModalBody`, `Field`, `CardGallery`, `EmptyState`, `ViewModeToggle`, `DropZone`, `VisuallyHiddenInput`, `SimpleTable`, `HeaderPopoverMenu` (estructura). Los presets `PendingMenu`/`DuplicateSalesMenu` se dejan separados a propósito (más legibles que fusionados).
