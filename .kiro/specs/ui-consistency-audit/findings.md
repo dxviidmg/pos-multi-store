@@ -336,7 +336,7 @@ Los dos poppers tenían radios muy distintos. Unificados a `1.5` (12px):
 
 ## ⏳ Pendiente (para después, a petición del usuario)
 
-- **#3 `CustomTooltip` `position`** — default es `"right"` pero casi todos los usos pasan `"bottom"`. Candidato a cambiar el default a `"bottom"` y quitar la prop repetida. Falta contar usos antes de decidir.
+- **#3 `CustomTooltip` `position`** — ❌ **Descartado (4 nov 2026).** Se contaron los usos: 23 pasan `position` explícito (11 `"bottom"`, 9 `"top"`, 1 `"left"`, **0 `"right"`**) y ~140 no lo pasan, usando el default `"right"`. El default es, de lejos, el valor más usado (los tooltips de botones de acción en columnas de tabla); nadie escribe `position="right"` porque ya es el default. Cambiarlo obligaría a añadir `position="right"` en ~140 sitios. El componente queda como está.
 - **#5 Fila de menú del header** — `MessageGroupsMenu` y `StockRequestMenu` repiten el patrón `ListItem` con `borderBottom`/`primaryTypographyProps`. Posible extracción menor; riesgo/beneficio bajo.
 
 ## ✅ Revisado y correcto (sin cambios)
