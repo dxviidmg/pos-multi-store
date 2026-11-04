@@ -6,7 +6,7 @@ import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 /** Tarjeta "mejor / peor" de los tableros (tienda, día, hora…). */
 const InsightCard = ({ icon: Icon, title, best, worst }) => (
   <Grid item xs={6} md={3}>
-    <Box className="card card-interactive" sx={{ height: "100%", mb: 0 }}>
+    <Box className="card" sx={{ height: "100%", mb: 0 }}>
       <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}>
         <Icon sx={{ fontSize: 18, color: "primary.main" }} />
         <Typography variant="body2" sx={{ fontWeight: 600, color: "text.secondary" }}>{title}</Typography>

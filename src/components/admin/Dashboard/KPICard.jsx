@@ -6,7 +6,7 @@ const KPI_ITEM_PROPS = { xs: 6, md: 3 };
 /** Tarjeta de indicador de los tableros dentro de su `Grid item`. */
 const KPICard = ({ title, value, subtitle, icon: Icon, index = 0, itemProps = KPI_ITEM_PROPS }) => (
   <Grid item {...itemProps}>
-    <Box className="card card-interactive" sx={{ height: "100%", mb: 0 }}>
+    <Box className="card" sx={{ height: "100%", mb: 0 }}>
       <Box className="fade-in-up" sx={{ height: "100%", animationDelay: `${index * 60}ms` }}>
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
           <Box sx={{ flex: 1 }}>

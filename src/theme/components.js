@@ -40,7 +40,7 @@ export const buildComponentsConfig = (modeColors, mode) => ({
         fontSize: '0.8125rem',
         lineHeight: 1.4,
         transition: 'background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.2s ease, transform 0.2s ease',
-        '&:active': { transform: 'translateY(0) scale(0.98)' },
+        '&:active': { transform: 'scale(0.98)' },
         '&.Mui-focusVisible': { boxShadow: `0 0 0 3px ${alpha(modeColors.focusRing, 0.6)}` },
       },
       contained: {
@@ -49,7 +49,6 @@ export const buildComponentsConfig = (modeColors, mode) => ({
         '&:hover': {
           background: modeColors.buttonHover,
           boxShadow: colors.shadow.brand,
-          transform: 'translateY(-1px)',
         },
         ...(modeColors.buttonDisabledBg && {
           '&.Mui-disabled': { background: modeColors.buttonDisabledBg, color: modeColors.buttonDisabledText },

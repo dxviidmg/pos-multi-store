@@ -30,7 +30,7 @@ const KPI_ITEM_PROPS = { xs: 6, md: 4 };
 
 const HighlightCard = ({ icon: Icon, title, value }) => (
   <Grid item {...KPI_ITEM_PROPS}>
-    <Box className="card card-interactive" sx={{ height: "100%", mb: 0 }}>
+    <Box className="card" sx={{ height: "100%", mb: 0 }}>
       <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
         <Icon sx={{ fontSize: 18, color: "primary.main" }} />
         <Typography variant="body2" sx={{ fontWeight: 600, color: "text.secondary" }}>{title}</Typography>
