@@ -11,8 +11,6 @@ import { Grid, Box, Typography } from "@mui/material";
 import { MONTH_NAMES, MONTH_NAMES_SHORT, DAY_NAMES } from "../../../utils/date";
 import { getTied } from "../../../utils/chart";
 import { getCancellationsDashboard } from "../../../api/dashboards";
-import BlockIcon from "@mui/icons-material/Block";
-import UndoIcon from "@mui/icons-material/Undo";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
@@ -129,9 +127,9 @@ const CancellationsDashboard = () => {
       <DashboardHeader title={TITLE} subtitle={periodLabel} filters={filters} sx={{ mb: 0 }} />
 
       <Grid container spacing={2}>
-        <KPICard title="Canceladas/Devueltas" value={kpis.total} subtitle={`${kpis.percentage}% de ${kpis.totalValidSales + kpis.total} ventas`} icon={BlockIcon} itemProps={KPI_ITEM_PROPS} />
-        <KPICard title="Canceladas" value={kpis.totalCanceled} subtitle="Ventas canceladas" icon={BlockIcon} itemProps={KPI_ITEM_PROPS} />
-        <KPICard title="Devoluciones" value={kpis.totalReturned} subtitle="Ventas con devolución" icon={UndoIcon} itemProps={KPI_ITEM_PROPS} />
+        <KPICard title="Canceladas/Devueltas" value={kpis.total} subtitle={`${kpis.percentage}% de ${kpis.totalValidSales + kpis.total} ventas`} itemProps={KPI_ITEM_PROPS} />
+        <KPICard title="Canceladas" value={kpis.totalCanceled} subtitle="Ventas canceladas" itemProps={KPI_ITEM_PROPS} />
+        <KPICard title="Devoluciones" value={kpis.totalReturned} subtitle="Ventas con devolución" itemProps={KPI_ITEM_PROPS} />
         {hasMultipleStores && <HighlightCard icon={StorefrontIcon} title="Más cancelaciones" value={kpis.worstStore} />}
         <HighlightCard icon={CalendarMonthIcon} title="Día con más" value={kpis.worstWeekday} />
         <HighlightCard icon={AccessTimeIcon} title="Hora con más" value={kpis.worstHour} />

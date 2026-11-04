@@ -16,12 +16,8 @@ import EmptyState from "../../ui/EmptyState/EmptyState";
 import { Grid, Box, Typography } from "@mui/material";
 import { MONTH_NAMES, MONTH_NAMES_SHORT } from "../../../utils/date";
 import { formatCurrency, formatNumber } from "../../../utils/currency";
-import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import StorefrontIcon from "@mui/icons-material/Storefront";
-import PercentIcon from "@mui/icons-material/Percent";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import ChartTypeSelect from "./ChartTypeSelect";
 import DashboardHeader from "./DashboardHeader";
@@ -114,25 +110,21 @@ const Dashboard = () => {
             title="Ventas"
             value={formatCurrency(kpis.totalAmount)}
             subtitle={`${kpis.totalSales} transacciones`}
-            icon={AttachMoneyIcon}
           />
           <KPICard
             title="Ganancias"
             value={formatCurrency(kpis.totalProfit)}
             subtitle={periodLabel}
-            icon={TrendingUpIcon}
           />
           <KPICard
             title="Margen"
             value={`${kpis.marginPercentage}%`}
             subtitle={`De ${formatCurrency(kpis.totalAmount)}`}
-            icon={PercentIcon}
           />
           <KPICard
             title="Ticket promedio"
             value={formatCurrency(kpis.totalAmount / kpis.totalSales)}
             subtitle={`${kpis.totalSales} ventas`}
-            icon={ShoppingCartIcon}
           />
         </Grid>
       )}
@@ -143,13 +135,11 @@ const Dashboard = () => {
             title="Transacciones"
             value={formatNumber(kpis.totalSales)}
             subtitle={periodLabel}
-            icon={ShoppingCartIcon}
           />
           <KPICard
             title={isYear ? "Promedio por mes" : "Promedio por día"}
             value={(kpis.totalSales / (isYear ? 12 : kpis.daysInPeriod)).toFixed(0)}
             subtitle={isYear ? "12 meses" : `${kpis.daysInPeriod} días`}
-            icon={StorefrontIcon}
           />
         </Grid>
       )}

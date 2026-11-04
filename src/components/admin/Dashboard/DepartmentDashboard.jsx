@@ -1,9 +1,6 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { Box, FormControl, Grid, InputLabel, MenuItem, Typography } from "@mui/material";
 import { Select } from "../../ui/Field/Field";
-import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
-import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
-import LayersOutlinedIcon from "@mui/icons-material/LayersOutlined";
 import { PieChart } from "@mui/x-charts/PieChart";
 import useTaskPolling from "../../../hooks/useTaskPolling";
 import { useDepartments } from "../../../hooks/useDepartments";
@@ -27,9 +24,9 @@ const NO_DEPARTMENT = "0";
 const KPI_ITEM_PROPS = { xs: 12, md: 4 };
 
 const KPIS = [
-  { key: "investment", title: "Inversión total", icon: Inventory2OutlinedIcon },
-  { key: "sales", title: "Ventas totales", icon: PointOfSaleIcon },
-  { key: "units", title: "Unidades en existencia", icon: LayersOutlinedIcon },
+  { key: "investment", title: "Inversión total" },
+  { key: "sales", title: "Ventas totales" },
+  { key: "units", title: "Unidades en existencia" },
 ];
 
 const TOP_PRODUCTS_COLUMNS = [
@@ -156,12 +153,11 @@ const DepartmentDashboard = () => {
       ) : (
         <>
           <Grid container spacing={2}>
-            {KPIS.map(({ key, title, icon }) => (
+            {KPIS.map(({ key, title }) => (
               <KPICard
                 key={key}
                 title={title}
                 value={key === "units" ? formatNumber(totals.units, UNITS_FORMAT) : formatCurrency(totals[key])}
-                icon={icon}
                 itemProps={KPI_ITEM_PROPS}
               />
             ))}
