@@ -95,7 +95,7 @@ function Login() {
         alignItems: 'center', justifyContent: 'center',
         flexDirection: 'column',
         overflow: 'hidden',
-        background: colors.gradient.sidebar,
+        background: colors.sidebar,
       }}>
         <Box sx={{ position: 'relative', zIndex: 1, textAlign: 'center', px: 6 }}>
           <Box component="img" src={LogoWhite} alt="SmartVenta" width={312} height="auto" sx={{

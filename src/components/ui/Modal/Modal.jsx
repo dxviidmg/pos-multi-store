@@ -36,7 +36,7 @@ function CustomModal({ showOut, onClose, title, children, maxWidth = 800 }) {
       slotProps={{ backdrop: { sx: { backgroundColor: colors.backdrop, backdropFilter: 'blur(4px)' } } }}
     >
       <Box className="modal-enter" sx={{ ...style, maxWidth }}>
-        <Box sx={{ background: colors.gradient.sidebar, color: colors.white, px: { xs: 2, sm: 3 }, py: 1.75, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'sticky', top: 0, zIndex: 2 }}>
+        <Box sx={{ background: colors.sidebar, color: colors.white, px: { xs: 2, sm: 3 }, py: 1.75, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'sticky', top: 0, zIndex: 2 }}>
           <Typography variant="h6" sx={{ px: 5, textAlign: 'center', fontSize: '1.0625rem', fontWeight: 700, color: 'inherit' }}>
             {title}
           </Typography>

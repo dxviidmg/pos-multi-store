@@ -45,7 +45,6 @@ export const colors = {
   },
 
   gradient: {
-    sidebar: `linear-gradient(180deg, ${SIDEBAR} 0%, ${SIDEBAR_DARK} 100%)`,
     brand: `linear-gradient(135deg, ${PRIMARY} 0%, ${PRIMARY_LIGHT} 100%)`,
     brandHover: `linear-gradient(135deg, ${PRIMARY_DARK} 0%, ${PRIMARY} 100%)`,
   },

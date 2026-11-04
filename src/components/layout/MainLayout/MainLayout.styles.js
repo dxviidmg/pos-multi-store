@@ -34,7 +34,7 @@ const closedMixin = (theme) => ({
 });
 
 const drawerPaper = {
-  background: colors.gradient.sidebar,
+  background: colors.sidebar,
   color: colors.white,
   borderRight: "none",
   display: "flex",
