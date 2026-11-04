@@ -14,7 +14,7 @@ Este documento acumula las auditorías de consistencia visual del frontend:
 5. [Auditoría de cards](#5-auditoría-de-cards--cerrada) — ✅ cerrada (3 nov 2026)
 6. [Auditoría de tipografía](#6-auditoría-de-tipografía--cerrada) — ✅ cerrada (3 nov 2026)
 7. [Auditoría de espaciados / sx repetidos](#7-auditoría-de-espaciados--sx-repetidos--cerrada) — ✅ cerrada (3 nov 2026)
-8. [Auditoría de componentes reutilizables](#8-auditoría-de-componentes-reutilizables--abierta) — 🔓 abierta (3 nov 2026)
+8. [Auditoría de componentes reutilizables](#8-auditoría-de-componentes-reutilizables--cerrada) — ✅ cerrada (4 nov 2026)
 
 ---
 
@@ -311,7 +311,7 @@ Las 7 auditorías están cerradas:
 
 ---
 
-# 8. Auditoría de componentes reutilizables — ABIERTA
+# 8. Auditoría de componentes reutilizables — CERRADA
 
 Objetivo: revisar `ui/` y `shared/`, quitar props que siempre son el mismo valor, fusionar lo fusionable y corregir inconsistencias CSS/MUI (tokens vs valores crudos).
 
@@ -334,10 +334,10 @@ Los dos poppers tenían radios muy distintos. Unificados a `1.5` (12px):
 | `ui/HeaderPopoverMenu/HeaderPopoverMenu.jsx` | `borderRadius: 3` (24px) | `borderRadius: 1.5` (12px) |
 | `ui/PageHelp/PageHelp.jsx` | `borderRadius: 1.5` (12px) | (ya correcto, referencia) |
 
-## ⏳ Pendiente (para después, a petición del usuario)
+## Resueltos / descartados de la auditoría 8
 
 - **#3 `CustomTooltip` `position`** — ❌ **Descartado (4 nov 2026).** Se contaron los usos: 23 pasan `position` explícito (11 `"bottom"`, 9 `"top"`, 1 `"left"`, **0 `"right"`**) y ~140 no lo pasan, usando el default `"right"`. El default es, de lejos, el valor más usado (los tooltips de botones de acción en columnas de tabla); nadie escribe `position="right"` porque ya es el default. Cambiarlo obligaría a añadir `position="right"` en ~140 sitios. El componente queda como está.
-- **#5 Fila de menú del header** — `MessageGroupsMenu` y `StockRequestMenu` repiten el patrón `ListItem` con `borderBottom`/`primaryTypographyProps`. Posible extracción menor; riesgo/beneficio bajo.
+- **#5 Fila de menú del header** — ✅ **Resuelto (4 nov 2026).** Se extrajo `ui/HeaderPopoverMenu/HeaderMenuItem.jsx` (fila estándar: título en negrita + borde inferior, con `secondary` o `children`). `MessageGroupsMenu` y `StockRequestMenu` la usan; se eliminó el `ListItem` y los `typographyProps` duplicados en ambos. Test de `MessageGroupsMenu` en verde (3/3).
 
 ## 🟡 Resuelto — M3: animación de entrada anidada en KPICard (4 nov 2026)
 
