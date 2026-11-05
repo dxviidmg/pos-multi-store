@@ -3,7 +3,6 @@ import { Snackbar, Alert, AlertTitle, Box } from "@mui/material";
 import WifiOffIcon from "@mui/icons-material/WifiOff";
 import WifiIcon from "@mui/icons-material/Wifi";
 import { useOnlineStatus } from "../../hooks/useOnlineStatus";
-import { colors } from "../../theme/colors";
 
 const RESTORED_DURATION_MS = 3000;
 
@@ -12,7 +11,7 @@ const alertSx = {
   width: "100%",
   maxWidth: { xs: "100%", sm: 480 },
   minHeight: 64,
-  boxShadow: colors.shadow.toast,
+  boxShadow: "var(--shadow-md)",
   borderRadius: "var(--radius-base)",
   alignItems: "center",
 };

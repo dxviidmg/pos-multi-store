@@ -30,7 +30,7 @@ const GridCardBase = ({ image, name, brandName, onClick, children, actions }) =>
       overflow: "hidden",
       transition: "all 0.2s ease",
       "&:hover": {
-        boxShadow: 3,
+        boxShadow: "var(--shadow-md)",
         borderColor: "primary.light",
       },
     }}

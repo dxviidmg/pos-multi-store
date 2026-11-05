@@ -410,7 +410,7 @@ Fuente única de colores, sombras y radios: `src/theme/colors.js` (primitivas, `
 - **Nunca hardcodear hex ni rgba** en componentes. Usa tokens del tema (`primary`, `secondary`, `accent`, `success`, `error`, `text.*`, `divider`, `common.white`…), `alpha(theme.palette.x.main, o)` para transparencias, o `colors` de `src/theme/colors.js`.
 - `colors.js` tiene las primitivas que no son tokens de MUI:
   - `error` (= `error.main`), `whatsapp`, `backdrop`, `appbar`.
-  - `shadow.{light, medium, brand, brandHover, appbar, card, toast, dialog, logo}`.
+  - `shadow.{brand, brandHover, appbar, dialog, logo}`.
   - `gradient.{brand}`.
 - Si un valor se repite y no existe, agrégalo a `colors.js`; no lo dejes en el componente.
 - Gráficas (`@mui/x-charts`): el texto SVG no acepta rutas del tema como `'text.secondary'`. Usa los estilos de `admin/Dashboard/chartStyles.js`, que leen variables CSS (`var(--color-text-secondary)`) y siguen el modo oscuro. La paleta de series es `CHART_COLORS` (`utils/chart.js`).
@@ -457,6 +457,7 @@ Texto e títulos `Inter` (títulos h1–h4 con peso 700; solo 500, 600 y 700; lo
   - Ligera: `0 1px 2px rgba(18,26,69,.04)`
   - Media: `0 8px 24px rgba(18,26,69,.08)`
   - Marca: `0 4px 14px rgba(18,26,69,.22)`
+  - Elevación de hover, popovers y avisos: `var(--shadow-md)`; diálogos: `var(--shadow-dialog)`. No uses los números de sombra de MUI (`boxShadow: 3`).
 - **Transiciones:** una sola duración, `0.2s ease`, y solo sobre las propiedades que cambian.
 - **Animaciones en `App.css`:**
   - `fade-in-up`: tarjetas y paneles; escalonar con `animationDelay`, 60 ms.

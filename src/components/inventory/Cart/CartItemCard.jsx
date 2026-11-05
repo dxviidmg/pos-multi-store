@@ -141,7 +141,7 @@ const CartItemCard = ({
             display: "flex",
             flexDirection: "column",
             transition: "all 0.2s ease",
-            "&:hover": { boxShadow: 3, borderColor: "primary.light" },
+            "&:hover": { boxShadow: "var(--shadow-md)", borderColor: "primary.light" },
           }}
         >
           <Box

@@ -22,7 +22,7 @@ const StockVerificationSnackbar = ({ open, productCode, onClose }) => (
         width: "100%",
         maxWidth: { xs: "100%", sm: 480 },
         minHeight: 64,
-        boxShadow: 5,
+        boxShadow: "var(--shadow-md)",
         borderRadius: "var(--radius-base)",
         alignItems: "center",
         fontWeight: 600,

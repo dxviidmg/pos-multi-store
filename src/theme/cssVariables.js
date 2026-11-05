@@ -18,6 +18,7 @@ export const applyCssVariables = (mode) => {
     '--color-table-head-text': t.tableHeadText,
     '--shadow-sm': t.shadowSm,
     '--shadow-md': t.shadowMd,
+    '--shadow-dialog': colors.shadow.dialog,
     '--radius-base': colors.radius.base,
     '--radius-pill': colors.radius.pill,
   };

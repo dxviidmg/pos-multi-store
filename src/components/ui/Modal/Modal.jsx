@@ -14,7 +14,7 @@ const style = {
   maxHeight: { xs: 'calc(100dvh - 24px)', sm: '90vh' },
   overflow: 'auto',
   bgcolor: 'modalHeader.main',
-  boxShadow: 24,
+  boxShadow: "var(--shadow-dialog)",
   borderRadius: "var(--radius-base)",
   border: '1px solid',
   borderColor: 'divider',

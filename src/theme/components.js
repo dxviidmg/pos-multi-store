@@ -105,7 +105,7 @@ export const buildComponentsConfig = (modeColors, mode) => {
         border: `1px solid ${modeColors.border}`,
         transition: 'box-shadow 0.2s ease',
         '&:hover': {
-          boxShadow: modeColors.shadows[2],
+          boxShadow: modeColors.shadowMd,
         },
       },
     },

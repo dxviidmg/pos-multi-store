@@ -38,8 +38,6 @@ export const colors = {
     brand: `0 4px 14px rgba(${PRIMARY_RGB},0.22)`,
     brandHover: `0 8px 24px rgba(${PRIMARY_RGB},0.28)`,
     appbar: 'none',
-    card: '0 8px 30px rgba(15,23,42,0.06)',
-    toast: '0 4px 20px rgba(15,23,42,0.12)',
     dialog: '0 24px 80px rgba(15,23,42,0.2)',
     logo: 'drop-shadow(0 8px 30px rgba(0,0,0,0.25))',
   },

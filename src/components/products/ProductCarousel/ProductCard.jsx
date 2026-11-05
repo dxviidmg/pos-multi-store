@@ -40,7 +40,7 @@ const ProductCard = ({ storeProduct, disabled = false, onClick }) => {
         scrollSnapAlign: "start",
         bgcolor: "background.paper",
         borderRadius: "var(--radius-base)",
-        boxShadow: 5,
+        boxShadow: "var(--shadow-md)",
         overflow: "hidden",
         cursor: disabled ? "not-allowed" : "pointer",
         opacity: disabled ? 0.55 : 1,

@@ -130,7 +130,7 @@ function Login() {
           bgcolor: 'background.paper',
           border: '1px solid',
           borderColor: 'divider',
-          boxShadow: colors.shadow.card,
+          boxShadow: "var(--shadow-md)",
           p: { xs: 3, sm: 4 },
         }}>
           <Typography variant="h4" sx={{ fontWeight: 700, color: 'text.primary', mb: 0.5 }}>
