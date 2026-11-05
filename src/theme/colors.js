@@ -49,6 +49,20 @@ export const colors = {
     brandHover: `linear-gradient(135deg, ${PRIMARY_DARK} 0%, ${PRIMARY} 100%)`,
   },
 
+  // Radios de la especificación (AGENTS.md §11). Fuente única; no repetir px sueltos
+  // en componentes. `card` para contenedores grandes y Dialog, `panel` para Card/Paper
+  // y tarjetas de contenido, `field` para botones y controles, `tag` para Alert/chips
+  // rectangulares e imágenes pequeñas, `tooltip` para tooltips, `pill` para píldoras y
+  // círculos (999px redondea por completo cualquier forma).
+  radius: {
+    card: '16px',
+    panel: '14px',
+    field: '10px',
+    tag: '8px',
+    tooltip: '6px',
+    pill: '999px',
+  },
+
   status: {
     success: { main: '#16a34a', light: '#dcfce7', dark: '#15803d' },
     warning: { main: '#d97706', light: '#fef3c7', dark: '#b45309' },

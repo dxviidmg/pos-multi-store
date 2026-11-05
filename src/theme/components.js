@@ -12,7 +12,9 @@ import { colors } from './colors';
  * @param {string} mode - 'light' o 'dark'
  * @returns {Object} Objeto de componentes para createTheme()
  */
-export const buildComponentsConfig = (modeColors, mode) => ({
+export const buildComponentsConfig = (modeColors, mode) => {
+  const { radius } = colors;
+  return {
   MuiCssBaseline: {
     styleOverrides: {
       body: {
@@ -34,7 +36,7 @@ export const buildComponentsConfig = (modeColors, mode) => ({
     defaultProps: { disableElevation: true },
     styleOverrides: {
       root: {
-        borderRadius: 10,
+        borderRadius: radius.field,
         padding: '6px 16px',
         fontWeight: 600,
         fontSize: '0.8125rem',
@@ -88,7 +90,7 @@ export const buildComponentsConfig = (modeColors, mode) => ({
     defaultProps: { elevation: 0 },
     styleOverrides: {
       root: {
-        borderRadius: 14,
+        borderRadius: radius.panel,
         border: `1px solid ${modeColors.border}`,
         backgroundImage: 'none',
       },
@@ -99,7 +101,7 @@ export const buildComponentsConfig = (modeColors, mode) => ({
     defaultProps: { elevation: 0 },
     styleOverrides: {
       root: {
-        borderRadius: 14,
+        borderRadius: radius.panel,
         border: `1px solid ${modeColors.border}`,
         transition: 'box-shadow 0.2s ease',
         '&:hover': {
@@ -112,7 +114,7 @@ export const buildComponentsConfig = (modeColors, mode) => ({
   MuiChip: {
     styleOverrides: {
       root: {
-        borderRadius: 999,
+        borderRadius: radius.pill,
         fontWeight: 600,
         fontSize: '0.75rem',
         height: 24,
@@ -125,7 +127,7 @@ export const buildComponentsConfig = (modeColors, mode) => ({
     styleOverrides: {
       root: {
         '& .MuiOutlinedInput-root': {
-          borderRadius: 10,
+          borderRadius: radius.field,
           fontSize: '0.875rem',
           transition: 'border-color 0.15s ease, box-shadow 0.15s ease',
           '&:hover fieldset': {
@@ -144,7 +146,7 @@ export const buildComponentsConfig = (modeColors, mode) => ({
   MuiSelect: {
     styleOverrides: {
       root: {
-        borderRadius: 10,
+        borderRadius: radius.field,
         fontSize: '0.875rem',
       },
     },
@@ -153,7 +155,7 @@ export const buildComponentsConfig = (modeColors, mode) => ({
   MuiDialog: {
     styleOverrides: {
       paper: {
-        borderRadius: 16,
+        borderRadius: radius.card,
         border: `1px solid ${modeColors.border}`,
       },
     },
@@ -162,7 +164,7 @@ export const buildComponentsConfig = (modeColors, mode) => ({
   MuiTooltip: {
     styleOverrides: {
       tooltip: {
-        borderRadius: 6,
+        borderRadius: radius.tooltip,
         fontSize: '0.75rem',
         backgroundColor: mode === 'light' ? modeColors.text : modeColors.border,
         color: mode === 'light' ? colors.white : modeColors.text,
@@ -229,7 +231,7 @@ export const buildComponentsConfig = (modeColors, mode) => ({
   MuiAlert: {
     styleOverrides: {
       root: {
-        borderRadius: 8,
+        borderRadius: radius.tag,
         fontSize: '0.8125rem',
       },
     },
@@ -255,7 +257,7 @@ export const buildComponentsConfig = (modeColors, mode) => ({
       root: {
         backgroundColor: alpha(modeColors.skeletonBase ?? (mode === 'light' ? colors.primary : colors.white), mode === 'light' ? 0.07 : 0.06),
       },
-      rounded: { borderRadius: 8 },
+      rounded: { borderRadius: radius.tag },
     },
   },
 
@@ -277,7 +279,7 @@ export const buildComponentsConfig = (modeColors, mode) => ({
   MuiMenuItem: {
     styleOverrides: {
       root: {
-        borderRadius: 6,
+        borderRadius: radius.tooltip,
         fontSize: '0.8125rem',
         transition: 'background-color 0.15s ease',
       },
@@ -300,4 +302,5 @@ export const buildComponentsConfig = (modeColors, mode) => ({
       },
     },
   },
-});
+  };
+};
