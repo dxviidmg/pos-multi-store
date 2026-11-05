@@ -92,7 +92,7 @@ const AppHeader = ({ user, open, themeMode, onToggleDrawer, onToggleTheme, onBac
             bgcolor: alpha(colors.googleBlue, 0.85),
             color: colors.white,
             fontSize: "0.8125rem", fontWeight: 700, mr: 1, cursor: "pointer",
-            transition: "all 0.2s",
+            transition: "all 0.2s ease",
             "&:hover": { transform: "scale(1.1)", bgcolor: colors.googleBlue },
             display: { xs: "none", sm: "flex" },
           }}

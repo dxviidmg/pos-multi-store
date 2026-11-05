@@ -35,7 +35,7 @@ const ServiceCard = ({ service, onConsult, onPricing }) => (
     sx={{
       height: "100%",
       bgcolor: "background.paper",
-      transition: "all 0.2s",
+      transition: "all 0.2s ease",
       "&:hover": { boxShadow: "var(--shadow-md)", transform: "translateY(-4px)", borderColor: "primary.main" },
     }}
   >
