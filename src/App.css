@@ -153,7 +153,7 @@ h1, h2, h3 {
 .text-success { color: var(--color-success, #16a34a); }
 .text-danger { color: var(--color-error, #dc2626); }
 .text-warning { color: var(--color-warning, #d97706); }
-.text-muted { color: #94a3b8; }
+.text-muted { color: var(--color-text-secondary); }
 
 .icon-success { color: var(--color-success, #16a34a); }
 .icon-danger { color: var(--color-error, #dc2626); }
@@ -186,8 +186,8 @@ input:focus, select:focus, textarea:focus {
 /* Scrollbar */
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(100,116,139,0.35); border-radius: 999px; border: 2px solid transparent; background-clip: padding-box; }
-::-webkit-scrollbar-thumb:hover { background: rgba(100,116,139,0.55); border: 2px solid transparent; background-clip: padding-box; }
+::-webkit-scrollbar-thumb { background: rgba(107,112,144,0.35); border-radius: 999px; border: 2px solid transparent; background-clip: padding-box; }
+::-webkit-scrollbar-thumb:hover { background: rgba(107,112,144,0.55); border: 2px solid transparent; background-clip: padding-box; }
 
 /* Filas de filtros: los campos de cada fila se reparten todo el ancho disponible */
 .fill-row > .MuiGrid-item {

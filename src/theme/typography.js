@@ -21,6 +21,7 @@ export const typographyConfig = (modeColors) => {
     fontFamily: BODY,
     h1: {
       fontFamily: DISPLAY,
+      color: modeColors.text,
       fontWeight: 700,
       fontSize: '1.75rem',
       letterSpacing: '-0.025em',

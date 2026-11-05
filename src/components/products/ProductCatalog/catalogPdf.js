@@ -7,7 +7,7 @@ const IMAGE_SIZE_MM = 16;
 const IMAGE_MAX_PX = 300;
 const IMAGE_CONCURRENCY = 6;
 const MARGIN_MM = 14;
-const NAVY = [18, 26, 69];
+const NAVY = [23, 26, 74];
 const SMARTVENTA_URL = "https://smartventapos.vercel.app/";
 
 /** Descarga una imagen y la reduce a JPEG ≤300 px. Devuelve `null` si no se puede leer (p. ej. CORS). */

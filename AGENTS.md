@@ -406,7 +406,7 @@ En el cobro: Ctrl+G confirma y Ctrl+O quita el cliente (solo con el cobro abiert
 
 Fuente única de colores, sombras y radios: `src/theme/colors.js` (primitivas, `status`, `radius` y `modes.light/dark`). `theme.js` y `cssVariables.js` solo los leen: `theme.js` arma el tema MUI y `cssVariables.js` publica las variables CSS (`--color-*`, `--shadow-*`, `--radius-*`) al cambiar de modo desde `useThemeMode`. `variables.css` solo guarda el respaldo estático de radios, espaciado, fuente y easing. **No repitas un valor de color ni de radio en estos archivos**: agrégalo a `colors.js`.
 
-- **Estilo de marca.** Navy `#121A45` (`colors.sidebar`) en topbar, sidebar, botones, encabezado de tabla y pestaña activa; neutros fríos para fondo, superficies y bordes; Inter en todo; íconos MUI Outlined de 18 px, monocromos. Las pantallas lo heredan del tema global: no lleva envoltorio ni tema propio. `useThemeTokens()` da los tokens extra de la tarjeta destacada y las pastillas (ejemplo: `admin/StoreList/`). `PageHeader` pone el título a la izquierda sin ícono; el contenedor principal de cada página es `.card` (radio 12 px, padding 28 px).
+- **Estilo de marca.** Navy `#171A4A` (`colors.sidebar`) en topbar, sidebar, botones, encabezado de tabla y pestaña activa; neutros fríos para fondo, superficies y bordes; Inter en todo; íconos MUI Outlined de 18 px, monocromos. Las pantallas lo heredan del tema global: no lleva envoltorio ni tema propio. `useThemeTokens()` da los tokens extra de la tarjeta destacada y las pastillas (ejemplo: `admin/StoreList/`). `PageHeader` pone el título a la izquierda sin ícono; el contenedor principal de cada página es `.card` (radio 12 px, padding 28 px).
 - **Nunca hardcodear hex ni rgba** en componentes. Usa tokens del tema (`primary`, `secondary`, `accent`, `success`, `error`, `text.*`, `divider`, `common.white`…), `alpha(theme.palette.x.main, o)` para transparencias, o `colors` de `src/theme/colors.js`.
 - `colors.js` tiene las primitivas que no son tokens de MUI:
   - `error` (= `error.main`), `whatsapp`, `backdrop`, `appbar`.
@@ -438,14 +438,15 @@ Texto e títulos `Inter` (títulos h1–h4 con peso 700; solo 500, 600 y 700; lo
 
 | Token | Claro | Oscuro |
 |---|---|---|
-| primary / sidebar / botones | `#121a45` | primary `#aab3e6`, botón `#2b3a8f` |
+| primary / sidebar / botones | `#171a4a` | primary `#aab3e6`, botón `#2b3a8f` |
 | accent | `#ffb020` (ámbar, solo botón principal del registro y detalles; dark `#f59e0b`; texto sobre ámbar `onAccent` `#0b1b4d`) | igual |
-| background.default | `#f3f4f8` | `#0f1220` |
+| background.default | `#e9ecf4` | `#0f1220` |
 | background.paper | `#ffffff` | `#171b2e` |
-| divider | `#e3e6ee` | `#2a3050` |
-| text.primary | `#141a33` | `#e8eaf4` |
-| text.secondary | `#5b6280` | `#a4abc9` |
+| divider | `#dce1ec` | `#2a3050` |
+| text.primary | `#1a1d3a` | `#e8eaf4` |
+| text.secondary | `#6b7090` | `#a4abc9` |
 | text terciario (`caption`) | `#8c92ab` | `#7f86a8` |
+| fila alterna / hover / seleccionada (tablas) | `#f5f7fb` / `#edf0fa` / `#e3e8fa` | translúcidos |
 | sidebar activo / íconos inactivos | `#ffffff` con barra de 3px / `#8e95be` | igual |
 
 `colors.js` define las primitivas que consume `theme.js` (no repitas hex en el tema). El sidebar, el login y los modales usan el navy plano (`colors.sidebar`). Sin azul rey ni fondos pastel de color en tarjetas o íconos.

@@ -16,7 +16,7 @@ import { buildComponentsConfig } from './components';
  * @returns {Object} Tema MUI (resultado de createTheme())
  * 
  * Paleta:
- * - Primary: navy de marca (#121a45)
+ * - Primary: navy de marca (#171A4A)
  * - Secondary: gris azulado
  * - Accent: ámbar (#ffb020)
  * - Success/Warning/Error/Info: del objeto status
@@ -56,6 +56,9 @@ export const getTheme = (mode) => {
       error: status.error,
       info: status.info,
       rowDivider: { main: t.rowDivider },
+      rowHover: { main: t.rowHover },
+      rowSelected: { main: t.rowSelected },
+      rowStripe: { main: t.rowStripe },
       modalBody: { main: t.modalBody },
       modalHeader: { main: t.modalHeader },
       modalField: { main: t.modalField },
