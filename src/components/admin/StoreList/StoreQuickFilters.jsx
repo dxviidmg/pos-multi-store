@@ -1,5 +1,6 @@
 import React, { memo } from "react";
 import { Box, ButtonBase, useMediaQuery } from "@mui/material";
+import { alpha } from "@mui/material/styles";
 import { STORE_TYPES } from "../../../constants";
 import { useThemeTokens } from "../../../theme";
 
@@ -14,7 +15,7 @@ const syncedFilter = {
 const actionsFilter = { value: "actions", label: "Acciones" };
 
 const STORE_FILTERS = [
-  { value: "all", label: "Pagos", count: ({ storeCount }) => storeCount },
+  { value: "all", label: "General", count: ({ storeCount }) => storeCount },
   { value: "sales", label: "Ventas", count: ({ storeCount }) => storeCount },
   managersFilter,
   investmentFilter,
@@ -31,7 +32,7 @@ const WAREHOUSE_FILTERS = [
   actionsFilter,
 ];
 
-/** Pastillas de vista (definen qué columnas muestra la tabla): activa en navy, con contador. */
+/** Pastillas de vista (definen qué columnas muestra la tabla): activa con tinte navy, con contador. */
 const StoreQuickFilters = ({ storeType, stores, value, onChange }) => {
   const tokens = useThemeTokens();
   const compact = useMediaQuery((theme) => theme.breakpoints.down("md"));
@@ -48,7 +49,7 @@ const StoreQuickFilters = ({ storeType, stores, value, onChange }) => {
       role="tablist"
       aria-label="Vista de la tabla"
       sx={{
-        display: "flex", gap: 0.5, p: 1, bgcolor: "background.paper", borderBottom: "1px solid", borderColor: "divider",
+        display: "flex", alignItems: "center", gap: 0.5, p: 0.5, borderRadius: "var(--radius-base)", bgcolor: tokens.pillBg,
         overflowX: "auto", scrollbarWidth: "none", "&::-webkit-scrollbar": { display: "none" },
       }}
     >
@@ -63,12 +64,12 @@ const StoreQuickFilters = ({ storeType, stores, value, onChange }) => {
               aria-selected={selected}
               onClick={() => onChange(filter)}
               sx={{
-                flex: compact ? "0 0 auto" : 1, gap: 0.75, px: 1.75, py: 0.9, borderRadius: "var(--radius-base)", whiteSpace: "nowrap",
+                flex: compact ? "0 0 auto" : 1, gap: 0.75, px: 1.75, minHeight: compact ? 36 : 32, borderRadius: "var(--radius-base)", whiteSpace: "nowrap",
                 fontSize: "0.8125rem", fontWeight: selected ? 600 : 500,
-                color: selected ? "common.white" : "text.secondary",
-                bgcolor: selected ? "tableHead.main" : "transparent",
+                color: selected ? "primary.main" : "text.secondary",
+                bgcolor: selected ? (theme) => alpha(theme.palette.primary.main, 0.1) : "transparent",
                 transition: "background-color 0.2s ease, color 0.2s ease",
-                "&:hover": { bgcolor: selected ? "tableHead.main" : "action.hover" },
+                "&:hover": { bgcolor: (theme) => alpha(theme.palette.primary.main, selected ? 0.14 : 0.06) },
                 "&.Mui-focusVisible": { outline: "2px solid", outlineColor: "primary.main", outlineOffset: 1 },
               }}
             >
@@ -78,8 +79,8 @@ const StoreQuickFilters = ({ storeType, stores, value, onChange }) => {
                   component="span"
                   sx={{
                     px: 0.9, borderRadius: "var(--radius-pill)", fontSize: "0.75rem", fontWeight: 600, lineHeight: 1.6,
-                    bgcolor: selected ? tokens.pillActiveBg : tokens.pillBg,
-                    color: selected ? "common.white" : "text.secondary",
+                    bgcolor: selected ? (theme) => alpha(theme.palette.primary.main, 0.14) : "background.paper",
+                    color: selected ? "primary.main" : "text.secondary",
                   }}
                 >
                   {count(counts)}

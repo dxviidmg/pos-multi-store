@@ -1,5 +1,5 @@
 import { useEffect, useCallback, useMemo, useRef, useState } from "react";
-import { Box, useMediaQuery, useTheme } from "@mui/material";
+import { Box, Grid, useMediaQuery, useTheme } from "@mui/material";
 import StorefrontOutlinedIcon from "@mui/icons-material/StorefrontOutlined";
 import CardGallery from "../../ui/CardGallery/CardGallery";
 import DataTable from "../../ui/DataTable/DataTable";
@@ -30,7 +30,7 @@ import { useModal } from "../../../hooks/useModal";
 import { useCanCreateStore } from "../../../hooks/useCanCreateStore";
 import { showRequestError } from "../../../utils/alerts";
 
-// La tabla y sus pastillas de vista comparten una misma tarjeta con borde
+// La tabla va en una tarjeta con borde; Tiendas/Almacenes y las pastillas de vista van fuera, en una fila encima
 const TABLE_CARD_SX = {
   border: "1px solid", borderColor: "divider", borderRadius: "var(--radius-base)", overflow: "hidden", bgcolor: "background.paper",
   "& > div:last-of-type": { mt: 0 },
@@ -161,15 +161,6 @@ const StoreList = () => {
     <StoreEmptyNotice icon={StorefrontOutlinedIcon} title="Todavía no tienes almacenes" />
   );
 
-  const quickFilters = (
-    <StoreQuickFilters
-      storeType={params.store_type}
-      stores={stores}
-      value={quickFilter}
-      onChange={setQuickFilter}
-    />
-  );
-
   return (
     <>
       <Box className="card">
@@ -194,14 +185,24 @@ const StoreList = () => {
 
         <StoreKpiTiles tenantInfo={tenantInfo} totals={totals} period={period} loading={loading} />
 
-        <StoreTypeTabs value={params.store_type} onChange={handleStoreType} />
+        <Grid container spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
+          <Grid item xs={12} md={3}>
+            <StoreTypeTabs value={params.store_type} onChange={handleStoreType} />
+          </Grid>
+          <Grid item xs={12} md={9}>
+            <StoreQuickFilters
+              storeType={params.store_type}
+              stores={stores}
+              value={quickFilter}
+              onChange={setQuickFilter}
+            />
+          </Grid>
+        </Grid>
 
         <Box ref={contentRef} sx={{ minHeight: lockedHeight || undefined }}>
           <Box key={params.store_type} className="fade-in-up">
             {isMobile ? (
-              <>
-                {quickFilters}
-                <Box sx={{ mt: 2 }}>
+              <Box sx={{ mt: 2 }}>
                   <CardGallery
                     items={filteredStores}
                     loading={loading}
@@ -212,10 +213,8 @@ const StoreList = () => {
                     )}
                   />
                 </Box>
-              </>
             ) : (
               <Box sx={TABLE_CARD_SX}>
-                {quickFilters}
                 <DataTable
                   progressPending={loading}
                   noDataComponent={emptyList}
