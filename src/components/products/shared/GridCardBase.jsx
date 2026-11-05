@@ -99,7 +99,7 @@ const GridCardBase = ({ image, name, brandName, onClick, children, actions }) =>
       <Typography
         sx={{
           fontWeight: 700,
-          fontSize: "0.95rem",
+          fontSize: "1rem",
           color: "text.primary",
           lineHeight: 1.35,
           display: "-webkit-box",

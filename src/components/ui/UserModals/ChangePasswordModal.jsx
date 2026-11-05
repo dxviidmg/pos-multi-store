@@ -15,7 +15,7 @@ const ChangePasswordModal = ({ open, onClose, passwordData, onChange, onSave, sh
         <Grid item xs={12} className="card">
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <Alert severity="warning" variant="filled" sx={{ fontSize: '0.8rem' }}>
+              <Alert severity="warning" variant="filled" sx={{ fontSize: '0.8125rem' }}>
                 Al cambiar la contraseña se cerrará la sesión en todos los dispositivos donde esté abierta.
               </Alert>
             </Grid>

@@ -137,7 +137,7 @@ export const subItemSx = { pl: 6.5, py: 0.5, borderRadius: "var(--radius-base)",
 
 export const subItemTextColor = whiteAlpha(0.75);
 
-export const secondaryTextProps = { fontSize: "0.65rem", color: whiteAlpha(0.4) };
+export const secondaryTextProps = { fontSize: "0.75rem", color: whiteAlpha(0.4) };
 
 export const userMenuPaperSx = {
   minWidth: 180,

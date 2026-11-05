@@ -64,7 +64,7 @@ const SidebarMenu = ({
         <ListItemButton onClick={onBack} sx={itemButtonSx(expanded)}>
           <ListItemIcon sx={itemIconSx(expanded)}>{getMenuIcon(item.label)}</ListItemIcon>
           <ListItemText primary={item.label}
-            primaryTypographyProps={{ fontWeight: 600, fontSize: "0.8rem", color: "inherit" }}
+            primaryTypographyProps={{ fontWeight: 600, fontSize: "0.8125rem", color: "inherit" }}
             sx={textSx}
           />
         </ListItemButton>
@@ -82,7 +82,7 @@ const SidebarMenu = ({
             <ListItemText
               primary={isStoreSelector && !expanded ? storeName : item.label}
               secondary={isStoreSelector && expanded ? storeName : null}
-              primaryTypographyProps={{ fontWeight: 600, fontSize: "0.8rem" }}
+              primaryTypographyProps={{ fontWeight: 600, fontSize: "0.8125rem" }}
               secondaryTypographyProps={secondaryTextProps}
               sx={textSx}
             />
@@ -111,7 +111,7 @@ const SidebarMenu = ({
         <ListItemIcon sx={itemIconSx(expanded, active)}>{getMenuIcon(item.iconKey || item.label)}</ListItemIcon>
         <ListItemText primary={item.label}
           primaryTypographyProps={{
-            fontWeight: 600, fontSize: "0.8rem",
+            fontWeight: 600, fontSize: "0.8125rem",
             color: active ? colors.sidebarActive : "inherit",
           }}
           sx={textSx}

@@ -31,7 +31,7 @@ const StockVerificationSnackbar = ({ open, productCode, onClose }) => (
       <AlertTitle sx={{ fontWeight: 700, mb: 0.25 }}>
         Verificación de stock requerida
       </AlertTitle>
-      <Box component="span" sx={{ fontSize: "0.8rem" }}>
+      <Box component="span" sx={{ fontSize: "0.8125rem" }}>
         El producto {productCode} necesita verificación de stock
       </Box>
     </Alert>

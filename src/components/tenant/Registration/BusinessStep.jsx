@@ -16,7 +16,7 @@ const getShortNameSuggestions = (shortName) => {
 };
 
 const suggestionSx = {
-  fontSize: "0.7rem",
+  fontSize: "0.75rem",
   px: 1,
   py: 0.25,
   borderRadius: "var(--radius-base)",
@@ -76,7 +76,7 @@ const BusinessStep = ({ formData, setField, shortNameStatus, isValid, onNext }) 
 
       {shortNameStatus === "taken" && (
         <Box sx={{ mt: 0.5, display: "flex", alignItems: "center", gap: 0.75, flexWrap: "wrap" }}>
-          <Typography sx={{ fontSize: "0.68rem", color: "text.secondary" }}>
+          <Typography sx={{ fontSize: "0.75rem", color: "text.secondary" }}>
             Prueba con:
           </Typography>
           {getShortNameSuggestions(formData.short_name).map((suggestion) => (

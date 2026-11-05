@@ -34,7 +34,7 @@ const RegistrationSuccess = ({ ownerUsername, onLogin, onRegisterAnother }) => (
         <Typography sx={{ fontSize: "1rem", fontWeight: 700, color: "primary.main", fontFamily: "monospace", letterSpacing: "0.5px" }}>
           {ownerUsername}
         </Typography>
-        <Typography sx={{ fontSize: "0.7rem", color: "text.secondary", mt: 0.75, lineHeight: 1.5 }}>
+        <Typography sx={{ fontSize: "0.75rem", color: "text.secondary", mt: 0.75, lineHeight: 1.5 }}>
           Usa este mismo valor como usuario y contraseña para tu primer inicio de sesión.
         </Typography>
       </Box>
@@ -44,7 +44,7 @@ const RegistrationSuccess = ({ ownerUsername, onLogin, onRegisterAnother }) => (
     </CustomButton>
     <Typography
       sx={{
-        mt: 2, fontSize: "0.8rem", color: "text.secondary",
+        mt: 2, fontSize: "0.8125rem", color: "text.secondary",
         fontWeight: 500, cursor: "pointer",
         "&:hover": { color: "primary.main" },
       }}

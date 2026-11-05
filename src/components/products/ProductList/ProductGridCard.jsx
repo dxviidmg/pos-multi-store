@@ -43,7 +43,7 @@ const ProductGridCard = ({ product, onEdit, onPriceLogs, onStoreStock, onCameraP
       {product.department_name && (
         <LabelValue label="Depto" sx={LINE_SPACING}>{product.department_name}</LabelValue>
       )}
-      <Typography variant="body2" sx={{ fontSize: "0.8rem", color: "text.primary", fontWeight: 600, lineHeight: 1.4, mb: 0.25 }}>
+      <Typography variant="body2" sx={{ fontSize: "0.8125rem", color: "text.primary", fontWeight: 600, lineHeight: 1.4, mb: 0.25 }}>
         {formatCurrency(product.unit_price)}
       </Typography>
       {product.apply_wholesale && (

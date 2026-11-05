@@ -21,7 +21,7 @@ const PriceOrTag = ({ service, onPricing }) => {
     <CustomButton
       size="small"
       onClick={() => service.action === STORE_UPDATE && onPricing()}
-      sx={{ textTransform: "none", fontSize: "0.85rem", height: "fit-content" }}
+      sx={{ textTransform: "none", fontSize: "0.8125rem", height: "fit-content" }}
     >
       {service.tag}
     </CustomButton>

@@ -107,7 +107,7 @@ const ProductCard = ({ storeProduct, disabled = false, onClick }) => {
                 borderRadius: "var(--radius-base)",
                 bgcolor: "error.main",
                 color: "common.white",
-                fontSize: "0.7rem",
+                fontSize: "0.75rem",
                 fontWeight: 700,
                 textTransform: "uppercase",
                 letterSpacing: "0.02em",
@@ -125,7 +125,7 @@ const ProductCard = ({ storeProduct, disabled = false, onClick }) => {
           <Typography
             sx={{
               color: "text.secondary",
-              fontSize: "0.68rem",
+              fontSize: "0.75rem",
               fontWeight: 600,
               textTransform: "uppercase",
               letterSpacing: "0.02em",
@@ -141,7 +141,7 @@ const ProductCard = ({ storeProduct, disabled = false, onClick }) => {
         <Typography
           sx={{
             fontWeight: 600,
-            fontSize: "0.82rem",
+            fontSize: "0.8125rem",
             color: "text.primary",
             lineHeight: 1.3,
             display: "-webkit-box",

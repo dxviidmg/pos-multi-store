@@ -77,7 +77,7 @@ const StoreQuickFilters = ({ storeType, stores, value, onChange }) => {
                 <Box
                   component="span"
                   sx={{
-                    px: 0.9, borderRadius: "var(--radius-pill)", fontSize: "0.6875rem", fontWeight: 600, lineHeight: 1.6,
+                    px: 0.9, borderRadius: "var(--radius-pill)", fontSize: "0.75rem", fontWeight: 600, lineHeight: 1.6,
                     bgcolor: selected ? tokens.pillActiveBg : tokens.pillBg,
                     color: selected ? "common.white" : "text.secondary",
                   }}

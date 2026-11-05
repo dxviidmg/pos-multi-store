@@ -62,7 +62,7 @@ const ConnectionStatusBanner = () => {
           <AlertTitle sx={{ fontWeight: 700, mb: 0.25 }}>
             Sin conexión a Internet
           </AlertTitle>
-          <Box component="span" sx={{ fontSize: "0.8rem" }}>
+          <Box component="span" sx={{ fontSize: "0.8125rem" }}>
             Algunas funciones pueden no estar disponibles.
           </Box>
         </Alert>
@@ -86,7 +86,7 @@ const ConnectionStatusBanner = () => {
           <AlertTitle sx={{ fontWeight: 700, mb: 0.25 }}>
             Conexión restaurada
           </AlertTitle>
-          <Box component="span" sx={{ fontSize: "0.8rem" }}>
+          <Box component="span" sx={{ fontSize: "0.8125rem" }}>
             Ya puedes usar todas las funciones.
           </Box>
         </Alert>

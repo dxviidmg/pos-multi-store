@@ -41,7 +41,7 @@ const AmountTile = ({ totals, period, loading }) => {
       <Box sx={{ display: "flex", gap: 2 }}>
         {PAYMENT_METHOD_OPTIONS.map(({ value, label }) => (
           <Box key={value}>
-            <Typography component="div" sx={{ fontSize: "0.7rem", color: tokens.heroLabel }}>{label}</Typography>
+            <Typography component="div" sx={{ fontSize: "0.75rem", color: tokens.heroLabel }}>{label}</Typography>
             <Typography component="div" sx={{ fontSize: "0.8125rem", fontWeight: 600, fontVariantNumeric: "tabular-nums" }}>
               {loading ? "—" : formatCurrency(totals[value])}
             </Typography>

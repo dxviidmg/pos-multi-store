@@ -5,8 +5,8 @@ import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import { QUANTITY_MODES, getSaleModeLabel, isCustomSaleMode } from "./quantityRules";
 
 const VARIANT_SX = {
-  table: { borderRadius: "var(--radius-base)", px: 1, width: "auto", height: 28, fontSize: "0.7rem" },
-  card: { borderRadius: "var(--radius-base)", px: 0.75, py: 0.4, fontSize: "0.6rem", width: "100%", justifyContent: "center" },
+  table: { borderRadius: "var(--radius-base)", px: 1, width: "auto", height: 28, fontSize: "0.75rem" },
+  card: { borderRadius: "var(--radius-base)", px: 0.75, py: 0.4, fontSize: "0.75rem", width: "100%", justifyContent: "center" },
   mobile: { borderRadius: "var(--radius-base)", px: 1, fontSize: "0.75rem" },
 };
 

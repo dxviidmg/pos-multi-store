@@ -157,8 +157,8 @@ const NotificationsMenu = memo(() => {
           <ListItemText
             primary={n.text}
             secondary={n.storeName}
-            primaryTypographyProps={{ fontSize: "0.8rem", fontWeight: 500 }}
-            secondaryTypographyProps={{ fontSize: "0.7rem" }}
+            primaryTypographyProps={{ fontSize: "0.8125rem", fontWeight: 500 }}
+            secondaryTypographyProps={{ fontSize: "0.75rem" }}
           />
         </ListItemButton>
       ))}

@@ -26,14 +26,14 @@ const getQuantityLabel = (item, mode, variant) => {
   return short ? "Cant" : "Cantidad";
 };
 
-const CARD_LABEL_SX = { display: "block", mb: 0.5, fontWeight: 600, fontSize: "0.6rem", textTransform: "uppercase" };
+const CARD_LABEL_SX = { display: "block", mb: 0.5, fontWeight: 600, fontSize: "0.75rem", textTransform: "uppercase" };
 const MOBILE_LABEL_SX = { display: "block", mb: 0.5, fontWeight: 600 };
 const CARD_INPUT_SX = { "& input": { fontSize: "0.75rem", py: 0.4, textAlign: "center" } };
-const CARD_WHOLESALE_SX = { fontSize: "0.65rem", m: 0, "& .MuiTypography-root": { fontSize: "0.65rem" } };
+const CARD_WHOLESALE_SX = { fontSize: "0.75rem", m: 0, "& .MuiTypography-root": { fontSize: "0.75rem" } };
 const MOBILE_REMOVE_SX = { width: 32, height: 32, flexShrink: 0, borderRadius: "var(--radius-base)", bgcolor: "primary.main", color: "common.white", "&:hover": { bgcolor: "primary.dark" } };
 const MOBILE_ROW_ITEM_SX = { py: 1.5, borderBottom: "1px solid", borderColor: "divider" };
 const MOBILE_NAME_SX = {
-  fontSize: "0.9375rem", fontWeight: 600, lineHeight: 1.3, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical",
+  fontSize: "0.875rem", fontWeight: 600, lineHeight: 1.3, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical",
 };
 const MOBILE_ROW_SX = { display: "grid", gridTemplateColumns: "minmax(96px, 1.2fr) 1fr 1fr", gap: 1.5, alignItems: "start", mt: 1.25 };
 const MOBILE_VALUE_SX = { display: "flex", alignItems: "center", minHeight: 40, fontSize: "1rem", fontWeight: 600 };
@@ -167,7 +167,7 @@ const CartItemCard = ({
                 <Typography sx={{ color: "text.secondary", fontSize: "0.75rem", fontWeight: 500, lineHeight: 1.2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", mb: 0.5 }}>
                   {item.product.brand_name}
                 </Typography>
-                <Typography sx={{ fontWeight: 700, fontSize: "0.95rem", color: "text.primary", lineHeight: 1.35, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                <Typography sx={{ fontWeight: 700, fontSize: "1rem", color: "text.primary", lineHeight: 1.35, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
                   {item.product.name}
                 </Typography>
               </Box>
@@ -177,7 +177,7 @@ const CartItemCard = ({
             <LabelValue label="Código">{item.product.code}</LabelValue>
 
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <Typography variant="body2" sx={{ fontSize: "0.8rem", color: "text.primary", lineHeight: 1.4 }}>
+              <Typography variant="body2" sx={{ fontSize: "0.8125rem", color: "text.primary", lineHeight: 1.4 }}>
                 <Box component="span" sx={{ fontWeight: 600 }}>{item.quantity}</Box> {getUnitLabel(item)}
               </Typography>
               <LabelValue label="Subtotal">{subtotal}</LabelValue>

@@ -1,6 +1,6 @@
 import { ListItem, ListItemText } from "@mui/material";
 
-const PRIMARY_PROPS = { fontSize: "0.8rem", fontWeight: 700 };
+const PRIMARY_PROPS = { fontSize: "0.8125rem", fontWeight: 700 };
 const SECONDARY_PROPS = { fontSize: "0.75rem" };
 
 /**

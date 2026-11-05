@@ -6,7 +6,7 @@ import { logoutColor, sidebarDividerSx } from "./MainLayout.styles";
 import { colors } from "../../../theme/colors";
 import { getSupportWhatsAppUrl } from "../../../api/utils";
 
-const labelProps = { fontWeight: 600, fontSize: "0.8rem" };
+const labelProps = { fontWeight: 600, fontSize: "0.8125rem" };
 
 const buildSupportUrl = (user) => {
   const text = `Soporte SmartVenta\nTenant: ${user.tenant_name}\nTienda: ${user.store_name || "General"}`;

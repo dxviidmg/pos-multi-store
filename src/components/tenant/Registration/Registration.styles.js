@@ -6,7 +6,7 @@ const FOCUS_RING = (color) => `0 0 0 3px ${alpha(color, 0.15)}`;
 export const inputSx = {
   "& .MuiOutlinedInput-root": {
     borderRadius: "var(--radius-base)",
-    fontSize: "0.9rem",
+    fontSize: "0.875rem",
     backgroundColor: colors.white,
     // Input text always dark in auth pages (light mode only)
     "& input": {
@@ -32,7 +32,7 @@ export const getShortNameInputSx = (status) => (theme) => {
   return {
     "& .MuiOutlinedInput-root": {
       borderRadius: "var(--radius-base)",
-      fontSize: "0.9rem",
+      fontSize: "0.875rem",
       backgroundColor: colors.white,
       transition: "all 0.2s ease",
       // Input text always dark in auth pages (light mode only)
@@ -94,7 +94,7 @@ export const progressBarSx = {
 export const primaryButtonSx = {
   py: 1.3,
   borderRadius: "var(--radius-base)",
-  fontSize: "0.9rem",
+  fontSize: "0.875rem",
   fontWeight: 700,
   background: colors.accent,
   color: colors.onAccent,
@@ -114,7 +114,7 @@ export const primaryButtonSx = {
 export const secondaryButtonSx = {
   py: 1.3, px: 2.5,
   borderRadius: "var(--radius-base)",
-  fontSize: "0.85rem",
+  fontSize: "0.8125rem",
   fontWeight: 600,
   color: "text.secondary",
   bgcolor: "action.hover",
@@ -125,7 +125,7 @@ export const secondaryButtonSx = {
 
 export const headerTitleSx = { fontWeight: 700, color: colors.white, mb: 0.5 };
 
-export const headerSubtitleSx = { fontSize: "0.85rem", color: alpha(colors.white, 0.75) };
+export const headerSubtitleSx = { fontSize: "0.8125rem", color: alpha(colors.white, 0.75) };
 
 /** Tarjeta de plan; resaltada cuando está seleccionada. */
 export const getPlanCardSx = (selected) => ({

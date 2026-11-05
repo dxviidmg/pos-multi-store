@@ -138,7 +138,7 @@ const SaleModal = ({ isOpen, sale, onClose, onUpdate }) => {
               {isReservation ? (
                 <Grid item xs={12} md={4}>
                   <Typography variant="body2" sx={{ fontWeight: 600, mt: 1 }}>
-                    Devolver al cliente: <Box component="span" sx={{ color: "primary.main", fontSize: "1.1rem" }}>{formatCurrency(cashBack)}</Box>
+                    Devolver al cliente: <Box component="span" sx={{ color: "primary.main", fontSize: "1.125rem" }}>{formatCurrency(cashBack)}</Box>
                   </Typography>
                 </Grid>
               ) : (

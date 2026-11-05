@@ -52,7 +52,7 @@ const ResultsList = ({ data, ...actionProps }) => (
   <Box sx={{ maxHeight: "300px", overflowY: "auto" }}>
     {data.map((row) => (
       <Box key={row.id} sx={{ py: 1.5, borderBottom: "1px solid", borderColor: "divider" }}>
-        <Typography variant="subtitle2" sx={{ fontSize: "0.9375rem", fontWeight: 600, lineHeight: 1.3 }}>
+        <Typography variant="subtitle2" sx={{ fontSize: "0.875rem", fontWeight: 600, lineHeight: 1.3 }}>
           {row.product.name}
         </Typography>
         <Typography variant="caption" display="block" sx={{ color: "text.secondary" }}>

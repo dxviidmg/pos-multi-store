@@ -7,7 +7,7 @@ import { Box, Typography } from "@mui/material";
  * base (p. ej. `{ mb: 0.25 }` entre líneas).
  */
 const LabelValue = ({ label, children, sx }) => (
-  <Typography variant="body2" sx={{ fontSize: "0.8rem", color: "text.primary", lineHeight: 1.4, ...sx }}>
+  <Typography variant="body2" sx={{ fontSize: "0.8125rem", color: "text.primary", lineHeight: 1.4, ...sx }}>
     <Box component="span" sx={{ fontWeight: 600 }}>{label}:</Box> {children}
   </Typography>
 );
