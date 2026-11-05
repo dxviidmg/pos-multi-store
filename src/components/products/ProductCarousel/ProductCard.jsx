@@ -44,7 +44,7 @@ const ProductCard = ({ storeProduct, disabled = false, onClick }) => {
         overflow: "hidden",
         cursor: disabled ? "not-allowed" : "pointer",
         opacity: disabled ? 0.55 : 1,
-        transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+        transition: "all 0.2s ease",
         userSelect: "none",
         "&:hover": disabled
           ? {}
@@ -84,7 +84,7 @@ const ProductCard = ({ storeProduct, disabled = false, onClick }) => {
             height: "100%",
             objectFit: "cover",
             display: "block",
-            transition: "transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+            transition: "transform 0.2s ease",
           }}
         />
 

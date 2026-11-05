@@ -6,7 +6,7 @@ import VisuallyHiddenInput from "../../ui/VisuallyHiddenInput";
 const ProductImageField = ({ src, onChange }) => (
   <Box
     component="label"
-    sx={{ display: "block", cursor: "pointer", "&:hover": { opacity: 0.8 }, transition: "opacity 0.2s" }}
+    sx={{ display: "block", cursor: "pointer", "&:hover": { opacity: 0.8 }, transition: "opacity 0.2s ease" }}
   >
     <Box component="img" src={src} alt="Producto" sx={{ width: "100%", height: "auto", borderRadius: "var(--radius-base)" }} />
     <VisuallyHiddenInput type="file" accept="image/*" onChange={onChange} />

@@ -26,7 +26,7 @@ const suggestionSx = {
   cursor: "pointer",
   fontFamily: "monospace",
   fontWeight: 500,
-  transition: "all 0.15s ease",
+  transition: "all 0.2s ease",
   "&:hover": {
     bgcolor: "action.hover",
     borderColor: "primary.main",

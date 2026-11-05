@@ -457,6 +457,7 @@ Texto e títulos `Inter` (títulos h1–h4 con peso 700; solo 500, 600 y 700; lo
   - Ligera: `0 1px 2px rgba(18,26,69,.04)`
   - Media: `0 8px 24px rgba(18,26,69,.08)`
   - Marca: `0 4px 14px rgba(18,26,69,.22)`
+- **Transiciones:** una sola duración, `0.2s ease`, y solo sobre las propiedades que cambian.
 - **Animaciones en `App.css`:**
   - `fade-in-up`: tarjetas y paneles; escalonar con `animationDelay`, 60 ms.
   - `fade-in-left`: campos condicionales.

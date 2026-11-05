@@ -41,7 +41,7 @@ const EnterButton = ({ tooltip, onClick }) => (
       aria-label={tooltip}
       sx={{
         "&&&": { width: 30, height: 30, minWidth: 30, padding: 0, borderRadius: "var(--radius-base)", "& .MuiSvgIcon-root": { fontSize: 18 } },
-        bgcolor: "tableHead.main", color: "common.white", transition: "background-color 0.15s ease",
+        bgcolor: "tableHead.main", color: "common.white", transition: "background-color 0.2s ease",
         "&:hover": { bgcolor: "primary.dark" },
         "&.Mui-focusVisible": { outline: "2px solid", outlineColor: "primary.main", outlineOffset: 2 },
       }}

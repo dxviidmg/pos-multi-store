@@ -202,6 +202,6 @@ input:focus, select:focus, textarea:focus {
 }
 
 @media (pointer: coarse) {
-  .MuiButtonBase-root { transition: transform 0.15s ease, background-color 0.15s ease; }
+  .MuiButtonBase-root { transition: transform 0.2s ease, background-color 0.2s ease; }
   .MuiButtonBase-root:active:not(.Mui-disabled) { transform: scale(0.97); }
 }

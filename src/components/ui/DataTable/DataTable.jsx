@@ -188,7 +188,7 @@ const DataTable = ({
             "& .MuiDataGrid-row": {
               minHeight: '34px !important',
               maxHeight: 'none !important',
-              transition: 'background-color 0.15s ease',
+              transition: 'background-color 0.2s ease',
               '&:hover': { backgroundColor: 'action.hover' },
             },
             "& .MuiDataGrid-cell:focus, & .MuiDataGrid-columnHeader:focus": { outline: 'none' },

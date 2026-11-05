@@ -67,7 +67,7 @@ const StoreQuickFilters = ({ storeType, stores, value, onChange }) => {
                 fontSize: "0.8125rem", fontWeight: selected ? 600 : 500,
                 color: selected ? "common.white" : "text.secondary",
                 bgcolor: selected ? "tableHead.main" : "transparent",
-                transition: "background-color 0.15s ease, color 0.15s ease",
+                transition: "background-color 0.2s ease, color 0.2s ease",
                 "&:hover": { bgcolor: selected ? "tableHead.main" : "action.hover" },
                 "&.Mui-focusVisible": { outline: "2px solid", outlineColor: "primary.main", outlineOffset: 1 },
               }}

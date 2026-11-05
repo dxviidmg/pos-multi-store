@@ -154,7 +154,7 @@ const CartItemCard = ({
               objectFit: "cover",
               borderBottom: "1px solid",
               borderColor: "divider",
-              transition: "transform 0.3s ease",
+              transition: "transform 0.2s ease",
               cursor: "pointer",
               display: "block",
               "&:hover": { transform: "scale(1.04)" },

@@ -41,7 +41,7 @@ export const buildComponentsConfig = (modeColors, mode) => {
         fontWeight: 600,
         fontSize: '0.8125rem',
         lineHeight: 1.4,
-        transition: 'background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.2s ease, transform 0.2s ease',
+        transition: 'background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease',
         '&:active': { transform: 'scale(0.98)' },
         '&.Mui-focusVisible': { boxShadow: `0 0 0 3px ${alpha(modeColors.focusRing, 0.6)}` },
       },
@@ -129,7 +129,7 @@ export const buildComponentsConfig = (modeColors, mode) => {
         '& .MuiOutlinedInput-root': {
           borderRadius: radius.base,
           fontSize: '0.875rem',
-          transition: 'border-color 0.15s ease, box-shadow 0.15s ease',
+          transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
           '&:hover fieldset': {
             borderColor: modeColors.borderHover,
           },
@@ -192,7 +192,7 @@ export const buildComponentsConfig = (modeColors, mode) => {
     styleOverrides: {
       root: {
         '& .MuiTableRow-root': {
-          transition: 'background-color 0.1s ease',
+          transition: 'background-color 0.2s ease',
           '&:hover': {
             backgroundColor: modeColors.rowHover,
           },
@@ -281,7 +281,7 @@ export const buildComponentsConfig = (modeColors, mode) => {
       root: {
         borderRadius: radius.base,
         fontSize: '0.8125rem',
-        transition: 'background-color 0.15s ease',
+        transition: 'background-color 0.2s ease',
       },
     },
   },
@@ -289,7 +289,7 @@ export const buildComponentsConfig = (modeColors, mode) => {
   MuiIconButton: {
     styleOverrides: {
       root: {
-        transition: 'background-color 0.15s ease, transform 0.1s ease',
+        transition: 'background-color 0.2s ease, transform 0.2s ease',
         '&:active': { transform: 'scale(0.92)' },
       },
     },

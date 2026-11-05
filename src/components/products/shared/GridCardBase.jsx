@@ -62,7 +62,7 @@ const GridCardBase = ({ image, name, brandName, onClick, children, actions }) =>
           height: "100%",
           objectFit: "cover",
           display: "block",
-          transition: "transform 0.3s ease",
+          transition: "transform 0.2s ease",
         }}
       />
     </Box>
