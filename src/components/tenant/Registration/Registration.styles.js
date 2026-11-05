@@ -5,7 +5,6 @@ const FOCUS_RING = (color) => `0 0 0 3px ${alpha(color, 0.15)}`;
 
 export const inputSx = {
   "& .MuiOutlinedInput-root": {
-    borderRadius: "var(--radius-base)",
     fontSize: "0.875rem",
     backgroundColor: colors.white,
     // Input text always dark in auth pages (light mode only)
@@ -31,7 +30,6 @@ export const getShortNameInputSx = (status) => (theme) => {
   const focusColor = main || theme.palette.primary.light;
   return {
     "& .MuiOutlinedInput-root": {
-      borderRadius: "var(--radius-base)",
       fontSize: "0.875rem",
       backgroundColor: colors.white,
       transition: "all 0.2s ease",

@@ -452,7 +452,7 @@ Texto e títulos `Inter` (títulos h1–h4 con peso 700; solo 500, 600 y 700; lo
 
 ### Formas, sombras y movimiento
 
-- **Radio único:** `colors.radius.base` = 12px para todo lo rectangular (`.card`, Dialog, Paper/Card, Button/TextField/Select, Alert, chips, imágenes, tooltips); `pill` 999px para píldoras y barras finas (progreso, barra activa del sidebar); `"50%"` para círculos. En `sx`: `borderRadius: "var(--radius-base)"`; en el tema: `colors.radius.base`. No agregues otro radio.
+- **Radio único:** `colors.radius.base` = 12px para todo lo rectangular (`.card`, Dialog, Paper/Card, Button/TextField/Select, Alert, chips, imágenes, tooltips); `pill` 999px para píldoras y barras finas (progreso, barra activa del sidebar); `"50%"` para círculos. En `sx`: `borderRadius: "var(--radius-base)"`; `theme.shape.borderRadius` sale de `colors.radius.base`, así que Button, TextField, Select, Paper, Card, Dialog, Popover, Tooltip y Alert ya lo heredan: no repitas `borderRadius` en ellos (solo en ListItemButton, Tab, IconButton y `Box`). No agregues otro radio.
 - **Sombras teñidas de navy en modo claro** (negras en oscuro), casi imperceptibles:
   - Ligera: `0 1px 2px rgba(18,26,69,.04)`
   - Media: `0 8px 24px rgba(18,26,69,.08)`

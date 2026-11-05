@@ -126,7 +126,6 @@ function Login() {
         <Paper elevation={0} sx={{
           display: { xs: 'none', md: 'block' },
           width: '100%', maxWidth: 420,
-          borderRadius: 'var(--radius-base)',
           bgcolor: 'background.paper',
           border: '1px solid',
           borderColor: 'divider',

@@ -36,7 +36,6 @@ export const buildComponentsConfig = (modeColors, mode) => {
     defaultProps: { disableElevation: true },
     styleOverrides: {
       root: {
-        borderRadius: radius.base,
         padding: '6px 16px',
         fontWeight: 600,
         fontSize: '0.8125rem',
@@ -90,7 +89,6 @@ export const buildComponentsConfig = (modeColors, mode) => {
     defaultProps: { elevation: 0 },
     styleOverrides: {
       root: {
-        borderRadius: radius.base,
         border: `1px solid ${modeColors.border}`,
         backgroundImage: 'none',
       },
@@ -101,7 +99,6 @@ export const buildComponentsConfig = (modeColors, mode) => {
     defaultProps: { elevation: 0 },
     styleOverrides: {
       root: {
-        borderRadius: radius.base,
         border: `1px solid ${modeColors.border}`,
         transition: 'box-shadow 0.2s ease',
         '&:hover': {
@@ -127,7 +124,6 @@ export const buildComponentsConfig = (modeColors, mode) => {
     styleOverrides: {
       root: {
         '& .MuiOutlinedInput-root': {
-          borderRadius: radius.base,
           fontSize: '0.875rem',
           transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
           '&:hover fieldset': {
@@ -146,7 +142,6 @@ export const buildComponentsConfig = (modeColors, mode) => {
   MuiSelect: {
     styleOverrides: {
       root: {
-        borderRadius: radius.base,
         fontSize: '0.875rem',
       },
     },
@@ -155,7 +150,6 @@ export const buildComponentsConfig = (modeColors, mode) => {
   MuiDialog: {
     styleOverrides: {
       paper: {
-        borderRadius: radius.base,
         border: `1px solid ${modeColors.border}`,
       },
     },
@@ -164,7 +158,6 @@ export const buildComponentsConfig = (modeColors, mode) => {
   MuiTooltip: {
     styleOverrides: {
       tooltip: {
-        borderRadius: radius.base,
         fontSize: '0.75rem',
         backgroundColor: mode === 'light' ? modeColors.text : modeColors.border,
         color: mode === 'light' ? colors.white : modeColors.text,
@@ -231,7 +224,6 @@ export const buildComponentsConfig = (modeColors, mode) => {
   MuiAlert: {
     styleOverrides: {
       root: {
-        borderRadius: radius.base,
         fontSize: '0.8125rem',
       },
     },
@@ -257,14 +249,12 @@ export const buildComponentsConfig = (modeColors, mode) => {
       root: {
         backgroundColor: alpha(modeColors.skeletonBase ?? (mode === 'light' ? colors.primary : colors.white), mode === 'light' ? 0.07 : 0.06),
       },
-      rounded: { borderRadius: radius.base },
     },
   },
 
   MuiPopover: {
     styleOverrides: {
       paper: {
-        borderRadius: radius.base,
         boxShadow: modeColors.shadowMd,
       },
     },
