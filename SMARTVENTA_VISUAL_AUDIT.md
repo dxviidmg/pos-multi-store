@@ -152,7 +152,17 @@ Bajo riesgo: ESLint limpio, 23 suites / 185 pruebas en verde y `npm run build` c
 - **Paso 2 — radios numéricos a tokens.** Los `borderRadius` sueltos en `sx`/`styled` que coincidían con la spec se cambiaron a `var(--radius-*)`: `14px`→panel (DataTable, Login, Skeleton, DashboardLoading, StoreList, StoreKpiTiles, GridCardBase, ProductCard, SearchSuggestions, PaymentModal, PageHelp, HeaderPopoverMenu, CartItemCard), `16px`→card (BarcodeScanner), `10px`→field (Registration, Login.styles, MainLayout.styles, SidebarFooter, StoreQuickFilters, StorePeriodFilters, TenantSection, ProfileCard, ProductImageField, SearchProduct, ZeroStockSelector, AuthLayout, ConnectionStatusBanner, StockVerificationSnackbar, MultiCart, ConsultDialog, BarcodeScanner), `8px`→tag (StockModal, SaleModeButton, StoreList.columns, ProductCard, subItem, DropZone, tableButtonSx), `6px`→tooltip (BusinessStep), `999`→pill (StoreQuickFilters) y el modal (`{ xs: 2, sm: 3 }` = 20/30px fuera de spec) → card.
 - **Se conservan** (excepciones vivas, sin cambio): `"50%"` de círculos/avatares/puntos, `"4px"`/`"2px"` de barras e indicadores delgados y celdas del mapa de calor, `"12px"` de los bloques destacados del registro, `borderRadius: 0` plano y `borderRadius={4}` de `@mui/x-charts` (prop numérica, no CSS).
 
+### Paso 4 — Gradientes decorativos — aplicado el 5 de noviembre de 2026
+
+Revisados todos los usos de gradiente (mucho menos de los 8 que estimaba la auditoría: el `gradient.sidebar` plano ya se había quitado en M2). Clasificación y acción:
+
+- **Conservados (gradientes reales que aportan):** banner superior de la card de registro (`Registration.styles` `headerBannerSx`, navy→navy claro), barra del stepper de registro (`Registration.styles`), barra del `LinearProgress` global (`theme/components.js`, navy→cyan), glows radiales y patrón de puntos del fondo del login (`AuthLayout`, `Login`), glow radial de la tarjeta destacada (`StoreKpiTiles`).
+- **Eliminado (plano disfrazado / inconsistente):** el botón "Cambiar tarjeta" de `PlanCard` era el único botón de la app con gradiente; se dejó como `CustomButton` estándar (navy plano, como el resto). Se quitó el import de `colors` que quedó huérfano.
+- **Token muerto eliminado:** `colors.gradient.brandHover` ya no se usaba tras quitar `PlanCard`; se eliminó. `colors.gradient.brand` se conserva (lo usa el banner de registro). `colors.shadow.brandHover` (sombra, distinta) no se tocó.
+- **Comentario corregido:** `ProductCard` mencionaba un "gradiente primario" que el código ya no tiene.
+
+Bajo riesgo: ESLint limpio, 23 suites / 185 pruebas en verde y `npm run build` compila.
+
 Pendiente:
 
 - **A2:** jerarquía de indicadores en tableros.
-- Gradientes decorativos de `PlanCard`, `Registration`, `StoreKpiTiles`, `ProductCard` y `Login` (paso 4).

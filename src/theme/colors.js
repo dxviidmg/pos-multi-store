@@ -46,7 +46,6 @@ export const colors = {
 
   gradient: {
     brand: `linear-gradient(135deg, ${PRIMARY} 0%, ${PRIMARY_LIGHT} 100%)`,
-    brandHover: `linear-gradient(135deg, ${PRIMARY_DARK} 0%, ${PRIMARY} 100%)`,
   },
 
   // Radios de la especificación (AGENTS.md §11). Fuente única; no repetir px sueltos

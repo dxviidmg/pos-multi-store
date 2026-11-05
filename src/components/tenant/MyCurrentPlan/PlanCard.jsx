@@ -6,7 +6,6 @@ import CreditCardIcon from "@mui/icons-material/CreditCard";
 import PageHeader from "../../ui/PageHeader";
 import CustomButton from "../../ui/Button/Button";
 import StatusChip from "../../ui/StatusChip";
-import { colors } from "../../../theme/colors";
 import { formatCurrency } from "../../../utils/utils";
 
 /** La tarjeta caduca pronto si vence en menos de 2 meses. `expiration` viene como "MM/AA". */
@@ -106,11 +105,7 @@ const PlanCard = ({ plan, equivalent, planLoading, isOwner, hasAccess, onSubscri
                   isOwner && (
                     <CustomButton
                       onClick={onUpdateCard}
-                      sx={{
-                        whiteSpace: "nowrap",
-                        background: colors.gradient.brand,
-                        "&:hover": { background: colors.gradient.brandHover },
-                      }}
+                      sx={{ whiteSpace: "nowrap" }}
                     >
                       Cambiar tarjeta
                     </CustomButton>

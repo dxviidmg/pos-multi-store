@@ -7,7 +7,7 @@ import { colors } from "../../../theme/colors";
 
 /**
  * Tarjeta visual de producto para el carrusel de búsqueda visual.
- * Diseño acorde a SmartVenta: imagen protagonista, gradiente primario,
+ * Diseño acorde a SmartVenta: imagen protagonista,
  * precio destacado tipo badge y feedback visual al pasar el cursor.
  */
 const ProductCard = ({ storeProduct, disabled = false, onClick }) => {

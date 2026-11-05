@@ -411,7 +411,7 @@ Fuente única de colores, sombras y radios: `src/theme/colors.js` (primitivas, `
 - `colors.js` tiene las primitivas que no son tokens de MUI:
   - `error` (= `error.main`), `whatsapp`, `backdrop`, `appbar`.
   - `shadow.{light, medium, brand, brandHover, appbar, card, toast, dialog, logo}`.
-  - `gradient.{brand, brandHover}`.
+  - `gradient.{brand}`.
 - Si un valor se repite y no existe, agrégalo a `colors.js`; no lo dejes en el componente.
 - Gráficas (`@mui/x-charts`): el texto SVG no acepta rutas del tema como `'text.secondary'`. Usa los estilos de `admin/Dashboard/chartStyles.js`, que leen variables CSS (`var(--color-text-secondary)`) y siguen el modo oscuro. La paleta de series es `CHART_COLORS` (`utils/chart.js`).
 - Inputs: nunca fondo fijo (`#fff`); usa `background.paper`, o rompe el modo oscuro.
