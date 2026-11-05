@@ -138,7 +138,7 @@ const AuthLayout = ({ children, headline, subtitle, activeStep, stepLabels }) =>
             {FEATURES.map(({ Icon, title, text }) => (
               <Box key={title} sx={{ display: "flex", gap: 2 }}>
                 <Box aria-hidden sx={{
-                  width: 40, height: 40, borderRadius: "var(--radius-field)", flexShrink: 0,
+                  width: 40, height: 40, borderRadius: "var(--radius-base)", flexShrink: 0,
                   display: "flex", alignItems: "center", justifyContent: "center",
                   bgcolor: alpha(colors.white, 0.08), color: colors.accent,
                   border: `1px solid ${alpha(colors.white, 0.12)}`,

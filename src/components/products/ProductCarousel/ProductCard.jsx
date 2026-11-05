@@ -39,7 +39,7 @@ const ProductCard = ({ storeProduct, disabled = false, onClick }) => {
         width: 168,
         scrollSnapAlign: "start",
         bgcolor: "background.paper",
-        borderRadius: "var(--radius-panel)",
+        borderRadius: "var(--radius-base)",
         boxShadow: 5,
         overflow: "hidden",
         cursor: disabled ? "not-allowed" : "pointer",
@@ -104,7 +104,7 @@ const ProductCard = ({ storeProduct, disabled = false, onClick }) => {
               sx={{
                 px: 1.25,
                 py: 0.4,
-                borderRadius: "var(--radius-tag)",
+                borderRadius: "var(--radius-base)",
                 bgcolor: "error.main",
                 color: "common.white",
                 fontSize: "0.7rem",

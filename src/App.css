@@ -19,7 +19,7 @@ h1, h2, h3 {
 .card {
   background-color: var(--color-paper);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-base);
   color: var(--color-text);
   box-shadow: var(--shadow-sm);
   margin-bottom: 1rem;

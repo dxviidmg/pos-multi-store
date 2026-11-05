@@ -5,7 +5,7 @@ import { formatCurrency, formatNumber } from "../../../utils/currency";
 import { useThemeTokens } from "../../../theme";
 import { PERIODS } from "./storeInsights";
 
-const CARD_RADIUS = "var(--radius-panel)";
+const CARD_RADIUS = "var(--radius-base)";
 
 /** Tarjeta destacada: monto vendido y su desglose por forma de pago. */
 const AmountTile = ({ totals, period, loading }) => {

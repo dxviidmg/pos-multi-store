@@ -16,7 +16,7 @@ const CHIP_TABS_SX = {
   "& .MuiTabs-indicator": { display: "none" },
   "& .MuiTabs-flexContainer": { gap: 1 },
   "& .MuiTab-root": {
-    minHeight: 36, minWidth: 0, px: 1.5, py: 0.5, borderRadius: "var(--radius-field)", border: "1px solid", borderColor: "divider", fontSize: "0.8125rem",
+    minHeight: 36, minWidth: 0, px: 1.5, py: 0.5, borderRadius: "var(--radius-base)", border: "1px solid", borderColor: "divider", fontSize: "0.8125rem",
   },
   "& .MuiTab-root.Mui-selected": { bgcolor: "primary.main", borderColor: "primary.main", color: "common.white" },
   "& .MuiTab-root.Mui-disabled": { opacity: 0.5 },

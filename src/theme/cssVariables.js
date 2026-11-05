@@ -18,11 +18,7 @@ export const applyCssVariables = (mode) => {
     '--color-table-head-text': t.tableHeadText,
     '--shadow-sm': t.shadowSm,
     '--shadow-md': t.shadowMd,
-    '--radius-card': colors.radius.card,
-    '--radius-panel': colors.radius.panel,
-    '--radius-field': colors.radius.field,
-    '--radius-tag': colors.radius.tag,
-    '--radius-tooltip': colors.radius.tooltip,
+    '--radius-base': colors.radius.base,
     '--radius-pill': colors.radius.pill,
   };
   const style = document.documentElement.style;

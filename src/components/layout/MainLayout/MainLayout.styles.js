@@ -116,13 +116,13 @@ export const activeSx = {
     content: '""',
     position: "absolute",
     left: 0, top: 8, bottom: 8, width: 3,
-    borderRadius: 3,
+    borderRadius: "var(--radius-pill)",
     background: colors.sidebarActive,
   },
 };
 
 export const itemButtonSx = (expanded, active = false) => ({
-  borderRadius: "var(--radius-field)", py: 0.75,
+  borderRadius: "var(--radius-base)", py: 0.75,
   justifyContent: expanded ? "initial" : "center",
   ...(active ? activeSx : {}),
   "&:hover": { backgroundColor: whiteAlpha(0.08) },
@@ -133,7 +133,7 @@ export const itemIconSx = (expanded, active = false) => ({
   minWidth: expanded ? 38 : 0, justifyContent: "center",
 });
 
-export const subItemSx = { pl: 6.5, py: 0.5, borderRadius: "var(--radius-tag)", my: 0.1, mx: 0.5 };
+export const subItemSx = { pl: 6.5, py: 0.5, borderRadius: "var(--radius-base)", my: 0.1, mx: 0.5 };
 
 export const subItemTextColor = whiteAlpha(0.75);
 

@@ -199,7 +199,7 @@ const StockModal = ({ isOpen, product, onClose }) => {
 
             {storeProduct.showImage ? (
               <Grid item xs={12} sx={{ textAlign: "center" }}>
-                <Box component="img" src={storeProduct.product?.image} alt="Producto" sx={{ maxWidth: 200, borderRadius: "var(--radius-tag)" }} />
+                <Box component="img" src={storeProduct.product?.image} alt="Producto" sx={{ maxWidth: 200, borderRadius: "var(--radius-base)" }} />
               </Grid>
             ) : (
               <Grid item xs={12}>

@@ -1,14 +1,7 @@
 :root {
-  --radius-lg: 16px;
-
-  /* Radios de la especificación (fuente: theme/colors.js → radius.*).
-     cssVariables.js reinyecta estos mismos valores al aplicar el modo;
-     aquí quedan como respaldo estático antes del primer render JS. */
-  --radius-card: 16px;
-  --radius-panel: 14px;
-  --radius-field: 10px;
-  --radius-tag: 8px;
-  --radius-tooltip: 6px;
+  /* Radio único (fuente: theme/colors.js → radius.*); cssVariables.js lo
+     reinyecta al aplicar el modo, aquí queda como respaldo estático. */
+  --radius-base: 12px;
   --radius-pill: 999px;
 
   --spacing-md: 1.75rem;

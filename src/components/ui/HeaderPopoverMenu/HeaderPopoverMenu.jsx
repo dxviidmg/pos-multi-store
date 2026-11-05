@@ -52,7 +52,7 @@ const HeaderPopoverMenu = ({
         onClose={close}
         anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
         transformOrigin={{ vertical: "top", horizontal: "right" }}
-        slotProps={{ paper: { sx: { width: 360, maxHeight: 420, borderRadius: "var(--radius-panel)", overflow: "hidden" } } }}
+        slotProps={{ paper: { sx: { width: 360, maxHeight: 420, borderRadius: "var(--radius-base)", overflow: "hidden" } } }}
       >
         <Box sx={{ px: 2.5, py: 1.5, borderBottom: 1, borderColor: "divider", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>{title}</Typography>

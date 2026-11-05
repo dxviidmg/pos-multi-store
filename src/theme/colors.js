@@ -48,17 +48,10 @@ export const colors = {
     brand: `linear-gradient(135deg, ${PRIMARY} 0%, ${PRIMARY_LIGHT} 100%)`,
   },
 
-  // Radios de la especificación (AGENTS.md §11). Fuente única; no repetir px sueltos
-  // en componentes. `card` para contenedores grandes y Dialog, `panel` para Card/Paper
-  // y tarjetas de contenido, `field` para botones y controles, `tag` para Alert/chips
-  // rectangulares e imágenes pequeñas, `tooltip` para tooltips, `pill` para píldoras y
-  // círculos (999px redondea por completo cualquier forma).
+  // Radio único (AGENTS.md §11): `base` para todo lo rectangular (cards, paneles,
+  // controles, chips, tooltips); `pill` para círculos y barras finas (999px).
   radius: {
-    card: '16px',
-    panel: '14px',
-    field: '10px',
-    tag: '8px',
-    tooltip: '6px',
+    base: '12px',
     pill: '999px',
   },
 

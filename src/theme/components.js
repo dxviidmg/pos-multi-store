@@ -36,7 +36,7 @@ export const buildComponentsConfig = (modeColors, mode) => {
     defaultProps: { disableElevation: true },
     styleOverrides: {
       root: {
-        borderRadius: radius.field,
+        borderRadius: radius.base,
         padding: '6px 16px',
         fontWeight: 600,
         fontSize: '0.8125rem',
@@ -90,7 +90,7 @@ export const buildComponentsConfig = (modeColors, mode) => {
     defaultProps: { elevation: 0 },
     styleOverrides: {
       root: {
-        borderRadius: radius.panel,
+        borderRadius: radius.base,
         border: `1px solid ${modeColors.border}`,
         backgroundImage: 'none',
       },
@@ -101,7 +101,7 @@ export const buildComponentsConfig = (modeColors, mode) => {
     defaultProps: { elevation: 0 },
     styleOverrides: {
       root: {
-        borderRadius: radius.panel,
+        borderRadius: radius.base,
         border: `1px solid ${modeColors.border}`,
         transition: 'box-shadow 0.2s ease',
         '&:hover': {
@@ -127,7 +127,7 @@ export const buildComponentsConfig = (modeColors, mode) => {
     styleOverrides: {
       root: {
         '& .MuiOutlinedInput-root': {
-          borderRadius: radius.field,
+          borderRadius: radius.base,
           fontSize: '0.875rem',
           transition: 'border-color 0.15s ease, box-shadow 0.15s ease',
           '&:hover fieldset': {
@@ -146,7 +146,7 @@ export const buildComponentsConfig = (modeColors, mode) => {
   MuiSelect: {
     styleOverrides: {
       root: {
-        borderRadius: radius.field,
+        borderRadius: radius.base,
         fontSize: '0.875rem',
       },
     },
@@ -155,7 +155,7 @@ export const buildComponentsConfig = (modeColors, mode) => {
   MuiDialog: {
     styleOverrides: {
       paper: {
-        borderRadius: radius.card,
+        borderRadius: radius.base,
         border: `1px solid ${modeColors.border}`,
       },
     },
@@ -164,7 +164,7 @@ export const buildComponentsConfig = (modeColors, mode) => {
   MuiTooltip: {
     styleOverrides: {
       tooltip: {
-        borderRadius: radius.tooltip,
+        borderRadius: radius.base,
         fontSize: '0.75rem',
         backgroundColor: mode === 'light' ? modeColors.text : modeColors.border,
         color: mode === 'light' ? colors.white : modeColors.text,
@@ -223,7 +223,7 @@ export const buildComponentsConfig = (modeColors, mode) => {
     styleOverrides: {
       indicator: {
         height: 2,
-        borderRadius: 1,
+        borderRadius: radius.pill,
       },
     },
   },
@@ -231,7 +231,7 @@ export const buildComponentsConfig = (modeColors, mode) => {
   MuiAlert: {
     styleOverrides: {
       root: {
-        borderRadius: radius.tag,
+        borderRadius: radius.base,
         fontSize: '0.8125rem',
       },
     },
@@ -240,12 +240,12 @@ export const buildComponentsConfig = (modeColors, mode) => {
   MuiLinearProgress: {
     styleOverrides: {
       root: {
-        borderRadius: 4,
+        borderRadius: radius.pill,
         height: 3,
         backgroundColor: mode === 'light' ? alpha(colors.primary, 0.08) : alpha(colors.white, 0.08),
       },
       bar: {
-        borderRadius: 4,
+        borderRadius: radius.pill,
         background: `linear-gradient(90deg, ${modeColors.primary} 0%, ${colors.secondary} 100%)`,
       },
     },
@@ -257,14 +257,14 @@ export const buildComponentsConfig = (modeColors, mode) => {
       root: {
         backgroundColor: alpha(modeColors.skeletonBase ?? (mode === 'light' ? colors.primary : colors.white), mode === 'light' ? 0.07 : 0.06),
       },
-      rounded: { borderRadius: radius.tag },
+      rounded: { borderRadius: radius.base },
     },
   },
 
   MuiPopover: {
     styleOverrides: {
       paper: {
-        borderRadius: 12,
+        borderRadius: radius.base,
         boxShadow: modeColors.shadowMd,
       },
     },
@@ -279,7 +279,7 @@ export const buildComponentsConfig = (modeColors, mode) => {
   MuiMenuItem: {
     styleOverrides: {
       root: {
-        borderRadius: radius.tooltip,
+        borderRadius: radius.base,
         fontSize: '0.8125rem',
         transition: 'background-color 0.15s ease',
       },

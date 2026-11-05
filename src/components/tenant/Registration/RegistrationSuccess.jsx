@@ -6,7 +6,7 @@ import { successIconSx, primaryButtonSx } from "./Registration.styles";
 
 const credentialsBoxSx = {
   mb: 2.5, px: 2, py: 1.5,
-  borderRadius: "var(--radius-field)",
+  borderRadius: "var(--radius-base)",
   bgcolor: "action.hover",
   border: "1px solid",
   borderColor: "divider",

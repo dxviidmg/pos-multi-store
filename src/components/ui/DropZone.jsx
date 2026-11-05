@@ -7,7 +7,7 @@ const DropZone = styled('label', { shouldForwardProp: (prop) => prop !== 'isDrag
   justifyContent: 'center',
   padding: '1.25rem',
   border: `1.5px dashed ${isDragging ? theme.palette.primary.main : theme.palette.divider}`,
-  borderRadius: "var(--radius-tag)",
+  borderRadius: "var(--radius-base)",
   cursor: 'pointer',
   backgroundColor: isDragging ? alpha(theme.palette.primary.main, 0.04) : 'transparent',
   transition: 'border-color 0.15s ease, background-color 0.15s ease',

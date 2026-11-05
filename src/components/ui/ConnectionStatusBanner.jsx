@@ -13,7 +13,7 @@ const alertSx = {
   maxWidth: { xs: "100%", sm: 480 },
   minHeight: 64,
   boxShadow: colors.shadow.toast,
-  borderRadius: "var(--radius-field)",
+  borderRadius: "var(--radius-base)",
   alignItems: "center",
 };
 

@@ -88,7 +88,7 @@ const BarcodeScanner = ({ open, onClose, onDetected }) => {
       onClose={onClose}
       fullWidth
       maxWidth="sm"
-      PaperProps={{ sx: { borderRadius: "var(--radius-card)", overflow: "hidden" } }}
+      PaperProps={{ sx: { borderRadius: "var(--radius-base)", overflow: "hidden" } }}
     >
       <DialogTitle sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", pb: 1 }}>
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -135,7 +135,7 @@ const BarcodeScanner = ({ open, onClose, onDetected }) => {
                 <Box sx={{
                   width: "70%", height: 100,
                   border: (theme) => `2px solid ${alpha(theme.palette.common.white, 0.8)}`,
-                  borderRadius: "var(--radius-field)",
+                  borderRadius: "var(--radius-base)",
                   boxShadow: (theme) => `0 0 0 9999px ${alpha(theme.palette.common.black, 0.4)}`,
                 }} />
               </Box>

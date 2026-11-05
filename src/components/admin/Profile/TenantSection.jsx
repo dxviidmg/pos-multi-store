@@ -89,7 +89,7 @@ const TenantSection = ({ tenantId, tenant }) => {
               key={name}
               sx={{
                 display: "flex", alignItems: "center", justifyContent: "space-between", gap: 2,
-                p: 1.5, border: 1, borderColor: "divider", borderRadius: "var(--radius-field)",
+                p: 1.5, border: 1, borderColor: "divider", borderRadius: "var(--radius-base)",
               }}
             >
               <Box sx={{ minWidth: 0 }}>

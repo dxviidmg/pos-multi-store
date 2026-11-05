@@ -5,7 +5,7 @@ import DateRangeFilter from "../../ui/DateRangeFilter/DateRangeFilter";
 import { UI_TEXT } from "../../../constants";
 import { PERIODS } from "./storeInsights";
 
-const SELECT_SX = { flex: "1 1 190px", height: 38, fontSize: "0.875rem", bgcolor: "background.paper", borderRadius: "var(--radius-field)" };
+const SELECT_SX = { flex: "1 1 190px", height: 38, fontSize: "0.875rem", bgcolor: "background.paper", borderRadius: "var(--radius-base)" };
 const DATE_ITEM_PROPS = { xs: 6 };
 
 /** Select compacto: la etiqueta va en gris dentro y el valor en el color del texto. */

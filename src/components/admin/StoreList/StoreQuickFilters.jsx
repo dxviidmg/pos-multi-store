@@ -63,7 +63,7 @@ const StoreQuickFilters = ({ storeType, stores, value, onChange }) => {
               aria-selected={selected}
               onClick={() => onChange(filter)}
               sx={{
-                flex: compact ? "0 0 auto" : 1, gap: 0.75, px: 1.75, py: 0.9, borderRadius: "var(--radius-field)", whiteSpace: "nowrap",
+                flex: compact ? "0 0 auto" : 1, gap: 0.75, px: 1.75, py: 0.9, borderRadius: "var(--radius-base)", whiteSpace: "nowrap",
                 fontSize: "0.8125rem", fontWeight: selected ? 600 : 500,
                 color: selected ? "common.white" : "text.secondary",
                 bgcolor: selected ? "tableHead.main" : "transparent",

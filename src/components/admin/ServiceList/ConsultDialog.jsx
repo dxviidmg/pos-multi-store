@@ -45,7 +45,7 @@ const ConsultDialog = ({ service, current, onClose }) => {
       <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2, pt: 2 }}>
         {isStoreUpdate ? (
           <>
-            <Box sx={{ p: 2, bgcolor: "background.default", borderRadius: "var(--radius-field)", mb: 1 }}>
+            <Box sx={{ p: 2, bgcolor: "background.default", borderRadius: "var(--radius-base)", mb: 1 }}>
               <SectionLabel>ACTUALMENTE TIENES:</SectionLabel>
               <Typography variant="body2" sx={{ mt: 0.5 }}>
                 {storesLabel(current.stores)} y {warehousesLabel(current.warehouses)}
@@ -74,7 +74,7 @@ const ConsultDialog = ({ service, current, onClose }) => {
               size="small"
             />
             {(stores > 0 || warehouses > 0) && (
-              <Box sx={{ p: 2, borderRadius: "var(--radius-field)", mt: 1, bgcolor: (theme) => alpha(theme.palette.success.main, 0.12) }}>
+              <Box sx={{ p: 2, borderRadius: "var(--radius-base)", mt: 1, bgcolor: (theme) => alpha(theme.palette.success.main, 0.12) }}>
                 <SectionLabel>TOTAL DE SUCURSALES:</SectionLabel>
                 <Typography variant="body2" sx={{ mt: 0.5, fontWeight: 600 }}>
                   {branchesLabel(stores + warehouses)}
