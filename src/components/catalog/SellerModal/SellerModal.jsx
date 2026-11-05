@@ -8,6 +8,7 @@ import { useStoreOptions } from "../../../hooks/useStores";
 import { createSeller } from "../../../api/sellers";
 import { STORE_TYPES } from "../../../constants";
 import { Grid, MenuItem, FormControl, InputLabel } from "@mui/material";
+import { alpha } from "@mui/material/styles";
 import { TextField, Select } from "../../ui/Field/Field";
 import SaveIcon from "@mui/icons-material/Save";
 
@@ -24,6 +25,19 @@ const INITIAL_FORM_DATA = {
 };
 
 const getStoreName = (store) => store.name;
+
+// Campo deshabilitado pero destacado: es el usuario y contraseña con los que entrará el vendedor
+const CREDENTIALS_SX = {
+  "& .MuiOutlinedInput-root.Mui-disabled": {
+    bgcolor: (theme) => alpha(theme.palette.primary.main, 0.06),
+    "& fieldset": { borderColor: (theme) => alpha(theme.palette.primary.main, 0.45), borderStyle: "dashed" },
+    "& input": { WebkitTextFillColor: (theme) => theme.palette.primary.main, fontWeight: 700 },
+  },
+  "& .MuiInputLabel-root.Mui-disabled": { color: "primary.main", fontWeight: 600 },
+  "& .MuiFormHelperText-root": { fontWeight: 500 },
+};
+
+const CREDENTIALS_HELP = "Con este usuario y contraseña entrará el vendedor";
 
 /** Usuario sugerido según el patrón: `{negocio}.tienda.{tienda}.{sufijo}`. */
 const buildUsername = (pattern, prefix, firstName, lastName) => {
@@ -140,7 +154,7 @@ const SellerModal = ({ isOpen, onClose, onUpdate }) => {
               </FormControl>
             </Grid>
             <Grid item xs={12} md={6}>
-              <TextField size="small" fullWidth label="Usuario y contraseña" disabled type="text" value={formData.worker?.username} placeholder="Usuario" name="username" error={!!usernameError} helperText={usernameError} />
+              <TextField size="small" fullWidth label="Usuario y contraseña" disabled type="text" value={formData.worker?.username} placeholder="Usuario" name="username" error={!!usernameError} helperText={usernameError || CREDENTIALS_HELP} sx={CREDENTIALS_SX} />
             </Grid>
             <Grid item xs={12} md={12}>
               <CustomButton fullWidth onClick={handleSubmit} disabled={isFormIncomplete || saving} startIcon={<SaveIcon />}>
