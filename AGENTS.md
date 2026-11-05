@@ -404,7 +404,7 @@ En el cobro: Ctrl+G confirma y Ctrl+O quita el cliente (solo con el cobro abiert
 
 ## 11. Estilo visual
 
-Fuente única de colores y sombras: `src/theme/colors.js` (primitivas, `status` y `modes.light/dark`). `theme.js` y `cssVariables.js` solo los leen: `theme.js` arma el tema MUI y `cssVariables.js` publica las variables CSS (`--color-*`, `--shadow-*`) al cambiar de modo desde `useThemeMode`. `variables.css` solo guarda radio, espaciado, fuente y easing. **No repitas un valor de color en estos archivos**: agrégalo a `colors.js`.
+Fuente única de colores, sombras y radios: `src/theme/colors.js` (primitivas, `status`, `radius` y `modes.light/dark`). `theme.js` y `cssVariables.js` solo los leen: `theme.js` arma el tema MUI y `cssVariables.js` publica las variables CSS (`--color-*`, `--shadow-*`, `--radius-*`) al cambiar de modo desde `useThemeMode`. `variables.css` solo guarda el respaldo estático de radios, espaciado, fuente y easing. **No repitas un valor de color ni de radio en estos archivos**: agrégalo a `colors.js`.
 
 - **Estilo de marca.** Navy `#121A45` (`colors.sidebar`) en topbar, sidebar, botones, encabezado de tabla y pestaña activa; neutros fríos para fondo, superficies y bordes; Inter en todo; íconos MUI Outlined de 18 px, monocromos. Las pantallas lo heredan del tema global: no lleva envoltorio ni tema propio. `useThemeTokens()` da los tokens extra de la tarjeta destacada y las pastillas (ejemplo: `admin/StoreList/`). `PageHeader` pone el título a la izquierda sin ícono; el contenedor principal de cada página es `.card` (radio 16 px, padding 28 px).
 - **Nunca hardcodear hex ni rgba** en componentes. Usa tokens del tema (`primary`, `secondary`, `accent`, `success`, `error`, `text.*`, `divider`, `common.white`…), `alpha(theme.palette.x.main, o)` para transparencias, o `colors` de `src/theme/colors.js`.
@@ -452,7 +452,7 @@ Texto e títulos `Inter` (títulos h1–h4 con peso 700–800; los encabezados d
 
 ### Formas, sombras y movimiento
 
-- **Radios:** `.card` 16px · Paper/Card y tarjetas 14px · Button/TextField/Select 10px · Alert 8px · Dialog 16px · Chip 999px · Tooltip 6px.
+- **Radios:** usa los tokens de `colors.radius` (y sus variables CSS `--radius-*`), no px sueltos. `card` 16px (`.card` y Dialog) · `panel` 14px (Paper/Card y tarjetas de contenido) · `field` 10px (Button/TextField/Select y controles) · `tag` 8px (Alert, chips rectangulares, imágenes pequeñas) · `tooltip` 6px · `pill` 999px (Chip, píldoras). En `sx` usa `borderRadius: "var(--radius-panel)"`; en el tema (`theme/components.js`), `colors.radius.panel`. Excepciones vivas: `"50%"` para círculos/avatares, barras e indicadores delgados con su propio radio (progreso, barra activa del sidebar), y los bloques destacados del registro.
 - **Sombras teñidas de navy en modo claro** (negras en oscuro), casi imperceptibles:
   - Ligera: `0 1px 2px rgba(18,26,69,.04)`
   - Media: `0 8px 24px rgba(18,26,69,.08)`
