@@ -110,6 +110,7 @@ const Dashboard = () => {
             title="Ventas"
             value={formatCurrency(kpis.totalAmount)}
             subtitle={`${kpis.totalSales} transacciones`}
+            featured
           />
           <KPICard
             title="Ganancias"
@@ -135,6 +136,7 @@ const Dashboard = () => {
             title="Transacciones"
             value={formatNumber(kpis.totalSales)}
             subtitle={periodLabel}
+            featured
           />
           <KPICard
             title={isYear ? "Promedio por mes" : "Promedio por día"}

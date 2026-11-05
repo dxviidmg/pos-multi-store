@@ -343,7 +343,7 @@ Los dos poppers tenían radios muy distintos. Unificados a `1.5` (12px):
 
 `KPICard` mostraba un ícono gris (`text.secondary`) arriba a la derecha, sin color semántico ni información que el título no diera. Se quitó el ícono, la prop `icon` y se aplanó la estructura (ya sin el `Box` flex de dos columnas). Se limpiaron los `icon={…}` y los imports de íconos sin uso en `Dashboard` (4), `CancellationsDashboard` (`BlockIcon`/`UndoIcon`) y `DepartmentDashboard` (3, incl. la propiedad `icon` del array `KPIS`). `StatCard` e `InsightCard` NO se tocaron: ahí el ícono es funcional (color semántico, ancla el dato).
 
-**A2 (jerarquía de indicadores): NO aplicado.** Cambio estético subjetivo y de alto toque visual, no verificable sin navegador. Queda como pendiente consciente a decisión del usuario.
+**A2 (jerarquía de indicadores): aplicado (5 nov 2026).** `KPICard` y `StatCard` reciben una prop `featured`; el indicador principal de cada fila lleva borde de acento navy a la izquierda y valor más grande, sin reorganizar el grid ni tocar datos. Detalle en `SMARTVENTA_VISUAL_AUDIT.md`. Verificación visual en navegador pendiente de hacerse a mano.
 
 ## 🟡 Resuelto — M3: animación de entrada anidada en KPICard (4 nov 2026)
 

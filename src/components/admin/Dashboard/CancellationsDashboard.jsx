@@ -127,7 +127,7 @@ const CancellationsDashboard = () => {
       <DashboardHeader title={TITLE} subtitle={periodLabel} filters={filters} sx={{ mb: 0 }} />
 
       <Grid container spacing={2}>
-        <KPICard title="Canceladas/Devueltas" value={kpis.total} subtitle={`${kpis.percentage}% de ${kpis.totalValidSales + kpis.total} ventas`} itemProps={KPI_ITEM_PROPS} />
+        <KPICard title="Canceladas/Devueltas" value={kpis.total} subtitle={`${kpis.percentage}% de ${kpis.totalValidSales + kpis.total} ventas`} itemProps={KPI_ITEM_PROPS} featured />
         <KPICard title="Canceladas" value={kpis.totalCanceled} subtitle="Ventas canceladas" itemProps={KPI_ITEM_PROPS} />
         <KPICard title="Devoluciones" value={kpis.totalReturned} subtitle="Ventas con devolución" itemProps={KPI_ITEM_PROPS} />
         {hasMultipleStores && <HighlightCard icon={StorefrontIcon} title="Más cancelaciones" value={kpis.worstStore} />}

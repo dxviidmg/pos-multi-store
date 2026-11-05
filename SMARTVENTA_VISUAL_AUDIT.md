@@ -136,9 +136,13 @@ Aplicado y **commiteado en `develop`** el 4 de noviembre de 2026 (bajo riesgo, s
 - **M3 (4 nov 2026):** se quitó la animación de entrada anidada de `KPICard` (`fade-in-up` + `animationDelay`) y la prop `index`; la página ya anima con `page-enter`. Limpiados los `index={…}` de `Dashboard`, `CancellationsDashboard` y `DepartmentDashboard`.
 - **B3 (4 nov 2026):** se retiró el ícono decorativo de `KPICard` (gris, sin información) y la prop `icon`; limpiados los `icon={…}` e imports sin uso en `Dashboard`, `CancellationsDashboard` y `DepartmentDashboard`. `StatCard`/`InsightCard` sin cambios (ícono funcional).
 
-Pendiente de aprobación (cambian la presentación visible):
+Todos los hallazgos de la auditoría visual están aplicados. Queda solo la verificación manual en navegador de los cambios de presentación (A2, M4) en ambos modos.
 
-- **A2:** jerarquía de los indicadores en tableros (indicador principal más grande). No aplicado: estético, subjetivo y no verificable sin navegador.
+### A2 — Jerarquía de indicadores en tableros — aplicado el 5 de noviembre de 2026
+
+`KPICard` y `StatCard` reciben una prop `featured`: la tarjeta principal de cada fila lleva un borde de acento navy a la izquierda (3px) y un valor más grande (`KPICard` h3/800 en vez de h4/600; `StatCard` h4 e ícono de 40px en vez de h5 y 32px). Así la fila deja de pesar igual en todas las tarjetas, sin reorganizar columnas (el grid y el responsive no cambian) y sin datos nuevos. Indicador marcado como principal por tablero: Ventas y Transacciones (`Dashboard`), Canceladas/Devueltas (`CancellationsDashboard`), el primer total (`DepartmentDashboard`), Traspasos pendientes (`PendingTransfersDashboard`) y Productos a verificar (`StockVerificationDashboard`).
+
+Bajo riesgo de build (ESLint limpio, 23 suites / 185 pruebas en verde, `npm run build` compila), pero **cambia la presentación**: verificación visual en navegador (ambos modos) pendiente de hacerse a mano.
 
 ### M4 — Encabezado de tabla en modo oscuro — aplicado el 5 de noviembre de 2026
 
@@ -162,7 +166,3 @@ Revisados todos los usos de gradiente (mucho menos de los 8 que estimaba la audi
 - **Comentario corregido:** `ProductCard` mencionaba un "gradiente primario" que el código ya no tiene.
 
 Bajo riesgo: ESLint limpio, 23 suites / 185 pruebas en verde y `npm run build` compila.
-
-Pendiente:
-
-- **A2:** jerarquía de indicadores en tableros.
