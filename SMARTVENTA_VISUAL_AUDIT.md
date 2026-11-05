@@ -139,7 +139,10 @@ Aplicado y **commiteado en `develop`** el 4 de noviembre de 2026 (bajo riesgo, s
 Pendiente de aprobación (cambian la presentación visible):
 
 - **A2:** jerarquía de los indicadores en tableros (indicador principal más grande). No aplicado: estético, subjetivo y no verificable sin navegador.
-- **M4:** tono del encabezado de tabla en modo oscuro (requiere verlo en el navegador).
+
+### M4 — Encabezado de tabla en modo oscuro — aplicado el 5 de noviembre de 2026
+
+`modes.dark.tableHead` pasó de `#1b2766` (índigo saturado, destacaba frente a los neutros fríos del tema oscuro) a `#1f2440` (navy desaturado, por encima de `paper #171b2e` y `border #2a3050` para mantener contraste con el texto blanco). El cambio se propaga a `DataTable`, `SimpleTable`, `StoreComparisonTable`, el header de `Skeleton`, el filtro activo de `StoreQuickFilters` y el botón de `StoreList.columns`. `heroBg` conserva `#1b2766` a propósito (tarjeta destacada del dueño, uso distinto). Bajo riesgo: ESLint limpio, 23 suites / 185 pruebas en verde y `npm run build` compila. Verificación visual en navegador (modo oscuro) pendiente de hacerse a mano.
 
 ### Tokens de radio (pasos 1–2) — aplicado el 5 de noviembre de 2026
 
@@ -152,5 +155,4 @@ Bajo riesgo: ESLint limpio, 23 suites / 185 pruebas en verde y `npm run build` c
 Pendiente:
 
 - **A2:** jerarquía de indicadores en tableros.
-- **M4:** tono del encabezado de tabla en modo oscuro.
 - Gradientes decorativos de `PlanCard`, `Registration`, `StoreKpiTiles`, `ProductCard` y `Login` (paso 4).

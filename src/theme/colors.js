@@ -140,7 +140,7 @@ export const colors = {
       borderHover: '#5a6390',
       rowHover: 'rgba(255,255,255,0.04)',
       rowDivider: '#232944',
-      tableHead: '#1b2766',
+      tableHead: '#1f2440',
       tableHeadText: '#ffffff',
       modalHeader: '#171b2e',
       modalBody: '#0f1220',
