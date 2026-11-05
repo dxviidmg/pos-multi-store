@@ -36,7 +36,7 @@ const StoresPicker = ({ plans, selectedPlan, onSelect }) => {
         <Typography sx={{ fontSize: "0.8125rem", color: "text.secondary" }}>
           Plan para {storesLabel(selectedPlan.stores)}
         </Typography>
-        <Typography sx={{ fontSize: "1.75rem", fontWeight: 800, color: "primary.main" }}>
+        <Typography sx={{ fontSize: "1.75rem", fontWeight: 700, color: "primary.main" }}>
           {formatCurrency(selectedPlan.price)}
         </Typography>
         <Typography sx={{ fontSize: "0.75rem", color: "text.secondary" }}>MXN/mes</Typography>

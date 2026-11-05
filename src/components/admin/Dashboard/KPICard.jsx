@@ -13,7 +13,7 @@ const KPICard = ({ title, value, subtitle, featured = false, itemProps = KPI_ITE
       <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5, fontWeight: 500 }}>
         {title}
       </Typography>
-      <Typography variant={featured ? "h3" : "h4"} sx={{ fontWeight: featured ? 800 : 600, mb: 0.5, fontVariantNumeric: "tabular-nums" }}>
+      <Typography variant={featured ? "h3" : "h4"} sx={{ fontWeight: featured ? 700 : 600, mb: 0.5, fontVariantNumeric: "tabular-nums" }}>
         {value}
       </Typography>
       {subtitle && (

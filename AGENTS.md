@@ -420,11 +420,11 @@ Fuente única de colores, sombras y radios: `src/theme/colors.js` (primitivas, `
 
 ### Tipografía
 
-Texto e títulos `Inter` (títulos h1–h4 con peso 700–800; los encabezados de página usan 600); números `tabular-nums`.
+Texto e títulos `Inter` (títulos h1–h4 con peso 700; solo 500, 600 y 700; los encabezados de página usan 600); números `tabular-nums`.
 
 | Nivel | Tamaño | Peso |
 |---|---|---|
-| h1 | 1.75rem | 800 |
+| h1 | 1.75rem | 700 |
 | h2 | 1.5rem | 700 |
 | h3 | 1.25rem | 700 |
 | h4 | 1.125rem | 700 |

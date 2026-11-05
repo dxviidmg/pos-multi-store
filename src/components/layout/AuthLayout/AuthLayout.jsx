@@ -122,7 +122,7 @@ const AuthLayout = ({ children, headline, subtitle, activeStep, stepLabels }) =>
 
       <Box>
         <Typography component="p" sx={{
-          fontSize: { md: "1.9rem", lg: "2.3rem" }, fontWeight: 800, lineHeight: 1.15,
+          fontSize: { md: "1.9rem", lg: "2.3rem" }, fontWeight: 700, lineHeight: 1.15,
           letterSpacing: "-0.02em", mb: 1.5, color: colors.white,
         }}>
           {headline}
