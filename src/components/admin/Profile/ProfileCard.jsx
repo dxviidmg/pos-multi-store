@@ -15,7 +15,7 @@ const ProfileCard = ({ icon: Icon, title, description, action, delay = 0, childr
       <Box
         aria-hidden="true"
         sx={{
-          width: 40, height: 40, borderRadius: "10px", flexShrink: 0,
+          width: 40, height: 40, borderRadius: "var(--radius-field)", flexShrink: 0,
           display: "grid", placeItems: "center",
           bgcolor: (t) => alpha(t.palette.primary.main, 0.08), color: "primary.main",
         }}

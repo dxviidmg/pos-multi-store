@@ -19,7 +19,7 @@ const suggestionSx = {
   fontSize: "0.7rem",
   px: 1,
   py: 0.25,
-  borderRadius: "6px",
+  borderRadius: "var(--radius-tooltip)",
   border: "1px solid",
   borderColor: "divider",
   color: "text.primary",

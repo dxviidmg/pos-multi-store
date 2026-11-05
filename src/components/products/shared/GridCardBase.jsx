@@ -26,7 +26,7 @@ const GridCardBase = ({ image, name, brandName, onClick, children, actions }) =>
       bgcolor: "background.paper",
       border: "1px solid",
       borderColor: "divider",
-      borderRadius: "14px",
+      borderRadius: "var(--radius-panel)",
       overflow: "hidden",
       transition: "all 0.2s ease",
       "&:hover": {

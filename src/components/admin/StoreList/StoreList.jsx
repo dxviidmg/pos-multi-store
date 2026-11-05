@@ -32,7 +32,7 @@ import { showRequestError } from "../../../utils/alerts";
 
 // La tabla y sus pastillas de vista comparten una misma tarjeta con borde
 const TABLE_CARD_SX = {
-  border: "1px solid", borderColor: "divider", borderRadius: "14px", overflow: "hidden", bgcolor: "background.paper",
+  border: "1px solid", borderColor: "divider", borderRadius: "var(--radius-panel)", overflow: "hidden", bgcolor: "background.paper",
   "& > div:last-of-type": { mt: 0 },
   "& .MuiDataGrid-root": { border: 0, borderRadius: 0 },
   "& .MuiDataGrid-cell": { borderColor: "rowDivider.main", fontVariantNumeric: "tabular-nums" },

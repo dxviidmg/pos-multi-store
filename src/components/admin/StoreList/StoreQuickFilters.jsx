@@ -63,7 +63,7 @@ const StoreQuickFilters = ({ storeType, stores, value, onChange }) => {
               aria-selected={selected}
               onClick={() => onChange(filter)}
               sx={{
-                flex: compact ? "0 0 auto" : 1, gap: 0.75, px: 1.75, py: 0.9, borderRadius: "10px", whiteSpace: "nowrap",
+                flex: compact ? "0 0 auto" : 1, gap: 0.75, px: 1.75, py: 0.9, borderRadius: "var(--radius-field)", whiteSpace: "nowrap",
                 fontSize: "0.8125rem", fontWeight: selected ? 600 : 500,
                 color: selected ? "common.white" : "text.secondary",
                 bgcolor: selected ? "tableHead.main" : "transparent",
@@ -77,7 +77,7 @@ const StoreQuickFilters = ({ storeType, stores, value, onChange }) => {
                 <Box
                   component="span"
                   sx={{
-                    px: 0.9, borderRadius: 999, fontSize: "0.6875rem", fontWeight: 600, lineHeight: 1.6,
+                    px: 0.9, borderRadius: "var(--radius-pill)", fontSize: "0.6875rem", fontWeight: 600, lineHeight: 1.6,
                     bgcolor: selected ? tokens.pillActiveBg : tokens.pillBg,
                     color: selected ? "common.white" : "text.secondary",
                   }}

@@ -15,7 +15,7 @@ const buildSupportUrl = (user) => {
 
 /** Pie del sidebar: soporte por WhatsApp (excepto vendedores) y cerrar sesión. */
 const SidebarFooter = ({ user, expanded, showSupport, onLogout }) => {
-  const buttonSx = { borderRadius: "10px", justifyContent: expanded ? "initial" : "center" };
+  const buttonSx = { borderRadius: "var(--radius-field)", justifyContent: expanded ? "initial" : "center" };
   const iconSx = { minWidth: expanded ? 38 : 0, justifyContent: "center" };
   const textSx = { opacity: expanded ? 1 : 0 };
 

@@ -3,7 +3,7 @@ import { Box, Grid, LinearProgress, Skeleton, Typography } from "@mui/material";
 import CountdownTimer from "../../ui/CountdownTimer";
 
 const KPI_ITEM_PROPS = { xs: 12, sm: 6, md: 3 };
-const SKELETON_SX = { borderRadius: "14px" };
+const SKELETON_SX = { borderRadius: "var(--radius-panel)" };
 
 /**
  * Estado de carga de un tablero mientras corre la tarea: título, progreso,

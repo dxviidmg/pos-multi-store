@@ -15,7 +15,7 @@ const style = {
   overflow: 'auto',
   bgcolor: 'modalHeader.main',
   boxShadow: 24,
-  borderRadius: { xs: 2, sm: 3 },
+  borderRadius: "var(--radius-card)",
   border: '1px solid',
   borderColor: 'divider',
 };

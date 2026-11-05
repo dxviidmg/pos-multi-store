@@ -42,7 +42,7 @@ const INLINE_SECTION_SX = {
   borderColor: "divider",
 };
 const INLINE_SX = {
-  mt: 3, p: 1.5, bgcolor: "background.paper", borderRadius: "14px", border: "1px solid", borderColor: "divider", scrollMarginTop: 8,
+  mt: 3, p: 1.5, bgcolor: "background.paper", borderRadius: "var(--radius-panel)", border: "1px solid", borderColor: "divider", scrollMarginTop: 8,
   "& .card": INLINE_SECTION_SX,
   "& .card:last-child": { borderBottom: 0, paddingBottom: "0 !important" },
 };

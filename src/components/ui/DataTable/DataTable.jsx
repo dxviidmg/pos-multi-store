@@ -160,7 +160,7 @@ const DataTable = ({
           sx={{
             border: '1px solid',
             borderColor: 'divider',
-            borderRadius: '14px',
+            borderRadius: 'var(--radius-panel)',
             overflow: 'hidden',
             "& .MuiDataGrid-columnHeaders": {
               backgroundColor: 'tableHead.main',

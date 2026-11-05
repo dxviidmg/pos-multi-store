@@ -46,7 +46,7 @@ const SearchProduct = ({ searchInputRef }) => {
   const isCodeMode = queryType === QUERY_TYPES.CODE;
   // En móvil los botones miden lo mismo que el campo y los selects (40 px)
   const buttonSize = isMobile ? 40 : 36;
-  const squareButtonSx = { width: isMobile ? "100%" : buttonSize, height: buttonSize, color: "common.white", borderRadius: isMobile ? "10px" : 1 };
+  const squareButtonSx = { width: isMobile ? "100%" : buttonSize, height: buttonSize, color: "common.white", borderRadius: "var(--radius-field)" };
 
   const storePrinter = user?.store_printer;
   const { connected: printerConnected } = usePrinterStatus(storePrinter);

@@ -30,7 +30,7 @@ const CARD_LABEL_SX = { display: "block", mb: 0.5, fontWeight: 600, fontSize: "0
 const MOBILE_LABEL_SX = { display: "block", mb: 0.5, fontWeight: 600 };
 const CARD_INPUT_SX = { "& input": { fontSize: "0.75rem", py: 0.4, textAlign: "center" } };
 const CARD_WHOLESALE_SX = { fontSize: "0.65rem", m: 0, "& .MuiTypography-root": { fontSize: "0.65rem" } };
-const MOBILE_REMOVE_SX = { width: 32, height: 32, flexShrink: 0, borderRadius: 1, bgcolor: "primary.main", color: "common.white", "&:hover": { bgcolor: "primary.dark" } };
+const MOBILE_REMOVE_SX = { width: 32, height: 32, flexShrink: 0, borderRadius: "var(--radius-field)", bgcolor: "primary.main", color: "common.white", "&:hover": { bgcolor: "primary.dark" } };
 const MOBILE_ROW_ITEM_SX = { py: 1.5, borderBottom: "1px solid", borderColor: "divider" };
 const MOBILE_NAME_SX = {
   fontSize: "0.9375rem", fontWeight: 600, lineHeight: 1.3, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical",
@@ -134,7 +134,7 @@ const CartItemCard = ({
           sx={{
             width: "100%",
             bgcolor: "background.paper",
-            borderRadius: "14px",
+            borderRadius: "var(--radius-panel)",
             border: "1px solid",
             borderColor: "divider",
             overflow: "hidden",

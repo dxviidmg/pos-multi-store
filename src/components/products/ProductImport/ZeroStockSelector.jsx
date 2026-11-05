@@ -16,7 +16,7 @@ const Stat = ({ label, value, highlight = false }) => (
   <Grid item xs={6} md={3}>
     <Box
       sx={{
-        p: 1.25, height: "100%", textAlign: "center", border: "1px solid", borderRadius: "10px",
+        p: 1.25, height: "100%", textAlign: "center", border: "1px solid", borderRadius: "var(--radius-field)",
         borderColor: highlight ? "primary.main" : "divider",
         bgcolor: (theme) => (highlight ? alpha(theme.palette.primary.main, 0.08) : "transparent"),
       }}
