@@ -404,14 +404,14 @@ En el cobro: Ctrl+G confirma y Ctrl+O quita el cliente (solo con el cobro abiert
 
 ## 11. Estilo visual
 
-Fuente única de colores y sombras: `src/theme/colors.js` (primitivas, `status` y `modes.light/dark`). `theme.js` y `cssVariables.js` solo los leen: `theme.js` arma el tema MUI y `cssVariables.js` publica las variables CSS (`--color-*`, `--shadow-*`) al cambiar de modo desde `useThemeMode`. `variables.css` solo guarda radio, espaciado, fuente y easing. **No repitas un valor de color en estos archivos**: agrégalo a `colors.js`.
+Fuente única de colores, sombras y radios: `src/theme/colors.js` (primitivas, `status`, `radius` y `modes.light/dark`). `theme.js` y `cssVariables.js` solo los leen: `theme.js` arma el tema MUI y `cssVariables.js` publica las variables CSS (`--color-*`, `--shadow-*`, `--radius-*`) al cambiar de modo desde `useThemeMode`. `variables.css` solo guarda el respaldo estático de radios, espaciado, fuente y easing. **No repitas un valor de color ni de radio en estos archivos**: agrégalo a `colors.js`.
 
-- **Estilo de marca.** Navy `#121A45` (`colors.sidebar`) en topbar, sidebar, botones, encabezado de tabla y pestaña activa; neutros fríos para fondo, superficies y bordes; Inter en todo; íconos MUI Outlined de 18 px, monocromos. Las pantallas lo heredan del tema global: no lleva envoltorio ni tema propio. `useThemeTokens()` da los tokens extra de la tarjeta destacada y las pastillas (ejemplo: `admin/StoreList/`). `PageHeader` pone el título a la izquierda sin ícono; el contenedor principal de cada página es `.card` (radio 16 px, padding 28 px).
+- **Estilo de marca.** Navy `#171A4A` (`colors.sidebar`) en topbar, sidebar, botones, encabezado de tabla y pestaña activa; neutros fríos para fondo, superficies y bordes; Inter en todo; íconos MUI Outlined de 18 px, monocromos. Las pantallas lo heredan del tema global: no lleva envoltorio ni tema propio. `useThemeTokens()` da los tokens extra de la tarjeta destacada y las pastillas (ejemplo: `admin/StoreList/`). `PageHeader` pone el título a la izquierda sin ícono; el contenedor principal de cada página es `.card` (radio 12 px, padding 28 px).
 - **Nunca hardcodear hex ni rgba** en componentes. Usa tokens del tema (`primary`, `secondary`, `accent`, `success`, `error`, `text.*`, `divider`, `common.white`…), `alpha(theme.palette.x.main, o)` para transparencias, o `colors` de `src/theme/colors.js`.
 - `colors.js` tiene las primitivas que no son tokens de MUI:
   - `error` (= `error.main`), `whatsapp`, `backdrop`, `appbar`.
-  - `shadow.{light, medium, brand, brandHover, appbar, card, toast, dialog, logo}`.
-  - `gradient.{sidebar, brand, brandHover, kpi[]}`.
+  - `shadow.{brand, brandHover, appbar, dialog, logo}`.
+  - `gradient.{brand}`.
 - Si un valor se repite y no existe, agrégalo a `colors.js`; no lo dejes en el componente.
 - Gráficas (`@mui/x-charts`): el texto SVG no acepta rutas del tema como `'text.secondary'`. Usa los estilos de `admin/Dashboard/chartStyles.js`, que leen variables CSS (`var(--color-text-secondary)`) y siguen el modo oscuro. La paleta de series es `CHART_COLORS` (`utils/chart.js`).
 - Inputs: nunca fondo fijo (`#fff`); usa `background.paper`, o rompe el modo oscuro.
@@ -420,11 +420,11 @@ Fuente única de colores y sombras: `src/theme/colors.js` (primitivas, `status` 
 
 ### Tipografía
 
-Texto e títulos `Inter` (títulos h1–h4 con peso 700–800; los encabezados de página usan 600); números `tabular-nums`.
+Texto e títulos `Inter` (títulos h1–h4 con peso 700; solo 500, 600 y 700; los encabezados de página usan 600); números `tabular-nums`.
 
 | Nivel | Tamaño | Peso |
 |---|---|---|
-| h1 | 1.75rem | 800 |
+| h1 | 1.75rem | 700 |
 | h2 | 1.5rem | 700 |
 | h3 | 1.25rem | 700 |
 | h4 | 1.125rem | 700 |
@@ -438,25 +438,28 @@ Texto e títulos `Inter` (títulos h1–h4 con peso 700–800; los encabezados d
 
 | Token | Claro | Oscuro |
 |---|---|---|
-| primary / sidebar / botones | `#121a45` | primary `#aab3e6`, botón `#2b3a8f` |
+| primary / sidebar / botones | `#171a4a` | primary `#aab3e6`, botón `#2b3a8f` |
 | accent | `#ffb020` (ámbar, solo botón principal del registro y detalles; dark `#f59e0b`; texto sobre ámbar `onAccent` `#0b1b4d`) | igual |
-| background.default | `#f3f4f8` | `#0f1220` |
+| background.default | `#e9ecf4` | `#0f1220` |
 | background.paper | `#ffffff` | `#171b2e` |
-| divider | `#e3e6ee` | `#2a3050` |
-| text.primary | `#141a33` | `#e8eaf4` |
-| text.secondary | `#5b6280` | `#a4abc9` |
+| divider | `#dce1ec` | `#2a3050` |
+| text.primary | `#1a1d3a` | `#e8eaf4` |
+| text.secondary | `#6b7090` | `#a4abc9` |
 | text terciario (`caption`) | `#8c92ab` | `#7f86a8` |
+| fila alterna / hover / seleccionada (tablas) | `#f5f7fb` / `#edf0fa` / `#e3e8fa` | translúcidos |
 | sidebar activo / íconos inactivos | `#ffffff` con barra de 3px / `#8e95be` | igual |
 
-`colors.js` define las primitivas que consume `theme.js` (no repitas hex en el tema). El sidebar, el login y los modales usan el navy plano (`colors.gradient.sidebar` es el mismo tono). Sin azul rey ni fondos pastel de color en tarjetas o íconos.
+`colors.js` define las primitivas que consume `theme.js` (no repitas hex en el tema). El sidebar, el login y los modales usan el navy plano (`colors.sidebar`). Sin azul rey ni fondos pastel de color en tarjetas o íconos.
 
 ### Formas, sombras y movimiento
 
-- **Radios:** `.card` 16px · Paper/Card y tarjetas 14px · Button/TextField/Select 10px · Alert 8px · Dialog 16px · Chip 999px · Tooltip 6px.
+- **Radio único:** `colors.radius.base` = 12px para todo lo rectangular (`.card`, Dialog, Paper/Card, Button/TextField/Select, Alert, chips, imágenes, tooltips); `pill` 999px para píldoras y barras finas (progreso, barra activa del sidebar); `"50%"` para círculos. En `sx`: `borderRadius: "var(--radius-base)"`; `theme.shape.borderRadius` sale de `colors.radius.base`, así que Button, TextField, Select, Paper, Card, Dialog, Popover, Tooltip y Alert ya lo heredan: no repitas `borderRadius` en ellos (solo en ListItemButton, Tab, IconButton y `Box`). No agregues otro radio.
 - **Sombras teñidas de navy en modo claro** (negras en oscuro), casi imperceptibles:
   - Ligera: `0 1px 2px rgba(18,26,69,.04)`
   - Media: `0 8px 24px rgba(18,26,69,.08)`
   - Marca: `0 4px 14px rgba(18,26,69,.22)`
+  - Elevación de hover, popovers y avisos: `var(--shadow-md)`; diálogos: `var(--shadow-dialog)`. No uses los números de sombra de MUI (`boxShadow: 3`).
+- **Transiciones:** una sola duración, `0.2s ease`, y solo sobre las propiedades que cambian.
 - **Animaciones en `App.css`:**
   - `fade-in-up`: tarjetas y paneles; escalonar con `animationDelay`, 60 ms.
   - `fade-in-left`: campos condicionales.

@@ -1,17 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import CustomModal, { ModalBody } from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
 import StoreSelect from "../../ui/StoreSelect/StoreSelect";
 import { showSuccess } from "../../../utils/alerts";
 import { useUser } from "../../../context/UserContext";
 import { useStoreOptions } from "../../../hooks/useStores";
-import { createSeller } from "../../../api/sellers";
+import { useSellers } from "../../../hooks/useSellers";
+import { getFormattedDate } from "../../../utils/utils";
+import { checkWorkerExists, createSeller } from "../../../api/sellers";
 import { STORE_TYPES } from "../../../constants";
 import { Grid, MenuItem, FormControl, InputLabel } from "@mui/material";
+import { alpha } from "@mui/material/styles";
 import { TextField, Select } from "../../ui/Field/Field";
 import SaveIcon from "@mui/icons-material/Save";
 
 const STORE_PARAMS = { store_type: STORE_TYPES.STORE };
+const today = getFormattedDate();
+const SELLERS_PARAMS = { start_date: today, end_date: today };
 
 const INITIAL_FORM_DATA = {
   role: "V",
@@ -24,6 +30,27 @@ const INITIAL_FORM_DATA = {
 };
 
 const getStoreName = (store) => store.name;
+
+const isSameUsername = (a, b) => a?.toLowerCase() === b?.toLowerCase();
+
+// Campo deshabilitado pero destacado: es el usuario y contraseña con los que entrará el vendedor
+const getCredentialsSx = (hasError) => {
+  const tone = hasError ? "error" : "primary";
+  return {
+    "& .MuiOutlinedInput-root.Mui-disabled": {
+      bgcolor: (theme) => alpha(theme.palette[tone].main, 0.06),
+      "& fieldset": { borderColor: (theme) => alpha(theme.palette[tone].main, 0.45), borderStyle: "dashed" },
+      "& input": { WebkitTextFillColor: (theme) => theme.palette[tone].main, fontWeight: 700 },
+    },
+    "& .MuiInputLabel-root.Mui-disabled": { color: `${tone}.main`, fontWeight: 600 },
+    "& .MuiFormHelperText-root": { fontWeight: 500 },
+  };
+};
+
+const CREDENTIALS_HELP = "Con este usuario y contraseña entrará el vendedor";
+const USERNAME_CHECK_DELAY_MS = 300;
+const USERNAME_CHECKING = "Verificando usuario...";
+const USERNAME_TAKEN = "Ya existe un vendedor con este usuario. Cambia el nombre o el patrón.";
 
 /** Usuario sugerido según el patrón: `{negocio}.tienda.{tienda}.{sufijo}`. */
 const buildUsername = (pattern, prefix, firstName, lastName) => {
@@ -43,11 +70,14 @@ const SellerModal = ({ isOpen, onClose, onUpdate }) => {
   const { user } = useUser();
   const short_name = user.tenant_short_name;
 
+  const queryClient = useQueryClient();
   const { data: stores } = useStoreOptions(STORE_PARAMS);
+  const { data: sellers } = useSellers(SELLERS_PARAMS);
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
   const [usernamePattern, setUsernamePattern] = useState("first_name");
   const [usernameError, setUsernameError] = useState("");
   const [saving, setSaving] = useState(false);
+  const [usernameStatus, setUsernameStatus] = useState(null);
 
   const getUsernamePrefix = (storeId) => {
     const store = stores.find((s) => s.id === storeId);
@@ -94,6 +124,7 @@ const SellerModal = ({ isOpen, onClose, onUpdate }) => {
       const response = await createSeller(formData);
       onClose();
       onUpdate(response.data);
+      queryClient.invalidateQueries({ queryKey: ["sellers"] });
       setFormData(INITIAL_FORM_DATA);
       setUsernameError("");
       showSuccess("Vendedor creado");
@@ -103,6 +134,37 @@ const SellerModal = ({ isOpen, onClose, onUpdate }) => {
       setSaving(false);
     }
   };
+
+  const username = formData.worker?.username;
+  const hasName = Boolean(formData.worker?.first_name);
+
+  // Verifica el usuario con el servidor; si la verificación falla, queda el respaldo local
+  useEffect(() => {
+    if (!username || !formData.store_id || !hasName) {
+      setUsernameStatus(null);
+      return undefined;
+    }
+    const controller = new AbortController();
+    setUsernameStatus("checking");
+    const timer = setTimeout(async () => {
+      try {
+        const data = await checkWorkerExists(username, { signal: controller.signal });
+        if (!controller.signal.aborted) setUsernameStatus(data.exists ? "taken" : "available");
+      } catch {
+        if (!controller.signal.aborted) setUsernameStatus(null);
+      }
+    }, USERNAME_CHECK_DELAY_MS);
+    return () => {
+      controller.abort();
+      clearTimeout(timer);
+    };
+  }, [username, formData.store_id, hasName]);
+
+  const takenLocally = Boolean(username) && Boolean(sellers?.some((seller) => isSameUsername(seller.worker?.username, username)));
+  const usernameTaken = usernameStatus === "taken" || (usernameStatus === null && takenLocally);
+  const usernameChecking = usernameStatus === "checking";
+  const usernameMessage = usernameError || (usernameTaken ? USERNAME_TAKEN : "");
+  const usernameHelp = usernameMessage || (usernameChecking ? USERNAME_CHECKING : CREDENTIALS_HELP);
 
   const isFormIncomplete = !formData.store_id || formData.worker?.first_name === "" || formData.worker?.last_name === "";
 
@@ -140,10 +202,10 @@ const SellerModal = ({ isOpen, onClose, onUpdate }) => {
               </FormControl>
             </Grid>
             <Grid item xs={12} md={6}>
-              <TextField size="small" fullWidth label="Usuario y contraseña" disabled type="text" value={formData.worker?.username} placeholder="Usuario" name="username" error={!!usernameError} helperText={usernameError} />
+              <TextField size="small" fullWidth label="Usuario y contraseña" disabled type="text" value={formData.worker?.username} placeholder="Usuario" name="username" error={!!usernameMessage} helperText={usernameHelp} sx={getCredentialsSx(!!usernameMessage)} />
             </Grid>
             <Grid item xs={12} md={12}>
-              <CustomButton fullWidth onClick={handleSubmit} disabled={isFormIncomplete || saving} startIcon={<SaveIcon />}>
+              <CustomButton fullWidth onClick={handleSubmit} disabled={isFormIncomplete || usernameTaken || usernameChecking || saving} startIcon={<SaveIcon />}>
                 Crear vendedor
               </CustomButton>
             </Grid>

@@ -12,7 +12,9 @@ import { colors } from './colors';
  * @param {string} mode - 'light' o 'dark'
  * @returns {Object} Objeto de componentes para createTheme()
  */
-export const buildComponentsConfig = (modeColors, mode) => ({
+export const buildComponentsConfig = (modeColors, mode) => {
+  const { radius } = colors;
+  return {
   MuiCssBaseline: {
     styleOverrides: {
       body: {
@@ -34,13 +36,12 @@ export const buildComponentsConfig = (modeColors, mode) => ({
     defaultProps: { disableElevation: true },
     styleOverrides: {
       root: {
-        borderRadius: 10,
         padding: '6px 16px',
         fontWeight: 600,
         fontSize: '0.8125rem',
         lineHeight: 1.4,
-        transition: 'background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.2s ease, transform 0.2s ease',
-        '&:active': { transform: 'translateY(0) scale(0.98)' },
+        transition: 'background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease',
+        '&:active': { transform: 'scale(0.98)' },
         '&.Mui-focusVisible': { boxShadow: `0 0 0 3px ${alpha(modeColors.focusRing, 0.6)}` },
       },
       contained: {
@@ -49,7 +50,6 @@ export const buildComponentsConfig = (modeColors, mode) => ({
         '&:hover': {
           background: modeColors.buttonHover,
           boxShadow: colors.shadow.brand,
-          transform: 'translateY(-1px)',
         },
         ...(modeColors.buttonDisabledBg && {
           '&.Mui-disabled': { background: modeColors.buttonDisabledBg, color: modeColors.buttonDisabledText },
@@ -89,7 +89,6 @@ export const buildComponentsConfig = (modeColors, mode) => ({
     defaultProps: { elevation: 0 },
     styleOverrides: {
       root: {
-        borderRadius: 14,
         border: `1px solid ${modeColors.border}`,
         backgroundImage: 'none',
       },
@@ -100,11 +99,10 @@ export const buildComponentsConfig = (modeColors, mode) => ({
     defaultProps: { elevation: 0 },
     styleOverrides: {
       root: {
-        borderRadius: 14,
         border: `1px solid ${modeColors.border}`,
         transition: 'box-shadow 0.2s ease',
         '&:hover': {
-          boxShadow: modeColors.shadows[2],
+          boxShadow: modeColors.shadowMd,
         },
       },
     },
@@ -113,7 +111,7 @@ export const buildComponentsConfig = (modeColors, mode) => ({
   MuiChip: {
     styleOverrides: {
       root: {
-        borderRadius: 999,
+        borderRadius: radius.pill,
         fontWeight: 600,
         fontSize: '0.75rem',
         height: 24,
@@ -126,9 +124,8 @@ export const buildComponentsConfig = (modeColors, mode) => ({
     styleOverrides: {
       root: {
         '& .MuiOutlinedInput-root': {
-          borderRadius: 10,
           fontSize: '0.875rem',
-          transition: 'border-color 0.15s ease, box-shadow 0.15s ease',
+          transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
           '&:hover fieldset': {
             borderColor: modeColors.borderHover,
           },
@@ -145,7 +142,6 @@ export const buildComponentsConfig = (modeColors, mode) => ({
   MuiSelect: {
     styleOverrides: {
       root: {
-        borderRadius: 10,
         fontSize: '0.875rem',
       },
     },
@@ -154,7 +150,6 @@ export const buildComponentsConfig = (modeColors, mode) => ({
   MuiDialog: {
     styleOverrides: {
       paper: {
-        borderRadius: 16,
         border: `1px solid ${modeColors.border}`,
       },
     },
@@ -163,7 +158,6 @@ export const buildComponentsConfig = (modeColors, mode) => ({
   MuiTooltip: {
     styleOverrides: {
       tooltip: {
-        borderRadius: 6,
         fontSize: '0.75rem',
         backgroundColor: mode === 'light' ? modeColors.text : modeColors.border,
         color: mode === 'light' ? colors.white : modeColors.text,
@@ -191,7 +185,7 @@ export const buildComponentsConfig = (modeColors, mode) => ({
     styleOverrides: {
       root: {
         '& .MuiTableRow-root': {
-          transition: 'background-color 0.1s ease',
+          transition: 'background-color 0.2s ease',
           '&:hover': {
             backgroundColor: modeColors.rowHover,
           },
@@ -222,7 +216,7 @@ export const buildComponentsConfig = (modeColors, mode) => ({
     styleOverrides: {
       indicator: {
         height: 2,
-        borderRadius: 1,
+        borderRadius: radius.pill,
       },
     },
   },
@@ -230,7 +224,6 @@ export const buildComponentsConfig = (modeColors, mode) => ({
   MuiAlert: {
     styleOverrides: {
       root: {
-        borderRadius: 8,
         fontSize: '0.8125rem',
       },
     },
@@ -239,12 +232,12 @@ export const buildComponentsConfig = (modeColors, mode) => ({
   MuiLinearProgress: {
     styleOverrides: {
       root: {
-        borderRadius: 4,
+        borderRadius: radius.pill,
         height: 3,
         backgroundColor: mode === 'light' ? alpha(colors.primary, 0.08) : alpha(colors.white, 0.08),
       },
       bar: {
-        borderRadius: 4,
+        borderRadius: radius.pill,
         background: `linear-gradient(90deg, ${modeColors.primary} 0%, ${colors.secondary} 100%)`,
       },
     },
@@ -256,14 +249,12 @@ export const buildComponentsConfig = (modeColors, mode) => ({
       root: {
         backgroundColor: alpha(modeColors.skeletonBase ?? (mode === 'light' ? colors.primary : colors.white), mode === 'light' ? 0.07 : 0.06),
       },
-      rounded: { borderRadius: 8 },
     },
   },
 
   MuiPopover: {
     styleOverrides: {
       paper: {
-        borderRadius: 12,
         boxShadow: modeColors.shadowMd,
       },
     },
@@ -278,9 +269,9 @@ export const buildComponentsConfig = (modeColors, mode) => ({
   MuiMenuItem: {
     styleOverrides: {
       root: {
-        borderRadius: 6,
+        borderRadius: radius.base,
         fontSize: '0.8125rem',
-        transition: 'background-color 0.15s ease',
+        transition: 'background-color 0.2s ease',
       },
     },
   },
@@ -288,7 +279,7 @@ export const buildComponentsConfig = (modeColors, mode) => ({
   MuiIconButton: {
     styleOverrides: {
       root: {
-        transition: 'background-color 0.15s ease, transform 0.1s ease',
+        transition: 'background-color 0.2s ease, transform 0.2s ease',
         '&:active': { transform: 'scale(0.92)' },
       },
     },
@@ -301,4 +292,5 @@ export const buildComponentsConfig = (modeColors, mode) => ({
       },
     },
   },
-});
+  };
+};

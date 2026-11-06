@@ -1,9 +1,6 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { Box, FormControl, Grid, InputLabel, MenuItem, Typography } from "@mui/material";
 import { Select } from "../../ui/Field/Field";
-import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
-import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
-import LayersOutlinedIcon from "@mui/icons-material/LayersOutlined";
 import { PieChart } from "@mui/x-charts/PieChart";
 import useTaskPolling from "../../../hooks/useTaskPolling";
 import { useDepartments } from "../../../hooks/useDepartments";
@@ -13,7 +10,7 @@ import Filters from "./Filters";
 import KPICard from "./KPICard";
 import DashboardLoading from "./DashboardLoading";
 import { MONTH_NAMES } from "../../../utils/date";
-import { CHART_COLORS } from "../../../utils/chart";
+import { CHART_COLORS, CHART_FADED } from "../../../utils/chart";
 import { formatCurrency, formatNumber } from "../../../utils/currency";
 import { getDepartmentDashboard } from "../../../api/dashboards";
 import DashboardHeader from "./DashboardHeader";
@@ -27,9 +24,9 @@ const NO_DEPARTMENT = "0";
 const KPI_ITEM_PROPS = { xs: 12, md: 4 };
 
 const KPIS = [
-  { key: "investment", title: "Inversión total", icon: Inventory2OutlinedIcon },
-  { key: "sales", title: "Ventas totales", icon: PointOfSaleIcon },
-  { key: "units", title: "Unidades en existencia", icon: LayersOutlinedIcon },
+  { key: "investment", title: "Inversión total" },
+  { key: "sales", title: "Ventas totales" },
+  { key: "units", title: "Unidades en existencia" },
 ];
 
 const TOP_PRODUCTS_COLUMNS = [
@@ -83,7 +80,7 @@ const StoreChart = ({ title, stores, field }) => {
             cornerRadius: 4,
             valueFormatter: ({ value }) => formatCurrency(value),
             highlightScope: { faded: "global", highlighted: "item" },
-            faded: { additionalRadius: -5, color: "gray" },
+            faded: { additionalRadius: -5, color: CHART_FADED },
           }]}
           height={300}
           margin={PIE_MARGIN}
@@ -156,14 +153,13 @@ const DepartmentDashboard = () => {
       ) : (
         <>
           <Grid container spacing={2}>
-            {KPIS.map(({ key, title, icon }, i) => (
+            {KPIS.map(({ key, title }, i) => (
               <KPICard
                 key={key}
                 title={title}
                 value={key === "units" ? formatNumber(totals.units, UNITS_FORMAT) : formatCurrency(totals[key])}
-                icon={icon}
-                index={i}
                 itemProps={KPI_ITEM_PROPS}
+                featured={i === 0}
               />
             ))}
           </Grid>

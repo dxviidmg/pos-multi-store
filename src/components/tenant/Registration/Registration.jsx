@@ -209,11 +209,11 @@ const Registration = () => {
               {showPayment && (
                 <Box>
                   {paymentError && (
-                    <Alert severity="error" sx={{ mb: 2, borderRadius: "10px", fontSize: "0.85rem" }}>
+                    <Alert severity="error" variant="filled" sx={{ mb: 2, fontSize: "0.8125rem" }}>
                       {paymentError}
                     </Alert>
                   )}
-                  <Typography sx={{ fontSize: "0.85rem", color: "text.secondary", mb: 2 }}>
+                  <Typography sx={{ fontSize: "0.8125rem", color: "text.secondary", mb: 2 }}>
                     Se activará cobro recurrente de{" "}
                     <Box component="strong" sx={{ color: "inherit" }}>{formatCurrency(selectedPlan?.price)} MXN/mes</Box>{" "}
                     con tu tarjeta.
@@ -237,7 +237,7 @@ const Registration = () => {
               )}
 
               {!showPayment && (
-                <Typography sx={{ fontSize: "0.8rem", color: "text.secondary", textAlign: "center", mt: 2.5 }}>
+                <Typography sx={{ fontSize: "0.8125rem", color: "text.secondary", textAlign: "center", mt: 2.5 }}>
                   ¿Ya tienes una cuenta?{" "}
                   <Box
                     component="span"

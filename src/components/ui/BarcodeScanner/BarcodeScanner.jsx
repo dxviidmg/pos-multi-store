@@ -88,7 +88,7 @@ const BarcodeScanner = ({ open, onClose, onDetected }) => {
       onClose={onClose}
       fullWidth
       maxWidth="sm"
-      PaperProps={{ sx: { borderRadius: 3, overflow: "hidden" } }}
+      PaperProps={{ sx: { overflow: "hidden" } }}
     >
       <DialogTitle sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", pb: 1 }}>
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -105,7 +105,7 @@ const BarcodeScanner = ({ open, onClose, onDetected }) => {
       <DialogContent sx={{ p: 0 }}>
         {error ? (
           <Box sx={{ p: 2 }}>
-            <Alert severity="error">{error}</Alert>
+            <Alert severity="error" variant="filled">{error}</Alert>
           </Box>
         ) : (
           <Box sx={{ position: "relative", bgcolor: "common.black", minHeight: 300 }}>
@@ -135,7 +135,7 @@ const BarcodeScanner = ({ open, onClose, onDetected }) => {
                 <Box sx={{
                   width: "70%", height: 100,
                   border: (theme) => `2px solid ${alpha(theme.palette.common.white, 0.8)}`,
-                  borderRadius: 1,
+                  borderRadius: "var(--radius-base)",
                   boxShadow: (theme) => `0 0 0 9999px ${alpha(theme.palette.common.black, 0.4)}`,
                 }} />
               </Box>

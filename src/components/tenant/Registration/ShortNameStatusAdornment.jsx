@@ -35,7 +35,7 @@ const ShortNameStatusAdornment = ({ status }) => {
     <InputAdornment position="end" sx={{ mr: 0.5 }}>
       <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
         {tone && (
-          <Typography sx={{ fontSize: "0.72rem", color: tone.color, fontWeight: tone.fontWeight }}>
+          <Typography sx={{ fontSize: "0.75rem", color: tone.color, fontWeight: tone.fontWeight }}>
             {tone.label}
           </Typography>
         )}

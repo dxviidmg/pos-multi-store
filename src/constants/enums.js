@@ -82,3 +82,13 @@ export const PRODUCT_VIEW_OPTIONS = [
   { value: "table", label: "Tabla" },
   { value: "gallery", label: "Galería" },
 ];
+
+// Tonos de estado para avisos (StatusChip, pastillas de estado).
+// Son los `color` de MUI; fuente única para no repetir mapas estado→color por pantalla.
+export const STATUS_TONES = {
+  SUCCESS: "success",
+  WARNING: "warning",
+  ERROR: "error",
+  INFO: "info",
+  NEUTRAL: "default",
+};

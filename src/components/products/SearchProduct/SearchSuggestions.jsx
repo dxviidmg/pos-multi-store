@@ -39,7 +39,7 @@ const SearchSuggestions = ({
       modifiers={[{ name: "offset", options: { offset: [0, 4] } }]}
     >
       <ClickAwayListener onClickAway={onClickAway}>
-        <Paper elevation={4} className="dropdown-enter" sx={{ borderRadius: 2, overflow: "hidden" }}>
+        <Paper elevation={4} className="dropdown-enter" sx={{ overflow: "hidden" }}>
           {loading ? (
             <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", py: 2, gap: 1 }}>
               <CircularProgress size={18} />

@@ -4,10 +4,6 @@ import { colors } from './colors';
 export const applyCssVariables = (mode) => {
   const t = colors.modes[mode];
   const vars = {
-    '--color-primary': t.primary,
-    '--color-primary-light': t.primaryLight,
-    '--color-primary-dark': t.primaryDark,
-    '--color-white': colors.white,
     '--color-background': t.background,
     '--color-paper': t.paper,
     '--color-text': t.text,
@@ -18,6 +14,9 @@ export const applyCssVariables = (mode) => {
     '--color-table-head-text': t.tableHeadText,
     '--shadow-sm': t.shadowSm,
     '--shadow-md': t.shadowMd,
+    '--shadow-dialog': colors.shadow.dialog,
+    '--radius-base': colors.radius.base,
+    '--radius-pill': colors.radius.pill,
   };
   const style = document.documentElement.style;
   Object.entries(vars).forEach(([name, value]) => style.setProperty(name, value));

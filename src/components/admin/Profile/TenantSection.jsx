@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { Box, Button, Grid, Switch, Typography } from "@mui/material";
+import { Box, Grid, Switch, Typography } from "@mui/material";
 import { TextField } from "../../ui/Field/Field";
+import CustomButton from "../../ui/Button/Button";
 import { Business, Save, Settings } from "@mui/icons-material";
 import ProfileCard from "./ProfileCard";
 import { updateTenant } from "../../../api/tenants";
@@ -78,9 +79,9 @@ const TenantSection = ({ tenantId, tenant }) => {
           description="Cómo se comporta tu negocio"
           delay={30}
           action={
-            <Button variant="contained" startIcon={<Save />} onClick={handleSave} disabled={saving} sx={{ width: { xs: "100%", sm: "auto" } }}>
+            <CustomButton startIcon={<Save />} onClick={handleSave} disabled={saving} fullWidth>
               Guardar datos del negocio
-            </Button>
+            </CustomButton>
           }
         >
           {SETTINGS.map(({ name, label, hint }) => (
@@ -88,7 +89,7 @@ const TenantSection = ({ tenantId, tenant }) => {
               key={name}
               sx={{
                 display: "flex", alignItems: "center", justifyContent: "space-between", gap: 2,
-                p: 1.5, border: 1, borderColor: "divider", borderRadius: "10px",
+                p: 1.5, border: 1, borderColor: "divider", borderRadius: "var(--radius-base)",
               }}
             >
               <Box sx={{ minWidth: 0 }}>

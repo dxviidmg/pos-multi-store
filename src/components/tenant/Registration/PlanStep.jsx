@@ -17,7 +17,7 @@ const StoresPicker = ({ plans, selectedPlan, onSelect }) => {
 
   return (
   <Box>
-    <Typography sx={{ fontSize: "0.85rem", fontWeight: 600, color: "text.secondary", mb: 1 }}>
+    <Typography sx={{ fontSize: "0.8125rem", fontWeight: 600, color: "text.secondary", mb: 1 }}>
       ¿Cuántas tiendas tienes?
     </Typography>
     <Box sx={{ px: 2 }}>
@@ -28,15 +28,15 @@ const StoresPicker = ({ plans, selectedPlan, onSelect }) => {
         step={1}
         marks={sorted.map((plan, i) => ({ value: i, label: plan.stores }))}
         onChange={(_, value) => onSelect(sorted[value])}
-        sx={{ "& .MuiSlider-markLabel": { fontSize: "0.8rem", fontWeight: 600 } }}
+        sx={{ "& .MuiSlider-markLabel": { fontSize: "0.8125rem", fontWeight: 600 } }}
       />
     </Box>
     {selectedPlan && (
       <Box sx={{ textAlign: "center", mt: 2, py: 2, borderRadius: "12px", bgcolor: "action.hover" }}>
-        <Typography sx={{ fontSize: "0.85rem", color: "text.secondary" }}>
+        <Typography sx={{ fontSize: "0.8125rem", color: "text.secondary" }}>
           Plan para {storesLabel(selectedPlan.stores)}
         </Typography>
-        <Typography sx={{ fontSize: "1.8rem", fontWeight: 800, color: "primary.main" }}>
+        <Typography sx={{ fontSize: "1.75rem", fontWeight: 700, color: "primary.main" }}>
           {formatCurrency(selectedPlan.price)}
         </Typography>
         <Typography sx={{ fontSize: "0.75rem", color: "text.secondary" }}>MXN/mes</Typography>
@@ -54,7 +54,7 @@ const PlanStep = ({ plans, plansLoading, selectedPlan, onSelectPlan, onBack, onS
         <CircularProgress size={28} sx={{ color: "primary.main" }} />
       </Box>
     ) : plans.length === 0 ? (
-      <Typography sx={{ fontSize: "0.85rem", color: "text.secondary", textAlign: "center", py: 3 }}>
+      <Typography sx={{ fontSize: "0.8125rem", color: "text.secondary", textAlign: "center", py: 3 }}>
         No hay planes disponibles en este momento.
       </Typography>
     ) : (

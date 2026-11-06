@@ -16,7 +16,7 @@ const StockRequestAlert = ({ onClose }) => {
     <Alert
       severity="info"
       variant="filled"
-      sx={{ py: 0, borderRadius: 2 }}
+      sx={{ py: 0 }}
       icon={<NotificationImportantIcon fontSize="inherit" />}
       onClose={onClose}
     >

@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import DataTable from "../../ui/DataTable/DataTable";
 import CustomButton from "../../ui/Button/Button";
 import CustomTooltip from "../../ui/Tooltip";
-import { Grid, Chip } from "@mui/material";
+import StatusChip from "../../ui/StatusChip";
+import { Grid } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useUser } from "../../../context/UserContext";
@@ -86,10 +87,9 @@ const StockUpdateRequestList = () => {
           { name: "Solicitante", selector: (row) => row.requested_by_username },
           { name: "Fecha", selector: (row) => getFormattedDateTime(row.created_at), minWidth: 150 },
           { name: "Estado", selector: (row) => (
-            <Chip
+            <StatusChip
               label={row.applied ? "Aplicado" : "Pendiente"}
-              color={row.applied ? "success" : "warning"}
-              size="small"
+              tone={row.applied ? "success" : "warning"}
             />
           )},
           {

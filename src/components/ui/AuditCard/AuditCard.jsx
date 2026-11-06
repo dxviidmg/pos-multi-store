@@ -122,7 +122,7 @@ const AuditCard = ({ title, taskId, syncResult, pollInterval = 7500 }) => {
               variant="determinate"
               value={info.progress}
               color={isComplete ? "success" : "primary"}
-              sx={{ height: 8, borderRadius: 4 }}
+              sx={{ height: 8, borderRadius: "var(--radius-pill)" }}
             />
             <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: "block" }}>
               {info.progress}%

@@ -7,7 +7,7 @@ import { colors } from "../../../theme/colors";
 
 /**
  * Tarjeta visual de producto para el carrusel de búsqueda visual.
- * Diseño acorde a SmartVenta: imagen protagonista, gradiente primario,
+ * Diseño acorde a SmartVenta: imagen protagonista,
  * precio destacado tipo badge y feedback visual al pasar el cursor.
  */
 const ProductCard = ({ storeProduct, disabled = false, onClick }) => {
@@ -39,12 +39,12 @@ const ProductCard = ({ storeProduct, disabled = false, onClick }) => {
         width: 168,
         scrollSnapAlign: "start",
         bgcolor: "background.paper",
-        borderRadius: "16px",
-        boxShadow: 5,
+        borderRadius: "var(--radius-base)",
+        boxShadow: "var(--shadow-md)",
         overflow: "hidden",
         cursor: disabled ? "not-allowed" : "pointer",
         opacity: disabled ? 0.55 : 1,
-        transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+        transition: "all 0.2s ease",
         userSelect: "none",
         "&:hover": disabled
           ? {}
@@ -84,7 +84,7 @@ const ProductCard = ({ storeProduct, disabled = false, onClick }) => {
             height: "100%",
             objectFit: "cover",
             display: "block",
-            transition: "transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+            transition: "transform 0.2s ease",
           }}
         />
 
@@ -104,10 +104,10 @@ const ProductCard = ({ storeProduct, disabled = false, onClick }) => {
               sx={{
                 px: 1.25,
                 py: 0.4,
-                borderRadius: "8px",
+                borderRadius: "var(--radius-base)",
                 bgcolor: "error.main",
                 color: "common.white",
-                fontSize: "0.7rem",
+                fontSize: "0.75rem",
                 fontWeight: 700,
                 textTransform: "uppercase",
                 letterSpacing: "0.02em",
@@ -125,7 +125,7 @@ const ProductCard = ({ storeProduct, disabled = false, onClick }) => {
           <Typography
             sx={{
               color: "text.secondary",
-              fontSize: "0.68rem",
+              fontSize: "0.75rem",
               fontWeight: 600,
               textTransform: "uppercase",
               letterSpacing: "0.02em",
@@ -141,7 +141,7 @@ const ProductCard = ({ storeProduct, disabled = false, onClick }) => {
         <Typography
           sx={{
             fontWeight: 600,
-            fontSize: "0.82rem",
+            fontSize: "0.8125rem",
             color: "text.primary",
             lineHeight: 1.3,
             display: "-webkit-box",

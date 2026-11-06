@@ -5,8 +5,6 @@ import { formatCurrency, formatNumber } from "../../../utils/currency";
 import { useThemeTokens } from "../../../theme";
 import { PERIODS } from "./storeInsights";
 
-const CARD_RADIUS = "14px";
-
 /** Tarjeta destacada: monto vendido y su desglose por forma de pago. */
 const AmountTile = ({ totals, period, loading }) => {
   const tokens = useThemeTokens();
@@ -16,7 +14,7 @@ const AmountTile = ({ totals, period, loading }) => {
     <Box
       sx={{
         position: "relative", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "space-between",
-        flexWrap: "wrap", columnGap: 3, rowGap: 1, flex: 1, px: 2, py: 1.25, borderRadius: CARD_RADIUS,
+        flexWrap: "wrap", columnGap: 3, rowGap: 1, flex: 1, px: 2, py: 1.25, borderRadius: "var(--radius-base)",
         bgcolor: tokens.heroBg, color: "common.white",
         "&::before": {
           content: '""', position: "absolute", top: -70, right: -70, width: 220, height: 220, borderRadius: "50%",
@@ -41,7 +39,7 @@ const AmountTile = ({ totals, period, loading }) => {
       <Box sx={{ display: "flex", gap: 2 }}>
         {PAYMENT_METHOD_OPTIONS.map(({ value, label }) => (
           <Box key={value}>
-            <Typography component="div" sx={{ fontSize: "0.7rem", color: tokens.heroLabel }}>{label}</Typography>
+            <Typography component="div" sx={{ fontSize: "0.75rem", color: tokens.heroLabel }}>{label}</Typography>
             <Typography component="div" sx={{ fontSize: "0.8125rem", fontWeight: 600, fontVariantNumeric: "tabular-nums" }}>
               {loading ? "—" : formatCurrency(totals[value])}
             </Typography>
@@ -59,7 +57,7 @@ const SIMPLE_TILES = [
 ];
 
 const SimpleTile = ({ label, value, loading }) => (
-  <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", px: 2, py: 1.25, bgcolor: "background.paper", border: "1px solid", borderColor: "divider", borderRadius: CARD_RADIUS }}>
+  <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", px: 2, py: 1.25, bgcolor: "background.paper", border: "1px solid", borderColor: "divider", borderRadius: "var(--radius-base)" }}>
     <Typography sx={{ fontSize: "0.75rem" }} color="text.secondary">{label}</Typography>
     {loading ? (
       <Skeleton variant="rounded" width={80} height={28} />

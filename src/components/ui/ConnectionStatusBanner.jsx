@@ -3,7 +3,6 @@ import { Snackbar, Alert, AlertTitle, Box } from "@mui/material";
 import WifiOffIcon from "@mui/icons-material/WifiOff";
 import WifiIcon from "@mui/icons-material/Wifi";
 import { useOnlineStatus } from "../../hooks/useOnlineStatus";
-import { colors } from "../../theme/colors";
 
 const RESTORED_DURATION_MS = 3000;
 
@@ -12,8 +11,7 @@ const alertSx = {
   width: "100%",
   maxWidth: { xs: "100%", sm: 480 },
   minHeight: 64,
-  boxShadow: colors.shadow.toast,
-  borderRadius: "10px",
+  boxShadow: "var(--shadow-md)",
   alignItems: "center",
 };
 
@@ -62,7 +60,7 @@ const ConnectionStatusBanner = () => {
           <AlertTitle sx={{ fontWeight: 700, mb: 0.25 }}>
             Sin conexión a Internet
           </AlertTitle>
-          <Box component="span" sx={{ fontSize: "0.8rem" }}>
+          <Box component="span" sx={{ fontSize: "0.8125rem" }}>
             Algunas funciones pueden no estar disponibles.
           </Box>
         </Alert>
@@ -86,7 +84,7 @@ const ConnectionStatusBanner = () => {
           <AlertTitle sx={{ fontWeight: 700, mb: 0.25 }}>
             Conexión restaurada
           </AlertTitle>
-          <Box component="span" sx={{ fontSize: "0.8rem" }}>
+          <Box component="span" sx={{ fontSize: "0.8125rem" }}>
             Ya puedes usar todas las funciones.
           </Box>
         </Alert>

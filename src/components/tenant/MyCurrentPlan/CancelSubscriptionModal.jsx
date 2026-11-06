@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Box, Typography, Alert, Button, Stack, MenuItem } from "@mui/material";
+import { Typography, Alert, Stack, MenuItem } from "@mui/material";
 import { TextField } from "../../ui/Field/Field";
-import CustomModal from "../../ui/Modal/Modal";
+import CustomModal, { ModalBody } from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { cancelSubscription } from "../../../api/subscriptions";
@@ -60,9 +60,9 @@ const CancelSubscriptionModal = ({ isOpen, onClose }) => {
     <>
       <CustomSpinner isLoading={cancelling} />
       <CustomModal showOut={isOpen} onClose={handleClose} title="Cancelar suscripción">
-        <Box sx={{ p: 3 }}>
+        <ModalBody>
           {error && (
-            <Alert severity="error" sx={{ mb: 2 }}>
+            <Alert severity="error" variant="filled" sx={{ mb: 2 }}>
               {error}
             </Alert>
           )}
@@ -95,16 +95,15 @@ const CancelSubscriptionModal = ({ isOpen, onClose }) => {
             <CustomButton onClick={handleClose} disabled={cancelling} variant="outlined">
               No, mantener
             </CustomButton>
-            <Button
+            <CustomButton
               onClick={handleCancelSubscription}
               disabled={!reason || cancelling}
-              variant="contained"
               color="error"
             >
               {cancelling ? "Cancelando..." : "Sí, cancelar"}
-            </Button>
+            </CustomButton>
           </Stack>
-        </Box>
+        </ModalBody>
       </CustomModal>
     </>
   );

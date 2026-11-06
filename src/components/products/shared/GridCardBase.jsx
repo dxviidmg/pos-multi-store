@@ -26,11 +26,11 @@ const GridCardBase = ({ image, name, brandName, onClick, children, actions }) =>
       bgcolor: "background.paper",
       border: "1px solid",
       borderColor: "divider",
-      borderRadius: "12px",
+      borderRadius: "var(--radius-base)",
       overflow: "hidden",
       transition: "all 0.2s ease",
       "&:hover": {
-        boxShadow: 3,
+        boxShadow: "var(--shadow-md)",
         borderColor: "primary.light",
       },
     }}
@@ -62,7 +62,7 @@ const GridCardBase = ({ image, name, brandName, onClick, children, actions }) =>
           height: "100%",
           objectFit: "cover",
           display: "block",
-          transition: "transform 0.3s ease",
+          transition: "transform 0.2s ease",
         }}
       />
     </Box>
@@ -99,7 +99,7 @@ const GridCardBase = ({ image, name, brandName, onClick, children, actions }) =>
       <Typography
         sx={{
           fontWeight: 700,
-          fontSize: "0.95rem",
+          fontSize: "1rem",
           color: "text.primary",
           lineHeight: 1.35,
           display: "-webkit-box",

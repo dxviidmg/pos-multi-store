@@ -95,7 +95,7 @@ function Login() {
         alignItems: 'center', justifyContent: 'center',
         flexDirection: 'column',
         overflow: 'hidden',
-        background: colors.gradient.sidebar,
+        background: colors.sidebar,
       }}>
         <Box sx={{ position: 'relative', zIndex: 1, textAlign: 'center', px: 6 }}>
           <Box component="img" src={LogoWhite} alt="SmartVenta" width={312} height="auto" sx={{
@@ -126,11 +126,10 @@ function Login() {
         <Paper elevation={0} sx={{
           display: { xs: 'none', md: 'block' },
           width: '100%', maxWidth: 420,
-          borderRadius: '16px',
           bgcolor: 'background.paper',
           border: '1px solid',
           borderColor: 'divider',
-          boxShadow: colors.shadow.card,
+          boxShadow: "var(--shadow-md)",
           p: { xs: 3, sm: 4 },
         }}>
           <Typography variant="h4" sx={{ fontWeight: 700, color: 'text.primary', mb: 0.5 }}>

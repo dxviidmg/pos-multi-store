@@ -2,15 +2,16 @@ import { showSuccess, showRequestError } from "../../../utils/alerts";
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { selectCarts, selectActiveCartId } from "../../../redux/cart/selectors";
-import CustomModal from "../../ui/Modal/Modal";
+import CustomModal, { ModalBody } from "../../ui/Modal/Modal";
 import SimpleTable from "../../ui/SimpleTable/SimpleTable";
 import CustomButton from "../../ui/Button/Button";
 import { createTransfer } from "../../../api/transfers";
 import { addProducts, getStockOtherStores } from "../../../api/products";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { addToCart, updateMovementType, updateQuantityInCart } from "../../../redux/cart/cartActions";
-import { Grid, Box, Alert, Chip, Tabs, Tab } from "@mui/material";
+import { Grid, Box, Alert, Tabs, Tab } from "@mui/material";
 import { TextField } from "../../ui/Field/Field";
+import StatusChip from "../../ui/StatusChip";
 import { MOVEMENT_TYPES } from "../../../constants";
 import { useUser } from "../../../context/UserContext";
 
@@ -143,11 +144,9 @@ const StockModal = ({ isOpen, product, onClose }) => {
     {
       name: "Stock",
       selector: (row) => (
-        <Chip
+        <StatusChip
           label={row.available_stock}
-          color={row.available_stock > 0 ? "success" : "default"}
-          size="small"
-          variant="outlined"
+          tone={row.available_stock > 0 ? "success" : "default"}
         />
       ),
     },
@@ -184,9 +183,9 @@ const StockModal = ({ isOpen, product, onClose }) => {
         showOut={isOpen}
         onClose={onClose}
         title={`${storeProduct.product?.code} - ${storeProduct.product?.brand_name} ${storeProduct.product?.name}`}
-        maxWidth="sm"
+        maxWidth={600}
       >
-        <Box sx={{ p: 2, bgcolor: "background.paper" }}>
+        <ModalBody>
           <Grid container>
             {!storeProduct.onlyRead && (
               <Box sx={{ mb: 0, width: "100%" }}>
@@ -200,7 +199,7 @@ const StockModal = ({ isOpen, product, onClose }) => {
 
             {storeProduct.showImage ? (
               <Grid item xs={12} sx={{ textAlign: "center" }}>
-                <Box component="img" src={storeProduct.product?.image} alt="Producto" sx={{ maxWidth: 200, borderRadius: "8px" }} />
+                <Box component="img" src={storeProduct.product?.image} alt="Producto" sx={{ maxWidth: 200, borderRadius: "var(--radius-base)" }} />
               </Grid>
             ) : (
               <Grid item xs={12}>
@@ -216,7 +215,7 @@ const StockModal = ({ isOpen, product, onClose }) => {
                     {storesWithStock > 0 ? (
                       <SimpleTable noDataComponent="Sin acceso a otras tiendas" data={stockOtherStores} columns={stockColumns} />
                     ) : (
-                      <Alert severity="warning" sx={{ py: 2 }}>
+                      <Alert severity="warning" variant="filled" sx={{ py: 2 }}>
                         No hay stock disponible en ninguna otra tienda
                       </Alert>
                     )}
@@ -255,7 +254,7 @@ const StockModal = ({ isOpen, product, onClose }) => {
               </Grid>
             )}
           </Grid>
-        </Box>
+        </ModalBody>
       </CustomModal>
     </>
   );

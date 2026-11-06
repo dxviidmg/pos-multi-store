@@ -1,6 +1,9 @@
 import React from "react";
 import { FormControl, MenuItem, Select } from "@mui/material";
 
+// Select crudo de MUI a propósito (no ui/Field/Field): es un control de presentación
+// de la gráfica (líneas/barras), no un campo de formulario, y sin label el wrapper
+// Field no aportaría ícono ni estilo. Mismo criterio que ViewModeToggle.
 /** Selector Líneas / Barras de las gráficas de los tableros. */
 const ChartTypeSelect = ({ value, onChange }) => (
   <FormControl size="small" sx={{ minWidth: 120 }}>

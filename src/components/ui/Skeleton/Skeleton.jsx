@@ -4,7 +4,7 @@ import { Box, Skeleton, Stack } from "@mui/material";
 const ROW_WIDTHS = ["92%", "78%", "86%", "70%", "88%", "74%", "82%", "66%"];
 
 export const TableSkeleton = memo(({ rows = 6, columns = 5 }) => (
-  <Box sx={{ border: "1px solid", borderColor: "divider", borderRadius: 1.5, overflow: "hidden" }}>
+  <Box sx={{ border: "1px solid", borderColor: "divider", borderRadius: "var(--radius-base)", overflow: "hidden" }}>
     <Box sx={{ display: "grid", gridTemplateColumns: `repeat(${columns}, 1fr)`, gap: 2, px: 2, py: 1.25, bgcolor: "tableHead.main", borderBottom: "1px solid", borderColor: "divider" }}>
       {Array.from({ length: columns }, (_, i) => (
         <Skeleton key={i} variant="text" sx={{ mx: "auto", width: "60%" }} />

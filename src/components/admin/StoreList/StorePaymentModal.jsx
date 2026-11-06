@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Box, Typography } from "@mui/material";
-import CustomModal from "../../ui/Modal/Modal";
+import CustomModal, { ModalBody } from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
 import { createMercadoPagoPreference } from "../../../api/mercadopago";
 import { showRequestError } from "../../../utils/alerts";
@@ -27,7 +27,7 @@ const StorePaymentModal = ({ isOpen, onClose }) => {
 
   return (
     <CustomModal showOut={isOpen} onClose={onClose} title="Pago de servicio">
-      <Box sx={{ p: 3, textAlign: "center" }}>
+      <ModalBody sx={{ textAlign: "center" }}>
         <Box component="img" src={mercadoPagoLogo} alt="Mercado Pago" sx={{ height: 40, mb: 2 }} />
         <Typography variant="body1" sx={{ mb: 3 }}>
           Tu suscripción está próxima a vencer o ya venció. Realiza tu pago para continuar usando el sistema.
@@ -35,7 +35,7 @@ const StorePaymentModal = ({ isOpen, onClose }) => {
         <CustomButton onClick={handlePayment} disabled={loading}>
           {loading ? "Generando enlace..." : "Pagar con Mercado Pago"}
         </CustomButton>
-      </Box>
+      </ModalBody>
     </CustomModal>
   );
 };

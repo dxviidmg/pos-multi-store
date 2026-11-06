@@ -89,12 +89,10 @@ const DataTable = ({
   );
 
   const getRowClassName = useMemo(
-    () => conditionalRowStyles?.length
-      ? ({ row }) => conditionalRowStyles
-          .map((rule, index) => (rule.when(row) ? `conditional-row-${index}` : null))
-          .filter(Boolean)
-          .join(" ")
-      : undefined,
+    () => ({ row, indexRelativeToCurrentPage }) => [
+      indexRelativeToCurrentPage % 2 === 1 ? "row-striped" : null,
+      ...(conditionalRowStyles || []).map((rule, index) => (rule.when(row) ? `conditional-row-${index}` : null)),
+    ].filter(Boolean).join(" "),
     [conditionalRowStyles]
   );
 
@@ -160,7 +158,7 @@ const DataTable = ({
           sx={{
             border: '1px solid',
             borderColor: 'divider',
-            borderRadius: '14px',
+            borderRadius: 'var(--radius-base)',
             overflow: 'hidden',
             "& .MuiDataGrid-columnHeaders": {
               backgroundColor: 'tableHead.main',
@@ -170,6 +168,7 @@ const DataTable = ({
               minHeight: '36px !important',
               maxHeight: '36px !important',
             },
+            "& .MuiDataGrid-columnHeader .MuiSvgIcon-root, & .MuiDataGrid-columnSeparator": { color: 'tableHead.contrastText' },
             "& .MuiDataGrid-columnHeaderTitle": {
               fontWeight: 600,
               fontSize: '0.8125rem',
@@ -188,9 +187,12 @@ const DataTable = ({
             "& .MuiDataGrid-row": {
               minHeight: '34px !important',
               maxHeight: 'none !important',
-              transition: 'background-color 0.15s ease',
-              '&:hover': { backgroundColor: 'action.hover' },
+              transition: 'background-color 0.2s ease',
+              '&.row-striped': { backgroundColor: 'rowStripe.main' },
+              '&:hover, &.row-striped:hover': { backgroundColor: 'rowHover.main' },
+              '&.Mui-selected, &.Mui-selected:hover': { backgroundColor: 'rowSelected.main' },
             },
+            "& .MuiDataGrid-footerContainer": { backgroundColor: 'rowStripe.main', borderColor: 'divider' },
             "& .MuiDataGrid-cell:focus, & .MuiDataGrid-columnHeader:focus": { outline: 'none' },
             ...conditionalRowSx,
           }}

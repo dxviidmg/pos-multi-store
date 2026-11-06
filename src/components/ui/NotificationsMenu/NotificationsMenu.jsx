@@ -1,5 +1,5 @@
 import React, { memo, useState, useEffect, useRef, useCallback } from "react";
-import { Button, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
+import { ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
@@ -14,6 +14,7 @@ import { canAccessRoute } from "../../../constants/routeAccess";
 import { showWarning } from "../../../utils/alerts";
 import { logger } from "../../../utils/logger";
 import HeaderPopoverMenu from "../HeaderPopoverMenu/HeaderPopoverMenu";
+import CustomButton from "../Button/Button";
 
 const WS_URL = getApiWsUrl("ws/notifications/");
 
@@ -142,9 +143,9 @@ const NotificationsMenu = memo(() => {
       autoHideBadge={false}
       onOpen={() => setSeen(true)}
       headerAction={count > 0 && (
-        <Button size="small" onClick={() => setNotifications([])}>
+        <CustomButton variant="text" onClick={() => setNotifications([])}>
           Limpiar
-        </Button>
+        </CustomButton>
       )}
       isEmpty={count === 0}
       emptyIcon={InboxIcon}
@@ -156,8 +157,8 @@ const NotificationsMenu = memo(() => {
           <ListItemText
             primary={n.text}
             secondary={n.storeName}
-            primaryTypographyProps={{ fontSize: "0.8rem", fontWeight: 500 }}
-            secondaryTypographyProps={{ fontSize: "0.7rem" }}
+            primaryTypographyProps={{ fontSize: "0.8125rem", fontWeight: 500 }}
+            secondaryTypographyProps={{ fontSize: "0.75rem" }}
           />
         </ListItemButton>
       ))}

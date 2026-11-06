@@ -14,8 +14,8 @@ const style = {
   maxHeight: { xs: 'calc(100dvh - 24px)', sm: '90vh' },
   overflow: 'auto',
   bgcolor: 'modalHeader.main',
-  boxShadow: 24,
-  borderRadius: { xs: 2, sm: 3 },
+  boxShadow: "var(--shadow-dialog)",
+  borderRadius: "var(--radius-base)",
   border: '1px solid',
   borderColor: 'divider',
 };
@@ -36,8 +36,8 @@ function CustomModal({ showOut, onClose, title, children, maxWidth = 800 }) {
       slotProps={{ backdrop: { sx: { backgroundColor: colors.backdrop, backdropFilter: 'blur(4px)' } } }}
     >
       <Box className="modal-enter" sx={{ ...style, maxWidth }}>
-        <Box sx={{ background: colors.gradient.sidebar, color: colors.white, px: { xs: 2, sm: 3 }, py: 1.75, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'sticky', top: 0, zIndex: 2 }}>
-          <Typography variant="h6" sx={{ px: 5, textAlign: 'center', fontSize: '1.0625rem', fontWeight: 700, color: 'inherit' }}>
+        <Box sx={{ background: colors.sidebar, color: colors.white, px: { xs: 2, sm: 3 }, py: 1.75, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'sticky', top: 0, zIndex: 2 }}>
+          <Typography variant="h6" sx={{ px: 5, textAlign: 'center', fontSize: '1.125rem', fontWeight: 700, color: 'inherit' }}>
             {title}
           </Typography>
           <IconButton onClick={onClose} onMouseDown={keepInputFocus} size="small" aria-label="Cerrar" sx={{ position: 'absolute', top: '50%', transform: 'translateY(-50%)', right: { xs: 8, sm: 16 }, color: alpha(colors.white, 0.8), '&:hover': { bgcolor: alpha(colors.white, 0.12), color: colors.white } }}>

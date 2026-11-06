@@ -1,11 +1,12 @@
 import React, { useMemo } from "react";
-import { Alert, Grid, LinearProgress } from "@mui/material";
+import { Alert, Grid } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
 import CustomButton from "../../ui/Button/Button";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import PageHeader from "../../ui/PageHeader";
 import ImportStepper from "../../ui/Import/ImportStepper";
 import ImportFileDrop from "../../ui/Import/ImportFileDrop";
+import ImportProgress from "../../ui/Import/ImportProgress";
 import { ImportValidateButton, ImportSubmitButton } from "../../ui/Import/ImportActions";
 import YesNoSelect from "./YesNoSelect";
 import ImportResults from "./ImportResults";
@@ -48,7 +49,7 @@ const TraditionalImport = ({ tabs }) => {
 
         <ImportStepper hasFile={!!formData.file} withConfig configured={!isFormIncomplete} validated={!!validationResult} />
 
-        {loading && <LinearProgress sx={{ mb: 2, borderRadius: 1 }} />}
+        <ImportProgress loading={loading} />
 
         <Grid container spacing={2}>
           <Grid item xs={12} md={3}>

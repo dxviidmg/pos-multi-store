@@ -11,8 +11,6 @@ import { Grid, Box, Typography } from "@mui/material";
 import { MONTH_NAMES, MONTH_NAMES_SHORT, DAY_NAMES } from "../../../utils/date";
 import { getTied } from "../../../utils/chart";
 import { getCancellationsDashboard } from "../../../api/dashboards";
-import BlockIcon from "@mui/icons-material/Block";
-import UndoIcon from "@mui/icons-material/Undo";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
@@ -30,7 +28,7 @@ const KPI_ITEM_PROPS = { xs: 6, md: 4 };
 
 const HighlightCard = ({ icon: Icon, title, value }) => (
   <Grid item {...KPI_ITEM_PROPS}>
-    <Box className="card card-interactive" sx={{ height: "100%", mb: 0 }}>
+    <Box className="card" sx={{ height: "100%", mb: 0 }}>
       <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
         <Icon sx={{ fontSize: 18, color: "primary.main" }} />
         <Typography variant="body2" sx={{ fontWeight: 600, color: "text.secondary" }}>{title}</Typography>
@@ -129,9 +127,9 @@ const CancellationsDashboard = () => {
       <DashboardHeader title={TITLE} subtitle={periodLabel} filters={filters} sx={{ mb: 0 }} />
 
       <Grid container spacing={2}>
-        <KPICard title="Canceladas/Devueltas" value={kpis.total} subtitle={`${kpis.percentage}% de ${kpis.totalValidSales + kpis.total} ventas`} icon={BlockIcon} index={0} itemProps={KPI_ITEM_PROPS} />
-        <KPICard title="Canceladas" value={kpis.totalCanceled} subtitle="Ventas canceladas" icon={BlockIcon} index={1} itemProps={KPI_ITEM_PROPS} />
-        <KPICard title="Devoluciones" value={kpis.totalReturned} subtitle="Ventas con devolución" icon={UndoIcon} index={2} itemProps={KPI_ITEM_PROPS} />
+        <KPICard title="Canceladas/Devueltas" value={kpis.total} subtitle={`${kpis.percentage}% de ${kpis.totalValidSales + kpis.total} ventas`} itemProps={KPI_ITEM_PROPS} featured />
+        <KPICard title="Canceladas" value={kpis.totalCanceled} subtitle="Ventas canceladas" itemProps={KPI_ITEM_PROPS} />
+        <KPICard title="Devoluciones" value={kpis.totalReturned} subtitle="Ventas con devolución" itemProps={KPI_ITEM_PROPS} />
         {hasMultipleStores && <HighlightCard icon={StorefrontIcon} title="Más cancelaciones" value={kpis.worstStore} />}
         <HighlightCard icon={CalendarMonthIcon} title="Día con más" value={kpis.worstWeekday} />
         <HighlightCard icon={AccessTimeIcon} title="Hora con más" value={kpis.worstHour} />

@@ -1,10 +1,11 @@
 import React from "react";
-import { Grid, Typography, Box, Chip, Button, Alert } from "@mui/material";
+import { Grid, Typography, Box, Alert } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
 import PageHeader from "../../ui/PageHeader";
-import { colors } from "../../../theme/colors";
+import CustomButton from "../../ui/Button/Button";
+import StatusChip from "../../ui/StatusChip";
 import { formatCurrency } from "../../../utils/utils";
 
 /** La tarjeta caduca pronto si vence en menos de 2 meses. `expiration` viene como "MM/AA". */
@@ -47,18 +48,16 @@ const PlanCard = ({ plan, equivalent, planLoading, isOwner, hasAccess, onSubscri
     <Grid item xs={12} className="card">
       <PageHeader title="Mi plan actual" childrenMd="auto">
         {isSubscription ? (
-          <Chip icon={<CheckCircleIcon />} label="Domiciliación activada" color="success" variant="filled" />
+          <StatusChip icon={<CheckCircleIcon />} label="Domiciliación activada" tone="success" />
         ) : isOwner && equivalent ? (
-          <Button
+          <CustomButton
             onClick={onSubscribe}
             startIcon={<AddCircleIcon />}
-            variant="contained"
             color="success"
-            size="small"
             sx={{ bgcolor: "success.main", "&:hover": { bgcolor: "success.dark" } }}
           >
             Domiciliar (Ahorra {formatCurrency(plan.plan.price - equivalent.price)} MXN/mes)
-          </Button>
+          </CustomButton>
         ) : null}
       </PageHeader>
 
@@ -99,22 +98,17 @@ const PlanCard = ({ plan, equivalent, planLoading, isOwner, hasAccess, onSubscri
             {isSubscription && isCardExpiringSoon(currentCard) && (
               <Alert
                 severity="warning"
+                variant="filled"
                 icon={<CreditCardIcon />}
                 sx={{ mt: 2, alignItems: "center" }}
                 action={
                   isOwner && (
-                    <Button
+                    <CustomButton
                       onClick={onUpdateCard}
-                      variant="contained"
-                      size="small"
-                      sx={{
-                        whiteSpace: "nowrap",
-                        background: colors.gradient.brand,
-                        "&:hover": { background: colors.gradient.brandHover },
-                      }}
+                      sx={{ whiteSpace: "nowrap" }}
                     >
                       Cambiar tarjeta
-                    </Button>
+                    </CustomButton>
                   )
                 }
               >
@@ -124,7 +118,7 @@ const PlanCard = ({ plan, equivalent, planLoading, isOwner, hasAccess, onSubscri
             )}
 
             {isSubscription && isCancelled && (
-              <Alert severity="info" sx={{ mt: 2 }}>
+              <Alert severity="info" variant="filled" sx={{ mt: 2 }}>
                 Tu suscripción está cancelada. Para reactivarla, contacta a soporte.
               </Alert>
             )}
@@ -132,12 +126,13 @@ const PlanCard = ({ plan, equivalent, planLoading, isOwner, hasAccess, onSubscri
             {isSubscription && expiredWithAccess && (
               <Alert
                 severity="warning"
+                variant="filled"
                 sx={{ mt: 2 }}
                 action={
                   isOwner && (
-                    <Button color="inherit" size="small" onClick={onUpdateCard}>
+                    <CustomButton color="inherit" variant="text" onClick={onUpdateCard}>
                       Actualizar tarjeta
-                    </Button>
+                    </CustomButton>
                   )
                 }
               >
@@ -150,12 +145,13 @@ const PlanCard = ({ plan, equivalent, planLoading, isOwner, hasAccess, onSubscri
             {isSubscription && expiredWithoutAccess && (
               <Alert
                 severity="error"
+                variant="filled"
                 sx={{ mt: 2 }}
                 action={
                   isOwner && (
-                    <Button color="inherit" size="small" onClick={onSubscribe}>
+                    <CustomButton color="inherit" variant="text" onClick={onSubscribe}>
                       Reactivar
-                    </Button>
+                    </CustomButton>
                   )
                 }
               >

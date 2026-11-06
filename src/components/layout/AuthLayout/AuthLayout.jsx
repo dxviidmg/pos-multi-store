@@ -49,7 +49,7 @@ const Stepper = ({ activeStep, stepLabels }) => (
           <Box sx={{
             width: 32, height: 32, borderRadius: "50%", flexShrink: 0,
             display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: "0.85rem", fontWeight: 700,
+            fontSize: "0.8125rem", fontWeight: 700,
             bgcolor: current ? colors.accent : done ? alpha(colors.white, 0.9) : "transparent",
             color: current || done ? colors.onAccent : alpha(colors.white, 0.8),
             border: "2px solid",
@@ -58,7 +58,7 @@ const Stepper = ({ activeStep, stepLabels }) => (
             {done ? <CheckIcon sx={{ fontSize: 18 }} /> : i + 1}
           </Box>
           <Typography sx={{
-            fontSize: "0.95rem", fontWeight: current ? 700 : 500,
+            fontSize: "1rem", fontWeight: current ? 700 : 500,
             color: current ? colors.white : alpha(colors.white, 0.78),
           }}>
             {label}
@@ -83,7 +83,7 @@ const HorizontalStepper = ({ activeStep, stepLabels }) => (
             <Box sx={{
               width: 32, height: 32, borderRadius: "50%",
               display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: "0.85rem", fontWeight: 700,
+              fontSize: "0.8125rem", fontWeight: 700,
               bgcolor: current ? colors.accent : done ? alpha(colors.white, 0.9) : "transparent",
               color: current || done ? colors.onAccent : alpha(colors.white, 0.8),
               border: "2px solid",
@@ -92,7 +92,7 @@ const HorizontalStepper = ({ activeStep, stepLabels }) => (
               {done ? <CheckIcon sx={{ fontSize: 18 }} /> : i + 1}
             </Box>
             <Typography sx={{
-              fontSize: "0.8rem", fontWeight: current ? 700 : 500, whiteSpace: "nowrap",
+              fontSize: "0.8125rem", fontWeight: current ? 700 : 500, whiteSpace: "nowrap",
               color: current ? colors.white : alpha(colors.white, 0.78),
             }}>
               {label}
@@ -122,7 +122,7 @@ const AuthLayout = ({ children, headline, subtitle, activeStep, stepLabels }) =>
 
       <Box>
         <Typography component="p" sx={{
-          fontSize: { md: "1.9rem", lg: "2.3rem" }, fontWeight: 800, lineHeight: 1.15,
+          fontSize: { md: "1.9rem", lg: "2.3rem" }, fontWeight: 700, lineHeight: 1.15,
           letterSpacing: "-0.02em", mb: 1.5, color: colors.white,
         }}>
           {headline}
@@ -138,7 +138,7 @@ const AuthLayout = ({ children, headline, subtitle, activeStep, stepLabels }) =>
             {FEATURES.map(({ Icon, title, text }) => (
               <Box key={title} sx={{ display: "flex", gap: 2 }}>
                 <Box aria-hidden sx={{
-                  width: 40, height: 40, borderRadius: "10px", flexShrink: 0,
+                  width: 40, height: 40, borderRadius: "var(--radius-base)", flexShrink: 0,
                   display: "flex", alignItems: "center", justifyContent: "center",
                   bgcolor: alpha(colors.white, 0.08), color: colors.accent,
                   border: `1px solid ${alpha(colors.white, 0.12)}`,
@@ -146,8 +146,8 @@ const AuthLayout = ({ children, headline, subtitle, activeStep, stepLabels }) =>
                   <Icon fontSize="small" />
                 </Box>
                 <Box>
-                  <Typography sx={{ fontWeight: 700, fontSize: "0.95rem" }}>{title}</Typography>
-                  <Typography sx={{ fontSize: "0.85rem", color: alpha(colors.white, 0.75), lineHeight: 1.5 }}>{text}</Typography>
+                  <Typography sx={{ fontWeight: 700, fontSize: "1rem" }}>{title}</Typography>
+                  <Typography sx={{ fontSize: "0.8125rem", color: alpha(colors.white, 0.75), lineHeight: 1.5 }}>{text}</Typography>
                 </Box>
               </Box>
             ))}

@@ -1,13 +1,14 @@
 import React from "react";
-import { Box, Card, CardContent, Chip, Typography } from "@mui/material";
+import { Box, Card, CardContent, Typography } from "@mui/material";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import CustomButton from "../../ui/Button/Button";
+import StatusChip from "../../ui/StatusChip";
 import { formatCurrency } from "../../../utils/utils";
 import { STORE_UPDATE } from "./services";
 import { whatsappButtonSx } from "./whatsappButtonSx";
 
 const PriceOrTag = ({ service, onPricing }) => {
-  if (service.price === 0) return <Chip label="Gratis" color="success" size="small" />;
+  if (service.price === 0) return <StatusChip label="Gratis" tone="success" />;
   if (service.price) {
     return (
       <Typography variant="body2" fontWeight={700} color="primary.main">
@@ -20,7 +21,7 @@ const PriceOrTag = ({ service, onPricing }) => {
     <CustomButton
       size="small"
       onClick={() => service.action === STORE_UPDATE && onPricing()}
-      sx={{ textTransform: "none", fontSize: "0.85rem", height: "fit-content" }}
+      sx={{ textTransform: "none", fontSize: "0.8125rem", height: "fit-content" }}
     >
       {service.tag}
     </CustomButton>
@@ -34,8 +35,8 @@ const ServiceCard = ({ service, onConsult, onPricing }) => (
     sx={{
       height: "100%",
       bgcolor: "background.paper",
-      transition: "all 0.2s",
-      "&:hover": { boxShadow: 3, transform: "translateY(-4px)", borderColor: "primary.main" },
+      transition: "all 0.2s ease",
+      "&:hover": { boxShadow: "var(--shadow-md)", transform: "translateY(-4px)", borderColor: "primary.main" },
     }}
   >
     <CardContent sx={{ textAlign: "center", display: "flex", flexDirection: "column", gap: 2, height: "100%" }}>

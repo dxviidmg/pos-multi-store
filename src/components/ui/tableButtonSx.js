@@ -5,7 +5,7 @@ export const tableButtonSx = {
     height: 30,
     px: 0.75,
     py: 0,
-    borderRadius: '8px',
+    borderRadius: 'var(--radius-base)',
     fontSize: '0.75rem',
     '& .MuiSvgIcon-root': { fontSize: '1.125rem' },
   },

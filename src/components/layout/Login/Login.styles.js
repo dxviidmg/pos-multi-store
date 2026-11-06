@@ -16,7 +16,7 @@ export const mobileInputSx = {
 
 // Botón principal de escritorio: navy sobre tarjeta clara.
 export const desktopPrimaryButtonSx = {
-  py: 1.25, mt: 1, borderRadius: "10px", fontWeight: 700, fontSize: "0.95rem",
+  py: 1.25, mt: 1, fontWeight: 700, fontSize: "1rem",
   background: colors.sidebar,
   color: colors.white,
   boxShadow: colors.shadow.brand,
@@ -33,7 +33,7 @@ export const desktopPrimaryButtonSx = {
 
 // Botón principal de móvil: amarillo (accent) sobre el fondo navy, como el de registrarse.
 export const mobilePrimaryButtonSx = {
-  py: 1.25, mt: 1, borderRadius: "10px", fontWeight: 700, fontSize: "0.95rem",
+  py: 1.25, mt: 1, fontWeight: 700, fontSize: "1rem",
   background: colors.accent,
   color: colors.onAccent,
   boxShadow: colors.shadow.brand,
@@ -49,7 +49,7 @@ export const mobilePrimaryButtonSx = {
 
 // Botón secundario ("Crear mi negocio") de escritorio: outline azul con fill ligero.
 export const desktopSecondaryButtonSx = {
-  py: 1, borderRadius: "10px", fontWeight: 600, fontSize: "0.85rem",
+  py: 1, fontWeight: 600, fontSize: "0.8125rem",
   borderColor: "primary.main", color: "primary.main",
   bgcolor: (theme) => alpha(theme.palette.primary.main, 0.04),
   "&:hover": {
@@ -60,7 +60,7 @@ export const desktopSecondaryButtonSx = {
 
 // Botón secundario ("Crear mi negocio") de móvil: outline blanco con fill ligero.
 export const mobileSecondaryButtonSx = {
-  py: 1, borderRadius: "10px", fontWeight: 600, fontSize: "0.85rem",
+  py: 1, fontWeight: 600, fontSize: "0.8125rem",
   borderColor: alpha(colors.white, 0.5), color: colors.white,
   bgcolor: alpha(colors.white, 0.08),
   "&:hover": {

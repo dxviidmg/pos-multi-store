@@ -86,7 +86,7 @@ const StockVerificationDashboard = () => {
       <DashboardHeader title={TITLE} subtitle={DESCRIPTION} sx={{ mb: 3 }} />
 
       <Grid container spacing={3} sx={{ mb: 3 }}>
-        <StatCard icon={WarningIcon} iconColor="warning.main" label="Productos a verificar" value={kpis.total} />
+        <StatCard icon={WarningIcon} iconColor="warning.main" label="Productos a verificar" value={kpis.total} featured />
         <StatCard icon={InventoryIcon} iconColor="info.main" label="Total de productos" value={formatNumber(kpis.totalStoreProducts)} />
         <StatCard icon={StorefrontIcon} iconColor="primary.main" label="Cobertura" value={`${kpis.coverage}%`} />
         <StatCard icon={InventoryIcon} iconColor="success.main" label="Promedio por tienda" value={kpis.avgPerStore} />

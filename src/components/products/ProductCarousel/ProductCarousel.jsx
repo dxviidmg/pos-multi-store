@@ -14,7 +14,7 @@ const ARROW_SX = {
   bgcolor: "background.paper",
   border: "1px solid",
   borderColor: "divider",
-  boxShadow: 2,
+  boxShadow: "var(--shadow-md)",
   "&:hover": { bgcolor: "action.hover" },
 };
 

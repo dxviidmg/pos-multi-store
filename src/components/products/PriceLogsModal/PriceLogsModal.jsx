@@ -2,7 +2,6 @@ import React, { useMemo } from "react";
 import { Grid } from "@mui/material";
 import CustomModal, { ModalBody } from "../../ui/Modal/Modal";
 import DataTable from "../../ui/DataTable/DataTable";
-import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import { usePriceLogTable } from "../shared/usePriceLogTable";
 
 const PriceLogsModal = ({ isOpen, product, onClose }) => {
@@ -19,8 +18,8 @@ const PriceLogsModal = ({ isOpen, product, onClose }) => {
     <CustomModal showOut={isOpen} onClose={onClose} title={`Historial de precios — ${product?.name || ""}`}>
       <ModalBody>
         <Grid item xs={12} className="card">
-          <CustomSpinner isLoading={isLoading} />
           <DataTable
+            progressPending={isLoading}
             noDataComponent="Sin cambios de precio"
             data={rows}
             columns={columns}

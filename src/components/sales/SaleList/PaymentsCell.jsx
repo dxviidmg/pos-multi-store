@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "@mui/material";
+import CustomButton from "../../ui/Button/Button";
 
 /** Métodos de pago de la venta; con pagos mixtos es un enlace que abre el detalle de cada pago. */
 const PaymentsCell = ({ sale, onOpen }) => {
@@ -8,13 +8,13 @@ const PaymentsCell = ({ sale, onOpen }) => {
   if (sale.payments_methods.length < 2) return text;
 
   return (
-    <Button
-      size="small"
+    <CustomButton
+      variant="text"
       onClick={() => onOpen(sale)}
-      sx={{ minWidth: 0, p: 0, textTransform: "none", textDecoration: "underline", color: "text.primary", fontWeight: 400 }}
+      sx={{ height: "auto", p: 0, textTransform: "none", textDecoration: "underline", color: "text.primary", fontWeight: 400 }}
     >
       {text}
-    </Button>
+    </CustomButton>
   );
 };
 

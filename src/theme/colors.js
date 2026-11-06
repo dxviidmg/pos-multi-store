@@ -1,14 +1,14 @@
 // Paleta del POS: navy de marca (topbar, sidebar, botones, encabezados de tabla y pestaña activa)
 // sobre neutros fríos y descansados. Es la única fuente de color: theme y cssVariables solo la leen.
-const SIDEBAR = '#121a45';
-const SIDEBAR_DARK = '#121a45';
+const SIDEBAR = '#171A4A';
+const SIDEBAR_DARK = '#171A4A';
 const PRIMARY = SIDEBAR;
-const PRIMARY_LIGHT = '#2b3578';
-const PRIMARY_DARK = '#0b1233';
+const PRIMARY_LIGHT = '#262A63';
+const PRIMARY_DARK = '#0F1236';
 const ACCENT = '#ffb020';
 const ACCENT_DARK = '#f59e0b';
 
-const PRIMARY_RGB = '18,26,69';
+const PRIMARY_RGB = '23,26,74';
 const STATUS_ERROR = '#dc2626';
 const SECONDARY = '#00a4db';
 
@@ -32,22 +32,25 @@ export const colors = {
   white: '#fff',
 
   // Fondo detrás de los modales
-  backdrop: 'rgba(8,20,58,0.45)',
+  backdrop: `rgba(${PRIMARY_RGB},0.45)`,
 
   shadow: {
     brand: `0 4px 14px rgba(${PRIMARY_RGB},0.22)`,
     brandHover: `0 8px 24px rgba(${PRIMARY_RGB},0.28)`,
     appbar: 'none',
-    card: '0 8px 30px rgba(15,23,42,0.06)',
-    toast: '0 4px 20px rgba(15,23,42,0.12)',
     dialog: '0 24px 80px rgba(15,23,42,0.2)',
     logo: 'drop-shadow(0 8px 30px rgba(0,0,0,0.25))',
   },
 
   gradient: {
-    sidebar: `linear-gradient(180deg, ${SIDEBAR} 0%, ${SIDEBAR_DARK} 100%)`,
     brand: `linear-gradient(135deg, ${PRIMARY} 0%, ${PRIMARY_LIGHT} 100%)`,
-    brandHover: `linear-gradient(135deg, ${PRIMARY_DARK} 0%, ${PRIMARY} 100%)`,
+  },
+
+  // Radio único (AGENTS.md §11): `base` para todo lo rectangular (cards, paneles,
+  // controles, chips, tooltips); `pill` para círculos y barras finas (999px).
+  radius: {
+    base: '12px',
+    pill: '999px',
   },
 
   status: {
@@ -65,29 +68,31 @@ export const colors = {
       primaryHover: PRIMARY_DARK,
       primaryLight: PRIMARY_LIGHT,
       primaryDark: PRIMARY_DARK,
-      secondary: '#5b6280',
+      secondary: '#6B7090',
       buttonBg: SIDEBAR,
-      buttonHover: '#1c2760',
+      buttonHover: PRIMARY_LIGHT,
       buttonDisabledBg: '#e7e9f0',
       buttonDisabledText: '#9ea3b8',
       focusRing: SIDEBAR,
-      tabSelectedColor: '#141a33',
-      skeletonBase: '#5b6280',
-      background: '#f3f4f8',
+      tabSelectedColor: '#1A1D3A',
+      skeletonBase: '#6B7090',
+      background: '#E9ECF4',
       paper: '#ffffff',
-      text: '#141a33',
-      textSecondary: '#5b6280',
+      text: '#1A1D3A',
+      textSecondary: '#6B7090',
       caption: '#8c92ab',
-      border: '#e3e6ee',
-      borderStrong: '#d3d7e3',
+      border: '#DCE1EC',
+      borderStrong: '#C9D0E0',
       borderHover: '#a9aec4',
-      rowHover: '#f6f7fb',
-      rowDivider: '#eef0f5',
+      rowHover: '#EDF0FA',
+      rowSelected: '#E3E8FA',
+      rowStripe: '#F5F7FB',
+      rowDivider: '#E9ECF3',
       tableHead: SIDEBAR,
       tableHeadText: '#ffffff',
       modalHeader: '#eceef5',
       modalBody: '#e6e9f2',
-      modalField: '#f6f7fb',
+      modalField: '#F5F7FB',
       modalBorder: '#b9bfd4',
       heroBg: SIDEBAR,
       heroLabel: '#aeb5da',
@@ -95,13 +100,13 @@ export const colors = {
       heroGlow: 'rgba(255,255,255,0.14)',
       pillBg: '#e9ebf2',
       pillActiveBg: 'rgba(255,255,255,0.2)',
-      shadowSm: '0 1px 2px rgba(18,26,69,0.04)',
-      shadowMd: '0 8px 24px rgba(18,26,69,0.08)',
+      shadowSm: `0 1px 2px rgba(${PRIMARY_RGB},0.05), 0 6px 20px rgba(${PRIMARY_RGB},0.06)`,
+      shadowMd: `0 8px 24px rgba(${PRIMARY_RGB},0.08)`,
       shadows: [
-        '0 1px 3px rgba(18,26,69,0.05)',
-        '0 2px 6px rgba(18,26,69,0.06)',
-        '0 4px 12px rgba(18,26,69,0.07)',
-        '0 12px 32px rgba(18,26,69,0.10)',
+        `0 1px 3px rgba(${PRIMARY_RGB},0.05)`,
+        `0 2px 6px rgba(${PRIMARY_RGB},0.06)`,
+        `0 4px 12px rgba(${PRIMARY_RGB},0.07)`,
+        `0 12px 32px rgba(${PRIMARY_RGB},0.10)`,
       ],
     },
     dark: {
@@ -126,8 +131,10 @@ export const colors = {
       borderStrong: '#363d63',
       borderHover: '#5a6390',
       rowHover: 'rgba(255,255,255,0.04)',
+      rowSelected: 'rgba(170,179,230,0.14)',
+      rowStripe: 'rgba(255,255,255,0.02)',
       rowDivider: '#232944',
-      tableHead: '#1b2766',
+      tableHead: '#1f2440',
       tableHeadText: '#ffffff',
       modalHeader: '#171b2e',
       modalBody: '#0f1220',

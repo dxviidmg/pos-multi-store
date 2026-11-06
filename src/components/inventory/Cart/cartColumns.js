@@ -69,7 +69,7 @@ const getSaleColumns = (movementType, ctx) => [
     width: 100,
     selector: (row) => {
       if (!isWeightedItem(row)) {
-        return <Box component="span" sx={{ fontSize: "0.8rem", fontWeight: 600 }}>{getUnitLabel(row)}</Box>;
+        return <Box component="span" sx={{ fontSize: "0.8125rem", fontWeight: 600 }}>{getUnitLabel(row)}</Box>;
       }
       return <SaleModeButton item={row} mode={getQuantityMode(row, movementType, ctx.saleModes)} onToggle={ctx.onToggleSaleMode} />;
     },
@@ -80,7 +80,7 @@ const getSaleColumns = (movementType, ctx) => [
     selector: (row) => {
       const mode = getQuantityMode(row, movementType, ctx.saleModes);
       if (mode === QUANTITY_MODES.AMOUNT) {
-        return <Box component="span" sx={{ fontSize: "0.85rem" }}>{formatWeightedQuantity(row)}</Box>;
+        return <Box component="span" sx={{ fontSize: "0.8125rem" }}>{formatWeightedQuantity(row)}</Box>;
       }
       return (
         <QuantityInput

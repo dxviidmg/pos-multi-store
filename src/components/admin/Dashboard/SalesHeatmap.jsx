@@ -85,7 +85,7 @@ const SalesHeatmap = ({ data, metricType = "count" }) => {
                           borderRadius: "2px",
                           bgcolor: getColor(val, si),
                           cursor: "pointer",
-                          transition: "transform 0.15s ease",
+                          transition: "transform 0.2s ease",
                           "&:hover": { transform: "scale(1.4)", zIndex: 1 },
                         }} />
                       </Tooltip>

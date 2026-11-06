@@ -164,7 +164,7 @@ const Cart = ({ searchInputRef, cartViewMode = CART_VIEW.TABLE, setCartViewMode 
   return (
     <div>
       <CustomSpinner isLoading={submit.loading} />
-      {!isMobile && toolbar}
+      {!isMobile && toolbar && <Box sx={{ p: 1.5, pb: 0.5 }}>{toolbar}</Box>}
       <StockModal isOpen={stockModal.isOpen} product={stockModal.data} onClose={stockModal.close} />
       {!isMobile && cartViewMode === CART_VIEW.TABLE && (
         <SimpleTable noDataComponent="Sin productos" data={cart} columns={columns} />

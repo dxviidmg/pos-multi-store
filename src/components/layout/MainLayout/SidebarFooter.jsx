@@ -6,7 +6,7 @@ import { logoutColor, sidebarDividerSx } from "./MainLayout.styles";
 import { colors } from "../../../theme/colors";
 import { getSupportWhatsAppUrl } from "../../../api/utils";
 
-const labelProps = { fontWeight: 600, fontSize: "0.8rem" };
+const labelProps = { fontWeight: 600, fontSize: "0.8125rem" };
 
 const buildSupportUrl = (user) => {
   const text = `Soporte SmartVenta\nTenant: ${user.tenant_name}\nTienda: ${user.store_name || "General"}`;
@@ -15,7 +15,7 @@ const buildSupportUrl = (user) => {
 
 /** Pie del sidebar: soporte por WhatsApp (excepto vendedores) y cerrar sesión. */
 const SidebarFooter = ({ user, expanded, showSupport, onLogout }) => {
-  const buttonSx = { borderRadius: 2, justifyContent: expanded ? "initial" : "center" };
+  const buttonSx = { borderRadius: "var(--radius-base)", justifyContent: expanded ? "initial" : "center" };
   const iconSx = { minWidth: expanded ? 38 : 0, justifyContent: "center" };
   const textSx = { opacity: expanded ? 1 : 0 };
 

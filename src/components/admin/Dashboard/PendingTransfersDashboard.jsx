@@ -113,7 +113,7 @@ const PendingTransfersDashboard = () => {
       <DashboardHeader title={TITLE} subtitle={DESCRIPTION} sx={{ mb: 3 }} />
 
       <Grid container spacing={3} sx={{ mb: 3 }}>
-        <StatCard icon={WarningIcon} iconColor="warning.main" label="Traspasos pendientes" value={kpis.total} itemProps={STAT_ITEM_PROPS} />
+        <StatCard icon={WarningIcon} iconColor="warning.main" label="Traspasos pendientes" value={kpis.total} itemProps={STAT_ITEM_PROPS} featured />
         <StatCard icon={InventoryIcon} iconColor="primary.main" label="Promedio por tienda" value={kpis.avgPerStore} itemProps={STAT_ITEM_PROPS} />
       </Grid>
 

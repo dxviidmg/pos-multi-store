@@ -7,11 +7,12 @@ import { useModal } from "../../../hooks/useModal";
 import { useUser } from "../../../context/UserContext";
 import { isOwner as isOwnerUser } from "../../../constants/routeAccess";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
-import { Grid, Typography, Box, Button, Alert } from "@mui/material";
+import { Grid, Typography, Box, Alert } from "@mui/material";
 import { showRequestError, showSuccess } from "../../../utils/alerts";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import { logger } from "../../../utils/logger";
 import { formatLongDate } from "../../../utils/date";
+import CustomButton from "../../ui/Button/Button";
 import PlanCard from "./PlanCard";
 import SubscribeModal, { SUBSCRIBE_CONTAINER_ID } from "./SubscribeModal";
 import UpdateCardModal, { UPDATE_CARD_CONTAINER_ID } from "./UpdateCardModal";
@@ -121,7 +122,7 @@ const MyCurrentPlan = () => {
 
       {user?.access_blocked && (
         <Grid item xs={12} className="card">
-          <Alert severity="warning" sx={{ mb: 2 }}>
+          <Alert severity="warning" variant="filled" sx={{ mb: 2 }}>
             El acceso a tu negocio está suspendido porque tu suscripción venció
             {user?.access_until ? ` el ${formatLongDate(user.access_until)}` : ""}
             . Renueva tu plan para reactivar el acceso completo.
@@ -179,9 +180,9 @@ const MyCurrentPlan = () => {
                   Se detendrá el cobro recurrente. Conservarás acceso hasta el final de
                   tu periodo pagado.
                 </Typography>
-                <Button onClick={() => cancelModal.open()} variant="text" color="error" size="small">
+                <CustomButton onClick={() => cancelModal.open()} variant="text" color="error">
                   Cancelar suscripción
-                </Button>
+                </CustomButton>
               </Box>
             )}
           </Box>
