@@ -1,140 +1,117 @@
-import { Box } from "@mui/material";
+import { Box, ButtonBase } from "@mui/material";
 import CustomButton from "../../ui/Button/Button";
 import CustomTooltip from "../../ui/Tooltip";
-import { formatCurrency } from "../../../utils/utils";
-import { chooseIcon } from "../../ui/Icons/Icons";
-import HomeIcon from "@mui/icons-material/Home";
-import PrintIcon from "@mui/icons-material/Print";
-import RestartAltIcon from "@mui/icons-material/RestartAlt";
-import EditIcon from "@mui/icons-material/Edit";
-import LockResetIcon from "@mui/icons-material/LockReset";
-import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import { formatCurrency } from "../../../utils/currency";
+import { isOwner } from "../../../constants/routeAccess";
+import { PAYMENT_METHOD_OPTIONS } from "../../../constants";
+import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
+import RestartAltOutlinedIcon from "@mui/icons-material/RestartAltOutlined";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import LockResetOutlinedIcon from "@mui/icons-material/LockResetOutlined";
 
-const alignTdStyles = {
-  justifyContent: "flex-end",
-  textAlign: "right",
+// Columnas visibles por filtro rápido (se respeta el orden de la definición)
+const PAYMENT_LABELS = PAYMENT_METHOD_OPTIONS.map(({ label }) => label);
+const PAYMENT_COLUMNS = ["Nombre", ...PAYMENT_LABELS, "Caja", "Entrar"];
+const SALES_COLUMNS = ["Nombre", "Vendido", "Apartado", "Total del día", "Ganancia", "Entrar"];
+
+const FILTER_COLUMNS = {
+  sales: SALES_COLUMNS,
+  investment: ["Nombre", "Obtener (Inversión)", "Inversión", "Entrar"],
+  managers: ["Nombre", "Administrador", "Editar usuario", "Cambiar contraseña", "Entrar"],
+  printer: ["Nombre", "Impresora", "Entrar"],
+  actions: ["Nombre", "Vaciar stock", "Entrar"],
 };
 
-const getCashValue = (cash_summary, key) =>
-  formatCurrency(cash_summary?.[key] || 0);
+const STORAGE_FILTER_COLUMNS = {
+  ...FILTER_COLUMNS,
+  all: ["Nombre", "Entrar"],
+};
 
-const getCashValueTotal = (value) =>
-  formatCurrency(value || 0);
+const pickColumns = (columns, names = []) => columns.filter((col) => names.includes(col.name));
 
-export const getStoreColumns = ({ user, averageSales, storeInvestments, handleSelectStore, handleOpenEditUser, handleOpenChangePassword, handleShowInvestmentForStore, handleResetStore }) => [
-  {
-    name: "Nombre",
-    cell: ({ name, id, cash_summary }) => {
-      const vendido = cash_summary?.total_day || 0;
-      const isAboveAverage = vendido > averageSales;
-      const isBelowAverage = vendido < averageSales * 0.8;
-      return (
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          {isAboveAverage && <span className="status-dot status-dot--success">●</span>}
-          {isBelowAverage && <span className="status-dot status-dot--danger">●</span>}
-          {!isAboveAverage && !isBelowAverage && <span className="status-dot status-dot--warning">●</span>}
-          <span style={{ fontWeight: id === user?.store_id ? 'bold' : 'normal' }}>{name}</span>
-        </Box>
-      );
-    },
-  },
+const cashCol = (name, key) => ({
+  name,
+  selector: (row) => formatCurrency(row.cash_summary?.[key]),
+});
+
+const EnterButton = ({ tooltip, onClick }) => (
+  <CustomTooltip text={tooltip}>
+    <ButtonBase
+      onClick={onClick}
+      aria-label={tooltip}
+      sx={{
+        "&&&": { width: 30, height: 30, minWidth: 30, padding: 0, borderRadius: "var(--radius-base)", "& .MuiSvgIcon-root": { fontSize: 18 } },
+        bgcolor: "tableHead.main", color: "common.white", transition: "background-color 0.2s ease",
+        "&:hover": { bgcolor: "primary.dark" },
+        "&.Mui-focusVisible": { outline: "2px solid", outlineColor: "primary.main", outlineOffset: 2 },
+      }}
+    >
+      <HomeOutlinedIcon />
+    </ButtonBase>
+  </CustomTooltip>
+);
+
+const catalogCol = {
+  name: "Catálogo",
+  cell: ({ has_all_products }) => (
+    <Box
+      component="span"
+      className={has_all_products ? "text-success" : "text-danger"}
+      sx={{ fontSize: "13px", fontWeight: 600 }}
+    >
+      {has_all_products ? "Completo" : "Incompleto"}
+    </Box>
+  ),
+};
+
+// Con "Catálogo incompleto" se muestra la columna de catálogo entre "Nombre" y "Entrar"
+const withCatalog = (columns, catalogColumn) => [
+  columns.find((col) => col.name === "Nombre"),
+  catalogColumn,
+  columns.find((col) => col.name === "Entrar"),
+];
+
+const getAmountColumns = () => [
+  ...PAYMENT_METHOD_OPTIONS.map(({ value, label }) => cashCol(label, value)),
+  cashCol("Vendido", "total_sold"),
+  cashCol("Apartado", "total_reserved"),
+  cashCol("Total del día", "total_day"),
+  cashCol("Ganancia", "profit"),
+  cashCol("Caja", "cash"),
+];
+
+const getAdminColumns = ({ user, handleOpenEditUser, handleOpenChangePassword }) => [
   {
     name: "Administrador",
     selector: ({ manager }) => manager?.username || "-",
   },
-  {
-    name: "Editar usuario",
-    omit: user?.role !== "owner",
-    cell: (row) => row.manager?.username ? (
-      <CustomTooltip text="Editar usuario">
-        <CustomButton onClick={() => handleOpenEditUser(row.manager.id)}><EditIcon /></CustomButton>
-      </CustomTooltip>
-    ) : "-",
-  },
-  {
-    name: "Cambiar contraseña",
-    omit: user?.role !== "owner",
-    cell: (row) => row.manager?.username ? (
-      <CustomTooltip text="Cambiar contraseña">
-        <CustomButton onClick={() => handleOpenChangePassword(row.manager.id)}><LockResetIcon /></CustomButton>
-      </CustomTooltip>
-    ) : "-",
-  },
-  {
-    name: "Impresora",
-    cell: ({ printer }) => printer
-      ? <span>{printer.brand} {printer.model}</span>
-      : <span style={{ color: 'var(--color-text-secondary)', fontStyle: 'italic' }}>Sin impresora configurada</span>,
-  },
-  {
-    name: "Efectivo",
-    style: alignTdStyles,
-    selector: ({ cash_summary }) => getCashValue(cash_summary, "EF"),
-  },
-  {
-    name: "Tarjeta",
-    style: alignTdStyles,
-    selector: ({ cash_summary }) => getCashValue(cash_summary, "TA"),
-  },
-  {
-    name: "Transferencia",
-    style: alignTdStyles,
-    selector: ({ cash_summary }) => getCashValue(cash_summary, "TR"),
-  },
-  {
-    name: "Vendido",
-    style: alignTdStyles,
-    selector: ({ cash_summary }) => getCashValue(cash_summary, "total_sold"),
-  },
-  {
-    name: "Apartado",
-    style: alignTdStyles,
-    selector: ({ cash_summary }) => getCashValue(cash_summary, "total_reserved"),
-  },
-  {
-    name: "Total del día",
-    style: alignTdStyles,
-    selector: ({ cash_summary }) => getCashValue(cash_summary, "total_day"),
-  },
-  {
-    name: "Ventas realizadas",
-    style: alignTdStyles,
-    selector: ({ cash_summary }) => cash_summary?.total_sales?.toLocaleString() || "0",
-  },
-  {
-    name: "Apartados realizados",
-    style: alignTdStyles,
-    selector: ({ cash_summary }) => cash_summary?.reservations_created?.toLocaleString() || "0",
-  },
-  {
-    name: "Canceladas",
-    style: alignTdStyles,
-    selector: ({ cash_summary }) => cash_summary?.canceled_sales?.toLocaleString() || "0",
-  },
-  {
-    name: "Distribuciones",
-    style: alignTdStyles,
-    selector: ({ cash_summary }) => cash_summary?.pending_distributions?.toLocaleString() || "0",
-  },
-  {
-    name: "Traspasos",
-    style: alignTdStyles,
-    selector: ({ cash_summary }) => cash_summary?.pending_transfers?.toLocaleString() || "0",
-  },
-  {
-    name: "Ganancia",
-    style: alignTdStyles,
-    selector: ({ cash_summary }) => getCashValue(cash_summary, "profit"),
-  },
-  {
-    name: "Caja",
-    style: alignTdStyles,
-    selector: ({ cash_summary }) => getCashValue(cash_summary, "cash"),
-  },
+  ...(isOwner(user)
+    ? [
+        {
+          name: "Editar usuario",
+          cell: (row) => row.manager?.username ? (
+            <CustomTooltip text="Editar usuario">
+              <CustomButton onClick={() => handleOpenEditUser(row.manager.id)}><EditOutlinedIcon /></CustomButton>
+            </CustomTooltip>
+          ) : "-",
+        },
+        {
+          name: "Cambiar contraseña",
+          cell: (row) => row.manager?.username ? (
+            <CustomTooltip text="Cambiar contraseña">
+              <CustomButton onClick={() => handleOpenChangePassword(row.manager.id)}><LockResetOutlinedIcon /></CustomButton>
+            </CustomTooltip>
+          ) : "-",
+        },
+      ]
+    : []),
+];
+
+const getInvestmentColumns = ({ storeInvestments, handleShowInvestmentForStore }) => [
   {
     name: "Obtener (Inversión)",
     cell: (row) => (
-      <CustomButton onClick={() => handleShowInvestmentForStore(row.id)} startIcon={<AttachMoneyIcon />} disabled={storeInvestments[row.id] !== undefined}>
+      <CustomButton onClick={() => handleShowInvestmentForStore(row.id)} disabled={storeInvestments[row.id] !== undefined}>
         Ver
       </CustomButton>
     ),
@@ -142,319 +119,72 @@ export const getStoreColumns = ({ user, averageSales, storeInvestments, handleSe
   {
     name: "Inversión",
     cell: (row) => storeInvestments[row.id] !== undefined
-      ? <span>{getCashValueTotal(storeInvestments[row.id])}</span>
+      ? <span>{formatCurrency(storeInvestments[row.id])}</span>
       : <span className="text-muted">Pendiente</span>,
   },
-  {
-    name: "Vaciar stock",
-    cell: (row) => (
-      <CustomTooltip text="Vaciar stock de la tienda">
-        <CustomButton onClick={() => handleResetStore(row.id, row.name)}><RestartAltIcon /></CustomButton>
-      </CustomTooltip>
-    ),
-  },
+];
+
+const getActionColumns = ({ user, handleSelectStore, handleResetStore, enterTooltip }) => [
+  ...(isOwner(user)
+    ? [
+        {
+          name: "Vaciar stock",
+          cell: (row) => (
+            <CustomTooltip text="Vaciar stock de la tienda">
+              <CustomButton onClick={() => handleResetStore(row.id, row.name)}><RestartAltOutlinedIcon /></CustomButton>
+            </CustomTooltip>
+          ),
+        },
+      ]
+    : []),
   {
     name: "Entrar",
-    cell: (row) => (
-      <CustomTooltip text="Ingresar a la tienda">
-        <CustomButton onClick={() => handleSelectStore(row)}><HomeIcon /></CustomButton>
-      </CustomTooltip>
-    ),
-  },
-  {
-    name: "Acciones",
-    cell: (row) => (
-      <>
-        {chooseIcon(row.has_all_products)}
-        {row.printer && <PrintIcon titleAccess={`${row.printer.brand} ${row.printer.model}`} />}
-      </>
-    ),
+    cell: (row) => <EnterButton tooltip={enterTooltip} onClick={() => handleSelectStore(row)} />,
   },
 ];
 
-export const getStorageColumns = ({ user, storeInvestments, handleSelectStore, handleOpenEditUser, handleOpenChangePassword, handleShowInvestmentForStore, handleResetStore }) => [
-  {
-    name: "Nombre",
-    selector: ({ name }) => `${name}`,
-  },
-  {
-    name: "Administrador",
-    selector: ({ manager }) => manager?.username || "-",
-  },
-  {
-    name: "Editar usuario",
-    omit: user?.role !== "owner",
-    cell: (row) => row.manager?.username ? (
-      <CustomTooltip text="Editar usuario">
-        <CustomButton onClick={() => handleOpenEditUser(row.manager.id)}><EditIcon /></CustomButton>
-      </CustomTooltip>
-    ) : "-",
-  },
-  {
-    name: "Cambiar contraseña",
-    omit: user?.role !== "owner",
-    cell: (row) => row.manager?.username ? (
-      <CustomTooltip text="Cambiar contraseña">
-        <CustomButton onClick={() => handleOpenChangePassword(row.manager.id)}><LockResetIcon /></CustomButton>
-      </CustomTooltip>
-    ) : "-",
-  },
-  {
-    name: "Pendientes",
-    style: alignTdStyles,
-    cell: ({ cash_summary }) => {
-      const distributions = cash_summary?.pending_distributions?.toLocaleString() || "0";
-      const transfers = cash_summary?.pending_transfers?.toLocaleString() || "0";
-      return (
-        <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-          <div>Distribuciones: {distributions}</div>
-          <div>Traspasos: {transfers}</div>
-        </div>
-      );
-    },
-  },
-  {
-    name: "Obtener (Inversión)",
-    cell: (row) => (
-      <CustomButton onClick={() => handleShowInvestmentForStore(row.id)} startIcon={<AttachMoneyIcon />} disabled={storeInvestments[row.id] !== undefined}>
-        Ver
-      </CustomButton>
-    ),
-  },
-  {
-    name: "Inversión",
-    cell: (row) => storeInvestments[row.id] !== undefined
-      ? <span>{getCashValueTotal(storeInvestments[row.id])}</span>
-      : <span className="text-muted">Pendiente</span>,
-  },
-  {
-    name: "Vaciar stock",
-    cell: (row) => (
-      <CustomTooltip text="Vaciar stock de la tienda">
-        <CustomButton onClick={() => handleResetStore(row.id, row.name)}><RestartAltIcon /></CustomButton>
-      </CustomTooltip>
-    ),
-  },
-  {
-    name: "Entrar",
-    cell: (row) => (
-      <CustomTooltip text="Ingresar al almacén">
-        <CustomButton onClick={() => handleSelectStore(row)}><HomeIcon /></CustomButton>
-      </CustomTooltip>
-    ),
-  },
-  {
-    name: "Acciones",
-    cell: ({ has_all_products }) => <>{chooseIcon(has_all_products)}</>,
-  },
-];
+const nameCell = ({ name, id }, { user }) => (
+  <Box sx={{ display: "flex", alignItems: "center", gap: 1.25, flexWrap: "wrap" }}>
+    <Box component="span" sx={{ fontWeight: 600 }}>{name}</Box>
+    {id === user?.store_id && <Box component="span" sx={{ color: "text.secondary", fontSize: "0.75rem" }}>Estás aquí</Box>}
+  </Box>
+);
 
-export const getTotalColumns = ({ user, hasDepartment }) => [
-  {
-    name: "Nombre",
-    selector: () => "TOTAL",
-  },
-  {
-    name: "Administrador",
-    selector: () => "",
-  },
-  {
-    name: "Editar usuario",
-    omit: user?.role !== "owner",
-    selector: () => "",
-  },
-  {
-    name: "Cambiar contraseña",
-    omit: user?.role !== "owner",
-    selector: () => "",
-  },
-  {
-    name: "Impresora",
-    selector: () => "",
-  },
-  {
-    name: "Efectivo",
-    style: alignTdStyles,
-    selector: ({ paymentCash }) => getCashValueTotal(paymentCash),
-  },
-  {
-    name: "Tarjeta",
-    style: alignTdStyles,
-    selector: ({ paymentCard }) => getCashValueTotal(paymentCard),
-  },
-  {
-    name: "Transferencia",
-    style: alignTdStyles,
-    selector: ({ paymentTransfer }) => getCashValueTotal(paymentTransfer),
-  },
-  {
-    name: "Vendido",
-    style: alignTdStyles,
-    selector: ({ totalSold }) => getCashValueTotal(totalSold),
-  },
-  {
-    name: "Apartado",
-    style: alignTdStyles,
-    selector: ({ totalReserved }) => getCashValueTotal(totalReserved),
-  },
-  {
-    name: "Total del día",
-    style: alignTdStyles,
-    selector: ({ totalDay }) => getCashValueTotal(totalDay),
-  },
-  {
-    name: "Ventas realizadas",
-    style: alignTdStyles,
-    selector: ({ totalSales }) => totalSales,
-  },
-  {
-    name: "Apartados realizados",
-    style: alignTdStyles,
-    selector: ({ reservationsCreated }) => reservationsCreated,
-  },
-  {
-    name: "Canceladas",
-    style: alignTdStyles,
-    selector: ({ canceledSales }) => canceledSales,
-  },
-  {
-    name: "Distribuciones",
-    style: alignTdStyles,
-    selector: ({ distributions }) => distributions?.toLocaleString() || "0",
-  },
-  {
-    name: "Traspasos",
-    style: alignTdStyles,
-    selector: ({ transfers }) => transfers?.toLocaleString() || "0",
-  },
-  {
-    name: "Ganancia",
-    style: alignTdStyles,
-    selector: ({ profit }) => getCashValueTotal(profit),
-  },
-  {
-    name: "Caja",
-    style: alignTdStyles,
-    selector: ({ cash }) => getCashValueTotal(cash),
-  },
-  {
-    name: "Vaciar stock",
-    selector: () => "",
-  },
-  {
-    name: "Entrar",
-    selector: () => "",
-  },
-  {
-    name: "Acciones",
-    selector: () => "",
-  },
-];
+const getStoreNameColumn = (props) => ({
+  name: "Nombre",
+  cell: (row) => nameCell(row, props),
+});
 
-export const filterColumns = (allColumns, quickFilter, hasDepartment) => {
-  if (quickFilter === "all") {
-    return hasDepartment
-      ? allColumns.filter(col => ["Nombre", "Vendido", "Apartado", "Total del día", "Ventas realizadas", "Apartados realizados", "Canceladas", "Ganancia", "Entrar"].includes(col.name))
-      : allColumns.filter(col => ["Nombre", "Efectivo", "Tarjeta", "Transferencia", "Caja", "Entrar"].includes(col.name));
-  }
-  if (quickFilter === "sales") {
-    return allColumns.filter(col => ["Nombre", "Vendido", "Apartado", "Total del día", "Ventas realizadas", "Apartados realizados", "Canceladas", "Ganancia", "Entrar"].includes(col.name));
-  }
-  if (quickFilter === "investment") {
-    return allColumns.filter(col => ["Nombre", "Obtener (Inversión)", "Inversión", "Entrar"].includes(col.name));
-  }
-  if (quickFilter === "pending") {
-    return allColumns.filter(col => ["Nombre", "Distribuciones", "Traspasos", "Entrar"].includes(col.name));
-  }
-  if (quickFilter === "managers") {
-    return allColumns.filter(col => ["Nombre", "Administrador", "Editar usuario", "Cambiar contraseña", "Entrar"].includes(col.name));
-  }
-  if (quickFilter === "printer") {
-    return allColumns.filter(col => ["Nombre", "Impresora", "Entrar"].includes(col.name));
-  }
-  if (quickFilter === "synced") {
-    return [
-      allColumns.find(col => col.name === "Nombre"),
-      {
-        name: "Catálogo",
-        cell: ({ has_all_products }) => (
-          <span className={has_all_products ? "text-success" : "text-danger"} style={{ fontSize: '13px', fontWeight: 600 }}>
-            {has_all_products ? "Completo" : "Incompleto"}
-          </span>
-        ),
-      },
-      allColumns.find(col => col.name === "Entrar"),
-    ];
-  }
-  if (quickFilter === "actions") {
-    return allColumns.filter(col => ["Nombre", "Vaciar stock", "Entrar"].includes(col.name));
-  }
-  return allColumns;
+const printerCol = {
+  name: "Impresora",
+  cell: ({ printer }) => printer
+    ? <span>{printer.brand} {printer.model}</span>
+    : <Box component="span" sx={{ color: "text.secondary" }}>Sin impresora configurada</Box>,
 };
 
-export const filterStorageColumns = (allColumns, quickFilter) => {
-  if (quickFilter === "all") {
-    return allColumns.filter(col => ["Nombre", "Entrar"].includes(col.name));
-  }
-  if (quickFilter === "pending") {
-    return allColumns.filter(col => ["Nombre", "Pendientes", "Entrar"].includes(col.name));
-  }
-  if (quickFilter === "managers") {
-    return allColumns.filter(col => ["Nombre", "Administrador", "Editar usuario", "Cambiar contraseña", "Entrar"].includes(col.name));
-  }
-  if (quickFilter === "investment") {
-    return allColumns.filter(col => ["Nombre", "Obtener (Inversión)", "Inversión", "Entrar"].includes(col.name));
-  }
-  if (quickFilter === "synced") {
-    return [
-      allColumns.find(col => col.name === "Nombre"),
-      {
-        name: "Catálogo",
-        cell: ({ has_all_products }) => (
-          <span className={has_all_products ? "text-success" : "text-danger"} style={{ fontSize: '13px', fontWeight: 600 }}>
-            {has_all_products ? "Completo" : "Incompleto"}
-          </span>
-        ),
-      },
-      allColumns.find(col => col.name === "Entrar"),
-    ];
-  }
-  if (quickFilter === "actions") {
-    return allColumns.filter(col => ["Nombre", "Vaciar stock", "Entrar"].includes(col.name));
-  }
-  return allColumns;
+/** Columnas de tiendas según el filtro rápido. */
+export const getStoreColumns = ({ quickFilter, hasDepartment, ...props }) => {
+  const columns = [
+    getStoreNameColumn(props),
+    ...getAdminColumns(props),
+    printerCol,
+    ...getAmountColumns(),
+    ...getInvestmentColumns(props),
+    ...getActionColumns({ ...props, enterTooltip: "Ingresar a la tienda" }),
+  ];
+  if (quickFilter === "synced") return withCatalog(columns, catalogCol);
+  if (quickFilter === "all") return pickColumns(columns, hasDepartment ? SALES_COLUMNS : PAYMENT_COLUMNS);
+  return pickColumns(columns, FILTER_COLUMNS[quickFilter]);
 };
 
-export const filterTotalColumns = (allColumns, quickFilter, hasDepartment) => {
-  if (quickFilter === "all") {
-    return hasDepartment
-      ? allColumns.filter(col => ["Nombre", "Vendido", "Apartado", "Total del día", "Ventas realizadas", "Apartados realizados", "Canceladas", "Ganancia", "Entrar"].includes(col.name))
-      : allColumns.filter(col => ["Nombre", "Efectivo", "Tarjeta", "Transferencia", "Caja", "Entrar"].includes(col.name));
-  }
-  if (quickFilter === "sales") {
-    return allColumns.filter(col => ["Nombre", "Vendido", "Apartado", "Total del día", "Ventas realizadas", "Apartados realizados", "Canceladas", "Ganancia", "Entrar"].includes(col.name));
-  }
-  if (quickFilter === "investment") {
-    return allColumns.filter(col => ["Nombre", "Obtener (Inversión)", "Inversión", "Entrar"].includes(col.name));
-  }
-  if (quickFilter === "pending") {
-    return allColumns.filter(col => ["Nombre", "Distribuciones", "Traspasos", "Entrar"].includes(col.name));
-  }
-  if (quickFilter === "managers") {
-    return allColumns.filter(col => ["Nombre", "Administrador", "Editar usuario", "Cambiar contraseña", "Entrar"].includes(col.name));
-  }
-  if (quickFilter === "printer") {
-    return allColumns.filter(col => ["Nombre", "Impresora", "Entrar"].includes(col.name));
-  }
-  if (quickFilter === "synced") {
-    return [
-      allColumns.find(col => col.name === "Nombre"),
-      { name: "Catálogo", selector: () => "" },
-      allColumns.find(col => col.name === "Entrar"),
-    ];
-  }
-  if (quickFilter === "actions") {
-    return allColumns.filter(col => ["Nombre", "Vaciar stock", "Entrar"].includes(col.name));
-  }
-  return allColumns;
+/** Columnas de almacenes según el filtro rápido. */
+export const getStorageColumns = ({ quickFilter, ...props }) => {
+  const columns = [
+    getStoreNameColumn(props),
+    ...getAdminColumns(props),
+    ...getInvestmentColumns(props),
+    ...getActionColumns({ ...props, enterTooltip: "Ingresar al almacén" }),
+  ];
+  if (quickFilter === "synced") return withCatalog(columns, catalogCol);
+  return pickColumns(columns, STORAGE_FILTER_COLUMNS[quickFilter]);
 };

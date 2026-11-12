@@ -1,5 +1,7 @@
 import axios from 'axios';
 import { getUserData } from './utils';
+import { STORAGE_KEYS } from '../constants/storageKeys';
+import { readJSON, removeKey, writeJSON } from '../utils/storage';
 
 const httpClient = axios.create({
   timeout: 60000,
@@ -33,7 +35,7 @@ httpClient.interceptors.response.use(
       // tenant, por lo que la siguiente petición de cualquier usuario (dueño o
       // trabajador, en cualquier máquina) recibe 401 y sale de la sesión.
       if (status === 401) {
-        localStorage.removeItem('user');
+        removeKey(STORAGE_KEYS.USER);
         window.location.href = '/login';
       }
 
@@ -42,20 +44,12 @@ httpClient.interceptors.response.use(
       // El dueño entra en "modo pago" (access_blocked → /mi-plan-actual/) para renovar;
       // administradores y vendedores quedan bloqueados.
       if (status === 403 && code === "subscription_expired") {
-        try {
-          const raw = localStorage.getItem('user');
-          if (raw) {
-            const stored = JSON.parse(raw);
-            if (!stored.access_blocked) {
-              stored.access_blocked = true;
-              localStorage.setItem('user', JSON.stringify(stored));
-              if (window.location.pathname !== '/mi-plan-actual/') {
-                window.location.href = '/mi-plan-actual/';
-              }
-            }
+        const stored = readJSON(STORAGE_KEYS.USER);
+        if (stored && !stored.access_blocked) {
+          writeJSON(STORAGE_KEYS.USER, { ...stored, access_blocked: true });
+          if (window.location.pathname !== '/mi-plan-actual/') {
+            window.location.href = '/mi-plan-actual/';
           }
-        } catch (e) {
-          // Ignorar errores al leer/escribir el usuario en localStorage.
         }
       }
     }

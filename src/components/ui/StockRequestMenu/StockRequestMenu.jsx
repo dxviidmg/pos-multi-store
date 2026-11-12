@@ -1,30 +1,13 @@
-import React, { memo, useState, useEffect, useCallback, useMemo } from "react";
-import {
-  IconButton, Badge, Popover, Box, Typography, List, ListItem,
-  ListItemText,
-} from "@mui/material";
+import React, { memo, useMemo } from "react";
 import TuneIcon from "@mui/icons-material/Tune";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-import { getStockUpdateRequests } from "../../../api/notifications";
+import { getStockUpdateRequests } from "../../../api/stockRequests";
+import { useStoreScopedList } from "../../../hooks/useStoreScopedList";
+import HeaderPopoverMenu from "../HeaderPopoverMenu/HeaderPopoverMenu";
+import HeaderMenuItem from "../HeaderPopoverMenu/HeaderMenuItem";
 
-const StockRequestMenu = memo(() => {
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [items, setItems] = useState([]);
-  const [seen, setSeen] = useState(false);
-
-  const fetchPending = useCallback(async () => {
-    try {
-      const { data } = await getStockUpdateRequests();
-      setItems(data);
-    } catch {}
-  }, []);
-
-  useEffect(() => {
-    fetchPending();
-    const onStoreChange = () => fetchPending();
-    window.addEventListener("store-changed", onStoreChange);
-    return () => window.removeEventListener("store-changed", onStoreChange);
-  }, [fetchPending]);
+const StockRequestMenu = () => {
+  const { items, refresh } = useStoreScopedList(getStockUpdateRequests, "Error al obtener solicitudes de ajuste:");
 
   const grouped = useMemo(() => {
     const map = {};
@@ -35,47 +18,21 @@ const StockRequestMenu = memo(() => {
   }, [items]);
 
   return (
-    <>
-      <IconButton color="inherit" onClick={(e) => { setAnchorEl(e.currentTarget); setSeen(true); fetchPending(); }}>
-        <Badge badgeContent={seen ? 0 : items.length} color="error" max={99}>
-          <TuneIcon />
-        </Badge>
-      </IconButton>
-      <Popover
-        open={Boolean(anchorEl)}
-        anchorEl={anchorEl}
-        onClose={() => setAnchorEl(null)}
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-        transformOrigin={{ vertical: "top", horizontal: "right" }}
-        slotProps={{ paper: { sx: { width: 360, maxHeight: 420, borderRadius: 3, overflow: "hidden" } } }}
-      >
-        <Box sx={{ px: 2.5, py: 1.5, borderBottom: 1, borderColor: "divider" }}>
-          <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>Solicitudes de ajuste</Typography>
-        </Box>
-        {items.length === 0 ? (
-          <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", py: 4, gap: 1, opacity: 0.6 }}>
-            <CheckCircleOutlineIcon sx={{ fontSize: 40 }} />
-            <Typography variant="body2">Sin solicitudes pendientes</Typography>
-          </Box>
-        ) : (
-          <List dense sx={{ maxHeight: 340, overflow: "auto", py: 0 }}>
-            {grouped.map(([store, count], i) => (
-              <ListItem key={i} sx={{ py: 1, borderBottom: '1px solid', borderColor: 'divider' }}>
-                <ListItemText
-                  primary={store}
-                  secondary={`${count} solicitud(es)`}
-                  primaryTypographyProps={{ fontSize: "0.8rem", fontWeight: 700 }}
-                  secondaryTypographyProps={{ fontSize: "0.75rem" }}
-                />
-              </ListItem>
-            ))}
-          </List>
-        )}
-      </Popover>
-    </>
+    <HeaderPopoverMenu
+      icon={<TuneIcon />}
+      tooltip="Solicitudes de ajuste"
+      title="Solicitudes de ajuste"
+      badgeCount={items.length}
+      onOpen={refresh}
+      isEmpty={items.length === 0}
+      emptyIcon={CheckCircleOutlineIcon}
+      emptyText="Sin solicitudes pendientes"
+    >
+      {grouped.map(([store, count], i) => (
+        <HeaderMenuItem key={i} primary={store} secondary={`${count} solicitud(es)`} />
+      ))}
+    </HeaderPopoverMenu>
   );
-});
+};
 
-StockRequestMenu.displayName = "StockRequestMenu";
-
-export default StockRequestMenu;
+export default memo(StockRequestMenu);

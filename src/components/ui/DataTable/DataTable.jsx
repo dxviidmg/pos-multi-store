@@ -1,8 +1,12 @@
 import React, { memo, useState, useMemo } from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import { Box, TextField, Typography, Paper, LinearProgress } from "@mui/material";
+import { Box, Typography, Paper, LinearProgress } from "@mui/material";
+import { TextField } from "../Field/Field";
+import { alpha } from "@mui/material/styles";
 import InboxOutlinedIcon from "@mui/icons-material/InboxOutlined";
 import { TableSkeleton } from "../Skeleton/Skeleton";
+import { colors } from "../../../theme/colors";
+import { tableButtonSx } from "../tableButtonSx";
 
 const searchInObject = (obj, search) => {
   if (typeof obj === "string") return obj.toLowerCase().includes(search.toLowerCase());
@@ -17,6 +21,8 @@ const DataTable = ({
   noDataComponent = "Sin datos que mostrar",
   searcher = false,
   setSelectedRows,
+  selectedIds,
+  conditionalRowStyles,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [paginationModel, setPaginationModel] = useState({
@@ -29,14 +35,9 @@ const DataTable = ({
     [data, searchTerm]
   );
 
-  const visibleColumns = useMemo(
-    () => columns.filter((col) => !col.omit),
-    [columns]
-  );
-
   const muiColumns = useMemo(
     () =>
-      visibleColumns.map((col, index) => {
+      columns.map((col, index) => {
         const getCellAlignment = (row) => {
           const value = col.selector ? col.selector(row) : row[col.field];
           if (typeof value === 'string' && value.includes('$')) {
@@ -59,18 +60,18 @@ const DataTable = ({
 
         if (col.cell) {
           column.renderCell = (params) => (
-            <div
-              style={{
+            <Box
+              sx={{
                 display: 'flex',
                 gap: '2px',
                 alignItems: 'center',
                 justifyContent: getCellAlignment(params.row),
                 width: '100%',
-                paddingRight: isRightAligned(params.row) ? '12px' : '2px'
+                pr: isRightAligned(params.row) ? '12px' : '2px',
               }}
             >
               {col.cell(params.row)}
-            </div>
+            </Box>
           );
         } else if (col.selector) {
           column.renderCell = (params) => col.selector(params.row);
@@ -85,6 +86,21 @@ const DataTable = ({
   const rowsWithIds = useMemo(
     () => filteredData.map((row, index) => ({ ...row, _id: row.id ?? row._id ?? index })),
     [filteredData]
+  );
+
+  const getRowClassName = useMemo(
+    () => ({ row, indexRelativeToCurrentPage }) => [
+      indexRelativeToCurrentPage % 2 === 1 ? "row-striped" : null,
+      ...(conditionalRowStyles || []).map((rule, index) => (rule.when(row) ? `conditional-row-${index}` : null)),
+    ].filter(Boolean).join(" "),
+    [conditionalRowStyles]
+  );
+
+  const conditionalRowSx = useMemo(
+    () => Object.fromEntries(
+      (conditionalRowStyles || []).map((rule, index) => [`& .conditional-row-${index}`, rule.style])
+    ),
+    [conditionalRowStyles]
   );
 
   return (
@@ -105,7 +121,7 @@ const DataTable = ({
 
       <Box sx={{ width: "100%", maxWidth: "100%", overflowX: "auto" }}>
         {data.length === 0 && progressPending ? (
-          <TableSkeleton columns={Math.min(Math.max(visibleColumns.length, 3), 6)} />
+          <TableSkeleton columns={Math.min(Math.max(columns.length, 3), 6)} />
         ) : data.length === 0 ? (
           <Paper className="fade-in-up" sx={{ p: 4, textAlign: 'center' }}>
             <InboxOutlinedIcon sx={{ fontSize: 36, color: 'text.disabled', mb: 1 }} />
@@ -125,6 +141,7 @@ const DataTable = ({
           onPaginationModelChange={setPaginationModel}
           pageSizeOptions={[10, 25, 50, 100]}
           checkboxSelection={!!setSelectedRows}
+          {...(selectedIds && { rowSelectionModel: selectedIds })}
           onRowSelectionModelChange={(ids) => {
             if (setSelectedRows) {
               const selected = rowsWithIds.filter((row) => ids.includes(row._id));
@@ -133,6 +150,7 @@ const DataTable = ({
           }}
           disableRowSelectionOnClick
           getRowHeight={() => 'auto'}
+          getRowClassName={getRowClassName}
           localeText={{ noRowsLabel: noDataComponent }}
           hideFooter={data.length <= 10}
           density="compact"
@@ -140,14 +158,17 @@ const DataTable = ({
           sx={{
             border: '1px solid',
             borderColor: 'divider',
-            borderRadius: 1.5,
+            borderRadius: 'var(--radius-base)',
             overflow: 'hidden',
             "& .MuiDataGrid-columnHeaders": {
-              backgroundColor: 'primary.main',
-              color: 'primary.contrastText',
+              backgroundColor: 'tableHead.main',
+              color: 'tableHead.contrastText',
+              borderBottom: '1px solid',
+              borderColor: alpha(colors.white, 0.12),
               minHeight: '36px !important',
               maxHeight: '36px !important',
             },
+            "& .MuiDataGrid-columnHeader .MuiSvgIcon-root, & .MuiDataGrid-columnSeparator": { color: 'tableHead.contrastText' },
             "& .MuiDataGrid-columnHeaderTitle": {
               fontWeight: 600,
               fontSize: '0.8125rem',
@@ -155,18 +176,25 @@ const DataTable = ({
             "& .MuiDataGrid-columnHeader": { justifyContent: 'center' },
             "& .MuiDataGrid-columnHeaderTitleContainer": { justifyContent: 'center' },
             "& .MuiDataGrid-cell": {
-              py: 0.5, px: 1, fontSize: '0.8125rem',
+              py: 1, px: 1, fontSize: '0.8125rem', fontVariantNumeric: 'tabular-nums',
               whiteSpace: 'normal !important', lineHeight: '1.4 !important',
               justifyContent: 'center', textAlign: 'center',
-              '& .MuiButtonBase-root': { transform: 'scale(0.85)', minWidth: 0, px: 0.5 },
+              color: 'text.primary',
+              borderBottom: '1px solid',
+              borderColor: 'rowDivider.main',
+              ...tableButtonSx,
             },
             "& .MuiDataGrid-row": {
               minHeight: '34px !important',
               maxHeight: 'none !important',
-              transition: 'background-color 0.15s ease',
-              '&:hover': { backgroundColor: 'action.hover' },
+              transition: 'background-color 0.2s ease',
+              '&.row-striped': { backgroundColor: 'rowStripe.main' },
+              '&:hover, &.row-striped:hover': { backgroundColor: 'rowHover.main' },
+              '&.Mui-selected, &.Mui-selected:hover': { backgroundColor: 'rowSelected.main' },
             },
+            "& .MuiDataGrid-footerContainer": { backgroundColor: 'rowStripe.main', borderColor: 'divider' },
             "& .MuiDataGrid-cell:focus, & .MuiDataGrid-columnHeader:focus": { outline: 'none' },
+            ...conditionalRowSx,
           }}
         />
         )}

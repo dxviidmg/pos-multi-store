@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { createTenant } from "../api/registration";
 import { showSuccess, showWarning, showRequestError, SUPPORT_HINT } from "../utils/alerts";
+import { parsePhoneError } from "../utils/apiErrors";
 
 const registrationErrorParser = (error) => {
   if (error.response?.status === 400) {
@@ -11,15 +12,8 @@ const registrationErrorParser = (error) => {
     if (data.name) {
       return "El nombre del negocio es requerido.";
     }
-    if (data.phone_number) {
-      const phoneError = data.phone_number[0];
-      if (phoneError === "Ensure this field has at least 10 characters.") {
-        return "El teléfono debe tener al menos 10 dígitos.";
-      }
-      if (phoneError === "client with this phone number already exists.") {
-        return "El teléfono ya está registrado.";
-      }
-    }
+    const phoneError = parsePhoneError(data.phone_number);
+    if (phoneError) return phoneError;
     if (data.email) {
       return "El correo electrónico no es válido o ya está registrado.";
     }
@@ -34,7 +28,7 @@ export const useCreateTenant = (options = {}) => {
   return useMutation({
     mutationFn: createTenant,
     onSuccess: (data, variables, context) => {
-      showSuccess("¡Negocio registrado!", "Tu negocio ha sido creado.");
+      showSuccess("Negocio registrado", "Tu negocio ha sido creado.");
       options?.onSuccess?.(data, variables, context);
     },
     onError: (error, variables, context) => {

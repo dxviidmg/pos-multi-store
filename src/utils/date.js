@@ -85,3 +85,25 @@ export function getDateDifference(startDate, endDate) {
 
   return result.join(" ");
 }
+
+const DATE_ONLY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+
+/**
+ * Fecha larga es-MX: "5 de marzo de 2026" o, con hora, "5 de marzo de 2026, 14:30".
+ * Las fechas "YYYY-MM-DD" se interpretan en hora local (no UTC).
+ * Devuelve "—" si no hay fecha.
+ */
+export const formatLongDate = (date, { withTime = false } = {}) => {
+  if (!date) return "—";
+  const value = typeof date === "string" && DATE_ONLY_PATTERN.test(date) ? `${date}T00:00:00` : date;
+  return new Date(value).toLocaleDateString("es-MX", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    ...(withTime && { hour: "2-digit", minute: "2-digit" }),
+  });
+};
+
+// Años seleccionables en los tableros: de 2025 al año en curso
+export const getYearOptions = () =>
+  Array.from({ length: new Date().getFullYear() - 2024 }, (_, i) => 2025 + i);

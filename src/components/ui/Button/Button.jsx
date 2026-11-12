@@ -5,9 +5,11 @@ const CustomButton = forwardRef(({
   children,
   onClick,
   size = "small",
+  variant = "contained",
   disabled = false,
   href,
   fullWidth = false,
+  sx,
   ...props
 }, ref) => {
   return (
@@ -18,8 +20,12 @@ const CustomButton = forwardRef(({
       disabled={disabled}
       href={href}
       fullWidth={fullWidth}
-      variant="contained"
-      sx={{ minWidth: 0, ...props.sx }}
+      variant={variant}
+      sx={{ 
+        minWidth: 0,
+        height: size === "small" ? "40px" : "44px",
+        ...sx 
+      }}
       {...props}
     >
       {children}

@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
-import { getBrands } from "../../../api/brands";
-import { getDepartments } from "../../../api/departments";
+import { useBrands } from "../../../hooks/useBrands";
+import { useDepartments } from "../../../hooks/useDepartments";
+import { useInvalidateCatalogOptions } from "../shared/useCatalogOptions";
 import { reassignProducts } from "../../../api/products";
 import { showSuccess, showRequestError } from "../../../utils/alerts";
 import { useForm } from "../../../hooks/useForm";
 import CustomButton from "../../ui/Button/Button";
-import { Grid, Select, MenuItem, FormControl, InputLabel} from "@mui/material";
+import { Grid, MenuItem, FormControl, InputLabel } from "@mui/material";
+import { Select } from "../../ui/Field/Field";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import PageHeader from "../../ui/PageHeader";
 
@@ -28,34 +30,23 @@ const INITIAL_FORM_DATA = {
 };
 
 const ProductReassign = () => {
-  const [loading, setLoading] = useState(false);
-  const [options, setOptions] = useState([]);
   const { values: params, handleChange: handleDataChange, reset } = useForm(INITIAL_FORM_DATA);
-
-  useEffect(() => {
-    const fetchOptions = async () => {
-      setLoading(true);
-      if (params.reassign_type === "department") {
-        const res = await getDepartments();
-        setOptions(res.data);
-      } else if (params.reassign_type === "brand") {
-        const res = await getBrands();
-        setOptions(res.data);
-      } else {
-        setOptions([]);
-      }
-      setLoading(false);
-    };
-    fetchOptions();
-  }, [params.reassign_type]);
+  const brandsQuery = useBrands();
+  const departmentsQuery = useDepartments();
+  const selectedQuery = { brand: brandsQuery, department: departmentsQuery }[params.reassign_type];
+  const options = selectedQuery?.data || [];
+  const loading = selectedQuery?.isLoading || false;
+  const invalidateCatalogOptions = useInvalidateCatalogOptions();
+  const optionsDisabled = !loading && Boolean(params.reassign_type) && options.length === 0;
 
   const handleReassignProducts = async () => {
-    const response = await reassignProducts(params);
-    if (response.status === 200) {
+    try {
+      await reassignProducts(params);
       reset();
+      invalidateCatalogOptions();
       showSuccess("Productos reasignados");
-    } else {
-      showRequestError("reasignar los productos", response);
+    } catch (error) {
+      showRequestError("reasignar los productos", error);
     }
   };
 
@@ -67,7 +58,7 @@ const ProductReassign = () => {
         <CustomSpinner isLoading={loading} />
         <PageHeader title="Reasignación de productos" />
 
-        <Grid container spacing={2}>
+        <Grid container className="fill-row" spacing={2}>
           <Grid item xs={12} md={3}>
             <FormControl fullWidth size="small">
               <InputLabel>Tipo de reasignación</InputLabel>
@@ -82,7 +73,7 @@ const ProductReassign = () => {
           <Grid item xs={12} md={3}>
             <FormControl fullWidth size="small">
               <InputLabel>Origen</InputLabel>
-              <Select value={params.origin_id} onChange={handleDataChange} name="origin_id" label="Origen" disabled={!loading && params.reassign_type && options.length === 0}>
+              <Select value={params.origin_id} onChange={handleDataChange} name="origin_id" label="Origen" disabled={optionsDisabled}>
                 <MenuItem value="">Origen</MenuItem>
                 {loading && <MenuItem disabled>Cargando...</MenuItem>}
                 {options.map((opt) => (
@@ -94,7 +85,7 @@ const ProductReassign = () => {
           <Grid item xs={12} md={3}>
             <FormControl fullWidth size="small">
               <InputLabel>Destino</InputLabel>
-              <Select value={params.destination_id} onChange={handleDataChange} name="destination_id" label="Destino" disabled={!loading && params.reassign_type && options.length === 0}>
+              <Select value={params.destination_id} onChange={handleDataChange} name="destination_id" label="Destino" disabled={optionsDisabled}>
                 <MenuItem value="">Destino</MenuItem>
                 {loading && <MenuItem disabled>Cargando...</MenuItem>}
                 {options.map((opt) => (

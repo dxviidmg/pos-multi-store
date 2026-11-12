@@ -1,13 +1,28 @@
 import { useCallback, useRef, useState } from "react";
 import { useFetchWithRetry } from "./useFetch";
 import { getStoreProducts } from "../api/products";
-import { showError, showWarning } from "../utils/alerts";
-import Swal from "sweetalert2";
+import { showError, showWarning, showConfirm } from "../utils/alerts";
+import { colors } from "../theme/colors";
+import { QUERY_TYPES } from "../constants";
+import { STORAGE_KEYS } from "../constants/storageKeys";
+import { readJSON, writeJSON } from "../utils/storage";
+
+const MAX_SLOW_CODES = 50;
+
+const logSearchTiming = (ms, queryCode) => {
+  const stored = readJSON(STORAGE_KEYS.SEARCH_TIMING_STATS);
+  const tiempos = stored?.tiempos && typeof stored.tiempos === "object" ? stored.tiempos : {};
+  let slow = Array.isArray(stored?.mas_de_8s) ? stored.mas_de_8s : [];
+  const bucket = ms <= 500 ? 0 : Math.ceil((ms - 500) / 1000);
+  tiempos[bucket] = (tiempos[bucket] || 0) + 1;
+  if (ms > 8000) slow = [...slow, queryCode];
+  writeJSON(STORAGE_KEYS.SEARCH_TIMING_STATS, { tiempos, mas_de_8s: slow.slice(-MAX_SLOW_CODES) });
+};
 
 export const useProductSearch = () => {
   const [query, setQuery] = useState("");
   const [data, setData] = useState([]);
-  const [queryType, setQueryType] = useState("code");
+  const [queryType, setQueryType] = useState(QUERY_TYPES.CODE);
   const [searching, setSearching] = useState(false);
   const searchingRef = useRef(false);
 
@@ -16,18 +31,10 @@ export const useProductSearch = () => {
     { maxRetries: 1, timeout: 8000 }
   );
 
-  const logSearchTiming = (ms, queryCode) => {
-    const stats = JSON.parse(localStorage.getItem("search_timing_stats") || '{"tiempos":{},"mas_de_8s":[]}');
-    const bucket = ms <= 500 ? 0 : Math.ceil((ms - 500) / 1000);
-    stats.tiempos[bucket] = (stats.tiempos[bucket] || 0) + 1;
-    if (ms > 8000) stats.mas_de_8s.push(queryCode);
-    localStorage.setItem("search_timing_stats", JSON.stringify(stats));
-  };
-
   const fetchData = useCallback(
     async (handleSingleProductFetch, createProductsOnSale, productModal) => {
       // El modo "visual" busca igual que "q" (por marca o nombre)
-      const isTextMode = queryType === "q" || queryType === "visual";
+      const isTextMode = queryType === QUERY_TYPES.NAME || queryType === QUERY_TYPES.VISUAL;
       if (!query || isTextMode) {
         setData([]);
         return;
@@ -55,16 +62,12 @@ export const useProductSearch = () => {
 
         if (fetchedData.length === 0) {
           if (createProductsOnSale) {
-            const confirm = await Swal.fire({
-              icon: "question",
-              title: "Producto no encontrado",
-              text: `No se encontró ningún producto con el código "${query}". ¿Desea crear uno nuevo con este código?`,
-              showCancelButton: true,
-              confirmButtonText: "Sí, crear producto",
-              cancelButtonText: "No, gracias",
-              confirmButtonColor: "#04346b",
-            });
-            if (confirm.isConfirmed) {
+            const confirmed = await showConfirm(
+              "Producto no encontrado",
+              `No se encontró ningún producto con el código "${query}". ¿Desea crear uno nuevo con este código?`,
+              { confirmText: "Sí, crear producto", cancelText: "No, gracias", confirmColor: colors.primary, icon: "question" }
+            );
+            if (confirmed) {
               productModal.open({ code: query, createFromSearch: true });
             } else {
               // Si cancela, limpiar la búsqueda para evitar que se re-abra el diálogo
@@ -78,9 +81,8 @@ export const useProductSearch = () => {
         } else {
           setData(fetchedData);
         }
-      } catch (err) {
+      } catch {
         searchingRef.current = false;
-        if (err.name === "AbortError" || err.name === "CanceledError") return;
         setSearching(false);
       }
     },

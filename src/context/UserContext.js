@@ -1,38 +1,38 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useMemo } from 'react';
+import { STORAGE_KEYS } from '../constants/storageKeys';
+import { readJSON, removeKey, writeJSON } from '../utils/storage';
 
 const UserContext = createContext(null);
 
-const getStoredUser = () => {
-  const raw = localStorage.getItem("user");
-  return raw ? JSON.parse(raw) : null;
-};
+const getStoredUser = () => readJSON(STORAGE_KEYS.USER);
 
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(getStoredUser);
 
   const login = useCallback((userData) => {
-    localStorage.setItem("user", JSON.stringify(userData));
+    writeJSON(STORAGE_KEYS.USER, userData);
     setUser(userData);
   }, []);
 
   const logout = useCallback(() => {
-    localStorage.removeItem("user");
+    removeKey(STORAGE_KEYS.USER);
     setUser(null);
   }, []);
 
   const updateUser = useCallback((updates) => {
     setUser((prev) => {
       const updated = { ...prev, ...updates };
-      localStorage.setItem("user", JSON.stringify(updated));
+      writeJSON(STORAGE_KEYS.USER, updated);
       return updated;
     });
   }, []);
 
-  return (
-    <UserContext.Provider value={{ user, login, logout, updateUser }}>
-      {children}
-    </UserContext.Provider>
+  const value = useMemo(
+    () => ({ user, login, logout, updateUser }),
+    [user, login, logout, updateUser]
   );
+
+  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };
 
 export const useUser = () => {

@@ -1,4 +1,5 @@
 import Swal from "sweetalert2";
+import { colors } from "../theme/colors";
 
 export const showAlert = (icon, title, text = "", timer = 5000) => {
   Swal.fire({ icon, title, text, timer });
@@ -15,6 +16,15 @@ export const showError = (title, text = "") => {
 export const showWarning = (title, text = "") => {
   showAlert("warning", title, text);
 };
+
+const ALERT_POLL_DELAY = 100;
+
+/** Se resuelve cuando ya no hay una alerta abierta (SweetAlert restaura el scroll al cerrar). */
+export const waitForAlertClose = () =>
+  new Promise((resolve) => {
+    const check = () => (Swal.isVisible() ? setTimeout(check, ALERT_POLL_DELAY) : setTimeout(resolve, ALERT_POLL_DELAY));
+    check();
+  });
 
 export const SUPPORT_HINT = "Intenta de nuevo. Si continúa, contacta a soporte.";
 
@@ -38,15 +48,23 @@ export const showRequestError = (action, source) => {
   }
 };
 
-export const showConfirm = async (title, text = "") => {
+/**
+ * Confirmación con botones Confirmar/Cancelar. Por defecto es de eliminación.
+ * `options` permite personalizar los textos de los botones, el color de confirmar y el ícono.
+ */
+export const showConfirm = async (
+  title,
+  text = "",
+  { confirmText = "Eliminar", cancelText = "Cancelar", confirmColor = colors.error, icon = "warning" } = {}
+) => {
   const result = await Swal.fire({
-    icon: "warning",
+    icon,
     title,
     text,
     showCancelButton: true,
-    confirmButtonText: "Eliminar",
-    cancelButtonText: "Cancelar",
-    confirmButtonColor: "#d33",
+    confirmButtonText: confirmText,
+    cancelButtonText: cancelText,
+    confirmButtonColor: confirmColor,
   });
   return result.isConfirmed;
 };

@@ -2,8 +2,21 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Box, IconButton, Typography } from "@mui/material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import CustomTooltip from "../../ui/Tooltip";
 import ProductCard from "./ProductCard";
 import { MOVEMENT_TYPES } from "../../../constants";
+
+const ARROW_SX = {
+  position: "absolute",
+  top: "50%",
+  transform: "translateY(-50%)",
+  zIndex: 2,
+  bgcolor: "background.paper",
+  border: "1px solid",
+  borderColor: "divider",
+  boxShadow: "var(--shadow-md)",
+  "&:hover": { bgcolor: "action.hover" },
+};
 
 /**
  * Carrusel horizontal de tarjetas de producto para la búsqueda visual.
@@ -54,26 +67,17 @@ const ProductCarousel = ({ products = [], onSelect, movementType }) => {
 
   return (
     <Box sx={{ position: "relative", width: "100%" }}>
-      <IconButton
-        onClick={() => scrollByAmount(-1)}
-        disabled={!canScrollLeft}
-        size="small"
-        aria-label="Anterior"
-        sx={{
-          position: "absolute",
-          left: -6,
-          top: "50%",
-          transform: "translateY(-50%)",
-          zIndex: 2,
-          bgcolor: "background.paper",
-          border: "1px solid",
-          borderColor: "divider",
-          boxShadow: "0 1px 3px rgba(0,0,0,0.12)",
-          "&:hover": { bgcolor: "action.hover" },
-        }}
-      >
-        <ChevronLeftIcon />
-      </IconButton>
+      <CustomTooltip text="Anterior" position="top">
+        <IconButton
+          onClick={() => scrollByAmount(-1)}
+          disabled={!canScrollLeft}
+          size="small"
+          aria-label="Anterior"
+          sx={{ ...ARROW_SX, left: -6 }}
+        >
+          <ChevronLeftIcon />
+        </IconButton>
+      </CustomTooltip>
 
       <Box
         ref={scrollRef}
@@ -102,26 +106,17 @@ const ProductCarousel = ({ products = [], onSelect, movementType }) => {
         })}
       </Box>
 
-      <IconButton
-        onClick={() => scrollByAmount(1)}
-        disabled={!canScrollRight}
-        size="small"
-        aria-label="Siguiente"
-        sx={{
-          position: "absolute",
-          right: -6,
-          top: "50%",
-          transform: "translateY(-50%)",
-          zIndex: 2,
-          bgcolor: "background.paper",
-          border: "1px solid",
-          borderColor: "divider",
-          boxShadow: "0 1px 3px rgba(0,0,0,0.12)",
-          "&:hover": { bgcolor: "action.hover" },
-        }}
-      >
-        <ChevronRightIcon />
-      </IconButton>
+      <CustomTooltip text="Siguiente" position="top">
+        <IconButton
+          onClick={() => scrollByAmount(1)}
+          disabled={!canScrollRight}
+          size="small"
+          aria-label="Siguiente"
+          sx={{ ...ARROW_SX, right: -6 }}
+        >
+          <ChevronRightIcon />
+        </IconButton>
+      </CustomTooltip>
     </Box>
   );
 };

@@ -18,8 +18,7 @@ export const getPrint = async (endpoint, data) => {
     store_printer: user.store_printer,
   };
 
-  const response = await httpClient.post(printerUrl, printData);
-  return response;
+  return httpClient.post(printerUrl, printData);
 };
 
 /**
@@ -28,11 +27,8 @@ export const getPrint = async (endpoint, data) => {
  */
 export const testPrinterConnection = async () => {
   try {
-    const response = await httpClient.get(getPrinterUrl("status"), { timeout: 3000 });
-    if (response.status === 200) {
-      return { connected: true };
-    }
-    return { connected: false, error: response.data?.error || "Error de impresora" };
+    await httpClient.get(getPrinterUrl("status"), { timeout: 3000 });
+    return { connected: true };
   } catch (error) {
     if (error.code === "ECONNABORTED" || error.code === "ERR_NETWORK" || !error.response) {
       return { connected: false, error: "Iniciar servidor de impresora" };
@@ -43,5 +39,3 @@ export const testPrinterConnection = async () => {
     return { connected: false, error: "Error de conexión" };
   }
 };
-
-

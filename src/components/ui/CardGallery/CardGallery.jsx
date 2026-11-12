@@ -1,20 +1,21 @@
 import React, { memo } from "react";
 import { Grid, Typography, Paper, Skeleton } from "@mui/material";
 
-const GRID_ITEM = { xs: 6, sm: 4, md: 3, lg: 2 };
+const DEFAULT_GRID_ITEM = { xs: 6, sm: 4, md: 3, lg: 2 };
 const SKELETON_COUNT = 12;
 const MAX_STAGGERED = 12;
 
 /**
  * Cuadrícula de tarjetas con estado de carga y vacío.
  * `renderItem` recibe cada elemento y devuelve su tarjeta.
+ * `gridItem` sobrescribe los breakpoints por tarjeta (por defecto 2 por fila en móvil).
  */
-const CardGallery = ({ items = [], loading, emptyText, renderItem }) => {
+const CardGallery = ({ items = [], loading, emptyText, renderItem, gridItem = DEFAULT_GRID_ITEM }) => {
   if (loading) {
     return (
       <Grid container spacing={2} sx={{ mt: 0.5 }} aria-busy="true" aria-label="Cargando">
         {Array.from({ length: SKELETON_COUNT }, (_, i) => (
-          <Grid item {...GRID_ITEM} key={i}>
+          <Grid item {...gridItem} key={i}>
             <Skeleton variant="rounded" height={260} />
           </Grid>
         ))}
@@ -37,7 +38,7 @@ const CardGallery = ({ items = [], loading, emptyText, renderItem }) => {
       {items.map((item, i) => (
         <Grid
           item
-          {...GRID_ITEM}
+          {...gridItem}
           key={item.id}
           className="fade-in-up"
           sx={{ animationDelay: `${Math.min(i, MAX_STAGGERED) * 30}ms` }}

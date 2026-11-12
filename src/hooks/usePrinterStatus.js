@@ -155,6 +155,10 @@ export const usePrinterStatus = (printer, options = {}) => {
     };
   }, [printer, closeSocket, clearTimers, httpCheck, scheduleReconnect]);
 
+  // El efecto de abajo reconecta con la versión más reciente de connect sin re-suscribirse cuando cambia
+  const connectRef = useRef(connect);
+  connectRef.current = connect;
+
   // retest: fuerza un intento de reconexión inmediato.
   const retest = useCallback(() => {
     if (!printer) {
@@ -185,14 +189,13 @@ export const usePrinterStatus = (printer, options = {}) => {
 
     activeRef.current = true;
     attemptRef.current = 0;
-    connect();
+    connectRef.current();
 
     return () => {
       activeRef.current = false;
       closeSocket();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [active, printer]);
+  }, [active, printer, closeSocket]);
 
   return { connected, error, retest };
 };

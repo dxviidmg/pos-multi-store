@@ -1,23 +1,14 @@
 import React, { useEffect, useState } from "react";
-import CustomModal from "../../ui/Modal/Modal";
+import CustomModal, { ModalBody } from "../../ui/Modal/Modal";
 import CustomButton from "../../ui/Button/Button";
 import { showSuccess, showRequestError } from "../../../utils/alerts";
 import { createCashFlow, updateCashFlow, getCashFlowChoices } from "../../../api/cashflow";
-import {
-  Box,
-  Grid,
-  TextField,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  InputAdornment,
-  Typography,
-} from "@mui/material";
+import { Box, Grid, MenuItem, FormControl, InputLabel, InputAdornment, Typography } from "@mui/material";
+import { TextField, Select } from "../../ui/Field/Field";
 import SaveIcon from "@mui/icons-material/Save";
-import SwapVertIcon from "@mui/icons-material/SwapVert";
-import NotesIcon from "@mui/icons-material/Notes";
-import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import SwapVertIcon from "@mui/icons-material/SwapVertOutlined";
+import NotesIcon from "@mui/icons-material/NotesOutlined";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoneyOutlined";
 
 const INITIAL_FORM = { id: "", transaction_type: "", concept: "", amount: "" };
 
@@ -27,11 +18,17 @@ const CashFlowModal = ({ isOpen, cashFlow, onClose, onUpdate }) => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    let ignore = false;
     const fetchChoices = async () => {
-      const res = await getCashFlowChoices();
-      setOptions(res.data);
+      try {
+        const res = await getCashFlowChoices();
+        if (!ignore) setOptions(res.data);
+      } catch (error) {
+        if (!ignore) showRequestError("cargar los tipos de movimiento", error);
+      }
     };
     fetchChoices();
+    return () => { ignore = true; };
   }, []);
 
   useEffect(() => {
@@ -48,24 +45,25 @@ const CashFlowModal = ({ isOpen, cashFlow, onClose, onUpdate }) => {
   }, [cashFlow]);
 
   const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async () => {
     if (loading) return;
     setLoading(true);
-    const response = formData.id
-      ? await updateCashFlow(formData)
-      : await createCashFlow(formData);
-    setLoading(false);
-
-    if (response.status === 200 || response.status === 201) {
-      onUpdate(response.data, !!formData.id);
+    try {
+      const response = formData.id
+        ? await updateCashFlow(formData)
+        : await createCashFlow(formData);
+      onUpdate(response.data, Boolean(formData.id));
       onClose();
       setFormData(INITIAL_FORM);
       showSuccess(formData.id ? "Movimiento actualizado" : "Movimiento creado");
-    } else {
-      showRequestError("guardar el movimiento", response);
+    } catch (error) {
+      showRequestError("guardar el movimiento", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -78,101 +76,99 @@ const CashFlowModal = ({ isOpen, cashFlow, onClose, onUpdate }) => {
       onClose={onClose}
       title={formData.id ? "Editar movimiento" : "Crear movimiento"}
     >
-      <Box sx={{ p: 3 }}>
-        <Typography
-          variant="body2"
-          sx={{ mb: 2.5, color: "text.secondary" }}
-        >
-          Registra una entrada o salida de dinero que no corresponda a una venta.
-        </Typography>
+      <ModalBody>
+        <Box className="card">
+          <Typography
+            variant="body2"
+            sx={{ mb: 2.5, color: "text.secondary" }}
+          >
+            Registra una entrada o salida de dinero que no corresponda a una venta.
+          </Typography>
 
-        <Grid container spacing={2.5}>
-          <Grid item xs={12} sm={6} md={3}>
-            <FormControl fullWidth size="small">
-              <InputLabel>Tipo de movimiento</InputLabel>
-              <Select
-                fullWidth
+          <Grid container className="fill-row" spacing={2.5}>
+            <Grid item xs={12} sm={8} md={8}>
+              <TextField
                 size="small"
-                value={formData.transaction_type}
+                fullWidth
+                label="Concepto"
+                placeholder="Ej: Pago de luz, retiro de efectivo..."
+                type="text"
+                value={formData.concept}
+                name="concept"
                 onChange={handleInputChange}
-                name="transaction_type"
-                label="Tipo de movimiento"
-                startAdornment={
-                  <InputAdornment position="start">
-                    <SwapVertIcon fontSize="small" sx={{ color: "primary.main" }} />
-                  </InputAdornment>
-                }
-              >
-                <MenuItem value="" disabled>
-                  Selecciona un tipo
-                </MenuItem>
-                {options.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <NotesIcon fontSize="small" sx={{ color: "primary.main" }} />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={4} md={4}>
+              <TextField
+                size="small"
+                fullWidth
+                label="Monto"
+                placeholder="0.00"
+                type="number"
+                value={formData.amount}
+                name="amount"
+                onChange={handleInputChange}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <AttachMoneyIcon fontSize="small" sx={{ color: "primary.main" }} />
+                    </InputAdornment>
+                  ),
+                }}
+                inputProps={{ min: 0, step: "0.01" }}
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6} md={6}>
+              <FormControl fullWidth size="small">
+                <InputLabel>Tipo de movimiento</InputLabel>
+                <Select
+                  fullWidth
+                  size="small"
+                  value={formData.transaction_type}
+                  onChange={handleInputChange}
+                  name="transaction_type"
+                  label="Tipo de movimiento"
+                  startAdornment={
+                    <InputAdornment position="start">
+                      <SwapVertIcon fontSize="small" sx={{ color: "primary.main" }} />
+                    </InputAdornment>
+                  }
+                >
+                  <MenuItem value="" disabled>
+                    Selecciona un tipo
                   </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
+                  {options.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
 
-          <Grid item xs={12} sm={6} md={4}>
-            <TextField
-              size="small"
-              fullWidth
-              label="Concepto"
-              placeholder="Ej: Pago de luz, retiro de efectivo..."
-              type="text"
-              value={formData.concept}
-              name="concept"
-              onChange={handleInputChange}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <NotesIcon fontSize="small" sx={{ color: "primary.main" }} />
-                  </InputAdornment>
-                ),
-              }}
-            />
+            <Grid item xs={12} sm={6} md={6}>
+              <CustomButton
+                fullWidth
+                onClick={handleSubmit}
+                disabled={isFormIncomplete || loading}
+                startIcon={<SaveIcon />}
+                sx={{ height: "40px" }}
+              >
+                {loading ? "Guardando..." : formData.id ? "Actualizar" : "Crear"}
+              </CustomButton>
+            </Grid>
           </Grid>
-
-          <Grid item xs={12} sm={6} md={2.5}>
-            <TextField
-              size="small"
-              fullWidth
-              label="Monto"
-              placeholder="0.00"
-              type="number"
-              value={formData.amount}
-              name="amount"
-              onChange={handleInputChange}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <AttachMoneyIcon fontSize="small" sx={{ color: "primary.main" }} />
-                  </InputAdornment>
-                ),
-              }}
-              inputProps={{ min: 0, step: "0.01" }}
-            />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={2.5}>
-            <CustomButton
-              fullWidth
-              onClick={handleSubmit}
-              disabled={isFormIncomplete || loading}
-              startIcon={<SaveIcon />}
-              sx={{ height: "40px" }}
-            >
-              {loading
-                ? "Guardando..."
-                : formData.id
-                ? "Actualizar"
-                : "Crear"}
-            </CustomButton>
-          </Grid>
-        </Grid>
-      </Box>
+        </Box>
+      </ModalBody>
     </CustomModal>
   );
 };

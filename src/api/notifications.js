@@ -8,7 +8,3 @@ export const getPendingMovements = async () => {
 export const getDuplicateSales = async () => {
   return httpClient.get(getApiUrl("duplicate-sales"));
 };
-
-export const getStockUpdateRequests = async () => {
-  return httpClient.get(getApiUrl("stock-update-request"));
-};

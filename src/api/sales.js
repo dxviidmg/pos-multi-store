@@ -1,5 +1,5 @@
 import httpClient from "./httpClient";
-import { getApiUrl, buildUrlWithParams } from "./utils";
+import { getApiUrl, buildUrlWithParams, toFormData } from "./utils";
 
 /**
  * Create a new sale
@@ -45,15 +45,7 @@ export const getCashSummary = async (date) => {
  * @returns {Promise<Object>} Validation results
  */
 export const importSalesValidation = async (data) => {
-  const formData = new FormData();
-  Object.entries(data).forEach(([key, value]) => {
-    if (value !== "" && value !== null && value !== undefined) {
-      formData.append(key, value);
-    }
-  });
-  return httpClient.post(getApiUrl("sales/import-validation"), formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
+  return httpClient.post(getApiUrl("sales/import-validation"), toFormData(data));
 };
 
 /**
@@ -62,15 +54,7 @@ export const importSalesValidation = async (data) => {
  * @returns {Promise<Object>} Import results
  */
 export const importSales = async (data) => {
-  const formData = new FormData();
-  Object.entries(data).forEach(([key, value]) => {
-    if (value !== "" && value !== null && value !== undefined) {
-      formData.append(key, value);
-    }
-  });
-  return httpClient.post(getApiUrl("sales/import"), formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
+  return httpClient.post(getApiUrl("sales/import"), toFormData(data));
 };
 
 /**

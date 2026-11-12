@@ -1,15 +1,15 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import SimpleTable from "../../ui/SimpleTable/SimpleTable";
 import CustomButton from "../../ui/Button/Button";
 import { useUser } from "../../../context/UserContext";
 import { exportToExcel, getFormattedDate, formatCurrency } from "../../../utils/utils";
 import { getCashSummary } from "../../../api/sales";
-import { getCashFlow } from "../../../api/cashflow";
 import { getDuplicateSales } from "../../../api/notifications";
-import { showWarning } from "../../../utils/alerts";
+import { showWarning, showRequestError } from "../../../utils/alerts";
 import { CustomSpinner } from "../../ui/Spinner/Spinner";
 import PageHeader from "../../ui/PageHeader";
-import { Grid, TextField, Box, Typography, Stack } from "@mui/material";
+import { Grid, Box, Typography, Stack } from "@mui/material";
+import { TextField } from "../../ui/Field/Field";
 import DownloadIcon from "@mui/icons-material/Download";
 import PaymentIcon from "@mui/icons-material/Payment";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
@@ -31,45 +31,36 @@ const CashSummary = () => {
   const [totalSummary, setTotalSummary] = useState([]);
   const today = getFormattedDate();
   const [date, setDate] = useState(today);
-  const [cashFlow, setCashFlow] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const processSummary = (data) => {
-    setPaymentMethodsSummary(data.filter((c) => c.payment_method_data));
-    setSalesSummary(data.filter((c) => c.sales_data));
-    setCashFlowSummary(data.filter((c) => c.cashflow_data));
-    setTotalSummary(data.filter((c) => c.total_data));
-    setCashSummary(data);
-  };
-
-  const fetchSummary = useCallback(async () => {
-    const res = await getCashSummary(date);
-    processSummary(res.data);
-  }, [date]);
-
   useEffect(() => {
+    let ignore = false;
     const fetchData = async () => {
       setLoading(true);
-      const [summaryRes, cashFlowRes] = await Promise.all([
-        getCashSummary(date),
-        getCashFlow({ start_date: date, end_date: date }),
-      ]);
-      processSummary(summaryRes.data);
-      setCashFlow(cashFlowRes.data);
-      setLoading(false);
+      try {
+        const { data } = await getCashSummary(date);
+        if (ignore) return;
+        setPaymentMethodsSummary(data.filter((c) => c.payment_method_data));
+        setSalesSummary(data.filter((c) => c.sales_data));
+        setCashFlowSummary(data.filter((c) => c.cashflow_data));
+        setTotalSummary(data.filter((c) => c.total_data));
+        setCashSummary(data);
+      } catch (error) {
+        if (!ignore) showRequestError("cargar el corte de caja", error);
+      } finally {
+        if (!ignore) setLoading(false);
+      }
     };
     fetchData();
+    return () => { ignore = true; };
   }, [date]);
 
   useEffect(() => {
-    fetchSummary();
-  }, [cashFlow, fetchSummary]);
-
-  useEffect(() => {
+    let ignore = false;
     const fetchDuplicates = async () => {
       try {
         const { data } = await getDuplicateSales();
-        if (data && data.length > 0 && data[0].messages && data[0].messages.length > 0) {
+        if (!ignore && data && data.length > 0 && data[0].messages && data[0].messages.length > 0) {
           const message = `${data[0].messages.join(", ")}\n\nPosiblemente no cuadren las cuentas por esas ventas duplicadas.`;
           showWarning("Posibles ventas duplicadas", message);
         }
@@ -78,6 +69,7 @@ const CashSummary = () => {
       }
     };
     fetchDuplicates();
+    return () => { ignore = true; };
   }, []);
 
   const handleExport = () => {

@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SmartVenta · Logo con el estilo del sitio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Rubik:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --royal:#0030AB; --deep:#00269E; --g1:#0030CC; --g2:#00A4DB;
+    --cyan:#00E0D8; --amber:#FFB020; --navy:#0B1B4D; --ink:#242F3E; --muted:#5B6472;
+    --page:#F8FAFC; --paper:#fff; --border:#E2E8F0;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--page); color:var(--ink); font-family:Rubik,system-ui,sans-serif; padding:32px 16px 48px; }
+  .wrap { max-width:1060px; margin:0 auto; }
+  h1 { font-family:Poppins,sans-serif; font-weight:500; font-size:30px; margin:0 0 6px; text-align:center; color:var(--ink); }
+  h1 span { color:var(--royal); }
+  p.sub { color:var(--muted); text-align:center; margin:0 0 20px; font-size:15px; }
+  .brand { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-bottom:28px; }
+  .tok { display:flex; align-items:center; gap:8px; background:var(--paper); border:1px solid var(--border); border-radius:12px; padding:6px 10px 6px 6px; font-size:12px; color:var(--muted); }
+  .tok i { width:22px; height:22px; border-radius:6px; display:block; font-style:normal; }
+  .tok b { color:var(--ink); font-weight:600; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(470px,1fr)); gap:20px; }
+  @media (max-width:540px){ .grid{ grid-template-columns:1fr; } }
+  .card { background:var(--paper); border:1px solid var(--border); border-radius:20px; overflow:hidden; box-shadow:0 10px 30px rgba(37,99,235,.08); }
+  .stage { position:relative; padding:32px 20px; display:flex; align-items:center; justify-content:center; gap:14px; min-height:130px; }
+  .stage::after { content:attr(data-l); position:absolute; left:12px; top:9px; font:500 10px Poppins,sans-serif; letter-spacing:.1em; text-transform:uppercase; opacity:.55; }
+  .s-hero { background:linear-gradient(80deg,#0030CC 0%,#0079BE 60%,#00A4DB 100%); color:#fff; --bg:#0050c4; --hl:var(--cyan); }
+  .s-white { background:#fff; color:var(--navy); --bg:#fff; --hl:#0079BE; border-top:1px solid var(--border); }
+  .s-navy { background:var(--navy); color:#fff; --bg:var(--navy); --hl:var(--cyan); }
+  .info { padding:14px 18px 18px; border-top:1px solid var(--border); }
+  .info h2 { font-family:Poppins,sans-serif; font-size:16px; font-weight:600; margin:0 0 4px; color:var(--ink); }
+  .info p { font-size:13.5px; color:var(--muted); margin:0; line-height:1.6; }
+  .wm { font-family:Poppins,sans-serif; line-height:1; white-space:nowrap; letter-spacing:-.01em; }
+  .wm .a { font-weight:400; }
+  .wm .b { font-weight:700; }
+  .hl { color:var(--hl); }
+
+  /* Adaptable */
+  .resp { display:flex; flex-direction:column; gap:14px; }
+  .row { background:var(--paper); border:1px solid var(--border); border-radius:16px; padding:14px; display:grid; grid-template-columns:28px 1fr 150px 92px; gap:14px; align-items:center; }
+  .num { font:600 18px Poppins,sans-serif; color:var(--royal); text-align:center; }
+  .cap { font:500 10px Poppins,sans-serif; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:6px; }
+  .desk { border-radius:12px; overflow:hidden; }
+  .desk .bar { height:60px; background:linear-gradient(80deg,#0030CC,#00A4DB); color:#fff; display:flex; align-items:center; gap:10px; padding:0 18px; --bg:#0050c4; --hl:var(--cyan); }
+  .desk .nav { margin-left:auto; display:flex; gap:14px; align-items:center; font:500 13px Poppins,sans-serif; }
+  .desk .pill { border:2px solid var(--cyan); border-radius:45px; padding:5px 14px; }
+  .phone { width:150px; height:100px; border-radius:18px 18px 0 0; border:3px solid var(--ink); border-bottom:none; overflow:hidden; background:#fff; }
+  .phone .bar { height:50px; margin-top:14px; background:linear-gradient(80deg,#0030CC,#00A4DB); color:#fff; display:flex; align-items:center; justify-content:space-between; padding:0 12px; --bg:#0050c4; --hl:var(--cyan); }
+  .phone .bar b { width:16px; height:2px; background:#fff; box-shadow:0 5px 0 #fff,0 -5px 0 #fff; display:block; }
+  .home { display:flex; flex-direction:column; align-items:center; gap:5px; font-size:10px; color:var(--muted); }
+  @media (max-width:680px){ .row{ grid-template-columns:1fr; } .num{text-align:left} }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="gSite" x1="0" y1="1" x2="1" y2="0.2">
+      <stop offset="0" stop-color="#0030CC"/><stop offset="1" stop-color="#00A4DB"/>
+    </linearGradient>
+    <linearGradient id="gArrow" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#00E0D8"/><stop offset="1" stop-color="#FFB020"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 1. Terminal -->
+  <symbol id="i1" viewBox="0 0 100 100">
+    <rect x="11" y="12" width="78" height="58" rx="13" fill="none" stroke="currentColor" stroke-width="7"/>
+    <rect x="27" y="46" width="11" height="16" rx="3" fill="currentColor"/>
+    <rect x="45" y="36" width="11" height="26" rx="3" fill="currentColor"/>
+    <rect x="63" y="24" width="11" height="38" rx="3" fill="#FFB020"/>
+    <path d="M44 70 L40 83 H60 L56 70 Z" fill="currentColor"/>
+    <rect x="30" y="83" width="40" height="7" rx="3.5" fill="currentColor"/>
+  </symbol>
+
+  <!-- 2. Tile con degradado del sitio -->
+  <symbol id="i2" viewBox="0 0 100 100">
+    <rect x="4" y="4" width="92" height="92" rx="26" fill="url(#gSite)"/>
+    <rect x="4.5" y="4.5" width="91" height="91" rx="25.5" fill="none" stroke="#fff" stroke-opacity=".28"/>
+    <rect x="23" y="55" width="14" height="22" rx="4" fill="#fff" opacity=".6"/>
+    <rect x="43" y="41" width="14" height="36" rx="4" fill="#fff"/>
+    <rect x="63" y="24" width="14" height="53" rx="4" fill="#FFB020"/>
+  </symbol>
+
+  <!-- 3. Barras con flecha -->
+  <symbol id="i3" viewBox="0 0 100 100">
+    <rect x="10" y="60" width="20" height="30" rx="5" fill="currentColor"/>
+    <rect x="38" y="42" width="20" height="48" rx="5" fill="currentColor"/>
+    <path d="M66 90 V34 H60 L76 10 L92 34 H86 V90 Z" fill="url(#gArrow)"/>
+  </symbol>
+
+  <!-- 4. Círculo con tendencia -->
+  <symbol id="i4" viewBox="0 0 100 100">
+    <circle cx="50" cy="50" r="44" fill="currentColor"/>
+    <path d="M26 64 L42 48 L54 57 L72 36" fill="none" stroke="var(--bg)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="73" cy="35" r="9" fill="#FFB020"/>
+  </symbol>
+</svg>
+
+<div class="wrap">
+  <h1>SmartVenta: logo con el estilo <span>del sitio</span></h1>
+  <p class="sub">Con la tipografía Poppins y los colores que usa smartventa-landing (src/constants/design.js)</p>
+
+  <div class="brand">
+    <div class="tok"><i style="background:linear-gradient(80deg,#0030CC,#00A4DB)"></i><b>Degradado</b> #0030CC → #00A4DB</div>
+    <div class="tok"><i style="background:#0030AB"></i><b>Azul</b> #0030AB</div>
+    <div class="tok"><i style="background:#00E0D8"></i><b>Acento</b> #00E0D8</div>
+    <div class="tok"><i style="background:#FFB020"></i><b>Ámbar</b> #FFB020</div>
+    <div class="tok"><i style="background:#0B1B4D"></i><b>Navy</b> #0B1B4D</div>
+    <div class="tok"><i style="background:#fff;border:1px solid #E2E8F0;font:600 12px Poppins;color:#0030AB;display:flex;align-items:center;justify-content:center">Aa</i><b>Poppins</b> 400 / 700</div>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <h1 style="margin-top:44px">Adaptable: <span>escritorio y móvil</span></h1>
+  <p class="sub">Icono + letra en escritorio, solo icono en celular, como ícono de app y favicon</p>
+  <div class="resp" id="resp"></div>
+</div>
+
+<script>
+  const C = [
+    { id:'i1', name:'1. Terminal', size:62, word:'<span class="a">Smart</span><span class="b">Venta</span>',
+      desc:'Una pantalla de POS con barras; la más alta, en el ámbar del sitio (el mismo de "bajo control" y del botón principal).',
+      tile:'linear-gradient(80deg,#0030CC,#00A4DB)' },
+    { id:'i2', name:'2. Ícono de app con degradado', size:58, word:'<span class="a hl">smart</span><span class="b">venta</span>',
+      desc:'Un cuadro con el mismo degradado azul → celeste del hero, barras blancas y la última en ámbar. "smart" va en el cian de acento. Es la mejor opción para app y favicon.',
+      tile:null },
+    { id:'i3', name:'3. Barras con flecha', size:62, word:'<span class="a">Smart</span><span class="b">Venta</span>',
+      desc:'La más cercana a tu logo actual, pero con solo 3 barras. La flecha va en degradado cian → ámbar, los dos acentos del sitio.',
+      tile:'linear-gradient(135deg,#0B1B4D,#00269E)' },
+    { id:'i4', name:'4. Círculo con tendencia', size:56, word:'<span class="a">Smart</span><span class="b">Venta</span>',
+      desc:'Un círculo con la línea de ventas y un punto ámbar. Es el más simple y redondeado, igual que los botones tipo píldora del sitio.',
+      tile:'#fff' },
+  ];
+  const stage = (c, cls, label) => `<div class="stage ${cls}" data-l="${label}"><svg width="${c.size}" height="${c.size}"><use href="#${c.id}"/></svg><span class="wm" style="font-size:36px">${c.word}</span></div>`;
+  document.getElementById('grid').innerHTML = C.map(c => `
+    <div class="card">
+      ${stage(c,'s-hero','Hero del sitio')}
+      ${stage(c,'s-white','Fondo claro')}
+      ${stage(c,'s-navy','Fondo oscuro')}
+      <div class="info"><h2>${c.name}</h2><p>${c.desc}</p></div>
+    </div>`).join('');
+
+  const appTile = c => {
+    if (!c.tile) return `<svg width="62" height="62"><use href="#${c.id}"/></svg>`;
+    const light = c.tile === '#fff';
+    return `<div style="width:62px;height:62px;border-radius:16px;background:${c.tile};${light?'border:1px solid #E2E8F0;':''}display:flex;align-items:center;justify-content:center;color:${light?'#0030AB':'#fff'};--bg:${light?'#fff':'#00269E'}"><svg width="${c.id==='i4'?48:44}" height="${c.id==='i4'?48:44}"><use href="#${c.id}"/></svg></div>`;
+  };
+  const fav = c => c.tile
+    ? `<div style="width:22px;height:22px;border-radius:5px;background:${c.tile};${c.tile==='#fff'?'border:1px solid #E2E8F0;':''}display:flex;align-items:center;justify-content:center;color:${c.tile==='#fff'?'#0030AB':'#fff'};--bg:${c.tile==='#fff'?'#fff':'#00269E'}"><svg width="16" height="16"><use href="#${c.id}"/></svg></div>`
+    : `<svg width="22" height="22"><use href="#${c.id}"/></svg>`;
+
+  document.getElementById('resp').innerHTML = C.map((c,n) => `
+    <div class="row">
+      <div class="num">${n+1}</div>
+      <div><div class="cap">Escritorio · icono + letra</div>
+        <div class="desk"><div class="bar"><svg width="34" height="34"><use href="#${c.id}"/></svg><span class="wm" style="font-size:22px">${c.word}</span>
+          <span class="nav"><span>Funciones</span><span>Precios</span><span class="pill">Contacto</span></span></div></div></div>
+      <div><div class="cap">Móvil · solo icono</div>
+        <div class="phone"><div class="bar"><svg width="30" height="30"><use href="#${c.id}"/></svg><b></b></div></div></div>
+      <div class="home"><div class="cap" style="margin:0">App · favicon</div>${appTile(c)}<div style="display:flex;align-items:center;gap:6px">${fav(c)}<span>SmartVenta</span></div></div>
+    </div>`).join('');
+</script>
+</body>
+</html>

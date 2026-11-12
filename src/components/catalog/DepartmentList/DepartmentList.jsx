@@ -2,7 +2,7 @@ import React from "react";
 import CatalogList from "../CatalogList/CatalogList";
 import { deleteDepartments } from "../../../api/departments";
 import { useDepartments } from "../../../hooks/useDepartments";
-import { useCreateDepartment, useUpdateDepartment } from "../../../hooks/useDepartmentMutations";
+import { useCreateDepartment, useUpdateDepartment } from "../../../hooks/useCatalogMutations";
 
 const LABELS = {
   title: "Departamentos",
@@ -20,6 +20,7 @@ const LABELS = {
 const DepartmentList = () => (
   <CatalogList
     useData={useDepartments}
+    queryKey="departments"
     deleteFn={deleteDepartments}
     useCreate={useCreateDepartment}
     useUpdate={useUpdateDepartment}

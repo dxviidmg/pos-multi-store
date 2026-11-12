@@ -1,27 +1,18 @@
 import React, { useEffect, useState } from "react";
 import DataTable from "../../ui/DataTable/DataTable";
 import { getSubscriptions } from "../../../api/subscriptions";
-import { Grid, Chip } from "@mui/material";
-import { logger } from "../../../utils/logger";
-import { formatCurrency } from "../../../utils/utils";
+import { Grid } from "@mui/material";
+import { showRequestError } from "../../../utils/alerts";
+import { formatCurrency, formatLongDate } from "../../../utils/utils";
+import { STATUS_TONES } from "../../../constants";
+import PageHeader from "../../ui/PageHeader";
+import StatusChip from "../../ui/StatusChip";
 
 const statusMap = {
-  authorized: { label: "Autorizada", color: "success" },
-  paused: { label: "Pausada", color: "warning" },
-  cancelled: { label: "Cancelada", color: "error" },
-  expired: { label: "Vencida", color: "warning" },
-};
-
-const formatDate = (dateStr) => {
-  if (!dateStr) return "—";
-  const date = new Date(dateStr);
-  return date.toLocaleDateString("es-MX", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  authorized: { label: "Autorizada", tone: STATUS_TONES.SUCCESS },
+  paused: { label: "Pausada", tone: STATUS_TONES.WARNING },
+  cancelled: { label: "Cancelada", tone: STATUS_TONES.ERROR },
+  expired: { label: "Vencida", tone: STATUS_TONES.WARNING },
 };
 
 const formatCard = (row) => {
@@ -38,23 +29,25 @@ const SubscriptionList = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let ignore = false;
     const fetchSubscriptions = async () => {
       try {
         const response = await getSubscriptions();
-        setSubscriptions(response.data);
+        if (!ignore) setSubscriptions(response.data);
       } catch (error) {
-        logger.error("Error al obtener suscripciones:", error);
+        if (!ignore) showRequestError("cargar las suscripciones", error);
       } finally {
-        setLoading(false);
+        if (!ignore) setLoading(false);
       }
     };
     fetchSubscriptions();
+    return () => { ignore = true; };
   }, []);
 
   return (
     <Grid container>
       <Grid item xs={12} className="card">
-        <h1>Suscripciones</h1>
+        <PageHeader title="Suscripciones" />
         <DataTable
           progressPending={loading}
           noDataComponent="Sin suscripciones"
@@ -83,14 +76,14 @@ const SubscriptionList = () => {
             {
               name: "Estado",
               cell: (row) => {
-                const status = statusMap[row.status] || { label: row.status, color: "default" };
-                return <Chip size="small" label={status.label} color={status.color} variant="filled" />;
+                const status = statusMap[row.status] || { label: row.status, tone: STATUS_TONES.NEUTRAL };
+                return <StatusChip label={status.label} tone={status.tone} />;
               },
               width: 140,
             },
             {
               name: "Fecha de creación",
-              selector: (row) => formatDate(row.created_at),
+              selector: (row) => formatLongDate(row.created_at, { withTime: true }),
               minWidth: 220,
             },
           ]}

@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SmartVenta POS · Propuesta de colores</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --primary:#1D4ED8; --primary-hover:#1E40AF; --tint:#EEF3FF; --tint-bd:#C7D7FE;
+    --bg:#F5F7FB; --paper:#fff; --border:#E4E8EF; --text:#0F172A; --text2:#475569; --cap:#64748B;
+    --thead:#F8FAFC; --row:#F8FAFC;
+    --side1:#0B1B4D; --side2:#08143A; --side-tx:rgba(255,255,255,.72); --side-act:rgba(255,255,255,.09); --cyan:#00E0D8; --amber:#FFB020;
+    --top:#fff; --top-tx:#0F172A; --top-ic:#475569;
+  }
+  body.dark{
+    --primary:#4C7DFF; --primary-hover:#6B93FF; --tint:rgba(76,125,255,.14); --tint-bd:rgba(76,125,255,.35);
+    --bg:#0F1420; --paper:#161C2A; --border:#262F42; --text:#E6EAF2; --text2:#A3ADC2; --cap:#7F8AA3;
+    --thead:#1B2232; --row:#1B2232; --side1:#0B1222; --side2:#0B1222; --top:#161C2A; --top-tx:#E6EAF2; --top-ic:#A3ADC2;
+  }
+  body.lightside{ --side1:#FFFFFF; --side2:#FFFFFF; --side-tx:#475569; --side-act:var(--tint); }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,sans-serif;background:#e9edf3;color:var(--text);font-size:13px}
+  .bar{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;padding:14px 16px;font-size:13px;background:#fff;border-bottom:1px solid #e2e8f0;color:#0F172A}
+  .bar b{font-family:'Plus Jakarta Sans',Inter,sans-serif;font-size:15px;margin-right:8px}
+  .bar button{font:600 12px Inter;padding:7px 12px;border-radius:8px;border:1px solid #d6dce6;background:#fff;color:#334155;cursor:pointer}
+  .bar button.on{background:#1D4ED8;border-color:#1D4ED8;color:#fff}
+  .app{display:grid;grid-template-columns:220px 1fr;height:640px;max-width:1400px;margin:16px auto;border-radius:12px;overflow:hidden;box-shadow:0 10px 40px rgba(15,23,42,.12);background:var(--bg)}
+  @media(max-width:800px){.app{grid-template-columns:1fr}.side{display:none}}
+  .side{background:linear-gradient(180deg,var(--side1),var(--side2));color:var(--side-tx);display:flex;flex-direction:column;border-right:1px solid var(--border)}
+  body:not(.lightside) .side{border-right:none}
+  .logo{height:56px;display:flex;align-items:center;gap:8px;padding:0 18px;border-bottom:1px solid rgba(255,255,255,.06)}
+  body.lightside .logo{border-bottom:1px solid var(--border)}
+  .logo span{font:400 18px Poppins,Inter;letter-spacing:-.01em;color:#fff} .logo span b{font-weight:700}
+  body.lightside .logo span{color:#0B1B4D}
+  .nav{padding:10px 8px;flex:1}
+  .it{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;font-weight:500;margin-bottom:2px;position:relative}
+  .it i{width:16px;height:16px;border-radius:4px;background:currentColor;opacity:.75;display:block}
+  .it.act{background:var(--side-act);color:#fff;font-weight:600}
+  body.lightside .it.act{color:var(--primary)}
+  .it.act::before{content:"";position:absolute;left:0;top:8px;bottom:8px;width:3px;border-radius:3px;background:var(--cyan)}
+  body.lightside .it.act::before{background:var(--primary)}
+  .it .ch{margin-left:auto;opacity:.5;font-size:10px}
+  .foot{padding:8px;border-top:1px solid rgba(255,255,255,.06)} body.lightside .foot{border-top:1px solid var(--border)}
+  .main{display:flex;flex-direction:column;min-width:0}
+  .top{height:56px;background:var(--top);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:14px;color:var(--top-tx)}
+  .top h3{margin:0;font:700 16px 'Plus Jakarta Sans',Inter,sans-serif}
+  .top .ics{margin-left:auto;display:flex;gap:16px;align-items:center}
+  .top .ics i{width:18px;height:18px;border-radius:4px;border:2px solid var(--top-ic);display:block}
+  .av{width:30px;height:30px;border-radius:50%;background:var(--amber);color:#0B1B4D;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .content{padding:20px;overflow:auto}
+  .card{background:var(--paper);border:1px solid var(--border);border-radius:12px;padding:20px}
+  .hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+  .hd h2{margin:0;font:700 18px 'Plus Jakarta Sans',Inter,sans-serif;color:var(--text)}
+  .btn{font:600 12px Inter;border-radius:8px;padding:7px 14px;border:1px solid var(--border);background:var(--paper);color:var(--text2)}
+  .btn.pri{background:var(--primary);border-color:var(--primary);color:#fff}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+  @media(max-width:1000px){.kpis{grid-template-columns:repeat(2,1fr)}}
+  .kpi{border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;gap:12px;align-items:center;background:var(--paper)}
+  .kpi .ic{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px}
+  .kpi small{display:block;color:var(--cap);font-weight:500;font-size:12px;margin-bottom:2px}
+  .kpi strong{font:700 20px 'Plus Jakarta Sans',Inter,sans-serif;color:var(--text);font-variant-numeric:tabular-nums}
+  .row1{display:flex;align-items:center;gap:18px;margin-bottom:12px;color:var(--text2)}
+  .cb{width:16px;height:16px;border-radius:4px;border:1.5px solid #94A3B8;display:inline-block;vertical-align:-3px;margin-right:6px}
+  .cb.on{background:var(--primary);border-color:var(--primary)}
+  .legend{margin-left:auto;font-size:12px}
+  .fields{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+  .fld{border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);background:var(--paper);position:relative}
+  .fld label{position:absolute;top:-8px;left:8px;background:var(--paper);padding:0 4px;font-size:10.5px;color:var(--cap)}
+  .tabs{display:flex;gap:4px;background:var(--thead);border:1px solid var(--border);border-radius:10px;padding:4px;margin-bottom:14px;flex-wrap:wrap}
+  .tab{flex:1;text-align:center;padding:7px 10px;border-radius:7px;font-weight:600;font-size:12px;color:var(--text2);white-space:nowrap}
+  .tab.on{background:var(--paper);color:var(--primary);box-shadow:0 1px 3px rgba(15,23,42,.1)}
+  table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+  th{background:var(--thead);color:var(--text2);font-weight:600;font-size:12px;text-align:center;padding:10px 12px;border-bottom:1px solid var(--border)}
+  td{padding:10px 12px;text-align:center;border-bottom:1px solid var(--border);color:var(--text);font-variant-numeric:tabular-nums}
+  tr:last-child td{border-bottom:none} tbody tr:hover td{background:var(--row)}
+  .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#D97706;margin-right:8px}
+  .go{width:28px;height:28px;border-radius:8px;background:var(--tint);border:1px solid var(--tint-bd);display:inline-flex;align-items:center;justify-content:center;color:var(--primary);font-weight:700}
+  h4{font:700 16px 'Plus Jakarta Sans',Inter,sans-serif;margin:22px 0 10px;color:var(--text)}
+  .notes{max-width:1400px;margin:0 auto 32px;padding:0 16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+  .note{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:14px 16px;color:#334155;line-height:1.5}
+  .note b{color:#0F172A;display:block;margin-bottom:4px;font-family:'Plus Jakarta Sans',Inter,sans-serif}
+  .sw{display:flex;gap:6px;margin-top:8px}.sw span{width:24px;height:24px;border-radius:6px;border:1px solid rgba(0,0,0,.08)}
+  body.dark .kpi .ic{background:rgba(255,255,255,.06)!important}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="bar"><b>Propuesta de colores · SmartVenta POS</b>
+  <button id="b1" class="on" onclick="setSide(false)">Sidebar navy</button>
+  <button id="b2" onclick="setSide(true)">Sidebar claro</button>
+  <button id="b3" onclick="toggleDark()">Modo oscuro</button>
+</div>
+
+<div class="app">
+  <aside class="side">
+    <div class="logo">
+      <svg width="30" height="30" viewBox="0 0 100 100"><g id="ic"><rect x="11" y="12" width="78" height="58" rx="13" fill="none" stroke="currentColor" stroke-width="7"/><rect x="27" y="46" width="11" height="16" rx="3" fill="currentColor"/><rect x="45" y="36" width="11" height="26" rx="3" fill="currentColor"/><rect x="63" y="24" width="11" height="38" rx="3" fill="#FFB020"/><path d="M44 70 L40 83 H60 L56 70 Z" fill="currentColor"/><rect x="30" y="83" width="40" height="7" rx="3.5" fill="currentColor"/></g></svg>
+      <span>Smart<b>Venta</b></span>
+    </div>
+    <div class="nav">
+      <div class="it"><i></i>Tableros<span class="ch">▼</span></div>
+      <div class="it act"><i></i>Tiendas</div>
+      <div class="it"><i></i>Clientes</div>
+      <div class="it"><i></i>Vendedores</div>
+      <div class="it"><i></i>Productos<span class="ch">▼</span></div>
+      <div class="it"><i></i>Auditoría<span class="ch">▼</span></div>
+      <div class="it"><i></i>Facturación<span class="ch">▼</span></div>
+      <div class="it"><i></i>Servicios</div>
+      <div class="it"><i></i>Sincronizar</div>
+    </div>
+    <div class="foot">
+      <div class="it" style="color:#22C55E"><i></i>Soporte</div>
+      <div class="it" style="color:#F87171"><i></i>Cerrar sesión</div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="top"><span style="font-size:18px;color:var(--top-ic)">☰</span><h3>Demo</h3>
+      <div class="ics"><i></i><i></i><i></i><i></i><i></i><i></i><div class="av">D</div></div></div>
+    <div class="content">
+      <div class="card">
+        <div class="hd"><h2>Tiendas</h2><span class="btn pri">+ Crear tienda</span></div>
+        <div class="kpis">
+          <div class="kpi"><div class="ic" style="background:#EEF3FF;color:#1D4ED8">#</div><div><small># Productos</small><strong>16,318</strong></div></div>
+          <div class="kpi"><div class="ic" style="background:#ECFDF5;color:#059669">↗</div><div><small>Ventas totales</small><strong>0</strong></div></div>
+          <div class="kpi"><div class="ic" style="background:#E6F7FC;color:#0284C7">$</div><div><small>Monto total</small><strong>$0.00</strong></div></div>
+          <div class="kpi"><div class="ic" style="background:#FFF7E6;color:#B45309">★</div><div><small>Ganancia total</small><strong>$0.00</strong></div></div>
+        </div>
+        <div class="row1"><span><span class="cb on"></span>Tiendas</span><span><span class="cb"></span>Almacenes</span>
+          <span class="legend"><span style="color:#16A34A">● Arriba del promedio</span> · <span style="color:#D97706">● Promedio</span> · <span style="color:#DC2626">● Debajo del promedio</span></span></div>
+        <div class="fields">
+          <div class="fld"><label>Fecha de inicio</label>10/09/2026</div>
+          <div class="fld"><label>Fecha de fin</label>10/09/2026</div>
+          <div class="fld" style="color:var(--cap)"><label>Rango</label>1 día</div>
+          <div class="fld" style="color:var(--cap)">Departamento ▾</div>
+        </div>
+        <div class="tabs"><div class="tab on">Pagos (2)</div><div class="tab">Ventas (2)</div><div class="tab">Administradores</div><div class="tab">$ Inversión</div><div class="tab">Impresoras (1)</div><div class="tab">Acciones</div></div>
+        <table>
+          <thead><tr><th>Nombre</th><th>Efectivo</th><th>Tarjeta</th><th>Transferencia</th><th>Caja</th><th>Entrar</th></tr></thead>
+          <tbody>
+            <tr><td><span class="dot"></span>Principal</td><td>$0.00</td><td>$0.00</td><td>$0.00</td><td>$0.00</td><td><span class="go">⌂</span></td></tr>
+            <tr><td><span class="dot"></span>Secundaria</td><td>$0.00</td><td>$0.00</td><td>$0.00</td><td>$0.00</td><td><span class="go">⌂</span></td></tr>
+          </tbody>
+        </table>
+        <h4>Totales</h4>
+        <table><thead><tr><th>Nombre</th><th>Efectivo</th><th>Tarjeta</th><th>Transferencia</th><th>Caja</th><th>Entrar</th></tr></thead>
+          <tbody><tr><td colspan="6" style="color:var(--cap)">Sin datos en este periodo</td></tr></tbody></table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="notes">
+  <div class="note"><b>El azul solo donde hay acción</b>Botones, pestaña activa, checkbox y enlaces. Los encabezados de tabla, las tarjetas KPI y la barra superior pasan a neutros. Es lo que hacen Stripe, Linear o Shopify: grandes superficies tranquilas.</div>
+  <div class="note"><b>Azul más suave</b>De #0030CC (eléctrico) a #1D4ED8: sigue siendo la familia del landing, pero con menos vibración en pantalla.
+    <div class="sw"><span style="background:#0030CC"></span><span style="background:#1D4ED8"></span><span style="background:#EEF3FF"></span></div></div>
+  <div class="note"><b>Sidebar navy del landing</b>Usa #0B1B4D, el mismo navy del footer y los textos del sitio, con el cian #00E0D8 solo como indicador. Sin degradado brillante ni resplandor.
+    <div class="sw"><span style="background:#0B1B4D"></span><span style="background:#00E0D8"></span><span style="background:#FFB020"></span></div></div>
+  <div class="note"><b>Fondos y texto descansados</b>Fondo gris azulado #F5F7FB en lugar de blanco puro, texto #0F172A y bordes #E4E8EF. El contraste es alto para leer, sin deslumbrar.</div>
+</div>
+
+<script>
+  function setSide(light){document.body.classList.toggle('lightside',light);b1.classList.toggle('on',!light);b2.classList.toggle('on',light);}
+  function toggleDark(){document.body.classList.toggle('dark');b3.classList.toggle('on');}
+</script>
+</body>
+</html>

@@ -3,6 +3,7 @@ import { IconButton, Popover, Typography, Box } from "@mui/material";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import { useLocation } from "react-router-dom";
 import helpTexts from "../../../constants/helpTexts";
+import CustomTooltip from "../Tooltip";
 
 const PageHelp = memo(() => {
   const { pathname } = useLocation();
@@ -13,16 +14,18 @@ const PageHelp = memo(() => {
 
   return (
     <>
-      <IconButton color="inherit" onClick={(e) => setAnchorEl(e.currentTarget)} size="small">
-        <HelpOutlineIcon />
-      </IconButton>
+      <CustomTooltip text="Ayuda" position="bottom">
+        <IconButton color="inherit" onClick={(e) => setAnchorEl(e.currentTarget)} size="small" aria-label="Ayuda">
+          <HelpOutlineIcon />
+        </IconButton>
+      </CustomTooltip>
       <Popover
         open={Boolean(anchorEl)}
         anchorEl={anchorEl}
         onClose={() => setAnchorEl(null)}
         anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
         transformOrigin={{ vertical: "top", horizontal: "right" }}
-        slotProps={{ paper: { sx: { maxWidth: 400, borderRadius: 1.5, overflow: "hidden", bgcolor: "background.default" } } }}
+        slotProps={{ paper: { sx: { maxWidth: 400, overflow: "hidden", bgcolor: "background.default" } } }}
       >
         <Box sx={{ px: 2.5, py: 2 }}>
           <Typography variant="body1" color="text.primary" sx={{ lineHeight: 1.7 }}>

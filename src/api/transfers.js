@@ -1,14 +1,16 @@
 import httpClient from "./httpClient";
+import { createApiService } from "./apiFactory";
 import { getApiUrl } from "./utils";
+
+export const transferApi = createApiService("transfer");
+const distributionApi = createApiService("distribution");
 
 /**
  * Create new transfer between stores
  * @param {Object} data - Transfer data
  * @returns {Promise<Object>} Created transfer response
  */
-export const createTransfer = async (data) => {
-  return httpClient.post(getApiUrl("transfer"), data);
-};
+export const createTransfer = transferApi.create;
 
 /**
  * Get all transfers
@@ -42,26 +44,20 @@ export const confirmDistribution = async (data) => {
  * @param {Object} data - Distribution data
  * @returns {Promise<Object>} Created distribution response
  */
-export const createDistribution = async (data) => {
-  return httpClient.post(getApiUrl("distribution"), data);
-};
+export const createDistribution = distributionApi.create;
 
 /**
  * Get all distributions
  * @returns {Promise<Object>} Distributions list response
  */
-export const getDistributions = async () => {
-  return httpClient.get(getApiUrl("distribution"));
-};
+export const getDistributions = () => distributionApi.getAll();
 
 /**
  * Update transfer
  * @param {Object} data - Transfer data with ID
  * @returns {Promise<Object>} Updated transfer response
  */
-export const updateTransfer = async (data) => {
-  return httpClient.patch(getApiUrl(`transfer/${data.id}`), data);
-};
+export const updateTransfer = transferApi.update;
 
 /**
  * Delete transfer (alternative method)
@@ -77,6 +73,4 @@ export const deleteTransfer = async (data) => {
  * @param {number|string} id - Distribution ID
  * @returns {Promise<Object>} Deletion response
  */
-export const deleteDistribution = async (id) => {
-  return httpClient.delete(getApiUrl(`distribution/${id}`));
-};
+export const deleteDistribution = distributionApi.delete;

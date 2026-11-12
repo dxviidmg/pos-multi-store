@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { getStoreProductSuggestions } from "../api/products";
 import { logger } from "../utils/logger";
+import { QUERY_TYPES } from "../constants";
 
 const MIN_CHARS = 3;
 const DEBOUNCE_MS = 300;
@@ -31,7 +32,7 @@ export const useProductSuggestions = ({ query, queryType, enabled }) => {
     const trimmed = (query || "").trim();
 
     // Condiciones para NO buscar: modo no habilitado, tipo distinto de "q" o texto corto.
-    if (!enabled || queryType !== "q" || trimmed.length < MIN_CHARS) {
+    if (!enabled || queryType !== QUERY_TYPES.NAME || trimmed.length < MIN_CHARS) {
       if (abortRef.current) abortRef.current.abort();
       setSuggestions([]);
       setNoResults(false);
@@ -73,7 +74,6 @@ export const useProductSuggestions = ({ query, queryType, enabled }) => {
     }, DEBOUNCE_MS);
 
     return () => clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query, queryType, enabled]);
 
   // Limpieza al desmontar.

@@ -1,27 +1,18 @@
 {
-  "short_name": "SmartVenta",
-  "name": "SmartVenta — Punto de Venta",
+  "short_name": "SmartVenta - App",
+  "name": "SmartVenta - App",
   "icons": [
     {
       "src": "favicon.ico",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
     },
-    {
-      "src": "logo2.webp",
-      "type": "image/webp",
-      "sizes": "192x192",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "logo2.webp",
-      "type": "image/webp",
-      "sizes": "512x512",
-      "purpose": "any maskable"
-    }
+    { "src": "icon-192.png", "type": "image/png", "sizes": "192x192", "purpose": "any" },
+    { "src": "icon-512.png", "type": "image/png", "sizes": "512x512", "purpose": "any" },
+    { "src": "icon-maskable-512.png", "type": "image/png", "sizes": "512x512", "purpose": "maskable" }
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#04346b",
-  "background_color": "#ffffff"
+  "theme_color": "#171A4A",
+  "background_color": "#171A4A"
 }

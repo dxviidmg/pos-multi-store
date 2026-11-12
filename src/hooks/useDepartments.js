@@ -1,10 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
 import { getDepartments } from '../api/departments';
+import { createQueryHook } from './createQueryHook';
 
-export const useDepartments = () => {
-  return useQuery({
-    queryKey: ['departments'],
-    queryFn: getDepartments,
-    select: (response) => response.data,
-  });
-};
+export const useDepartments = createQueryHook('departments', getDepartments);

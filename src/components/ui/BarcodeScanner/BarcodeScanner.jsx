@@ -12,16 +12,24 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
+import { alpha } from "@mui/material/styles";
+import CustomTooltip from "../Tooltip";
 
 const BarcodeScanner = ({ open, onClose, onDetected }) => {
   const videoRef = useRef(null);
   const readerRef = useRef(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  // Callbacks más recientes sin reiniciar la cámara cuando cambian
+  const onCloseRef = useRef(onClose);
+  const onDetectedRef = useRef(onDetected);
+  onCloseRef.current = onClose;
+  onDetectedRef.current = onDetected;
 
   useEffect(() => {
     if (!open) return;
 
+    let ignore = false;
     setError("");
     setLoading(true);
 
@@ -40,15 +48,17 @@ const BarcodeScanner = ({ open, onClose, onDetected }) => {
         await reader.decodeFromVideoDevice(
           deviceId,
           videoRef.current,
-          (result, err) => {
+          (result) => {
+            if (ignore) return;
             setLoading(false);
             if (result) {
-              onDetected(result.getText());
-              onClose();
+              onDetectedRef.current(result.getText());
+              onCloseRef.current();
             }
           }
         );
       } catch (e) {
+        if (ignore) return;
         setLoading(false);
         if (e.name === "NotAllowedError") {
           setError("Permiso de cámara denegado. Habilítalo en la configuración del navegador.");
@@ -63,9 +73,12 @@ const BarcodeScanner = ({ open, onClose, onDetected }) => {
     startScanner();
 
     return () => {
+      ignore = true;
       try {
         readerRef.current?.reset();
-      } catch (_) {}
+      } catch {
+        // El lector ya estaba detenido
+      }
     };
   }, [open]);
 
@@ -75,25 +88,27 @@ const BarcodeScanner = ({ open, onClose, onDetected }) => {
       onClose={onClose}
       fullWidth
       maxWidth="sm"
-      PaperProps={{ sx: { borderRadius: 3, overflow: "hidden" } }}
+      PaperProps={{ sx: { overflow: "hidden" } }}
     >
       <DialogTitle sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", pb: 1 }}>
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <QrCodeScannerIcon sx={{ color: "primary.main" }} />
           <Typography fontWeight={600}>Escanear código de barras</Typography>
         </Box>
-        <IconButton size="small" onClick={onClose}>
-          <CloseIcon />
-        </IconButton>
+        <CustomTooltip text="Cerrar" position="bottom">
+          <IconButton size="small" onClick={onClose} aria-label="Cerrar">
+            <CloseIcon />
+          </IconButton>
+        </CustomTooltip>
       </DialogTitle>
 
       <DialogContent sx={{ p: 0 }}>
         {error ? (
           <Box sx={{ p: 2 }}>
-            <Alert severity="error">{error}</Alert>
+            <Alert severity="error" variant="filled">{error}</Alert>
           </Box>
         ) : (
-          <Box sx={{ position: "relative", backgroundColor: "#000", minHeight: 300 }}>
+          <Box sx={{ position: "relative", bgcolor: "common.black", minHeight: 300 }}>
             {loading && (
               <Box sx={{
                 position: "absolute", inset: 0,
@@ -105,9 +120,10 @@ const BarcodeScanner = ({ open, onClose, onDetected }) => {
                 <Typography variant="body2">Iniciando cámara...</Typography>
               </Box>
             )}
-            <video
+            <Box
+              component="video"
               ref={videoRef}
-              style={{ width: "100%", display: "block", maxHeight: "60vh", objectFit: "cover" }}
+              sx={{ width: "100%", display: "block", maxHeight: "60vh", objectFit: "cover" }}
             />
             {/* Guía visual de encuadre */}
             {!loading && (
@@ -118,9 +134,9 @@ const BarcodeScanner = ({ open, onClose, onDetected }) => {
               }}>
                 <Box sx={{
                   width: "70%", height: 100,
-                  border: "2px solid rgba(255,255,255,0.8)",
-                  borderRadius: 1,
-                  boxShadow: "0 0 0 9999px rgba(0,0,0,0.4)",
+                  border: (theme) => `2px solid ${alpha(theme.palette.common.white, 0.8)}`,
+                  borderRadius: "var(--radius-base)",
+                  boxShadow: (theme) => `0 0 0 9999px ${alpha(theme.palette.common.black, 0.4)}`,
                 }} />
               </Box>
             )}

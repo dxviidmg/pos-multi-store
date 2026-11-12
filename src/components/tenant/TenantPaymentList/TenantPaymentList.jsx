@@ -2,30 +2,34 @@ import React, { useEffect, useState } from "react";
 import DataTable from "../../ui/DataTable/DataTable";
 import { getPayments } from "../../../api/tenants";
 import { Grid } from "@mui/material";
-import { formatCurrency } from "../../../utils/utils";
-
-const formatDate = (dateStr) => {
-  const date = new Date(dateStr + "T00:00:00");
-  return date.toLocaleDateString("es-MX", { day: "numeric", month: "long", year: "numeric" });
-};
+import { formatCurrency, formatLongDate } from "../../../utils/utils";
+import { showRequestError } from "../../../utils/alerts";
+import PageHeader from "../../ui/PageHeader";
 
 const TenantPaymentList = () => {
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let ignore = false;
     const fetchPayments = async () => {
-      const response = await getPayments();
-      setPayments(response.data);
-      setLoading(false);
+      try {
+        const response = await getPayments();
+        if (!ignore) setPayments(response.data);
+      } catch (error) {
+        if (!ignore) showRequestError("cargar los pagos", error);
+      } finally {
+        if (!ignore) setLoading(false);
+      }
     };
     fetchPayments();
+    return () => { ignore = true; };
   }, []);
 
   return (
     <Grid container>
       <Grid item xs={12} className="card">
-        <h1>Historial de pagos realizados</h1>
+        <PageHeader title="Historial de pagos realizados" />
         <DataTable
           progressPending={loading}
           noDataComponent="Sin pagos"
@@ -34,7 +38,7 @@ const TenantPaymentList = () => {
             {
               name: "Vigencia",
               selector: (row) =>
-                `${formatDate(row.start_of_validity)} al ${formatDate(row.end_of_validity)}`,
+                `${formatLongDate(row.start_of_validity)} al ${formatLongDate(row.end_of_validity)}`,
               minWidth: 300,
             },
             { name: "Meses pagados", selector: (row) => row.months },

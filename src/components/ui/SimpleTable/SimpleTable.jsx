@@ -9,6 +9,7 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
+import { tableButtonSx } from "../tableButtonSx";
 
 const SimpleTable = ({ data, columns, noDataComponent, onRowClicked }) => {
   const getCellAlignment = (row, col) => {
@@ -27,7 +28,12 @@ const SimpleTable = ({ data, columns, noDataComponent, onRowClicked }) => {
             {columns.map((col, idx) => (
               <TableCell
                 key={idx}
-                sx={{ textAlign: "center" }}
+                sx={{ 
+                  textAlign: "center", 
+                  color: "tableHead.contrastText !important",
+                  backgroundColor: "tableHead.main !important",
+                  fontWeight: 600
+                }}
               >
                 {col.name}
               </TableCell>
@@ -55,9 +61,7 @@ const SimpleTable = ({ data, columns, noDataComponent, onRowClicked }) => {
                     key={colIdx}
                     align={getCellAlignment(row, col)}
                     width={col.width}
-                    sx={{
-                      '& .MuiButtonBase-root': { transform: 'scale(0.85)', minWidth: 0, px: 0.5 }
-                    }}
+                    sx={tableButtonSx}
                   >
                     {col.cell ? col.cell(row, rowIdx) : col.selector ? col.selector(row, rowIdx) : row[col.field]}
                   </TableCell>

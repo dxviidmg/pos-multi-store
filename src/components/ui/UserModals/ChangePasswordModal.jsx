@@ -1,16 +1,21 @@
-import { Grid, TextField, IconButton, InputAdornment, Alert } from "@mui/material";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { Grid, IconButton, InputAdornment, Alert } from "@mui/material";
+import { TextField } from "../Field/Field";
+import { CheckCircle, Visibility, VisibilityOff } from "@mui/icons-material";
 import CustomModal from "../Modal/Modal";
 import CustomButton from "../Button/Button";
+import CustomTooltip from "../Tooltip";
+import { getConfirmFieldProps, getConfirmState } from "./passwordConfirm";
 
 const ChangePasswordModal = ({ open, onClose, passwordData, onChange, onSave, showPasswords, onToggleVisibility }) => {
+  const confirmState = getConfirmState(passwordData.new_password, passwordData.confirm_password);
+
   return (
     <CustomModal showOut={open} onClose={onClose} title="Cambiar contraseña">
       <Grid container sx={{ padding: '1rem', backgroundColor: 'modalBody.main' }}>
         <Grid item xs={12} className="card">
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <Alert severity="warning" sx={{ fontSize: '0.8rem' }}>
+              <Alert severity="warning" variant="filled" sx={{ fontSize: '0.8125rem' }}>
                 Al cambiar la contraseña se cerrará la sesión en todos los dispositivos donde esté abierta.
               </Alert>
             </Grid>
@@ -27,9 +32,11 @@ const ChangePasswordModal = ({ open, onClose, passwordData, onChange, onSave, sh
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
-                      <IconButton onClick={() => onToggleVisibility('current')} edge="end" size="small">
-                        {showPasswords.current ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
+                      <CustomTooltip text={showPasswords.current ? "Ocultar contraseña" : "Mostrar contraseña"} position="top">
+                        <IconButton onClick={() => onToggleVisibility('current')} edge="end" size="small" aria-label={showPasswords.current ? "Ocultar contraseña" : "Mostrar contraseña"}>
+                          {showPasswords.current ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </CustomTooltip>
                     </InputAdornment>
                   ),
                 }}
@@ -48,9 +55,11 @@ const ChangePasswordModal = ({ open, onClose, passwordData, onChange, onSave, sh
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
-                      <IconButton onClick={() => onToggleVisibility('new')} edge="end" size="small">
-                        {showPasswords.new ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
+                      <CustomTooltip text={showPasswords.new ? "Ocultar contraseña" : "Mostrar contraseña"} position="top">
+                        <IconButton onClick={() => onToggleVisibility('new')} edge="end" size="small" aria-label={showPasswords.new ? "Ocultar contraseña" : "Mostrar contraseña"}>
+                          {showPasswords.new ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </CustomTooltip>
                     </InputAdornment>
                   ),
                 }}
@@ -66,12 +75,18 @@ const ChangePasswordModal = ({ open, onClose, passwordData, onChange, onSave, sh
                 size="small"
                 autoComplete="new-password"
                 type={showPasswords.confirm ? "text" : "password"}
+                {...getConfirmFieldProps(confirmState)}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
-                      <IconButton onClick={() => onToggleVisibility('confirm')} edge="end" size="small">
-                        {showPasswords.confirm ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
+                      {confirmState === "match" && (
+                        <CheckCircle color="success" fontSize="small" aria-hidden="true" sx={{ mr: 0.5 }} />
+                      )}
+                      <CustomTooltip text={showPasswords.confirm ? "Ocultar contraseña" : "Mostrar contraseña"} position="top">
+                        <IconButton onClick={() => onToggleVisibility('confirm')} edge="end" size="small" aria-label={showPasswords.confirm ? "Ocultar contraseña" : "Mostrar contraseña"}>
+                          {showPasswords.confirm ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </CustomTooltip>
                     </InputAdornment>
                   ),
                 }}
@@ -81,7 +96,7 @@ const ChangePasswordModal = ({ open, onClose, passwordData, onChange, onSave, sh
               <CustomButton 
                 onClick={onSave} 
                 fullWidth
-                disabled={!passwordData.old_password || !passwordData.new_password || !passwordData.confirm_password}
+                disabled={!passwordData.old_password || !passwordData.new_password || confirmState !== "match"}
               >
                 Cambiar contraseña
               </CustomButton>

@@ -1,12 +1,12 @@
 import { memo } from "react";
-import { Tooltip } from "@mui/material";
+import { Box, Tooltip } from "@mui/material";
 
 export const CustomTooltip = memo(({ children, text, position, fullWidth }) => {
   return (
     <Tooltip title={text} placement={position || "right"} arrow>
-      <span style={{ display: fullWidth ? 'block' : 'inline-block' }}>
+      <Box component="span" sx={{ display: fullWidth ? 'block' : 'inline-block' }}>
         {children}
-      </span>
+      </Box>
     </Tooltip>
   );
 });

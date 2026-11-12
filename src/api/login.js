@@ -9,10 +9,5 @@ import { getApiUrl } from "./utils";
  * @returns {Promise<Object>} Response with token and user data
  */
 export const loginUser = async (credentials) => {
-  const response = await httpClient.post(getApiUrl("api-token-auth"), credentials, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  return response;
+  return httpClient.post(getApiUrl("api-token-auth"), credentials);
 };

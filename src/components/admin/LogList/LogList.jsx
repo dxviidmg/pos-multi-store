@@ -1,49 +1,65 @@
 import React, { useEffect, useState } from "react";
 import DataTable from "../../ui/DataTable/DataTable";
-import { exportToExcel, formatTimeFromDate, getFormattedDate } from "../../../utils/utils";
+import { exportToExcel } from "../../../utils/excel";
+import { formatTimeFromDate, getFormattedDate } from "../../../utils/date";
+import { logger } from "../../../utils/logger";
+import { showRequestError } from "../../../utils/alerts";
 import { getStoreProductLogs, getStoreProductLogsChoices } from "../../../api/products";
-import { CustomSpinner } from "../../ui/Spinner/Spinner";
-import { getBrands } from "../../../api/brands";
-import { getStores } from "../../../api/stores";
+import { useBrands } from "../../../hooks/useBrands";
 import CustomButton from "../../ui/Button/Button";
+import StoreSelect from "../../ui/StoreSelect/StoreSelect";
 import { chooseIcon } from "../../ui/Icons/Icons";
-import { Grid, TextField, Select, MenuItem, FormControl, InputLabel, Autocomplete } from "@mui/material";
+import { Grid, MenuItem, FormControl, InputLabel, Autocomplete } from "@mui/material";
+import { TextField, Select } from "../../ui/Field/Field";
 import DownloadIcon from "@mui/icons-material/Download";
 import PageHeader from "../../ui/PageHeader";
 
+const COLUMNS = [
+  { name: "OK", selector: (row) => chooseIcon(row.is_consistent) },
+  { name: "Código", selector: (row) => row.product.code },
+  { name: "Marca", selector: (row) => row.product.brand_name },
+  { name: "Nombre", selector: (row) => row.product.name },
+  { name: "Descripción", selector: (row) => row.description },
+  { name: "Hora", selector: (row) => formatTimeFromDate(row.created_at) },
+  { name: "Stock anterior", selector: (row) => row.previous_stock },
+  { name: "Diferencia", selector: (row) => row.difference },
+  { name: "Stock nuevo", selector: (row) => row.updated_stock },
+];
+
+const getBrandLabel = (option) => `${option.name} (${option.product_count})`;
+const isSameBrand = (option, value) => option.id === value.id;
+
 const LogList = () => {
-  const today = getFormattedDate();
+  const [today] = useState(getFormattedDate);
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [brands, setBrands] = useState([]);
-  const [stores, setStores] = useState([]);
   const [actions, setActions] = useState([]);
-  const [optionsLoaded, setOptionsLoaded] = useState(false);
   const [params, setParams] = useState({ date: today });
+  const { data: brands = [], isLoading: loadingBrands, isFetched: brandsLoaded } = useBrands();
 
   useEffect(() => {
-    const fetchOptions = async () => {
-      setLoading(true);
-      const [brandsRes, actionsRes, storesRes] = await Promise.all([
-        getBrands(), getStoreProductLogsChoices(), getStores(),
-      ]);
-      setBrands(brandsRes.data);
-      setActions(actionsRes.data);
-      setStores(storesRes.data);
-      setOptionsLoaded(true);
-      setLoading(false);
-    };
-    fetchOptions();
+    let ignore = false;
+    getStoreProductLogsChoices()
+      .then((res) => { if (!ignore) setActions(res.data); })
+      .catch((error) => logger.error("Error al cargar los tipos de movimiento:", error));
+    return () => { ignore = true; };
   }, []);
 
   useEffect(() => {
+    let ignore = false;
     const fetchLogs = async () => {
       setLoading(true);
-      const res = await getStoreProductLogs(params);
-      setLogs(res.data);
-      setLoading(false);
+      try {
+        const res = await getStoreProductLogs(params);
+        if (!ignore) setLogs(res.data);
+      } catch (error) {
+        if (!ignore) showRequestError("cargar el historial de stock", error);
+      } finally {
+        if (!ignore) setLoading(false);
+      }
     };
     fetchLogs();
+    return () => { ignore = true; };
   }, [params]);
 
   const handleDataChange = (e) => {
@@ -61,13 +77,11 @@ const LogList = () => {
 
   return (
     <>
-      <CustomSpinner isLoading={loading} />
-
       <Grid container>
         <Grid item xs={12} className="card">
           <PageHeader title="Historial de stock" />
 
-          <Grid container spacing={2} sx={{ mb: 2 }}>
+          <Grid container className="fill-row" spacing={2} sx={{ mb: 2 }}>
             <Grid item xs={12} md={3}>
               <TextField size="small" fullWidth label="Fecha" type="date"
                 value={params.date} onChange={handleDataChange} name="date"
@@ -75,27 +89,25 @@ const LogList = () => {
               />
             </Grid>
             <Grid item xs={12} md={3}>
-              <FormControl fullWidth size="small">
-                <InputLabel>Tiendas o almacenes</InputLabel>
-                <Select value={params.store_related || ""} onChange={handleDataChange} name="store_related" label="Tiendas o almacenes">
-                  <MenuItem value="">Todas</MenuItem>
-                  {stores.map((store) => (
-                    <MenuItem key={store.id} value={store.id}>{store.full_name}</MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+              <StoreSelect
+                value={params.store_related || ""}
+                onChange={handleDataChange}
+                name="store_related"
+                label="Sucursal"
+                allLabel="Todas"
+              />
             </Grid>
             <Grid item xs={12} md={3}>
               <Autocomplete
                 size="small"
                 options={brands}
-                getOptionLabel={(option) => `${option.name} (${option.product_count})`}
+                getOptionLabel={getBrandLabel}
                 value={brands.find((b) => b.id === params.brand_id) || null}
                 onChange={(_, newValue) => {
                   setParams((prev) => ({ ...prev, brand_id: newValue?.id || "" }));
                 }}
-                isOptionEqualToValue={(option, value) => option.id === value.id}
-                disabled={optionsLoaded && brands.length === 0}
+                isOptionEqualToValue={isSameBrand}
+                disabled={brandsLoaded && brands.length === 0}
                 renderInput={(inputProps) => (
                   <TextField {...inputProps} label="Marca" />
                 )}
@@ -120,20 +132,10 @@ const LogList = () => {
           </Grid>
 
           <DataTable
-            progressPending={loading}
+            progressPending={loading || loadingBrands}
             noDataComponent="Sin movimientos"
             data={logs}
-            columns={[
-              { name: "OK", selector: (row) => chooseIcon(row.is_consistent) },
-              { name: "Código", selector: (row) => row.product.code },
-              { name: "Marca", selector: (row) => row.product.brand_name },
-              { name: "Nombre", selector: (row) => row.product.name },
-              { name: "Descripción", selector: (row) => row.description },
-              { name: "Hora", selector: (row) => formatTimeFromDate(row.created_at) },
-              { name: "Stock anterior", selector: (row) => row.previous_stock },
-              { name: "Diferencia", selector: (row) => row.difference },
-              { name: "Stock nuevo", selector: (row) => row.updated_stock },
-            ]}
+            columns={COLUMNS}
           />
         </Grid>
       </Grid>

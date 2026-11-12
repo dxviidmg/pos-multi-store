@@ -1,328 +1,49 @@
-import React, { useEffect, useState, useRef } from "react";
-import SimpleTable from "../../ui/SimpleTable/SimpleTable";
-import {
-  getImportCanIncludeQuantity,
-  importProducts,
-  importProductsValidation,
-} from "../../../api/products";
-import CustomButton from "../../ui/Button/Button";
-import { showSuccess, showRequestError } from "../../../utils/alerts";
-import { CustomSpinner } from "../../ui/Spinner/Spinner";
-import PageHeader from "../../ui/PageHeader";
-import DropZone from "../../ui/DropZone";
-import VisuallyHiddenInput from "../../ui/VisuallyHiddenInput";
-import StatusChip from "../../ui/StatusChip";
-import {
-  Alert, Grid, Select, MenuItem, FormControl, InputLabel,
-  Typography, Stepper, Step, StepLabel, Chip,
-  LinearProgress, Tooltip, TablePagination, Box,
-} from "@mui/material";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import PublishIcon from "@mui/icons-material/Publish";
-import DownloadIcon from "@mui/icons-material/Download";
-import ErrorIcon from "@mui/icons-material/Error";
+import React, { useState } from "react";
+import { ToggleButton, ToggleButtonGroup } from "@mui/material";
+import TraditionalImport from "./TraditionalImport";
+import EleventaImport from "./EleventaImport";
 
-const URL_TEMPLATE =
-  process.env.REACT_APP_API_URL +
-  "/static/templates/SmartVenta_plantilla_importacion_productos.xlsx";
-
-const CREATE_OPTIONS = [
-  { value: "Y", label: "Si" },
-  { value: "N", label: "No" },
+const MODES = [
+  { label: "Tradicional", Component: TraditionalImport },
+  { label: "Especial", Component: EleventaImport },
 ];
 
-const productColumns = [
-  { name: "Número de fila", selector: (row) => row.excel_row },
-  { name: "Código", selector: (row) => row.code },
-  { name: "Marca", selector: (row) => row.brand },
-  { name: "Departamento", selector: (row) => row.departament },
-  { name: "Nombre", selector: (row) => row.name },
-  { name: "Costo", selector: (row) => row.cost },
-  { name: "Precio unitario", selector: (row) => row.unit_price },
-  { name: "Precio mayoreo", selector: (row) => row.wholesale_price },
-  { name: "Cantidad mínima mayoreo", selector: (row) => row.min_wholesale_quantity },
-  { name: "Permitir mayoreo con descuento de cliente", selector: (row) => row.wholesale_price_on_client_discount },
-];
+const a11yProps = (index) => ({
+  id: `import-tab-${index}`,
+  "aria-controls": `import-tabpanel-${index}`,
+});
+
+const TabPanel = ({ value, index, children }) => (
+  <div role="tabpanel" hidden={value !== index} id={`import-tabpanel-${index}`} aria-labelledby={`import-tab-${index}`}>
+    {value === index && children}
+  </div>
+);
 
 const ProductImport = () => {
-  const fileInputRef = useRef(null);
-  const [products, setProducts] = useState([]);
-  const [productsError, setProductsError] = useState([]);
-  const [formData, setFormData] = useState({
-    file: "",
-    create_brands: "",
-    create_departments: "",
-    departments_mandatory: "",
-    import_stock: "N",
-  });
-  const [canIncludeQuantity, setCanIncludeQuantity] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
-  const [validationResult, setValidationResult] = useState(null);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [value, setValue] = useState(0);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await getImportCanIncludeQuantity();
-      setCanIncludeQuantity(!response.data);
-      if (response.data) {
-        setFormData((prev) => ({ ...prev, import_stock: "" }));
-      }
-    };
-    fetchData();
-  }, []);
-
-  const handleDataChange = (e) => {
-    const { name, value, files } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: name === "file" ? files[0] : value,
-    }));
-    if (name === "file") {
-      setProducts([]);
-      setProductsError([]);
-      setValidationResult(null);
-      setPage(0);
-    }
-  };
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    setIsDragging(false);
-    const file = e.dataTransfer.files[0];
-    if (file) {
-      if (fileInputRef.current) fileInputRef.current.value = "";
-      setFormData((prev) => ({ ...prev, file }));
-      setProducts([]);
-      setProductsError([]);
-      setValidationResult(null);
-      setPage(0);
-    }
-  };
-
-  const fileTableRef = useRef(null);
-
-  const handleValidation = async () => {
-    setLoading(true);
-    try {
-      const response = await importProductsValidation(formData);
-      setLoading(false);
-      setProducts(response.data);
-      const errors = response.data.filter((item) => item.status !== "Exitoso");
-      const successes = response.data.length - errors.length;
-      setProductsError(errors);
-      setValidationResult({ successes, errors: errors.length });
-      setPage(0);
-      const text = errors.length > 0
-        ? `${errors.length} filas tienen errores. Corrige los errores y vuelve a subir el archivo.`
-        : "Todas las filas están bien";
-      showSuccess("Archivo cargado", text);
-      if (errors.length > 0) {
-        setTimeout(() => fileTableRef.current?.scrollIntoView({ behavior: 'smooth' }), 300);
-      }
-    } catch (error) {
-      setLoading(false);
-      if (fileInputRef.current) fileInputRef.current.value = "";
-      showRequestError("validar el archivo", error);
-    }
-  };
-
-  const handleImport = async () => {
-    setLoading(true);
-    try {
-      await importProducts(formData);
-      setLoading(false);
-      setProducts([]);
-      setProductsError([]);
-      setFormData({
-        file: "",
-        create_brands: "",
-        create_departments: "",
-        departments_mandatory: "",
-        import_stock: canIncludeQuantity ? "N" : "",
-      });
-      setValidationResult(null);
-      setPage(0);
-      if (fileInputRef.current) fileInputRef.current.value = "";
-      showSuccess("Productos importados");
-    } catch (error) {
-      setLoading(false);
-      showRequestError("importar los productos", error);
-    }
-  };
-
-  const isFormIncomplete = formData.file === "" || formData.create_brands === "" ||
-    formData.create_departments === "" || formData.departments_mandatory === "" || formData.import_stock === "";
-
-  const canImport = products.length > 0 && products.every((item) => item.status === "Exitoso");
-
-  const activeStep = !formData.file ? 0 : isFormIncomplete ? 1 : !validationResult ? 2 : 3;
-
-  const steps = [
-    "Subir archivo",
-    "Configurar",
-    validationResult ? "Validado" : "Validar",
-    "Importar",
-  ];
-
-  return (
-    <>
-      <CustomSpinner isLoading={loading} />
-
-      <Grid item xs={12} className="card" sx={{ mb: '1.5rem' }}>
-        <PageHeader title="Importación de productos">
-          <CustomButton fullWidth href={URL_TEMPLATE} startIcon={<DownloadIcon />}>Descargar plantilla</CustomButton>
-        </PageHeader>
-
-        <Stepper activeStep={activeStep} alternativeLabel sx={{ mb: 3,
-          '& .MuiStepIcon-root.Mui-completed': { color: 'success.main' },
-          '& .MuiStepLabel-label.Mui-completed': { color: 'success.main' },
-        }}>
-          {steps.map((label, index) => (
-            <Step key={index} completed={index < activeStep || (index === 2 && !!validationResult)}>
-              <StepLabel>{label}</StepLabel>
-            </Step>
-          ))}
-        </Stepper>
-
-        {loading && <LinearProgress sx={{ mb: 2, borderRadius: 1 }} />}
-
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={3}>
-            <DropZone
-              isDragging={isDragging}
-              onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
-              onDragLeave={() => setIsDragging(false)}
-              onDrop={handleDrop}
-            >
-              <CloudUploadIcon sx={{ fontSize: 32, color: 'text.secondary', mb: 0.5 }} />
-              <Typography variant="body2" color="text.secondary">
-                Arrastra tu archivo o haz clic para seleccionar
-              </Typography>
-              {formData.file && (
-                <Chip label={formData.file.name} color="primary" size="small" sx={{ mt: 1 }} />
-              )}
-              <VisuallyHiddenInput type="file" ref={fileInputRef} onChange={handleDataChange} name="file" />
-            </DropZone>
-          </Grid>
-
-          <Grid item xs={12} md={3} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <FormControl fullWidth size="small">
-              <InputLabel>¿Crear marcas?</InputLabel>
-              <Select value={formData.create_brands} onChange={handleDataChange} name="create_brands" label="¿Crear marcas?">
-                <MenuItem value="">Seleccionar</MenuItem>
-                {CREATE_OPTIONS.map((opt) => (
-                  <MenuItem key={opt.value} value={opt.value}>{opt.label}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControl fullWidth size="small">
-              <InputLabel>¿Crear departamentos?</InputLabel>
-              <Select value={formData.create_departments} onChange={handleDataChange} name="create_departments" label="¿Crear departamentos?">
-                <MenuItem value="">Seleccionar</MenuItem>
-                {CREATE_OPTIONS.map((opt) => (
-                  <MenuItem key={opt.value} value={opt.value}>{opt.label}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControl fullWidth size="small">
-              <InputLabel>¿Deptos obligatorios?</InputLabel>
-              <Select value={formData.departments_mandatory} onChange={handleDataChange} name="departments_mandatory" label="¿Deptos obligatorios?">
-                <MenuItem value="">Seleccionar</MenuItem>
-                {CREATE_OPTIONS.map((opt) => (
-                  <MenuItem key={opt.value} value={opt.value}>{opt.label}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            {!canIncludeQuantity && (
-              <>
-                <FormControl fullWidth size="small">
-                  <InputLabel>¿Agregar inventario?</InputLabel>
-                  <Select value={formData.import_stock} onChange={handleDataChange} name="import_stock" label="¿Agregar inventario?">
-                    <MenuItem value="">Seleccionar</MenuItem>
-                    {CREATE_OPTIONS.map((opt) => (
-                      <MenuItem key={opt.value} value={opt.value}>{opt.label}</MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-                <Alert severity="info">
-                  Primera vez aquí con una sola tienda: puedes agregar stock junto con los productos.
-                </Alert>
-              </>
-            )}
-          </Grid>
-
-          <Grid item xs={12} md={3} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <CustomButton
-              onClick={handleValidation}
-              disabled={isFormIncomplete}
-              fullWidth
-              color={validationResult?.errors > 0 ? "error" : "primary"}
-              startIcon={validationResult?.errors > 0
-                ? <ErrorIcon sx={{ color: 'error.main' }} />
-                : <CheckCircleIcon sx={{ color: isFormIncomplete ? 'inherit' : 'success.main' }} />
-              }
-            >
-              {validationResult
-                ? validationResult.errors > 0 ? "Tiene errores" : "Validado"
-                : "Validar"}
-            </CustomButton>
-            {validationResult && (
-              <>
-                <Chip icon={<CheckCircleIcon />} label={`${validationResult.successes} exitosos`} color="success" variant="outlined" />
-                <Chip icon={<ErrorIcon />} label={`${validationResult.errors} con error`} color="error" variant="outlined" />
-              </>
-            )}
-          </Grid>
-
-          <Grid item xs={12} md={3}>
-            <Tooltip title={!canImport ? "Primero valida el archivo sin errores" : ""}>
-              <span>
-                <CustomButton onClick={handleImport} fullWidth disabled={!canImport} startIcon={<PublishIcon sx={{ color: canImport ? 'success.main' : 'inherit' }} />}>
-                  Importar
-                </CustomButton>
-              </span>
-            </Tooltip>
-          </Grid>
-        </Grid>
-      </Grid>
-
-      {productsError.length > 0 && (
-      <Grid item xs={12} className="card" ref={fileTableRef}>
-        <h1>Filas con error</h1>
-        <SimpleTable
-          noDataComponent="Sin filas con error"
-          data={productsError.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
-          columns={[
-            ...productColumns,
-            ...(formData.import_stock === "Y"
-              ? [{ name: "Cantidad", selector: (row) => row.quantity }]
-              : []),
-              { name: "Estado", cell: (row) => <StatusChip status={row.status} /> },
-          ]}
-        />
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={productsError.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={(event, newPage) => setPage(newPage)}
-            onRowsPerPageChange={(event) => {
-              setRowsPerPage(parseInt(event.target.value, 10));
-              setPage(0);
-            }}
-            labelRowsPerPage="Filas por página"
-            labelDisplayedRows={({ from, to, count }) => `${from}-${to} de ${count}`}
-          />
-        </Box>
-      </Grid>
-      )}
-    </>
+  const tabs = (
+    <ToggleButtonGroup
+      value={value}
+      exclusive
+      fullWidth
+      size="small"
+      color="primary"
+      onChange={(event, newValue) => newValue !== null && setValue(newValue)}
+      aria-label="Modo de importación"
+      sx={{ mb: 2 }}
+    >
+      {MODES.map(({ label }, index) => (
+        <ToggleButton key={label} value={index} {...a11yProps(index)}>{label}</ToggleButton>
+      ))}
+    </ToggleButtonGroup>
   );
+
+  return MODES.map(({ label, Component }, index) => (
+    <TabPanel key={label} value={value} index={index}>
+      <Component tabs={tabs} />
+    </TabPanel>
+  ));
 };
 
 export default ProductImport;

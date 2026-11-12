@@ -1,24 +1,21 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { logger } from '../utils/logger';
 
 /**
- * Hook unificado para fetch con soporte de reintentos y timeout
+ * Hook para fetch bajo demanda con soporte de reintentos y timeout: no se ejecuta solo,
+ * se llama con `refetch(params)`.
  * @param {Function} fetchFn - Función que retorna una promesa
  * @param {Object} options - Opciones de configuración
- * @param {Array} options.deps - Dependencias para re-ejecutar
  * @param {*} options.initialData - Valor inicial de data
  * @param {number} options.maxRetries - Reintentos máximos (0 = sin reintentos)
  * @param {number} options.timeout - Timeout en ms
- * @param {boolean} options.enabled - Si debe ejecutarse automáticamente
  * @returns {Object} { data, loading, error, refetch }
  */
 export const useFetch = (fetchFn, options = {}) => {
   const {
-    deps = [],
     initialData = null,
     maxRetries = 0,
     timeout = 3000,
-    enabled = true,
   } = options;
 
   const initialDataRef = useRef(initialData);
@@ -69,13 +66,6 @@ export const useFetch = (fetchFn, options = {}) => {
     }
   }, [fetchFn, maxRetries, timeout]);
 
-  useEffect(() => {
-    if (enabled) {
-      fetchData();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
-
   return { data, loading, error, refetch: fetchData };
 };
 
@@ -84,9 +74,8 @@ export const useFetch = (fetchFn, options = {}) => {
  * Alias de useFetch con maxRetries configurado
  */
 export const useFetchWithRetry = (fetchFn, options = {}) => {
-  return useFetch(fetchFn, { 
-    ...options, 
+  return useFetch(fetchFn, {
+    ...options,
     maxRetries: options.maxRetries ?? 2,
-    enabled: false, // No ejecutar automáticamente
   });
 };

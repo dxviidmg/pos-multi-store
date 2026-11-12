@@ -4,13 +4,37 @@ import { lazy, Suspense } from "react";
 import { useUser } from "./context/UserContext";
 import LoadingFallback from "./components/ui/LoadingFallback";
 import ErrorBoundary from "./components/ui/ErrorBoundary";
+import RequireAccess from "./components/ui/RequireAccess";
+import { getHomeRoute, LEGACY_ROUTES } from "./constants/routeAccess";
 
 // Componentes críticos (carga inmediata)
 import Login from "./components/layout/Login/Login";
 import MainLayout from "./components/layout/MainLayout/MainLayout";
 
+// Si falla la descarga de un chunk (nuevo deploy), recarga la página una sola vez.
+// Si vuelve a fallar tras recargar, se propaga el error para que lo muestre ErrorBoundary.
+const CHUNK_RELOAD_KEY = "chunk_reload_attempted";
+
+// Recarga una sola vez por ventana de tiempo si falla un chunk (deploy nuevo).
+// Se guarda la hora de la última recarga para no entrar en bucle si un chunk está roto.
+const RELOAD_WINDOW_MS = 10000;
+const getLastReload = () => {
+  try { return Number(sessionStorage.getItem(CHUNK_RELOAD_KEY)) || 0; } catch { return Date.now(); }
+};
+const markReload = () => {
+  try { sessionStorage.setItem(CHUNK_RELOAD_KEY, String(Date.now())); return true; } catch { return false; }
+};
+
 const lazyRetry = (importFn) =>
-  lazy(() => importFn().catch(() => { window.location.reload(); return new Promise(() => {}); }));
+  lazy(() =>
+    importFn().catch((error) => {
+      if (Date.now() - getLastReload() > RELOAD_WINDOW_MS && markReload()) {
+        window.location.reload();
+        return new Promise(() => {});
+      }
+      throw error;
+    })
+  );
 
 // Wrapper para Suspense
 const Lazy = ({ children }) => <ErrorBoundary><Suspense fallback={<LoadingFallback />}>{children}</Suspense></ErrorBoundary>;
@@ -24,9 +48,11 @@ const ClientList = lazyRetry(() => import("./components/clients/ClientList/Clien
 const ProductList = lazyRetry(() => import("./components/products/ProductList/ProductList"));
 const BrandList = lazyRetry(() => import("./components/catalog/BrandList/BrandList"));
 const SaleImport = lazyRetry(() => import("./components/sales/SaleImport/SaleImport"));
+const ProductCreate = lazyRetry(() => import("./components/products/ProductCreate/ProductCreate"));
 const StoreProductList = lazyRetry(() => import("./components/products/StoreProductList/StoreProductList"));
 const ProductAuditList = lazyRetry(() => import("./components/products/StoreProductAuditList/StoreProductAuditList"));
 const StoreList = lazyRetry(() => import("./components/admin/StoreList/StoreList"));
+const ProductCatalog = lazyRetry(() => import("./components/products/ProductCatalog/ProductCatalog"));
 const ProductImport = lazyRetry(() => import("./components/products/ProductImport/ProductImport"));
 const ReservationList = lazyRetry(() => import("./components/sales/ReservationList/ReservationList"));
 const CashSummary = lazyRetry(() => import("./components/sales/CashSummary/CashSummary"));
@@ -47,6 +73,7 @@ const CancellationsDashboard = lazyRetry(() => import("./components/admin/Dashbo
 const StockVerificationDashboard = lazyRetry(() => import("./components/admin/Dashboard/StockVerificationDashboard"));
 const PendingTransfersDashboard = lazyRetry(() => import("./components/admin/Dashboard/PendingTransfersDashboard"));
 const ProductsDashboard = lazyRetry(() => import("./components/admin/Dashboard/ProductsDashboard"));
+const DepartmentDashboard = lazyRetry(() => import("./components/admin/Dashboard/DepartmentDashboard"));
 const PriceLogsList = lazyRetry(() => import("./components/products/PriceLogsList/PriceLogsList"));
 const DistributionList = lazyRetry(() => import("./components/inventory/DistributionList/DistributionList"));
 const ConversionList = lazyRetry(() => import("./components/inventory/ConversionList/ConversionList"));
@@ -74,53 +101,58 @@ function App({ toggleTheme, themeMode }) {
             </Route>
           ) : (
           <Route element={<MainLayout toggleTheme={toggleTheme} themeMode={themeMode} />}>
-            <Route path="/tiendas/" element={<Lazy><StoreList /></Lazy>} />
-            <Route path="/ventas/" element={<Lazy><SaleList /></Lazy>} />
-            <Route path="/apartados/" element={<Lazy><ReservationList /></Lazy>} />
-            <Route path="/vender/" element={<Lazy><SaleCreate /></Lazy>} />
-            <Route path="/distribuir/" element={<Lazy><SaleCreate /></Lazy>} />
-            <Route path="/importar-ventas/" element={<Lazy><SaleImport /></Lazy>} />
-            <Route path="/corte-caja/" element={<Lazy><CashSummary /></Lazy>} />
-            <Route path="/movimientos-caja/" element={<Lazy><CashFlowList /></Lazy>} />
-            <Route path="/distribuciones/" element={<Lazy><DistributionList /></Lazy>} />
-            <Route path="/conversiones/" element={<Lazy><ConversionList /></Lazy>} />
-            <Route path="/traspasos/" element={<Lazy><TransferList /></Lazy>} />
-            <Route path="/solicitudes-ajustes-stock/" element={<Lazy><StockUpdateRequestList /></Lazy>} />
-            <Route path="/historial-precios/" element={<Lazy><PriceLogsList /></Lazy>} />
-            <Route path="/clientes/" element={<Lazy><ClientList /></Lazy>} />
-            <Route path="/productos/" element={<Lazy><ProductList /></Lazy>} />
-            <Route path="/inventario/" element={<Lazy><StoreProductList /></Lazy>} />
-            <Route path="/auditoria-inventario/" element={<Lazy><ProductAuditList /></Lazy>} />
-            <Route path="/marcas/" element={<Lazy><BrandList /></Lazy>} />
-            <Route path="/departamentos/" element={<Lazy><DepartmentList /></Lazy>} />
-            <Route path="/historial-stock/" element={<Lazy><LogList /></Lazy>} />
-            <Route path="/pagos/" element={<Lazy><TenantPaymentList /></Lazy>} />
-            <Route path="/suscripciones/" element={<Lazy><SubscriptionList /></Lazy>} />
-            <Route path="/mi-plan-actual/" element={<Lazy><MyCurrentPlan /></Lazy>} />
-            <Route path="/vendedores/" element={<Lazy><SellerList /></Lazy>} />
-            <Route path="/servicios/" element={<Lazy><ServiceList /></Lazy>} />
-            <Route path="/tablero-ventas/" element={<Lazy><Dashboard /></Lazy>} />
-            <Route path="/tablero-ventas-ajustadas-cancelaciones/" element={<Lazy><CancellationsDashboard /></Lazy>} />
-            <Route path="/tablero-verificacion-stock/" element={<Lazy><StockVerificationDashboard /></Lazy>} />
-            <Route path="/tablero-traspasos-pendientes/" element={<Lazy><PendingTransfersDashboard /></Lazy>} />
-            <Route path="/tablero-productos/" element={<Lazy><ProductsDashboard /></Lazy>} />
-            <Route path="/reasignacion/" element={<Lazy><ProductReassign /></Lazy>} />
-            <Route path="/importar-productos/" element={<Lazy><ProductImport /></Lazy>} />
-            <Route path="/importar-inventario/" element={<Lazy><StoreProductImport /></Lazy>} />
-            <Route path="/auditoria-transacciones/" element={<Lazy><TransactionAudit /></Lazy>} />
-            <Route path="/auditoria-productos/" element={<Lazy><ProductAudit /></Lazy>} />
-            <Route path="/sincronizar/" element={<Lazy><RestartService /></Lazy>} />
-            <Route path="/perfil/" element={<Lazy><Profile /></Lazy>} />
-            {user?.store_id ? (
-              <Route path="*" element={<Lazy><SaleCreate /></Lazy>} />
-            ) : (
-              <Route path="*" element={<Lazy><StoreList /></Lazy>} />
-            )}
+            {/* Permisos por rol, tipo de sucursal y plan: constants/routeAccess.js */}
+            {Object.entries(LEGACY_ROUTES).map(([from, to]) => (
+              <Route key={from} path={from} element={<Navigate to={to} replace />} />
+            ))}
+            <Route element={<RequireAccess />}>
+              <Route path="/tiendas/" element={<Lazy><StoreList /></Lazy>} />
+              <Route path="/ventas/" element={<Lazy><SaleList /></Lazy>} />
+              <Route path="/apartados/" element={<Lazy><ReservationList /></Lazy>} />
+              <Route path="/vender/" element={<Lazy><SaleCreate /></Lazy>} />
+              <Route path="/distribuir/" element={<Lazy><SaleCreate /></Lazy>} />
+              <Route path="/importar-ventas/" element={<Lazy><SaleImport /></Lazy>} />
+              <Route path="/corte-caja/" element={<Lazy><CashSummary /></Lazy>} />
+              <Route path="/movimientos-caja/" element={<Lazy><CashFlowList /></Lazy>} />
+              <Route path="/distribuciones/" element={<Lazy><DistributionList /></Lazy>} />
+              <Route path="/conversiones/" element={<Lazy><ConversionList /></Lazy>} />
+              <Route path="/traspasos/" element={<Lazy><TransferList /></Lazy>} />
+              <Route path="/ajustes-inventario/" element={<Lazy><StockUpdateRequestList /></Lazy>} />
+              <Route path="/historial-precios/" element={<Lazy><PriceLogsList /></Lazy>} />
+              <Route path="/clientes/" element={<Lazy><ClientList /></Lazy>} />
+              <Route path="/productos/" element={<Lazy><ProductList /></Lazy>} />
+              <Route path="/productos/nuevo/" element={<Lazy><ProductCreate /></Lazy>} />
+              <Route path="/inventario/" element={<Lazy><StoreProductList /></Lazy>} />
+              <Route path="/inventario-a-verificar/" element={<Lazy><ProductAuditList /></Lazy>} />
+              <Route path="/marcas/" element={<Lazy><BrandList /></Lazy>} />
+              <Route path="/departamentos/" element={<Lazy><DepartmentList /></Lazy>} />
+              <Route path="/historial-stock/" element={<Lazy><LogList /></Lazy>} />
+              <Route path="/pagos/" element={<Lazy><TenantPaymentList /></Lazy>} />
+              <Route path="/suscripciones/" element={<Lazy><SubscriptionList /></Lazy>} />
+              <Route path="/mi-plan-actual/" element={<Lazy><MyCurrentPlan /></Lazy>} />
+              <Route path="/vendedores/" element={<Lazy><SellerList /></Lazy>} />
+              <Route path="/servicios/" element={<Lazy><ServiceList /></Lazy>} />
+              <Route path="/tablero-ventas-exitosas/" element={<Lazy><Dashboard /></Lazy>} />
+              <Route path="/tablero-ventas-canceladas/" element={<Lazy><CancellationsDashboard /></Lazy>} />
+              <Route path="/tablero-verificacion-stock/" element={<Lazy><StockVerificationDashboard /></Lazy>} />
+              <Route path="/tablero-traspasos-pendientes/" element={<Lazy><PendingTransfersDashboard /></Lazy>} />
+              <Route path="/tablero-marcas-productos/" element={<Lazy><ProductsDashboard /></Lazy>} />
+              <Route path="/tablero-por-departamento/" element={<Lazy><DepartmentDashboard /></Lazy>} />
+              <Route path="/reasignacion/" element={<Lazy><ProductReassign /></Lazy>} />
+              <Route path="/catalogo/" element={<Lazy><ProductCatalog /></Lazy>} />
+              <Route path="/importar-productos/" element={<Lazy><ProductImport /></Lazy>} />
+              <Route path="/importar-inventario/" element={<Lazy><StoreProductImport /></Lazy>} />
+              <Route path="/auditoria-transacciones/" element={<Lazy><TransactionAudit /></Lazy>} />
+              <Route path="/auditoria-productos/" element={<Lazy><ProductAudit /></Lazy>} />
+              <Route path="/sincronizar/" element={<Lazy><RestartService /></Lazy>} />
+              <Route path="/perfil/" element={<Lazy><Profile /></Lazy>} />
+            </Route>
+            <Route path="*" element={<Navigate to={getHomeRoute(user)} replace />} />
           </Route>
           )
         ) : (
           <>
-          <Route path="/registrarme/" element={<Suspense fallback={<LoadingFallback />}><Registration /></Suspense>} />
+          <Route path="/registrarme/" element={<Lazy><Registration /></Lazy>} />
           <Route path="*" element={<Login />} />
           </>
         )}
