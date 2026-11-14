@@ -74,7 +74,7 @@ export const getStoreComparison = (dashboardData, metricType) => {
   }));
 };
 
-/** Mejor y peor tienda, día del mes, día de la semana (promedio) y hora. */
+/** Mejor y peor tienda, día del mes, día de la semana (promedio), mes y hora. */
 export const getSalesInsights = (dashboardData, { metricType, month }) => {
   if (!dashboardData?.sales?.length) return null;
   const { sales } = dashboardData;
@@ -88,26 +88,34 @@ export const getSalesInsights = (dashboardData, { metricType, month }) => {
   });
   const [bestStore, worstStore] = bestAndWorst(byStore);
 
-  let bestDay = "N/A", worstDay = "N/A", bestDayOfWeek = "N/A", worstDayOfWeek = "N/A";
+  let bestDay = "N/A", worstDay = "N/A", bestDayOfWeek = "N/A", worstDayOfWeek = "N/A", bestMonth = "N/A", worstMonth = "N/A";
+
+  // Promedio por venta de cada día de la semana (aplica para mes y año)
+  const byDayOfWeek = {};
+  const countByDayOfWeek = {};
+  DAY_NAMES.forEach((day) => {
+    byDayOfWeek[day] = 0;
+    countByDayOfWeek[day] = 0;
+  });
+  sales.forEach((s) => {
+    const day = DAY_NAMES[new Date(s.created_at).getDay()];
+    byDayOfWeek[day] += value(s);
+    countByDayOfWeek[day] += 1;
+  });
+  Object.keys(byDayOfWeek).forEach((day) => {
+    if (countByDayOfWeek[day] > 0) byDayOfWeek[day] /= countByDayOfWeek[day];
+  });
+  [bestDayOfWeek, worstDayOfWeek] = bestAndWorst(byDayOfWeek);
+
   if (month !== 0) {
     [bestDay, worstDay] = bestAndWorst(sumBy(sales, (s) => new Date(s.created_at).getDate(), value));
-
-    // Promedio por venta de cada día de la semana
-    const byDayOfWeek = {};
-    const countByDayOfWeek = {};
-    DAY_NAMES.forEach((day) => {
-      byDayOfWeek[day] = 0;
-      countByDayOfWeek[day] = 0;
-    });
-    sales.forEach((s) => {
-      const day = DAY_NAMES[new Date(s.created_at).getDay()];
-      byDayOfWeek[day] += value(s);
-      countByDayOfWeek[day] += 1;
-    });
-    Object.keys(byDayOfWeek).forEach((day) => {
-      if (countByDayOfWeek[day] > 0) byDayOfWeek[day] /= countByDayOfWeek[day];
-    });
-    [bestDayOfWeek, worstDayOfWeek] = bestAndWorst(byDayOfWeek);
+  } else {
+    // Mejor y peor mes cuando se ve todo el año
+    const MONTH_NAMES = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+    [bestMonth, worstMonth] = bestAndWorst(
+      sumBy(sales, (s) => new Date(s.created_at).getMonth(), value),
+      (monthIndex) => MONTH_NAMES[monthIndex]
+    );
   }
 
   const [bestHour, worstHour] = bestAndWorst(
@@ -115,5 +123,5 @@ export const getSalesInsights = (dashboardData, { metricType, month }) => {
     (hour) => `${hour}:00`
   );
 
-  return { bestStore, worstStore, bestDay, worstDay, bestDayOfWeek, worstDayOfWeek, bestHour, worstHour };
+  return { bestStore, worstStore, bestDay, worstDay, bestDayOfWeek, worstDayOfWeek, bestMonth, worstMonth, bestHour, worstHour };
 };

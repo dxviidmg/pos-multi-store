@@ -149,6 +149,12 @@ const Dashboard = () => {
       {insights && storeComparison.length > 1 && (
         <Grid container spacing={2}>
           <InsightCard icon={StorefrontIcon} title="Tiendas" best={insights.bestStore} worst={insights.worstStore} />
+          {isYear && (
+            <InsightCard icon={CalendarMonthIcon} title="Mes" best={insights.bestMonth} worst={insights.worstMonth} />
+          )}
+          {isYear && (
+            <InsightCard icon={CalendarMonthIcon} title="Día de la semana" best={insights.bestDayOfWeek} worst={insights.worstDayOfWeek} />
+          )}
           {!isYear && (
             <InsightCard icon={CalendarMonthIcon} title="Día del mes" best={`Día ${insights.bestDay}`} worst={`Día ${insights.worstDay}`} />
           )}
