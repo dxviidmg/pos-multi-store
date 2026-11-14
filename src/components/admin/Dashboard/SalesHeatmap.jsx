@@ -1,8 +1,9 @@
-import React, { useMemo } from "react";
-import { Box, Typography, Tooltip, useTheme, alpha } from "@mui/material";
+import React, { useMemo, useState } from "react";
+import { Box, Typography, Tooltip, FormControl, InputLabel, MenuItem, useTheme, alpha } from "@mui/material";
 import { DAY_NAMES_SHORT } from "../../../utils/date";
 import { formatCurrency } from "../../../utils/currency";
 import { CHART_COLORS } from "../../../utils/chart";
+import { Select } from "../../ui/Field/Field";
 
 const HOUR_LABELS = Array.from({ length: 24 }, (_, i) => `${i}:00`);
 const LEGEND_STEPS = [0, 0.25, 0.5, 0.75, 1];
@@ -16,7 +17,6 @@ const SalesHeatmap = ({ data, metricType = "count" }) => {
   const isDark = theme.palette.mode === "dark";
   // Celdas vacías y leyenda: blanco translúcido en oscuro, negro translúcido en claro
   const neutral = isDark ? theme.palette.common.white : theme.palette.common.black;
-
   const { storeGrids, globalMax } = useMemo(() => {
     if (!data?.sales?.length || !data?.stores?.length) return { storeGrids: [], globalMax: 0 };
 
@@ -37,6 +37,13 @@ const SalesHeatmap = ({ data, metricType = "count" }) => {
     return { storeGrids: grids, globalMax: gMax };
   }, [data, metricType]);
 
+  const [selectedStore, setSelectedStore] = useState("");
+
+  const displayStore = selectedStore || storeGrids[0]?.name || "";
+  const filteredStores = displayStore
+    ? [storeGrids.find((s) => s.name === displayStore)].filter(Boolean)
+    : storeGrids;
+
   const formatValue = (v) =>
     metricType === "total" ? formatCurrency(v, 0) : v;
 
@@ -53,49 +60,69 @@ const SalesHeatmap = ({ data, metricType = "count" }) => {
 
   return (
     <Box sx={{ width: "100%" }}>
-      <Typography variant="h6" sx={{ mb: 2, fontWeight: 500, color: "text.primary" }}>
-        Mapa de calor — Ventas por día y hora
-      </Typography>
+      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", mb: 2 }}>
+        <Typography variant="h6" sx={{ fontWeight: 500, color: "text.primary" }}>
+          Mapa de calor — Ventas por día y hora
+        </Typography>
+        {storeGrids.length > 1 && (
+          <FormControl size="small" sx={{ width: 250 }}>
+            <InputLabel id="heatmap-store-label">Tienda</InputLabel>
+            <Select
+              labelId="heatmap-store-label"
+              label="Tienda"
+              value={displayStore}
+              onChange={(e) => setSelectedStore(e.target.value)}
+            >
+              {storeGrids.map((s) => (
+                <MenuItem key={s.name} value={s.name}>{s.name}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )}
+      </Box>
       <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-        {storeGrids.map((store, si) => (
-          <Box key={store.name}>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
-              <Box sx={{ width: 10, height: 10, borderRadius: "50%", bgcolor: getStoreColor(si) }} />
-              <Typography variant="body2" sx={{ fontWeight: 600 }}>{store.name}</Typography>
-            </Box>
-            <Box sx={{ overflowX: "auto" }}>
-              <Box sx={{ display: "grid", gridTemplateColumns: "48px repeat(24, 1fr)", gap: "2px", minWidth: 500 }}>
-                <Box />
-                {HOUR_LABELS.map((h, i) =>
-                  i % 3 === 0 ? (
-                    <Typography key={i} variant="caption" sx={{ textAlign: "center", color: "text.secondary", fontSize: 9 }}>
-                      {h}
-                    </Typography>
-                  ) : <Box key={i} />
-                )}
-                {DAY_NAMES_SHORT.map((day, di) => (
-                  <React.Fragment key={di}>
-                    <Typography variant="caption" sx={{ display: "flex", alignItems: "center", fontWeight: 600, color: "text.secondary", fontSize: 10 }}>
-                      {day}
-                    </Typography>
-                    {store.grid[di].map((val, hi) => (
-                      <Tooltip key={hi} title={`${store.name} · ${day} ${hi}:00 — ${formatValue(val)}`} arrow placement="top">
-                        <Box sx={{
-                          aspectRatio: "1",
-                          borderRadius: "2px",
-                          bgcolor: getColor(val, si),
-                          cursor: "pointer",
-                          transition: "transform 0.2s ease",
-                          "&:hover": { transform: "scale(1.4)", zIndex: 1 },
-                        }} />
-                      </Tooltip>
-                    ))}
-                  </React.Fragment>
-                ))}
+        {filteredStores.map((store) => {
+          const originalIndex = storeGrids.findIndex((s) => s.name === store.name);
+          return (
+            <Box key={store.name}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
+                <Box sx={{ width: 10, height: 10, borderRadius: "50%", bgcolor: getStoreColor(originalIndex) }} />
+                <Typography variant="body2" sx={{ fontWeight: 600 }}>{store.name}</Typography>
+              </Box>
+              <Box sx={{ overflowX: "auto" }}>
+                <Box sx={{ display: "grid", gridTemplateColumns: "48px repeat(24, 1fr)", gap: "2px", minWidth: 500 }}>
+                  <Box />
+                  {HOUR_LABELS.map((h, i) =>
+                    i % 3 === 0 ? (
+                      <Typography key={i} variant="caption" sx={{ textAlign: "center", color: "text.secondary", fontSize: 9 }}>
+                        {h}
+                      </Typography>
+                    ) : <Box key={i} />
+                  )}
+                  {DAY_NAMES_SHORT.map((day, di) => (
+                    <React.Fragment key={di}>
+                      <Typography variant="caption" sx={{ display: "flex", alignItems: "center", fontWeight: 600, color: "text.secondary", fontSize: 10 }}>
+                        {day}
+                      </Typography>
+                      {store.grid[di].map((val, hi) => (
+                        <Tooltip key={hi} title={`${store.name} · ${day} ${hi}:00 — ${formatValue(val)}`} arrow placement="top">
+                          <Box sx={{
+                            aspectRatio: "1",
+                            borderRadius: "2px",
+                            bgcolor: getColor(val, originalIndex),
+                            cursor: "pointer",
+                            transition: "transform 0.2s ease",
+                            "&:hover": { transform: "scale(1.4)", zIndex: 1 },
+                          }} />
+                        </Tooltip>
+                      ))}
+                    </React.Fragment>
+                  ))}
+                </Box>
               </Box>
             </Box>
-          </Box>
-        ))}
+          );
+        })}
       </Box>
       <Box sx={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 0.5, mt: 2 }}>
         <Typography variant="caption" sx={{ color: "text.secondary", fontSize: 10, mr: 0.5 }}>Menos</Typography>
