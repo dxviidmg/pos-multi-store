@@ -51,7 +51,7 @@
 - **Negocios con almacén** que surten a sus tiendas y quieren saber qué salió, qué llegó y qué falta.
 - **Tiendas con varios vendedores en mostrador** que atienden a varios clientes a la vez.
 - **Negocios de una sola tienda** que quieren empezar rápido. Dan de alta productos con su stock en un solo paso, y el sistema no les muestra funciones de varias sucursales que no necesitan.
-- **Giros que venden a granel** (semillas, forrajes, abarrotes, ferreterías, cremerías). Venden por kilo, por fracción o por monto, y desempacan bultos a kilos.
+- **Giros que venden a granel** (semillas, forrajes, abarrotes, ferreterías, cremerías). Venden por kilo, por fracción o por monto, y convierten bultos a kilos.
 
 Giros típicos: ferreterías, refaccionarias, papelerías, abarrotes, forrajeras, jugueterías, cosméticos, dulcerías, regalos, limpieza, joyerías, celulares, electrónica, mercerías, librerías, mueblerías, fiestas, mascotas, ópticas y estéticas.
 
@@ -266,7 +266,7 @@ Al confirmar un traspaso o una distribución eliges el destino dos veces, para n
 
 ### 🔄 Desempaque de productos
 
-- **Convierte bultos en unidades.** Define una vez la equivalencia ("1 costal = 10 kilos") y desempaca desde la página de conversiones dentro de la tienda. Cada clic desempaca una unidad, con confirmación.
+- **Convierte bultos en unidades.** Define una vez la equivalencia ("1 costal = 10 kilos") y convierte desde la página de conversiones dentro de la tienda. Cada clic convierte una unidad, con confirmación.
 - **Equivalencias controladas.** Solo el dueño crea, cambia o elimina equivalencias.
 
 ### 🛒 Apartados
@@ -398,7 +398,7 @@ Sí. Importas productos, inventario y ventas desde Excel con plantilla, y el sis
 Cualquier impresora térmica de tickets compatible; recomendamos la Epson TM-88V, por USB o WiFi.
 
 **¿Puedo vender a granel?**
-Sí: por kilo, por fracción o por monto. También desempacas bultos a unidades.
+Sí: por kilo, por fracción o por monto. También conviertes bultos a unidades.
 
 **¿Mis vendedores pueden ver costos o cambiar precios?**
 No. Solo el dueño ve costos y edita precios.
