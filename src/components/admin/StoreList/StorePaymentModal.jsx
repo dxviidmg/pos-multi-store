@@ -27,14 +27,16 @@ const StorePaymentModal = ({ isOpen, onClose }) => {
 
   return (
     <CustomModal showOut={isOpen} onClose={onClose} title="Pago de servicio">
-      <ModalBody sx={{ textAlign: "center" }}>
-        <Box component="img" src={mercadoPagoLogo} alt="Mercado Pago" sx={{ height: 40, mb: 2 }} />
-        <Typography variant="body1" sx={{ mb: 3 }}>
-          Tu suscripción está próxima a vencer o ya venció. Realiza tu pago para continuar usando el sistema.
-        </Typography>
-        <CustomButton onClick={handlePayment} disabled={loading}>
-          {loading ? "Generando enlace..." : "Pagar con Mercado Pago"}
-        </CustomButton>
+      <ModalBody>
+        <Box className="card" sx={{ textAlign: "center" }}>
+          <Box component="img" src={mercadoPagoLogo} alt="Mercado Pago" sx={{ height: 40, mb: 2 }} />
+          <Typography variant="body1" sx={{ mb: 3 }}>
+            Tu suscripción está próxima a vencer o ya venció. Realiza tu pago para continuar usando el sistema.
+          </Typography>
+          <CustomButton onClick={handlePayment} disabled={loading}>
+            {loading ? "Generando enlace..." : "Pagar con Mercado Pago"}
+          </CustomButton>
+        </Box>
       </ModalBody>
     </CustomModal>
   );

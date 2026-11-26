@@ -36,9 +36,9 @@ const ConversionList = () => {
 
     const handleApply = async (row) => {
       const confirmed = await showConfirm(
-        "¿Desempacar producto?",
+        "¿Convertir producto?",
         `Se restará 1 ${row.source_unit_display} de ${row.source_product_name} y se sumarán ${row.factor} ${row.target_unit_display} a ${row.target_product_name}.`,
-        { confirmText: "Sí, desempacar", confirmColor: colors.primary, icon: "question" }
+        { confirmText: "Sí, convertir", confirmColor: colors.primary, icon: "question" }
       );
       if (confirmed) applyConversion(row.id);
     };
@@ -76,7 +76,7 @@ const ConversionList = () => {
         width: 120,
       },
       ...(isStore ? [{
-        name: "Desempacar",
+        name: "Convertir",
         width: 130,
         cell: (row) => (
           <CustomButton
@@ -127,8 +127,8 @@ const ConversionList = () => {
         <Typography variant="body2" sx={{ mb: 2, color: "text.secondary" }}>
           Configura equivalencias entre productos. Ejemplo: 1 Costal = 10 Kilogramos.{" "}
           {isStore
-            ? "Para desempacar, usa el botón \"Aplicar\" de esta tabla."
-            : "Para desempacar, entra a una tienda y usa el botón \"Aplicar\" en esta página."}
+            ? "Para convertir, usa el botón \"Aplicar\" de esta tabla."
+            : "Para convertir, entra a una tienda y usa el botón \"Aplicar\" en esta página."}
         </Typography>
 
         <DataTable
@@ -144,7 +144,7 @@ const ConversionList = () => {
               {isOwner && (
                 <>
                   <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                    Crea una para poder desempacar productos
+                    Crea una para poder convertir productos
                   </Typography>
                   <CustomButton
                     onClick={() => modal.open()}
